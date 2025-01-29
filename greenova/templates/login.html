@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Greenova EMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <article class="grid">
+        <div>
+            <hgroup>
+                <h1>Login</h1>
+                <h2>Enter your credentials to access your account</h2>
+            </hgroup>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div>
+                    <label for="username">Username</label>
+                    {{ form.username }}
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    {{ form.password }}
+                </div>
+                <button type="submit" class="contrast">Login</button>
+            </form>
+
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'password_reset' %}">Forgot your password?</a>
+            </div>
+            <div>
+                <p>Don't have an account? <a href="/register">Register here</a></p>
+            </div>
+        </div>
+    </article>
+</div>
+{% endblock %}

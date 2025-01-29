@@ -1,0 +1,16 @@
+[project]
+name = "greenova"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "black>=24.10.0",
+    "debugpy>=1.8.12",
+    "django>=5.1.5",
+    "isort>=5.13.2",
+    "pillow>=11.1.0",
+    "pylance>=0.22.0",
+    "pytest>=8.3.4",
+    "uv>=0.5.24",
+]

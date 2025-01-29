@@ -1,0 +1,90 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+static/
+.env
+.env.*
+!.env.example
+.devcontainer/devcontainer.env
+
+# IDE
+.idea/
+#.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Miscellaneous
+*.bak
+*.tmp
+*.old
+*.orig
+import.ipynb
+input.csv
+database-creation.txt
+logs/
+
+# Prettier configuration
+#prettierc
+
+# Django migrations
+core/migrations/
+
+# Static files
+greenova/staticfiles/*
+staticfiles/*
+
+# Scripts
+#scripts/rebuild.py
+#scripts/setup_permissions.py
+#scripts/watch.py
+#scripts/watcher/
+
+# User Path
+!greenova/core/templates/lib
+!.config
+!.github
+uv.lock
+snyk/snyk-cli/1.1295.0/snyk-linux-arm64

@@ -1,0 +1,109 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Django Rebuild",
+            "type": "shell",
+            "command": "systemctl --user stop django && cd /home/ubuntu/greenova/greenova && python manage.py check && python manage.py check --deploy && python manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && systemctl --user start django",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Django Restart",
+            "type": "shell",
+            "command": "systemctl --user restart django",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true,
+                "close": false
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^.*$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Watching for file changes with StatReloader.*$",
+                    "endsPattern": "^.*Quit the server with CONTROL-C.*$"
+                }
+            }
+        },
+        {
+            "label": "Services: Enable Lingering",
+            "type": "shell",
+            "command": "loginctl enable-linger $USER",
+            "problemMatcher": []
+        },
+        {
+            "label": "Caddy: Start",
+            "type": "shell",
+            "command": "systemctl --user start caddy",
+            "problemMatcher": []
+        },
+        {
+            "label": "Caddy: Stop",
+            "type": "shell",
+            "command": "systemctl --user stop caddy",
+            "problemMatcher": []
+        },
+        {
+            "label": "Caddy: Restart",
+            "type": "shell",
+            "command": "systemctl --user restart caddy",
+            "problemMatcher": []
+        },
+        {
+            "label": "Caddy: Status",
+            "type": "shell",
+            "command": "systemctl --user status caddy",
+            "problemMatcher": []
+        },
+        {
+            "label": "Django: Start",
+            "type": "shell",
+            "command": "systemctl --user start django",
+            "problemMatcher": []
+        },
+        {
+            "label": "Django: Stop",
+            "type": "shell",
+            "command": "systemctl --user stop django",
+            "problemMatcher": []
+        },
+        {
+            "label": "Django: Status",
+            "type": "shell",
+            "command": "systemctl --user status django",
+            "problemMatcher": []
+        },
+        {
+            "label": "Services: View Logs",
+            "type": "shell",
+            "command": "journalctl --user -f -u caddy.service -u django.service",
+            "problemMatcher": []
+        },
+        {
+            "label": "Services: Status",
+            "type": "shell",
+            "command": "systemctl --user status django caddy",
+            "problemMatcher": []
+        },
+        {
+            "label": "Services: Logs",
+            "type": "shell",
+            "command": "journalctl --user -f -u django -u caddy",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

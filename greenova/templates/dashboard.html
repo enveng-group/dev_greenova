@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Greenova EMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Top Bar -->
+    <nav class="top-bar">
+        <ul>
+            <li><strong>Welcome, {{ user.get_full_name|default:user.username }}</strong></li>
+        </ul>
+        <ul>
+            <li>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="outline">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Dashboard Grid -->
+    <div class="stats-grid">
+        <!-- Quick Links -->
+        <article class="dashboard-card">
+            <header>
+                <h3>Quick Links</h3>
+            </header>
+            <div class="button-group">
+                <a href="{% url 'user_profile' %}" class="button">My Profile</a>
+                <a href="{% url 'audit_log' %}" class="button">Audit Log</a>
+                <a href="{% url 'obligations_list' %}" class="button">Obligations</a>
+            </div>
+        </article>
+
+        <!-- Stats Cards -->
+        <article class="dashboard-card">
+            <header>
+                <h3>Summary</h3>
+            </header>
+            <div class="stats-grid">
+                <div class="stats-card alert">
+                    <strong>Overdue</strong>
+                    <p>{{ stats.overdue }}</p>
+                </div>
+                <div class="stats-card">
+                    <strong>Due Soon</strong>
+                    <p>{{ stats.week }}</p>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid">
+        <!-- Status Chart -->
+        <div>
+            <h4>Compliance Status Overview</h4>
+            <canvas id="statusChart" 
+                    class="lazy"
+                    data-chart-type="doughnut"
+                    data-chart-data="{{ status_data }}"></canvas>
+        </div>
+
+        <!-- Risk Assessment Chart -->
+        <div>
+            <h4>Environmental Risk Assessment</h4>
+            <canvas id="riskChart"
+                    class="lazy"
+                    data-chart-type="matrix" 
+                    data-chart-data="{{ risk_data }}"></canvas>
+        </div>
+
+        <!-- Timeline Chart with Controls -->
+        <div>
+            <h4>Obligation Timeline</h4>
+            <div class="timeline-controls">
+                <button onclick="updateTimeline('overdue')" class="outline">Overdue</button>
+                <button onclick="updateTimeline('week')" class="outline">7 Days</button>
+                <button onclick="updateTimeline('fortnight')" class="outline">14 Days</button>
+                <button onclick="updateTimeline('month')" class="outline">30 Days</button>
+            </div>
+            <canvas id="timelineChart"
+                    class="lazy"
+                    data-chart-type="line"
+                    data-chart-data="{{ timeline_data }}"></canvas>
+        </div>
+    </div>
+
+    <!-- Obligation Details Modal -->
+    <dialog id="obligationModal" class="modal">
+        <article>
+            <header>
+                <a href="#close" 
+                   aria-label="Close" 
+                   class="close"
+                   onClick="obligationModal.close()">
+                </a>
+                <h3>Obligations by Status: <span id="modalStatus"></span></h3>
+            </header>
+            
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <input type="text" id="obligationSearch" placeholder="Search obligations..." 
+                       onkeyup="filterObligations()">
+                <select id="projectFilter" onchange="filterObligations()">
+                    <option value="">All Projects</option>
+                </select>
+                <select id="aspectFilter" onchange="filterObligations()">
+                    <option value="">All Aspects</option>
+                </select>
+            </div>
+
+            <!-- Obligations Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="sortObligations('obligation_number')">Number ⇅</th>
+                            <th onclick="sortObligations('project_name')">Project ⇅</th>
+                            <th onclick="sortObligations('environmental_aspect')">Aspect ⇅</th>
+                            <th onclick="sortObligations('action_due_date')">Due Date ⇅</th>
+                            <th onclick="sortObligations('accountability')">Accountability ⇅</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="obligationsTable">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </dialog>
+</div>
+
+<!-- Load Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+
+<script>
+let currentObligations = [];
+const obligationModal = document.getElementById('obligationModal');
+const modalStatus = document.getElementById('modalStatus');
+const obligationsTable = document.getElementById('obligationsTable');
+
+function showObligationDetails(obligationNumber) {
+    fetch(`/obligations/${obligationNumber}/`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('obligationDetails').innerHTML = html;
+            obligationModal.showModal();
+        });
+}
+
+function updateTimeline(period) {
+    const timelineData = JSON.parse(document.getElementById('timelineChart').dataset.chartData);
+    const data = timelineData[period];
+    
+    timelineChart.data.labels = data.map(item => item.action_due_date);
+    timelineChart.data.datasets[0].data = data.map(item => ({
+        x: item.action_due_date,
+        y: 1,
+        obligation: item.obligation_number,
+        project: item.project_name,
+        status: item.status,
+        aspect: item.environmental_aspect,
+        accountability: item.accountability
+    }));
+    timelineChart.update();
+}
+
+function showObligationsList(status, obligations) {
+    currentObligations = obligations;
+    modalStatus.textContent = status;
+    
+    // Populate filter dropdowns
+    populateFilterDropdowns(obligations);
+    
+    // Show obligations
+    displayObligations(obligations);
+    obligationModal.showModal();
+}
+
+function populateFilterDropdowns(obligations) {
+    const projectSelect = document.getElementById('projectFilter');
+    const aspectSelect = document.getElementById('aspectFilter');
+    
+    // Get unique values
+    const projects = [...new Set(obligations.map(o => o.project_name))];
+    const aspects = [...new Set(obligations.map(o => o.environmental_aspect))];
+    
+    // Populate dropdowns
+    projectSelect.innerHTML = '<option value="">All Projects</option>' + 
+        projects.map(p => `<option value="${p}">${p}</option>`).join('');
+    
+    aspectSelect.innerHTML = '<option value="">All Aspects</option>' + 
+        aspects.map(a => `<option value="${a}">${a}</option>`).join('');
+}
+
+function displayObligations(obligations) {
+    obligationsTable.innerHTML = obligations.map(o => `
+        <tr>
+            <td>${o.obligation_number}</td>
+            <td>${o.project_name}</td>
+            <td>${o.environmental_aspect || 'N/A'}</td>
+            <td>${o.action_due_date || 'N/A'}</td>
+            <td>${o.accountability || 'N/A'}</td>
+            <td>
+                <a href="/obligations/${o.obligation_number}" 
+                   class="button outline">View</a>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function filterObligations() {
+    const searchTerm = document.getElementById('obligationSearch').value.toLowerCase();
+    const projectFilter = document.getElementById('projectFilter').value;
+    const aspectFilter = document.getElementById('aspectFilter').value;
+    
+    const filtered = currentObligations.filter(o => {
+        const matchesSearch = Object.values(o).some(val => 
+            String(val).toLowerCase().includes(searchTerm)
+        );
+        const matchesProject = !projectFilter || o.project_name === projectFilter;
+        const matchesAspect = !aspectFilter || o.environmental_aspect === aspectFilter;
+        
+        return matchesSearch && matchesProject && matchesAspect;
+    });
+    
+    displayObligations(filtered);
+}
+
+function sortObligations(field) {
+    const sorted = [...currentObligations].sort((a, b) => {
+        if (!a[field]) return 1;
+        if (!b[field]) return -1;
+        return a[field].localeCompare(b[field]);
+    });
+    displayObligations(sorted);
+}
+
+var lazyLoadInstance = new LazyLoad({
+    elements_selector: ".lazy",
+    callback_enter: function(el) {
+        const chartType = el.dataset.chartType;
+        const chartData = JSON.parse(el.dataset.chartData);
+
+        switch(chartType) {
+            case 'doughnut':
+                new Chart(el, {
+                    type: chartType,
+                    data: {
+                        labels: chartData.map(item => item.status),
+                        datasets: [{
+                            data: chartData.map(item => item.count),
+                            backgroundColor: [
+                                '#FF6384', // Not Started
+                                '#36A2EB', // In Progress
+                                '#4BC0C0', // Completed
+                                '#FF9F40'  // Overdue
+                            ]
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const item = chartData[context.dataIndex];
+                                        return [
+                                            `Status: ${item.status}`,
+                                            `Count: ${item.count}`
+                                        ];
+                                    }
+                                }
+                            }
+                        },
+                        onClick: (e, elements) => {
+                            if (elements.length > 0) {
+                                const clickedItem = chartData[elements[0].index];
+                                if (clickedItem.obligations && clickedItem.obligations.length > 0) {
+                                    showObligationsList(clickedItem.status, clickedItem.obligations);
+                                }
+                            }
+                        }
+                    }
+                });
+                break;
+
+            case 'matrix':
+                new Chart(el, {
+                    type: 'bubble',
+                    data: {
+                        datasets: [{
+                            label: 'Risk Assessment',
+                            data: chartData.map(item => ({
+                                x: item.total,
+                                y: item.overdue,
+                                r: item.compliant * 5,
+                                project: item.project_name,
+                                aspect: item.environmental_aspect
+                            })),
+                            backgroundColor: '#FF9F40'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Total Obligations'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Overdue Obligations'
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const item = context.raw;
+                                        return [
+                                            `Project: ${item.project}`,
+                                            `Aspect: ${item.aspect}`,
+                                            `Total: ${item.x}`,
+                                            `Overdue: ${item.y}`,
+                                            `Compliant: ${item.r/5}`
+                                        ];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                break;
+
+            case 'line':
+                timelineChart = new Chart(el, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Due Obligations',
+                            data: [],
+                            borderColor: '#4bc0c0'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'day'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Due Date'
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const item = context.raw;
+                                        return [
+                                            `Due: ${item.x}`,
+                                            `Project: ${item.project}`,
+                                            `Status: ${item.status}`,
+                                            `Aspect: ${item.aspect}`,
+                                            `Accountability: ${item.accountability}`
+                                        ];
+                                    }
+                                }
+                            }
+                        },
+                        onClick: (e, elements) => {
+                            if (elements.length > 0) {
+                                const item = elements[0].element.$context.raw;
+                                showObligationDetails(item.obligation);
+                            }
+                        }
+                    }
+                });
+                // Initialize with overdue items
+                updateTimeline('overdue');
+                break;
+        }
+    }
+});
+</script>
+
+<style>
+.filter-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.table-container {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+table th {
+    cursor: pointer;
+}
+
+table th:hover {
+    background: var(--secondary-hover);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Greenova EMS{% endblock %}
+    
+{% block content %}
+<!-- Navigation -->
+<nav class="container-fluid">
+    <ul>
+        <li><strong><a href="/" class="contrast">Greenova</a></strong></li>
+    </ul>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="/login" role="button">Login</a></li>
+    </ul>
+</nav>
+
+<!-- Hero Section -->
+<header class="container">
+    <hgroup>
+        <h1>Welcome to Greenova EMS</h1>
+        <h2>ISO14001 compliant, cloud-based Environmental Management System</h2>
+    </hgroup>
+    <p><a href="/register" role="button">Get Started</a></p>
+</header>
+
+<!-- Features Section -->
+<section id="features" class="container">
+    <h2>Key Features</h2>
+    <div class="grid">
+        <article>
+            <header>
+                <h3>ISO 14001 Compliance</h3>
+            </header>
+            <p>Ensure your environmental management system meets international standards</p>
+        </article>
+        <article>
+            <header>
+                <h3>Cloud-Based Solution</h3>
+            </header>
+            <p>Access your EMS from anywhere, anytime with secure cloud storage</p>
+        </article>
+        <article>
+            <header>
+                <h3>Real-time Monitoring</h3>
+            </header>
+            <p>Track environmental performance with real-time dashboards and reports</p>
+        </article>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="container">
+    <h2>What Our Clients Say</h2>
+    <div class="grid">
+        <blockquote>
+            "Greenova has transformed how we manage our environmental obligations."
+            <footer>
+                <cite>- John Smith, Environmental Manager</cite>
+            </footer>
+        </blockquote>
+        <blockquote>
+            "The most user-friendly EMS solution we've ever used."
+            <footer>
+                <cite>- Sarah Johnson, Compliance Officer</cite>
+            </footer>
+        </blockquote>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" class="container">
+    <h2>Frequently Asked Questions</h2>
+    <details>
+        <summary>What is Greenova EMS?</summary>
+        <p>Greenova is a comprehensive environmental management system designed to help organizations maintain ISO 14001 compliance.</p>
+    </details>
+    <details>
+        <summary>How secure is my data?</summary>
+        <p>We use industry-standard encryption and security measures to protect your data at all times.</p>
+    </details>
+    <details>
+        <summary>Can I try before I buy?</summary>
+        <p>Yes, we offer a 30-day free trial for all new customers.</p>
+    </details>
+</section>
+{% endblock %}

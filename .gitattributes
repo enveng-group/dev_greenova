@@ -1,0 +1,44 @@
+# Ensure consistent line endings
+* text=auto
+
+# Handle binary files
+*.jpg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.pdf binary
+
+# Handle specific file types
+*.html text
+*.css text
+*.js text
+*.py text
+*.sh text
+*.json text
+*.md text
+
+# Handle line endings for YAML files
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Handle line endings for TypeScript files
+*.ts text eol=lf
+
+# Handle line endings for configuration files
+*.conf text eol=lf
+*.ini text eol=lf
+
+# Handle line endings for Docker files
+Dockerfile text eol=lf
+
+# Handle line endings for Makefiles
+Makefile text eol=lf
+
+# Handle line endings for Git attributes files
+.gitattributes text eol=lf
+
+# Handle line endings for Git ignore files
+.gitignore text eol=lf
+
+# Handle line endings for CSV files
+*.csv text eol=lf

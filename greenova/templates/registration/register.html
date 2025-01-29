@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Greenova EMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <article class="grid">
+        <div style="padding: 2rem; background: var(--card-background-color); border-radius: var(--border-radius);">
+            <hgroup>
+                <h1 style="margin-bottom: 0.5rem;">Create Account</h1>
+                <h2 style="font-size: 1rem; color: var(--muted-color);">Register for access to Greenova EMS</h2>
+            </hgroup>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div role="alert" style="padding: 1rem; margin: 1rem 0; border-radius: var(--border-radius); 
+                         background-color: {% if message.tags == 'success' %}var(--form-element-valid-border-color){% else %}var(--form-element-invalid-border-color){% endif %};
+                         color: var(--primary-inverse);">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div style="margin-bottom: 1rem;">
+                        <label for="{{ field.id_for_label }}" style="margin-bottom: 0.5rem; display: block;">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <small style="color: var(--form-element-invalid-border-color); display: block; margin-top: 0.5rem;">
+                                    {{ error }}
+                                </small>
+                            {% endfor %}
+                        {% endif %}
+                        {% if field.help_text %}
+                            <small style="color: var(--muted-color); display: block; margin-top: 0.5rem;">
+                                {{ field.help_text|safe }}
+                            </small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="contrast" style="width: 100%;">Register</button>
+            </form>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+            </div>
+        </div>
+    </article>
+</div>
+{% endblock %}

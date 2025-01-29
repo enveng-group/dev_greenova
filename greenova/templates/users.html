@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Greenova EMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <article class="grid">
+        <div style="padding: 2rem; background: var(--card-background-color); border-radius: var(--border-radius);">
+            <hgroup>
+                <h1>My Profile</h1>
+                <h2>Manage your account information</h2>
+            </hgroup>
+
+            {% include 'profile_management/users_views.html' %}
+            
+            <div style="margin-top: 2rem;">
+                <a href="{% url 'edit_profile' %}" role="button">Edit Profile</a>
+                <a href="{% url 'change_password' %}" role="button" class="outline">Change Password</a>
+            </div>
+        </div>
+    </article>
+</div>
+{% endblock %}

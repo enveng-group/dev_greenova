@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Greenova EMS - Environmental Management System">
+    <title>{% block title %}Greenova EMS{% endblock %}</title>
+    <script src="https://unpkg.com/htmx.org@latest"></script>
+    <script src="https://unpkg.com/hyperscript.org@latest"></script>
+    <link rel="stylesheet" href="https://unpkg.com/modern-normalize@latest/modern-normalize.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    
+    <!-- Add custom CSS for mobile-first design -->
+    <style>
+        /* Mobile-first base styles */
+        :root {
+            --spacing: 1rem;
+            --container-max-width: 1200px;
+        }
+
+        /* Container modifications */
+        .container {
+            padding: var(--spacing);
+            max-width: var(--container-max-width);
+            margin: 0 auto;
+        }
+
+        /* Grid improvements */
+        .grid {
+            gap: var(--spacing);
+            margin: var(--spacing) 0;
+        }
+
+        /* Card styling */
+        article {
+            padding: var(--spacing);
+            border-radius: var(--border-radius);
+            background: var(--card-background-color);
+            margin-bottom: var(--spacing);
+        }
+
+        /* Table responsiveness */
+        @media (max-width: 768px) {
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        /* Form improvements */
+        form {
+            max-width: 100%;
+        }
+
+        /* Navigation improvements */
+        nav {
+            padding: var(--spacing);
+        }
+
+        nav ul {
+            gap: calc(var(--spacing) / 2);
+        }
+
+        /* Modal and dialog improvements */
+        dialog {
+            max-width: 90%;
+            padding: var(--spacing);
+        }
+
+        /* Button improvements */
+        .button-group {
+            display: flex;
+            gap: calc(var(--spacing) / 2);
+            flex-wrap: wrap;
+        }
+
+        /* Profile picture container */
+        .profile-picture {
+            max-width: 150px;
+            margin: 0 auto var(--spacing);
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--spacing);
+        }
+
+        .stats-card {
+            padding: var(--spacing);
+            text-align: center;
+        }
+
+        /* Responsive typography */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Content -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="container">
+        <div class="grid">
+            <div>
+                <h3>Contact Us</h3>
+                <p>Email: info@enssol.com.au</p>
+                <p>Phone: +61 (08) 1234 5678</p>
+            </div>
+            <div>
+                <h3>Follow Us</h3>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="secondary">LinkedIn</a></li>
+                        <li><a href="#" class="secondary">Twitter</a></li>
+                        <li><a href="#" class="secondary">Facebook</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div>
+                <h3>Legal</h3>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="secondary">Privacy Policy</a></li>
+                        <li><a href="#" class="secondary">Terms of Service</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <p style="text-align: center">&copy; {% now "Y" %} Greenova EMS. All rights reserved.</p>
+    </footer>
+</body>
+</html>

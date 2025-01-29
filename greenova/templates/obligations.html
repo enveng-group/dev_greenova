@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Obligations - Greenova EMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <article>
+        <header>
+            <h1>Environmental Obligations</h1>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid">
+            <article class="stats-card alert">
+                <header>Overdue</header>
+                <p class="alert">{{ stats.overdue }}</p>
+            </article>
+            <article class="stats-card">
+                <header>Due in 7 Days</header>
+                <p>{{ stats.week }}</p>
+            </article>
+            <article class="stats-card">
+                <header>Due in 14 Days</header>
+                <p>{{ stats.fortnight }}</p>
+            </article>
+            <article class="stats-card">
+                <header>Due in 30 Days</header>
+                <p>{{ stats.month }}</p>
+            </article>
+        </div>
+
+        <!-- Filters Form -->
+        <form method="get" class="filters">
+            <div class="grid">
+                <div class="form-group">
+                    {{ form.status }}
+                </div>
+                <div class="form-group">
+                    {{ form.project }}
+                </div>
+                <div class="button-group">
+                    <button type="submit">Filter</button>
+                    <a href="{% url 'obligations_create' %}" role="button" class="primary">New</a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Obligations Table -->
+        <div class="table-responsive">
+            <table role="grid">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Project</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obligation in obligations %}
+                    <tr>
+                        <td>{{ obligation.obligation_number }}</td>
+                        <td>{{ obligation.project_name }}</td>
+                        <td>{{ obligation.action_due_date|date:"Y-m-d" }}</td>
+                        <td><span class="badge {{ obligation.status }}">{{ obligation.get_status_display }}</span></td>
+                        <td>
+                            <div class="grid">
+                                <a href="{% url 'obligations_detail' obligation.obligation_number %}" role="button" class="outline">View</a>
+                                <a href="{% url 'obligations_update' obligation.obligation_number %}" role="button" class="outline">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No obligations found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if obligations.has_other_pages %}
+        <nav class="pagination">
+            {% if obligations.has_previous %}
+            <a href="?page={{ obligations.previous_page_number }}" role="button">&laquo; Previous</a>
+            {% endif %}
+            
+            <span>Page {{ obligations.number }} of {{ obligations.paginator.num_pages }}</span>
+            
+            {% if obligations.has_next %}
+            <a href="?page={{ obligations.next_page_number }}" role="button">Next &raquo;</a>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </article>
+</div>
+{% endblock %}
