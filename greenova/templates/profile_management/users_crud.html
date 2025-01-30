@@ -3,37 +3,59 @@
 {% block title %}Edit Profile - Greenova EMS{% endblock %}
 
 {% block content %}
-<div class="container">
-    <article class="grid">
-        <div style="padding: 2rem; background: var(--card-background-color); border-radius: var(--border-radius);">
-            <hgroup>
-                <h1>Edit Profile</h1>
-                <h2>Update your account information</h2>
-            </hgroup>
+<main class="form-container">
+    <article class="form-card">
+        <header>
+            <h1>Edit Profile</h1>
+        </header>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div role="alert" style="margin-bottom: 1rem;">{{ message }}</div>
+        <form method="post" class="profile-form" enctype="multipart/form-data" novalidate
+              hx-post="{% url 'profile_edit' %}"
+              hx-target="closest form"
+              hx-swap="outerHTML">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-error" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
                 {% endfor %}
+            </div>
             {% endif %}
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div style="margin-bottom: 1rem;">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            {% for error in field.errors %}
-                                <small style="color: var(--form-element-invalid-color);">{{ error }}</small>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                <button type="submit">Save Changes</button>
-                <a href="{% url 'user_profile' %}" role="button" class="outline">Cancel</a>
-            </form>
-        </div>
+            <div class="form-section">
+                <h2>Personal Information</h2>
+                
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="error-message" role="alert">{{ form.first_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="error-message" role="alert">{{ form.last_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="error-message" role="alert">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'profile_view' %}" class="btn btn-link">Cancel</a>
+            </div>
+        </form>
     </article>
-</div>
+</main>
 {% endblock %}

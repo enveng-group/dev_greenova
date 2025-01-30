@@ -3,8 +3,36 @@
 This document provides guidelines to configure GitHub Copilot to generate code that is:
 
 - Compliant with HTML-first web development principles.
+   - Templates should use semantic HTML first
+   - Progressive enhancement layers: HTML → CSS → HTMX → Web APIs → JS
+   - Data attributes should be used for behavior
+   - Forms should work without JS
 - Follows a data-oriented programming paradigm.
 - Modular, reusable, and adheres to best practices for Django applications.
+Semantic HTML structure:
+Proper heading hierarchy (h1, h2, etc.)
+Semantic elements (main, article, section, etc.)
+ARIA labels and roles
+Proper form structure
+Progressive Enhancement:
+Base functionality works without JS
+HTMX attributes for dynamic updates
+Proper CSRF token handling
+Proper event triggers and indicators
+Django-HTMX Integration:
+Using hx-get for AJAX requests
+Proper event handling
+Swap targets and indicators
+URL pushing for history
+Django-Chartjs Integration:
+Using proper template tags
+Responsive configurations
+Chart containers with proper sizing
+Accessibility:
+ARIA labels
+Proper heading structure
+Form labels
+Keyboard navigation support
 
 ## General Instructions
 
@@ -42,7 +70,7 @@ This document provides guidelines to configure GitHub Copilot to generate code t
 
 1. Use `venv` or `virtualenv` to create isolated environments for each project.
 
-2. Include a `pyproject.toml` file for dependency management with `uv`.
+2. Include a `pyproject.toml` file and `requirements.txt` for dependency management with `pip`.
 
 ## Code Generation Workflow
 
@@ -303,13 +331,9 @@ CREATE TABLE Obligations (
 1. **Django**: Backend framework.
 2. **SQLite3**: Lightweight database for development and production.
 3. **Docker**: Containerization platform.
-4. **GitLab CI/CD**: Continuous integration and deployment.
-5. **HTMX**: 
-6. **Hyperscript**:
-7. **PicoCSS**:
-8. **Modern-Normalizer**:
-9. **Lazy-Loading**:
-10. **Chart.js**:
+4. **GitHub CI/CD**: Continuous integration and deployment.
+5. **django-htmx**: Python wrapper for HTMX
+6. **django-chartjs**: Chart.js wrapper for python
 
 ### Step-by-Step Instructions
 

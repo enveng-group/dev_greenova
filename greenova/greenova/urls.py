@@ -8,6 +8,7 @@ from landing.views import index
 from login.views import login_view, password_reset_request, register_view
 from users.views import change_password, edit_profile, user_profile
 from obligations import views as obligation_views
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
     # Admin
@@ -40,8 +41,6 @@ urlpatterns = [
     path("obligations/next-14-days/", obligation_views.obligation_list, {"due_range": "14days"}, name="obligations_next_14_days"),
     path("obligations/next-month/", obligation_views.obligation_list, {"due_range": "month"}, name="obligations_next_month"),
 ]
-
-# Static/Media Files
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
++ debug_toolbar_urls()
++ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
++ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

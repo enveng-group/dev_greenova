@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=75.8.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "greenova"
+version = "1.0.0"
+description = "Environmental Compliance Management System"
+readme = "README.md"
+requires-python = ">=3.12.8"
+license = {text = "AGPL-3.0"}
+authors = [
+    {name = "Adrian Gallo", email = "agallo@enveng-group.com.au"},
+]
+dependencies = [
+    "Django>=5.1.5",
+    "django-htmx>=1.21.0",
+    "django-chartjs>=2.3.0",
+    "whitenoise>=6.8.2",
+    "daphne>=4.1.2",
+    "django-compressor>=4.5.1",
+    "django-debug-toolbar>=5.0.1",
+    "WeasyPrint>=61.0",
+    "django-environ>=0.11.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/enssol/greenova"
+Repository = "https://github.com/enssol/greenova.git"
+Documentation = "https://greenova.readthedocs.io/"
+
+[tool.setuptools]
+packages = ["greenova"]
+
+[tool.black]
+line-length = 79
+target-version = ['py312']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 79
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "greenova.settings"
+python_files = ["test_*.py", "*_test.py", "tests.py"]
+addopts = "-v --tb=short --strict-markers"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["greenova"]
+omit = ["*/migrations/*", "*/tests/*", "*/admin.py"]

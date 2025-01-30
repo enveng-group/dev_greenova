@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %}Welcome to Greenova EMS{% endblock %}
-    
-{% block content %}
-<!-- Navigation -->
-<nav class="container-fluid">
+
+{% block navigation %}
+<nav class="container-fluid" role="navigation" aria-label="Main navigation">
     <ul>
-        <li><strong><a href="/" class="contrast">Greenova</a></strong></li>
+        <li><strong><a href="/" class="nav-brand">Greenova</a></strong></li>
     </ul>
     <ul>
         <li><a href="/">Home</a></li>
@@ -16,7 +15,9 @@
         <li><a href="/login" role="button">Login</a></li>
     </ul>
 </nav>
-
+{% endblock %}
+    
+{% block content %}
 <!-- Hero Section -->
 <header class="container">
     <hgroup>

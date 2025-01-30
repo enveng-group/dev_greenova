@@ -3,53 +3,65 @@
 {% block title %}Register - Greenova EMS{% endblock %}
 
 {% block content %}
-<div class="container">
-    <article class="grid">
-        <div style="padding: 2rem; background: var(--card-background-color); border-radius: var(--border-radius);">
-            <hgroup>
-                <h1 style="margin-bottom: 0.5rem;">Create Account</h1>
-                <h2 style="font-size: 1rem; color: var(--muted-color);">Register for access to Greenova EMS</h2>
-            </hgroup>
+<main class="auth-container">
+    <article class="auth-card">
+        <header>
+            <h1>Create Account</h1>
+            <p>Join Greenova EMS to manage environmental obligations</p>
+        </header>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div role="alert" style="padding: 1rem; margin: 1rem 0; border-radius: var(--border-radius); 
-                         background-color: {% if message.tags == 'success' %}var(--form-element-valid-border-color){% else %}var(--form-element-invalid-border-color){% endif %};
-                         color: var(--primary-inverse);">
-                        {{ message }}
-                    </div>
+        <form method="post" class="auth-form" novalidate
+              hx-post="{% url 'register' %}"
+              hx-trigger="submit"
+              hx-target="closest form"
+              hx-swap="outerHTML">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-error" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
                 {% endfor %}
+            </div>
             {% endif %}
 
-            <form method="post">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div style="margin-bottom: 1rem;">
-                        <label for="{{ field.id_for_label }}" style="margin-bottom: 0.5rem; display: block;">
-                            {{ field.label }}
-                        </label>
-                        {{ field }}
-                        {% if field.errors %}
-                            {% for error in field.errors %}
-                                <small style="color: var(--form-element-invalid-border-color); display: block; margin-top: 0.5rem;">
-                                    {{ error }}
-                                </small>
-                            {% endfor %}
-                        {% endif %}
-                        {% if field.help_text %}
-                            <small style="color: var(--muted-color); display: block; margin-top: 0.5rem;">
-                                {{ field.help_text|safe }}
-                            </small>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                <button type="submit" class="contrast" style="width: 100%;">Register</button>
-            </form>
-
-            <div style="margin-top: 2rem; text-align: center;">
-                <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message" role="alert">{{ form.username.errors }}</div>
+                {% endif %}
             </div>
-        </div>
+
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error-message" role="alert">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="error-message" role="alert">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="error-message" role="alert">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Account</button>
+                <a href="{% url 'login' %}" class="btn btn-link">Already have an account?</a>
+            </div>
+        </form>
     </article>
-</div>
+</main>
 {% endblock %}

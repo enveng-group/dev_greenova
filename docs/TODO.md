@@ -11,6 +11,9 @@
 
 ## Security
 - Investigate the insecure notification for Clough Fortinet.
+- Github CodeQL integration
+- Github repository rulesets
+    - https://github.com/github/ruleset-recipes
 
 ## Authorization
 - Use groups in authentication as the responsibility values in the obligation register. Map these groups to user profiles.
@@ -35,6 +38,7 @@
 
 ## Version Control
 - Set up a local GitLab repository.
+- Set up configutation/dotfiles repository
 
 ## Development Environment
 - Ensure compatibility with FreeBSD on a local laptop.
@@ -54,3 +58,12 @@
     - Minimize unused JavaScript
     - Optimize hyperscript.org dependency
     - Implement code splitting
+
+## Documentation
+- markdownlint2
+    - https://github.com/github/markdownlint-github?tab=readme-ov-file
+
+## Automation
+- helper shell scripts
+    - https://github.com/github/training-utils/tree/master
+    - https://github.com/github/scripts-to-rule-them-all

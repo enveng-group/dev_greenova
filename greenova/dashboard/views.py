@@ -7,10 +7,14 @@ from django.db.models import Count, Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django_htmx.http import HttpResponseClientRefresh
+from django_chartjs.views.lines import BaseLineChartView
+from django.template.response import TemplateResponse
 from obligations.models import Obligation
 
 
 @login_required(login_url="/login/")
+@require_http_methods(["GET"])
 def dashboard_view(request):
     today = timezone.now().date()
 
@@ -136,11 +140,29 @@ def dashboard_view(request):
         "status_data": json.dumps(status_chart_data),
         "risk_data": json.dumps(risk_data),
         "timeline_data": json.dumps(timeline_data),
+        'stats': get_dashboard_stats(),
+        'chart_config': {
+            'responsive': True,
+            'maintainAspectRatio': False
+        }
     }
-    return render(request, "dashboard.html", context)
+    return TemplateResponse(request, "dashboard.html", context)
 
 
 @require_http_methods(["POST"])
 def logout_view(request):
     logout(request)
     return redirect("index")
+
+@require_http_methods(["GET"])
+def refresh_stats(request):
+    if not request.htmx:
+        return HttpResponseClientRefresh()
+    return TemplateResponse(request, 'partials/stats.html', {'stats': get_dashboard_stats()})
+
+class StatusChartView(BaseLineChartView):
+    def get_labels(self):
+        return ["Not Started", "In Progress", "Completed", "Overdue"]
+
+    def get_data(self):
+        return [get_status_counts()]

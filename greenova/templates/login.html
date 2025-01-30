@@ -3,42 +3,49 @@
 {% block title %}Login - Greenova EMS{% endblock %}
 
 {% block content %}
-<div class="container">
-    <article class="grid">
-        <div>
-            <hgroup>
-                <h1>Login</h1>
-                <h2>Enter your credentials to access your account</h2>
-            </hgroup>
+<main class="auth-container">
+    <article class="auth-card">
+        <header>
+            <h1>Login</h1>
+            <p>Please sign in to access Greenova EMS</p>
+        </header>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                        {{ message }}
-                    </div>
+        <form method="post" class="auth-form" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-error" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
                 {% endfor %}
+            </div>
             {% endif %}
 
-            <form method="post">
-                {% csrf_token %}
-                <div>
-                    <label for="username">Username</label>
-                    {{ form.username }}
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    {{ form.password }}
-                </div>
-                <button type="submit" class="contrast">Login</button>
-            </form>
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message" role="alert">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
 
-            <div style="margin-top: 1rem;">
-                <a href="{% url 'password_reset' %}">Forgot your password?</a>
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="error-message" role="alert">{{ form.password.errors }}</div>
+                {% endif %}
             </div>
-            <div>
-                <p>Don't have an account? <a href="/register">Register here</a></p>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Sign In</button>
+                <a href="{% url 'password_reset' %}" class="btn btn-link">Forgot Password?</a>
             </div>
-        </div>
+        </form>
+
+        <footer class="auth-footer">
+            <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        </footer>
     </article>
-</div>
+</main>
 {% endblock %}
