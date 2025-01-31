@@ -1,6 +1,10 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/alpine
 {
 	"name": "dev_Greenova",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/base:alpine",
+	//"features": {}
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -12,16 +16,10 @@
 				"ms-python.python",
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-				"batisteo.vscode-django",
-				"ms-vscode.remote-server"
+				"batisteo.vscode-django"
 			]
 		}
 	},
-	"mounts": [
-		"source=/Users/adriangallo/devcontainer,target=/workspaces,type=bind,consistency=cached"
-	],
-	"workspaceMount": "source=dev_greenova,target=/workspaces/dev_greenova,type=volume",
-	"workspaceFolder": "/workspaces/dev_greenova",
 	"postCreateCommand": "python3 -m venv /workspaces/dev_greenova/.venv && . /workspaces/dev_greenova/.venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt",
-	"postStartCommand": "code tunnel service install --no-sleep --accept-server-license-terms --disable-telemetry --name 'dev_Greenova' && . /workspaces/dev_greenova/.venv/bin/activate && set -a && . /workspaces/dev_greenova/.env && set +a"
+	"postStartCommand": ". /workspaces/dev_greenova/.venv/bin/activate && set -a && . /workspaces/dev_greenova/.env && set +a"
 }
