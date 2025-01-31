@@ -114,6 +114,8 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+staticfiles/
+
 
 # Flask stuff:
 instance/
@@ -183,6 +185,9 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
+!.env.example
+!.env.vault
 .venv
 env/
 venv/
@@ -226,6 +231,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Logs
+logs/
+*.log
 
 ###############################################################################
 # community/Python/JupyterNotebooks.gitignore
@@ -302,3 +311,7 @@ pip-selfcheck.json
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+.env*
+.flaskenv*
+!.env.project

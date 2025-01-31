@@ -1,25 +1,47 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/alpine
 {
-	"name": "dev_Greenova",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:alpine",
-	//"features": {}
-	"customizations": {
-		"vscode": {
-			"settings": {
-				"github.copilot.chat.codeGeneration.useInstructionFiles": true,
-				"files.autoSave": "afterDelay",
-				"files.autoSaveDelay": 1000
-			},
-			"extensions": [
-				"ms-python.python",
-				"GitHub.copilot",
-				"GitHub.copilot-chat",
-				"batisteo.vscode-django"
-			]
-		}
-	},
-	"postCreateCommand": "python3 -m venv /workspaces/dev_greenova/.venv && . /workspaces/dev_greenova/.venv/bin/activate && python -m pip install --upgrade pip && pip install -r requirements.txt",
-	"postStartCommand": ". /workspaces/dev_greenova/.venv/bin/activate && set -a && . /workspaces/dev_greenova/.env && set +a"
+    "name": "dev_Greenova",
+    "image": "mcr.microsoft.com/devcontainers/python:3",
+    "workspaceFolder": "/workspaces/dev_greenova",
+    "workspaceMount": "source=/Users/adriangallo/devcontainer,target=/workspaces/dev_greenova,type=bind,consistency=cached",
+    "features": {},
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+                "files.autoSave": "afterDelay",
+                "files.autoSaveDelay": 1000,
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    }
+                },
+                "python.envFile": "/workspaces/dev_greenova/.env",
+                "python.interpreter.infoVisibility": "always",
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+                "python.terminal.activateEnvironment": true
+            },
+            "extensions": [
+                "ms-python.python",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "batisteo.vscode-django",
+                "EditorConfig.EditorConfig",
+                "dotenv.dotenv-vscode",
+                "dotenv.dotenvx-vscode",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    },
+    "mounts": [
+        "source=/Users/adriangallo/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
+        "source=/Users/adriangallo/.gnupg,target=/home/vscode/.gnupg,type=bind,readonly",
+        "source=dev_greenova_data,target=/mnt/data,type=volume"
+    ],
+    //"remoteEnv": {
+        //"DOTENV_KEY": "${localEnv:DOTENV_KEY}"
+    //},
+    "forwardPorts": [8000, 8080],
+    "postCreateCommand": "./.devcontainer/post-create.sh",
+    "remoteUser": "vscode"
 }

@@ -7,27 +7,27 @@
   --border-color: oklch(90% 0 0);
   --error-color: oklch(55% 0.2 25);
   --success-color: oklch(55% 0.2 150);
-  
+
   /* Fluid spacing scale */
   --space-unit: clamp(1rem, 2vw, 1.5rem);
   --space-xs: calc(var(--space-unit) * 0.25);
   --space-sm: calc(var(--space-unit) * 0.5);
   --space-md: var(--space-unit);
   --space-lg: calc(var(--space-unit) * 2);
-  
+
   /* Fluid typography */
   --step--1: clamp(0.875rem, calc(0.85rem + 0.14vw), 0.938rem);
   --step-0: clamp(1rem, calc(0.96rem + 0.22vw), 1.125rem);
   --step-1: clamp(1.125rem, calc(1.07rem + 0.33vw), 1.266rem);
   --step-2: clamp(1.266rem, calc(1.18rem + 0.47vw), 1.424rem);
-  
+
   /* Modern container width */
   --container-inline-size: min(100% - 2rem, 75rem);
-  
+
   /* Typography */
   --font-family: system-ui, -apple-system, sans-serif;
   --line-height: 1.5;
-  
+
   /* Border radius */
   --border-radius: 4px;
 
@@ -132,7 +132,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: var(--space-md);
   border-radius: 0.25rem;
   background: white;
-  box-shadow: 
+  box-shadow:
     0 1px 2px oklch(0% 0 0 / 0.07),
     0 2px 4px oklch(0% 0 0 / 0.07);
 }
@@ -323,12 +323,12 @@ dialog {
   h1 { font-size: 1.75rem; }
   h2 { font-size: 1.5rem; }
   h3 { font-size: 1.25rem; }
-  
+
   table {
     display: block;
     overflow-x: auto;
   }
-  
+
   form {
     max-width: 100%;
   }
@@ -527,13 +527,13 @@ dialog {
   .grid {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
   }
-  
+
   .dashboard-layout {
     display: grid;
     grid-template-columns: var(--sidebar-width) 1fr;
     gap: var(--space-md);
   }
-  
+
   .data-table {
     font-size: var(--step-0);
     white-space: normal;
@@ -553,11 +553,11 @@ dialog {
   }
 
   .card:hover {
-    box-shadow: 
+    box-shadow:
       0 4px 8px oklch(0% 0 0 / 0.1),
       0 8px 16px oklch(0% 0 0 / 0.1);
   }
-  
+
   .table-row:hover {
     background-color: oklch(98% 0 0);
   }
@@ -576,18 +576,18 @@ dialog {
   .no-print {
     display: none !important;
   }
-  
+
   body {
     color: black;
     background: white;
   }
-  
+
   .card {
     break-inside: avoid;
     border: 1px solid #ddd;
     box-shadow: none;
   }
-  
+
   @page {
     margin: 2cm;
   }
@@ -601,4 +601,97 @@ dialog {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Landing page specific styles */
+.landing-content {
+    container-type: inline-size;
+    container-name: landing;
+}
+
+.hero {
+    text-align: center;
+    padding: var(--space-lg) var(--space-md);
+    background: var(--background-color);
+}
+
+.hero h1 {
+    font-size: var(--step-2);
+    margin-bottom: var(--space-md);
+}
+
+.hero h2 {
+    font-size: var(--step-1);
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.features-grid {
+    display: grid;
+    gap: var(--space-md);
+}
+
+@container landing (min-width: 40em) {
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+.testimonials-grid {
+    display: grid;
+    gap: var(--space-lg);
+}
+
+@container landing (min-width: 40em) {
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.faq-section details {
+    margin-bottom: var(--space-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--space-md);
+}
+
+.faq-section summary {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Auth form styles */
+.auth-container {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: var(--space-md);
+}
+
+.auth-card {
+    width: min(100%, 400px);
+    padding: var(--space-lg);
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow:
+        0 1px 3px oklch(0% 0 0 / 0.1),
+        0 1px 2px oklch(0% 0 0 / 0.06);
+}
+
+.auth-form {
+    display: grid;
+    gap: var(--space-md);
+}
+
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.form-actions {
+    position: relative;
 }

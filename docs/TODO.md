@@ -67,3 +67,7 @@
 - helper shell scripts
     - https://github.com/github/training-utils/tree/master
     - https://github.com/github/scripts-to-rule-them-all
+
+is there any opportunity to modularialise/break-down dashboard.html? if so, please provide new file names and paths?
+
+do we need to add anything to settings.py urls.py admin.py apps.py models.py tests.py .env forms.py or views.py or init.py and styles.css and main.js now that we have setup all templates for login/registration

@@ -1,79 +1,17 @@
-{% load static compress %}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="description" content="Greenova EMS - Environmental Management System">
-    <title>{% block title %}Greenova EMS{% endblock %}</title>
-
-    <!-- Progressive enhancement: CSS -->
-    {% compress css %}
-    <link rel="stylesheet" href="{% static 'css/modern-normalize.css' %}">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    {% endcompress %}
-</head>
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    {% block navigation %}{% endblock %}
-
-    <!-- Main Content -->
-    <main id="main-content" class="container" tabindex="-1">
-        {% if messages %}
-        <div class="messages" role="alert" aria-live="polite">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+    {% include 'base/head.html' %}
+    <body>
+        {% block navigation %}
+            {% include 'base/header.html' %}
+        {% endblock %}
         
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-grid">
-                <section aria-label="Contact Information">
-                    <h2>Contact Us</h2>
-                    <address>
-                        <p>Email: <a href="mailto:info@enssol.com.au">info@enssol.com.au</a></p>
-                        <p>Phone: <a href="tel:+61-08-1234-5678">+61 (08) 1234 5678</a></p>
-                    </address>
-                </section>
-                
-                <section aria-label="Social Media Links">
-                    <h2>Follow Us</h2>
-                    <nav aria-label="Social media navigation">
-                        <ul>
-                            <li><a href="#" rel="noopener noreferrer">LinkedIn</a></li>
-                            <li><a href="#" rel="noopener noreferrer">Twitter</a></li>
-                        </ul>
-                    </nav>
-                </section>
-                
-                <section aria-label="Legal Information">
-                    <h2>Legal</h2>
-                    <nav aria-label="Legal navigation">
-                        <ul>
-                            <li><a href="#">Privacy Policy</a></li>
-                            <li><a href="#">Terms of Service</a></li>
-                        </ul>
-                    </nav>
-                </section>
-            </div>
-            <p class="copyright">&copy; {% now "Y" %} Greenova EMS. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Progressive enhancement: JavaScript -->
-    {% compress js %}
-    <script src="{% static 'js/main.js' %}" defer></script>
-    {% endcompress %}
-</body>
+        <main class="main-content">
+            {% include 'base/partials/messages.html' %}
+            {% block content %}{% endblock %}
+        </main>
+        
+        {% include 'base/footer.html' %}
+    </body>
 </html>

@@ -1,38 +1,55 @@
 # GitHub Copilot Instructions for Django Development with POSIX-Compliant Python
 
-This document provides guidelines to configure GitHub Copilot to generate code that is:
+## Core Development Principles
 
-- Compliant with HTML-first web development principles.
-   - Templates should use semantic HTML first
-   - Progressive enhancement layers: HTML → CSS → HTMX → Web APIs → JS
-   - Data attributes should be used for behavior
-   - Forms should work without JS
-- Follows a data-oriented programming paradigm.
-- Modular, reusable, and adheres to best practices for Django applications.
-Semantic HTML structure:
-Proper heading hierarchy (h1, h2, etc.)
-Semantic elements (main, article, section, etc.)
-ARIA labels and roles
-Proper form structure
-Progressive Enhancement:
-Base functionality works without JS
-HTMX attributes for dynamic updates
-Proper CSRF token handling
-Proper event triggers and indicators
-Django-HTMX Integration:
-Using hx-get for AJAX requests
-Proper event handling
-Swap targets and indicators
-URL pushing for history
-Django-Chartjs Integration:
-Using proper template tags
-Responsive configurations
-Chart containers with proper sizing
-Accessibility:
-ARIA labels
-Proper heading structure
-Form labels
-Keyboard navigation support
+### HTML-First Development
+1. Templates must prioritize semantic HTML structure
+2. Follow progressive enhancement layers:
+   - Layer 1: Semantic HTML
+   - Layer 2: CSS for styling
+   - Layer 3: HTMX for interactivity
+   - Layer 4: Web APIs for data
+   - Layer 5: JavaScript as fallback
+3. Use data-attributes for behavior definition
+4. Ensure forms function without JavaScript
+
+### Semantic Structure Requirements
+1. HTML Hierarchy:
+   - Proper use of h1-h6 elements
+   - Semantic containers (main, article, section)
+   - Descriptive ARIA labels and roles
+   - Well-structured forms with labels
+
+2. Progressive Enhancement:
+   - Base functionality without JavaScript
+   - HTMX integration with proper attributes
+   - CSRF token handling in forms
+   - Clear loading/error indicators
+
+### Framework Integration
+
+1. Django-HTMX Requirements:
+   - Use hx-get for AJAX requests
+   - Implement proper event handlers
+   - Define clear swap targets
+   - Enable URL history management
+
+2. Django-Chartjs Implementation:
+   - Use Django template tags
+   - Implement responsive chart configs
+   - Proper sizing of chart containers
+
+### Accessibility Standards
+1. Required Elements:
+   - ARIA labels for interactive elements
+   - Proper heading structure
+   - Form labels and descriptions
+   - Keyboard navigation support
+
+2. Development Approach:
+   - Follow data-oriented programming
+   - Create modular, reusable components
+   - Adhere to Django best practices
 
 ## General Instructions
 

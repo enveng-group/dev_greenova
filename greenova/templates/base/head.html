@@ -1,0 +1,11 @@
+{% load static %}
+<head>
+    {% include 'base/meta.html' %}
+    <title>{% block title %}Greenova EMS{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/modern-normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- Load Chart.js before main.js -->
+    <script src="{% static 'js/chart.min.js' %}" defer></script>
+</head>

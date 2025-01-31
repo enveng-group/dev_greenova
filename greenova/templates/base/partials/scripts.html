@@ -1,0 +1,9 @@
+{% load static %}
+<!-- Core JavaScript -->
+<script src="{% static 'js/chart.min.js' %}" defer></script>
+<script src="{% static 'js/main.js' %}" type="module"></script>
+
+<!-- HTMX -->
+<script src="{% static 'django-htmx.js' %}" defer></script>
+
+{% block extra_scripts %}{% endblock %}

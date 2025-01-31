@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRefresh
-from django_chartjs.views.lines import BaseLineChartView
+from chartjs.views.lines import BaseLineChartView
 from django.template.response import TemplateResponse
 from obligations.models import Obligation
 

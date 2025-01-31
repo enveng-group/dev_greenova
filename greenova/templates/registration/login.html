@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Greenova EMS{% endblock %}
+
+{% block content %}
+<main class="auth-container" role="main">
+    <article class="auth-card">
+        <header role="banner">
+            <h1>Login</h1>
+            <p class="auth-description">Please sign in to access Greenova EMS</p>
+        </header>
+
+        {% include "registration/login_form.html" %}
+
+        <footer class="auth-footer" role="contentinfo">
+            <p>Don't have an account? <a href="{% url 'register' %}" class="link-register">Register here</a></p>
+        </footer>
+    </article>
+</main>
+{% endblock %}

@@ -10,6 +10,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from .forms import RegistrationForm
+from django.views.decorators.http import require_http_methods
 
 def login_view(request):
     if request.method == "POST":
@@ -21,12 +22,12 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Welcome back, {username}!")
-                return redirect('dashboard')  # Changed from 'index' to 'dashboard'
+                return redirect('dashboard')
         else:
             messages.error(request, "Invalid username or password.")
     else:
         form = AuthenticationForm()
-    return render(request, "login.html", {"form": form})
+    return render(request, "registration/login.html", {"form": form})
 
 def password_reset_request(request):
     if request.method == "POST":
@@ -55,16 +56,24 @@ def password_reset_request(request):
         form = PasswordResetForm()
     return render(request, "registration/password_reset_form.html", {"form": form})
 
+@require_http_methods(["GET", "POST"])
 def register_view(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
+    if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, f"Welcome {user.username}! Your account has been created successfully.")
-            return redirect('index')
-        else:
-            messages.error(request, "Please correct the errors below.")
+            messages.success(request, 'Registration successful!')
+            if request.htmx:
+                return render(request, 'registration/register_success.html')
+            return redirect('dashboard')
     else:
         form = RegistrationForm()
-    return render(request, 'registration/register.html', {'form': form})
+
+    context = {'form': form}
+    if request.htmx:
+        return render(request, 'registration/register_form.html', context)
+    return render(request, 'registration/register.html', context)
