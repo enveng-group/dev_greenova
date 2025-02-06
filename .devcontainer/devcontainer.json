@@ -2,7 +2,7 @@
   "name": "dev_Greenova",
   "image": "mcr.microsoft.com/devcontainers/python:3",
   "workspaceFolder": "/workspaces/dev_greenova",
-  "workspaceMount": "source=/Users/adriangallo/devcontainer,target=/workspaces/dev_greenova,type=bind,consistency=cached",
+  "workspaceMount": "source=/Users/adriangallo/dev_greenova,target=/workspaces/dev_greenova,type=bind,consistency=delegate",
   "features": {
     "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {}
   },
@@ -37,7 +37,10 @@
     "source=/Users/adriangallo/.gnupg,target=/home/vscode/.gnupg,type=bind,readonly",
     "source=dev_greenova_data,target=/mnt/data,type=volume"
   ],
-  "forwardPorts": [8000, 8080],
+  "forwardPorts": [
+    8000,
+    8080
+  ],
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "remoteUser": "vscode"
 }
