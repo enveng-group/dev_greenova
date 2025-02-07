@@ -1,10 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Welcome to GREENOVA EMS{% endblock %}
+{% block title %}
+    Welcome to GREENOVA EMS
+{% endblock %}
 
 {% block content %}
-    {% include 'landing/sections/hero.html' %}
-    {% include 'landing/sections/features.html' %}
-    {% include 'landing/sections/testimonials.html' %}
-    {% include 'landing/sections/faq.html' %}
+<main>
+    <header class="logo-title">
+        <img src="{% static 'img/Enveng Group Logo Title.webp' %}" alt="Enveng Logo" width="50" height="50">
+            </header>
+    <section>
+        {% include 'landing/sections/hero.html' %}
+    </section>
+    <section>
+        {% include 'landing/sections/features.html' %}
+    </section>
+    <section>
+        {% include 'landing/sections/testimonials.html' %}
+    </section>
+    <section>
+        {% include 'landing/sections/faq.html' %}
+    </section>
+</main>
 {% endblock %}
