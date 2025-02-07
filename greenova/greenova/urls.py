@@ -17,6 +17,7 @@ urlpatterns = [
     path("services/", include("services.urls", namespace="services")),
     # Landing pages (root URLs)
     path("", include("landing.urls", namespace="landing")),
+    # dropdown list (from Projects)
     path('dropdown/', dropdown_view, name='dropdown_view'),
 ]
 

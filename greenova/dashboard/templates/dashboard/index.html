@@ -21,12 +21,7 @@
         <nav>
           <ul role="list">
             <li>
-              <a href="{% url 'dashboard:pcemp' %}"
-                 class="outline"
-                 role="button"
-                 hx-boost="true"
-                 hx-push-url="true"
-                 hx-indicator="#loading">Portside CEMP</a>
+              {% include "dashboard/partials/dropdown.html" %}
             </li>
           </ul>
         </nav>

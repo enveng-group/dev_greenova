@@ -1,11 +1,12 @@
 from datetime import timedelta
-
+import pandas as pd
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
+import os
 
 
 @login_required
@@ -62,6 +63,24 @@ def refresh_stats(request):
         }
     }
     return render(request, "dashboard/components/stats_overview.html", context)
+
+
+def dropdown_view(request):
+    """View to render a dropdown with unique values from a CSV column."""
+    # Define the path to the CSV file in the root directory
+    csv_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'clean_output_with_nulls.csv')
+
+    # Read the CSV file
+    df = pd.read_csv(csv_file_path)
+
+    # Use the correct column name from your CSV file and get unique values
+    column_data = df['Project_Name'].unique().tolist()
+
+    # Pass the data to the template
+    context = {
+        'column_data': column_data
+    }
+    return render(request, 'dashboard/partials/dropdown.html', context)
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
