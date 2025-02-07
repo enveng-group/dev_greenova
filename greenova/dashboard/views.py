@@ -74,7 +74,7 @@ def dropdown_view(request):
     df = pd.read_csv(csv_file_path)
 
     # Use the correct column name from your CSV file and get unique values
-    column_data = df['Project_Name'].unique().tolist()
+    column_data = df['Project_Name'].unique()
 
     # Pass the data to the template
     context = {
