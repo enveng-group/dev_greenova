@@ -2,7 +2,7 @@
   "name": "dev_Greenova",
   "image": "mcr.microsoft.com/devcontainers/python:3",
   "workspaceFolder": "/workspaces/dev_greenova",
-  "workspaceMount": "source=/Users/adriangallo/dev_greenova,target=/workspaces/dev_greenova,type=bind,consistency=delegate",
+  "workspaceMount": "source=${env:DEV_CONTAINER_PATH}/dev_greenova,target=/workspaces/dev_greenova,type=bind,consistency=delegate",
   "features": {
     "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {}
   },
@@ -33,8 +33,7 @@
     }
   },
   "mounts": [
-    "source=/Users/adriangallo/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
-    "source=/Users/adriangallo/.gnupg,target=/home/vscode/.gnupg,type=bind,readonly",
+    "source=${env:DEV_CONTAINER_PATH}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
     "source=dev_greenova_data,target=/mnt/data,type=volume"
   ],
   "forwardPorts": [
