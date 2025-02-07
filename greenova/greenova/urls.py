@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from .views import dropdown_view
 
 urlpatterns = [
     # Admin interface
@@ -16,6 +17,7 @@ urlpatterns = [
     path("services/", include("services.urls", namespace="services")),
     # Landing pages (root URLs)
     path("", include("landing.urls", namespace="landing")),
+    path('dropdown/', dropdown_view, name='dropdown_view'),
 ]
 
 # Error handlers

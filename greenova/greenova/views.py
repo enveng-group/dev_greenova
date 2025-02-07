@@ -31,3 +31,23 @@ def server_error(request):
 @cache_control(no_cache=True, no_store=True)
 def service_unavailable(request, exception=None):
     return render(request, "errors/503.html", status=503)
+
+import pandas as pd
+from django.shortcuts import render
+import os
+
+def dropdown_view(request):
+    # Define the path to the CSV file in the root directory
+    csv_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'clean_output_with_nulls.csv')
+
+    # Read the CSV file
+    df = pd.read_csv(csv_file_path)
+
+    # Extract the column data
+    column_data = df['project__name'].tolist()
+
+    # Pass the data to the template
+    context = {
+        'column_data': column_data
+    }
+    return render(request, 'dropdown.html', context)
