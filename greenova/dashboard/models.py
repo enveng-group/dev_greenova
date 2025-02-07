@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -7,7 +6,11 @@ from django.db import models
 class DashboardPreference(models.Model):
     """Store user-specific dashboard preferences."""
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='dashboard_preferences',
+    )
     show_completed = models.BooleanField(default=True)
     chart_type = models.CharField(
         max_length=10,

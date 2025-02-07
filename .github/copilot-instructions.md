@@ -67,7 +67,8 @@
    - Limit lines to a maximum of 79 characters.
    - Include blank lines to separate top-level function and class definitions.
 
-2. Use `snake_case` for function and variable names, `CamelCase` for class names, and `UPPER_CASE` for constants.
+2. Use `snake_case` for function and variable names, `CamelCase` for class names,
+   and `UPPER_CASE` for constants.
 
 3. Place all imports at the top of the file, grouped as:
    - Standard library imports.
@@ -77,8 +78,10 @@
 ### Comments and Documentation
 
 1. Use comments to explain why the code exists, not what it does.
-
-2. Write docstrings for all public modules, functions, classes, and methods using triple quotes.
+2. Write docstrings for all public modules, functions, classes, and methods using
+   triple quotes.
+3. Ensure inline comments are concise and placed at least two spaces away from
+   the statement.
 
 3. Ensure inline comments are concise and placed at least two spaces away from the statement.
 
@@ -94,6 +97,9 @@
 
 1. Use `venv` or `virtualenv` to create isolated environments for each project.
 
+2. Include a `pyproject.toml` file and `requirements.txt` for dependency
+   management.
+
 2. Include a `pyproject.toml` file and `requirements.txt` for dependency management with `pip`.
 
 ## Code Generation Workflow - Generic Framework Template
@@ -105,11 +111,11 @@
 - Establish data relationships.
 
 ```pseudocode
-DATA_MODEL User:
+    roles: Array[String]
     id: String
-    name: String
-    email: String
-    roles: List<String>
+    roles: Array[String]
+
+DATA_MODEL Transaction:
 
 DATA_MODEL Transaction:
     id: String
@@ -258,9 +264,11 @@ FUNCTION shutdownSystem():
 FUNCTION main():
     initializeSystem()
     processAutomatedTransaction()
-    shutdownSystem()
+This template provides a **modular, scalable, and fault-tolerant** approach,
+integrating **data-oriented programming** with **automated workflow management**.
     generateReport()
-```
+This template provides a **modular, scalable, and fault-tolerant** approach to
+integrate **data-oriented programming** with **automated workflow management**.
 
 This template provides a **modular, scalable, and fault-tolerant** approach, integrating **data-oriented programming** with **automated workflow management**.
 
@@ -431,10 +439,10 @@ my_project/
 │── manage.py
 ```
 
-#### Template Components by Framework Principles
-
-1. **Data Definition and Validation Templates**
-
+{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
+Pipeline{% endblock title %} {% block dashboard_content %}
+{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
+Pipeline{% endblock title %} {% block dashboard_content %}
 ```html
 {% extends 'layouts/dashboard_base.html' %} {% block title %}Transaction
 Pipeline{% endblock %} {% block dashboard_content %}
@@ -450,7 +458,7 @@ Pipeline{% endblock %} {% block dashboard_content %}
   <tr>
     <td>{{ transaction.id }}</td>
     <td>{{ transaction.userId }}</td>
-    <td>{{ transaction.status }}</td>
+{% endblock dashboard_content %}
     <td>{{ transaction.timestamp }}</td>
   </tr>
   {% endfor %}
@@ -469,8 +477,8 @@ Pipeline{% endblock %} {% block dashboard_content %}
   <td>{{ transaction.timestamp }}</td>
 </tr>
 {% endfor %}
-```
-
+{% extends "layouts/dashboard_base.html" %} {% block title %}System
+Monitoring{% endblock title %} {% block dashboard_content %}
 3. **Pipeline Management Templates**
 
 ```html
@@ -480,8 +488,8 @@ Monitoring{% endblock %} {% block dashboard_content %}
 <p>Active Transactions: {{ active_transactions }}</p>
 <p>Pending Retries: {{ pending_retries }}</p>
 {% endblock %}
-```
-
+{% extends "base.html" %} {% block title %}Server Error{% endblock title %} 
+{% block content %}
 4. **Error Management Templates**
 
 ```html
@@ -490,8 +498,8 @@ content %}
 <h1>500 - Server Error</h1>
 <p>Something went wrong. Our team is investigating.</p>
 {% endblock %}
-```
-
+{% extends "base.html" %} {% block title %}Access Denied{% endblock title %} 
+{% block content %}
 5. **Security Templates**
 
 ```html
@@ -568,43 +576,58 @@ content %}
 ### SQL Schema for Database
 
 ```sql
--- Create the obligations table
+-- Create the obligations table with improved data types and constraints
 CREATE TABLE Obligations (
-    obligation__number INT PRIMARY KEY,
-    project__name VARCHAR(255),
+    obligation__number VARCHAR(20) PRIMARY KEY,  -- Changed from INT since some IDs like 'PCEMP-01'
+    project__name VARCHAR(255) NOT NULL,
     primary__environmental__mechanism TEXT,
     procedure TEXT,
     environmental__aspect TEXT,
-    obligation TEXT,
-    accountability INT,
-    responsibility INT,
+    obligation TEXT NOT NULL,
+    accountability VARCHAR(255),  -- Changed from INT to VARCHAR since it contains text
+    responsibility VARCHAR(255),  -- Changed from INT to VARCHAR since it contains text
     project_phase TEXT,
     action__due_date DATE,
     close__out__date DATE,
-    status VARCHAR(50),
+    status VARCHAR(50) CHECK (status IN ('not started', 'in progress', 'completed')),
     supporting__information TEXT,
     general__comments TEXT,
     compliance__comments TEXT,
     non_conformance__comments TEXT,
     evidence TEXT,
-    person_email TEXT,
-    recurring__obligation BOOLEAN,
+    person_email VARCHAR(255),  -- Added specific type for email
+    recurring__obligation BOOLEAN DEFAULT FALSE,
     recurring__frequency VARCHAR(50),
     recurring__status VARCHAR(50),
     recurring__forcasted__date DATE,
-    inspection BOOLEAN,
+    inspection BOOLEAN DEFAULT FALSE,
     inspection__frequency VARCHAR(50),
-    site_or__desktop VARCHAR(50),
-    new__control__action_required BOOLEAN,
+    site_or__desktop VARCHAR(50) CHECK (site_or__desktop IN ('Site', 'Desktop')),
+    new__control__action_required BOOLEAN DEFAULT FALSE,
     obligation_type VARCHAR(50),
     gap__analysis TEXT,
     notes_for__gap__analysis TEXT,
-    covered_in_which_inspection_checklist TEXT
+    covered_in_which_inspection_checklist VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Added audit fields
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Add indexes for frequently queried fields
+    INDEX idx_project_name (project__name),
+    INDEX idx_status (status),
+    INDEX idx_due_date (action__due_date),
+    INDEX idx_phase (project_phase)
 );
+
+-- Trigger to update the updated_at timestamp
+CREATE TRIGGER update_obligations_timestamp 
+    BEFORE UPDATE ON Obligations
+    FOR EACH ROW
+    SET NEW.updated_at = CURRENT_TIMESTAMP;
 ```
 
 ## User Journey
-
+- Create a basic homepage template with welcome message, navigation links, and 
+  app info.
 ### Develop the Landing Page
 
 - Create a basic homepage template with welcome message, navigation links, and information about the app.
@@ -619,7 +642,8 @@ CREATE TABLE Obligations (
 
 - Create a dashboard view displaying user activity, notifications, and quick links.
 - Add a logout feature that redirects to the landing home page.
-
+- Implement CRUD operations for user info updates, password changes, and profile 
+  pictures.
 ### Implement User Profile Management
 
 - Create views for viewing and editing user profiles.
@@ -775,12 +799,13 @@ CREATE TABLE Obligations (
 1. Python Version:
 
    - Python 3.13.1 (exact version)
-   - Configure virtual environments accordingly
+   - Email: `agallo@enveng-group.com.au`
 
+### Project Metadata
 2. Django Version:
    - Django 5.1.5 (exact version)
    - Ensure compatibility with Django 5.1.x features
-
+   - Email: <agallo@enveng-group.com.au>
 ### Project Metadata
 
 1. Author Information:

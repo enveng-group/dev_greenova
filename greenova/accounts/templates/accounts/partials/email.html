@@ -6,7 +6,7 @@ You're receiving this email because you requested a password reset for your Gree
 Please go to the following page and choose a new password:
 {% block reset_link %}
 {{ protocol }}://{{ domain }}{% url 'accounts:password_reset_confirm' uidb64=uid token=token %}
-{% endblock %}
+{% endblock reset_link %}
 
 If you didn't request this, you can safely ignore this email.
 

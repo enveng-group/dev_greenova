@@ -1,17 +1,21 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 {% load core_tags %}
 {% load accounts_tags %}
 {% load dashboard_tags %}
-{% block title %}System Management - Greenova EMS{% endblock %}
+{% block title %}
+  System Management - Greenova EMS
+{% endblock title %}
 {% block content %}
   <main class="core-container">
     <header class="core-header">
       <h1>
-        {% block core_title %}{% endblock %}
+        {% block core_title %}
+        {% endblock core_title %}
       </h1>
       <div class="header-actions">
-        {% block core_actions %}{% endblock %}
+        {% block core_actions %}
+        {% endblock core_actions %}
         <form method="post"
               action="{% url 'accounts:logout' %}"
               class="inline-form">
@@ -20,6 +24,7 @@
         </form>
       </div>
     </header>
-    {% block core_content %}{% endblock %}
+    {% block core_content %}
+    {% endblock core_content %}
   </main>
-{% endblock %}
+{% endblock content %}

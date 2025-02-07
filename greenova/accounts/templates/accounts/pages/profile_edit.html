@@ -2,9 +2,9 @@
 {% load accounts_tags %}
 {% load core_tags %}
 
-{% block title %}Edit Profile - Greenova EMS{% endblock %}
+{% block title %}Edit Profile - Greenova EMS{% endblock title %}
 
-{% block auth_title %}Edit Profile{% endblock %}
+{% block auth_title %}Edit Profile{% endblock auth_title %}
 
 {% block auth_content %}
 <form method="post" class="profile-form">
@@ -22,4 +22,4 @@
 
     <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
-{% endblock %}
+{% endblock auth_content %}

@@ -1,21 +1,21 @@
-{% extends 'core/layouts/dashboard_base.html' %}
+{% extends "core/layouts/dashboard_base.html" %}
 {% load static %}
 {% load core_tags %}
 {% load dashboard_tags %}
 {% load chartjs_tags %}
 
-{% block core_title %}System Status{% endblock %}
+{% block core_title %}System Status{% endblock core_title %}
 
 {% block dashboard_content %}
 <article class="system-overview">
-    {% include 'core/partials/system_stats.html' %}
+    {% include "core/partials/system_stats.html" %}
 
     <section>
         <h2>System Configuration</h2>
         <div hx-get="{% url 'core:refresh_configs' %}"
              hx-trigger="load, every 60s">
             {% for config in configs %}
-                {% include 'core/components/system_status_card.html' with title=config.key status=config.value last_updated=config.updated_at %}
+                {% include "core/components/system_status_card.html" with title=config.key status=config.value last_updated=config.updated_at %}
             {% endfor %}
         </div>
     </section>
@@ -24,8 +24,8 @@
         <h2>Recent Activity</h2>
         <div hx-get="{% url 'core:refresh_audits' %}"
              hx-trigger="load, every 30s">
-            {% include 'core/partials/audit_table.html' with audit_entries=recent_audits %}
+            {% include "core/partials/audit_table.html" with audit_entries=recent_audits %}
         </div>
     </section>
 </article>
-{% endblock %}
+{% endblock dashboard_content %}

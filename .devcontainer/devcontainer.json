@@ -2,7 +2,7 @@
   "name": "dev_Greenova",
   "image": "mcr.microsoft.com/devcontainers/python:3",
   "workspaceFolder": "/workspaces/dev_greenova",
-  "workspaceMount": "source=${env:DEV_CONTAINER_PATH}/dev_greenova,target=/workspaces/dev_greenova,type=bind,consistency=delegate",
+  "workspaceMount": "type=bind,source=${localWorkspaceFolder},target=/workspaces/dev_greenova,consistency=delegated",
   "features": {
     "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {}
   },
@@ -28,13 +28,14 @@
         "DavidAnson.vscode-markdownlint",
         "mechatroner.rainbow-csv",
         "monosans.djlint",
-        "timonwong.shellcheck"
+        "timonwong.shellcheck",
+        "yy0931.vscode-sqlite3-editor"
       ]
     }
   },
   "mounts": [
-    "source=${env:DEV_CONTAINER_PATH}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
-    "source=dev_greenova_data,target=/mnt/data,type=volume"
+    "type=bind,source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,readonly",
+    "type=volume,source=dev_greenova_data,target=/mnt/data"
   ],
   "forwardPorts": [
     8000,

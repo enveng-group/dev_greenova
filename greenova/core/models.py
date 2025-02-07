@@ -1,5 +1,7 @@
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import models
+
 
 class SystemConfig(models.Model):
     key = models.CharField(max_length=255, unique=True)
@@ -14,16 +16,20 @@ class SystemConfig(models.Model):
     def __str__(self):
         return self.key
 
+
 class Audit(models.Model):
     ACTION_CHOICES = [
         ('CREATE', 'Create'),
         ('UPDATE', 'Update'),
         ('DELETE', 'Delete'),
         ('LOGIN', 'Login'),
-        ('LOGOUT', 'Logout')
+        ('LOGOUT', 'Logout'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    # Update User reference to use settings.AUTH_USER_MODEL
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+    )
     action = models.CharField(max_length=10, choices=ACTION_CHOICES)
     details = models.JSONField(default=dict)
     timestamp = models.DateTimeField(auto_now_add=True)

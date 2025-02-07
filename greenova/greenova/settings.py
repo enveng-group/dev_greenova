@@ -101,12 +101,15 @@ INSTALLED_APPS = [
     "landing.apps.LandingConfig",
     "services.apps.ServicesConfig",
     "dashboard.apps.DashboardConfig",
+    "obligations.apps.ObligationsConfig",
 ]
 
 # Authentication settings
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard:index'  # Redirect after login
 LOGOUT_REDIRECT_URL = 'landing:index'  # Redirect after logout
+
+AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
