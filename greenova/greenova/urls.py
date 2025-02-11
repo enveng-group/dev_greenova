@@ -10,6 +10,8 @@ urlpatterns = [
     path("accounts/", include("accounts.urls", namespace="accounts")),
     # Core functionality
     path("core/", include("core.urls", namespace="core")),
+    # Obligations
+    path("obligations/", include("obligations.urls", namespace="obligations")),
     # Main dashboard
     path("dashboard/", include("dashboard.urls", namespace="dashboard")),
     # Environmental services

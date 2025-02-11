@@ -238,9 +238,6 @@ WHITENOISE_USE_FINDERS = True  # Set to True only in development
 WHITENOISE_MANIFEST_STRICT = False  # Set to True in production
 WHITENOISE_ALLOW_ALL_ORIGINS = True  # Restrict in production
 
-# Whitenoise configuration
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -325,7 +322,10 @@ ALLOWED_UPLOAD_EXTENSIONS = os.environ.get(
 
 # Custom app settings
 OBLIGATIONS_SETTINGS = {
-    "PER_PAGE": int(os.environ.get("OBLIGATIONS_PER_PAGE", 25)),
+    "PER_PAGE": 20,
+    "RECENT_ITEMS": 5,
+    "WARNING_DAYS": 14,
+    "CRITICAL_DAYS": 7,
     "AUTO_REMINDER_DAYS": int(
         os.environ.get("OBLIGATION_AUTO_REMINDER_DAYS", 14)
     ),

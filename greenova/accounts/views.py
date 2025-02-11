@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
-from django.urls import reverse_lazy
 
 from .forms import AccountRegistrationForm, UserProfileForm
 
@@ -32,15 +32,6 @@ def register(request):
 @login_required
 def settings(request):
     return render(request, 'accounts/pages/settings.html')
-
-
-@login_required(login_url="accounts:login")
-def dashboard(request):
-    context = {
-        "user": request.user,
-        "stats": {"total_items": 0, "active_items": 0, "completed_items": 0},
-    }
-    return TemplateResponse(request, "dashboard/index.html", context)
 
 
 class CustomLoginView(LoginView):

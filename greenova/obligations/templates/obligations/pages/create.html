@@ -1,0 +1,11 @@
+{% extends "obligations/layouts/obligation_base.html" %}
+{% load static %}
+{% load obligations_tags %}
+{% block obligation_title %}Create Obligation{% endblock %}
+{% block obligation_header %}Create New Obligation{% endblock %}
+{% block obligation_content %}
+  <section class="obligation-form" aria-labelledby="form-heading">
+    <h2 id="form-heading" class="visually-hidden">Obligation Form</h2>
+    {% include "obligations/partials/obligation_form.html" with form=form %}
+  </section>
+{% endblock %}

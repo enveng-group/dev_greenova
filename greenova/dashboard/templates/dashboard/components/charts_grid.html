@@ -2,6 +2,7 @@
 {% load dashboard_tags %}
 {% load chartjs_tags %}
 {% load core_tags %}
+{% load obligations_tags %}
 <section class="charts-grid" aria-labelledby="charts-heading">
   <h2 id="charts-heading" class="visually-hidden">Data Visualizations</h2>
   <article class="chart-card">
@@ -13,6 +14,7 @@
               role="img"
               aria-label="Bar chart showing obligation status distribution"
               data-chart="{{ status_data|safe_json }}"
+              data-status-class="{{ status_class|safe_json }}"
               height="300">
       </canvas>
       <figcaption>Distribution of obligations by their current status</figcaption>

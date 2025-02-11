@@ -1,21 +1,18 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
-import json
 import logging
 import os
 import signal
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
-from functools import wraps
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Any, Callable, Dict, List, NoReturn, Optional
+from typing import Any, List, NoReturn, Optional
 
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
+# Add the project root to Python path
+project_root = Path(__file__).resolve().parent
+sys.path.insert(0, str(project_root))
 
 
 class ManagementError(Exception):
@@ -43,17 +40,17 @@ class EnvironmentContext:
         project_root = Path(__file__).resolve().parent
         return cls(
             project_root=project_root,
-            environment=os.environ.get("GREENOVA_ENVIRONMENT", "development"),
-            debug=os.environ.get("DJANGO_DEBUG", "True") == "True",
-            log_level=os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
-            settings_module=os.environ.get(
+            environment=os.getenv("GREENOVA_ENVIRONMENT", "development"),
+            debug=os.getenv("DJANGO_DEBUG", "True") == "True",
+            log_level=os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            settings_module=os.getenv(
                 "DJANGO_SETTINGS_MODULE", "greenova.settings"
             ),
-            allowed_hosts=os.environ.get(
+            allowed_hosts=os.getenv(
                 "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1"
             ).split(","),
-            time_zone=os.environ.get("DJANGO_TIME_ZONE", "UTC"),
-            version=os.environ.get("GREENOVA_VERSION", "0.1.0"),
+            time_zone=os.getenv("DJANGO_TIME_ZONE", "UTC"),
+            version=os.getenv("GREENOVA_VERSION", "0.1.0"),
         )
 
 
@@ -96,7 +93,7 @@ def validate_environment() -> bool:
         "GREENOVA_VERSION",
     ]
 
-    missing_vars = [var for var in required_vars if not os.environ.get(var)]
+    missing_vars = [var for var in required_vars if not os.getenv(var)]
     if missing_vars:
         raise ManagementError(
             f"Missing required environment variables: {', '.join(missing_vars)}"
@@ -133,7 +130,7 @@ def setup_logging(context: EnvironmentContext) -> None:
     )
 
 
-def signal_handler(signum: int, frame: Any) -> NoReturn:
+def signal_handler(signum: int, _: Any) -> NoReturn:
     """Handle system signals."""
     logging.info(f"Received signal {signum}")
     sys.exit(0)

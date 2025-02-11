@@ -1,16 +1,26 @@
+{% load obligations_tags %}
 <section class="service-stats">
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h3>Active Services</h3>
-            <p class="stat-value">{{ active_count }}</p>
-        </div>
-        <div class="stat-card">
-            <h3>Error Rate</h3>
-            <p class="stat-value">{{ error_rate }}%</p>
-        </div>
-        <div class="stat-card">
-            <h3>Uptime</h3>
-            <p class="stat-value">{{ uptime }}%</p>
-        </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Active Services</h3>
+      <p class="stat-value">{{ active_count }}</p>
+      <p class="stat-subtitle">
+        {{ obligation_stats.active_obligations }} Active Obligations
+      </p>
     </div>
+    <div class="stat-card">
+      <h3>Error Rate</h3>
+      <p class="stat-value">{{ error_rate }}%</p>
+      <span class="status-badge {{ obligation_stats.compliance_rate|status_class }}">
+        {{ obligation_stats.compliance_rate }}% Compliance
+      </span>
+    </div>
+    <div class="stat-card">
+      <h3>Uptime</h3>
+      <p class="stat-value">{{ uptime }}%</p>
+      <p class="stat-subtitle">
+        Last checked {{ obligation_stats.last_check|timesince }} ago
+      </p>
+    </div>
+  </div>
 </section>

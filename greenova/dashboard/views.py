@@ -1,51 +1,16 @@
 from datetime import timedelta
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+
+User = get_user_model()
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
 
-
-@login_required
-@require_http_methods(["GET"])
-def dashboard_view(request):
-    """Dashboard view showing obligation statistics."""
-    # Get user's dashboard preferences
-    preferences = getattr(request.user, "dashboard_preferences", None)
-    refresh_interval = getattr(preferences, "refresh_interval", 30)
-
-    # Calculate stats
-    now = timezone.now()
-    two_weeks = now + timedelta(days=14)
-
-    context = {
-        "user": request.user,
-        "now": timezone.now(),
-        "stats": {
-            "total_items": 0,
-            "due_soon": 0,
-            "overdue": 0,
-            "completed": 0,
-        },
-        "refresh_interval": refresh_interval,
-        "status_data": {
-            "labels": ["Pending", "In Progress", "Completed", "Overdue"],
-            "datasets": [
-                {
-                    "data": [0, 0, 0, 0],
-                    "backgroundColor": [
-                        "#3498db",  # Blue for pending
-                        "#f1c40f",  # Yellow for in progress
-                        "#2ecc71",  # Green for completed
-                        "#e74c3c",  # Red for overdue
-                    ],
-                }
-            ],
-        },
-    }
-    return render(request, "dashboard/index.html", context)
+from obligations.models import Obligation  # Import the Obligation model
 
 
 @login_required
@@ -69,16 +34,44 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add initial dashboard data
-        context.update(
-            {
-                'user': self.request.user,
-                'total_obligations': 0,  # Replace with actual data
-                'due_soon': 0,
-                'overdue': 0,
-                'completed': 0,
+        user = self.request.user
+
+        # Get user's dashboard preferences
+        preferences = getattr(user, "dashboard_preferences", None)
+        refresh_interval = getattr(preferences, "refresh_interval", 30)
+
+        # Handle anonymous users and get email safely using type annotation
+        user_email = user.email if isinstance(user, User) and user.is_authenticated else None
+
+        # Handle anonymous users and get email safely using isinstance check
+        user_email = user.email if isinstance(user, User) and user.is_authenticated else None
+        obligations = Obligation.objects.filter(person_email=user_email) if user_email else Obligation.objects.none()
+
+        context.update({
+            'user': user,
+            'refresh_interval': refresh_interval,
+            'total_obligations': obligations.count(),
+            'due_soon': obligations.filter(status='in progress').count(),
+            'overdue': obligations.filter(status='overdue').count(),
+            'completed': obligations.filter(status='completed').count(),
+            'status_data': {
+                "labels": ["Pending", "In Progress", "Completed", "Overdue"],
+                "datasets": [{
+                    "data": [
+                        obligations.filter(status='not started').count(),
+                        obligations.filter(status='in progress').count(),
+                        obligations.filter(status='completed').count(),
+                        obligations.filter(status='overdue').count(),
+                    ],
+                    "backgroundColor": [
+                        "#3498db",  # Blue for pending
+                        "#f1c40f",  # Yellow for in progress
+                        "#2ecc71",  # Green for completed
+                        "#e74c3c",  # Red for overdue
+                    ],
+                }]
             }
-        )
+        })
         return context
 
 

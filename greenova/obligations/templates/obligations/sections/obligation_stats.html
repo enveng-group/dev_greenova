@@ -1,0 +1,25 @@
+<section class="obligation-stats" aria-labelledby="stats-heading">
+  <h2 id="stats-heading" class="visually-hidden">Statistics</h2>
+
+  <div class="stats-grid">
+    <article class="stat-card">
+      <h3>Total Obligations</h3>
+      <data value="{{ stats.total }}">{{ stats.total }}</data>
+    </article>
+
+    <article class="stat-card">
+      <h3>Completed</h3>
+      <data value="{{ stats.completed }}" class="success">
+        {{ stats.completed }}
+        <small>{{ stats.completion_rate|floatformat:1 }}%</small>
+      </data>
+    </article>
+
+    <article class="stat-card">
+      <h3>Overdue</h3>
+      <data value="{{ stats.overdue }}" class="error">
+        {{ stats.overdue }}
+      </data>
+    </article>
+  </div>
+</section>

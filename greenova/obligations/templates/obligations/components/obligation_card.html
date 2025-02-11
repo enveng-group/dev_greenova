@@ -1,0 +1,23 @@
+<article class="obligation-card" role="article">
+  <header>
+    <h3>{{ obligation.obligation_number }}</h3>
+    {% include "obligations/components/status_badge.html" with status=obligation.status %}
+  </header>
+
+  <div class="card-body">
+    <h4>{{ obligation.project_name }}</h4>
+    <p>{{ obligation.obligation|truncatechars:200 }}</p>
+
+    {% if obligation.action_due_date %}
+      {% include "obligations/components/due_date_indicator.html" with due_date=obligation.action_due_date %}
+    {% endif %}
+
+    {% if obligation.recurring_obligation %}
+      <span class="recurring-badge" role="status">Recurring</span>
+    {% endif %}
+  </div>
+
+  <footer>
+    <a href="{% url 'obligations:detail' obligation.obligation_number %}" class="button">View Details</a>
+  </footer>
+</article>

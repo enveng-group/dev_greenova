@@ -2,11 +2,34 @@
 {% load static %}
 {% load dashboard_tags %}
 {% load core_tags %}
+{% load obligations_tags %}
 {% block title %}
   MS1180 - Greenova EMS
 {% endblock title %}
 {% block dashboard_content %}
   <h2>MS1180 Dashboard</h2>
+  {% obligation_stats obligations as stats %}
+  <div class="stats-container">
+    <div class="stat-card">
+      <h3>Total Obligations</h3>
+      <p>{{ stats.total }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Completion Rate</h3>
+      <p>{{ stats.completion_rate|floatformat:1 }}%</p>
+    </div>
+    <div class="stat-card">
+      <h3>Overdue</h3>
+      <p>{{ stats.overdue }}</p>
+    </div>
+  </div>
   {% include "dashboard/components/stats_overview.html" %}
   {% include "dashboard/components/charts_grid.html" %}
+  <section class="obligations-grid">
+    {% for obligation in obligations %}
+      {% obligation_card obligation %}
+    {% empty %}
+      <p>No obligations found for MS1180.</p>
+    {% endfor %}
+  </section>
 {% endblock dashboard_content %}

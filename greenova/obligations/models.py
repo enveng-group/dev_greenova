@@ -1,5 +1,6 @@
 from accounts.models import User
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -10,6 +11,7 @@ class Obligation(models.Model):
         ('not started', 'Not Started'),
         ('in progress', 'In Progress'),
         ('completed', 'Completed'),
+        ('overdue', 'Overdue'),  # Add overdue status
     ]
 
     SITE_DESKTOP_CHOICES = [('Site', 'Site'), ('Desktop', 'Desktop')]
@@ -104,11 +106,16 @@ class Obligation(models.Model):
 
     def is_overdue(self):
         """Check if the obligation is overdue."""
-        from django.utils import timezone
-
         if self.action_due_date and self.status != 'completed':
             return self.action_due_date < timezone.now().date()
         return False
+
+    def save(self, *args, **kwargs):
+        """Override save to check for overdue status"""
+        if self.action_due_date and self.status != 'completed':
+            if self.action_due_date < timezone.now().date():
+                self.status = 'overdue'
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         """Get the absolute URL for this obligation."""

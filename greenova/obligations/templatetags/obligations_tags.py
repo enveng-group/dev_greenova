@@ -1,35 +1,44 @@
+from datetime import date, datetime, timedelta
+
 from django import template
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
-from datetime import datetime, timedelta
 
 register = template.Library()
+
 
 @register.filter
 def status_class(status):
     """Return CSS class based on obligation status."""
+    if not status:
+        return 'status-unknown'
+
     status_classes = {
         'not started': 'status-not-started',
         'in progress': 'status-in-progress',
-        'completed': 'status-completed'
+        'completed': 'status-completed',
     }
-    return status_classes.get(status, '')
+    return status_classes.get(status.lower(), 'status-unknown')
+
 
 @register.filter
 def due_date_class(due_date):
     """Return CSS class based on due date proximity."""
     if not due_date:
-        return ''
+        return 'no-date'
 
     today = now().date()
-    warning_threshold = today + timedelta(days=14)
+    days_until = (due_date - today).days
 
-    if due_date < today:
+    if days_until < 0:
         return 'overdue'
-    elif due_date <= warning_threshold:
+    elif days_until <= 7:
         return 'due-soon'
-    return ''
+    elif days_until <= 14:
+        return 'upcoming'
+    return 'future'
+
 
 @register.simple_tag
 def obligation_card(obligation):
@@ -56,8 +65,13 @@ def obligation_card(obligation):
         obligation.status,
         obligation.obligation,
         due_class,
-        obligation.action_due_date.strftime('%d %b %Y') if obligation.action_due_date else 'No due date'
+        (
+            obligation.action_due_date.strftime('%d %b %Y')
+            if obligation.action_due_date
+            else 'No due date'
+        ),
     )
+
 
 @register.simple_tag
 def obligation_stats(obligations):
@@ -70,12 +84,23 @@ def obligation_stats(obligations):
         'total': total,
         'completed': completed,
         'overdue': overdue,
-        'completion_rate': (completed / total * 100) if total > 0 else 0
+        'completion_rate': (completed / total * 100) if total > 0 else 0,
     }
 
+
 @register.filter
-def format_frequency(value):
-    """Format frequency values for display."""
-    if not value:
-        return 'N/A'
-    return value.replace('_', ' ').title()
+def format_frequency(frequency):
+    """Format recurring frequency in a human-readable way."""
+    if not frequency:
+        return 'Not specified'
+
+    frequencies = {
+        'daily': 'Daily',
+        'weekly': 'Weekly',
+        'monthly': 'Monthly',
+        'quarterly': 'Quarterly',
+        'annually': 'Annually',
+    }
+    return frequencies.get(
+        frequency.lower(), frequency.replace('_', ' ').title()
+    )

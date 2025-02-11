@@ -1,0 +1,11 @@
+{% load obligations_tags %}
+<div class="obligations-grid">
+  {% for obligation in obligations %}
+    {% obligation_card obligation %}
+  {% empty %}
+    <p>No obligations found matching your criteria.</p>
+  {% endfor %}
+</div>
+{% if obligations.has_other_pages %}
+  {% include "core/partials/pagination.html" with page_obj=obligations %}
+{% endif %}

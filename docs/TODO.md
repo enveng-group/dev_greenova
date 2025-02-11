@@ -28,6 +28,8 @@
 
 ## Obligations View
 - Map environmental aspects to the obligations view.
+- accountability is the username when it is mapped with the relationship "responsibility"
+- Ensure that the mapping process is documented for clarity.
 
 ## Branding
 - Update the application to include the trademarked EnvEng logo.
@@ -67,6 +69,8 @@
 - helper shell scripts
     - https://github.com/github/training-utils/tree/master
     - https://github.com/github/scripts-to-rule-them-all
+- Use other shell script setup.py with setuptools, cmake or makefile or ninja or something else? 
+- create .dotfiles repository
 
 is there any opportunity to modularialise/break-down dashboard.html? if so, please provide new file names and paths?
 

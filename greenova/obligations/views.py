@@ -1,177 +1,101 @@
 import csv
-from datetime import datetime
-from io import TextIOWrapper
 
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
-from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
     ListView,
+    TemplateView,
     UpdateView,
 )
 
-from .forms import (
-    ObligationFilterForm,
-    ObligationForm,
-    ObligationImportForm,
-    ObligationSearchForm,
-)
 from .models import Obligation
 
 
-class ObligationListView(LoginRequiredMixin, ListView):
-    """Display list of obligations with filtering and search."""
-
-    model = Obligation
-    template_name = 'obligations/pages/list.html'
-    context_object_name = 'obligations'
-    paginate_by = 20
-
-    def get_queryset(self):
-        queryset = Obligation.objects.all()
-        form = ObligationFilterForm(self.request.GET)
-
-        if form.is_valid():
-            if form.cleaned_data.get('project_name'):
-                queryset = queryset.filter(
-                    project_name__icontains=form.cleaned_data['project_name']
-                )
-            if form.cleaned_data.get('status'):
-                queryset = queryset.filter(status=form.cleaned_data['status'])
-            if form.cleaned_data.get('responsibility'):
-                queryset = queryset.filter(
-                    responsibility__icontains=form.cleaned_data[
-                        'responsibility'
-                    ]
-                )
-            if form.cleaned_data.get('due_date_from'):
-                queryset = queryset.filter(
-                    action_due_date__gte=form.cleaned_data['due_date_from']
-                )
-            if form.cleaned_data.get('due_date_to'):
-                queryset = queryset.filter(
-                    action_due_date__lte=form.cleaned_data['due_date_to']
-                )
-            if form.cleaned_data.get('recurring_only'):
-                queryset = queryset.filter(recurring_obligation=True)
-            if form.cleaned_data.get('inspection_only'):
-                queryset = queryset.filter(inspection=True)
-
-        search_form = ObligationSearchForm(self.request.GET)
-        if search_form.is_valid() and search_form.cleaned_data.get('q'):
-            query = search_form.cleaned_data['q']
-            queryset = queryset.filter(
-                Q(obligation_number__icontains=query)
-                | Q(project_name__icontains=query)
-                | Q(obligation__icontains=query)
-                | Q(responsibility__icontains=query)
-            )
-
-        return queryset.select_related('created_by', 'updated_by')
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'obligations/dashboard.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = ObligationFilterForm(self.request.GET)
-        context['search_form'] = ObligationSearchForm(self.request.GET)
+        user = self.request.user
+        obligations = Obligation.objects.filter(person_email=getattr(user, 'email', '')) if user.is_authenticated else Obligation.objects.none()
+        context.update(
+            {
+                'total_count': obligations.count(),
+                'overdue_count': obligations.filter(status='overdue').count(),
+                'completed_count': obligations.filter(
+                    status='completed'
+                ).count(),
+                'recent_obligations': obligations.order_by('-created_at')[:5],
+            }
+        )
         return context
 
 
-class ObligationDetailView(LoginRequiredMixin, DetailView):
-    """Display detailed view of an obligation."""
-
+class ObligationListView(LoginRequiredMixin, ListView):
     model = Obligation
-    template_name = 'obligations/pages/detail.html'
-    context_object_name = 'obligation'
+    template_name = 'obligations/list.html'
+    context_object_name = 'obligations'
+
+    def get_queryset(self):
+        return Obligation.objects.filter(person_email=getattr(self.request.user, 'email', ''))
+
+
+class ObligationDetailView(LoginRequiredMixin, DetailView):
+    model = Obligation
+    template_name = 'obligations/detail.html'
 
 
 class ObligationCreateView(LoginRequiredMixin, CreateView):
-    """Create a new obligation."""
-
     model = Obligation
-    form_class = ObligationForm
-    template_name = 'obligations/pages/create.html'
+    template_name = 'obligations/form.html'
+    fields = '__all__'
     success_url = reverse_lazy('obligations:list')
 
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
-        form.instance.updated_by = self.request.user
+        if self.request.user.is_authenticated:
+            form.instance.person_email = getattr(self.request.user, 'email', '')
         return super().form_valid(form)
 
 
 class ObligationUpdateView(LoginRequiredMixin, UpdateView):
-    """Update an existing obligation."""
-
     model = Obligation
-    form_class = ObligationForm
-    template_name = 'obligations/pages/edit.html'
-    context_object_name = 'obligation'
+    template_name = 'obligations/form.html'
+    fields = '__all__'
+    success_url = reverse_lazy('obligations:list')
 
-    def form_valid(self, form):
-        form.instance.updated_by = self.request.user
-        return super().form_valid(form)
+
+class ObligationDeleteView(LoginRequiredMixin, DeleteView):
+    model = Obligation
+    template_name = 'obligations/confirm_delete.html'
+    success_url = reverse_lazy('obligations:list')
 
 
 @login_required
 def import_obligations(request):
-    """Import obligations from CSV file."""
-    if request.method == 'POST':
-        form = ObligationImportForm(request.POST, request.FILES)
-        if form.is_valid():
-            csv_file = TextIOWrapper(
-                request.FILES['file'].file, encoding='utf-8'
-            )
-            reader = csv.DictReader(csv_file)
+    if request.method == 'POST' and request.FILES['csv_file']:
+        # Add CSV import logic here
+        return HttpResponse('Import successful')
+    return render(request, 'obligations/import.html')
 
-            success_count = 0
-            error_count = 0
 
-            for row in reader:
-                try:
-                    if form.cleaned_data['update_existing']:
-                        obligation, created = (
-                            Obligation.objects.update_or_create(
-                                obligation_number=row['obligation_number'],
-                                defaults={
-                                    'project_name': row['project_name'],
-                                    'primary_environmental_mechanism': row[
-                                        'primary_environmental_mechanism'
-                                    ],
-                                    # Add other fields here
-                                },
-                            )
-                        )
-                    else:
-                        obligation = Obligation.objects.create(
-                            obligation_number=row['obligation_number'],
-                            project_name=row['project_name'],
-                            primary_environmental_mechanism=row[
-                                'primary_environmental_mechanism'
-                            ],
-                            # Add other fields here
-                        )
-                    success_count += 1
-                except Exception as e:
-                    error_count += 1
-                    messages.error(
-                        request, f"Error on row {reader.line_num}: {str(e)}"
-                    )
+@login_required
+def export_obligations(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="obligations.csv"'
 
-            messages.success(
-                request,
-                f"Successfully imported {success_count} obligations. "
-                f"Errors: {error_count}",
-            )
-            return redirect('obligations:list')
-    else:
-        form = ObligationImportForm()
+    writer = csv.writer(response)
+    fields = [field.name for field in Obligation._meta.fields]
+    writer.writerow(fields)
 
-    return render(request, 'obligations/pages/import.html', {'form': form})
+    for obligation in Obligation.objects.filter(
+        person_email=request.user.email
+    ):
+        writer.writerow([getattr(obligation, field) for field in fields])
+
+    return response

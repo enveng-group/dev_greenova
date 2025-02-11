@@ -1,0 +1,33 @@
+{% extends "obligations/layouts/obligation_base.html" %}
+{% load obligations_tags %}
+{% block obligation_title %}Obligations List{% endblock %}
+{% block obligation_header %}Environmental Obligations{% endblock %}
+{% block obligation_content %}
+  <div class="obligation-controls">
+    <section class="filters" aria-labelledby="filters-heading">
+      <h2 id="filters-heading" class="visually-hidden">Filters</h2>
+      {% include "obligations/partials/filter_form.html" %}
+    </section>
+    <section class="actions">
+      <a href="{% url 'obligations:create' %}" role="button" class="button">Add New Obligation</a>
+      <button type="button"
+              hx-get="{% url 'obligations:export' %}"
+              hx-trigger="click"
+              class="button outline">Export</button>
+    </section>
+  </div>
+  {% include "obligations/sections/obligation_stats.html" with stats=obligation_stats %}
+  <section class="obligations-list" aria-labelledby="obligations-heading">
+    <h2 id="obligations-heading">Obligations</h2>
+    {% if obligations %}
+      <div class="grid-responsive">
+        {% for obligation in obligations %}
+          {% obligation_card obligation %}
+        {% endfor %}
+      </div>
+      {% include "core/partials/pagination.html" with page_obj=obligations %}
+    {% else %}
+      <p>No obligations found.</p>
+    {% endif %}
+  </section>
+{% endblock %}

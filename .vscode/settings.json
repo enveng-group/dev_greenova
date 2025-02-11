@@ -18,10 +18,17 @@
     "requirements*.txt": "pip-requirements",
     ".env*": "dotenv"
   },
-
+  // Git Configuration
+  "git.blame.statusBarItem.enabled": true,
+  "git.blame.editorDecoration.enabled": true,
+  // Github Configuration
+  "github.showAvatar": false,
   // Editor Core Settings
   "editor.formatOnSave": true,
-  "editor.rulers": [79, 88],
+  "editor.rulers": [
+    79,
+    88
+  ],
   "editor.tabSize": 4,
   "editor.detectIndentation": true,
   "editor.insertSpaces": true,
@@ -29,21 +36,25 @@
   "editor.guides.bracketPairs": true,
   "editor.suggestSelection": "first",
   "editor.minimap.maxColumn": 88,
-
+  "editor.formatOnPaste": true,
+  "editor.find.replaceHistory": "workspace",
   // Python Configuration
   "python.languageServer": "Pylance",
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.defaultInterpreterPath": "/workspaces/dev_greenova/.venv/bin/python",
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.diagnosticMode": "workspace",
   "python.analysis.autoImportCompletions": true,
   "python.analysis.indexing": true,
-    "python.analysis.exclude": [
-        "**/node_modules/**",
-        "**/.venv/**",
-        "**/greenova.bak/**",
-        "./greenova.bak/**"
-    ],
-
+  "python.analysis.exclude": [
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/greenova.bak/**",
+    "./greenova.bak/**"
+  ],
+  "python.analysis.aiCodeActions": {
+    "generateSymbol": true
+  },
+  "python.formatting.provider": "black",
   // Testing Configuration
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
@@ -53,7 +64,6 @@
     "--tb=short",
     "--cov"
   ],
-
   // Python Formatting
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
@@ -69,7 +79,6 @@
     "--skip-magic-trailing-comma",
     "--safe"
   ],
-
   // Django Template Settings
   "[django-html]": {
     "editor.formatOnSave": true,
@@ -78,33 +87,43 @@
   },
   "djlint.enableLinting": true,
   "djlint.profile": "django",
-  "djlint.ignore": ["H006", "H031", "H014"],
+  "djlint.ignore": [
+    "H006",
+    "H031",
+    "H014"
+  ],
   "djlint.maxLineLength": 79,
-  "djlint.exclude": ["**/node_modules/**", "**/.venv/**", "**/greenova.bak/**", "**/.github/**"],
+  "djlint.exclude": [
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/greenova.bak/**",
+    "**/.github/**"
+  ],
   "djlint.useVenv": true,
-
   // JavaScript & Frontend Settings
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "editor.tabSize": 2
   },
-  "eslint.validate": ["javascript"],
+  "eslint.validate": [
+    "javascript"
+  ],
   "prettier.configPath": "${workspaceFolder}/.prettierrc",
   "prettier.tabWidth": 2,
   "prettier.printWidth": 79,
-
   // Markdown Settings
   "[markdown]": {
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
     "editor.formatOnSave": true
   },
   "markdownlint.config": {
-    "MD013": { "line_length": 79 },
+    "MD013": {
+      "line_length": 79
+    },
     "MD033": false
   },
   "markdown.validate.enabled": true,
-
   // Shell Script Settings
   "[shellscript]": {
     "editor.defaultFormatter": "timonwong.shellcheck",
@@ -113,11 +132,9 @@
   "shellcheck.enable": true,
   "shellcheck.useWorkspaceRootAsCwd": true,
   "shellcheck.run": "onType",
-
   // Debug Configuration
   "debug.inlineValues": "auto",
   "debugpy.debugJustMyCode": false,
-
   // GitHub Copilot Settings
   "github.copilot.enable": {
     "*": true,
@@ -126,19 +143,28 @@
     "javascript": true,
     "markdown": true
   },
-
-  // Docker Settings
-  "docker.enableLinting": true,
-  "remote.containers.defaultExtensions": [
-    "ms-python.python",
-    "ms-python.vscode-pylance"
-  ],
-
-  // CSV Settings
-  "csv-preview.separator": ",",
-  "csv-preview.quoteMark": "\"",
-  "rainbow-csv.comment": "#",
-
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "editor.inlineSuggest.edits.renderSideBySide": "auto",
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.codesearch.enabled": true,
+  "chat.promptFiles": false,
   // EditorConfig
-  "editorconfig.generateAuto": false
+  "editorconfig.generateAuto": false,
+  // Node Version Specific
+  "npm.packageManager": "npm",
+  "npm.nodeVersionManagement": {
+    "runtime": "23.7.0",
+    "manager": "nvm"
+  },
+  // Workspace Specific
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/bin/bash",
+      "env": {
+        "PYTHONPATH": "/workspaces/dev_greenova",
+        "NODE_ENV": "development"
+      }
+    }
+  }
 }

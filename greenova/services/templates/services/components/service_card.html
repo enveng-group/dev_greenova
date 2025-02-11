@@ -1,6 +1,8 @@
 {% load static %}
 {% load core_tags %}
 {% load services_tags %}
+{% load obligations_tags %}
+
 <article class="service-card">
   <header class="service-card-header">
     <h2>{{ service.name }}</h2>
@@ -10,6 +12,9 @@
     <p>{{ service.description }}</p>
     <div class="service-meta">
       <span>Last checked: {{ service.last_check|format_date|timesince }} ago</span>
+      <span class="status-badge {{ service.obligation_status|status_class }}">
+        {{ service.get_obligation_status_display }}
+      </span>
     </div>
   </div>
   <footer class="service-card-footer">

@@ -1,0 +1,11 @@
+{% extends "obligations/layouts/obligation_base.html" %}
+{% load static %}
+{% load obligations_tags %}
+{% block obligation_title %}Edit {{ obligation.obligation_number }}{% endblock %}
+{% block obligation_header %}Edit Obligation{% endblock %}
+{% block obligation_content %}
+  <section class="obligation-form" aria-labelledby="form-heading">
+    <h2 id="form-heading" class="visually-hidden">Edit Obligation</h2>
+    {% include "obligations/partials/obligation_form.html" with form=form obligation=obligation %}
+  </section>
+{% endblock %}

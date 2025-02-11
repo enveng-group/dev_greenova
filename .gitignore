@@ -185,7 +185,8 @@ celerybeat.pid
 
 # Environments
 .env
-.env.*
+.env.me
+.env.previous
 !.env.example
 !.env.vault
 .venv
@@ -312,11 +313,6 @@ pip-selfcheck.json
 # Built Visual Studio Code Extensions
 *.vsix
 
-.env*
-.flaskenv*
-!.env.project
-!.env.vault
-
 # Node
 node_modules/
 npm-debug.log*
@@ -331,3 +327,7 @@ package-lock.json
 !scripts/
 .system_state
 .setup_state
+
+.env*
+.flaskenv*
+!.env.project
