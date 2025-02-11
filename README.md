@@ -1,10 +1,20 @@
 # Readme
 
-# Basic rebuild
-./scripts/rebuild.sh
+# 1. Switch to main and get latest changes
+git checkout main
+git pull origin main
 
-# Rebuild with tests
-RUN_TESTS=true ./scripts/rebuild.sh
+# 2. Squash and merge the feature branch
+git merge --squash feature-branch
+git commit -m "feat: squashed commit message"
 
-# Rebuild and start development server
-START_SERVER=true ./scripts/rebuild.sh
+# 3. Push changes to main
+git push origin main
+
+# 4. Delete feature branch locally
+git branch -D feature-branch
+
+# 5. Delete feature branch remotely
+git push origin --delete feature-branch
+
+

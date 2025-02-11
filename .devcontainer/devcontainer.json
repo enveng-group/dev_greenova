@@ -1,46 +1,52 @@
 {
-  "name": "dev_Greenova",
-  "image": "mcr.microsoft.com/devcontainers/python:3",
-  "workspaceFolder": "/workspaces/dev_greenova",
-  "workspaceMount": "type=bind,source=${localWorkspaceFolder},target=/workspaces/dev_greenova,consistency=delegated",
-  "features": {
-    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {}
-  },
-  "customizations": {
-    "vscode": {
-      "settings": {},
-      "extensions": [
-        "ms-python.python",
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "batisteo.vscode-django",
-        "EditorConfig.EditorConfig",
-        "dotenv.dotenv-vscode",
-        "ms-azuretools.vscode-docker",
-        "dbaeumer.vscode-eslint",
-        "ms-python.vscode-pylance",
-        "ms-python.debugpy",
-        "esbenp.prettier-vscode",
-        "ms-python.black-formatter",
-        "ms-python.isort",
-        "figma.figma-vscode-extension",
-        "yzhang.markdown-all-in-one",
-        "DavidAnson.vscode-markdownlint",
-        "mechatroner.rainbow-csv",
-        "monosans.djlint",
-        "timonwong.shellcheck",
-        "yy0931.vscode-sqlite3-editor"
-      ]
-    }
-  },
-  "mounts": [
-    "type=bind,source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,readonly",
-    "type=volume,source=dev_greenova_data,target=/mnt/data"
-  ],
-  "forwardPorts": [
-    8000,
-    8080
-  ],
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
-  "remoteUser": "vscode"
+    "name": "Greenova Development",
+    "image": "mcr.microsoft.com/devcontainers/python:3",
+
+    "features": {},
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.pylance",
+                "ms-python.debugpy",
+                "visualstudioexptteam.vscodeintellicode",
+                "GitHub.copilot-chat",
+                "GitHub.copilot",
+                "dbaeumer.vscode-eslint",
+                "ms-python.autopep8",
+                "VisualStudioExptTeam.vscodeintellicode",
+                "VisualStudioExptTeam.intellicode-api-usage-examples",
+                "ms-python.vscode-pylance"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.formatting.provider": "autopep8",
+                "dev.containers.copyGitConfig": true,
+                "remote.downloadExtensionsLocally": true,
+                "git.enabled": true,
+                "git.useIntegratedAskPass": true
+            }
+        }
+    },
+
+    "mounts": [
+        "type=bind,source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,readonly"
+      ],
+
+    "remoteUser": "vscode",
+    
+    "postCreateCommand": "pip install --upgrade pip && pipx upgrade-all",
+    
+    "remoteEnv": {
+        "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin"
+    },
+
+    "runArgs": ["--userns=keep-id"],
+
+    "containerUser": "vscode",
+
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "workspaceFolder": "/workspace"
 }

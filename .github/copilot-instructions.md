@@ -675,7 +675,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. **Django**: Backend framework.
 2. **SQLite3**: Lightweight database for development and production.
-3. **Docker**: Containerization platform.
+3. **Podman**: Containerization platform.
 4. **GitHub CI/CD**: Continuous integration and deployment.
 5. **Python**: Programming language for backend development.
 6. **Chart.js**: JavaScript library for data visualization.
@@ -700,15 +700,9 @@ CREATE TRIGGER update_obligations_timestamp
 1. Core Dependencies:
 
    - Django==5.1.5
-   - Pillow==11.1.0
-   - python-dotenv==1.0.1
-   - cryptography==41.0.7
 
 2. Development Tools:
-   - django-debug-toolbar==5.0.1
    - autopep8==2.3.2
-   - debugpy==1.8.2
-   - editorconfig==0.17.0
 
 ### Frontend Dependencies
 
@@ -736,7 +730,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. **Set Up Environment**:
 
-   - Install Python, SQLite3, and Docker.
+   - Install Python, SQLite3, and Podman.
    - Create a virtual environment using `python -m venv env`.
 
 2. **Initialize Django Project**:

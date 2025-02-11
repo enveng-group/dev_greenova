@@ -1,6 +1,0 @@
-{% load obligations_tags %}
-<time datetime="{{ due_date|date:'Y-m-d' }}"
-      class="due-date {{ due_date|due_date_class }}"
-      title="Due date">
-  Due: {{ due_date|date:"d M Y" }}
-</time>

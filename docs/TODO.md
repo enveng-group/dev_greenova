@@ -35,7 +35,7 @@
 - Update the application to include the trademarked EnvEng logo.
 
 ## Containerization
-- Create a Docker container for release.
+- Create a Podman Containerfile container for release.
 - Set up a devcontainer for development.
 
 ## Version Control

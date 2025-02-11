@@ -1,6 +1,0 @@
-{
-  "profile": "django",
-  "ignore": "H006,H031",
-  "max_line_length": 79,
-  "indent": 2
-}
