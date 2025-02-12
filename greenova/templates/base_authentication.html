@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta_description %}Greenova - Environmental Obligations Management System{% endblock %}
+{% block title %}Greenova - Environmental Management{% endblock %}
+
+{% block nav_items %}
+<li><a href="{% url 'landing:home' %}"><strong>Greenova</strong></a></li>
+{% endblock %}
+
+{% block main %}
+    {% block auth_content %}{% endblock %}
+{% endblock %}
+
+{% block extra_body %}{% endblock %}

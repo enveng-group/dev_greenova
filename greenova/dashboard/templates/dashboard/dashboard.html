@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+<article>
+    <header>
+        <hgroup>
+            <h1>Dashboard</h1>
+            <h2>Environmental Obligations Overview</h2>
+        </hgroup>
+    </header>
+
+    <label for="project-select">Select Project
+        <select id="project-select" 
+                hx-get="{% url 'dashboard:select_project' %}"
+                hx-target="#dashboard-content"
+                hx-include="this"
+                hx-indicator=".htmx-indicator"
+                name="project"
+                hx-trigger="change">
+            <option value="">Choose a project...</option>
+            {% for project in projects %}
+            <option value="{{ project.id }}">{{ project.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <div class="htmx-indicator" aria-busy="true">
+        Loading project data...
+    </div>
+
+    <div id="dashboard-content">
+        {% if not projects %}
+        <article role="alert">
+            <p>No projects found. Please contact your administrator.</p>
+        </article>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .project-selector {
+        margin: 2rem 0;
+    }
+
+    #project-select {
+        max-width: 400px;
+    }
+</style>
+{% endblock %}

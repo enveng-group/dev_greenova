@@ -1,0 +1,72 @@
+{% extends "base_authentication.html" %}
+{% load static %}
+
+{% block title %}Login - Greenova{% endblock %}
+
+{% block auth_content %}
+<article class="auth-container">
+    <div>
+        <hgroup>
+            <h1>Welcome back</h1>
+            <h2>Log in to your account</h2>
+        </hgroup>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div role="alert" aria-live="polite">
+                <p>Your username and password didn't match. Please try again.</p>
+            </div>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                <div role="alert" aria-live="polite">
+                    <p>Your account doesn't have access to this page.</p>
+                </div>
+                {% else %}
+                <div role="alert" aria-live="polite">
+                    <p>Please login to see this page.</p>
+                </div>
+                {% endif %}
+            {% endif %}
+
+            <label for="id_username">
+                Username
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="id_username" 
+                    autocomplete="username"
+                    autocapitalize="none"
+                    spellcheck="false"
+                    required
+                    aria-required="true">
+            </label>
+
+            <label for="id_password">
+                Password
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="id_password" 
+                    autocomplete="current-password"
+                    required
+                    aria-required="true">
+            </label>
+
+            <button type="submit">Log In</button>
+        </form>
+
+        <div class="auth-links">
+            <small>
+                <a href="{% url 'authentication:password_reset' %}" rel="nofollow">Forgot your password?</a>
+            </small>
+            <small>
+                Don't have an account? <a href="{% url 'authentication:register' %}" rel="nofollow">Sign up</a>
+            </small>
+        </div>
+    </div>
+</article>
+{% endblock %}

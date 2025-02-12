@@ -1,0 +1,37 @@
+<div class="htmx-indicator" aria-busy="true">
+    Loading obligations...
+</div>
+
+{% if obligations %}
+<article>
+    <header>
+        <h3>Project Obligations</h3>
+    </header>
+    <div class="table-container">
+        <table role="grid">
+            <thead>
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">Mechanism</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obligation in obligations %}
+                <tr>
+                    <td>{{ obligation.obligation_number }}</td>
+                    <td>{{ obligation.primary_environmental_mechanism }}</td>
+                    <td>{{ obligation.status|title }}</td>
+                    <td>{{ obligation.action_due_date|date:"Y-m-d" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+{% else %}
+<article role="alert">
+    <p>No obligations found for this project.</p>
+</article>
+{% endif %}

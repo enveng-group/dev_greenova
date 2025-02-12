@@ -5,14 +5,110 @@
 ### HTML-First Development
 
 1. Templates must prioritize semantic HTML structure
+
+```html
+   <body>
+     <header role="banner">
+       <nav role="navigation" aria-label="Main navigation">...</nav>
+     </header>
+     <main role="main">
+       <article>
+         <header>
+           <h1>...</h1>
+         </header>
+         <section aria-labelledby="section-heading">
+           <h2 id="section-heading">...</h2>
+         </section>
+       </article>
+     </main>
+     <footer role="contentinfo">...</footer>
+   </body>
+```
+
+
 2. Follow progressive enhancement layers:
    - Layer 1: Semantic HTML
+
+```html
+<form method="post" action="/submit">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required>
+  <button type="submit">Submit</button>
+</form>
+```
+
    - Layer 2: CSS for styling (classless-PicoCSS directly in html)
+
+```html
+<!-- No CSS classes needed - PicoCSS styles semantic elements -->
+<article>
+  <header>
+    <h2>Dashboard</h2>
+    <p>Current status: <mark>Active</mark></p>
+  </header>
+</article>
+```
+
    - Layer 3: HTMX for interactivity
+
+```html
+<div hx-get="/api/data" 
+     hx-trigger="load"
+     hx-target="#content"
+     hx-swap="innerHTML"
+     hx-indicator="#loading">
+  <div id="loading" aria-busy="true">Loading...</div>
+  <div id="content"></div>
+</div>
+```
+
    - Layer 4: Web APIs for data
+
+```html
+<figure role="region" aria-label="Monthly Statistics">
+  <canvas id="statsChart"></canvas>
+  <figcaption>Monthly transaction volume</figcaption>
+</figure>
+```
+
    - Layer 5: JavaScript as fallback
+
+```html
+<div data-widget="datepicker">
+  <input type="date" name="start_date">
+  <noscript>Please enter date in YYYY-MM-DD format</noscript>
+</div>
+```
+
 3. Use data-attributes for behavior definition
+
+```html
+<button type="button"
+        data-action="filter"
+        data-target="results"
+        data-param="status=active">
+  Filter Active
+</button>
+```
+
 4. Ensure forms function without JavaScript
+
+```html
+<form method="post" action="/submit" novalidate>
+  {% csrf_token %}
+  <fieldset>
+    <legend>Contact Information</legend>
+    <label for="email">Email:</label>
+    <input type="email" 
+           id="email" 
+           name="email" 
+           required 
+           aria-describedby="email-help">
+    <small id="email-help">We'll never share your email</small>
+  </fieldset>
+  <button type="submit">Submit</button>
+</form>
+```
 
 ### Semantic Structure Requirements
 
@@ -23,11 +119,50 @@
    - Descriptive ARIA labels and roles
    - Well-structured forms with labels
 
+```html
+<main>
+  <h1>Page Title</h1>
+  <article>
+    <header>
+      <h2>Article Title</h2>
+      <p>Meta information</p>
+    </header>
+    <section aria-labelledby="section1">
+      <h3 id="section1">Section Heading</h3>
+      <!-- Content -->
+    </section>
+  </article>
+  <aside role="complementary">
+    <h2>Related Information</h2>
+    <!-- Sidebar content -->
+  </aside>
+</main>
+```
+
 2. Progressive Enhancement:
    - Base functionality without JavaScript
    - HTMX integration with proper attributes
    - CSRF token handling in forms
    - Clear loading/error indicators
+
+```html
+<!-- Base functionality -->
+<form method="post" action="/search">
+  <input type="search" name="q">
+  <button type="submit">Search</button>
+</form>
+
+<!-- HTMX enhancement -->
+<div hx-target="#results" 
+     hx-swap="innerHTML"
+     hx-include="[name='q']">
+  <input type="search" 
+         name="q" 
+         hx-get="/search"
+         hx-trigger="keyup delay:500ms">
+  <div id="results" role="region" aria-live="polite"></div>
+</div>
+```
 
 ### Framework Integration
 
@@ -408,7 +543,7 @@ my_project/
 │   ├── templates/
 │   │   ├── layouts/          # Page layouts and base templates
 │   │   │   ├── base.html
-│   │   │   ├── auth_base.html
+│   │   │   ├── base_authentication.html
 │   │   │   ├── dashboard_base.html
 │   │   ├── components/       # Reusable UI elements
 │   │   │   ├── navbar.html

@@ -1,0 +1,21 @@
+{% extends "base_authentication.html" %}
+
+{% block title %}Logged Out - Greenova{% endblock %}
+
+{% block main %}
+<article class="grid">
+    <div>
+        <hgroup>
+            <h1>Successfully Logged Out</h1>
+            <h2>Thank you for using Greenova</h2>
+        </hgroup>
+
+        <p>You have been successfully logged out of your account.</p>
+        
+        <p>
+            <a href="{% url 'authentication:login' %}" role="button">Log In Again</a>
+            <a href="{% url 'landing:home' %}" role="button" class="outline">Return to Home</a>
+        </p>
+    </div>
+</article>
+{% endblock %}

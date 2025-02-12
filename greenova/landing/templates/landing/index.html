@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<article>
+    <!-- Hero Section -->
+    <header>
+        <hgroup>
+            <h1>Environmental Obligations Management</h1>
+            <h2>Streamline your environmental compliance with Greenova</h2>
+        </hgroup>
+        <p>
+            Track, manage, and report on environmental obligations with ease.
+            Built for environmental professionals by environmental professionals.
+        </p>
+        <p>
+            <a href="{% url 'authentication:register' %}" role="button">Get Started</a>
+            <a href="#features" role="button" class="outline">Learn More</a>
+        </p>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features">
+        <h2>Key Features</h2>
+        <div class="grid">
+            <article>
+                <h3>Obligation Tracking</h3>
+                <p>Monitor and manage environmental obligations across multiple projects</p>
+            </article>
+            <article>
+                <h3>Compliance Dashboard</h3>
+                <p>Real-time insights into your environmental compliance status</p>
+            </article>
+            <article>
+                <h3>Automated Reporting</h3>
+                <p>Generate comprehensive reports with just a few clicks</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2>About Greenova</h2>
+        <p>
+            Greenova is designed to help environmental professionals manage their 
+            obligations effectively. Our platform simplifies compliance tracking, 
+            reporting, and team collaboration.
+        </p>
+    </section>
+
+    <!-- CTA Section -->
+    <section>
+        <h2>Ready to get started?</h2>
+        <p>
+            Join environmental professionals who trust Greenova for their 
+            compliance management needs.
+        </p>
+        <p>
+            <a href="{% url 'authentication:register' %}" role="button">Sign Up Now</a>
+        </p>
+    </section>
+</article>
+{% endblock %}

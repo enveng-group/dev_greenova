@@ -1,1 +1,9 @@
 .DS_Store
+greenova/db.sqlite3
+package-lock.json
+**/node_modules/**
+**/.venv/**
+**/__pycache__/**
+**/staticfiles/**
+**/media/**
+**/db.sqlite3
