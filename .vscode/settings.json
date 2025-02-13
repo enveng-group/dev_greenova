@@ -1,23 +1,180 @@
 {
-    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-    "github.copilot.editor.enableAutoCompletions": true,
-    "github.copilot.nextEditSuggestions.enabled": true,
-    "html.format.templating": true,
-    "task.reconnection": true,
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.terminal.activateEnvironment": true,
-    "python.terminal.shellIntegration.enabled": true,
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features",
+        "editor.formatOnSave": false,
+        "editor.suggest.insertMode": "replace",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[git-commit]": {
+        "editor.rulers": [
+            72,
+            50
+        ],
+        "editor.wordWrap": "on",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.fontFamily": "monospace"
+    },
+    "[html]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "vscode.html-language-features",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.suggest.insertMode": "replace"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[json]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[markdown]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "vscode.markdown-language-features",
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "comments": "off",
+            "strings": "off",
+            "other": "off"
+        }
+    },
+    "[pip-requirements]": {
+        "editor.defaultFormatter": "ms-python.python",
+        "editor.insertFinalNewline": true,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "files.trimTrailingWhitespace": true
+    },
+    "[plaintext]": {
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "comments": false,
+            "strings": false,
+            "other": false
+        },
+        "editor.tabSize": 4,
+        "files.insertFinalNewline": true
+    },
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.python",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll": "explicit"
+        },
+        "editor.rulers": [
+            88,
+            100
+        ],
+        "editor.wordBasedSuggestions": "off"
+    },
+    "[shellscript]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format",
+        "editor.formatOnSave": true,
+        "files.eol": "\n"
+    },
+    "autopep8.args": [
+        "--max-line-length=88",
+        "--experimental",
+        "--aggressive",
+        "--aggressive",
+        "--in-place",
+        "--recursive",
+        "--select=E,W,F",
+        "--ignore=E226,E302,E41",
+        "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules"
+    ],
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.linkedEditing": true,
+    "editor.renderWhitespace": "boundary",
+    "editor.rulers": [
+        79,
+        88,
+        100
+    ],
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/node_modules": true
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "github.copilot.advanced": {
+        "listCount": 10,
+        "inlineSuggestCount": 3,
+        "debug.enable": false
+    },
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.editor.enableAutoCompletions": true,
     "github.copilot.enable": {
         "*": true,
         "plaintext": true,
         "markdown": true,
         "scminput": false
     },
-    "github.copilot.advanced": {
-        "setFallbackTimeout": 5000,
-        "listCount": 10,
-        "inlineSuggestCount": 3
-    }
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "html.format.templating": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.extraPaths": [],
+    "python.analysis.typeCheckingMode": "strict",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.shellIntegration.enabled": true,
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.indexing": true,
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.testing.unittestEnabled": true,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./greenova",
+        "-p",
+        "*test*.py"
+    ],
+    "python.envFile": "${workspaceFolder}/.env",
+    "task.reconnection": true,
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.editor.enablePreview": false,
+    "debug.inlineValues": "auto",
+    "debug.console.fontSize": 14,
+    "debug.toolBarLocation": "docked",
+    "debugpy.debugJustMyCode": false,
+    "editor.stickyScroll.enabled": true,
+    "eslint.validate": [
+        "javascript"
+    ],
+    "eslint.format.enable": true,
+    "files.associations": {
+        "*.html": "html",
+        "*.js": "javascript",
+        "*.py": "python",
+        "requirements*.txt": "pip-requirements"
+    },
+    "html.format.wrapLineLength": 88,
+    "html.format.wrapAttributes": "preserve-aligned",
+    "javascript.format.semicolons": "insert",
+    "javascript.preferences.quoteStyle": "single",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "eslint.codeActionsOnSave.rules": [
+        "!prettier/*",
+        "*"
+    ],
+    "figma.autocompleteBlocks": true,
+    "figma.autocompleteProperties": true,
+    "python.testing.pytestEnabled": false
 }

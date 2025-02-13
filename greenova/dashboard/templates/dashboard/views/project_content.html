@@ -1,0 +1,74 @@
+{% if error %}
+<article role="alert">
+    <p>{{ error }}</p>
+</article>
+{% elif project %}
+<article id="project-content">
+    <header>
+        <hgroup>
+            <h2>{{ project.name }}</h2>
+            {% if project.description %}
+            <p>{{ project.description }}</p>
+            {% endif %}
+        </hgroup>
+    </header>
+
+    <div role="region"
+         aria-label="Environmental Mechanisms"
+         hx-target="#obligations-table-content">
+        {% for mechanism in mechanisms %}
+        <figure>
+            <figcaption>
+                <h3>{{ mechanism }}</h3>
+            </figcaption>
+            <canvas id="chart-{{ forloop.counter }}"
+                    class="chart-container"
+                    data-mechanism="{{ mechanism }}"
+                    data-project="{{ project.id }}"
+                    height="200"
+                    hx-get="{% url 'analytics:mechanism-status' %}"
+                    hx-trigger="load, revealed"
+                    hx-vals='{"mechanism": "{{ mechanism }}", "project": "{{ project.id }}"}'
+                    hx-swap="none"
+                    hx-indicator=".chart-loading"
+                    aria-label="{{ mechanism }} status distribution">
+            </canvas>
+            <progress class="chart-loading htmx-indicator">
+                Loading chart data...
+            </progress>
+            <details>
+                <summary>Chart Description</summary>
+                <p>Shows the distribution of obligations by status for {{ mechanism }}
+                </p>
+            </details>
+        </figure>
+        {% empty %}
+        <p role="alert">No mechanisms found for this project.</p>
+        {% endfor %}
+    </div>
+
+    <section id="obligations-section"
+             aria-labelledby="obligations-heading"
+             hx-target="#obligations-table-content">
+        <h3 id="obligations-heading">Obligations</h3>
+        <div id="obligations-table-content"
+             hx-get="{% url 'dashboard:obligations' project.id %}"
+             hx-trigger="load, revealed, filterChanged from:canvas"
+             hx-include="[data-selected-filter]"
+             hx-indicator=".table-loading">
+            {% include "dashboard/components/obligation_list.html" %}
+        </div>
+        <progress class="table-loading htmx-indicator">
+            Loading obligations...
+        </progress>
+    </section>
+
+    <input type="hidden"
+           name="selected-filter"
+           data-selected-filter>
+</article>
+{% else %}
+<article role="alert">
+    <p>Please select a project to view details.</p>
+</article>
+{% endif %}

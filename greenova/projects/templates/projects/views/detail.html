@@ -1,0 +1,52 @@
+{% extends 'projects/layouts/project_base.html' %}
+
+{% block project_title %}{{ project.name }}{% endblock %}
+
+{% block project_content %}
+<article>
+  <header>
+    <div>
+      <h2>Project Details</h2>
+      <nav>
+        <a href="{% url 'projects:edit' project.id %}" role="button"
+           class="outline">Edit Project</a>
+        <button type="button"
+                class="outline"
+                hx-delete="{% url 'projects:delete' project.id %}"
+                hx-confirm="Are you sure you want to delete this project?"
+                hx-redirect="{% url 'projects:list' %}">
+          Delete Project
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <section aria-labelledby="project-info">
+    <h3 id="project-info">Project Information</h3>
+    <dl>
+      <dt>Description</dt>
+      <dd>{{ project.description|default:"No description provided" }}</dd>
+      <dt>Created</dt>
+      <dd><time
+              datetime="{{ project.created_at|date:'c' }}">{{ project.created_at|date:"j M Y" }}</time>
+      </dd>
+      <dt>Last Updated</dt>
+      <dd><time
+              datetime="{{ project.updated_at|date:'c' }}">{{ project.updated_at|date:"j M Y" }}</time>
+      </dd>
+    </dl>
+  </section>
+
+  <section aria-labelledby="obligations-heading">
+    <header>
+      <div>
+        <h3 id="obligations-heading">Obligations</h3>
+        <a href="{% url 'projects:add_obligation' project.id %}" role="button">Add
+          Obligation</a>
+      </div>
+    </header>
+
+    {% include "projects/components/tables/obligation_table.html" with obligations=project.obligations.all %}
+  </section>
+</article>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'analytics/layouts/analytics_base.html' %}
+
+{% block analytics_title %}Environmental Aspects{% endblock %}
+{% block analytics_subtitle %}Detailed Aspect Analysis{% endblock %}
+
+{% block analytics_content %}
+<section aria-labelledby="aspect-overview">
+  <h2 id="aspect-overview">Aspect Overview</h2>
+
+  {% for aspect in aspects %}
+  <article>
+    <header>
+      <h3>{{ aspect.name }}</h3>
+      {% include "analytics/components/indicators/status_indicator.html" with status=aspect.status %}
+    </header>
+
+    {% include "analytics/components/charts/aspect_details.html" with aspect=aspect %}
+
+    <footer>
+      <details>
+        <summary>Related Obligations</summary>
+        <ul>
+          {% for obligation in aspect.obligations %}
+          <li>
+            <a href="{% url 'projects:obligation_detail' obligation.number %}">
+              {{ obligation.number }} - {{ obligation.title }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+    </footer>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

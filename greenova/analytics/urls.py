@@ -1,9 +1,15 @@
 from django.urls import path
-from . import views
+from django.urls.resolvers import URLPattern
+from typing import List
+from .views import MechanismStatusChartView, AspectDetailsView
 
 app_name = 'analytics'
 
-urlpatterns = [
-    path('mechanism-status/', views.MechanismStatusChartView.as_view(), name='mechanism_status'),
-    path('aspect-details/<str:obligation_number>/', views.AspectDetailsView.as_view(), name='aspect_details'),
+urlpatterns: List[URLPattern] = [
+    path('mechanism-status/', 
+         MechanismStatusChartView.as_view(), 
+         name='mechanism_status'),
+    path('aspect-details/<str:obligation_number>/',
+         AspectDetailsView.as_view(),
+         name='aspect_details'),
 ]

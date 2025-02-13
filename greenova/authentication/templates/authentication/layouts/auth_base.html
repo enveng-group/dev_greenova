@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta_description %}Greenova - Environmental Obligations Management
+System{% endblock %}
+{% block title %}Greenova - Environmental Management{% endblock %}
+
+{% block nav_items %}
+<li><a href="{% url 'landing:home' %}"
+       aria-label="Return to home"><strong>Greenova</strong></a></li>
+{% endblock %}
+
+{% block main %}
+<main role="main">
+    {% block auth_content %}{% endblock %}
+</main>
+{% endblock %}
+
+{% block extra_body %}{% endblock %}

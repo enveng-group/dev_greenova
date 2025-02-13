@@ -1,0 +1,67 @@
+<div id="obligations-list"
+     role="region"
+     aria-labelledby="obligations-heading">
+
+    <progress class="htmx-indicator" aria-busy="true">
+        Loading obligations...
+    </progress>
+
+    {% if obligations %}
+    <article>
+        <header>
+            <hgroup>
+                <h3>Project Obligations</h3>
+                {% if current_filter %}
+                <p>Filtered by: {{ current_filter }}</p>
+                {% endif %}
+            </hgroup>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Number</th>
+                        <th scope="col">Mechanism</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obligation in obligations %}
+                    <tr>
+                        <td>
+                            <details>
+                                <summary>{{ obligation.obligation_number }}</summary>
+                                <article>
+                                    <header>{{ obligation.obligation }}</header>
+                                    {% if obligation.supporting_information %}
+                                    <p>{{ obligation.supporting_information }}</p>
+                                    {% endif %}
+                                </article>
+                            </details>
+                        </td>
+                        <td>{{ obligation.primary_environmental_mechanism }}</td>
+                        <td>
+                            <mark data-status="{{ obligation.status }}">
+                                {{ obligation.status|title }}
+                            </mark>
+                        </td>
+                        <td>
+                            <time
+                                  datetime="{{ obligation.action_due_date|date:'c'|default:'' }}">
+                                {{ obligation.action_due_date|date:"Y-m-d"|default:"No due date" }}
+                            </time>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+    {% else %}
+    <article role="alert">
+        <p>No obligations found matching the current filters.</p>
+    </article>
+    {% endif %}
+</div>

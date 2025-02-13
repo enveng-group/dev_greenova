@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+<article>
+    <header>
+        <hgroup>
+            <h1>Hi {{ request.user.first_name }}</h1>
+            <h2>Environmental Commitments Management System</h2>
+        </hgroup>
+        <p>Manage and track your environmental obligations with ease.</p>
+    </header>
+
+    <section aria-labelledby="project-selection">
+        <h2 id="project-selection">Project Selection</h2>
+        <!-- Remove project-selection class, use semantic label -->
+        <label for="project-select">
+            Select your project
+            <select id="project-select"
+                    name="project"
+                    hx-get="{% url 'dashboard:select_project' %}"
+                    hx-target="#dashboard-content"
+                    hx-include="[name='project']"
+                    hx-trigger="change"
+                    aria-controls="dashboard-content">
+                <option value="">Choose a project...</option>
+                {% for project in projects %}
+                <option value="{{ project.id }}">{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <!-- Use aria-live for dynamic content -->
+        <div aria-live="polite" role="status" class="htmx-indicator">
+            Loading project data...
+        </div>
+    </section>
+
+    <section id="dashboard-content" aria-live="polite">
+        {% if not projects %}
+        <article role="alert">
+            <p>No projects found. Please contact your administrator.</p>
+        </article>
+        {% endif %}
+    </section>
+
+    {% include "dashboard/components/chat_widget.html" %}
+</article>
+{% endblock %}
+
+{% block footer_content %}
+<div role="contentinfo">
+    <p>
+        System Status:
+        <mark data-status="{{ system_status }}">{{ system_status }}</mark> |
+        Version: {{ app_version }} |
+        Last Updated:
+        <time datetime="{{ last_updated|date:'c' }}">
+            {{ last_updated|date:"j M Y H:i" }}
+        </time>
+    </p>
+    <p>
+        Need help? Contact
+        <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+    </p>
+    <small>© {% now "Y" %} Greenova. All rights reserved.</small>
+</div>
+{% endblock %}

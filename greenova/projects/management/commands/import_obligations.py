@@ -1,20 +1,21 @@
 from django.core.management.base import BaseCommand
 from django.utils.dateparse import parse_date
 from projects.models import Project, Obligation
+from argparse import ArgumentParser
 import csv
 from datetime import datetime
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = 'Import obligations from CSV file'
-
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument('csv_file', type=str, help='Path to the CSV file')
 
-    def handle(self, *args, **options):
-        csv_file = options['csv_file']
+    def handle(self, *args: Any, **options: Any) -> None:
+        csv_file = str(options['csv_file'])
         self.stdout.write(f"Importing obligations from {csv_file}")
         
         try:
@@ -41,10 +42,10 @@ class Command(BaseCommand):
                     # Parse dates
                     action_due_date = parse_date(row['action__due_date']) if row['action__due_date'] else None
                     close_out_date = parse_date(row['close__out__date']) if row['close__out__date'] else None
-                    recurring_forecasted_date = parse_date(row['recurring__forcasted__date']) if row['recurring__forcasted__date'] else None
+                    # recurring_forecasted_date = parse_date(row['recurring__forcasted__date']) if row['recurring__forcasted__date'] else None
 
                     # Create or update obligation
-                    obligation, created = Obligation.objects.update_or_create(
+                    _obligation, created = Obligation.objects.update_or_create(
                         obligation_number=row['obligation__number'],
                         defaults={
                             'project': projects[project_name],

@@ -1,0 +1,20 @@
+<figure role="region"
+        aria-label="{{ mechanism.name }} Status Distribution">
+  <canvas id="chart-{{ mechanism.id }}"
+          class="chart-container"
+          data-mechanism="{{ mechanism.id }}"
+          height="200"
+          hx-get="{% url 'analytics:mechanism-status' %}"
+          hx-trigger="load, revealed"
+          hx-vals='{"mechanism": "{{ mechanism.id }}"}'
+          hx-swap="none"
+          aria-label="{{ mechanism.name }} status distribution chart">
+  </canvas>
+  <figcaption>
+    <details>
+      <summary>Chart Description</summary>
+      <p>Distribution of obligations by status for {{ mechanism.name }}</p>
+    </details>
+  </figcaption>
+  <progress class="htmx-indicator">Loading chart data...</progress>
+</figure>

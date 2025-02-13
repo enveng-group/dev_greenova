@@ -1,20 +1,23 @@
-from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
+from typing import Any, Dict
+from django.contrib.auth import login
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LogoutView
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
+from django.http import HttpRequest, HttpResponse
 
 class RegisterView(CreateView):
     form_class = UserCreationForm
-    template_name = 'authentication/register.html'
-    success_url = reverse_lazy('dashboard:home')  # Change this to redirect to dashboard
+    template_name = 'authentication/auth/register.html'
+    success_url = reverse_lazy('dashboard:home')
 
-    def form_valid(self, form):
+    def form_valid(self, form: Any) -> HttpResponse:
         response = super().form_valid(form)
-        login(self.request, self.object)
+        user = form.save()
+        login(self.request, user)
         next_url = self.request.GET.get('next')
         if next_url:
             return redirect(next_url)
@@ -23,9 +26,9 @@ class RegisterView(CreateView):
 @method_decorator(require_http_methods(['POST']), name='dispatch')
 class CustomLogoutView(LogoutView):
     next_page = reverse_lazy('landing:home')
-    template_name = 'authentication/logout.html'
+    template_name = 'authentication/auth/logout.html'
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Dict[str, Any]) -> HttpResponse:
         if request.method == 'POST':
             return super().dispatch(request, *args, **kwargs)
         return redirect('dashboard:home')

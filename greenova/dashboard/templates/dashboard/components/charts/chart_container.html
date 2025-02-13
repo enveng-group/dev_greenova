@@ -1,0 +1,21 @@
+{% load static %}
+
+<figure role="region"
+        aria-label="{{ mechanism }} Distribution"
+        data-action="filter"
+        data-mechanism="{{ mechanism }}"
+        data-project="{{ project.id }}">
+    <header>
+        <h3>{{ mechanism }}</h3>
+    </header>
+
+    <canvas id="chart-{{ index }}"
+            aria-label="{{ mechanism }} status distribution chart"></canvas>
+
+    <figcaption id="summary-{{ index }}">
+        <details>
+            <summary>Chart Description</summary>
+            <p>Shows the distribution of obligations by status for {{ mechanism }}</p>
+        </details>
+    </figcaption>
+</figure>

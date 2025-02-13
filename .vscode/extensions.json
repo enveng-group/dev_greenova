@@ -6,6 +6,9 @@
         "github.copilot-chat",
         "ms-python.vscode-pylance",
         "ms-python.python",
-        "ms-python.debugpy"
+        "ms-python.debugpy",
+        "figma.figma-vscode-extension",
+        "foxundermoon.shell-format",
+        "visualstudioexptteam.vscodeintellicode"
     ]
 }

@@ -1,45 +1,67 @@
-from django.http import JsonResponse
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse, HttpRequest, HttpResponse
+from django.views.generic import TemplateView
 from django.db.models import Count
-from projects.models import Obligation  # Import from projects app
+from typing import Dict, Any, TypedDict
+from projects.models import Obligation
+from utils.mixins import LoggedActionMixin
+from .generics import AnalyticsView  # Add this import
 
-class MechanismStatusChartView(LoginRequiredMixin, View):
-    def get(self, request):
-        mechanism = request.GET.get('mechanism')
-        project_id = request.GET.get('project')
+class StatusCount(TypedDict):
+    status: str
+    count: int
+
+class AnalyticsDashboardView(LoggedActionMixin, TemplateView):
+    template_name = 'analytics/views/mechanism_dashboard.html'
+
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        mechanisms = (Obligation.objects
+                     .values('primary_environmental_mechanism')
+                     .annotate(total=Count('id'))
+                     .order_by('primary_environmental_mechanism'))
+        context['mechanisms'] = mechanisms
+        return context
+
+class MechanismStatusChartView(LoggedActionMixin, TemplateView):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        raw_counts = (Obligation.objects
+                     .values('status')
+                     .annotate(count=Count('id')))
         
-        query = Obligation.objects.filter(primary_environmental_mechanism=mechanism)
-        if project_id:
-            query = query.filter(project_id=project_id)
-            
-        status_counts = (query
-            .values('status')
-            .annotate(count=Count('status'))
-            .order_by('status'))
+        counts: Dict[str, int] = {
+            'not started': 0,
+            'in progress': 0,
+            'completed': 0
+        }
         
-        # Initialize counts for all statuses
-        counts = {'not started': 0, 'in progress': 0, 'completed': 0}
-        for item in status_counts:
-            counts[item['status']] = item['count']
+        for item in raw_counts:
+            if isinstance(item['status'], str):
+                counts[item['status']] = item['count']
         
-        data = {
-            'status_counts': [counts['not started'], counts['in progress'], counts['completed']],
-            'labels': ['Not Started', 'In Progress', 'Completed']
+        data: Dict[str, list[str] | list[int]] = {
+            'labels': ['Not Started', 'In Progress', 'Completed'],
+            'values': [
+                counts['not started'],
+                counts['in progress'],
+                counts['completed']
+            ]
         }
         
         return JsonResponse(data)
 
-class AspectDetailsView(LoginRequiredMixin, View):
-    def get(self, request, obligation_number):
-        obligation = Obligation.objects.get(obligation_number=obligation_number)
-        
-        context = {
-            'obligation': obligation,
-            'environmental_aspects': Obligation.objects
-                .filter(project=obligation.project)
-                .values('environmental_aspect')
-                .annotate(count=Count('environmental_aspect'))
-        }
-        
-        return JsonResponse(context)
+class AspectAnalyticsView(LoggedActionMixin, TemplateView):
+    template_name = 'analytics/views/aspect_analysis.html'
+
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        aspects = (Obligation.objects
+                  .values('environmental_aspect')
+                  .annotate(total=Count('id'))
+                  .order_by('environmental_aspect'))
+        context['aspects'] = aspects
+        return context
+
+class AspectDetailsView(AnalyticsView[Obligation]):
+    """View for displaying aspect details."""
+    template_name = 'analytics/views/aspect_details.html'
+    model = Obligation

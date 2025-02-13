@@ -1,0 +1,30 @@
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {% include "projects/components/messages/form_errors.html" %}
+
+  <fieldset>
+    <legend>Project Details</legend>
+
+    <label for="id_name">
+      Project Name
+      <input type="text"
+             name="name"
+             id="id_name"
+             value="{{ form.name.value|default:'' }}"
+             required
+             aria-required="true"
+             maxlength="255">
+    </label>
+
+    <label for="id_description">
+      Description
+      <textarea name="description"
+                id="id_description"
+                rows="4">{{ form.description.value|default:'' }}</textarea>
+    </label>
+  </fieldset>
+
+  <button type="submit">{{ submit_text|default:"Save Project" }}</button>
+  <a href="{% url 'projects:list' %}" role="button" class="outline">Cancel</a>
+</form>

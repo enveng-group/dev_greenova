@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics - Greenova{% endblock %}
+
+{% block main %}
+<article>
+  <header>
+    <hgroup>
+      <h1>{% block analytics_title %}Analytics{% endblock %}</h1>
+      <h2>{% block analytics_subtitle %}Environmental Performance Insights{% endblock %}
+      </h2>
+    </hgroup>
+  </header>
+
+  <div role="main">
+    {% block analytics_content %}{% endblock %}
+  </div>
+</article>
+{% endblock %}
