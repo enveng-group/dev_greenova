@@ -3,47 +3,22 @@
     "image": "mcr.microsoft.com/devcontainers/python:3",
 
     "features": {
-        "ghcr.io/devcontainers/features/git:1": {
-            "version": "latest",
-            "ppa": false
-        }
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {}
     },
 
     "customizations": {
         "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "ms-python.vscode-pylance",
-                "ms-python.debugpy",
-                "GitHub.copilot-chat",
-                "GitHub.copilot",
-                "dbaeumer.vscode-eslint",
-                "ms-python.autopep8"
-            ],
-
             "settings": {
-                "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-                "github.copilot.editor.enableAutoCompletions": true,
-                "github.copilot.nextEditSuggestions.enabled": true,
-                "html.format.templating": true,
-                "dev.containers.copyGitConfig": true,
-                "task.reconnection": true,
                 "dev.containers.gpuAvailability": "none",
                 "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.7.0/bin/node",
-                "github.copilot.enable": {
-                    "*": true,
-                    "plaintext": true,
-                    "markdown": true,
-                    "scminput": false
-                },
-                "github.copilot.advanced": {
-                    "setFallbackTimeout": 5000,
-                    "listCount": 10,
-                    "inlineSuggestCount": 3
+                "python.interpreter.infoVisibility": "always",
+                "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
+                "dotfiles.targetPath": "~/dotfiles",
+                "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh"
                 }
             }
-        }
-    },
+        },
 
     "mounts": [
         "source=dev_greenova_home,target=/home/vscode,type=volume",
@@ -52,7 +27,7 @@
         "source=dev_greenova-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules,type=volume",
         "source=dev_greenova-nvm,target=/usr/local/share/nvm,type=volume",
         "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
-        "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=delegated"
+        "source=${localEnv:HOME}/dotfiles,target=/home/vscode/dotfiles,type=bind,consistency=delegated"
     ],
 
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",
@@ -83,11 +58,7 @@
         8000
     ],
 
-    "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode && sudo chown -R vscode:vscode /home/vscode/.vscode-server && touch /home/vscode/.gitconfig && sudo chown vscode:vscode /home/vscode/.gitconfig && git config --global --add safe.directory /workspaces/${localWorkspaceFolderBasename} && git config --global core.fileMode false",
+    "postCreateCommand": "chmod +x .devcontainer/post_create.sh && /bin/sh .devcontainer/post_create.sh",
 
-    "postStartCommand": "bash -c 'touch ~/.bash_env && echo \". /usr/local/share/nvm/nvm.sh\" >> ~/.bash_env && echo \". /usr/local/share/nvm/bash_completion\" >> ~/.bash_env && . ~/.bash_env && nvm install node && nvm use node && nvm alias default node && python -m venv .venv && . .venv/bin/activate && pip install --upgrade pip && npm install -g npm@latest && npm install && pip install -r requirements.txt && git config --global --add safe.directory \"$(pwd)\"'",
-
-    "initializeCommand": {
-        "podman-prep": "podman system prune --force && podman volume prune --force || true"
-    }
+    "postStartCommand": "chmod +x .devcontainer/post_start.sh && /bin/sh .devcontainer/post_start.sh"
 }

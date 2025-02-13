@@ -1,0 +1,23 @@
+{
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.editor.enableAutoCompletions": true,
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "html.format.templating": true,
+    "task.reconnection": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.shellIntegration.enabled": true,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 500,
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": true,
+        "markdown": true,
+        "scminput": false
+    },
+    "github.copilot.advanced": {
+        "setFallbackTimeout": 5000,
+        "listCount": 10,
+        "inlineSuggestCount": 3
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "ms-python.autopep8",
+        "dbaeumer.vscode-eslint",
+        "github.copilot",
+        "github.copilot-chat",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy"
+    ]
+}
