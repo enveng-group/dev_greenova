@@ -2,65 +2,82 @@
 
 set -e
 
-# Setup NVM environment
-if ! touch "${HOME}/.bash_env"; then
-    echo "Error: Could not create .bash_env file" >&2
-    exit 1
-fi
+# Function to safely create and setup virtual environment
+setup_venv() {
+    # Remove existing venv if it exists - use force removal to handle permission issues
+    if [ -d ".venv" ]; then
+        rm -rf .venv/* || {
+            echo "Error: Failed to clean existing virtual environment" >&2
+            return 1
+        }
+    fi
 
-# Use printf for reliable newline handling
-printf ". /usr/local/share/nvm/nvm.sh\n" >> "${HOME}/.bash_env"
-printf ". /usr/local/share/nvm/bash_completion\n" >> "${HOME}/.bash_env"
+    # Create new virtual environment with specific permissions
+    mkdir -p .venv
+    chown -R $(id -u):$(id -g) .venv
+    python -m venv --clear .venv || {
+        echo "Error: Failed to create virtual environment" >&2
+        return 1
+    }
 
-# Source the environment file
-. "${HOME}/.bash_env"
+    # Source the activation script
+    . .venv/bin/activate || {
+        echo "Error: Failed to activate virtual environment" >&2
+        return 1
+    }
+}
 
-# Install and configure Node.js
-if ! command -v nvm >/dev/null 2>&1; then
-    echo "Error: NVM not found" >&2
-    exit 1
-fi
+# Function to setup NVM environment
+setup_nvm() {
+    # Create .bash_env file
+    touch "${HOME}/.bash_env" || {
+        echo "Error: Could not create .bash_env file" >&2
+        return 1
+    }
 
-if ! nvm install node; then
-    echo "Error: Node.js installation failed" >&2
-    exit 1
-fi
+    # Setup NVM environment variables
+    {
+        echo '. /usr/local/share/nvm/nvm.sh'
+        echo '. /usr/local/share/nvm/bash_completion'
+    } >"${HOME}/.bash_env"
 
-if ! nvm use node; then
-    echo "Error: Could not use installed Node.js version" >&2
-    exit 1
-fi
+    # Source the environment file
+    . "${HOME}/.bash_env"
 
-if ! nvm alias default node; then
-    echo "Error: Could not set default Node.js version" >&2
-    exit 1
-fi
+    # Install and configure Node.js
+    command -v nvm >/dev/null 2>&1 || {
+        echo "Error: NVM not found" >&2
+        return 1
+    }
+
+    nvm install node &&
+        nvm use node &&
+        nvm alias default node || {
+        echo "Error: Node.js setup failed" >&2
+        return 1
+    }
+}
+
+# Setup virtual environment
+setup_venv || exit 1
+
+# Setup NVM and Node.js
+setup_nvm || exit 1
 
 # Update package managers
-if ! pip install --upgrade pip; then
+pip install --upgrade pip || {
     echo "Error: pip upgrade failed" >&2
     exit 1
-fi
+}
 
-if ! command -v npm >/dev/null 2>&1; then
-    echo "Error: npm not found" >&2
-    exit 1
-fi
-
-if ! npm install -g npm@latest; then
+command -v npm >/dev/null 2>&1 &&
+    npm install -g npm@latest || {
     echo "Error: npm upgrade failed" >&2
     exit 1
-fi
+}
 
-# Install project dependencies
-if [ -f package.json ] && ! npm install; then
-    echo "Error: npm dependencies installation failed" >&2
-    exit 1
-fi
-
-if [ -f requirements.txt ] && ! pip install -r requirements.txt; then
-    echo "Error: Python dependencies installation failed" >&2
-    exit 1
-fi
+# Install project dependencies if they exist
+[ -f package.json ] && npm install
+[ -f requirements.txt ] && pip install -r requirements.txt
 
 exit 0

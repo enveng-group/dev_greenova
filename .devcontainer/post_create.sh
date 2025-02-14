@@ -23,10 +23,10 @@ if [ -d "/home/vscode/.ssh" ]; then
         echo "Error: Failed to set permissions on .ssh directory" >&2
         exit 1
     fi
-    
+
     # Set proper permissions for SSH keys if they exist
-    if [ -f "/home/vscode/.ssh/id_rsa" ]; then
-        if ! chmod 600 /home/vscode/.ssh/id_rsa; then
+    if [ -f "/home/vscode/.ssh/id_ed25519" ]; then
+        if ! chmod 600 /home/vscode/.ssh/id_ed25519; then
             echo "Error: Failed to set permissions on SSH private key" >&2
             exit 1
         fi

@@ -9,31 +9,33 @@
         "vscode": {
             "settings": {
                 "dev.containers.gpuAvailability": "none",
-                "dev.containers.dockerSocketPath": "unix:///run/user/1000/podman/podman.sock",
-                "dev.containers.dockerCredentialHelper": false,
-                "dev.containers.dockerComposePath": "podman-compose",
-                "dev.containers.dockerPath": "podman",
-                "dev.containers.optimisticallyLaunchDocker": false,
-                "dev.containers.workspaceMountConsistency": "delegated",
-                "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.7.0/bin/node",
-                "python.interpreter.infoVisibility": "always",
                 "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
                 "dotfiles.targetPath": "~/dotfiles",
-                "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh"
+                "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
+                "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
+                "python.interpreter.infoVisibility": "always",
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+                "python.terminal.activateEnvironment": true
             }
         }
     },
     "mounts": [
         "source=dev_greenova_home,target=/home/vscode,type=volume",
         "source=dev_greenova-vscode-server,target=/home/vscode/.vscode-server,type=volume",
-        "source=dev_greenova-venv,target=/workspaces/${localWorkspaceFolderBasename}/.venv,type=volume",
-        "source=dev_greenova-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules,type=volume",
         "source=dev_greenova-nvm,target=/usr/local/share/nvm,type=volume",
+        "source=dev_greenova-venv,target=/workspaces/${localWorkspaceFolderBasename}/.venv,type=volume,consistency=delegated,uid=1000,gid=1000",
+        "source=dev_greenova-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules,type=volume",
         "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
-        "source=${localEnv:HOME}/dotfiles,target=/home/vscode/dotfiles,type=bind,consistency=delegated"
+        "source=${localEnv:HOME}/dotfiles,target=/home/vscode/dotfiles,type=bind,consistency=delegated",
+        "source=dev_greenova-venv,target=/workspaces/${localWorkspaceFolderBasename}/.venv,type=volume,Z"
     ],
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",
     "remoteUser": "vscode",
+    "runArgs": [
+        "--userns=keep-id",
+        "--security-opt",
+        "label=disable"
+    ],
     "containerEnv": {
         "HOME": "/home/vscode",
         "DOCKER_CONFIG": "/tmp"
@@ -41,8 +43,8 @@
     "containerUser": "vscode",
     "updateRemoteUserUID": true,
     "remoteEnv": {
-        "PODMAN_USERNS": "keep-id",
-        "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin",
+        "DOCKER_CREDENTIAL_HELPER": "none",
+        "CONTAINER_CREDENTIAL_HELPER": "none"
     },
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "forwardPorts": [
