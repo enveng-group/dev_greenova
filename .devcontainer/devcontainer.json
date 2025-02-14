@@ -23,7 +23,6 @@
         "source=dev_greenova_home,target=/home/vscode,type=volume",
         "source=dev_greenova-vscode-server,target=/home/vscode/.vscode-server,type=volume",
         "source=dev_greenova-nvm,target=/usr/local/share/nvm,type=volume",
-        "source=dev_greenova-venv,target=/workspaces/${localWorkspaceFolderBasename}/.venv,type=volume,consistency=delegated,uid=1000,gid=1000",
         "source=dev_greenova-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules,type=volume",
         "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
         "source=${localEnv:HOME}/dotfiles,target=/home/vscode/dotfiles,type=bind,consistency=delegated",
