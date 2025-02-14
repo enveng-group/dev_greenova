@@ -55,7 +55,7 @@ SECRET_KEY = "django-insecure-y4iiuwh@r27)q36u55%8k3l(gwyp7s&i$zl_+m0f+ljwm1c#hy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: List[str] = []
+ALLOWED_HOSTS: List[str] = ['127.0.0.1', 'localhost', '*']  # Add '*' for development
 
 
 # Application definition
@@ -178,14 +178,16 @@ APP_VERSION = '0.1.0'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Security settings
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = False  # Set to False for HTTP in development
+SESSION_COOKIE_SECURE = False  # Set to False for HTTP in development
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = None
 
 # Cache settings
 CACHES = {
@@ -216,12 +218,12 @@ LOGGING: LoggingConfig = {
     },
     'handlers': {
         'console': {
-            'class_name': 'logging.StreamHandler',  # Use class_name to match TypedDict
+            'class': 'logging.StreamHandler',  # Changed from class_name to class
             'level': 'INFO',
             'formatter': 'simple',
         },
         'file': {
-            'class_name': 'logging.FileHandler',  # Use class_name to match TypedDict
+            'class': 'logging.FileHandler',  # Changed from class_name to class
             'level': 'INFO',
             'filename': str(BASE_DIR / 'logs' / 'django.log'),
             'formatter': 'verbose',
@@ -239,4 +241,11 @@ LOGGING: LoggingConfig = {
             'propagate': True,
         },
     },
-}
+} # type: ignore
+
+# Modify runserver command to force HTTP
+import sys
+if 'runserver' in sys.argv:
+    import os
+    os.environ['PYTHONHTTPSVERIFY'] = '0'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'greenova.settings'

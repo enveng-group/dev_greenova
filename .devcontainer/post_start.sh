@@ -12,9 +12,7 @@ setup_venv() {
         }
     fi
 
-    # Create new virtual environment with specific permissions
-    mkdir -p .venv
-    chown -R $(id -u):$(id -g) .venv
+    # Create new virtual environment
     python -m venv --clear .venv || {
         echo "Error: Failed to create virtual environment" >&2
         return 1

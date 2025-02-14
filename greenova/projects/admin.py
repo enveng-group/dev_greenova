@@ -1,25 +1,32 @@
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin
 from django.http import HttpRequest
 from django.db.models import QuerySet
+from django.forms import ModelForm
+from logging import getLogger
 from .models import Project, Obligation
 
+logger = getLogger(__name__)
+
 @admin.register(Project)
-class ProjectAdmin(ModelAdmin[Project]):
-    """Admin configuration for Project model.
-    
-    This class configures the admin interface for managing Project objects.
-    Supports searching by name and displays ID and name columns.
-    """
+class ProjectAdmin(admin.ModelAdmin):
+    """Admin configuration for Project model."""
     list_display = ('id', 'name')
     search_fields = ('name',)
 
+    def save_model(self, request: HttpRequest, obj: Project, form: ModelForm, change: bool) -> None:
+        try:
+            logger.info(f"Admin saving project: {obj.name}")
+            super().save_model(request, obj, form, change)
+        except Exception as e:
+            logger.error(f"Admin save error: {str(e)}")
+            raise
+
 @admin.register(Obligation)
-class ObligationAdmin(ModelAdmin[Obligation]):
+class ObligationAdmin(admin.ModelAdmin):
     """Admin configuration for analytics views of obligations."""
     list_display = (
         'obligation_number',
-        'primary_environmental_mechanism',
+        'primary_environmental_mechanism', 
         'status',
         'action_due_date'
     )

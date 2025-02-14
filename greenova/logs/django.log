@@ -1,0 +1,108 @@
+INFO 2025-02-14 15:04:26,057 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:04:43,516 basehttp "GET / HTTP/1.1" 301 0
+INFO 2025-02-14 15:04:43,700 basehttp code 400, message Bad request syntax ('\x16\x03\x01\x06ò\x01\x00\x06î\x03\x03¶')
+ERROR 2025-02-14 15:04:43,701 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:04:43,834 basehttp code 400, message Bad request version ('rq')
+ERROR 2025-02-14 15:04:43,834 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:07:08,301 autoreload /workspaces/dev_greenova/greenova/greenova/settings.py changed, reloading.
+INFO 2025-02-14 15:07:08,661 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:07:09,750 autoreload /workspaces/dev_greenova/greenova/greenova/settings.py changed, reloading.
+INFO 2025-02-14 15:07:10,052 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:07:11,188 autoreload /workspaces/dev_greenova/greenova/greenova/settings.py changed, reloading.
+INFO 2025-02-14 15:07:11,520 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:07:12,644 autoreload /workspaces/dev_greenova/greenova/greenova/settings.py changed, reloading.
+INFO 2025-02-14 15:07:12,932 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:07:14,053 autoreload /workspaces/dev_greenova/greenova/greenova/settings.py changed, reloading.
+INFO 2025-02-14 15:07:14,324 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:07:18,801 basehttp code 400, message Bad request version ('õ5;$')
+ERROR 2025-02-14 15:07:18,801 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:07:18,919 basehttp code 400, message Bad request version ('localhost\x00')
+ERROR 2025-02-14 15:07:18,919 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:07:20,775 basehttp code 400, message Bad request version ('\x8a\x8a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x06ezz\x00\x00\x00\x12\x00\x00\x00\x17\x00\x00\x00-\x00\x02\x01\x01\x00')
+ERROR 2025-02-14 15:07:20,775 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:07:20,921 basehttp code 400, message Bad request version ("U\x82'\x8beþ\x11\x00°\x01\x12¼\x8cü+")
+ERROR 2025-02-14 15:07:20,922 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:07:26,344 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:07:28,469 basehttp code 400, message Bad request version ('\x02h2\x08http/1.1ÿ\x01\x00\x01\x00\x00-\x00\x02\x01\x01\x00')
+ERROR 2025-02-14 15:07:28,469 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:07:28,585 basehttp code 400, message Bad request version ('&\x02\x9c,"ªð*k')
+ERROR 2025-02-14 15:07:28,585 basehttp You're accessing the development server over HTTPS, but it only supports HTTP.
+INFO 2025-02-14 15:08:39,298 autoreload Watching for file changes with StatReloader
+INFO 2025-02-14 15:08:41,993 basehttp "GET / HTTP/1.1" 200 3903
+INFO 2025-02-14 15:08:42,039 basehttp "GET /static/css/vendor/modern-normalize.css HTTP/1.1" 200 3391
+INFO 2025-02-14 15:08:42,218 basehttp "GET /static/js/vendor/htmx.min.js HTTP/1.1" 200 48101
+INFO 2025-02-14 15:08:42,254 basehttp "GET /static/js/vendor/_hyperscript.min.js HTTP/1.1" 200 101286
+INFO 2025-02-14 15:08:42,267 basehttp "GET /static/css/vendor/pico.classless.min.css HTTP/1.1" 200 70167
+INFO 2025-02-14 15:08:42,274 basehttp "GET /static/css/styles.css HTTP/1.1" 200 3085
+INFO 2025-02-14 15:08:42,296 basehttp "GET /static/js/vendor/cdn.min.js HTTP/1.1" 200 44758
+WARNING 2025-02-14 15:08:42,358 log Not Found: /favicon.ico
+WARNING 2025-02-14 15:08:42,359 basehttp "GET /favicon.ico HTTP/1.1" 404 3232
+INFO 2025-02-14 15:09:05,058 basehttp "GET / HTTP/1.1" 200 3903
+INFO 2025-02-14 15:09:05,078 basehttp "GET /static/css/vendor/modern-normalize.css HTTP/1.1" 200 3391
+INFO 2025-02-14 15:09:05,084 basehttp "GET /static/js/vendor/htmx.min.js HTTP/1.1" 200 48101
+INFO 2025-02-14 15:09:05,087 basehttp "GET /static/js/vendor/cdn.min.js HTTP/1.1" 200 44758
+INFO 2025-02-14 15:09:05,087 basehttp "GET /static/js/vendor/_hyperscript.min.js HTTP/1.1" 200 101286
+INFO 2025-02-14 15:09:05,087 basehttp "GET /static/css/vendor/pico.classless.min.css HTTP/1.1" 200 70167
+INFO 2025-02-14 15:09:05,132 basehttp "GET /static/css/styles.css HTTP/1.1" 200 3085
+INFO 2025-02-14 15:09:11,284 basehttp "GET / HTTP/1.1" 200 3879
+INFO 2025-02-14 15:09:11,293 basehttp "GET /static/css/vendor/modern-normalize.css HTTP/1.1" 200 3391
+INFO 2025-02-14 15:09:11,298 basehttp "GET /static/js/vendor/cdn.min.js HTTP/1.1" 200 44758
+INFO 2025-02-14 15:09:11,299 basehttp "GET /static/css/vendor/pico.classless.min.css HTTP/1.1" 200 70167
+INFO 2025-02-14 15:09:11,300 basehttp "GET /static/js/vendor/_hyperscript.min.js HTTP/1.1" 200 101286
+INFO 2025-02-14 15:09:11,300 basehttp "GET /static/js/vendor/htmx.min.js HTTP/1.1" 200 48101
+INFO 2025-02-14 15:09:11,409 basehttp "GET /static/css/styles.css HTTP/1.1" 200 3085
+ERROR 2025-02-14 15:09:18,738 log Internal Server Error: /auth/register/
+Traceback (most recent call last):
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 134, in render
+    compiled_parent = self.get_parent(context)
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 131, in get_parent
+    return self.find_template(parent, context)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/loader_tags.py", line 109, in find_template
+    template, origin = context.template.engine.find_template(
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        template_name,
+        ^^^^^^^^^^^^^^
+        skip=history,
+        ^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/engine.py", line 163, in find_template
+    raise TemplateDoesNotExist(name, tried=tried)
+django.template.exceptions.TemplateDoesNotExist: base_authentication.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/backends/django.py", line 109, in render
+    reraise(exc, self.backend)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/dev_greenova/.venv/lib/python3.13/site-packages/django/template/backends/django.py", line 130, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: base_authentication.html
+ERROR 2025-02-14 15:09:18,740 basehttp "GET /auth/register/ HTTP/1.1" 500 131231

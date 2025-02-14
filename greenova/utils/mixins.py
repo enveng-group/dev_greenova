@@ -4,7 +4,10 @@ from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 from django.db.models import QuerySet
 from django.views.generic.detail import SingleObjectMixin
-from .logger import logger
+import logging  # Standard Python logging
+
+# Set up logger for this module
+logger = logging.getLogger(__name__)
 
 class LoggedActionMixin(LoginRequiredMixin, View):
     """Mixin to add logging to view actions."""

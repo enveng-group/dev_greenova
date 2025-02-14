@@ -1,6 +1,9 @@
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ProjectPagination:
     """Handle pagination for project-related views."""
@@ -10,7 +13,12 @@ class ProjectPagination:
     
     def get_page(self, page_number: int) -> Any:
         """Get the specified page of results."""
-        return self.paginator.get_page(page_number)
+        try:
+            logger.debug(f"Getting page {page_number}")
+            return self.paginator.get_page(page_number)
+        except Exception as e:
+            logger.error(f"Pagination error: {str(e)}")
+            raise
     
     @property
     def num_pages(self) -> int:

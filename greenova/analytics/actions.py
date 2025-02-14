@@ -1,8 +1,10 @@
 from typing import Any, Dict, Optional, TypedDict, List
-from django.http import HttpRequest
 from django.db.models import QuerySet
 from projects.models import Obligation
-from utils.logger import log_action
+import logging
+
+# Set up logger for this module
+logger = logging.getLogger(__name__)
 
 class DataPoint(TypedDict):
     name: str
@@ -17,17 +19,39 @@ class DataStructure(TypedDict):
     count: int
     data: List[Dict[str, Any]]
 
+def log_action(action_name: str):
+    """Decorator to log method execution time and status using Django's logging."""
+    def decorator(func: Any):
+        from functools import wraps
+        from time import time
+
+        @wraps(func)
+        def wrapper(*args: Any, **kwargs: Any):
+            start_time = time()
+            try:
+                result = func(*args, **kwargs)
+                logger.info(
+                    f"{action_name} completed successfully in {time() - start_time:.2f}s"
+                )
+                return result
+            except Exception as e:
+                logger.error(
+                    f"{action_name} failed after {time() - start_time:.2f}s: {str(e)}"
+                )
+                raise
+        return wrapper
+    return decorator
+
 class AnalyticsActions:
     """Handle analytics-related actions."""
 
     @staticmethod
+    @staticmethod
     @log_action("Export analytics data")
     def export_data(
-        request: HttpRequest,
         queryset: QuerySet[Obligation],
         format: str = 'csv'
     ) -> Dict[str, Any]:
-        """Export analytics data in specified format."""
         try:
             data: Dict[str, Any] = {
                 'format': format,
