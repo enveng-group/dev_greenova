@@ -1,25 +1,28 @@
 {
     "name": "Greenova Development",
     "image": "mcr.microsoft.com/devcontainers/python:3",
-
     "features": {
         "ghcr.io/devcontainers/features/git:1": {},
         "ghcr.io/devcontainers/features/github-cli:1": {}
     },
-
     "customizations": {
         "vscode": {
             "settings": {
                 "dev.containers.gpuAvailability": "none",
+                "dev.containers.dockerSocketPath": "unix:///run/user/1000/podman/podman.sock",
+                "dev.containers.dockerCredentialHelper": false,
+                "dev.containers.dockerComposePath": "podman-compose",
+                "dev.containers.dockerPath": "podman",
+                "dev.containers.optimisticallyLaunchDocker": false,
+                "dev.containers.workspaceMountConsistency": "delegated",
                 "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.7.0/bin/node",
                 "python.interpreter.infoVisibility": "always",
                 "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
                 "dotfiles.targetPath": "~/dotfiles",
                 "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh"
-                }
             }
-        },
-
+        }
+    },
     "mounts": [
         "source=dev_greenova_home,target=/home/vscode,type=volume",
         "source=dev_greenova-vscode-server,target=/home/vscode/.vscode-server,type=volume",
@@ -29,36 +32,22 @@
         "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
         "source=${localEnv:HOME}/dotfiles,target=/home/vscode/dotfiles,type=bind,consistency=delegated"
     ],
-
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated",
-
     "remoteUser": "vscode",
-
-    "runArgs": [
-        "--userns=keep-id",
-        "--security-opt", "label=disable"
-    ],
-
     "containerEnv": {
+        "HOME": "/home/vscode",
         "DOCKER_CONFIG": "/tmp"
     },
-
     "containerUser": "vscode",
     "updateRemoteUserUID": true,
-
     "remoteEnv": {
+        "PODMAN_USERNS": "keep-id",
         "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin",
-        "DOCKER_CREDENTIAL_HELPER": "none",
-        "CONTAINER_CREDENTIAL_HELPER": "none"
     },
-
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-
     "forwardPorts": [
         8000
     ],
-
     "postCreateCommand": "chmod +x .devcontainer/post_create.sh && /bin/sh .devcontainer/post_create.sh",
-
     "postStartCommand": "chmod +x .devcontainer/post_start.sh && /bin/sh .devcontainer/post_start.sh"
 }
