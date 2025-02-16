@@ -25,16 +25,15 @@
         }
     },
     "mounts": [
-        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
-        "source=dotfiles,target=~/dotfiles,type=volume"
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated"
     ],
     "workspaceMount": "source=dev_greenova,target=/workspaces/dev_greenova,type=volume",
     "remoteUser": "vscode",
     "containerUser": "vscode",
+    "updateRemoteUserUID": true,
     "forwardPorts": [
         8000
     ],
     "postCreateCommand": "sudo chmod +x .devcontainer/post_create.sh && /bin/bash .devcontainer/post_create.sh",
-    "postStartCommand": "sudo chmod +x .devcontainer/post_start.sh && /bin/bash .devcontainer/post_start.sh",
-    "workspaceFolder": "/workspaces/dev_greenova"
+    "postStartCommand": "sudo chmod +x .devcontainer/post_start.sh && /bin/bash .devcontainer/post_start.sh"
 }

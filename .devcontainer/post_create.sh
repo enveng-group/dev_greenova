@@ -17,10 +17,18 @@ if [ -d "/home/vscode/.ssh" ]; then
         exit 1
     fi
 
-    # Set proper permissions for SSH keys if they exist
+    # Set proper permissions for SSH key if they exist
     if [ -f "/home/vscode/.ssh/id_ed25519" ]; then
         if ! chmod 600 /home/vscode/.ssh/id_ed25519; then
             echo "Error: Failed to set permissions on SSH private key" >&2
+            exit 1
+        fi
+    fi
+
+        # Set proper permissions for public SSH key if they exist
+    if [ -f "/home/vscode/.ssh/id_ed25519.pub" ]; then
+        if ! chmod 644 /home/vscode/.ssh/id_ed25519.pub; then
+            echo "Error: Failed to set permissions on SSH public key" >&2
             exit 1
         fi
     fi
