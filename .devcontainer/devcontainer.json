@@ -27,7 +27,8 @@
     "mounts": [
         "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated"
     ],
-    "workspaceMount": "source=dev_greenova,target=/workspaces/dev_greenova,type=volume",
+    "workspaceMount": "source=workspaces,target=/workspaces,type=volume",
+    "workspaceFolder": "/workspaces",
     "remoteUser": "vscode",
     "containerUser": "vscode",
     "updateRemoteUserUID": true,
