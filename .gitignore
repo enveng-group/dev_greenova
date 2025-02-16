@@ -8,3 +8,4 @@ package-lock.json
 **/media/**
 **/db.sqlite3
 .env
+greenova/logs/django.log

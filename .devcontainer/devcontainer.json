@@ -1,10 +1,7 @@
 {
     "name": "Greenova Development",
     "image": "mcr.microsoft.com/devcontainers/python:3",
-    "features": {
-        "ghcr.io/devcontainers/features/git:1": {},
-        "ghcr.io/devcontainers/features/github-cli:1": {}
-    },
+    "features": {},
     "customizations": {
         "vscode": {
             "settings": {
@@ -18,49 +15,26 @@
             "extensions": [
                 "ms-python.autopep8",
                 "dbaeumer.vscode-eslint",
-                "figma.figma-vscode-extension",
                 "GitHub.copilot",
                 "GitHub.copilot-chat",
                 "ms-python.vscode-pylance",
                 "ms-python.python",
                 "ms-python.debugpy",
-                "foxundermoon.shell-format",
-                "ms-vscode-remote.remote-containers",
-                "ms-azuretools.vscode-docker"
+                "foxundermoon.shell-format"
             ]
         }
     },
     "mounts": [
-        "source=dev_greenova_home,target=/home/vscode,type=volume,Z",
-        "source=dev_greenova-vscode-server,target=/home/vscode/.vscode-server,type=volume,Z",
-        "source=dev_greenova-nvm,target=/usr/local/share/nvm,type=volume,Z",
-        "source=dev_greenova-node_modules,target=/workspaces/${localWorkspaceFolderBasename}/node_modules,type=volume,Z",
-        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated,Z",
-        "source=${localEnv:HOME}/dotfiles,target=/home/vscode/dotfiles,type=bind,consistency=delegated,Z",
-        "source=dev_greenova-venv,target=/workspaces/${localWorkspaceFolderBasename}/.venv,type=volume,Z",
-        "source=dev_greenova-nvm,target=/usr/local/share/nvm,type=volume,Z"
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
+        "source=dotfiles,target=~/dotfiles,type=volume"
     ],
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=delegated,Z",
+    "workspaceMount": "source=dev_greenova,target=/workspaces/dev_greenova,type=volume",
     "remoteUser": "vscode",
-    "runArgs": [
-        "--userns=keep-id",
-        "--security-opt",
-        "label=disable"
-    ],
-    "containerEnv": {
-        "HOME": "/home/vscode",
-        "DOCKER_CONFIG": "/tmp"
-    },
     "containerUser": "vscode",
-    "updateRemoteUserUID": true,
-    "remoteEnv": {
-        "DOCKER_CREDENTIAL_HELPER": "none",
-        "CONTAINER_CREDENTIAL_HELPER": "none"
-    },
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "forwardPorts": [
         8000
     ],
     "postCreateCommand": "sudo chmod +x .devcontainer/post_create.sh && /bin/bash .devcontainer/post_create.sh",
-    "postStartCommand": "sudo chmod +x .devcontainer/post_start.sh && /bin/bash .devcontainer/post_start.sh"
+    "postStartCommand": "sudo chmod +x .devcontainer/post_start.sh && /bin/bash .devcontainer/post_start.sh",
+    "workspaceFolder": "/workspaces/dev_greenova"
 }

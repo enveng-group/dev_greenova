@@ -104,11 +104,36 @@
     ],
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/**": true,
+        "**/.venv/**": true,
+        "**/__pycache__/**": true
+    },
+    "files.watcherInclude": [
+        "**/*.py",
+        "**/*.html",
+        "**/*.css",
+        "**/*.js"
+    ],
     "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/*.pyc": true,
         "**/__pycache__": true,
         "**/.pytest_cache": true,
-        "**/node_modules": true
+        "**/node_modules": true,
+        "**/.venv": true
     },
+    "extensions.ignoreRecommendations": true,
+    "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.indexing": false,
+    "javascript.suggest.enabled": false,
+    "typescript.suggest.enabled": false,
     "git.autofetch": true,
     "git.confirmSync": false,
     "git.enableSmartCommit": true,
@@ -156,8 +181,6 @@
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.terminal.activateEnvironment": true,
     "python.terminal.shellIntegration.enabled": true,
-    "python.analysis.diagnosticMode": "workspace",
-    "python.analysis.indexing": true,
     "python.analysis.inlayHints.functionReturnTypes": false,
     "python.analysis.inlayHints.variableTypes": false,
     "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
@@ -174,8 +197,6 @@
         "!prettier/*",
         "*"
     ],
-    "figma.autocompleteBlocks": true,
-    "figma.autocompleteProperties": true,
     "python.testing.pytestEnabled": false,
     "remoteHub.gitProtocol": "ssh",
     "github.gitProtocol": "ssh",
