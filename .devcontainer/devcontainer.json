@@ -10,7 +10,9 @@
                 "dotfiles.targetPath": "~/dotfiles",
                 "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
                 "python.interpreter.infoVisibility": "always",
-                "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node"
+                "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+                "python.terminal.activateEnvironment": true
             },
             "extensions": [
                 "ms-python.autopep8",
@@ -28,7 +30,7 @@
         "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated"
     ],
     "workspaceMount": "source=workspaces,target=/workspaces,type=volume",
-    "workspaceFolder": "/workspaces",
+    "workspaceFolder": "/workspaces/dev_greenova",
     "remoteUser": "vscode",
     "containerUser": "vscode",
     "updateRemoteUserUID": true,

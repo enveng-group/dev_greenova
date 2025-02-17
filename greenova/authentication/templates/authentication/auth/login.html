@@ -1,4 +1,4 @@
-{% extends "base_authentication.html" %}
+{% extends "authentication/layouts/auth_base.html" %}
 {% load static %}
 
 {% block title %}Login - Greenova{% endblock %}
@@ -12,7 +12,7 @@
         </hgroup>
 
         {% include "authentication/components/messages/form_errors.html" %}
-        {% include "authentication/components/forms/login_form.html" with submit_text="Log In" %}
+        {% include "authentication/components/forms/login_form.html" %}
 
         <footer>
             <details>

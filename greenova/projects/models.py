@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Project(models.Model):
     """Represents a project entity with related obligations."""
+    id = models.AutoField(primary_key=True)  # Add explicit id field
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

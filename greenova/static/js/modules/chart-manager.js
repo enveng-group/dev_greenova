@@ -6,7 +6,7 @@ export class ChartManager {
             this.cleanup(canvas.id);
 
             // Lazy load Chart.js
-            const Chart = (await import('/static/js/chart.umd.js')).default;
+            const Chart = (await import('../vendor/chart.umd.js')).default;
 
             const chart = new Chart(canvas, {
                 type: 'doughnut',

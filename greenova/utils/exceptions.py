@@ -18,3 +18,7 @@ class ObligationError(GreenovaException):
 class ChartDataError(GreenovaException):
     """Raised when there's an error processing chart data."""
     pass
+
+class DashboardError(GreenovaException):
+    """Dashboard-specific errors."""
+    pass

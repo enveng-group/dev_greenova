@@ -1,11 +1,9 @@
 {
   "dependencies": {
     "@picocss/pico": "2.0.6",
-    "alpinejs": "3.14.8",
     "chart.js": "4.4.7",
     "eslint": "9.20.1",
     "htmx.org": "1.9.12",
-    "hyperscript.org": "0.9.14",
     "modern-normalize": "3.0.1"
   },
   "engines": {

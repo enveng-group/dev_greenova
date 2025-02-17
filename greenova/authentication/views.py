@@ -40,3 +40,20 @@ class CustomLogoutView(LogoutView):
         if request.method == 'POST':
             return super().dispatch(request, *args, **kwargs)
         return redirect('dashboard:home')
+
+from django.views.generic import TemplateView
+from django.urls import reverse
+from utils.mixins import NavigationMixin
+
+class HomeView(NavigationMixin, TemplateView):
+    """Landing page view."""
+    template_name = 'landing/index.html'
+    
+    def get(self, request: Any, *args: Any, **kwargs: Any) -> Any:
+        if request.user.is_authenticated:
+            return redirect('dashboard:home')
+        return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        return context

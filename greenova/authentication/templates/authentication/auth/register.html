@@ -1,4 +1,4 @@
-{% extends "base_authentication.html" %}
+{% extends "authentication/layouts/auth_base.html" %}
 {% load static %}
 
 {% block title %}Register - Greenova{% endblock %}
@@ -13,7 +13,7 @@
     </header>
 
     {% include "authentication/components/messages/form_errors.html" %}
-    {% include "authentication/components/forms/login_form.html" with submit_text="Create Account" %}
+    {% include "authentication/components/forms/register_form.html" %}
 
     <footer>
         <nav>

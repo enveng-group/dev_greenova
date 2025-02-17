@@ -1,0 +1,14 @@
+[data-status="operational"] {
+    background-color: var(--success);
+    color: var(--success-inverse);
+}
+
+[data-status="maintenance"] {
+    background-color: var(--warning);
+    color: var(--warning-inverse);
+}
+
+[data-status="error"] {
+    background-color: var(--error);
+    color: var(--error-inverse);
+}

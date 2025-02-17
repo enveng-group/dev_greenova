@@ -1,5 +1,7 @@
-<figure role="region"
-        aria-label="{{ aspect.name }} Details">
+{% load analytics_tags common_tags %}
+
+<figure role="region" aria-label="{{ aspect.name }} Details">
+  {% if aspect %}
   <canvas id="aspect-chart-{{ aspect.id }}"
           class="chart-container"
           data-aspect="{{ aspect.id }}"
@@ -9,6 +11,11 @@
           hx-swap="none"
           aria-label="{{ aspect.name }} detailed analysis chart">
   </canvas>
+
+  <div class="htmx-indicator" role="status" aria-busy="true">
+    Loading {{ aspect.name }} aspect data...
+  </div>
+
   <figcaption>
     <details>
       <summary>Aspect Information</summary>
@@ -26,5 +33,7 @@
       </dl>
     </details>
   </figcaption>
-  <progress class="htmx-indicator">Loading aspect data...</progress>
+  {% else %}
+  <p>{{ chart_error_message|default:"Unable to load aspect details." }}</p>
+  {% endif %}
 </figure>

@@ -3,21 +3,6 @@
 
 {% block title %}Dashboard - Greenova{% endblock %}
 
-{% block nav_items %}
-<li><a href="{% url 'dashboard:home' %}"
-     aria-current="page"><strong>Greenova</strong></a></li>
-<li><a href="{% url 'projects:list' %}">Projects</a></li>
-<li><a href="{% url 'analytics:home' %}">Analytics</a></li>
-<li>
-  <form method="post" action="{% url 'authentication:logout' %}">
-    {% csrf_token %}
-    <button type="submit" class="outline"
-            onclick="return confirm('Are you sure you want to log out?')">Log
-      Out</button>
-  </form>
-</li>
-{% endblock %}
-
 {% block main %}
 <article>
   <header>

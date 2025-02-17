@@ -1,0 +1,30 @@
+.chart-container {
+    height: 300px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.chart-container:hover {
+    transform: scale(1.02);
+}
+
+.chart-container.active {
+    box-shadow: 0 0 0 2px var(--primary);
+}
+
+.chart-container figure {
+    margin: 0;
+    height: 200px;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: auto;
+        min-height: 250px;
+    }
+}

@@ -20,7 +20,7 @@ class DatabaseConfig(TypedDict):
 
 class TemplateOptions(TypedDict):
     context_processors: List[str]
-    debug: bool
+    debug: bool  # This was the missing required field
 
 class TemplateConfig(TypedDict):
     BACKEND: str
@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "analytics.apps.AnalyticsConfig",
     "dashboard.apps.DashboardConfig",
     "projects.apps.ProjectsConfig",
+    "utils",  # Add this to register common_tags
 ]
 
 MIDDLEWARE = [
@@ -94,16 +95,18 @@ TEMPLATES: List[TemplateConfig] = [
             BASE_DIR / 'landing' / 'templates',
             BASE_DIR / 'authentication' / 'templates',
             BASE_DIR / 'dashboard' / 'templates',
+            BASE_DIR / 'analytics' / 'templates',
+            BASE_DIR / 'projects' / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
+                'django.contrib.auth.context_processors.auth',  # Make sure this is present
                 'django.contrib.messages.context_processors.messages',
             ],
-            'debug': False,
+            'debug': DEBUG,  # Add this line, referencing your DEBUG setting
         },
     },
 ]

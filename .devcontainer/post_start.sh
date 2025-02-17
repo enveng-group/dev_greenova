@@ -13,13 +13,13 @@ setup_venv() {
     fi
 
     # Create new virtual environment
-    python -m venv --clear .venv || {
+    python3 -m venv --clear .venv || {
         echo "Error: Failed to create virtual environment" >&2
         return 1
     }
 
     # Source the activation script
-    . .venv/bin/activate || {
+    source .venv/bin/activate || {
         echo "Error: Failed to activate virtual environment" >&2
         return 1
     }

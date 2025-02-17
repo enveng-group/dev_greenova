@@ -1,8 +1,9 @@
-// Import only what's needed
 import { ChartManager } from './modules/chart-manager.js';
+import { ChatWidget } from './modules/chat-widget.js';
 
-// Initialize chart manager
+// Initialize managers
 const chartManager = new ChartManager();
+const chatWidget = new ChatWidget();
 
 // HTMX Events
 htmx.on('htmx:afterRequest', (evt) => {
@@ -10,6 +11,9 @@ htmx.on('htmx:afterRequest', (evt) => {
         const canvas = evt.detail.elt;
         const data = JSON.parse(evt.detail.xhr.response);
         chartManager.init(canvas, data);
+    }
+    if (evt.detail.failed) {
+        console.error('HTMX request failed:', evt.detail.xhr.responseText);
     }
 });
 

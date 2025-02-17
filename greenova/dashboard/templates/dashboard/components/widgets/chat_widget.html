@@ -1,103 +1,32 @@
-<aside id="chat-widget"
-       x-data="chatbot"
-       aria-label="Chat Assistant">
+<aside id="chat-widget" aria-label="Chat Assistant">
+    <dialog id="chat-dialog">
+        <article>
+            <header>
+                <h3>Chat Assistant</h3>
+                <button type="button" class="close-button" aria-label="Close chat">✕</button>
+            </header>
 
-  <button @click="toggle"
-          :aria-expanded="isOpen"
-          aria-controls="chat-dialog"
-          class="outline">
-    <span aria-hidden="true">💬</span>
-    <span class="sr-only">Toggle chat assistant</span>
-  </button>
+            <div id="chat-messages" role="log" aria-live="polite">
+                <template id="message-template">
+                    <div class="message">
+                        <p></p>
+                    </div>
+                </template>
+            </div>
 
-  <dialog id="chat-dialog"
-          x-ref="dialog"
-          @close="isOpen = false"
-          :open="isOpen">
-    <article>
-      <header>
-        <h3>Greenova Assistant</h3>
-        <button @click="close"
-                aria-label="Close chat"
-                class="outline">&times;</button>
-      </header>
-
-      <div id="chat-messages"
-           role="log"
-           x-ref="messages"
-           aria-live="polite">
-        <template x-for="msg in messages" :key="msg.id">
-          <div :class="msg.type + '-message'">
-            <p x-text="msg.text"></p>
-          </div>
-        </template>
-      </div>
-
-      <footer>
-        <form @submit.prevent="sendMessage"
-              hx-post="/api/chat/"
-              hx-trigger="submit"
-              hx-swap="none"
-              hx-target="#chat-messages"
-              hx-indicator="#chat-loading">
-          <label for="chat-input" class="sr-only">
-            Type your message
-          </label>
-          <input type="text"
-                 id="chat-input"
-                 x-model="input"
-                 placeholder="Type your question..."
-                 aria-label="Chat message">
-          <button type="submit">Send</button>
-          <progress id="chat-loading" class="htmx-indicator">
-            Sending message...
-          </progress>
-        </form>
-      </footer>
-    </article>
-  </dialog>
+            <footer>
+                <form id="chat-form" method="POST">
+                    {% csrf_token %}
+                    <input type="text"
+                           id="message-input"
+                           name="message"
+                           placeholder="Type your message..."
+                           aria-label="Chat message"
+                           autocomplete="off"
+                           required>
+                    <button type="submit" aria-label="Send message">Send</button>
+                </form>
+            </footer>
+        </article>
+    </dialog>
 </aside>
-
-<script>
-  document.addEventListener('alpine:init', () => {
-    Alpine.data('chatbot', () => ({
-      isOpen: false,
-      messages: [{
-        id: Date.now(),
-        type: 'bot',
-        text: '👋 Hi! How can I help you navigate Greenova?'
-      }],
-      input: '',
-
-      toggle() {
-        this.isOpen = !this.isOpen;
-        if (this.isOpen) {
-          this.$nextTick(() => this.$refs.dialog.showModal());
-        } else {
-          this.$refs.dialog.close();
-        }
-      },
-
-      close() {
-        this.$refs.dialog.close();
-      },
-
-      init() {
-        htmx.on('htmx:afterRequest', (evt) => {
-          if (evt.detail.elt.closest('#chat-widget')) {
-            const response = JSON.parse(evt.detail.xhr.response);
-            this.messages.push({
-              id: Date.now(),
-              type: 'bot',
-              text: response.message
-            });
-            this.input = '';
-            this.$nextTick(() => {
-              this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
-            });
-          }
-        });
-      }
-    }));
-  });
-</script>

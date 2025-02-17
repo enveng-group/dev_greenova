@@ -40,7 +40,7 @@
 │   │   └── views.cpython-313.pyc
 │   ├── templates
 │   │   └── authentication
-│   │       ├── base_authentication.html
+│   │       ├── auth_base.html
 │   │       ├── login.html
 │   │       ├── logout.html
 │   │       ├── password_reset_complete.html
