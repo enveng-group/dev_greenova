@@ -8,7 +8,11 @@ register = template.Library()
 @register.simple_tag
 def mechanism_chart_data(mechanism: str) -> Dict[str, Any]:
     """Get chart data for mechanism."""
-    processor = AnalyticsDataProcessor(Obligation.objects.all())
+    processor = AnalyticsDataProcessor(
+        Obligation.objects.filter(
+            primary_environmental_mechanism=mechanism
+        )
+    )
     return processor.get_mechanism_data(mechanism)
 
 @register.inclusion_tag('analytics/components/charts/trend_chart.html')

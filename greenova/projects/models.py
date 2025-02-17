@@ -49,6 +49,15 @@ class Project(models.Model):
             status__in=['not started', 'in progress']
         )
 
+    def get_analytics(self):
+        """Get analytics data for the project."""
+        return {
+            'total_obligations': self.obligations.count(),
+            'completed': self.obligations.filter(status='completed').count(),
+            'in_progress': self.obligations.filter(status='in progress').count(),
+            'not_started': self.obligations.filter(status='not started').count()
+        }
+
     def save(self, *args, **kwargs):
         try:
             logger.info(f"Saving project: {self.name}")

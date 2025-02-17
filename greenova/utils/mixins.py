@@ -6,6 +6,7 @@ from django.db.models import QuerySet
 from django.views.generic.detail import SingleObjectMixin
 import logging  # Standard Python logging
 from django.urls import reverse
+from projects.models import Project  # Import the Project model
 
 # Set up logger for this module
 logger = logging.getLogger(__name__)
@@ -64,13 +65,12 @@ class NavigationMixin(ContextMixin):
 
 class ProjectDataMixin:
     """Mixin to handle common project data operations."""
-    
     def get_project_analytics(self, project: Project) -> Dict[str, Any]:
         """Get analytics data for a project."""
         from analytics.data_utils import AnalyticsDataProcessor
         processor = AnalyticsDataProcessor(project.obligations.all())
         return {
-            'mechanism_data': processor.get_mechanism_data(),
+            'mechanism_data': processor.get_mechanism_data(mechanism="all"),  # Specify the mechanism parameter
             'completion_rate': self.calculate_completion_rate(project),
             'overdue_count': project.get_overdue_obligations().count()
         }

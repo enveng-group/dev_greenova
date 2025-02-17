@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="/static/css/vendor/pico.classless.min.css">
     <link rel="stylesheet" href="/static/css/styles.css">
 
+    <!-- In the head section, add this before other scripts -->
+    <script defer src="/static/js/vendor/chart.umd.js" type="module"></script>
+
     {% block extra_head %}{% endblock %}
 </head>
 
@@ -94,6 +97,12 @@
     <script defer src="/static/js/vendor/chart.umd.js"></script>
     <script defer src="/static/js/app.js" type="module"></script>
     {% endif %}
+
+    <!-- At the bottom of the body -->
+    <script type="module">
+        import { ChartManager } from '/static/js/modules/chart-manager.js';
+        window.chartManager = new ChartManager();
+    </script>
 </body>
 
 </html>

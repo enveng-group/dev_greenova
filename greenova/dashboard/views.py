@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from django.views.generic import TemplateView, ListView, View
+from django.views.generic import TemplateView, ListView, View, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -16,73 +16,106 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 import json
 from utils.mixins import LoggedActionMixin, NavigationMixin
-from utils.constants import STATUS_CHOICES
+from utils.constants import STATUS_CHOICES, STATUS_NOT_STARTED
 from utils.exceptions import ChartDataError
 from analytics.data_utils import AnalyticsDataProcessor
 from analytics.serializers import ChartDataSerializer
 
 logger = logging.getLogger(__name__)
 
-class DashboardHomeView(LoggedActionMixin, NavigationMixin, TemplateView):
+class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
     template_name = 'dashboard/views/dashboard.html'
-    
-    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
-        """Add dashboard context data."""
-        context = super().get_context_data(**kwargs)
-        try:
-            user = self.request.user
-            projects = Project.objects.all()
-            processor = AnalyticsDataProcessor(Obligation.objects.all())
-            
-            context.update({
-                'projects': projects,
-                'analytics': processor.get_mechanism_data('all'),
-                'system_status': self.get_system_status(),
-                'app_version': getattr(settings, 'APP_VERSION', '1.0.0'),
-                'last_updated': datetime.now(),
-                'user_name': user.get_username()
-            })
-            return context
-        except Exception as e:
-            logger.error(f"Error getting dashboard data: {str(e)}")
-            raise
-    
-    def get_system_status(self) -> str:
-        """Determine current system status."""
-        try:
-            # Implement actual status checks here
-            return 'operational'
-        except Exception as e:
-            logger.error(f"System status check error: {str(e)}")
-            return 'error'
 
-class ProjectSelectorView(LoggedActionMixin, NavigationMixin, View):
-    """Handle project selection and return project-specific content."""
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['projects'] = Project.objects.all()
+        return context
+
+class ProjectDetailView(LoginRequiredMixin, DetailView):
+    """Project detail view for the dashboard."""
+    model = Project
+    template_name = 'project/views/detail.html'
+    context_object_name = 'project'
+    pk_url_kwarg = 'project_id'
+
+    def get_object(self, queryset=None):
+        """Get the project object."""
+        return get_object_or_404(Project, pk=self.kwargs.get(self.pk_url_kwarg))
+
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        project = self.get_object()
+        context['obligations'] = Obligation.objects.filter(project=project)
+        return context
+
+class ProjectAnalyticsView(LoginRequiredMixin, TemplateView):
+    """Analytics view for a specific project."""
+    template_name = 'analytics/views/aspect_analysis.html'
+
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        project = Project.objects.get(id=project_id)
+        context['project'] = project
+        context['analytics'] = project.get_analytics()
+        return context
+
+class ProjectSelectionView(LoginRequiredMixin, View):
+    """Handle HTMX project selection requests."""
     
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def get(self, request: HttpRequest) -> HttpResponse:
         """Handle GET request for project selection."""
         try:
             project_id = request.GET.get('project_id')
-            project = get_object_or_404(Project, id=project_id)
+            if not project_id:
+                return JsonResponse({
+                    'error': 'No project selected'
+                }, status=400)
+
+            project = get_object_or_404(Project, pk=project_id)
             
-            # Get filtered obligations using utils
-            from analytics.filters import ObligationFilter
-            obligation_filter = ObligationFilter(project.obligations.all())
-            obligations = obligation_filter.filter_by_status(STATUS_NOT_STARTED)
+            # Get unique mechanisms
+            mechanisms = (
+                project.project_obligations
+                .values_list('primary_environmental_mechanism', flat=True)
+                .distinct()
+            )
+            
+            # Get obligations with status counts for each mechanism
+            mechanism_data = []
+            for mechanism in mechanisms:
+                status_counts = (
+                    project.project_obligations
+                    .filter(primary_environmental_mechanism=mechanism)
+                    .values('status')
+                    .annotate(count=Count('status'))
+                )
+                
+                mechanism_data.append({
+                    'name': mechanism,
+                    'status_counts': status_counts
+                })
             
             context = {
                 'project': project,
-                'obligations': obligations,
-                'mechanisms': project.obligations.values(
-                    'primary_environmental_mechanism'
-                ).distinct()
+                'obligations': project.project_obligations.all(),
+                'mechanisms': mechanism_data
             }
             
-            return render(request, 'dashboard/views/project_content.html', context)
+            html = render_to_string(
+                'dashboard/views/project_content.html',
+                context,
+                request
+            )
+            
+            return HttpResponse(html)
+            
         except Exception as e:
-            logger.error(f"Project selection error: {str(e)}")
-            return JsonResponse({'error': str(e)}, status=500)
+            logger.error(f"Error in project selection: {str(e)}")
+            return JsonResponse({
+                'error': 'Failed to load project'
+            }, status=500)
 
 @method_decorator(login_required, name='dispatch')
 class FilteredObligationsView(LoginRequiredMixin, ListView):
@@ -170,25 +203,12 @@ def chat_api(request: HttpRequest) -> JsonResponse:
     response = view(request)
     return JsonResponse(response.content, safe=False)
 
-class ObligationListView(LoginRequiredMixin, ListView):
-    """View for displaying obligations list."""
-    template_name = 'dashboard/components/tables/obligation_list.html'
-    context_object_name = 'obligations'
+class ObligationListView(LoginRequiredMixin, TemplateView):
+    """View for listing project obligations."""
+    template_name = 'dashboard/obligation_list.html'
 
-    def get_queryset(self) -> QuerySet[Obligation]:
-        """Get queryset of obligations for the selected project."""
-        project_id = self.kwargs.get('project_id')
-        project = get_object_or_404(Project, pk=project_id)
-        return (Obligation.objects
-                .filter(project=project)
-                .select_related('project')
-                .order_by('action_due_date'))
-
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        """Add additional context data."""
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context.update({
-            'project_id': self.kwargs.get('project_id'),
-            'current_filter': self.request.GET.get('mechanism')
-        })
+        project_id = self.kwargs.get('project_id')
+        context['obligations'] = Obligation.objects.filter(project_id=project_id)
         return context

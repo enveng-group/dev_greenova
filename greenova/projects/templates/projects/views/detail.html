@@ -48,7 +48,7 @@
       </div>
     </header>
 
-    {% include "projects/components/tables/obligation_table.html" with obligations=project.obligations.all %}
+    {% include "dashboard/components/tables/obligation_list.html" with obligations=project.obligations.all %}
   </section>
   {% obligation_table project.obligations.all %}
 </article>

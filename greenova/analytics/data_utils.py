@@ -1,8 +1,15 @@
+import logging
 from typing import Dict, List, TypedDict, Any
 from datetime import datetime, date
 from django.db.models import QuerySet, Count
 from projects.models import Obligation
 from utils.constants import STATUS_CHOICES
+
+logger = logging.getLogger(__name__)
+
+class ChartDataError(Exception):
+    """Exception raised for errors in chart data processing."""
+    pass
 
 class ChartDataPoint(TypedDict):
     label: str
@@ -22,26 +29,31 @@ class AnalyticsDataProcessor:
 
     def get_mechanism_data(self, mechanism: str) -> Dict[str, List[Any]]:
         """Get status distribution for a mechanism."""
-        status_counts = (
-            self.queryset
-            .filter(primary_environmental_mechanism=mechanism)
-            .values('status')
-            .annotate(count=Count('status'))
-            .order_by('status')
-        )
-        
-        data: Dict[str, List[Any]] = {
-            'labels': [status[1] for status in STATUS_CHOICES],
-            'values': [0] * len(STATUS_CHOICES),
-            'colors': ['var(--error)', 'var(--primary)', 'var(--success)']
-        }
-        
-        status_map = {status[0]: i for i, status in enumerate(STATUS_CHOICES)}
-        for item in status_counts:
-            if item['status'] in status_map:
-                data['values'][status_map[item['status']]] = item['count']
-                
-        return data
+        try:
+            status_counts = (
+                self.queryset
+                .filter(primary_environmental_mechanism=mechanism)
+                .values('status')
+                .annotate(count=Count('status'))
+                .order_by('status')
+            )
+            
+            data: Dict[str, List[Any]] = {
+                'labels': [status[1] for status in STATUS_CHOICES],
+                'values': [0] * len(STATUS_CHOICES),
+                'colors': ['var(--error)', 'var(--primary)', 'var(--success)']
+            }
+            
+            status_map = {status[0]: i for i, status in enumerate(STATUS_CHOICES)}
+            for item in status_counts:
+                idx = status_map.get(item['status'])
+                if idx is not None:
+                    data['values'][idx] = item['count']
+                    
+            return data
+        except Exception as e:
+            logger.error(f"Error processing mechanism data: {str(e)}")
+            raise ChartDataError("Failed to process mechanism data")
 
     def get_time_series_data(
         self,

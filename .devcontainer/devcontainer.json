@@ -27,16 +27,21 @@
         }
     },
     "mounts": [
-        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated"
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
     ],
-    "workspaceMount": "source=workspaces,target=/workspaces,type=volume",
-    "workspaceFolder": "/workspaces/dev_greenova",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "remoteUser": "vscode",
     "containerUser": "vscode",
     "updateRemoteUserUID": true,
     "forwardPorts": [
         8000
     ],
-    "postCreateCommand": "sudo chmod +x .devcontainer/post_create.sh && /bin/bash .devcontainer/post_create.sh",
-    "postStartCommand": "sudo chmod +x .devcontainer/post_start.sh && /bin/bash .devcontainer/post_start.sh"
+    "initializeCommand": "mkdir -p ${localWorkspaceFolder}/.devcontainer",
+    "postCreateCommand": {
+        "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
+        "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true",
+        "post-create": "bash .devcontainer/post_create.sh"
+    },
+    "postStartCommand": "bash .devcontainer/post_start.sh"
 }

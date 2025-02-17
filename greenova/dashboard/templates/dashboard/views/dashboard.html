@@ -7,15 +7,9 @@
     <article>
         <header>
             <hgroup>
-                <h1>Hi {{ request.user|display_name }}</h1>
-                {% with info=system_info %}
-                <p>System Status: {{ info.status|status_badge }}</p>
-                {% endwith %}
-                <h2>Environmental Commitments Management System</h2>
+                <h1>Dashboard</h1>
+                <h2>Project Overview</h2>
             </hgroup>
-            <p>Welcome to Enveng Groups ECMS where we make managing and tracking complex
-                environmental
-                commitments and obligations a whole lot easier for you.</p>
         </header>
 
         <section aria-labelledby="project-selection">
@@ -26,10 +20,10 @@
                 <select id="project-select"
                         name="project_id"
                         hx-get="{% url 'dashboard:select_project' %}"
-                        hx-target="#dashboard-content"
+                        hx-target="#project-content"
                         hx-include="[name='project_id']"
                         hx-trigger="change"
-                        aria-controls="dashboard-content">
+                        hx-indicator=".htmx-indicator">
                     <option value="">Choose a project...</option>
                     {% for project in projects %}
                     <option value="{{ project.pk }}">{{ project.name }}</option>
@@ -38,15 +32,16 @@
             </label>
 
             <!-- Use aria-live for dynamic content -->
-            <div aria-live="polite" role="status" class="htmx-indicator">
+            <div class="htmx-indicator" role="status" aria-busy="true">
                 Loading project data...
             </div>
         </section>
 
-        <section id="dashboard-content" aria-live="polite">
+        <section id="project-content" aria-live="polite">
             {% if not projects %}
             <article role="alert">
-                <p>No projects found. Please contact your administrator.</p>
+                <p>No projects found. Create your first project to get started.</p>
+                <a href="{% url 'projects:create' %}" role="button">Create Project</a>
             </article>
             {% endif %}
         </section>

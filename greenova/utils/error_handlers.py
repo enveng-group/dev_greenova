@@ -1,5 +1,8 @@
+import logging
 from django.http import JsonResponse
 from .exceptions import GreenovaException
+
+logger = logging.getLogger(__name__)
 
 def handle_dashboard_error(func):
     """Decorator to handle dashboard errors consistently."""
