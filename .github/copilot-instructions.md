@@ -535,44 +535,6 @@ This template provides a **modular, scalable, and fault-tolerant** approach, int
 
 ### Template Structure Guidelines
 
-#### Directory Structure
-
-```
-my_project/
-│── my_app/
-│   ├── templates/
-│   │   ├── layouts/          # Page layouts and base templates
-│   │   │   ├── base.html
-│   │   │   ├── base_authentication.html
-│   │   │   ├── dashboard_base.html
-│   │   ├── components/       # Reusable UI elements
-│   │   │   ├── navbar.html
-│   │   │   ├── sidebar.html
-│   │   │   ├── footer.html
-│   │   ├── partials/         # Small UI snippets (forms, alerts, etc.)
-│   │   │   ├── login_form.html
-│   │   │   ├── flash_messages.html
-│   │   ├── data_pipelines/   # UI sections for data pipelines & workflows
-│   │   │   ├── transaction_pipeline.html
-│   │   │   ├── monitoring_dashboard.html
-│   │   │   ├── logs.html
-│   │   ├── security/         # Access control & encryption-related templates
-│   │   │   ├── access_denied.html
-│   │   │   ├── login_attempts.html
-│   │   ├── pages/            # Full-page views
-│   │   │   ├── home.html
-│   │   │   ├── dashboard.html
-│   │   │   ├── settings.html
-│   │   ├── errors/           # Custom error pages
-│   │   │   ├── 404.html
-│   │   │   ├── 500.html
-│── templates/                # Global templates
-│   ├── base.html
-│   ├── security/
-│   ├── errors/
-│── static/
-│── manage.py
-```
 
 {% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
 Pipeline{% endblock title %} {% block dashboard_content %}
@@ -810,7 +772,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. **Django**: Backend framework.
 2. **SQLite3**: Lightweight database for development and production.
-3. **Podman**: Containerization platform.
+3. **Docker**: Containerization platform.
 4. **GitHub CI/CD**: Continuous integration and deployment.
 5. **Python**: Programming language for backend development.
 6. **Chart.js**: JavaScript library for data visualization.
@@ -822,11 +784,8 @@ CREATE TRIGGER update_obligations_timestamp
 12. **NPM**: Node Package Manager for frontend dependencies.
 13. **Autopep8**: Python code formatter.
 14. **Pylance**: Python language server for Visual Studio Code.
-15. **Dotenv-Vault**: Securely store environment variables.
-16. **Dotenx**: Load environment variables from `.env` files.
 17. **Eslint**: JavaScript linter.
 18. **Debugpy**: Python debugger for VS Code.
-19. **EditorConfig**: Maintain consistent coding styles.
 20. **venv**: Python virtual environment tool.
 21. **PicoCSS-classless**: Minimal CSS framework.
 

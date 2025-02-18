@@ -1,0 +1,24 @@
+<form hx-get="{% url 'obligations:filtered' project.id %}"
+      hx-target="#obligations-container"
+      hx-trigger="change"
+      hx-indicator=".htmx-indicator">
+  
+  <label for="mechanism-filter">
+    Filter by Mechanism
+    <select id="mechanism-filter" 
+            name="mechanism"
+            aria-controls="obligations-container">
+      <option value="">All Mechanisms</option>
+      {% for mechanism in mechanisms %}
+      <option value="{{ mechanism }}"
+              {% if current_filter == mechanism %}selected{% endif %}>
+        {{ mechanism }}
+      </option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <progress class="htmx-indicator" aria-busy="true">
+    Filtering obligations...
+  </progress>
+</form>

@@ -1,0 +1,58 @@
+{% extends "authentication/layouts/auth_base.html" %}
+
+{% block title %}Reset Password - Greenova{% endblock %}
+
+{% block auth_content %}
+<article>
+    <header>
+        <hgroup>
+            <h1>Reset Your Password</h1>
+            <h2>Enter your email to receive reset instructions</h2>
+        </hgroup>
+    </header>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <aside role="alert" aria-live="polite">
+            {% for field in form %}
+            {% for error in field.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+            {% endfor %}
+        </aside>
+        {% endif %}
+
+        <fieldset>
+            <label for="id_email">
+                Email address
+                <input type="email"
+                       name="email"
+                       id="id_email"
+                       autocomplete="email"
+                       required
+                       aria-required="true"
+                       aria-describedby="email-help">
+            </label>
+            <small id="email-help">We'll send instructions to this email address</small>
+        </fieldset>
+
+        <button type="submit">Send Reset Link</button>
+    </form>
+
+    <footer>
+        <details>
+            <summary>Need help?</summary>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'authentication:login' %}">Remember your
+                            password? Log in</a></li>
+                    <li><a href="{% url 'authentication:register' %}">Don't have an
+                            account? Sign up</a></li>
+                </ul>
+            </nav>
+        </details>
+    </footer>
+</article>
+{% endblock %}

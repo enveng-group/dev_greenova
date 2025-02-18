@@ -1,0 +1,13 @@
+.htmx-indicator {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.htmx-request .htmx-indicator {
+    display: flex;
+}

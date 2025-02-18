@@ -1,0 +1,29 @@
+{% extends 'obligations/layouts/obligations_base.html' %}
+{% load obligations_tags %}
+
+{% block obligations_title %}Project Obligations{% endblock %}
+{% block obligations_subtitle %}{{ project.name }}{% endblock %}
+
+{% block obligations_content %}
+<section aria-labelledby="obligations-overview">
+  <h2 id="obligations-overview">Obligations Overview</h2>
+
+  {% if error %}
+  <article role="alert">
+    <p>{{ error }}</p>
+  </article>
+  {% else %}
+  {% obligation_summary project %}
+
+  <div class="grid">
+    <div>
+      {% include "obligations/components/obligation_filter.html" %}
+    </div>
+
+    <div id="obligations-container">
+      {% include "obligations/tables/obligation_list.html" %}
+    </div>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

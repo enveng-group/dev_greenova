@@ -11,6 +11,37 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from typing import Dict, List, TypedDict, Union
+import os
+from utils.constants import SYSTEM_STATUS_OPERATIONAL
+
+class DatabaseConfig(TypedDict):
+    ENGINE: str
+    NAME: Union[str, Path]
+
+class TemplateOptions(TypedDict):
+    context_processors: List[str]
+    debug: bool  # This was the missing required field
+
+class TemplateConfig(TypedDict):
+    BACKEND: str
+    DIRS: List[Path]
+    APP_DIRS: bool
+    OPTIONS: TemplateOptions
+
+# Update the LoggingHandlerConfig TypedDict
+class LoggingHandlerConfig(TypedDict, total=False):
+    level: str
+    class_name: str  # Keep as class_name to avoid Python keyword conflict
+    filename: str
+    formatter: str
+
+class LoggingConfig(TypedDict):
+    version: int
+    disable_existing_loggers: bool
+    formatters: Dict[str, Dict[str, str]]
+    handlers: Dict[str, LoggingHandlerConfig]
+    loggers: Dict[str, Dict[str, Union[str, List[str], bool]]]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +56,7 @@ SECRET_KEY = "django-insecure-y4iiuwh@r27)q36u55%8k3l(gwyp7s&i$zl_+m0f+ljwm1c#hy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: List[str] = ['127.0.0.1', 'localhost', '*']  # Add '*' for development
 
 
 # Application definition
@@ -42,6 +73,10 @@ INSTALLED_APPS = [
     "analytics.apps.AnalyticsConfig",
     "dashboard.apps.DashboardConfig",
     "projects.apps.ProjectsConfig",
+    "charts.apps.ChartsConfig",
+    "obligations.apps.ObligationsConfig",
+    "chatbot.apps.ChatbotConfig",
+    "utils",
 ]
 
 MIDDLEWARE = [
@@ -56,7 +91,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "greenova.urls"
 
-TEMPLATES = [
+TEMPLATES: List[TemplateConfig] = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
@@ -64,32 +99,34 @@ TEMPLATES = [
             BASE_DIR / 'landing' / 'templates',
             BASE_DIR / 'authentication' / 'templates',
             BASE_DIR / 'dashboard' / 'templates',
+            BASE_DIR / 'analytics' / 'templates',
+            BASE_DIR / 'projects' / 'templates',
+            BASE_DIR / 'charts' / 'templates',
+            BASE_DIR / 'obligations' / 'templates',
+            BASE_DIR / 'chatbot' / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
+                'django.contrib.auth.context_processors.auth',  # Make sure this is present
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug': DEBUG,  # Add this line, referencing your DEBUG setting
         },
     },
 ]
 
-WSGI_APPLICATION = "greenova.wsgi.application"
-
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+DATABASES: Dict[str, DatabaseConfig] = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -113,9 +150,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en-au"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Australia/Perth"
 
 USE_I18N = True
 
@@ -126,54 +163,103 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
-
-# Add these settings for static files
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
+# Add these settings for static files
 # List of finder classes that know how to find static files in various locations
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+# Static files optimization
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
 # Authentication settings
 LOGIN_REDIRECT_URL = 'dashboard:home'
-LOGOUT_REDIRECT_URL = 'landing:home'  # Add this line
+LOGOUT_REDIRECT_URL = 'landing:home'
 LOGIN_URL = 'authentication:login'
+
+# Application version
+APP_VERSION = '0.1.0'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+CSRF_COOKIE_SECURE = False  # Set to False for HTTP in development
+SESSION_COOKIE_SECURE = False  # Set to False for HTTP in development
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = None
 
-# Add to the bottom of the file
+# Cache settings
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
 
-LOGGING = {
+# Create logs directory if it doesn't exist
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+if not os.path.exists(LOGS_DIR):
+    os.makedirs(LOGS_DIR)
+
+# Update the LOGGING configuration
+LOGGING: LoggingConfig = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',  # Changed from class_name to class
+            'level': 'INFO',
+            'formatter': 'simple',
+        },
+        'file': {
+            'class': 'logging.FileHandler',  # Changed from class_name to class
+            'level': 'INFO',
+            'filename': str(BASE_DIR / 'logs' / 'django.log'),
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'INFO',
-            'propagate': False,
+            'propagate': True,
         },
-        'dashboard': {
-            'handlers': ['console'],
+        'projects': {
+            'handlers': ['file'],
             'level': 'DEBUG',
-            'propagate': False,
+            'propagate': True,
         },
     },
-}
+} # type: ignore
+
+# Modify runserver command to force HTTP
+import sys
+if 'runserver' in sys.argv:
+    import os
+    os.environ['PYTHONHTTPSVERIFY'] = '0'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'greenova.settings'
+
+# Add these settings
+SYSTEM_STATUS = SYSTEM_STATUS_OPERATIONAL
+VERSION = '1.0.0'

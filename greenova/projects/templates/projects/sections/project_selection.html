@@ -1,0 +1,22 @@
+{% extends 'projects/layouts/project_base.html' %}
+
+{% block project_content %}
+<section aria-labelledby="project-selection">
+  <h2 id="project-selection">Project Selection</h2>
+  <!-- Remove project-selection class, use semantic label -->
+  <label for="project-select">
+    Select your project
+    <select id="project-select"
+            name="project_id"
+            hx-get="{% url 'dashboard:select_project' %}"
+            hx-target="#project-content"
+            hx-include="[name='project_id']"
+            hx-trigger="change"
+            hx-indicator=".htmx-indicator">
+      <option value="">Choose a project...</option>
+      {% for project in projects %}
+      <option value="{{ project.pk }}">{{ project.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+{% endblock %}

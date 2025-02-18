@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Greenova{% endblock %}
+
+{% block main %}
+<article>
+    <header>
+        <hgroup>
+            <h1>{% block dashboard_title %}Dashboard{% endblock %}</h1>
+            <h2>{% block dashboard_subtitle %}Environmental Obligations Overview{% endblock %}</h2>
+        </hgroup>
+    </header>
+
+    {% block dashboard_content %}{% endblock %}
+</article>
+
+{% include "dashboard/components/system_status.html" %}
+{% endblock %}

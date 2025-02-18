@@ -1,0 +1,32 @@
+{% extends "authentication/layouts/auth_base.html" %}
+{% load static %}
+
+{% block title %}Register - Greenova{% endblock %}
+
+{% block auth_content %}
+<article>
+    <header>
+        <hgroup>
+            <h1>Create an account</h1>
+            <h2>Join Greenova to manage your environmental obligations</h2>
+        </hgroup>
+    </header>
+
+    {% include "authentication/components/messages/form_errors.html" %}
+    {% include "authentication/components/forms/register_form.html" %}
+
+    <footer>
+        <nav>
+            <details>
+                <summary>Already have an account?</summary>
+                <ul>
+                    <li><a href="{% url 'authentication:login' %}">Log in to your
+                            account</a></li>
+                    <li><a href="{% url 'authentication:password_reset' %}">Forgot your
+                            password?</a></li>
+                </ul>
+            </details>
+        </nav>
+    </footer>
+</article>
+{% endblock %}

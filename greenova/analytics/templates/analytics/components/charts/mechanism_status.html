@@ -1,0 +1,36 @@
+{% load analytics_tags common_tags %}
+
+<section>
+  {% for mechanism in mechanisms %}
+  {% mechanism_chart_data mechanism as chart_data %}
+  <figure role="region" aria-label="{{ mechanism.name }} Status Distribution">
+    {% if chart_data %}
+    <canvas id="chart-{{ mechanism.id }}"
+            class="chart-container"
+            data-mechanism="{{ mechanism.id }}"
+            data-chart="{{ chart_data|json_script }}"
+            height="200"
+            hx-get="{% url 'analytics:mechanism-status' %}"
+            hx-trigger="load, revealed"
+            hx-vals='{"mechanism": "{{ mechanism.id }}"}'
+            hx-swap="none"
+            aria-label="{{ mechanism.name }} status distribution chart">
+    </canvas>
+    {% else %}
+    <p>{{ chart_error_message }}</p>
+    {% endif %}
+
+    <div class="htmx-indicator" role="status" aria-busy="true">
+      Loading {{ mechanism.name }} distribution data...
+    </div>
+
+    <figcaption>
+      <details>
+        <summary>Chart Description</summary>
+        <p>Distribution of obligations by status for {{ mechanism.name }}</p>
+      </details>
+    </figcaption>
+  </figure>
+  {% endfor %}
+  {% trend_chart days=30 %}
+</section>

@@ -1,62 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{% block meta_description %}{% endblock %}">
     <title>{% block title %}Greenova{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/modern-normalize.css">
-    <link rel="stylesheet" href="/static/css/pico.classless.min.css">
+
+    <!-- Critical CSS -->
+    <link rel="preload" href="/static/css/vendor/modern-normalize.css" as="style">
+    <link rel="preload" href="/static/css/vendor/pico.classless.min.css" as="style">
+    <link rel="preload" href="/static/js/vendor/htmx.min.js" as="script">
+
+    <!-- CSS files -->
+    <link rel="stylesheet" href="/static/css/vendor/modern-normalize.css">
+    <link rel="stylesheet" href="/static/css/vendor/pico.classless.min.css">
     <link rel="stylesheet" href="/static/css/styles.css">
+
+    <!-- In the head section, add this before other scripts -->
+    <script defer src="/static/js/vendor/chart.umd.js" type="module"></script>
+
     {% block extra_head %}{% endblock %}
 </head>
+
 <body>
-    <nav>
+    <nav role="navigation">
         <ul>
-            <li><strong>{% if user.is_authenticated %}
-                <a href="{% url 'dashboard:home' %}">Greenova</a>
-            {% else %}
-                <a href="{% url 'landing:home' %}">Greenova</a>
-            {% endif %}</strong></li>
+            <!-- Left side navigation -->
+            <li>
+                <a href="{% url 'landing:home' %}"
+                   {% if request.path == '/' %}aria-current="page" {% endif %}>
+                    <strong>Greenova</strong>
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+            <li>
+                <a href="{% url 'dashboard:home' %}"
+                   {% if request.resolver_match.app_name == 'dashboard' %}aria-current="page"
+                   {% endif %}>
+                    Dashboard
+                </a>
+            </li>
+            {% endif %}
         </ul>
+
+        <!-- Right side navigation -->
         <ul>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'dashboard:home' %}">Dashboard</a></li>
-                <li>
-                    <form method="post" action="{% url 'authentication:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="outline" 
-                                onclick="return confirm('Are you sure you want to log out?')">
-                            Log Out
-                        </button>
-                    </form>
-                </li>
+            <li>
+                <button id="chat-toggle"
+                        aria-controls="chat-dialog"
+                        class="outline">
+                    <span aria-hidden="true">💬</span>
+                    <span class="sr-only">Toggle chat assistant</span>
+                </button>
+            </li>
+            <li>
+                <form method="post" action="{% url 'authentication:logout' %}"
+                      class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="outline">Log Out</button>
+                </form>
+            </li>
             {% else %}
-                <li><a href="{% url 'authentication:login' %}" role="button">Log In</a></li>
+            {% if request.resolver_match.url_name != 'login' %}
+            <li>
+                <a href="{% url 'authentication:login' %}"
+                   role="button"
+                   class="outline">
+                    Log In
+                </a>
+            </li>
+            {% endif %}
             {% endif %}
         </ul>
     </nav>
 
-    <main>
+    <main role="main">
         {% if messages %}
-        <div role="alert" aria-live="polite">
+        <aside role="alert" aria-live="polite">
             {% for message in messages %}
             <p>{{ message }}</p>
             {% endfor %}
-        </div>
+        </aside>
         {% endif %}
         {% block main %}{% endblock %}
     </main>
 
-    <footer>
-        <small>
-            © {% now "Y" %} Greenova. All rights reserved.
-        </small>
+    <footer role="contentinfo">
+        {% block footer_content %}{% endblock %}
     </footer>
 
-    <script src="/static/js/htmx.min.js"></script>
-    <script src="/static/js/chart.umd.js"></script>
-    <script src="/static/js/app.js"></script>
-    {% block extra_scripts %}{% endblock %}
+    <script defer src="/static/js/vendor/htmx.min.js"></script>
+    <!-- Load additional scripts only when needed -->
+    {% if request.resolver_match.app_name == 'dashboard' %}
+    <script defer src="/static/js/vendor/chart.umd.js"></script>
+    <script defer src="/static/js/app.js" type="module"></script>
+    {% endif %}
+
+    <!-- At the bottom of the body -->
+    <script type="module">
+        import { ChartManager } from '/static/js/modules/chart-manager.js';
+        window.chartManager = new ChartManager();
+    </script>
 </body>
+
 </html>

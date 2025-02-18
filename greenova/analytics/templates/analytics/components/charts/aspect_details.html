@@ -1,0 +1,39 @@
+{% load analytics_tags common_tags %}
+
+<figure role="region" aria-label="{{ aspect.name }} Details">
+  {% if aspect %}
+  <canvas id="aspect-chart-{{ aspect.id }}"
+          class="chart-container"
+          data-aspect="{{ aspect.id }}"
+          height="200"
+          hx-get="{% url 'analytics:aspect-details' aspect.id %}"
+          hx-trigger="load, revealed"
+          hx-swap="none"
+          aria-label="{{ aspect.name }} detailed analysis chart">
+  </canvas>
+
+  <div class="htmx-indicator" role="status" aria-busy="true">
+    Loading {{ aspect.name }} aspect data...
+  </div>
+
+  <figcaption>
+    <details>
+      <summary>Aspect Information</summary>
+      <dl>
+        <dt>Total Obligations</dt>
+        <dd>{{ aspect.total_obligations }}</dd>
+        <dt>Current Status</dt>
+        <dd>{{ aspect.current_status }}</dd>
+        <dt>Last Updated</dt>
+        <dd>
+          <time datetime="{{ aspect.last_updated|date:'c' }}">
+            {{ aspect.last_updated|date:"j M Y" }}
+          </time>
+        </dd>
+      </dl>
+    </details>
+  </figcaption>
+  {% else %}
+  <p>{{ chart_error_message|default:"Unable to load aspect details." }}</p>
+  {% endif %}
+</figure>

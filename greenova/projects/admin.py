@@ -1,20 +1,23 @@
 from django.contrib import admin
-from .models import Project, Obligation
+from django.http import HttpRequest
+from django.db.models import QuerySet
+from django.forms import ModelForm
+from logging import getLogger
+from .models import Project
+from obligations.models import Obligation
+
+logger = getLogger(__name__)
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at', 'updated_at')
-    search_fields = ('name', 'description')
-    list_filter = ('created_at',)
+    """Admin configuration for Project model."""
+    list_display = ('id', 'name')
+    search_fields = ('name',)
 
-@admin.register(Obligation)
-class ObligationAdmin(admin.ModelAdmin):
-    list_display = ('obligation_number', 'project', 'status', 'primary_environmental_mechanism')
-    list_filter = ('status', 'project', 'primary_environmental_mechanism')
-    search_fields = (
-        'obligation_number', 
-        'obligation', 
-        'environmental_aspect',
-        'accountability',
-        'responsibility'
-    )
+    def save_model(self, request: HttpRequest, obj: Project, form: ModelForm, change: bool) -> None:
+        try:
+            logger.info(f"Admin saving project: {obj.name}")
+            super().save_model(request, obj, form, change)
+        except Exception as e:
+            logger.error(f"Admin save error: {str(e)}")
+            raise

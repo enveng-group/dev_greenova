@@ -1,0 +1,34 @@
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  <fieldset>
+    <legend>Login</legend>
+    <label for="id_username">
+      Username
+      <input type="text"
+             name="username"
+             id="id_username"
+             autocomplete="username"
+             required
+             aria-required="true"
+             spellcheck="false"
+             autocapitalize="none">
+    </label>
+
+    <label for="id_password">
+      Password
+      <input type="password"
+             name="password"
+             id="id_password"
+             autocomplete="current-password"
+             required
+             aria-required="true">
+    </label>
+  </fieldset>
+
+  {% if next %}
+  <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+
+  <button type="submit">{{ submit_text|default:"Log In" }}</button>
+</form>

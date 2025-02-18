@@ -1,0 +1,23 @@
+{% extends "authentication/layouts/auth_base.html" %}
+
+{% block title %}Reset Password - Greenova{% endblock %}
+
+{% block auth_content %}
+<article>
+    <header>
+        <hgroup>
+            <h1>Reset Password</h1>
+            <h2>Enter your new password</h2>
+        </hgroup>
+    </header>
+
+    {% if validlink %}
+    {% include "authentication/components/messages/form_errors.html" %}
+    {% include "authentication/components/forms/login_form.html" with submit_text="Reset Password" %}
+    {% else %}
+    <p>The password reset link is invalid or has expired. Please request a new one.</p>
+    <a href="{% url 'authentication:password_reset' %}" role="button">Request New Reset
+        Link</a>
+    {% endif %}
+</article>
+{% endblock %}

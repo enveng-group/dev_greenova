@@ -1,0 +1,67 @@
+<form method="post" novalidate hx-boost="true">
+  {% csrf_token %}
+
+  {% include "projects/components/messages/form_errors.html" %}
+
+  <fieldset>
+    <legend>Basic Information</legend>
+
+    <label for="id_obligation_number">
+      Obligation Number
+      <input type="text"
+             name="obligation_number"
+             id="id_obligation_number"
+             value="{{ form.obligation_number.value|default:'' }}"
+             required
+             aria-required="true"
+             maxlength="20">
+    </label>
+
+    <label for="id_primary_environmental_mechanism">
+      Environmental Mechanism
+      <input type="text"
+             name="primary_environmental_mechanism"
+             id="id_primary_environmental_mechanism"
+             value="{{ form.primary_environmental_mechanism.value|default:'' }}"
+             required
+             aria-required="true">
+    </label>
+
+    <label for="id_obligation">
+      Obligation Description
+      <textarea name="obligation"
+                id="id_obligation"
+                required
+                aria-required="true"
+                rows="4">{{ form.obligation.value|default:'' }}</textarea>
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Status and Timing</legend>
+
+    <label for="id_status">
+      Status
+      <select name="status" id="id_status" required aria-required="true">
+        {% for value, label in form.fields.status.choices %}
+        <option value="{{ value }}"
+                {% if form.status.value == value %}selected{% endif %}>
+          {{ label }}
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label for="id_action_due_date">
+      Due Date
+      <input type="date"
+             name="action_due_date"
+             id="id_action_due_date"
+             value="{{ form.action_due_date.value|date:'Y-m-d'|default:'' }}">
+    </label>
+  </fieldset>
+
+  <button type="submit">{{ submit_text|default:"Save Obligation" }}</button>
+  <a href="{% url 'projects:detail' project.id %}" role="button"
+     class="outline">Cancel</a>
+</form>

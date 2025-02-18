@@ -1,0 +1,37 @@
+<aside id="chat-widget" aria-label="Chat Assistant">
+    <dialog id="chat-dialog">
+        <article>
+            <header>
+                <h3>Chat Assistant</h3>
+                <button type="button" class="close-button"
+                        aria-label="Close chat">✕</button>
+            </header>
+
+            <div id="chat-messages" role="log" aria-live="polite">
+                <template id="message-template">
+                    <div class="message">
+                        <p></p>
+                    </div>
+                </template>
+            </div>
+
+            <footer>
+                <form id="chat-form"
+                      hx-post="{% url 'chatbot:api' %}"
+                    hx-target="#chat-messages"
+                    hx-swap="beforeend"
+                    hx-trigger="submit">
+                    {% csrf_token %}
+                    <input type="text"
+                           id="message-input"
+                           name="message"
+                           placeholder="Type your message..."
+                           aria-label="Chat message"
+                           autocomplete="off"
+                           required>
+                    <button type="submit" aria-label="Send message">Send</button>
+                </form>
+            </footer>
+        </article>
+    </dialog>
+</aside>

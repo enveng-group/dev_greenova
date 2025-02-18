@@ -1,0 +1,28 @@
+{% extends "authentication/layouts/auth_base.html" %}
+
+{% block title %}Password Reset Complete - Greenova{% endblock %}
+
+{% block auth_content %}
+<article>
+    <header>
+        <hgroup>
+            <h1>Password Reset Complete</h1>
+            <h2>Your password has been set successfully</h2>
+        </hgroup>
+    </header>
+
+    <section aria-labelledby="confirmation-heading">
+        <h3 id="confirmation-heading" class="sr-only">Confirmation Message</h3>
+        <p>Your password has been successfully reset. You can now log in with your new
+            password.</p>
+    </section>
+
+    <footer>
+        <nav aria-label="Authentication options">
+            <a href="{% url 'authentication:login' %}" role="button">
+                Log In with New Password
+            </a>
+        </nav>
+    </footer>
+</article>
+{% endblock %}

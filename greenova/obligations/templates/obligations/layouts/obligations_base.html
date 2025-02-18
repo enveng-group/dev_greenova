@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load obligations_tags %}
+
+{% block title %}Obligations - Greenova{% endblock %}
+
+{% block main %}
+<article>
+  <header>
+    <hgroup>
+      <h1>{% block obligations_title %}Obligations{% endblock %}</h1>
+      <h2>{% block obligations_subtitle %}Environmental Compliance Management{% endblock %}</h2>
+    </hgroup>
+  </header>
+
+  {% block obligations_content %}{% endblock %}
+</article>
+{% endblock %}

@@ -1,0 +1,58 @@
+<div id="obligations-list"
+     role="region"
+     aria-labelledby="obligations-heading">
+
+    <progress class="htmx-indicator" aria-busy="true">
+        Loading obligations...
+    </progress>
+
+    {% if obligations %}
+    <div class="table-container">
+        <table role="grid">
+            <thead>
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">Mechanism</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obligation in obligations %}
+                <tr>
+                    <td>{{ obligation.obligation_number }}</td>
+                    <td>{{ obligation.primary_environmental_mechanism }}</td>
+                    <td>
+                        <mark class="status-{{ obligation.status|lower }}">
+                            {{ obligation.status }}
+                        </mark>
+                    </td>
+                    <td>{{ obligation.action_due_date|date:"d M Y" }}</td>
+                    <td>
+                        <nav class="horizontal">
+                            <a href="{% url 'obligations:detail' obligation.id %}"
+                               role="button"
+                               class="outline">View</a>
+                            <button type="button"
+                                    class="outline"
+                                    hx-get="{% url 'obligations:filter' %}?mechanism={{ obligation.primary_environmental_mechanism }}"
+                                    hx-target="#obligations-container">
+                                Filter Similar
+                            </button>
+                        </nav>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <article role="alert">
+        <p>No obligations found for this project.</p>
+        <a href="{% url 'obligations:create' project.id %}" role="button">
+            Add First Obligation
+        </a>
+    </article>
+    {% endif %}
+</div>

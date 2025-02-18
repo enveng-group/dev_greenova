@@ -1,0 +1,56 @@
+{% extends 'analytics/layouts/analytics_base.html' %}
+{% load analytics_tags %}
+
+{% block analytics_title %}{{ project.name }} - Aspect Analysis{% endblock %}
+{% block analytics_subtitle %}Environmental Performance Analytics{% endblock %}
+
+{% block analytics_content %}
+<section aria-labelledby="aspect-overview">
+  <h2 id="aspect-overview">Environmental Aspects Overview</h2>
+
+  {% if error %}
+  <article role="alert">
+    <p>{{ error }}</p>
+  </article>
+  {% else %}
+  <div class="grid">
+    {% for aspect in aspects %}
+    <article>
+      <header>
+        <h3>{{ aspect.environmental_aspect }}</h3>
+        <p>Total Obligations: {{ aspect.total }}</p>
+      </header>
+
+      <figure role="region" aria-label="{{ aspect.environmental_aspect }} Analytics">
+        <canvas id="chart-{{ forloop.counter }}"
+                data-aspect="{{ aspect.environmental_aspect }}"
+                hx-get="{% url 'analytics:mechanism_status' %}?mechanism={{ aspect.environmental_aspect }}"
+                hx-trigger="load"
+                hx-swap="innerHTML"></canvas>
+        <figcaption>Status distribution for {{ aspect.environmental_aspect }}
+        </figcaption>
+      </figure>
+
+      <footer>
+        <details>
+          <summary>View Details</summary>
+          <a href="{% url 'analytics:aspect_details' aspect.environmental_aspect %}"
+             role="button"
+             class="outline">
+            Full Analysis
+          </a>
+        </details>
+      </footer>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+{% if analytics %}
+<section aria-labelledby="analytics-section">
+  <h2 id="analytics-section">Performance Analytics</h2>
+  {% trend_chart days=30 %}
+</section>
+{% endif %}
+{% endblock %}

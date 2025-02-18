@@ -1,0 +1,37 @@
+{% extends 'analytics/layouts/analytics_base.html' %}
+
+{% block analytics_title %}Mechanism Performance{% endblock %}
+{% block analytics_subtitle %}Environmental Mechanism Analysis{% endblock %}
+
+{% block analytics_content %}
+<section aria-labelledby="mechanism-stats">
+  <h2 id="mechanism-stats">Mechanism Statistics</h2>
+
+  <div class="grid">
+    {% for mechanism in mechanisms %}
+    <article>
+      <header>
+        <h3>{{ mechanism.name }}</h3>
+      </header>
+      {% include "analytics/components/charts/mechanism_status.html" with mechanism=mechanism %}
+      <footer>
+        <details>
+          <summary>View Details</summary>
+          <dl>
+            <dt>Total Obligations</dt>
+            <dd>{{ mechanism.total_obligations }}</dd>
+            <dt>Completion Rate</dt>
+            <dd>{{ mechanism.completion_rate }}%</dd>
+          </dl>
+        </details>
+      </footer>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section aria-labelledby="trend-analysis">
+  <h2 id="trend-analysis">Trend Analysis</h2>
+  {% include "analytics/components/charts/trend_chart.html" %}
+</section>
+{% endblock %}

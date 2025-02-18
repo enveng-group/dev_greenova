@@ -1,0 +1,44 @@
+{% extends "projects/layouts/project_base.html" %}
+
+{% block project_title %}Projects{% endblock %}
+{% block project_subtitle %}Manage Environmental Projects{% endblock %}
+
+{% block project_content %}
+<article>
+  <header>
+    <div>
+      <h2>Project List</h2>
+      <nav>
+        <a href="{% url 'projects:create' %}" role="button">New Project</a>
+      </nav>
+    </div>
+  </header>
+
+  <section aria-labelledby="projects-section">
+    <h3 id="projects-section" class="sr-only">Projects</h3>
+    {% include "projects/components/lists/project_list.html" %}
+  </section>
+
+  {% if is_paginated %}
+  <footer>
+    <nav aria-label="Pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}"
+         role="button"
+         class="outline">&laquo; Previous</a>
+      {% endif %}
+
+      <span>
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}"
+         role="button"
+         class="outline">Next &raquo;</a>
+      {% endif %}
+    </nav>
+  </footer>
+  {% endif %}
+</article>
+{% endblock %}

@@ -40,7 +40,7 @@
 │   │   └── views.cpython-313.pyc
 │   ├── templates
 │   │   └── authentication
-│   │       ├── base_authentication.html
+│   │       ├── auth_base.html
 │   │       ├── login.html
 │   │       ├── logout.html
 │   │       ├── password_reset_complete.html
@@ -448,7 +448,7 @@ urlpatterns = [
 ```python
 from django.core.management.base import BaseCommand
 import csv
-from projects.models import Project, Obligation
+from projects.models import Project
 
 class Command(BaseCommand):
     help = 'Import obligations from CSV file'

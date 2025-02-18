@@ -23,7 +23,7 @@ python manage.py shell
 ```
 
 ```python
-from projects.models import Project, Obligation
+from projects.models import Project
 project = Project.objects.create(name="Test Project", description="Test Description")
 obligation = Obligation.objects.create(
     obligation_number="TEST-001",

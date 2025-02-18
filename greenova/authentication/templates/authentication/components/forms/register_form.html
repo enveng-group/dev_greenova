@@ -1,0 +1,62 @@
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  <fieldset>
+    <legend>Account Information</legend>
+    <label for="id_username">
+      Username
+      <input type="text"
+             name="username"
+             id="id_username"
+             autocomplete="username"
+             required
+             aria-required="true"
+             spellcheck="false"
+             autocapitalize="none"
+             pattern="[a-zA-Z0-9_]+"
+             aria-describedby="username-help">
+    </label>
+    <small id="username-help">Letters, numbers, and underscores only</small>
+
+    <label for="id_email">
+      Email
+      <input type="email"
+             name="email"
+             id="id_email"
+             autocomplete="email"
+             required
+             aria-required="true"
+             spellcheck="false">
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Security</legend>
+    <label for="id_password1">
+      Password
+      <input type="password"
+             name="password1"
+             id="id_password1"
+             autocomplete="new-password"
+             required
+             aria-required="true"
+             minlength="8"
+             aria-describedby="password-help">
+    </label>
+    <small id="password-help">At least 8 characters with numbers and special
+      characters</small>
+
+    <label for="id_password2">
+      Confirm Password
+      <input type="password"
+             name="password2"
+             id="id_password2"
+             autocomplete="new-password"
+             required
+             aria-required="true"
+             minlength="8">
+    </label>
+  </fieldset>
+
+  <button type="submit">{{ submit_text|default:"Create Account" }}</button>
+</form>

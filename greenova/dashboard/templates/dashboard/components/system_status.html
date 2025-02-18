@@ -1,0 +1,23 @@
+<footer role="contentinfo">
+    <p>
+        System Status:
+        {% if system_status == 'operational' %}
+        <mark class="secondary">{{ system_status }}</mark>
+        {% elif system_status == 'maintenance' %}
+        <mark class="warning">{{ system_status }}</mark>
+        {% elif system_status == 'error' %}
+        <mark class="error">{{ system_status }}</mark>
+        {% endif %}
+        |
+        Version: {{ app_version }} |
+        Last Updated:
+        <time datetime="{{ last_updated|date:'c' }}">
+            {{ last_updated|date:"j M Y H:i" }}
+        </time>
+    </p>
+    <p>
+        Need help? Contact
+        <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+    </p>
+    <small>© {% now "Y" %} Greenova. All rights reserved.</small>
+</footer>

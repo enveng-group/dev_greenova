@@ -1,0 +1,39 @@
+<div class="grid" role="list">
+  {% for project in projects %}
+  <article role="listitem">
+    <header>
+      <h3>
+        <a href="{% url 'projects:detail' project.id %}">{{ project.name }}</a>
+      </h3>
+    </header>
+
+    {% if project.description %}
+    <p>{{ project.description|truncatewords:30 }}</p>
+    {% endif %}
+
+    <footer>
+      <details>
+        <summary>Project Statistics</summary>
+        <dl>
+          <dt>Total Obligations</dt>
+          <dd>{{ project.obligations.count }}</dd>
+          <dt>Active</dt>
+          <dd>{{ project.get_active_obligations.count }}</dd>
+          <dt>Completed</dt>
+          <dd>{{ project.get_completed_obligations.count }}</dd>
+        </dl>
+      </details>
+      <nav>
+        <a href="{% url 'projects:detail' project.id %}"
+           role="button"
+           class="outline">View Details</a>
+      </nav>
+    </footer>
+  </article>
+  {% empty %}
+  <article role="alert">
+    <p>No projects found. Create your first project to get started.</p>
+    <a href="{% url 'projects:create' %}" role="button">Create Project</a>
+  </article>
+  {% endfor %}
+</div>

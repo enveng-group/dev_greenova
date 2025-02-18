@@ -1,0 +1,30 @@
+{% extends 'dashboard/layouts/dashboard_base.html' %}
+{% load static %}
+{% load common_tags dashboard_tags %}
+{% load chatbot_tags %}
+
+<body data-page="dashboard">
+    {% block dashboard_content %}
+    <article>
+        <header>
+
+            <!-- Use aria-live for dynamic content -->
+            <div class="htmx-indicator" role="status" aria-busy="true">
+                Loading project data...
+            </div>
+
+            <section id="project-content" aria-live="polite">
+                {% if not projects %}
+                <article role="alert">
+                    <p>No projects found. Create your first project to get started.</p>
+                    <a href="{% url 'projects:create' %}" role="button">Create
+                        Project</a>
+                </article>
+                {% endif %}
+            </section>
+
+            {% include "chatbot/widgets/chat_widget.html" %}
+            {% chat_widget %}
+    </article>
+    {% endblock %}
+</body>

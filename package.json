@@ -2,7 +2,11 @@
   "dependencies": {
     "@picocss/pico": "2.0.6",
     "chart.js": "4.4.7",
+    "eslint": "9.20.1",
     "htmx.org": "1.9.12",
     "modern-normalize": "3.0.1"
+  },
+  "engines": {
+    "node": "23.8.0"
   }
 }
