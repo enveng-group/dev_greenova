@@ -6,19 +6,21 @@ from obligations.models import Obligation
 
 register = template.Library()
 
-@register.inclusion_tag('projects/components/charts/project_stats.html')
-def project_stats_chart(project: Project) -> Dict[str, Any]:
-    """Render project statistics chart."""
-    return {
-        'stats': {
-            'total': project.obligations.count(),
-            'completed': project.get_completed_obligations().count(),
-            'active': project.get_active_obligations().count(),
-            'overdue': project.get_overdue_obligations().count()
-        }
-    }
-
 @register.inclusion_tag('projects/components/tables/obligation_list.html')
 def obligation_table(obligations: QuerySet[Obligation]) -> Dict[str, Any]:
     """Render obligation list table."""
     return {'obligations': obligations}
+
+@register.filter
+def get_item(dictionary: Dict[str, Any], key: Any) -> Any:
+    """Get item from dictionary by key."""
+    return dictionary.get(key)
+
+@register.filter
+def get_user_role(project: Any, user: Any) -> str:
+    """Get user's role in project."""
+    try:
+        membership = project.memberships.get(user=user)
+        return membership.role
+    except Exception:
+        return "No Role"

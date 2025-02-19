@@ -1,5 +1,5 @@
 {% extends 'obligations/layouts/obligations_base.html' %}
-{% load obligations_tags %}
+{% load common_tags %}
 
 {% block obligations_title %}Project Obligations{% endblock %}
 {% block obligations_subtitle %}{{ project.name }}{% endblock %}
@@ -13,7 +13,7 @@
     <p>{{ error }}</p>
   </article>
   {% else %}
-  {% obligation_summary project %}
+  {% project_stats project as stats %}
 
   <div class="grid">
     <div>

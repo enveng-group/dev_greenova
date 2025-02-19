@@ -1,16 +1,35 @@
-from django.http import JsonResponse, HttpRequest, HttpResponse
+from typing import TypedDict, Dict, Any, Optional, cast
+from django.http import JsonResponse, HttpRequest
 from django.views.generic import TemplateView
-from django.shortcuts import redirect
-from django.db.models import Count
-from typing import Dict, Any, TypedDict
+from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Count, QuerySet
+from django.contrib.auth.mixins import LoginRequiredMixin
 from obligations.models import Obligation
+from projects.models import Project
 from utils.mixins import LoggedActionMixin
 from utils.constants import STATUS_CHOICES
 from utils.generics import AnalyticsView
 import logging
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
-from projects.models import Project
+
+# Update TypedDict definitions
+class StatusCount(TypedDict, total=True):
+    not_started: int
+    in_progress: int
+    completed: int
+
+class ChartData(TypedDict, total=True):
+    type: str
+    data: Dict[str, Any]
+    options: Dict[str, Any]
+
+class AspectData(TypedDict, total=True):
+    environmental_aspect: str
+    total: int
+
+class AnalyticsContextData(TypedDict, total=True):
+    mechanisms: QuerySet
+    status_counts: Dict[str, int]  # Changed from StatusCount
+    error: Optional[str]
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -20,29 +39,33 @@ class AnalyticsDashboardView(LoggedActionMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        mechanisms = (Obligation.objects
-                     .values('primary_environmental_mechanism')
-                     .annotate(total=Count('id'))
-                     .order_by('primary_environmental_mechanism'))
-        context['mechanisms'] = mechanisms
-        
-
-        status_counts = {
-            'not_started': Obligation.objects.filter(status='Not Started').count(),
-            'in_progress': Obligation.objects.filter(status='In Progress').count(),
-            'completed': Obligation.objects.filter(status='Completed').count(),
-        }
-        context['status_counts'] = status_counts
-
-        return context
+        try:
+            mechanisms = (Obligation.objects
+                        .values('primary_environmental_mechanism')
+                        .annotate(total=Count('id'))
+                        .order_by('primary_environmental_mechanism'))
+            
+            status_counts = {
+                'not_started': Obligation.objects.filter(status='Not Started').count(),
+                'in_progress': Obligation.objects.filter(status='In Progress').count(),
+                'completed': Obligation.objects.filter(status='Completed').count(),
+            }
+            
+            context['mechanisms'] = mechanisms
+            context['status_counts'] = status_counts
+            return context
+        except Exception as e:
+            logger.error(f"Error in analytics dashboard: {str(e)}")
+            context['error'] = "Error loading analytics data"
+            return context
 
 class MechanismStatusChartView(LoggedActionMixin, TemplateView):
     """View for getting mechanism status chart data."""
     
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
         """Handle GET request for mechanism status data."""
         try:
-            mechanism = request.GET.get('mechanism')
+            mechanism: Optional[str] = request.GET.get('mechanism')
             if not mechanism:
                 return JsonResponse(
                     {'error': 'Mechanism parameter is required'}, 
@@ -66,7 +89,7 @@ class MechanismStatusChartView(LoggedActionMixin, TemplateView):
                     counts[item['status']] = item['count']
             
             # Format data for Chart.js
-            data = {
+            data: ChartData = {
                 'type': 'doughnut',
                 'data': {
                     'labels': [status[1] for status in STATUS_CHOICES],

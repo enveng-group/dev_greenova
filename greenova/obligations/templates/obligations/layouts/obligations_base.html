@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load obligations_tags %}
 
-{% block title %}Obligations - Greenova{% endblock %}
+{% block title %}{% block page_title %}Obligations{% endblock %} -
+Greenova{% endblock %}
+
+{% block extra_styles %}{% endblock %}
 
 {% block main %}
 <article>
-  <header>
-    <hgroup>
-      <h1>{% block obligations_title %}Obligations{% endblock %}</h1>
-      <h2>{% block obligations_subtitle %}Environmental Compliance Management{% endblock %}</h2>
-    </hgroup>
-  </header>
-
-  {% block obligations_content %}{% endblock %}
+    <header>
+        <hgroup>
+            <h1>{% block page_title %}Obligations{% endblock %}</h1>
+            <h2>{% block page_subtitle %}Environmental Compliance
+                Management{% endblock %}</h2>
+        </hgroup>
+        {% block page_actions %}{% endblock %}
+    </header>
+    {% block obligations_content %}{% endblock %}
 </article>
 {% endblock %}
+
+{% block sidebar %}{% endblock %}

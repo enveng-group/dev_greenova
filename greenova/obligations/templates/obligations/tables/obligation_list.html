@@ -1,58 +1,38 @@
-<div id="obligations-list"
-     role="region"
-     aria-labelledby="obligations-heading">
+{% extends 'obligations/layouts/obligations_base.html' %}
+<div class="table-container" role="region" aria-labelledby="table-title">
+    <h2 id="table-title">{{ title }}</h2>
 
     <progress class="htmx-indicator" aria-busy="true">
-        Loading obligations...
+        Loading data...
     </progress>
 
-    {% if obligations %}
-    <div class="table-container">
-        <table role="grid">
-            <thead>
-                <tr>
-                    <th scope="col">Number</th>
-                    <th scope="col">Mechanism</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Due Date</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for obligation in obligations %}
-                <tr>
-                    <td>{{ obligation.obligation_number }}</td>
-                    <td>{{ obligation.primary_environmental_mechanism }}</td>
-                    <td>
-                        <mark class="status-{{ obligation.status|lower }}">
-                            {{ obligation.status }}
-                        </mark>
-                    </td>
-                    <td>{{ obligation.action_due_date|date:"d M Y" }}</td>
-                    <td>
-                        <nav class="horizontal">
-                            <a href="{% url 'obligations:detail' obligation.id %}"
-                               role="button"
-                               class="outline">View</a>
-                            <button type="button"
-                                    class="outline"
-                                    hx-get="{% url 'obligations:filter' %}?mechanism={{ obligation.primary_environmental_mechanism }}"
-                                    hx-target="#obligations-container">
-                                Filter Similar
-                            </button>
-                        </nav>
-                    </td>
-                </tr>
+    {% if data %}
+    <table role="grid">
+        <thead>
+            <tr>
+                {% for header in headers %}
+                <th scope="col">{{ header }}</th>
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                {% for cell in item.values %}
+                <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     {% else %}
     <article role="alert">
-        <p>No obligations found for this project.</p>
-        <a href="{% url 'obligations:create' project.id %}" role="button">
-            Add First Obligation
-        </a>
+        <p>{{ empty_message|default:"No data found." }}</p>
+        {% if add_url %}
+        <a href="{{ add_url }}" role="button">{{ add_text|default:"Add New" }}</a>
+        {% endif %}
     </article>
     {% endif %}
 </div>
+{% endblock %}

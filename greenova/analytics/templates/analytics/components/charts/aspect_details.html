@@ -1,3 +1,4 @@
+{% extends 'analytics/layouts/analytics_base.html' %}
 {% load analytics_tags common_tags %}
 
 <figure role="region" aria-label="{{ aspect.name }} Details">
@@ -37,3 +38,4 @@
   <p>{{ chart_error_message|default:"Unable to load aspect details." }}</p>
   {% endif %}
 </figure>
+{% endblock %}

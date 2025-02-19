@@ -1,13 +1,11 @@
 from typing import Any, Dict
 from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from django.shortcuts import get_object_or_404
 from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
 from projects.models import Project
+from obligations.models import Obligation
 from utils.mixins import LoggedActionMixin, ProjectContextMixin
-from obligations.models import Obligation  # Add this import
 import logging
 
 logger = logging.getLogger(__name__)

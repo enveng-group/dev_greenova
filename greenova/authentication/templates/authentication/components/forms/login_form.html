@@ -1,6 +1,5 @@
 <form method="post" novalidate>
   {% csrf_token %}
-
   <fieldset>
     <legend>Login</legend>
     <label for="id_username">
@@ -14,7 +13,6 @@
              spellcheck="false"
              autocapitalize="none">
     </label>
-
     <label for="id_password">
       Password
       <input type="password"
@@ -25,10 +23,5 @@
              aria-required="true">
     </label>
   </fieldset>
-
-  {% if next %}
-  <input type="hidden" name="next" value="{{ next }}">
-  {% endif %}
-
   <button type="submit">{{ submit_text|default:"Log In" }}</button>
 </form>

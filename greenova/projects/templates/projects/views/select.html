@@ -1,0 +1,54 @@
+{% load project_tags %}
+
+{% block main %}
+<article>
+  <form>
+    <for="project-select">
+      Please pick your project from the list below.
+      </br>
+      <select id="project-select"
+              name="project_id"
+              hx-trigger="change"
+              hx-target="#project-content"
+              hx-swap="innerHTML"
+              hx-get="/projects/${event.target.value}/content/">
+        <option value="">Choose a project...</option>
+        {% for project in projects %}
+        <option value="{{ project.id }}"
+                {% if project.id|stringformat:"s" == selected_project_id %}selected{% endif %}>
+          {{ project.name }} ({{ user_roles|get_item:project.id|title }})
+        </option>
+        {% endfor %}
+      </select>
+      </label>
+  </form>
+
+  <div id="project-content" aria-live="polite"></div>
+</article>
+
+<style>
+  select#project-select {
+    width: 100%;
+    max-width: none;
+    min-width: 300px;
+    padding: 0.5em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  select#project-select option {
+    padding: 0.5em;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    width: auto;
+  }
+
+  @media screen and (min-width: 768px) {
+    select#project-select {
+      width: auto;
+      min-width: 400px;
+    }
+  }
+</style>
+{% endblock %}

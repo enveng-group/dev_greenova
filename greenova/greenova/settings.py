@@ -94,26 +94,17 @@ ROOT_URLCONF = "greenova.urls"
 TEMPLATES: List[TemplateConfig] = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'templates',
-            BASE_DIR / 'landing' / 'templates',
-            BASE_DIR / 'authentication' / 'templates',
-            BASE_DIR / 'dashboard' / 'templates',
-            BASE_DIR / 'analytics' / 'templates',
-            BASE_DIR / 'projects' / 'templates',
-            BASE_DIR / 'charts' / 'templates',
-            BASE_DIR / 'obligations' / 'templates',
-            BASE_DIR / 'chatbot' / 'templates',
-        ],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',  # Make sure this is present
+                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'utils.context_processors.greenova_context',  # Corrected back to 'context_processors'
             ],
-            'debug': DEBUG,  # Add this line, referencing your DEBUG setting
+            'debug': DEBUG,  # Add the required debug field
         },
     },
 ]
@@ -259,7 +250,3 @@ if 'runserver' in sys.argv:
     import os
     os.environ['PYTHONHTTPSVERIFY'] = '0'
     os.environ['DJANGO_SETTINGS_MODULE'] = 'greenova.settings'
-
-# Add these settings
-SYSTEM_STATUS = SYSTEM_STATUS_OPERATIONAL
-VERSION = '1.0.0'

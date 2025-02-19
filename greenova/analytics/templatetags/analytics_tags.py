@@ -21,7 +21,9 @@ def aspect_chart_data(project_id: int, aspect: str) -> Dict[str, Any]:
     """Get chart data for environmental aspect analysis."""
     try:
         project = Project.objects.get(id=project_id)
-        obligations = project.obligations.filter(
+        # Use direct Obligation query instead
+        obligations = Obligation.objects.filter(
+            project=project,
             environmental_aspect=aspect
         )
         processor = AnalyticsDataProcessor(obligations)

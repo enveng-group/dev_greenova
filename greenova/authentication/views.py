@@ -1,21 +1,35 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional, cast, TypedDict
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpRequest
+from django.core.handlers.wsgi import WSGIRequest
+from .forms import GreenovaUserCreationForm  # Import the custom form
 import logging
 
 logger = logging.getLogger(__name__)
 
+class AuthContext(TypedDict):
+    form: UserCreationForm
+    next: Optional[str]
+    error: Optional[str]
+
 class RegisterView(CreateView):
-    form_class = UserCreationForm
+    form_class = GreenovaUserCreationForm
     template_name = 'authentication/auth/register.html'
     success_url = reverse_lazy('dashboard:home')
+
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> AuthContext:
+        context = cast(AuthContext, super().get_context_data(**kwargs))
+        if self.request.GET.get('next'):
+            context['next'] = self.request.GET['next']
+        return context
 
     def form_valid(self, form: Any) -> HttpResponse:
         try:
@@ -31,21 +45,43 @@ class RegisterView(CreateView):
             logger.error(f"Registration error: {str(e)}")
             raise
 
-@method_decorator(require_http_methods(['POST']), name='dispatch')
+@method_decorator(require_http_methods(['GET', 'POST']), name='dispatch')
 class CustomLogoutView(LogoutView):
-    next_page = reverse_lazy('landing:home')
+    """Custom logout view that handles both regular and HTMX requests."""
     template_name = 'authentication/auth/logout.html'
+    next_page = reverse_lazy('landing:home')
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle GET requests - show logout confirmation page."""
+        if request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        return redirect(self.next_page)
+    def post(self, request: WSGIRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle POST requests - perform logout."""
+        try:
+            response = super().post(request, *args, **kwargs)
+            
+            # Check if this is an HTMX request
+            if request.headers.get('HX-Request'):
+                return JsonResponse({
+                    'success': True,
+                    'redirect_url': str(self.next_page)
+                }, headers={
+                    'HX-Redirect': str(self.next_page)
+                })
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"Logout error: {str(e)}")
+            if request.headers.get('HX-Request'):
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Logout failed'
+                }, status=500)
+            raise
 
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Dict[str, Any]) -> HttpResponse:
-        if request.method == 'POST':
-            return super().dispatch(request, *args, **kwargs)
-        return redirect('dashboard:home')
-
-from django.views.generic import TemplateView
-from django.urls import reverse
-from utils.mixins import NavigationMixin
-
-class HomeView(NavigationMixin, TemplateView):
+class HomeView(TemplateView):
     """Landing page view."""
     template_name = 'landing/index.html'
     

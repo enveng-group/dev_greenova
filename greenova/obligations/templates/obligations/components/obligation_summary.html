@@ -1,3 +1,4 @@
+{% extends 'obligations/layouts/obligations_base.html' %}
 {% load common_tags %}
 
 <figure role="region" aria-label="Obligation Summary">
@@ -28,3 +29,4 @@
   <p>{{ chart_error_message|default:"Unable to load obligation summary." }}</p>
   {% endif %}
 </figure>
+{% endblock %}

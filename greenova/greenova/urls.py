@@ -6,21 +6,36 @@ from typing import List, Union
 from django.urls.resolvers import URLPattern, URLResolver
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
+import logging
+
+logger = logging.getLogger(__name__)
 
 def home_router(request):
     """Route to appropriate home page based on auth status."""
-    if request.user.is_authenticated:
-        return redirect('dashboard:home')
-    return redirect('landing:home')
+    logger.debug(f"Home router - User authenticated: {request.user.is_authenticated}")
+    
+    # If user is not authenticated, always go to landing page
+    if not request.user.is_authenticated:
+        logger.info("Unauthenticated user - redirecting to landing page")
+        return redirect('landing:home')
+    
+    # Only redirect to dashboard if authenticated
+    logger.info("Authenticated user - redirecting to dashboard")
+    return redirect('dashboard:home')
 
 urlpatterns: List[Union[URLPattern, URLResolver]] = [
+    # Landing page should be first to take precedence
     path('', home_router, name='home'),
-    path('admin/', admin.site.urls),
     path('landing/', include('landing.urls')),
+    path('admin/', admin.site.urls),
+    
+    # Authentication URLs
+    path('authentication/', include('authentication.urls')),
+    
+    # Protected URLs that require login
     path('dashboard/', include('dashboard.urls')),
     path('projects/', include('projects.urls')),
     path('analytics/', include('analytics.urls')),
-    path('auth/', include('authentication.urls')),
     path('obligations/', include('obligations.urls')),
     path('chat/', include('chatbot.urls')),
 ]

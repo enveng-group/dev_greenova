@@ -1,21 +1,27 @@
 {% extends 'base.html' %}
 
+{% block title %}Welcome to Greenova{% endblock %}
+
 {% block main %}
 <article>
-    <header role="banner">
+    <header>
         <hgroup>
-            <h1>Environmental Obligations Management</h1>
-            <h2>Streamline your environmental compliance with Greenova</h2>
+            <h1>Welcome to Greenova</h1>
+            <h2>Environmental Compliance Management System</h2>
         </hgroup>
-        <p>
-            Track, manage, and report on environmental obligations with ease.
-            Built for environmental professionals by environmental professionals.
-        </p>
-        <nav aria-label="Get started">
-            <a href="{% url 'authentication:register' %}" role="button">Get Started</a>
-            <a href="#features" role="button" class="outline">Learn More</a>
-        </nav>
+        <p>Track, manage, and report on environmental obligations with ease.</p>
     </header>
+
+    <section>
+        <!-- Landing page content -->
+        {% if not request.user.is_authenticated %}
+        <nav>
+            <a href="{% url 'authentication:register' %}" role="button">Get Started</a>
+            <a href="#features" role="button">Learn More</a>
+            <a href="{% url 'authentication:login' %}" role="button">Log In</a>
+        </nav>
+        {% endif %}
+    </section>
 
     <section id="features" aria-labelledby="features-heading">
         <h2 id="features-heading">Key Features</h2>

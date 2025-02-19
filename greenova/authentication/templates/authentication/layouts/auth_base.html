@@ -1,11 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}{% block auth_title %}Authentication{% endblock %} -
+Greenova{% endblock %}
 {% block meta_description %}Greenova - Environmental Obligations Management
 System{% endblock %}
 
 {% block main %}
-<main role="main">
-    {% block auth_content %}{% endblock %}
-</main>
+<article>
+    <header>
+        <hgroup>
+            <h1>{% block auth_heading %}Authentication{% endblock %}</h1>
+            <h2>{% block auth_subheading %}Secure access to your account{% endblock %}
+            </h2>
+        </hgroup>
+    </header>
+
+    {% block auth_actions %}{% endblock %}
+
+    <div class="auth-container">
+        {% block auth_content %}{% endblock %}
+    </div>
+</article>
 {% endblock %}

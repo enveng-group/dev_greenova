@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Analytics Dashboard{% endblock %}
+{% block page_subtitle %}View project metrics and insights{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .chart-container {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% block charts_content %}{% endblock %}
+{% endblock %}
+
+{% block page_actions %}
+<div class="chart-actions">
+  {% block chart_actions %}{% endblock %}
+</div>
+{% endblock %}

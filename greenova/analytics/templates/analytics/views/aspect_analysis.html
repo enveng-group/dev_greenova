@@ -1,10 +1,31 @@
 {% extends 'analytics/layouts/analytics_base.html' %}
-{% load analytics_tags %}
+{% load common_tags %}
 
-{% block analytics_title %}{{ project.name }} - Aspect Analysis{% endblock %}
-{% block analytics_subtitle %}Environmental Performance Analytics{% endblock %}
+{% block page_title %}{{ project.name }} - Aspect Analysis{% endblock %}
+{% block page_subtitle %}Environmental Performance Analytics{% endblock %}
 
-{% block analytics_content %}
+{% block extra_styles %}
+<style>
+  .aspect-grid {
+    gap: 1rem;
+  }
+
+  .analytics-chart {
+    min-height: 250px;
+  }
+</style>
+{% endblock %}
+
+{% block page_actions %}
+<div class="actions">
+  <button type="button" hx-get="{% url 'analytics:export_aspect_data' %}"
+          class="outline">Export Analysis</button>
+  <button type="button" hx-get="{% url 'analytics:refresh_aspect_data' %}"
+          class="outline">Refresh Data</button>
+</div>
+{% endblock %}
+
+{% block content %}
 <section aria-labelledby="aspect-overview">
   <h2 id="aspect-overview">Environmental Aspects Overview</h2>
 
@@ -50,7 +71,18 @@
 {% if analytics %}
 <section aria-labelledby="analytics-section">
   <h2 id="analytics-section">Performance Analytics</h2>
-  {% trend_chart days=30 %}
+  {% chart_container 
+   chart_id="mechanism-chart"
+   title=mechanism.name
+   data=chart_data
+   height="300px" %}
 </section>
 {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+<nav aria-label="Aspect filters">
+  <h3>Filter Options</h3>
+  <!-- ...filter controls... -->
+</nav>
 {% endblock %}

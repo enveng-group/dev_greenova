@@ -9,4 +9,5 @@ urlpatterns = [
     path('aspect-details/<str:obligation_number>/', views.AspectDetailsView.as_view(), name='aspect_details'),
     path('project/<int:project_id>/aspects/', views.AspectAnalysisView.as_view(), name='aspect_analysis'),
     path('aspect-analytics/', views.AspectAnalyticsView.as_view(), name='aspect_analytics'),
+    path('home/', views.home_router, name='home_router'),
 ]

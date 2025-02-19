@@ -1,20 +1,21 @@
+{% extends 'analytics/layouts/analytics_base.html' %}
 {% load analytics_tags common_tags %}
 
 <section>
   {% for mechanism in mechanisms %}
   {% mechanism_chart_data mechanism as chart_data %}
-  <figure role="region" aria-label="{{ mechanism.name }} Status Distribution">
+  <figure role="region"
+          aria-label="{{ mechanism.name }} Status Distribution"
+          class="chart-container">
+    <header>
+      <h3 id="chart-title-{{ mechanism.id }}">{{ mechanism.name }}</h3>
+    </header>
+
     {% if chart_data %}
-    <canvas id="chart-{{ mechanism.id }}"
-            class="chart-container"
-            data-mechanism="{{ mechanism.id }}"
+    <canvas id="status-chart-{{ mechanism.id }}"
             data-chart="{{ chart_data|json_script }}"
-            height="200"
-            hx-get="{% url 'analytics:mechanism-status' %}"
-            hx-trigger="load, revealed"
-            hx-vals='{"mechanism": "{{ mechanism.id }}"}'
-            hx-swap="none"
-            aria-label="{{ mechanism.name }} status distribution chart">
+            aria-labelledby="chart-title-{{ mechanism.id }}"
+            height="200">
     </canvas>
     {% else %}
     <p>{{ chart_error_message }}</p>
@@ -26,11 +27,21 @@
 
     <figcaption>
       <details>
-        <summary>Chart Description</summary>
-        <p>Distribution of obligations by status for {{ mechanism.name }}</p>
+        <summary>Distribution Details</summary>
+        <dl>
+          {% for status, count in chart_data.items %}
+          <dt>{{ status|title }}</dt>
+          <dd>{{ count }}</dd>
+          {% endfor %}
+        </dl>
       </details>
     </figcaption>
   </figure>
   {% endfor %}
-  {% trend_chart days=30 %}
+  {% chart_container 
+   chart_id="mechanism-chart"
+   title=mechanism.name
+   data=chart_data
+   height="300px" %}
 </section>
+{% endblock %}

@@ -1,21 +1,61 @@
+{% extends "charts/layouts/charts_base.html" %}
 {% load static %}
 
-<figure role="region"
-        aria-label="{{ mechanism }} Distribution"
-        data-action="filter"
-        data-mechanism="{{ mechanism }}"
-        data-project="{{ project.id }}">
+{% block page_title %}{{ mechanism }} Chart{% endblock %}
+{% block page_subtitle %}Distribution of obligations{% endblock %}
+
+{% block chart_actions %}
+<div class="chart-filters">
+    <label for="date-range">Date Range</label>
+    <select id="date-range" name="date_range">
+        <option value="7">Last 7 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+    </select>
+</div>
+{% endblock %}
+
+{% block charts_content %}
+<figure role="region" 
+        aria-label="{{ chart_title }}"
+        class="chart-container">
     <header>
-        <h3>{{ mechanism }}</h3>
+        <h3 id="chart-title-{{ chart_id }}">{{ chart_title }}</h3>
     </header>
 
-    <canvas id="chart-{{ index }}"
-            aria-label="{{ mechanism }} status distribution chart"></canvas>
+    <canvas id="{{ chart_id }}"
+            data-chart="{{ chart_data|json_script }}"
+            aria-labelledby="chart-title-{{ chart_id }}"
+            height="{{ height|default:'300px' }}"
+            {% if htmx_url %}
+            hx-get="{{ htmx_url }}"
+            hx-trigger="{{ htmx_trigger|default:'load' }}"
+            hx-swap="{{ htmx_swap|default:'none' }}"
+            {% endif %}>
+    </canvas>
 
-    <figcaption id="summary-{{ index }}">
+    <div class="htmx-indicator" role="status" aria-busy="true">
+        Loading chart data...
+    </div>
+
+    <figcaption>
         <details>
-            <summary>Chart Description</summary>
-            <p>Shows the distribution of obligations by status for {{ mechanism }}</p>
+            <summary>Chart Information</summary>
+            <dl>
+                <dt>Description</dt>
+                <dd>{{ chart_description }}</dd>
+                {% if chart_stats %}
+                <dt>Statistics</dt>
+                <dd>
+                    <ul>
+                        {% for stat in chart_stats %}
+                        <li>{{ stat.label }}: {{ stat.value }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+                {% endif %}
+            </dl>
         </details>
     </figcaption>
 </figure>
+{% endblock %}

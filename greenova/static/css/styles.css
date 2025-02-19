@@ -1,7 +1,2 @@
-/* Main stylesheet that imports all modular components */
-@import 'layout/grid.css';
-@import 'components/navigation.css';
+/* Main stylesheet that imports all modular components
 @import 'components/charts.css';
-@import 'components/htmx.css';
-@import 'components/chat-widget.css';
-@import 'components/status.css';

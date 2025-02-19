@@ -1,15 +1,17 @@
+{% if form.errors %}
 <aside role="alert" aria-live="polite">
-  {% if form.errors %}
   {% for field in form %}
   {% for error in field.errors %}
   <p class="message message-error">{{ error }}</p>
   {% endfor %}
   {% endfor %}
-  {% endif %}
+</aside>
+{% endif %}
 
-  {% if messages %}
+{% if messages %}
+<aside role="alert" aria-live="polite">
   {% for message in messages %}
   <p class="message message-{{ message.tags }}">{{ message }}</p>
   {% endfor %}
-  {% endif %}
 </aside>
+{% endif %}

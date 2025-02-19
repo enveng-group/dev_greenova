@@ -1,19 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %}Analytics - Greenova{% endblock %}
+{% block title %}{% block page_title %}Analytics{% endblock %} - Greenova{% endblock %}
+
+{% block extra_styles %}{% endblock %}
 
 {% block main %}
-<article>
+<article class="analytics-container">
   <header>
     <hgroup>
-      <h1>{% block analytics_title %}Analytics{% endblock %}</h1>
-      <h2>{% block analytics_subtitle %}Environmental Performance Insights{% endblock %}
-      </h2>
+      <h1>{% block page_title %}Analytics{% endblock %}</h1>
+      <h2>{% block page_subtitle %}Environmental Performance Insights{% endblock %}</h2>
     </hgroup>
+    {% block page_actions %}{% endblock %}
   </header>
 
-  <div role="main">
-    {% block analytics_content %}{% endblock %}
+  <div class="layout-grid">
+    <main role="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <aside>
+      {% block sidebar %}{% endblock %}
+    </aside>
   </div>
 </article>
 {% endblock %}

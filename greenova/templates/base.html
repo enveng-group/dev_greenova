@@ -1,108 +1,124 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{% block meta_description %}{% endblock %}">
-    <title>{% block title %}Greenova{% endblock %}</title>
+    <meta name="description"
+          content="{% block meta_description %}Environmental Compliance Management System{% endblock %}">
+    <title>{% block title %}{% block page_title %}Greenova{% endblock %}{% endblock %}
+    </title>
 
     <!-- Critical CSS -->
-    <link rel="preload" href="/static/css/vendor/modern-normalize.css" as="style">
-    <link rel="preload" href="/static/css/vendor/pico.classless.min.css" as="style">
-    <link rel="preload" href="/static/js/vendor/htmx.min.js" as="script">
+    <link rel="preload" href="{% static 'css/vendor/modern-normalize.css' %}"
+          as="style">
+    <link rel="preload" href="{% static 'css/vendor/pico.classless.min.css' %}"
+          as="style">
 
     <!-- CSS files -->
-    <link rel="stylesheet" href="/static/css/vendor/modern-normalize.css">
-    <link rel="stylesheet" href="/static/css/vendor/pico.classless.min.css">
-    <link rel="stylesheet" href="/static/css/styles.css">
-
-    <!-- In the head section, add this before other scripts -->
-    <script defer src="/static/js/vendor/chart.umd.js" type="module"></script>
+    <link rel="stylesheet" href="{% static 'css/vendor/modern-normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/pico.classless.min.css' %}">
 
     {% block extra_head %}{% endblock %}
 </head>
 
-<body>
-    <nav role="navigation">
-        <ul>
-            <!-- Left side navigation -->
-            <li>
-                <a href="{% url 'landing:home' %}"
-                   {% if request.path == '/' %}aria-current="page" {% endif %}>
-                    <strong>Greenova</strong>
-                </a>
-            </li>
-            {% if user.is_authenticated %}
-            <li>
-                <a href="{% url 'dashboard:home' %}"
-                   {% if request.resolver_match.app_name == 'dashboard' %}aria-current="page"
-                   {% endif %}>
-                    Dashboard
-                </a>
-            </li>
-            {% endif %}
-        </ul>
+<header>
+    <nav>
+        <ul role="menubar"
+            aria-label="Primary navigation"
+            style="display: flex; width: 100%; align-items: center;">
 
-        <!-- Right side navigation -->
-        <ul>
-            {% if user.is_authenticated %}
-            <li>
-                <button id="chat-toggle"
-                        aria-controls="chat-dialog"
-                        class="outline">
-                    <span aria-hidden="true">💬</span>
-                    <span class="sr-only">Toggle chat assistant</span>
-                </button>
+            {% if request.user.is_authenticated %}
+            <!-- Left side navigation items -->
+            <li role="none" style="margin-left: 2rem">
+            <li role="none" style="margin-left: 2rem">
+                <nav aria-label="Primary navigation" role="navigation">
+                    <ul>
+                        <li>
+                            <a href="{% url 'dashboard:home' %}"
+                               role="menuitem"
+                               aria-current="{% if request.resolver_match.namespace == 'dashboard' %}page{% endif %}">
+                                Dashboard
+                            </a>
+                        </li>
+                        {% if request.resolver_match.namespace != 'dashboard' %}
+                        <li>
+                            <span>{{ request.resolver_match.namespace|title }}</span>
+                        </li>
+                        {% endif %}
+                        {% block breadcrumbs %}{% endblock %}
+                    </ul>
+                </nav>
             </li>
-            <li>
-                <form method="post" action="{% url 'authentication:logout' %}"
-                      class="inline">
+
+            <!-- Auth Actions (right-aligned) -->
+            <li role="none"
+                style="margin-left: auto; display: flex; align-items: center; gap: 1rem;">
+                {% if request.user.is_authenticated %}
+                {% load chatbot_tags %}
+                    {% chat_widget %}
+                <form hx-post="{% url 'authentication:logout' %}"
+                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                      hx-push-url="true">
                     {% csrf_token %}
-                    <button type="submit" class="outline">Log Out</button>
+                    <button type="submit">Logout</button>
                 </form>
+                {% endif %}
             </li>
             {% else %}
-            {% if request.resolver_match.url_name != 'login' %}
-            <li>
+            <li role="none" style="margin-left: auto">
                 <a href="{% url 'authentication:login' %}"
-                   role="button"
-                   class="outline">
-                    Log In
+                   role="menuitem"
+                   aria-label="Login"
+                   class="secondary outline"
+                   hx-boost="true"
+                   _="on click call alert('Redirecting to login...')">
+                    Login
                 </a>
             </li>
-            {% endif %}
             {% endif %}
         </ul>
     </nav>
+</header>
 
+<body>
+    <!-- Main content -->
     <main role="main">
-        {% if messages %}
-        <aside role="alert" aria-live="polite">
-            {% for message in messages %}
-            <p>{{ message }}</p>
-            {% endfor %}
-        </aside>
-        {% endif %}
         {% block main %}{% endblock %}
     </main>
 
+    <!-- Footer -->
     <footer role="contentinfo">
-        {% block footer_content %}{% endblock %}
+        {% block footer %}{% endblock %}
+        <p>
+            System Status:
+            <mark>{{ system_status }}</mark> |
+            Version: {{ app_version }} |
+            Last Updated: {{ last_updated|date:"j M Y" }}
+        </p>
+        <p>
+            Need help? Contact
+            <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+        </p>
+        <p>
+            © {% now "Y" %} <a href="https://www.enveng-group.com.au/"
+               target="_blank"
+               rel="noopener noreferrer">Enveng Group</a> |
+            Licensed under <a
+               href="https://www.gnu.org/licenses/agpl-3.0.html"
+               target="_blank"
+               rel="noopener noreferrer">GNU AGPL v3.0</a>
+        </p>
     </footer>
 
-    <script defer src="/static/js/vendor/htmx.min.js"></script>
-    <!-- Load additional scripts only when needed -->
-    {% if request.resolver_match.app_name == 'dashboard' %}
-    <script defer src="/static/js/vendor/chart.umd.js"></script>
-    <script defer src="/static/js/app.js" type="module"></script>
-    {% endif %}
-
-    <!-- At the bottom of the body -->
-    <script type="module">
-        import { ChartManager } from '/static/js/modules/chart-manager.js';
-        window.chartManager = new ChartManager();
-    </script>
+    <!-- Scripts -->
+    <script src="{% static 'js/vendor/htmx.min.js' %}" defer></script>
+    <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
+    <script src="{% static 'js/vendor/chart.umd.js' %}" defer></script>
+    <script src="{% static 'js/app.js' %}" type="module" defer></script>
+    {% block extra_scripts %}{% endblock %}
 </body>
+
 
 </html>

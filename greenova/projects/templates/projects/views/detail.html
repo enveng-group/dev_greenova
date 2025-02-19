@@ -1,98 +1,32 @@
-{% extends 'projects/layouts/project_base.html' %}
-{% load project_tags %}
+{% load static project_tags %}
 
-{% block project_title %}{{ project.name }}{% endblock %}
+{% block title %}{{ project.name }}{% endblock %}
 
-{% block project_content %}
+{% block main %}
 <article>
-  <header>
-    <hgroup>
-      <h2>{{ project.name }}</h2>
-      {% if project.description %}
+    <h1>{{ project.name }}</h1>
+    {% if project.description %}
       <p>{{ project.description }}</p>
-      {% endif %}
-    </hgroup>
+    {% endif %}
+    
     <nav>
-      <a href="{% url 'projects:edit' project.id %}" role="button" class="outline">Edit
-        Project</a>
+      <a href="{% url 'projects:edit' project.id %}" role="button" class="outline">Edit</a>
       <button type="button"
               class="outline"
               hx-delete="{% url 'projects:delete' project.id %}"
-              hx-confirm="Are you sure you want to delete this project?"
-              hx-redirect="{% url 'projects:list' %}">
-        Delete Project
-      </button>
+              hx-confirm="Delete this project?"
+              hx-redirect="{% url 'projects:list' %}">Delete</button>
     </nav>
-  </header>
 
-  <!-- Project Stats -->
-  {% project_stats_chart project %}
-
-  <!-- Environmental Mechanisms -->
-  <section aria-labelledby="mechanisms-heading">
-    <h3 id="mechanisms-heading">Environmental Mechanisms</h3>
-    <nav>
-      <a href="{% url 'analytics:aspect_analysis' project.id %}"
-         role="button"
-         class="outline">
-        View Aspect Analysis
-      </a>
-    </nav>
-    <div class="grid">
-      {% for mechanism in mechanisms %}
-      <figure role="region"
-              aria-label="{{ mechanism.name }} Distribution"
-              class="chart-container">
-        <header>
-          <h4>{{ mechanism.name }}</h4>
-        </header>
-        <canvas id="chart-{{ forloop.counter }}"
-                data-mechanism="{{ mechanism.name }}"
-                data-chart='{
-                            "labels": ["Not Started", "In Progress", "Completed"],
-                            "datasets": [{
-                                "data": [
-                                    {% for status in mechanism.status_counts %}
-                                        {{ status.count }}{% if not forloop.last %},{% endif %}
-                                    {% endfor %}
-                                ],
-                                "backgroundColor": [
-                                    "var(--error)",
-                                    "var(--primary)",
-                                    "var(--success)"
-                                ]
-                            }]
-                        }'></canvas>
-        <figcaption>
-          <details>
-            <summary>Status Distribution</summary>
-            <dl>
-              {% for status in mechanism.status_counts %}
-              <dt>{{ status.status|title }}</dt>
-              <dd>{{ status.count }}</dd>
-              {% endfor %}
-            </dl>
-          </details>
-        </figcaption>
-      </figure>
-      {% endfor %}
-    </div>
-  </section>
-
-  <!-- Obligations Table -->
+  {% include "projects/components/stats.html" with stats=project.get_analytics %}
+  
   <section aria-labelledby="obligations-heading">
-    <header>
-      <h3 id="obligations-heading">Obligations</h3>
-      <nav>
-        <a href="{% url 'obligations:create' project.id %}" role="button">
-          Add Obligation
-        </a>
-        <a href="{% url 'obligations:list' project.id %}" role="button" class="outline">
-          View All Obligations
-        </a>
-      </nav>
-    </header>
+    <h2 id="obligations-heading">Obligations</h2>
     {% include "obligations/tables/obligation_list.html" with obligations=obligations %}
   </section>
+
+  <section aria-labelledby="charts-heading">
+    <h2 id="charts-heading">Analytics</h2>
+    {% include "projects/components/charts.html" with mechanisms=mechanisms %}
+  </section>
 </article>
-{% endblock %}

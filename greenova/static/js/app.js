@@ -1,9 +1,11 @@
 import { ChartManager } from './modules/chart-manager.js';
-import { ChatWidget } from './modules/chat-widget.js';
+import { ProjectSelect } from './modules/project-select.js';
+import { ProjectContent } from './modules/project-content.js';
 
 // Initialize managers
 const chartManager = new ChartManager();
-const chatWidget = new ChatWidget();
+const projectSelect = new ProjectSelect();
+const projectContent = new ProjectContent();
 
 // HTMX Events
 htmx.on('htmx:afterRequest', (evt) => {

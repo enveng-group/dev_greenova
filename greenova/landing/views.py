@@ -1,7 +1,5 @@
 from typing import Any, Dict
 from django.views.generic import TemplateView
-from django.shortcuts import redirect
-from django.urls import reverse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,10 +10,15 @@ class HomeView(TemplateView):
     
     def get(self, request: Any, *args: Any, **kwargs: Any) -> Any:
         """Handle GET requests."""
-        # Always allow access to landing page, even for authenticated users
+        logger.debug(f"Landing page access - User authenticated: {request.user.is_authenticated}")
         return super().get(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Add landing page context data."""
         context = super().get_context_data(**kwargs)
+        # Add show_landing_content flag
+        context['show_landing_content'] = True
+        # Still add dashboard link if authenticated
+        if self.request.user.is_authenticated:
+            context['show_dashboard_link'] = True
         return context

@@ -2,31 +2,24 @@
 {% load static %}
 
 {% block title %}Login - Greenova{% endblock %}
+{% block page_title %}Welcome back{% endblock %}
+{% block page_subtitle %}<h2>Log in to your account</h2>{% endblock %}
 
 {% block auth_content %}
-<article>
-    <div>
-        <hgroup>
-            <h1>Welcome back</h1>
-            <h2>Log in to your account</h2>
-        </hgroup>
+{% include "authentication/components/messages/form_errors.html" %}
+{% include "authentication/components/forms/login_form.html" %}
 
-        {% include "authentication/components/messages/form_errors.html" %}
-        {% include "authentication/components/forms/login_form.html" %}
-
-        <footer>
-            <details>
-                <summary>Need help?</summary>
-                <nav>
-                    <ul>
-                        <li><a href="{% url 'authentication:password_reset' %}">Forgot
-                                your password?</a></li>
-                        <li><a href="{% url 'authentication:register' %}">Don't have an
-                                account? Sign up</a></li>
-                    </ul>
-                </nav>
-            </details>
-        </footer>
-    </div>
-</article>
+<footer>
+    <details>
+        <summary>Need help?</summary>
+        <nav>
+            <ul>
+                <li><a href="{% url 'authentication:password_reset' %}">Forgot your
+                        password?</a></li>
+                <li><a href="{% url 'authentication:register' %}">Don't have an account?
+                        Sign up</a></li>
+            </ul>
+        </nav>
+    </details>
+</footer>
 {% endblock %}
