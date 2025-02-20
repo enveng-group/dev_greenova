@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load common_tags %}
+
+{% block title %}Environmental mechanisms Analysis{% endblock %}
+
+{% block main %}
+<article>
+  <header>
+    <h1>Environmental mechanisms Analysis</h1>
+    <p>Analyzing obligations by primary environmental mechanisms for {{ project.name }}
+    </p>
+  </header>
+
+  {% if error %}
+  <p role="alert">{{ error }}</p>
+  {% endif %}
+
+  <section aria-labelledby="charts-title">
+    <h2 id="charts-title">mechanisms Distribution</h2>
+
+    <div class="grid">
+      {% for mechanisms in mechanisms %}
+      <article class="mechanisms-chart">
+        <header>
+          <h3>{{ mechanisms.name }}</h3>
+        </header>
+
+        <figure role="region" aria-label="{{ mechanisms.name }} statistics">
+          <!-- Chart canvas with accessibility -->
+          <canvas id="chart-{{ mechanisms.id|slugify }}"
+                  role="img"
+                  aria-label="Status distribution for {{ mechanisms.name }}"
+                  hx-get="{% url 'mechanisms:chart_data' project.id mechanisms.name %}"
+                  hx-trigger="load"
+                  hx-swap="none">
+          </canvas>
+
+          <!-- Fallback table for accessibility -->
+          <table class="chart-data">
+            <caption>Status breakdown for {{ mechanisms.name }}</caption>
+            <thead>
+              <tr>
+                <th scope="col">Status</th>
+                <th scope="col">Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for status in mechanisms.status_counts %}
+              <tr>
+                <td>{{ status.name }}</td>
+                <td>{{ status.count }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </figure>
+      </article>
+      {% empty %}
+      <p>No mechanisms data available for this project.</p>
+      {% endfor %}
+    </div>
+  </section>
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/vendor/chart.umd.js' %}"></script>
+<script src="{% static 'js/modules/chart-manager.js' %}" type="module"></script>
+{% endblock %}

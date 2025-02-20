@@ -35,9 +35,9 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     # Protected URLs that require login
     path('dashboard/', include('dashboard.urls')),
     path('projects/', include('projects.urls')),
-    path('analytics/', include('analytics.urls')),
     path('obligations/', include('obligations.urls')),
     path('chat/', include('chatbot.urls')),
+    path('mechanisms/', include('mechanisms.urls')),
 ]
 
 if settings.DEBUG:

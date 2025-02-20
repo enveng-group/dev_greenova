@@ -13,8 +13,7 @@ htmx.on('htmx:afterRequest', (evt) => {
                 chartManager.init(canvas, chartData);
             }
         });
-    } else {
-        console.error('HTMX request failed:', evt.detail.xhr.responseText);
+        
     }
 });
 

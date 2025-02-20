@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.utils.dateparse import parse_date
 from django.db import transaction
 from projects.models import Project
+from obligations.models import Obligation
 import csv
 import logging
 from typing import Any

@@ -786,6 +786,7 @@ CREATE TRIGGER update_obligations_timestamp
 14. **Pylance**: Python language server for Visual Studio Code.
 17. **Eslint**: JavaScript linter.
 18. **Debugpy**: Python debugger for VS Code.
+19. **Hyperscript**: JavaScript library for creating HTML elements.
 20. **venv**: Python virtual environment tool.
 21. **PicoCSS-classless**: Minimal CSS framework.
 
@@ -793,7 +794,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Core Dependencies:
 
-   - Django==5.1.5
+   - Django==5.1.6
 
 2. Development Tools:
    - autopep8==2.3.2
@@ -802,7 +803,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Node.js Environment:
 
-   - Node.js 23.7.0 (exact version)
+   - Node.js 23.8.0 (exact version)
    - npm 11.1.0 (exact version)
 
 2. Required Libraries:

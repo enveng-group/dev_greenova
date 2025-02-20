@@ -70,13 +70,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "landing.apps.LandingConfig",
     "authentication.apps.AuthenticationConfig",
-    "analytics.apps.AnalyticsConfig",
     "dashboard.apps.DashboardConfig",
     "projects.apps.ProjectsConfig",
-    "charts.apps.ChartsConfig",
     "obligations.apps.ObligationsConfig",
     "chatbot.apps.ChatbotConfig",
     "utils",
+    "mechanisms.apps.mechanismsConfig",
 ]
 
 MIDDLEWARE = [

@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 register = template.Library()
 
-@register.inclusion_tag('chatbot/partials/chat_widget.html')
+@register.inclusion_tag('chatbot/chat_widget.html')
 def chat_widget() -> Dict[str, Any]:
     """Render the chat widget."""
     return {}

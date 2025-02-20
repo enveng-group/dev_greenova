@@ -27,7 +27,7 @@ class DashboardContext(TypedDict):
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
-    template_name = 'dashboard/views/dashboard.html'
+    template_name = 'dashboard/dashboard.html'
     navigation: Optional[NavigationMixin] = None
     
     def get_navigation(self) -> NavigationMixin:

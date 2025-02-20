@@ -14,19 +14,8 @@
         </hgroup>
     </header>
 
-    <!-- Project Selection with HTMX -->
-    <section id="project-select"
-             hx-get="{% url 'dashboard:home' %}"
-             hx-trigger="projectChange from:body"
-             hx-target="#dashboard-content"
-             hx-swap="innerHTML">
-        {% include "projects/partials/projects.html" %}
-    </section>
-
-    <!-- Dashboard Content -->
-    <div id="dashboard-content">
-        {% include "dashboard/partials/dashboard_content.html" %}
-    </div>
+    <!-- Project Selection -->
+    {% include "projects/projects_selector.html" %}
 
     {% if error %}
     <p role="alert">{{ error|format_error }}</p>
