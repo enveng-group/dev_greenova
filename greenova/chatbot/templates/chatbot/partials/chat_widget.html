@@ -54,24 +54,20 @@
             hx-post="{% url 'chatbot:api' %}"
             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
             hx-target="#chat-messages"
-            hx-swap="beforeend scroll:bottom">
+            hx-swap="beforeend scroll:bottom"
+            hx-indicator="#chat-loading"
+            hx-trigger="submit">
         {% csrf_token %}
         <div class="input-group">
-          <label for="message-input" class="sr-only">Message</label>
           <input type="text"
-                 id="message-input"
                  name="message"
-                 required
-                 autocomplete="off"
-                 aria-describedby="chat-error"
-                 placeholder="Type your message...">
+                 hx-on="htmx:afterRequest: this.value = ''"
+                 required>
           <button type="submit">Send</button>
         </div>
-        <div id="chat-error"
-             class="error-message"
-             role="alert"
-             aria-live="polite"
-             hidden></div>
+        <div id="chat-loading" class="htmx-indicator">
+          Sending...
+        </div>
       </form>
     </article>
   </dialog>

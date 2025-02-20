@@ -4,7 +4,6 @@ from django.db.models import QuerySet
 from django.forms import ModelForm
 from logging import getLogger
 from .models import Project, ProjectMembership
-from obligations.models import Obligation
 
 logger = getLogger(__name__)
 

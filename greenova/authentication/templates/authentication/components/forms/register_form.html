@@ -1,4 +1,8 @@
-<form method="post" novalidate>
+<form method="post"
+      novalidate
+      hx-post="{% url 'authentication:register' %}"
+      hx-target="#form-errors"
+      hx-swap="innerHTML">
   {% csrf_token %}
 
   <fieldset>
@@ -14,9 +18,13 @@
              spellcheck="false"
              autocapitalize="none"
              pattern="[a-zA-Z0-9_]+"
-             aria-describedby="username-help">
+             aria-describedby="username-help"
+             hx-get="{% url 'authentication:validate_username' %}"
+             hx-trigger="keyup changed delay:500ms"
+             hx-target="#username-error">
     </label>
     <small id="username-help">Letters, numbers, and underscores only</small>
+    <div id="username-error"></div>
 
     <label for="id_email">
       Email
@@ -57,6 +65,10 @@
              minlength="8">
     </label>
   </fieldset>
+
+  <div id="form-errors">
+    {% include "authentication/components/messages/form_errors.html" %}
+  </div>
 
   <button type="submit">{{ submit_text|default:"Create Account" }}</button>
 </form>

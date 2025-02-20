@@ -36,4 +36,7 @@ urlpatterns = [
     path('password/reset/complete/', auth_views.PasswordResetCompleteView.as_view(
         template_name='authentication/password/reset/complete.html'
     ), name='password_reset_complete'),
+    
+    path('validate/username/', views.ValidateUsernameView.as_view(), 
+         name='validate_username'),
 ]

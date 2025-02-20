@@ -1,7 +1,7 @@
 from typing import Any, TypedDict, Dict, Optional
 from datetime import datetime
 from django.views.generic import View
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -10,6 +10,7 @@ from .services import ChatService
 from .forms import ChatMessageForm
 import json
 import logging
+from django_htmx.http import trigger_client_event
 
 logger = logging.getLogger(__name__)
 
@@ -36,21 +37,22 @@ class ChatApiView(View):
     def post(self, request: HttpRequest) -> JsonResponse:
         """Handle POST requests for chat messages."""
         try:
-            # Parse form data
             form = ChatMessageForm(request.POST)
             
             if not form.is_valid():
+                if request.htmx:  # Check if HTMX request
+                    return HttpResponse(
+                        f'<div class="error">{form.errors["message"][0]}</div>',
+                        status=400
+                    )
                 return JsonResponse({
                     'status': 'error',
                     'message': '',
                     'context': {},
-                    'error': form.errors['message'][0] 
+                    'error': form.errors['message'][0]
                 }, status=400)
 
-            # Get cleaned message
             message = form.cleaned_data['message']
-            
-            # Process via chat service
             chat_service = ChatService()
             context = {
                 'page': request.GET.get('page', 'unknown'),
@@ -58,23 +60,33 @@ class ChatApiView(View):
             }
             
             response = chat_service.process_message(message, context)
+            
+            if request.htmx:
+                # Return partial HTML for HTMX requests
+                html = f"""
+                <div class="message {response['status']}">
+                    <p>{response['message']}</p>
+                </div>
+                """
+                resp = HttpResponse(html)
+                trigger_client_event(resp, 'chatMessageSent')
+                return resp
+                
             return JsonResponse(response)
 
-        except json.JSONDecodeError:
-            return JsonResponse({
-                'status': 'error',
-                'message': '',
-                'context': {},
-                'error': 'Invalid JSON format'
-            }, status=400)
-            
         except Exception as e:
             logger.error(f"Chat error: {str(e)}")
+            error_msg = str(e) if settings.DEBUG else 'Internal server error'
+            if request.htmx:
+                return HttpResponse(
+                    f'<div class="error">{error_msg}</div>',
+                    status=500
+                )
             return JsonResponse({
                 'status': 'error',
                 'message': '',
                 'context': {},
-                'error': str(e) if settings.DEBUG else 'Internal server error'
+                'error': error_msg
             }, status=500)
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -89,8 +101,12 @@ class ChatToggleView(View):
             "timestamp": datetime.now().isoformat()
         })
 
-    def post(self, request: HttpRequest) -> JsonResponse:
+    def post(self, request: HttpRequest) -> HttpResponse:
         """Handle dialog state toggle."""
+        if request.htmx:
+            response = HttpResponse("<div>Chat opened</div>")
+            trigger_client_event(response, 'chatOpened')
+            return response
         return JsonResponse({
             "isOpen": True,
             "messages": [],

@@ -6,7 +6,7 @@ from obligations.models import Obligation
 
 register = template.Library()
 
-@register.inclusion_tag('projects/components/tables/obligation_list.html')
+@register.inclusion_tag('obligations/components/tables/obligation_list.html')
 def obligation_table(obligations: QuerySet[Obligation]) -> Dict[str, Any]:
     """Render obligation list table."""
     return {'obligations': obligations}

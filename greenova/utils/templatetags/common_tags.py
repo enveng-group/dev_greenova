@@ -71,20 +71,30 @@ def chart_container(
     }
 
 @register.inclusion_tag('components/data_table.html')
-def data_table(data: QuerySet, headers: List[str], title: str, empty_message: Optional[str] = None) -> Dict[str, Any]:
+def data_table(data: QuerySet, headers: List[str], title: str, 
+               htmx_url: Optional[str] = None,
+               htmx_trigger: str = "load",
+               htmx_target: str = "this",
+               empty_message: Optional[str] = None) -> Dict[str, Any]:
+    """Render a data table with HTMX refresh capabilities."""
     return {
         'data': data,
         'headers': headers,
         'title': title,
-        'empty_message': empty_message
+        'empty_message': empty_message,
+        'htmx_url': htmx_url,
+        'htmx_trigger': htmx_trigger,
+        'htmx_target': htmx_target
     }
 
 @register.inclusion_tag('components/dialogs/base_dialog.html')
-def modal_dialog(dialog_id: str, title: str, content_template: str, **kwargs) -> Dict[str, Any]:
-    """Render a modal dialog."""
+def modal_dialog(dialog_id: str, title: str, content_template: str,
+                htmx_url: Optional[str] = None, **kwargs) -> Dict[str, Any]:
+    """Render a modal dialog with HTMX loading."""
     return {
         'dialog_id': dialog_id,
         'title': title,
         'content_template': content_template,
+        'htmx_url': htmx_url,
         **kwargs
     }

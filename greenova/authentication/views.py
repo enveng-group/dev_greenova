@@ -1,8 +1,9 @@
 from typing import Any, Dict, Optional, cast, TypedDict
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, View
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,8 +11,9 @@ from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.core.handlers.wsgi import WSGIRequest
-from .forms import GreenovaUserCreationForm  # Import the custom form
+from .forms import GreenovaUserCreationForm
 import logging
+from django_htmx.http import trigger_client_event
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +46,21 @@ class RegisterView(CreateView):
         except Exception as e:
             logger.error(f"Registration error: {str(e)}")
             raise
+
+    def form_invalid(self, form: Any) -> HttpResponse:
+        """Handle invalid form submission with HTMX support."""
+        if self.request.headers.get('HX-Request'):
+            return HttpResponse(
+                self.render_to_string('authentication/components/messages/form_errors.html', 
+                {'form': form}),
+                status=422
+            )
+        return super().form_invalid(form)
+
+    def render_to_string(self, template: str, context: Dict[str, Any]) -> str:
+        """Helper method to render template strings."""
+        from django.template.loader import render_to_string
+        return render_to_string(template, context, request=self.request)
 
 @method_decorator(require_http_methods(['GET', 'POST']), name='dispatch')
 class CustomLogoutView(LogoutView):
@@ -93,3 +110,20 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         return context
+
+class ValidateUsernameView(View):
+    """Handle real-time username validation."""
+    
+    def get(self, request: HttpRequest) -> HttpResponse:
+        """Check username availability."""
+        username = request.GET.get('username', '')
+        is_taken = User.objects.filter(username=username).exists()
+        
+        if is_taken:
+            return HttpResponse(
+                '<small class="error">Username is already taken</small>',
+                status=422
+            )
+        return HttpResponse(
+            '<small class="success">Username is available</small>'
+        )

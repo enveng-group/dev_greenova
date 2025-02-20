@@ -1,0 +1,22 @@
+<section aria-labelledby="project-overview"
+         hx-target="this"
+         hx-swap="outerHTML">
+  <h2 id="project-overview">Project Overview</h2>
+  {% if selected_project_id %}
+  {% with project=projects|get_item:selected_project_id %}
+  {% project_stats project as stats %}
+  <dl>
+    <dt>Total Obligations</dt>
+    <dd>{{ stats.total }}</dd>
+    <dt>Active</dt>
+    <dd>{{ stats.active }}</dd>
+    <dt>Completed</dt>
+    <dd>{{ stats.completed }}</dd>
+  </dl>
+  {% endwith %}
+  {% endif %}
+</section>
+
+<div class="htmx-indicator" role="status" aria-busy="true">
+  Loading dashboard data...
+</div>

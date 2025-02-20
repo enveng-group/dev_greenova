@@ -8,10 +8,11 @@
       </br>
       <select id="project-select"
               name="project_id"
+              hx-get="{% url 'projects:select' %}"
               hx-trigger="change"
               hx-target="#project-content"
               hx-swap="innerHTML"
-              hx-get="/projects/${event.target.value}/content/">
+              hx-indicator=".htmx-indicator">
         <option value="">Choose a project...</option>
         {% for project in projects %}
         <option value="{{ project.id }}"
@@ -24,6 +25,9 @@
   </form>
 
   <div id="project-content" aria-live="polite"></div>
+  <div class="htmx-indicator" role="status" aria-busy="true">
+    Loading project data...
+  </div>
 </article>
 
 <style>

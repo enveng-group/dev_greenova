@@ -1,51 +1,34 @@
 from typing import Dict, Any, cast
-from django.db.models import QuerySet
-from django.views.generic import ListView, DetailView, View, TemplateView
+from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
-from django.template.response import TemplateResponse
-from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-from django.db.models import Count
-from .models import Project, ProjectMembership, ProjectRole
+from .models import Project, ProjectMembership
 import logging
+from django_htmx.http import trigger_client_event
+from django.http import HttpRequest, HttpResponse
+from django_htmx.middleware import HtmxDetails
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-class ProjectListView(LoginRequiredMixin, ListView):
-    """Display list of all projects."""
-    model = Project
-    template_name = 'projects/views/list.html'
-    context_object_name = 'projects'
-    
-    def get_queryset(self) -> QuerySet[Project]:
-        """Get projects for current user with obligations prefetched."""
-        return (Project.objects
-                .filter(memberships__user=cast(AbstractUser, self.request.user))
-                .prefetch_related('obligations')
-                .distinct())
-
-class ProjectDetailView(LoginRequiredMixin, DetailView):
-    """Display detailed view of a project."""
-    model = Project
-    template_name = 'projects/views/detail.html'
-    context_object_name = 'project'
-
-    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
-        """Add project obligations to context."""
-        context = super().get_context_data(**kwargs)
-        project = cast(Project, self.get_object())
-        context['obligations'] = project.obligations.all()
-        return context
-
 class ProjectSelectionView(LoginRequiredMixin, TemplateView):
     """Handle project selection."""
-    template_name = 'projects/partials/select.html'
+    template_name = 'projects/partials/projects.html'
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle GET requests with HTMX support."""
+        htmx = getattr(request, 'htmx', None)
+        if htmx:
+            context = self.get_context_data(**kwargs)
+            response = HttpResponse(
+                self.render_to_string('projects/partials/project_content.html', context)
+            )
+            # Trigger event for client-side updates
+            trigger_client_event(response, 'projectSelected')
+            return response
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Get context data for project selection."""
@@ -83,44 +66,28 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             
         return context
 
-class ProjectContentView(LoginRequiredMixin, View):
-    """Handle HTMX requests for project content."""
+    def render_to_string(self, template: str, context: dict) -> str:
+        """Helper method to render template strings."""
+        from django.template.loader import render_to_string
+        return render_to_string(template, context, request=self.request)
+
+class ProjectContentView(LoginRequiredMixin, TemplateView):
+    """Handle project content loading."""
+    template_name = 'projects/partials/project_content.html'
     
-    def get(self, request: HttpRequest, project_id: int) -> HttpResponse:
-        """Handle GET requests for project content."""
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        """Get context data for project content."""
+        context = super().get_context_data(**kwargs)
+        
         try:
-            project = get_object_or_404(Project, id=project_id)
-            user = cast(AbstractUser, request.user)
-            
-            # Check if user has access
-            try:
-                membership = project.memberships.get(user=user)
-            except ProjectMembership.DoesNotExist:
-                logger.warning(f"User {user.pk} attempted to access unauthorized project {project_id}")
-                return HttpResponseForbidden("You don't have access to this project")
-            
-            # Get project data
-            mechanisms = (project.obligations
-                        .values('primary_environmental_mechanism')
-                        .annotate(count=Count('id'))
-                        .order_by('primary_environmental_mechanism'))
-            
-            context = {
+            project = Project.objects.get(id=kwargs['project_id'])
+            user = cast(AbstractUser, self.request.user)
+            context.update({
                 'project': project,
-                'mechanisms': mechanisms,
-                'obligations': project.obligations.all(),
-                'user_role': membership.role
-            }
-            
-            return TemplateResponse(
-                request,
-                'projects/partials/project_content.html',
-                context
-            )
-            
-        except Exception as e:
-            logger.error(f"Error loading project content: {str(e)}")
-            return HttpResponse(
-                status=500,
-                content="Error loading project content"
-            )
+                'user_context': project.get_user_context(user),
+                'analytics': project.get_analytics()
+            })
+        except Project.DoesNotExist:
+            context['error'] = 'Project not found'
+        
+        return context
