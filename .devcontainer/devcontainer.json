@@ -3,10 +3,8 @@
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
-      "installTools": "black,mypy,pipenv,pylint,pytest,bandit",
       "optimize": true,
-      "version": "3.13.2",
-      "installPath": "/workspaces/python"
+      "version": "3.13.3"
     },
     "ghcr.io/devcontainers/features/git:1": {
       "ppa": true,
@@ -18,7 +16,6 @@
     },
     "ghcr.io/devcontainers/features/node:1": {
       "version": "23.8.0",
-      "nvmInstallPath": "/workspace/nvm",
       "pnpmVersion": "10.4.1",
       "nvmVersion": "0.40.1",
       "nodeGypDependencies": false,
@@ -43,7 +40,7 @@
         "dotfiles.targetPath": "~/dotfiles",
         "dotfiles.installCommand": "chmod +x setup.sh && /bin/bash setup.sh",
         "python.interpreter.infoVisibility": "always",
-        "python.analysis.nodeExecutable": "/workspaces/nvm/versions/node/v23.8.0/bin/node",
+        "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
         "remoteHub.gitProtocol": "ssh"
       },
       "extensions": [
