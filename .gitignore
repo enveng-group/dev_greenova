@@ -1,11 +1,77 @@
+# OS generated files
 .DS_Store
-greenova/db.sqlite3
-package-lock.json
-**/node_modules/**
-**/.venv/**
-**/__pycache__/**
+*.swp
+*.swo
+Thumbs.db
+
+# Python/Django
+*.py[cod]
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+.Python
+.coverage
+htmlcov/
 **/staticfiles/**
 **/media/**
-**/db.sqlite3
+
+# Virtual Environment
 .env
+.venv/
+env/
+venv/
+ENV/
+
+# Database
+*.sqlite3
+db.sqlite3
+*.db
+
+# Django
+/staticfiles/
+/media/
+local_settings.py
+
+# Logs
+*.log
+logs/
+greenova/logs/
+
+# Node
+node_modules/
+npm-debug.log
+package-lock.json
+
+# IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Project specific
+greenova/db.sqlite3
 greenova/logs/django.log
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Testing
+.coverage
+.tox/
+.pytest_cache/

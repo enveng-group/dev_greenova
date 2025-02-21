@@ -10,24 +10,29 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from typing import Dict, List, TypedDict, Union
-import os
+
 from utils.constants import SYSTEM_STATUS_OPERATIONAL
+
 
 class DatabaseConfig(TypedDict):
     ENGINE: str
     NAME: Union[str, Path]
 
+
 class TemplateOptions(TypedDict):
     context_processors: List[str]
     debug: bool  # This was the missing required field
+
 
 class TemplateConfig(TypedDict):
     BACKEND: str
     DIRS: List[Path]
     APP_DIRS: bool
     OPTIONS: TemplateOptions
+
 
 # Update the LoggingHandlerConfig TypedDict
 class LoggingHandlerConfig(TypedDict, total=False):
@@ -36,12 +41,14 @@ class LoggingHandlerConfig(TypedDict, total=False):
     filename: str
     formatter: str
 
+
 class LoggingConfig(TypedDict):
     version: int
     disable_existing_loggers: bool
     formatters: Dict[str, Dict[str, str]]
     handlers: Dict[str, LoggingHandlerConfig]
     loggers: Dict[str, Dict[str, Union[str, List[str], bool]]]
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,7 +63,7 @@ SECRET_KEY = "django-insecure-y4iiuwh@r27)q36u55%8k3l(gwyp7s&i$zl_+m0f+ljwm1c#hy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: List[str] = ['127.0.0.1', 'localhost', '*']  # Add '*' for development
+ALLOWED_HOSTS: List[str] = ["127.0.0.1", "localhost", "*"]  # Add '*' for development
 
 
 # Application definition
@@ -75,7 +82,7 @@ INSTALLED_APPS = [
     "obligations.apps.ObligationsConfig",
     "chatbot.apps.ChatbotConfig",
     "utils",
-    #"profiles.apps.ProfilesConfig",
+    # "profiles.apps.ProfilesConfig",
 ]
 
 MIDDLEWARE = [
@@ -86,25 +93,24 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    
 ]
 
 ROOT_URLCONF = "greenova.urls"
 
 TEMPLATES: List[TemplateConfig] = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'utils.context_processors.greenova_context',  # Corrected back to 'context_processors'
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "utils.context_processors.greenova_context",  # Corrected back to 'context_processors'
             ],
-            'debug': DEBUG,  # Add the required debug field
+            "debug": DEBUG,  # Add the required debug field
         },
     },
 ]
@@ -167,24 +173,24 @@ STATICFILES_FINDERS = [
 ]
 
 # Static files optimization
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 
 # Authentication settings
-LOGIN_REDIRECT_URL = 'dashboard:home'
-LOGOUT_REDIRECT_URL = 'landing:home'
-LOGIN_URL = 'authentication:login'
+LOGIN_REDIRECT_URL = "dashboard:home"
+LOGOUT_REDIRECT_URL = "landing:home"
+LOGIN_URL = "authentication:login"
 
 # Application version
-APP_VERSION = '0.1.0'
+APP_VERSION = "0.1.0"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Security settings
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = "DENY"
 CSRF_COOKIE_SECURE = False  # Set to False for HTTP in development
 SESSION_COOKIE_SECURE = False  # Set to False for HTTP in development
 SECURE_SSL_REDIRECT = False
@@ -192,61 +198,67 @@ SECURE_PROXY_SSL_HEADER = None
 
 # Cache settings
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
     }
 }
 
 # Create logs directory if it doesn't exist
-LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+LOGS_DIR = os.path.join(BASE_DIR, "logs")
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
 
 # Update the LOGGING configuration
 LOGGING: LoggingConfig = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',  # Changed from class_name to class
-            'level': 'INFO',
-            'formatter': 'simple',
-        },
-        'file': {
-            'class': 'logging.FileHandler',  # Changed from class_name to class
-            'level': 'INFO',
-            'filename': str(BASE_DIR / 'logs' / 'django.log'),
-            'formatter': 'verbose',
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': True,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",  # Changed from class_name to class
+            "level": "INFO",
+            "formatter": "simple",
         },
-        'projects': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+        "file": {
+            "class": "logging.FileHandler",  # Changed from class_name to class
+            "level": "INFO",
+            "filename": str(BASE_DIR / "logs" / "django.log"),
+            "formatter": "verbose",
         },
     },
-} # type: ignore
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "projects": {
+            "handlers": ["file"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}  # type: ignore
+
+# Add media settings
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Modify runserver command to force HTTP
 import sys
-if 'runserver' in sys.argv:
+
+if "runserver" in sys.argv:
     import os
-    os.environ['PYTHONHTTPSVERIFY'] = '0'
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'greenova.settings'
+
+    os.environ["PYTHONHTTPSVERIFY"] = "0"
+    os.environ["DJANGO_SETTINGS_MODULE"] = "greenova.settings"

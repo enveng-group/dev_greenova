@@ -1,0 +1,75 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Python files
+*.py text diff=python
+*.pyi text diff=python
+*.pth text
+*.ipynb text
+MANIFEST.in text
+setup.cfg text
+setup.py text
+pyproject.toml text
+requirements*.txt text
+
+# Python specific
+.dockerignore text
+docker-compose*.yml text
+Dockerfile text
+
+# Docker
+.vscode/* text
+
+# VS Code
+.gitconfig text
+.gitignore text
+.gitattributes text
+
+# Git config
+*secret* filter=git-crypt diff=git-crypt
+*.key filter=git-crypt diff=git-crypt
+.snyk filter=git-crypt diff=git-crypt
+.env* filter=git-crypt diff=git-crypt
+
+# Config files
+*.conf text
+*.cfg text
+*.ini text
+*.toml text
+*.yaml text
+*.yml text
+
+# Scripts
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+Makefile text
+*.zsh text eol=lf
+*.fish text eol=lf
+*.bash text eol=lf
+*.sh text eol=lf
+
+# Data files
+*.pkl binary
+*.db binary
+*.sqlite3 binary
+
+# Graphics
+*.svg text
+*.ico binary
+*.gif binary
+*.jpg binary
+*.png binary
+*.pdf binary
+
+# Documentation
+*.txt text
+*.rst text
+*.md text diff=markdown
+
+# Web files
+*.json text
+*.js text diff=javascript
+*.css text diff=css
+*.htm text diff=html
+*.html text diff=html

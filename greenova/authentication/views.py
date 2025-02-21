@@ -5,10 +5,9 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LogoutView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
-from django.http import HttpResponse, JsonResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest
 from django.core.handlers.wsgi import WSGIRequest
 from .forms import GreenovaUserCreationForm  # Import the custom form
 import logging
@@ -25,8 +24,8 @@ class RegisterView(CreateView):
     template_name = 'authentication/auth/register.html'
     success_url = reverse_lazy('dashboard:home')
 
-    def get_context_data(self, **kwargs: Dict[str, Any]) -> AuthContext:
-        context = cast(AuthContext, super().get_context_data(**kwargs))
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
         if self.request.GET.get('next'):
             context['next'] = self.request.GET['next']
         return context
