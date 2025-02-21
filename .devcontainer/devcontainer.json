@@ -38,7 +38,7 @@
         "dev.containers.gpuAvailability": "none",
         "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
         "dotfiles.targetPath": "~/dotfiles",
-        "dotfiles.installCommand": "chmod +x setup.sh && /bin/bash setup.sh",
+        "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
         "python.interpreter.infoVisibility": "always",
         "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
         "remoteHub.gitProtocol": "ssh"
@@ -74,7 +74,7 @@
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated"
   ],
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=volume",
+  "workspaceMount": "source=dev_greenova,target=/workspaces/${localWorkspaceFolderBasename},type=volume",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode",
   "containerUser": "vscode",
