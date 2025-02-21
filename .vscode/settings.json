@@ -80,17 +80,6 @@
         "editor.formatOnSave": true,
         "files.eol": "\n"
     },
-    "autopep8.args": [
-        "--max-line-length=88",
-        "--experimental",
-        "--aggressive",
-        "--aggressive",
-        "--in-place",
-        "--recursive",
-        "--select=E,W,F",
-        "--ignore=E226,E302,E41",
-        "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules"
-    ],
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": true,
     "editor.formatOnSave": true,

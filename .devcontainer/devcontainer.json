@@ -1,7 +1,11 @@
 {
     "name": "Greenova Development",
-    "image": "mcr.microsoft.com/devcontainers/python:3",
-    "features": {},
+    "image": "mcr.microsoft.com/devcontainers/python:3.13.2",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest"
+        }
+    },
     "customizations": {
         "vscode": {
             "settings": {
@@ -13,14 +17,19 @@
                 "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node"
             },
             "extensions": [
-                "ms-python.autopep8",
                 "dbaeumer.vscode-eslint",
                 "GitHub.copilot",
                 "GitHub.copilot-chat",
                 "ms-python.vscode-pylance",
                 "ms-python.python",
                 "ms-python.debugpy",
-                "foxundermoon.shell-format"
+                "foxundermoon.shell-format",
+                "ms-python.isort",
+                "ms-python.black-formatter",
+                "ms-python.pylint",
+                "ms-python.mypy-type-checker",
+                "monosans.djlint",
+                "batisteo.vscode-django"
             ]
         }
     },
