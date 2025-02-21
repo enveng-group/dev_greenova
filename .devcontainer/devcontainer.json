@@ -1,26 +1,39 @@
 {
   "name": "Greenova Development",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
-      "installTools": true,
+      "installTools": "black,mypy,pipenv,pylint,pytest,bandit",
       "optimize": true,
-      "version": "latest"
+      "version": "3.13.2",
+      "installPath": "/workspaces/python"
     },
     "ghcr.io/devcontainers/features/git:1": {
       "ppa": true,
-      "version": "latest"
+      "version": "2.48.1"
     },
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
-      "version": "latest"
+      "version": "2.67.0"
     },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "latest",
-      "pnpmVersion": "latest",
-      "nvmVersion": "latest"
+      "version": "23.8.0",
+      "nvmInstallPath": "/workspace/nvm",
+      "pnpmVersion": "10.4.1",
+      "nvmVersion": "0.40.1",
+      "nodeGypDependencies": false,
+      "installYarn": false
     },
-    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {}
+    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {},
+    "ghcr.io/devcontainers/features/common-utils": {
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "installOhMyZshConfig": false,
+      "upgradePackages": true
+    },
+    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
+      "version": "0.10.0"
+    }
   },
   "customizations": {
     "vscode": {
@@ -28,9 +41,9 @@
         "dev.containers.gpuAvailability": "none",
         "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
         "dotfiles.targetPath": "~/dotfiles",
-        "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
+        "dotfiles.installCommand": "chmod +x setup.sh && /bin/bash setup.sh",
         "python.interpreter.infoVisibility": "always",
-        "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
+        "python.analysis.nodeExecutable": "/workspaces/nvm/versions/node/v23.8.0/bin/node",
         "remoteHub.gitProtocol": "ssh"
       },
       "extensions": [
@@ -54,7 +67,10 @@
         "bierner.markdown-mermaid",
         "bierner.markdown-preview-github-styles",
         "ms-vscode.makefile-tools",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "nwgh.bandit",
+        "redhat.vscode-yaml",
+        "timonwong.shellcheck"
       ]
     }
   },
@@ -73,6 +89,6 @@
   "postCreateCommand": {
     "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
     "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true",
-    "setup": "python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt && npm install -g npm@latest && npm audit fix && npm install"
+    "setup": "pipenv install --dev && . ${NVM_DIR}/nvm.sh && nvm install 23.8.0 && nvm use 23.8.0 && pnpm self-update && pnpm install"
   }
 }

@@ -75,3 +75,6 @@ greenova/logs/django.log
 .coverage
 .tox/
 .pytest_cache/
+
+# Pipenv
+Pipfile.lock
