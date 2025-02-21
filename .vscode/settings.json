@@ -1,296 +1,315 @@
 {
-    "[css]": {
-        "editor.defaultFormatter": "vscode.css-language-features",
-        "editor.formatOnSave": false,
-        "editor.suggest.insertMode": "replace",
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true
-    },
-    "[git-commit]": {
-        "editor.rulers": [
-            72,
-            50
-        ],
-        "editor.wordWrap": "on",
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true,
-        "editor.fontFamily": "monospace"
-    },
-    "[html]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "monosans.djlint",
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true,
-        "editor.suggest.insertMode": "replace"
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-        "editor.formatOnSave": true,
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true
-    },
-    "[json]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "vscode.json-language-features",
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true
-    },
-    "[markdown]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "vscode.markdown-language-features",
-        "editor.wordWrap": "on",
-        "editor.quickSuggestions": {
-            "comments": "off",
-            "strings": "off",
-            "other": "off"
-        }
-    },
-    "[pip-requirements]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
-        "editor.insertFinalNewline": true,
-        "editor.tabSize": 4,
-        "editor.insertSpaces": true,
-        "files.trimTrailingWhitespace": true
-    },
-    "[plaintext]": {
-        "editor.wordWrap": "on",
-        "editor.quickSuggestions": {
-            "comments": false,
-            "strings": false,
-            "other": false
-        },
-        "editor.tabSize": 4,
-        "files.insertFinalNewline": true
-    },
-    "[python]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "ms-python.black-formatter",
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit",
-            "source.fixAll": "explicit"
-        },
-        "editor.rulers": [
-            88,
-            100
-        ],
-        "editor.wordBasedSuggestions": "off"
-    },
-    "[shellscript]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format",
-        "editor.formatOnSave": true,
-        "files.eol": "\n"
-    },
-    "editor.bracketPairColorization.enabled": true,
-    "editor.guides.bracketPairs": true,
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "editor.linkedEditing": true,
-    "editor.renderWhitespace": "boundary",
+  "[css]": {
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.formatOnSave": false,
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[git-commit]": {
     "editor.rulers": [
-        79,
-        88,
-        100
+      72,
+      50
     ],
-    "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 500,
-    "files.watcherExclude": {
-        "**/.git/objects/**": true,
-        "**/.git/subtree-cache/**": true,
-        "**/node_modules/**": true,
-        "**/.venv/**": true,
-        "**/__pycache__/**": true
+    "editor.wordWrap": "on",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.fontFamily": "monospace"
+  },
+  "[html]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.suggest.insertMode": "replace"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "vscode.markdown-language-features",
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  },
+  "[pip-requirements]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.insertFinalNewline": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.trimTrailingWhitespace": true
+  },
+  "[plaintext]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": false,
+      "strings": false,
+      "other": false
     },
-    "files.watcherInclude": [
-        "**/*.py",
-        "**/*.html",
-        "**/*.css",
-        "**/*.js"
-    ],
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/*.pyc": true,
-        "**/__pycache__": true,
-        "**/.pytest_cache": true,
-        "**/node_modules": true,
-        "**/.venv": true
+    "editor.tabSize": 4,
+    "files.insertFinalNewline": true
+  },
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
     },
-    "extensions.ignoreRecommendations": true,
-    "python.analysis.diagnosticMode": "workspace",
-    "python.analysis.indexing": false,
-    "javascript.suggest.enabled": false,
-    "typescript.suggest.enabled": false,
-    "git.autofetch": true,
-    "git.confirmSync": false,
-    "git.enableSmartCommit": true,
-    "github.copilot.advanced": {
-        "listCount": 10,
-        "inlineSuggestCount": 3,
-        "debug.enable": false
-    },
-    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-    "github.copilot.editor.enableAutoCompletions": true,
-    "github.copilot.enable": {
-        "*": true,
-        "plaintext": true,
-        "markdown": false,
-        "scminput": false
-    },
-    "github.copilot.nextEditSuggestions.enabled": true,
-    "html.format.templating": true,
-    "task.reconnection": true,
-    "workbench.colorTheme": "Default Dark Modern",
-    "workbench.editor.enablePreview": false,
-    "debug.inlineValues": "on",
-    "debug.console.fontSize": 14,
-    "debug.toolBarLocation": "docked",
-    "debugpy.debugJustMyCode": false,
-    "editor.stickyScroll.enabled": true,
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact"
+    "editor.rulers": [
+      88,
+      100
     ],
-    "eslint.format.enable": true,
-    "files.associations": {
-        "*.html": "html",
-        "*.djhtml": "html",
-        "*.js": "javascript",
-        "*.py": "python",
-        "requirements*.txt": "pip-requirements"
-    },
-    "html.format.wrapLineLength": 88,
-    "html.format.wrapAttributes": "preserve-aligned",
-    "javascript.format.semicolons": "insert",
-    "javascript.preferences.quoteStyle": "single",
-    "javascript.updateImportsOnFileMove.enabled": "always",
-    "python.analysis.autoImportCompletions": false,
-    "python.analysis.extraPaths": [
-        "${workspaceFolder}/.venv/lib/python3.13/site-packages"
-    ],
-    "python.analysis.typeCheckingMode": "strict",
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.terminal.shellIntegration.enabled": true,
-    "python.terminal.activateEnvironment": true,
-    "python.analysis.inlayHints.functionReturnTypes": false,
-    "python.analysis.inlayHints.variableTypes": false,
-    "python.testing.unittestEnabled": true,
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "./greenova",
-        "-p",
-        "*test*.py"
-    ],
-    "python.envFile": "${workspaceFolder}/.env",
-    "eslint.codeActionsOnSave.rules": [
-        "!prettier/*",
-        "*"
-    ],
-    "python.testing.pytestEnabled": false,
-    "github.gitProtocol": "ssh",
-    "python.analysis.autoFormatStrings": true,
-    "python.analysis.completeFunctionParens": true,
-    "python.analysis.enablePytestSupport": false,
-    "python.analysis.languageServerMode": "light",
-    "python.analysis.logLevel": "Error",
-    "terminal.integrated.cwd": "${workspaceFolder}",
-    "terminal.integrated.defaultProfile.linux": "fish",
-    "terminal.integrated.shellIntegration.enabled": true,
-    "terminal.integrated.env.linux": {
-        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
-        "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
-    },
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
-    "python.analysis.autoSearchPaths": true,
-    "pylint.enabled": true,
-    "pylint.args": [
-        "--rcfile=.pylintrc",
-        "--load-plugins=pylint_django",
-        "--django-settings-module=greenova.settings"
-    ],
-    "pylint.cwd": "${workspaceFolder}",
-    "pylint.interpreter": [
-        "${workspaceFolder}/.venv/bin/python"
-    ],
-    "pylint.path": [
-        "${workspaceFolder}/.venv/bin/pylint"
-    ],
-    "pylint.severity": {
-        "convention": "Information",
-        "error": "Error",
-        "fatal": "Error",
-        "refactor": "Information",
-        "warning": "Warning",
-        "info": "Information"
-    },
-    "pylint.ignorePatterns": [
-        "**/.venv/**",
-        "**/migrations/**",
-        "**/__pycache__/**"
-    ],
-    "pylint.useMinimalCheckers": true,
-    "mypy-type-checker.cwd": "${workspaceFolder}",
-    "mypy-type-checker.interpreter": [
-        "${workspaceFolder}/.venv/bin/python"
-    ],
-    "mypy-type-checker.path": [
-        "${workspaceFolder}/.venv/bin/mypy"
-    ],
-    "mypy-type-checker.preferDaemon": true,
-    "mypy-type-checker.severity": {
-        "error": "Error",
-        "note": "Information"
-    },
-    "mypy-type-checker.args": [
-        "--strict",
-        "--ignore-missing-imports",
-        "--follow-imports=silent"
-    ],
-    "isort.check": true,
-    "isort.importStrategy": "fromEnvironment",
-    "isort.interpreter": [
-        "${workspaceFolder}/.venv/bin/python"
-    ],
-    "isort.path": [
-        "${workspaceFolder}/.venv/bin/isort"
-    ],
-    "isort.severity": {
-        "error": "Error",
-        "warning": "Warning"
-    },
-    "isort.args": [
-        "--profile=black",
-        "--line-length=88",
-        "--multi-line=3"
-    ],
-    "black-formatter.cwd": "${workspaceFolder}",
-    "black-formatter.interpreter": [
-        "${workspaceFolder}/.venv/bin/python"
-    ],
-    "black-formatter.path": [
-        "${workspaceFolder}/.venv/bin/black"
-    ],
-    "black-formatter.args": [
-        "--line-length=88",
-        "--target-version=py313"
-    ],
-    "djlint.pythonPath": "${workspaceFolder}/.venv/bin/python",
-    "djlint.useVenv": true,
-    "django.snippets.use": true,
-    "github.copilot.chat.followUps": "always",
-    "github.copilot.chat.copilotDebugCommand.enabled": true,
-    "github.copilot.chat.editor.temporalContext.enabled": true,
-    "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
-    "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
-    "github.copilot.chat.fixTestFailure.enabled": true,
-    "github.copilot.chat.reviewSelection.enabled": true,
-    "github.copilot.chat.setupTests.enabled": true,
-    "github.copilot.chat.startDebugging.enabled": true,
-    "github.copilot.chat.useProjectTemplates": true,
-    "github.copilot.renameSuggestions.triggerAutomatically": true,
-    "github.copilot.selectedCompletionModel": "preview",
-    "djlint.enableLinting": true
+    "editor.wordBasedSuggestions": "off"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.linkedEditing": true,
+  "editor.renderWhitespace": "boundary",
+  "editor.rulers": [
+    79,
+    88,
+    100
+  ],
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500,
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true
+  },
+  "files.watcherInclude": [
+    "**/*.py",
+    "**/*.html",
+    "**/*.css",
+    "**/*.js"
+  ],
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/*.pyc": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/node_modules": true,
+    "**/.venv": true
+  },
+  "extensions.ignoreRecommendations": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.indexing": true,
+  "javascript.suggest.enabled": true,
+  "typescript.suggest.enabled": false,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "github.copilot.advanced": {
+    "listCount": 10,
+    "inlineSuggestCount": 3,
+    "debug.enable": false
+  },
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "html": true,
+    "css": true,
+    "javascript": true,
+    "python": true,
+    "json": true,
+    "shellscript": true,
+    "git-commit": true,
+    "pip-requirements": true
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "html.format.templating": true,
+  "task.reconnection": true,
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.editor.enablePreview": false,
+  "debug.inlineValues": "on",
+  "debug.console.fontSize": 14,
+  "debug.toolBarLocation": "docked",
+  "debugpy.debugJustMyCode": false,
+  "editor.stickyScroll.enabled": true,
+  "files.associations": {
+    "*.html": "django-html",
+    "*.djhtml": "django-html",
+    "*.js": "javascript",
+    "*.py": "python",
+    "requirements*.txt": "pip-requirements"
+  },
+  "html.format.wrapLineLength": 88,
+  "html.format.wrapAttributes": "preserve-aligned",
+  "javascript.format.semicolons": "insert",
+  "javascript.preferences.quoteStyle": "single",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "python.analysis.autoImportCompletions": false,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/.venv/lib/python3.13/site-packages"
+  ],
+  "python.analysis.typeCheckingMode": "strict",
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.terminal.shellIntegration.enabled": true,
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.inlayHints.functionReturnTypes": false,
+  "python.analysis.inlayHints.variableTypes": false,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "--no-header",
+    "--no-summary",
+    "--no-color"
+  ],
+  "python.testing.pytestPath": "pytest",
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}",
+  "python.testing.debugPort": 3000,
+  "python.testing.promptToConfigure": true,
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.testing.pytestEnabled": true,
+  "github.gitProtocol": "ssh",
+  "editorconfig.generateAuto": true,
+  "python.analysis.autoFormatStrings": true,
+  "djlint.formatAttributeTemplateTags": true,
+  "css.format.enable": true,
+  "html.format.enable": true,
+  "json.format.enable": true,
+  "djlint.formatCss": true,
+  "djlint.formatJs": true,
+  "javascript.format.enable": true,
+  "djlint.formatLanguages": [
+    "django-html",
+    "css",
+    "javascript",
+    "html",
+    "json"
+  ],
+  "editor.formatOnSaveMode": "file",
+  "editor.formatOnType": true,
+  "shellformat.useEditorConfig": true,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.enablePytestSupport": false,
+  "python.analysis.languageServerMode": "light",
+  "python.analysis.logLevel": "Error",
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "terminal.integrated.defaultProfile.linux": "fish",
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+    "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.analysis.autoSearchPaths": true,
+  "pylint.enabled": true,
+  "pylint.args": [
+    "--rcfile=.pylintrc",
+    "--load-plugins=pylint_django",
+    "--django-settings-module=greenova.settings"
+  ],
+  "pylint.cwd": "${workspaceFolder}",
+  "pylint.interpreter": [
+    "${workspaceFolder}/.venv/bin/python"
+  ],
+  "pylint.path": [
+    "${workspaceFolder}/.venv/bin/pylint"
+  ],
+  "pylint.severity": {
+    "convention": "Information",
+    "error": "Error",
+    "fatal": "Error",
+    "refactor": "Information",
+    "warning": "Warning",
+    "info": "Information"
+  },
+  "pylint.ignorePatterns": [
+    "**/.venv/**",
+    "**/migrations/**",
+    "**/__pycache__/**"
+  ],
+  "pylint.useMinimalCheckers": true,
+  "mypy-type-checker.cwd": "${workspaceFolder}",
+  "mypy-type-checker.interpreter": [
+    "${workspaceFolder}/.venv/bin/python"
+  ],
+  "mypy-type-checker.path": [
+    "${workspaceFolder}/.venv/bin/mypy"
+  ],
+  "mypy-type-checker.preferDaemon": true,
+  "mypy-type-checker.severity": {
+    "error": "Error",
+    "note": "Information"
+  },
+  "mypy-type-checker.args": [
+    "--strict",
+    "--ignore-missing-imports",
+    "--follow-imports=silent"
+  ],
+  "isort.check": true,
+  "isort.importStrategy": "fromEnvironment",
+  "isort.interpreter": [
+    "${workspaceFolder}/.venv/bin/python"
+  ],
+  "isort.path": [
+    "${workspaceFolder}/.venv/bin/isort"
+  ],
+  "isort.severity": {
+    "error": "Error",
+    "warning": "Warning"
+  },
+  "isort.args": [
+    "--profile=black",
+    "--line-length=88",
+    "--multi-line=3"
+  ],
+  "black-formatter.cwd": "${workspaceFolder}",
+  "black-formatter.interpreter": [
+    "${workspaceFolder}/.venv/bin/python"
+  ],
+  "black-formatter.path": [
+    "${workspaceFolder}/.venv/bin/black"
+  ],
+  "black-formatter.args": [
+    "--line-length=88",
+    "--target-version=py313"
+  ],
+  "djlint.pythonPath": "${workspaceFolder}/.venv/bin/python",
+  "djlint.useVenv": true,
+  "django.snippets.use": true,
+  "github.copilot.chat.followUps": "always",
+  "github.copilot.chat.copilotDebugCommand.enabled": true,
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
+  "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
+  "github.copilot.chat.fixTestFailure.enabled": true,
+  "github.copilot.chat.reviewSelection.enabled": true,
+  "github.copilot.chat.setupTests.enabled": true,
+  "github.copilot.chat.startDebugging.enabled": true,
+  "github.copilot.chat.useProjectTemplates": true,
+  "github.copilot.renameSuggestions.triggerAutomatically": true,
+  "github.copilot.selectedCompletionModel": "preview",
+  "djlint.enableLinting": true
 }

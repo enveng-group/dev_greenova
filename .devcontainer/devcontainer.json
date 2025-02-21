@@ -34,7 +34,6 @@
                 "remoteHub.gitProtocol": "ssh"
             },
             "extensions": [
-                "dbaeumer.vscode-eslint",
                 "GitHub.copilot",
                 "GitHub.copilot-chat",
                 "ms-python.vscode-pylance",
@@ -47,7 +46,14 @@
                 "ms-python.mypy-type-checker",
                 "monosans.djlint",
                 "batisteo.vscode-django",
-                "EditorConfig.EditorConfig"
+                "EditorConfig.EditorConfig",
+                "ms-python.vscode-python-envs",
+                "MS-CST-E.vscode-devskim",
+                "ms-vscode.vscode-copilot-data-analysis",
+                "alexcvzz.vscode-sqlite",
+                "snyk-security.snyk-vulnerability-scanner",
+                "bierner.markdown-mermaid",
+                "bierner.markdown-preview-github-styles"
             ]
         }
     },

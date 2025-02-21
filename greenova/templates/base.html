@@ -63,9 +63,12 @@
               {% if request.user.is_authenticated %}
                 {% load chatbot_tags %}
                 {% chat_widget %}
-                <form hx-post="{% url 'authentication:logout' %}"
-                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                      hx-push-url="true">
+                <form method="post"
+                      action="{% url 'authentication:logout' %}"
+                      hx-post="{% url 'authentication:logout' %}"
+                      hx-target="body"
+                      hx-push-url="true"
+                      hx-redirect="{% url 'landing:home' %}">
                   {% csrf_token %}
                   <button type="submit">Logout</button>
                 </form>

@@ -49,7 +49,7 @@ class RegisterView(CreateView):
 class CustomLogoutView(LogoutView):
     """Custom logout view that handles both regular and HTMX requests."""
     template_name = 'authentication/auth/logout.html'
-    next_page = 'landing:home'
+    next_page = reverse_lazy('landing:home')
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -61,30 +61,36 @@ class CustomLogoutView(LogoutView):
         if request.user.is_authenticated:
             return super().get(request, *args, **kwargs)
         return redirect(self.next_page)
+
     def post(self, request: WSGIRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle POST requests - perform logout."""
         try:
+            # Perform logout
             response = super().post(request, *args, **kwargs)
 
             # Check if this is an HTMX request
             if request.headers.get('HX-Request'):
-                return JsonResponse({
-                    'success': True,
-                    'redirect_url': str(self.next_page)
-                }, headers={
-                    'HX-Redirect': str(self.next_page)
-                })
+                return HttpResponse(
+                    status=200,
+                    headers={
+                        'HX-Redirect': str(self.get_next_page())
+                    }
+                )
 
             return response
 
         except Exception as e:
             logger.error(f"Logout error: {str(e)}")
             if request.headers.get('HX-Request'):
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Logout failed'
-                }, status=500)
+                return HttpResponse(
+                    "Logout failed",
+                    status=500
+                )
             raise
+
+    def get_next_page(self) -> str:
+        """Get the URL to redirect to after logout."""
+        return str(self.next_page)
 
 class HomeView(TemplateView):
     """Landing page view."""

@@ -10,9 +10,7 @@ urlpatterns = [
         template_name='authentication/auth/login.html'
     ), name='login'),
 
-    path('logout/', CustomLogoutView.as_view(
-        template_name='authentication/auth/logout.html'
-    ), name='logout'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
 
     path('register/', views.RegisterView.as_view(
         template_name='authentication/auth/register.html'
