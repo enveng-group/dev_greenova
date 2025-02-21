@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -19,6 +19,9 @@
     <!-- CSS files -->
     <link rel="stylesheet" href="{% static 'css/vendor/modern-normalize.css' %}">
     <link rel="stylesheet" href="{% static 'css/vendor/pico.classless.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/components/colours.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/design.css' %}">
 
     {% block extra_head %}{% endblock %}
 </head>
@@ -57,7 +60,7 @@
                 style="margin-left: auto; display: flex; align-items: center; gap: 1rem;">
                 {% if request.user.is_authenticated %}
                 {% load chatbot_tags %}
-                    {% chat_widget %}
+                {% chat_widget %}
                 <form hx-post="{% url 'authentication:logout' %}"
                       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                       hx-push-url="true">
@@ -71,7 +74,6 @@
                 <a href="{% url 'authentication:login' %}"
                    role="menuitem"
                    aria-label="Login"
-                   class="secondary outline"
                    hx-boost="true"
                    _="on click call alert('Redirecting to login...')">
                     Login
