@@ -18,7 +18,7 @@
     },
     "[html]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "vscode.html-language-features",
+        "editor.defaultFormatter": "monosans.djlint",
         "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.suggest.insertMode": "replace"
@@ -46,7 +46,7 @@
         }
     },
     "[pip-requirements]": {
-        "editor.defaultFormatter": "ms-python.python",
+        "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.insertFinalNewline": true,
         "editor.tabSize": 4,
         "editor.insertSpaces": true,
@@ -64,7 +64,7 @@
     },
     "[python]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "ms-python.python",
+        "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit",
             "source.fixAll": "explicit"
@@ -136,7 +136,7 @@
     "github.copilot.enable": {
         "*": true,
         "plaintext": true,
-        "markdown": true,
+        "markdown": false,
         "scminput": false
     },
     "github.copilot.nextEditSuggestions.enabled": true,
@@ -144,17 +144,19 @@
     "task.reconnection": true,
     "workbench.colorTheme": "Default Dark Modern",
     "workbench.editor.enablePreview": false,
-    "debug.inlineValues": "auto",
+    "debug.inlineValues": "on",
     "debug.console.fontSize": 14,
     "debug.toolBarLocation": "docked",
     "debugpy.debugJustMyCode": false,
     "editor.stickyScroll.enabled": true,
     "eslint.validate": [
-        "javascript"
+        "javascript",
+        "javascriptreact"
     ],
     "eslint.format.enable": true,
     "files.associations": {
         "*.html": "html",
+        "*.djhtml": "html",
         "*.js": "javascript",
         "*.py": "python",
         "requirements*.txt": "pip-requirements"
@@ -168,7 +170,7 @@
     "python.analysis.extraPaths": [
         "${workspaceFolder}/.venv/lib/python3.13/site-packages"
     ],
-    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.typeCheckingMode": "strict",
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.terminal.shellIntegration.enabled": true,
     "python.terminal.activateEnvironment": true,
@@ -188,7 +190,6 @@
         "*"
     ],
     "python.testing.pytestEnabled": false,
-    "remoteHub.gitProtocol": "ssh",
     "github.gitProtocol": "ssh",
     "python.analysis.autoFormatStrings": true,
     "python.analysis.completeFunctionParens": true,
@@ -196,10 +197,100 @@
     "python.analysis.languageServerMode": "light",
     "python.analysis.logLevel": "Error",
     "terminal.integrated.cwd": "${workspaceFolder}",
-    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.defaultProfile.linux": "fish",
     "terminal.integrated.shellIntegration.enabled": true,
     "terminal.integrated.env.linux": {
         "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
         "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
-    }
+    },
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.analysis.autoSearchPaths": true,
+    "pylint.enabled": true,
+    "pylint.args": [
+        "--rcfile=.pylintrc",
+        "--load-plugins=pylint_django",
+        "--django-settings-module=greenova.settings"
+    ],
+    "pylint.cwd": "${workspaceFolder}",
+    "pylint.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "pylint.path": [
+        "${workspaceFolder}/.venv/bin/pylint"
+    ],
+    "pylint.severity": {
+        "convention": "Information",
+        "error": "Error",
+        "fatal": "Error",
+        "refactor": "Information",
+        "warning": "Warning",
+        "info": "Information"
+    },
+    "pylint.ignorePatterns": [
+        "**/.venv/**",
+        "**/migrations/**",
+        "**/__pycache__/**"
+    ],
+    "pylint.useMinimalCheckers": true,
+    "mypy-type-checker.cwd": "${workspaceFolder}",
+    "mypy-type-checker.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "mypy-type-checker.path": [
+        "${workspaceFolder}/.venv/bin/mypy"
+    ],
+    "mypy-type-checker.preferDaemon": true,
+    "mypy-type-checker.severity": {
+        "error": "Error",
+        "note": "Information"
+    },
+    "mypy-type-checker.args": [
+        "--strict",
+        "--ignore-missing-imports",
+        "--follow-imports=silent"
+    ],
+    "isort.check": true,
+    "isort.importStrategy": "fromEnvironment",
+    "isort.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "isort.path": [
+        "${workspaceFolder}/.venv/bin/isort"
+    ],
+    "isort.severity": {
+        "error": "Error",
+        "warning": "Warning"
+    },
+    "isort.args": [
+        "--profile=black",
+        "--line-length=88",
+        "--multi-line=3"
+    ],
+    "black-formatter.cwd": "${workspaceFolder}",
+    "black-formatter.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "black-formatter.path": [
+        "${workspaceFolder}/.venv/bin/black"
+    ],
+    "black-formatter.args": [
+        "--line-length=88",
+        "--target-version=py313"
+    ],
+    "djlint.pythonPath": "${workspaceFolder}/.venv/bin/python",
+    "djlint.useVenv": true,
+    "django.snippets.use": true,
+    "github.copilot.chat.followUps": "always",
+    "github.copilot.chat.copilotDebugCommand.enabled": true,
+    "github.copilot.chat.editor.temporalContext.enabled": true,
+    "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
+    "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
+    "github.copilot.chat.fixTestFailure.enabled": true,
+    "github.copilot.chat.reviewSelection.enabled": true,
+    "github.copilot.chat.setupTests.enabled": true,
+    "github.copilot.chat.startDebugging.enabled": true,
+    "github.copilot.chat.useProjectTemplates": true,
+    "github.copilot.renameSuggestions.triggerAutomatically": true,
+    "github.copilot.selectedCompletionModel": "preview",
+    "djlint.enableLinting": true
 }

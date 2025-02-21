@@ -3,11 +3,24 @@
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
     "features": {
         "ghcr.io/devcontainers/features/python:1": {
+            "installTools": true,
+            "optimize": true,
             "version": "latest"
         },
         "ghcr.io/devcontainers/features/git:1": {
+            "ppa": true,
             "version": "latest"
-        }
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {
+            "installDirectlyFromGitHubRelease": true,
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "latest",
+            "pnpmVersion": "latest",
+            "nvmVersion": "latest"
+        },
+        "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {}
     },
     "customizations": {
         "vscode": {
@@ -17,7 +30,8 @@
                 "dotfiles.targetPath": "~/dotfiles",
                 "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
                 "python.interpreter.infoVisibility": "always",
-                "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node"
+                "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
+                "remoteHub.gitProtocol": "ssh"
             },
             "extensions": [
                 "dbaeumer.vscode-eslint",
@@ -50,7 +64,7 @@
     "initializeCommand": "mkdir -p ${localWorkspaceFolder}/.devcontainer",
     "postCreateCommand": {
         "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
-        "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true"
-    },
-    "postStartCommand": "bash .devcontainer/post_start.sh"
+        "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true",
+        "setup": "python -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt && npm install"
+    }
 }
