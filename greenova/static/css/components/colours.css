@@ -111,6 +111,13 @@
 
 }
 
+h1, h2, h3, h4, h5, h6 {
+  color: var(--greenova-text-secondary-dark);
+  &:first-child { 
+    color: var(--greenova-text-primary-dark); 
+  }
+}
+
 header {
   background: var(--pico-secondary-background)
 }
@@ -118,4 +125,20 @@ header {
 /* Element is used for placeholder text before you type. */
 input[type='text']::placeholder {
   color: var(--greenova-tertiary-dark); /* Mutable Text, for text box hints */
+}
+p, article {
+  color: var(--greenova-text-secondary-dark);
+}
+
+
+
+/* Navigation */
+[role='navigation'],
+[role='navigation'] [role="menuitem"] {
+  background: var(--greenova-beige-primary);
+  color: var(--greenova-text-primary-dark) !important;
+}
+
+[role='navigation'] [role="menuitem"][aria-current] {
+  background: var(--greenova-beige-secondary);
 }
