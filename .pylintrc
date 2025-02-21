@@ -1,0 +1,10 @@
+[MASTER]
+load-plugins=pylint_django
+django-settings-module=greenova.settings
+ignore=migrations,venv,.venv
+
+[FORMAT]
+max-line-length=88
+
+[MESSAGES CONTROL]
+disable=C0111,R0903,C0103
