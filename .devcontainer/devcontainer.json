@@ -1,6 +1,6 @@
 {
     "name": "Greenova Development",
-    "image": "mcr.microsoft.com/devcontainers/python:3.13.2",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
     "features": {
         "ghcr.io/devcontainers/features/git:1": {
             "version": "latest"
