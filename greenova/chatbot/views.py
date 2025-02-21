@@ -10,7 +10,6 @@ from .services import ChatService
 from .forms import ChatMessageForm
 import json
 import logging
-from django_htmx.http import trigger_client_event
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,7 @@ class ChatResponse(TypedDict):
 @method_decorator(csrf_exempt, name='dispatch')
 class ChatApiView(View):
     """Handle chat API requests."""
-    
+
     def get(self, request: HttpRequest) -> JsonResponse:
         """Handle GET requests - return API info."""
         response: ChatResponse = {
@@ -38,13 +37,8 @@ class ChatApiView(View):
         """Handle POST requests for chat messages."""
         try:
             form = ChatMessageForm(request.POST)
-            
+
             if not form.is_valid():
-                if request.htmx:  # Check if HTMX request
-                    return HttpResponse(
-                        f'<div class="error">{form.errors["message"][0]}</div>',
-                        status=400
-                    )
                 return JsonResponse({
                     'status': 'error',
                     'message': '',
@@ -58,30 +52,13 @@ class ChatApiView(View):
                 'page': request.GET.get('page', 'unknown'),
                 'user': request.user.get_username() if request.user.is_authenticated else 'guest'
             }
-            
+
             response = chat_service.process_message(message, context)
-            
-            if request.htmx:
-                # Return partial HTML for HTMX requests
-                html = f"""
-                <div class="message {response['status']}">
-                    <p>{response['message']}</p>
-                </div>
-                """
-                resp = HttpResponse(html)
-                trigger_client_event(resp, 'chatMessageSent')
-                return resp
-                
             return JsonResponse(response)
 
         except Exception as e:
             logger.error(f"Chat error: {str(e)}")
             error_msg = str(e) if settings.DEBUG else 'Internal server error'
-            if request.htmx:
-                return HttpResponse(
-                    f'<div class="error">{error_msg}</div>',
-                    status=500
-                )
             return JsonResponse({
                 'status': 'error',
                 'message': '',
@@ -92,7 +69,7 @@ class ChatApiView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ChatToggleView(View):
     """Handle chat widget toggle state."""
-    
+
     def get(self, request: HttpRequest) -> JsonResponse:
         """Return chat dialog state."""
         return JsonResponse({
@@ -101,12 +78,8 @@ class ChatToggleView(View):
             "timestamp": datetime.now().isoformat()
         })
 
-    def post(self, request: HttpRequest) -> HttpResponse:
+    def post(self, request: HttpRequest) -> JsonResponse:
         """Handle dialog state toggle."""
-        if request.htmx:
-            response = HttpResponse("<div>Chat opened</div>")
-            trigger_client_event(response, 'chatOpened')
-            return response
         return JsonResponse({
             "isOpen": True,
             "messages": [],

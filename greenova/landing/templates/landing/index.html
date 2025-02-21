@@ -23,17 +23,28 @@
         {% endif %}
     </section>
 
-    <section id="features"
-             hx-get="{% url 'landing:home' %}"
-             hx-trigger="revealed"
-             hx-target="#features-content"
-             hx-swap="innerHTML">
+    <section id="features" aria-labelledby="features-heading">
         <h2 id="features-heading">Key Features</h2>
-        <div id="features-content" class="grid">
-            <!-- Content will be loaded via HTMX -->
-            <div class="htmx-indicator" aria-busy="true">
-                Loading features...
-            </div>
+        <div class="grid">
+            <article>
+                <header>
+                    <h3>Obligation Tracking</h3>
+                </header>
+                <p>Monitor and manage environmental obligations across multiple projects
+                </p>
+            </article>
+            <article>
+                <header>
+                    <h3>Compliance Dashboard</h3>
+                </header>
+                <p>Real-time insights into your environmental compliance status</p>
+            </article>
+            <article>
+                <header>
+                    <h3>Automated Reporting</h3>
+                </header>
+                <p>Generate comprehensive reports with just a few clicks</p>
+            </article>
         </div>
     </section>
 

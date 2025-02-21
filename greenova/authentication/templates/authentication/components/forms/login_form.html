@@ -1,8 +1,4 @@
-<form method="post"
-      novalidate
-      hx-post="{% url 'authentication:login' %}"
-      hx-target="#form-errors"
-      hx-swap="innerHTML">
+<form method="post" novalidate>
   {% csrf_token %}
   <fieldset>
     <legend>Login</legend>
@@ -28,7 +24,4 @@
     </label>
   </fieldset>
   <button type="submit">{{ submit_text|default:"Log In" }}</button>
-  <div id="form-errors">
-    {% include "authentication/components/messages/form_errors.html" %}
-  </div>
 </form>

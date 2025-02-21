@@ -46,7 +46,8 @@
                 "ms-python.pylint",
                 "ms-python.mypy-type-checker",
                 "monosans.djlint",
-                "batisteo.vscode-django"
+                "batisteo.vscode-django",
+                "EditorConfig.EditorConfig"
             ]
         }
     },

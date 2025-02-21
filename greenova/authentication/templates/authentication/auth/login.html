@@ -1,25 +1,28 @@
 {% extends "authentication/layouts/auth_base.html" %}
 {% load static %}
-
 {% block title %}Login - Greenova{% endblock %}
-{% block page_title %}Welcome back{% endblock %}
-{% block page_subtitle %}<h2>Log in to your account</h2>{% endblock %}
-
+{% block auth_title %}Welcome back{% endblock %}
+{% block auth_subheading %}Log in to your account{% endblock %}
 {% block auth_content %}
-{% include "authentication/components/messages/form_errors.html" %}
-{% include "authentication/components/forms/login_form.html" %}
-
-<footer>
-    <details>
+  {% if not request.user.is_authenticated %}
+    {% include "authentication/components/messages/form_errors.html" %}
+    {% include "authentication/components/forms/login_form.html" %}
+    <footer>
+      <details>
         <summary>Need help?</summary>
         <nav>
-            <ul>
-                <li><a href="{% url 'authentication:password_reset' %}">Forgot your
-                        password?</a></li>
-                <li><a href="{% url 'authentication:register' %}">Don't have an account?
-                        Sign up</a></li>
-            </ul>
+          <ul>
+            <li>
+              <a href="{% url 'authentication:password_reset' %}">Forgot your password?</a>
+            </li>
+            <li>
+              <a href="{% url 'authentication:register' %}">Don't have an account? Sign up</a>
+            </li>
+          </ul>
         </nav>
-    </details>
-</footer>
+      </details>
+    </footer>
+  {% else %}
+    <script>window.location.href = "{% url 'dashboard:home' %}";</script>
+  {% endif %}
 {% endblock %}

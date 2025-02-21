@@ -7,7 +7,6 @@ from .data_utils import AnalyticsDataProcessor
 from .serializers import ChartDataSerializer
 from obligations.models import Obligation
 from datetime import datetime, timedelta
-from django_htmx.http import trigger_client_event
 
 class ChartDataError(Exception):
     pass
@@ -24,14 +23,14 @@ class MechanismDataViewSet(LoginRequiredMixin, View):
                     status=400
                 )
             return JsonResponse({'error': 'Mechanism parameter is required'}, status=400)
-            
+
         try:
             processor = AnalyticsDataProcessor(Obligation.objects.all())
             serialized = processor.get_mechanism_data(mechanism)
-            
+
             if request.htmx:
                 response = HttpResponse(
-                    render_to_string('components/charts/mechanism_chart.html', 
+                    render_to_string('components/charts/mechanism_chart.html',
                     {'chart_data': serialized})
                 )
                 trigger_client_event(response, 'chartDataUpdated')
@@ -53,10 +52,10 @@ class TrendDataViewSet(LoginRequiredMixin, View):
         days = int(request.GET.get('days', 30))
         end_date = datetime.now()
         start_date = end_date - timedelta(days=days)
-        
+
         processor = AnalyticsDataProcessor(Obligation.objects.all())
         time_series_data = processor.get_time_series_data(start_date, end_date)
         dict_data = [point.__dict__ for point in time_series_data]
         serialized = ChartDataSerializer.format_trend_data(dict_data)
-        
+
         return JsonResponse(serialized)

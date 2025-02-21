@@ -19,14 +19,14 @@ class GreenovaUserCreationForm(UserCreationForm):
 
     def __init__(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
         super().__init__(*args, **kwargs)
-        
+
         # Username field
         self.fields['username'].widget.attrs.update({
             'autocomplete': 'username',
             'pattern': '[a-zA-Z0-9_]+',
             'aria-describedby': 'username-help'
         })
-        
+
         # Password fields
         for field in ('password1', 'password2'):
             self.fields[field].widget.attrs.update({

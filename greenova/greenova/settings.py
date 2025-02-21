@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     "obligations.apps.ObligationsConfig",
     "chatbot.apps.ChatbotConfig",
     "utils",
-    "mechanisms.apps.mechanismsConfig",
+    #"profiles.apps.ProfilesConfig",
 ]
 
 MIDDLEWARE = [
@@ -86,7 +86,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_htmx.middleware.HtmxMiddleware",
+    
 ]
 
 ROOT_URLCONF = "greenova.urls"
