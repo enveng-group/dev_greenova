@@ -66,7 +66,9 @@
         "tamasfe.even-better-toml",
         "nwgh.bandit",
         "redhat.vscode-yaml",
-        "timonwong.shellcheck"
+        "timonwong.shellcheck",
+        "GitHub.vscode-pull-request-github",
+        "GitHub.vscode-github-actions"
       ]
     }
   },
@@ -85,8 +87,8 @@
   "postCreateCommand": {
     "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
     "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true",
-    "dotfiles.installCommand": "cd /home/vscode && git clone git@github.com:enssol/dotfiles.git && chmod +x /home/vscode/dotfiles/setup.sh && bash /home/vscode/dotfiles/setup.sh",
-    "setup": ". ${NVM_DIR}/nvm.sh && nvm install 23.8.0 && nvm use 23.8.0 && pnpm self-update && pnpm install",
-    "activate": "cd /workspaces/${localWorkspaceFolderBasename} && pipenv shell && pipenv install --dev"
+    "dotfiles": "cd /home/vscode && git clone git@github.com:enssol/dotfiles.git || true && cd dotfiles && chmod +x setup.sh && ./setup.sh",
+    "python": "cd /workspaces/${localWorkspaceFolderBasename} && python -m venv .venv && . .venv/bin/activate && pip install --upgrade pip pipenv && pipenv install --dev",
+    "node": ". ${NVM_DIR}/nvm.sh && nvm install 23.8.0 && nvm use 23.8.0 && pnpm self-update && cd /workspaces/${localWorkspaceFolderBasename} && pnpm install"
   }
 }
