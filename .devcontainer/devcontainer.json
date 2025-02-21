@@ -4,7 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "optimize": true,
-      "version": "3.13.3"
+      "version": "3.13.2"
     },
     "ghcr.io/devcontainers/features/git:1": {
       "ppa": true,
@@ -38,7 +38,6 @@
         "dev.containers.gpuAvailability": "none",
         "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
         "dotfiles.targetPath": "~/dotfiles",
-        "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
         "python.interpreter.infoVisibility": "always",
         "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
         "remoteHub.gitProtocol": "ssh"
@@ -86,6 +85,8 @@
   "postCreateCommand": {
     "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
     "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true",
-    "setup": "pipenv install --dev && . ${NVM_DIR}/nvm.sh && nvm install 23.8.0 && nvm use 23.8.0 && pnpm self-update && pnpm install"
+    "dotfiles.installCommand": "cd /home/vscode && git clone git@github.com:enssol/dotfiles.git && chmod +x /home/vscode/dotfiles/setup.sh && bash /home/vscode/dotfiles/setup.sh",
+    "setup": ". ${NVM_DIR}/nvm.sh && nvm install 23.8.0 && nvm use 23.8.0 && pnpm self-update && pnpm install",
+    "activate": "cd /workspaces/${localWorkspaceFolderBasename} && pipenv shell && pipenv install --dev"
   }
 }

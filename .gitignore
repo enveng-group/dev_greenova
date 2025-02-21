@@ -78,3 +78,20 @@ greenova/logs/django.log
 
 # Pipenv
 Pipfile.lock
+.bandit
+.gitignore
+.env
+.editorconfig
+.eslintrc
+.env
+.npmrc
+.pylintrc
+.pythonstartup
+.shellcheckrc
+isort.cfg
+mypy.ini
+pnpm-lock.yaml
+home/vscode/.config/fish/config.fish
+home/vscode/.gitconfig
+.env
+.env
