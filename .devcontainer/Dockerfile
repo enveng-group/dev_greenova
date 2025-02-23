@@ -74,11 +74,28 @@ ARG NODE_VERSION=23.8.0
 ARG NVM_VERSION=0.40.1
 ARG PNPM_VERSION=10.4.1
 ENV NVM_DIR=/usr/local/share/nvm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash && \
+
+# Create nvm directory and set permissions
+RUN mkdir -p $NVM_DIR && \
+    chmod -R 777 $NVM_DIR && \
+    # Download and install nvm
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash && \
     . $NVM_DIR/nvm.sh && \
+    # Install Node.js
     nvm install ${NODE_VERSION} && \
     nvm alias default ${NODE_VERSION} && \
+    # Add NVM to PATH and environment
+    echo "export NVM_DIR=\"$NVM_DIR\"" >> /etc/bash.bashrc && \
+    echo "[ -s \"$NVM_DIR/nvm.sh\" ] && \. \"$NVM_DIR/nvm.sh\"" >> /etc/bash.bashrc && \
+    echo "[ -s \"$NVM_DIR/bash_completion\" ] && \. \"$NVM_DIR/bash_completion\"" >> /etc/bash.bashrc && \
+    # Install pnpm
     npm install -g pnpm@${PNPM_VERSION}
+
+# Verify installations
+RUN . $NVM_DIR/nvm.sh && \
+    node --version && \
+    npm --version && \
+    pnpm --version
 
 # Create scripts directory
 RUN mkdir -p /workspaces/scripts && \
