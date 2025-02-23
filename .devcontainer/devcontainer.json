@@ -4,9 +4,11 @@
   "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode",
-  "initializeCommand": "./make.sh initialize",
-  "onCreateCommand": "./make.sh create",
-  "postCreateCommand": "./make.sh post-create",
+  "postCreateCommand": [
+    "chmod +x /workspaces/make.sh",
+    "/workspaces/make.sh initialize",
+    "/workspaces/make.sh create"
+  ],
   "postStartCommand": "./make.sh post-start",
   "postAttachCommand": "./make.sh attach",
   "updateContentCommand": "./make.sh update",
@@ -48,7 +50,7 @@
     "source=${localWorkspaceFolder}/.devcontainer/make.sh,target=/workspaces/make.sh,type=bind,consistency=cached"
   ],
   "remoteEnv": {
-    "MAKE_PATH": "/usr/bin/make",
-    "SCRIPTS_DIR": "/workspaces/scripts"
+    "SCRIPTS_DIR": "/workspaces/scripts",
+    "WORKSPACE_NAME": "${localWorkspaceFolderBasename}"
   }
 }
