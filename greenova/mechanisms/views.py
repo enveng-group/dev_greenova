@@ -18,95 +18,107 @@ class mechanismsChartView(LoggedActionMixin, LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Get context data including project and mechanisms data."""
         context = super().get_context_data(**kwargs)
-        
+
         try:
             project_id = self.kwargs.get('project_id')
             project = get_object_or_404(Project, pk=project_id)
-            
-            # Get distinct mechanisms for this project
-            mechanisms = (Obligation.objects
-                        .filter(project=project)
-                        .values('primary_environmental_mechanisms')
-                        .distinct())
-            
+            context['project'] = project
+
+            # Get distinct mechanisms with status counts
             mechanisms_data = []
-            for mech in mechanisms:
-                name = mech['primary_environmental_mechanisms']
-                if not name:
-                    continue
-                    
-                status_counts = (
-                    Obligation.objects
-                    .filter(
-                        project=project,
-                        primary_environmental_mechanisms=name
-                    )
-                    .values('status')
-                    .annotate(count=Count('status'))
-                    .order_by('status')
+            status_counts = (
+                Obligation.objects
+                .filter(project=project)
+                .values('primary_environmental_mechanisms')
+                .annotate(
+                    total=Count('id'),
+                    not_started=Count('id', filter=Q(status='not started')),
+                    in_progress=Count('id', filter=Q(status='in progress')),
+                    completed=Count('id', filter=Q(status='completed'))
                 )
-                
+                .exclude(primary_environmental_mechanisms='')
+                .order_by('primary_environmental_mechanisms')
+            )
+
+            for mech in status_counts:
+                name = mech['primary_environmental_mechanisms']
                 mechanisms_data.append({
-                    'id': len(mechanisms_data) + 1,
                     'name': name,
-                    'status_counts': status_counts
+                    'id': name.lower().replace(' ', '-'),
+                    'total': mech['total'],
+                    'status_counts': {
+                        'Not Started': mech['not_started'],
+                        'In Progress': mech['in_progress'],
+                        'Completed': mech['completed']
+                    }
                 })
-            
-            context.update({
-                'project': project,
-                'mechanisms': mechanisms_data
-            })
-            
+
+            context['mechanisms'] = mechanisms_data
+
         except Exception as e:
             logger.error(f"Error getting mechanisms data: {str(e)}")
             context['error'] = "Unable to load mechanisms data"
-            
+
         return context
 
 class ChartDataView(LoginRequiredMixin, View):
     """View for fetching chart data via HTMX."""
-    
-    def get(self, request: HttpRequest, project_id: int, mechanisms: str) -> JsonResponse:
-        """Get chart data for a specific mechanisms."""
+
+    def get(self, request: HttpRequest, project_id: int, mechanism: str) -> JsonResponse:
+        """Get chart data for a specific mechanism."""
         try:
             project = get_object_or_404(Project, pk=project_id)
-            
-            # Get status counts
-            data = (Obligation.objects
-                   .filter(
-                       project=project,
-                       primary_environmental_mechanisms=mechanisms
-                   )
-                   .values('status')
-                   .annotate(count=Count('status'))
-                   .order_by('status'))
-            
-            # Format for Chart.js
+
+            # Get status counts for mechanism
+            status_counts = (
+                Obligation.objects
+                .filter(
+                    project=project,
+                    primary_environmental_mechanisms=mechanism
+                )
+                .values('status')
+                .annotate(count=Count('id'))
+                .order_by('status')
+            )
+
+            # Prepare chart data
             chart_data = {
-                'type': 'polarArea',
+                'type': 'doughnut',
                 'data': {
-                    'labels': [item['status'].title() for item in data],
+                    'labels': ['Not Started', 'In Progress', 'Completed'],
                     'datasets': [{
-                        'data': [item['count'] for item in data],
+                        'data': [
+                            next((item['count'] for item in status_counts
+                                 if item['status'] == 'not started'), 0),
+                            next((item['count'] for item in status_counts
+                                 if item['status'] == 'in progress'), 0),
+                            next((item['count'] for item in status_counts
+                                 if item['status'] == 'completed'), 0)
+                        ],
                         'backgroundColor': [
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)'
+                            '#ff6b6b',  # Red for Not Started
+                            '#339af0',  # Blue for In Progress
+                            '#51cf66'   # Green for Completed
                         ]
                     }]
                 },
                 'options': {
                     'responsive': True,
+                    'maintainAspectRatio': True,
                     'plugins': {
                         'legend': {
                             'position': 'bottom'
+                        },
+                        'title': {
+                            'display': True,
+                            'text': f'Status Distribution - {mechanism}'
                         }
                     }
                 }
             }
-            
+
             return JsonResponse(chart_data)
-            
+
         except Exception as e:
-            logger.error(f"Error generating chart data: {str(e)}")
+            logger.error(f"Error getting chart data: {str(e)}")
             return JsonResponse({'error': str(e)}, status=400)

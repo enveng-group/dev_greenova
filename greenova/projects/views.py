@@ -7,13 +7,14 @@ from django.conf import settings
 from .models import Project, ProjectMembership
 import logging
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
 class ProjectSelectionView(LoginRequiredMixin, TemplateView):
     """Handle project selection."""
-    template_name = 'projects/partials/projects.html'
+    template_name = 'projects/projects_selector.html'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests with HTMX support."""
@@ -34,33 +35,20 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
 
         try:
             user = cast(AbstractUser, self.request.user)
-            logger.info(f"Getting projects for user ID: {user.pk}")
-
-            # Get projects with efficient querying
-            projects = (Project.objects
-                      .filter(memberships__user=user)
-                      .prefetch_related('memberships', 'obligations')
-                      .distinct())
-
-            # Get user roles for each project
-            user_roles: Dict[int, str] = {}
-            for project in projects:
-                try:
-                    membership = project.memberships.get(user=user)
-                    user_roles[project.id] = membership.role
-                except ProjectMembership.DoesNotExist:
-                    continue
+            projects = Project.objects.filter(members=user)
 
             context.update({
                 'projects': projects,
-                'user_roles': user_roles,
-                'selected_project_id': self.request.GET.get('project_id'),
-                'debug': settings.DEBUG
+                'selected_project_id': self.request.GET.get('project_id', ''),
+                'user_roles': {
+                    project.id: project.get_user_role(user)
+                    for project in projects
+                }
             })
 
         except Exception as e:
-            logger.error(f"Error in project selection: {str(e)}")
-            context['error'] = 'Unable to load projects'
+            logger.error(f"Error getting project data: {str(e)}")
+            context['error'] = "Unable to load projects"
 
         return context
 
@@ -78,14 +66,19 @@ class ProjectContentView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         try:
-            project = Project.objects.get(id=kwargs['project_id'])
-            user = cast(AbstractUser, self.request.user)
-            context.update({
-                'project': project,
-                'user_context': project.get_user_context(user),
-                'analytics': project.get_analytics()
-            })
-        except Project.DoesNotExist:
-            context['error'] = 'Project not found'
+            project_id = self.request.GET.get('project_id')
+            if project_id:
+                project = get_object_or_404(Project, pk=project_id)
+                user = cast(AbstractUser, self.request.user)
+
+                context.update({
+                    'project': project,
+                    'user_role': project.get_user_role(user),
+                    'analytics': project.get_analytics()
+                })
+
+        except Exception as e:
+            logger.error(f"Error getting project content: {str(e)}")
+            context['error'] = "Unable to load project content"
 
         return context

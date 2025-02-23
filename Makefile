@@ -1,4 +1,4 @@
-.PHONY: check run migrations migrate static
+.PHONY: check run migrations migrate static user db import
 
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
@@ -18,6 +18,12 @@ migrate:
 static:
 	$(CD_CMD) pipenv run python manage.py collectstatic --clear --noinput
 
+user:
+	$(CD_CMD) pipenv run python manage.py createsuperuser
+
+import:
+	$(CD_CMD) pipenv run python manage.py import_obligations clean_output_with_nulls.csv
+
 # Combined command for database updates
 db: migrations migrate
 
@@ -29,4 +35,6 @@ help:
 	@echo "  make migrations   - Create new migrations"
 	@echo "  make migrate      - Apply migrations"
 	@echo "  make static       - Collect static files (with --clear)"
-	@echo "  make db          - Run both migrations and migrate"
+	@echo "  make db           - Run both migrations and migrate"
+	@echo "  make user         - Create superuser"
+	@echo "  make import       - Import data from CSV file"

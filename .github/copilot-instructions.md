@@ -892,7 +892,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 ### Project Metadata
 2. Django Version:
-   - Django 5.1.5 (exact version)
+   - Django 5.1.6 (exact version)
    - Ensure compatibility with Django 5.1.x features
    - Email: <agallo@enveng-group.com.au>
 ### Project Metadata

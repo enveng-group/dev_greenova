@@ -1,43 +1,44 @@
 {% extends 'base.html' %}
-{% load common_tags %}
+{% load static common_tags %}
 
-{% block title %}Environmental mechanisms Analysis{% endblock %}
+{% block title %}Environmental Mechanisms Analysis{% endblock %}
 
 {% block main %}
 <article>
   <header>
-    <h1>Environmental mechanisms Analysis</h1>
-    <p>Analyzing obligations by primary environmental mechanisms for {{ project.name }}
-    </p>
+    <h1>Environmental Mechanisms Analysis</h1>
+    <p>Analyzing obligations by primary environmental mechanisms for {{ project.name }}</p>
   </header>
 
   {% if error %}
-  <p role="alert">{{ error }}</p>
+  <p role="alert" class="error">{{ error }}</p>
   {% endif %}
 
   <section aria-labelledby="charts-title">
-    <h2 id="charts-title">mechanisms Distribution</h2>
+    <h2 id="charts-title">Mechanisms Distribution</h2>
 
     <div class="grid">
-      {% for mechanisms in mechanisms %}
-      <article class="mechanisms-chart">
+      {% for mechanism in mechanisms %}
+      <article class="mechanism-chart">
         <header>
-          <h3>{{ mechanisms.name }}</h3>
+          <h3>{{ mechanism.name }}</h3>
+          <p>Total Obligations: {{ mechanism.total }}</p>
         </header>
 
-        <figure role="region" aria-label="{{ mechanisms.name }} statistics">
-          <!-- Chart canvas with accessibility -->
-          <canvas id="chart-{{ mechanisms.id|slugify }}"
+        <figure role="region" aria-label="{{ mechanism.name }} statistics">
+          <!-- Chart canvas -->
+          <canvas id="chart-{{ mechanism.id }}"
                   role="img"
-                  aria-label="Status distribution for {{ mechanisms.name }}"
-                  hx-get="{% url 'mechanisms:chart_data' project.id mechanisms.name %}"
+                  aria-label="Status distribution for {{ mechanism.name }}"
+                  data-mechanism="{{ mechanism.name }}"
+                  hx-get="{% url 'mechanisms:chart_data' project.id mechanism.name %}"
                   hx-trigger="load"
                   hx-swap="none">
           </canvas>
 
-          <!-- Fallback table for accessibility -->
+          <!-- Fallback/accessible table -->
           <table class="chart-data">
-            <caption>Status breakdown for {{ mechanisms.name }}</caption>
+            <caption>Status breakdown for {{ mechanism.name }}</caption>
             <thead>
               <tr>
                 <th scope="col">Status</th>
@@ -45,10 +46,10 @@
               </tr>
             </thead>
             <tbody>
-              {% for status in mechanisms.status_counts %}
+              {% for status, count in mechanism.status_counts.items %}
               <tr>
-                <td>{{ status.name }}</td>
-                <td>{{ status.count }}</td>
+                <td>{{ status }}</td>
+                <td>{{ count }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -63,7 +64,7 @@
 </article>
 {% endblock %}
 
-{% block scripts %}
-<script src="{% static 'js/vendor/chart.umd.js' %}"></script>
-<script src="{% static 'js/modules/chart-manager.js' %}" type="module"></script>
+{% block extra_scripts %}
+<script src="{% static 'js/vendor/chart.umd.js' %}" defer></script>
+<script src="{% static 'js/modules/chart-manager.js' %}" type="module" defer></script>
 {% endblock %}

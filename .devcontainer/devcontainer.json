@@ -1,94 +1,46 @@
 {
   "name": "Greenova Development",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
-  "features": {
-    "ghcr.io/devcontainers/features/python:1": {
-      "optimize": true,
-      "version": "3.13.2"
-    },
-    "ghcr.io/devcontainers/features/git:1": {
-      "ppa": true,
-      "version": "2.48.1"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "installDirectlyFromGitHubRelease": true,
-      "version": "2.67.0"
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "23.8.0",
-      "pnpmVersion": "10.4.1",
-      "nvmVersion": "0.40.1",
-      "nodeGypDependencies": false,
-      "installYarn": false
-    },
-    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {},
-    "ghcr.io/devcontainers/features/common-utils": {
-      "installZsh": false,
-      "installOhMyZsh": false,
-      "installOhMyZshConfig": false,
-      "upgradePackages": true
-    },
-    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
-      "version": "0.10.0"
-    }
-  },
+  "image": "mcr.microsoft.com/devcontainers/python:3",
+  "features": {},
   "customizations": {
-    "vscode": {
-      "settings": {
-        "dev.containers.gpuAvailability": "none",
-        "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
-        "dotfiles.targetPath": "~/dotfiles",
-        "python.interpreter.infoVisibility": "always",
-        "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
-        "remoteHub.gitProtocol": "ssh"
-      },
-      "extensions": [
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "ms-python.vscode-pylance",
-        "ms-python.python",
-        "ms-python.debugpy",
-        "foxundermoon.shell-format",
-        "ms-python.isort",
-        "ms-python.black-formatter",
-        "ms-python.pylint",
-        "ms-python.mypy-type-checker",
-        "monosans.djlint",
-        "batisteo.vscode-django",
-        "EditorConfig.EditorConfig",
-        "ms-python.vscode-python-envs",
-        "MS-CST-E.vscode-devskim",
-        "ms-vscode.vscode-copilot-data-analysis",
-        "alexcvzz.vscode-sqlite",
-        "bierner.markdown-mermaid",
-        "bierner.markdown-preview-github-styles",
-        "ms-vscode.makefile-tools",
-        "tamasfe.even-better-toml",
-        "nwgh.bandit",
-        "redhat.vscode-yaml",
-        "timonwong.shellcheck",
-        "GitHub.vscode-pull-request-github",
-        "GitHub.vscode-github-actions"
-      ]
-    }
+      "vscode": {
+          "settings": {
+              "dev.containers.gpuAvailability": "none",
+              "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
+              "dotfiles.targetPath": "~/dotfiles",
+              "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
+              "python.interpreter.infoVisibility": "always",
+              "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node"
+          },
+          "extensions": [
+            "ms-python.autopep8",
+            "dbaeumer.vscode-eslint",
+            "GitHub.copilot",
+            "GitHub.copilot-chat",
+            "ms-python.vscode-pylance",
+            "ms-python.python",
+            "ms-python.debugpy",
+            "foxundermoon.shell-format",
+            "monosans.djlint",
+            "EditorConfig.EditorConfig"
+          ]
+      }
   },
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated"
+      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=volume"
   ],
-  "workspaceMount": "source=dev_greenova,target=/workspaces/${localWorkspaceFolderBasename},type=volume",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=volume",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode",
   "containerUser": "vscode",
   "updateRemoteUserUID": true,
   "forwardPorts": [
-    8000
+      8000
   ],
   "initializeCommand": "mkdir -p ${localWorkspaceFolder}/.devcontainer",
   "postCreateCommand": {
-    "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
-    "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true",
-    "dotfiles": "cd /home/vscode && git clone git@github.com:enssol/dotfiles.git || true && cd dotfiles && chmod +x setup.sh && ./setup.sh",
-    "python": "cd /workspaces/${localWorkspaceFolderBasename} && python -m venv .venv && . .venv/bin/activate && pip install --upgrade pip pipenv && pipenv install --dev",
-    "node": ". ${NVM_DIR}/nvm.sh && nvm install 23.8.0 && nvm use 23.8.0 && pnpm self-update && cd /workspaces/${localWorkspaceFolderBasename} && pnpm install"
-  }
+      "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
+      "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true"
+  },
+  "postStartCommand": "bash .devcontainer/post_start.sh"
 }

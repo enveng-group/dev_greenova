@@ -82,7 +82,7 @@ INSTALLED_APPS = [
     "obligations.apps.ObligationsConfig",
     "chatbot.apps.ChatbotConfig",
     "utils",
-    # "profiles.apps.ProfilesConfig",
+    "mechanisms.apps.MechanismsConfig",
 ]
 
 MIDDLEWARE = [

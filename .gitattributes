@@ -1,4 +1,4 @@
-# Auto detect text files and perform LF normalization
+# Default behavior
 * text=auto eol=lf
 
 # Python files
@@ -12,44 +12,51 @@ setup.py text
 pyproject.toml text
 requirements*.txt text
 
-# Python specific
-.dockerignore text
-docker-compose*.yml text
-Dockerfile text
+# Scripts
+*.sh text eol=lf
+*.bash text eol=lf
+Makefile text
 
-# Docker
-.vscode/* text
-
-# VS Code
-.gitconfig text
-.gitignore text
-.gitattributes text
-
-# Git config
-*secret* filter=git-crypt diff=git-crypt
-*.key filter=git-crypt diff=git-crypt
-.snyk filter=git-crypt diff=git-crypt
-.env* filter=git-crypt diff=git-crypt
-
-# Config files
+# Configuration files
 *.conf text
 *.cfg text
 *.ini text
 *.toml text
 *.yaml text
 *.yml text
+.editorconfig text
+.dockerignore text
+docker-compose*.yml text
+Dockerfile text
 
-# Scripts
-*.ps1 text eol=crlf
-*.cmd text eol=crlf
-*.bat text eol=crlf
-Makefile text
-*.zsh text eol=lf
-*.fish text eol=lf
-*.bash text eol=lf
-*.sh text eol=lf
+# Git related
+.gitconfig text
+.gitignore text
+.gitattributes text
 
-# Data files
+# Encrypted files
+*secret* filter=git-crypt diff=git-crypt
+*.key filter=git-crypt diff=git-crypt
+.snyk filter=git-crypt diff=git-crypt
+.env* filter=git-crypt diff=git-crypt
+
+# VS Code
+.vscode/* text
+*.json text
+
+# Web files
+*.js text diff=javascript
+*.css text diff=css
+*.htm text diff=html
+*.html text diff=html
+
+# Documentation
+*.txt text
+*.rst text
+*.md text diff=markdown
+LICENSE text
+
+# Binary files
 *.pkl binary
 *.db binary
 *.sqlite3 binary
@@ -61,15 +68,3 @@ Makefile text
 *.jpg binary
 *.png binary
 *.pdf binary
-
-# Documentation
-*.txt text
-*.rst text
-*.md text diff=markdown
-
-# Web files
-*.json text
-*.js text diff=javascript
-*.css text diff=css
-*.htm text diff=html
-*.html text diff=html

@@ -1,0 +1,25 @@
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+
+# Types:
+# feat: New feature
+# fix: Bug fix
+# docs: Documentation changes
+# style: Code style/formatting
+# refactor: Code restructuring
+# perf: Performance improvements
+# test: Adding/modifying tests
+# chore: Maintenance tasks
+
+# Rules:
+# - Subject line: max 50 chars
+# - Use imperative mood
+# - No period at end
+# - Describe what and why, not how
+# - Reference issues in footer
+# - Sign all commits
+
+Signed-off-by: enveng-group <164126503+enveng-group@users.noreply.github.com>

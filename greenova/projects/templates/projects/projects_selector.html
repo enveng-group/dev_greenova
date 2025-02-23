@@ -1,34 +1,31 @@
 {% load project_tags %}
 
-{% block main %}
-<article>
-  <form>
-    <for="project-select">
-      Please pick your project from the list below.
-      </br>
-      <select id="project-select"
-              name="project_id"
-              hx-get="{% url 'projects:select' %}"
-              hx-trigger="change"
-              hx-target="#project-content"
-              hx-swap="innerHTML"
-              hx-indicator=".htmx-indicator">
-        <option value="">Choose a project...</option>
-        {% for project in projects %}
-        <option value="{{ project.id }}"
-                {% if project.id|stringformat:"s" == selected_project_id %}selected{% endif %}>
-          {{ project.name }} ({{ user_roles|get_item:project.id|title }})
-        </option>
-        {% endfor %}
-      </select>
-      </label>
-  </form>
+<form>
+  <label for="project-select">
+    Please pick your project from the list below:
+  </label>
+  <br>
+  <select id="project-select"
+          name="project_id"
+          hx-get="{% url 'projects:content' %}"
+          hx-trigger="change"
+          hx-target="#project-content"
+          hx-swap="innerHTML"
+          hx-indicator=".htmx-indicator">
+    <option value="">Choose a project...</option>
+    {% for project in projects %}
+    <option value="{{ project.id }}"
+            {% if project.id|stringformat:"s" == selected_project_id %}selected{% endif %}>
+      {{ project.name }} ({{ user_roles|get_item:project.id|title }})
+    </option>
+    {% endfor %}
+  </select>
+</form>
 
-  <div id="project-content" aria-live="polite"></div>
-  <div class="htmx-indicator" role="status" aria-busy="true">
-    Loading project data...
-  </div>
-</article>
+<div id="project-content" aria-live="polite"></div>
+<div class="htmx-indicator" role="status" aria-busy="true">
+  Loading project data...
+</div>
 
 <style>
   select#project-select {
@@ -47,4 +44,3 @@
     }
   }
 </style>
-{% endblock %}
