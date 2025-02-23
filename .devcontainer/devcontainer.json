@@ -2,13 +2,22 @@
     "name": "Greenova Development",
     "image": "mcr.microsoft.com/devcontainers/python:3",
     "features": {},
+    "mounts": [
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
+        "source=dotfiles,target=/home/vscode/.dotfiles,type=volume"
+    ],
+    "workspaceMount": "source=dev_greenova,target=${containerWorkspaceFolder},type=volume",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "remoteUser": "vscode",
+    "containerUser": "vscode",
+    "updateRemoteUserUID": true,
     "customizations": {
         "vscode": {
             "settings": {
                 "dev.containers.gpuAvailability": "none",
                 "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
                 "dotfiles.targetPath": "/home/vscode/.dotfiles",
-                "dotfiles.installCommand": "if [ -f setup.sh ]; then chmod +x setup.sh && ./setup.sh; else echo 'No setup.sh found'; fi",
+                "dotfiles.installCommand": "cd /home/vscode/.dotfiles && if [ -f setup.sh ]; then sudo chmod +x setup.sh && sudo ./setup.sh; else echo 'No setup.sh found'; fi",
                 "python.interpreter.infoVisibility": "always",
                 "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
                 "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
@@ -62,24 +71,6 @@
                 "EditorConfig.EditorConfig"
             ]
         }
-    },
-    "mounts": [
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
-        "source=dotfiles,target=/home/vscode/.dotfiles,type=volume",
-        "source=venv,target=${containerWorkspaceFolder}/.venv,type=volume",
-        "source=sqlite_data,target=${containerWorkspaceFolder}/greenova/db.sqlite3,type=volume",
-        "source=staticfiles,target=${containerWorkspaceFolder}/greenova/staticfiles,type=volume",
-        "source=logs,target=${containerWorkspaceFolder}/greenova/logs,type=volume",
-        "source=media,target=${containerWorkspaceFolder}/greenova/media,type=volume",
-        "source=node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
-    ],
-    "workspaceMount": "source=dev_greenova,target=${containerWorkspaceFolder},type=volume",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    "remoteUser": "vscode",
-    "containerUser": "vscode",
-    "updateRemoteUserUID": true,
-    "initializeCommand": {
-        "create-volumes": "docker volume create dev_greenova && docker volume create venv && docker volume create sqlite_data && docker volume create staticfiles && docker volume create logs && docker volume create media && docker volume create node_modules"
     },
     "postCreateCommand": {
         "permissions": [
