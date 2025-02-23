@@ -1,10 +1,28 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
+# Modified user setup to handle existing user/group
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Only create group and user if they don't exist
+RUN if ! getent group $USER_GID > /dev/null 2>&1; then \
+        groupadd --gid $USER_GID $USERNAME; \
+    fi && \
+    if ! getent passwd $USER_UID > /dev/null 2>&1; then \
+        useradd --uid $USER_UID --gid $USER_GID -m $USERNAME; \
+    fi && \
+    mkdir -p /home/$USERNAME/.ssh && \
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.ssh && \
+    chmod 700 /home/$USERNAME/.ssh
+
 # Install build essentials and shell tools
 RUN apt-get update && apt-get install -y \
     build-essential \
     shellcheck \
-    shfmt
+    shfmt \
+    openssh-client \
+    git
 
 # Install Python build dependencies
 RUN apt-get update && apt-get install -y \
@@ -63,11 +81,7 @@ RUN apt-get update && apt-get install -y \
     && make prefix=/usr/local all \
     && make prefix=/usr/local install \
     && cd .. \
-    && rm -rf git-${GIT_VERSION}* \
-    && git --version
-
-# Verify Git installation works
-RUN git --version | grep ${GIT_VERSION}
+    && rm -rf git-${GIT_VERSION}*
 
 # Install Node.js via nvm
 ARG NODE_VERSION=23.8.0
@@ -109,7 +123,9 @@ RUN mkdir -p logs && \
     chmod +x scripts/*.sh 2>/dev/null || true
 
 # Set up SSH and Git
-RUN apt-get update && apt-get install -y \
+RUN mkdir -p /var/lib/apt/lists/partial && \
+    chmod 755 /var/lib/apt/lists/partial && \
+    apt-get update && apt-get install -y \
     openssh-client \
     git \
     && rm -rf /var/lib/apt/lists/*
@@ -140,15 +156,6 @@ RUN ssh-keyscan github.com >> /home/vscode/.ssh/known_hosts && \
 RUN mkdir -p /workspaces/dev_greenova && \
     git clone -b main git@github.com:enveng-group/dev_greenova.git /workspaces/dev_greenova && \
     chown -R vscode:vscode /workspaces/dev_greenova
-
-# Create non-root user
-ARG USERNAME=vscode
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-RUN groupadd --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
-
-USER vscode
 
 # Set Git config for dotfiles
 RUN git config --global user.name "enveng-group" && \
