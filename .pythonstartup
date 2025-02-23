@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+import atexit
+import os
+import readline
+import rlcompleter
+
+# Enable tab completion
+readline.parse_and_bind("tab: complete")
+
+# History file
+histfile = os.path.join(os.environ["HOME"], ".python_history")
+try:
+    readline.read_history_file(histfile)
+except FileNotFoundError:
+    pass
+
+atexit.register(readline.write_history_file, histfile)

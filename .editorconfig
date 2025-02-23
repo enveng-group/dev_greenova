@@ -1,0 +1,83 @@
+# Top-most EditorConfig file
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+# Python files
+[*.py]
+indent_size = 4
+max_line_length = 88
+profile = black
+
+# Django HTML templates
+[*.{html,htm,djhtml}]
+indent_size = 2
+max_line_length = 88
+
+# JavaScript files
+[*.{js,jsx,ts,tsx}]
+indent_size = 2
+max_line_length = 80
+
+# CSS files
+[*.{css,scss,sass,less}]
+indent_size = 2
+max_line_length = 80
+
+# JSON files
+[*.{json,jsonc}]
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = off
+
+# Makefiles require tabs
+[Makefile]
+indent_style = tab
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+switch_case_indent = true
+
+# Documentation
+[*.rst]
+indent_size = 4
+max_line_length = 79
+
+# Git commit messages
+[COMMIT_EDITMSG]
+max_line_length = 72
+
+# Requirements files
+[requirements*.txt]
+indent_size = 4
+
+# SQL files
+[*.sql]
+indent_size = 2
+max_line_length = 80
+
+# TOML files
+[*.toml]
+indent_size = 4
+
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+[*.mk]
+indent_style = tab
+indent_size = 4

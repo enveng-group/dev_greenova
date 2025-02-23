@@ -1,0 +1,97 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Django: Run Server",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/greenova/manage.py",
+      "args": [
+        "runserver",
+        "--noreload"
+      ],
+      "django": true,
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/greenova",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "DJANGO_SETTINGS_MODULE": "greenova.settings"
+      },
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Django: Run Tests",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/greenova/manage.py",
+      "args": [
+        "test",
+        "--noinput",
+        "--verbosity=2"
+      ],
+      "django": true,
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/greenova",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "DJANGO_SETTINGS_MODULE": "greenova.settings"
+      },
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "cwd": "${fileDirname}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "DJANGO_SETTINGS_MODULE": "greenova.settings"
+      },
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Django: Import Data",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/greenova/manage.py",
+      "args": [
+        "import_obligations",
+        "clean_output_with_nulls.csv"
+      ],
+      "django": true,
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/greenova",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "DJANGO_SETTINGS_MODULE": "greenova.settings"
+      },
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Django: Shell",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/greenova/manage.py",
+      "args": [
+        "shell"
+      ],
+      "django": true,
+      "justMyCode": false,
+      "cwd": "${workspaceFolder}/greenova",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "DJANGO_SETTINGS_MODULE": "greenova.settings"
+      },
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Django: Full Stack",
+      "configurations": ["Django: Run Server"]
+    }
+  ]
+}

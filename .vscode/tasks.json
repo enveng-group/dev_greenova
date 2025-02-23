@@ -1,0 +1,143 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Django: Check",
+      "type": "shell",
+      "command": "make check",
+      "group": "test",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
+      "label": "Django: Run Server",
+      "type": "shell",
+      "command": "make run",
+      "group": "none",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^Error: (.*)$",
+          "message": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^Watching for file changes with StatReloader$",
+          "endsPattern": "^Starting development server at http://[0-9.:]+/$"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Django: Make Migrations",
+      "type": "shell",
+      "command": "make migrations",
+      "group": "build",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
+      "label": "Django: Migrate",
+      "type": "shell",
+      "command": "make migrate",
+      "group": "build",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
+      "label": "Django: Collect Static",
+      "type": "shell",
+      "command": "make static",
+      "group": "build",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
+      "label": "Django: Create Superuser",
+      "type": "shell",
+      "command": "make user",
+      "group": "none",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
+      "label": "Django: Import Data",
+      "type": "shell",
+      "command": "make import",
+      "group": "none",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
+      "label": "Django: Database Update",
+      "type": "shell",
+      "command": "make db",
+      "group": "build",
+      "problemMatcher": [
+        "$python"
+      ],
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Django: Make Migrations",
+        "Django: Migrate"
+      ]
+    },
+    {
+      "label": "ESLint: Fix All",
+      "type": "npm",
+      "script": "eslint",
+      "args": [
+        "--fix",
+        "."
+      ],
+      "problemMatcher": [
+        "$eslint-stylish"
+      ]
+    },
+    {
+      "label": "Watch: JavaScript",
+      "type": "shell",
+      "command": "npx eslint --watch --fix .",
+      "isBackground": true,
+      "problemMatcher": [
+        "$eslint-stylish"
+      ],
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Watch: Django Templates",
+      "type": "shell",
+      "command": "djlint --watch greenova/templates",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^.*$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "djangoCommand",
+      "type": "promptString",
+      "description": "Django management command to run",
+      "default": "help"
+    }
+  ]
+}

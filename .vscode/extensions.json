@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-python.autopep8",
+    "dbaeumer.vscode-eslint",
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "ms-python.vscode-pylance",
+    "ms-python.python",
+    "ms-python.debugpy",
+    "foxundermoon.shell-format",
+    "monosans.djlint",
+    "EditorConfig.EditorConfig"
+  ]
+}
