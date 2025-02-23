@@ -44,17 +44,17 @@ command -v npm >/dev/null 2>&1 &&
 
 # Setup Python virtual environment
 setup_venv() {
-    VENV_PATH="${WORKSPACE_FOLDER:-/workspaces/dev_greenova}/.venv"
+    VENV_PATH="${containerWorkspaceFolder}/.venv"
 
     # Create virtual environment if it doesn't exist
     if [ ! -d "$VENV_PATH" ]; then
         echo "Creating Python virtual environment..."
-        python3 -m venv "$VENV_PATH"
+        python -m venv "$VENV_PATH"
     fi
 
     # Activate virtual environment
     echo "Activating virtual environment..."
-    . "$VENV_PATH/bin/activate"
+    source ${containerWorkspaceFolder}/.venv/bin/activate
 
     # Upgrade pip
     python -m pip install --upgrade pip

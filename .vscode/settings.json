@@ -111,31 +111,12 @@
   ],
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 500,
-  "files.watcherExclude": {
-    "**/.git/objects/**": true,
-    "**/.git/subtree-cache/**": true,
-    "**/node_modules/**": true,
-    "**/.venv/**": true,
-    "**/__pycache__/**": true
-  },
   "files.watcherInclude": [
     "**/*.py",
     "**/*.html",
     "**/*.css",
     "**/*.js"
   ],
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/*.pyc": true,
-    "**/__pycache__": true,
-    "**/.pytest_cache": true,
-    "**/node_modules": true,
-    "**/.venv": true
-  },
   "extensions.ignoreRecommendations": true,
   "python.analysis.diagnosticMode": "workspace",
   "python.analysis.indexing": false,
@@ -172,9 +153,13 @@
   ],
   "eslint.format.enable": true,
   "files.associations": {
-    "*.html": "html",
+    "*.html": "django-html",
     "*.js": "javascript",
     "*.py": "python",
+    "*.css": "css",
+    "*.json": "json",
+    "*.md": "markdown",
+    "*.txt": "plaintext",
     "requirements*.txt": "pip-requirements"
   },
   "html.format.wrapLineLength": 88,
@@ -187,9 +172,6 @@
     "${workspaceFolder}/.venv/lib/python3.13/site-packages"
   ],
   "python.analysis.typeCheckingMode": "strict",
-  "python.terminal.activateEnvInCurrentTerminal": true,
-  "python.terminal.shellIntegration.enabled": true,
-  "python.terminal.activateEnvironment": true,
   "python.analysis.inlayHints.functionReturnTypes": false,
   "python.analysis.inlayHints.variableTypes": false,
   "python.testing.unittestEnabled": true,
@@ -200,7 +182,6 @@
     "-p",
     "*test*.py"
   ],
-  "python.envFile": "${workspaceFolder}/.env",
   "eslint.codeActionsOnSave.rules": [
     "!prettier/*",
     "*"
@@ -212,12 +193,5 @@
   "python.analysis.completeFunctionParens": true,
   "python.analysis.enablePytestSupport": false,
   "python.analysis.languageServerMode": "light",
-  "python.analysis.logLevel": "Error",
-  "terminal.integrated.cwd": "${workspaceFolder}",
-  "terminal.integrated.defaultProfile.linux": "bash",
-  "terminal.integrated.shellIntegration.enabled": true,
-  "terminal.integrated.env.linux": {
-    "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
-    "PATH": "${workspaceFolder}/.venv/bin:${env:PATH}"
-  }
+  "python.analysis.logLevel": "Error"
 }

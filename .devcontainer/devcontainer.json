@@ -1,46 +1,110 @@
 {
-  "name": "Greenova Development",
-  "image": "mcr.microsoft.com/devcontainers/python:3",
-  "features": {},
-  "customizations": {
-      "vscode": {
-          "settings": {
-              "dev.containers.gpuAvailability": "none",
-              "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
-              "dotfiles.targetPath": "~/dotfiles",
-              "dotfiles.installCommand": "chmod +x setup.sh && /bin/sh setup.sh",
-              "python.interpreter.infoVisibility": "always",
-              "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node"
-          },
-          "extensions": [
-            "ms-python.autopep8",
-            "dbaeumer.vscode-eslint",
-            "GitHub.copilot",
-            "GitHub.copilot-chat",
-            "ms-python.vscode-pylance",
-            "ms-python.python",
-            "ms-python.debugpy",
-            "foxundermoon.shell-format",
-            "monosans.djlint",
-            "EditorConfig.EditorConfig"
-          ]
-      }
-  },
-  "mounts": [
-      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=volume"
-  ],
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=volume",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "remoteUser": "vscode",
-  "containerUser": "vscode",
-  "updateRemoteUserUID": true,
-  "forwardPorts": [
-      8000
-  ],
-  "initializeCommand": "mkdir -p ${localWorkspaceFolder}/.devcontainer",
-  "postCreateCommand": {
-      "permissions": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename}",
-      "ssh": "chmod 700 /home/vscode/.ssh && chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true"
-  },
-  "postStartCommand": "bash .devcontainer/post_start.sh"
+    "name": "Greenova Development",
+    "image": "mcr.microsoft.com/devcontainers/python:3",
+    "features": {},
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "dev.containers.gpuAvailability": "none",
+                "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
+                "dotfiles.targetPath": "/home/vscode/.dotfiles",
+                "dotfiles.installCommand": "if [ -f setup.sh ]; then chmod +x setup.sh && ./setup.sh; else echo 'No setup.sh found'; fi",
+                "python.interpreter.infoVisibility": "always",
+                "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
+                "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+                "python.envFile": "${containerWorkspaceFolder}/.env",
+                "python.analysis.extraPaths": [
+                    "${containerWorkspaceFolder}/.venv/lib/python3.13/site-packages"
+                ],
+                "terminal.integrated.cwd": "${containerWorkspaceFolder}",
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.shellIntegration.enabled": true,
+                "terminal.integrated.env.linux": {
+                    "PYTHONPATH": "${containerWorkspaceFolder}",
+                    "VENV_PATH": "${containerWorkspaceFolder}/.venv",
+                    "PYTHONSTARTUP": "${containerWorkspaceFolder}/.devcontainer/pythonstartup.py",
+                    "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
+                },
+                "python.terminal.activateEnvInCurrentTerminal": true,
+                "python.terminal.activateEnvironment": true,
+                "python.terminal.shellIntegration.enabled": true,
+                "files.watcherExclude": {
+                    "**/.git/objects/**": true,
+                    "**/.git/subtree-cache/**": true,
+                    "**/node_modules/**": true,
+                    "**/.venv/**": true,
+                    "**/__pycache__/**": true,
+                    "**/.env": true
+                },
+                "files.exclude": {
+                    "**/.git": true,
+                    "**/.svn": true,
+                    "**/.hg": true,
+                    "**/CVS": true,
+                    "**/.DS_Store": true,
+                    "**/*.pyc": true,
+                    "**/__pycache__": true,
+                    "**/.pytest_cache": true,
+                    "**/node_modules": true,
+                    "**/.venv": true
+                }
+            },
+            "extensions": [
+                "ms-python.autopep8",
+                "dbaeumer.vscode-eslint",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "ms-python.vscode-pylance",
+                "ms-python.python",
+                "ms-python.debugpy",
+                "foxundermoon.shell-format",
+                "monosans.djlint",
+                "EditorConfig.EditorConfig"
+            ]
+        }
+    },
+    "mounts": [
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
+        "source=dotfiles,target=/home/vscode/.dotfiles,type=volume",
+        "source=venv,target=${containerWorkspaceFolder}/.venv,type=volume",
+        "source=sqlite_data,target=${containerWorkspaceFolder}/greenova/db.sqlite3,type=volume",
+        "source=staticfiles,target=${containerWorkspaceFolder}/greenova/staticfiles,type=volume",
+        "source=logs,target=${containerWorkspaceFolder}/greenova/logs,type=volume",
+        "source=media,target=${containerWorkspaceFolder}/greenova/media,type=volume",
+        "source=node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+    ],
+    "workspaceMount": "source=dev_greenova,target=${containerWorkspaceFolder},type=volume",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "remoteUser": "vscode",
+    "containerUser": "vscode",
+    "updateRemoteUserUID": true,
+    "initializeCommand": {
+        "create-volumes": "docker volume create dev_greenova && docker volume create venv && docker volume create sqlite_data && docker volume create staticfiles && docker volume create logs && docker volume create media && docker volume create node_modules"
+    },
+    "postCreateCommand": {
+        "permissions": [
+            "sudo chown -R vscode:vscode ${containerWorkspaceFolder}",
+            "sudo chown -R vscode:vscode /home/vscode/.ssh",
+            "sudo chown -R vscode:vscode /home/vscode/.dotfiles",
+            "sudo chmod 700 /home/vscode/.ssh",
+            "sudo chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true"
+        ]
+    },
+    "postStartCommand": [
+        "bash .devcontainer/post_start.sh",
+        "sudo chown -R vscode:vscode /home/vscode/.vscode-server || true",
+        "sudo chown -R vscode:vscode /usr/local/share/nvm",
+        "sudo chmod 755 /usr/local/share/nvm",
+        "sudo chmod 644 /home/vscode/.ssh/id_ed25519.pub",
+        "sudo chmod 700 /home/vscode/.ssh/config"
+    ],
+    "forwardPorts": [
+        8000
+    ],
+    "remoteEnv": {
+        "PYTHONPATH": "${containerWorkspaceFolder}",
+        "VENV_PATH": "${containerWorkspaceFolder}/.venv",
+        "PYTHONSTARTUP": "${containerWorkspaceFolder}/.devcontainer/pythonstartup.py",
+        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
+    }
 }
