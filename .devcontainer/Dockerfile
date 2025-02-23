@@ -1,9 +1,8 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
-# Install build essentials and make
+# Install build essentials and shell tools
 RUN apt-get update && apt-get install -y \
     build-essential \
-    make \
     shellcheck \
     shfmt
 
@@ -88,3 +87,8 @@ USER vscode
 # Set Git config for dotfiles
 RUN git config --global user.name "enveng-group" && \
     git config --global user.email "164126503+enveng-group@users.noreply.github.com"
+
+# Set up workspace for shell script
+COPY make.sh /workspaces/
+RUN chmod +x /workspaces/make.sh && \
+    chown vscode:vscode /workspaces/make.sh

@@ -4,22 +4,48 @@
   "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode",
-  "initializeCommand": "make initialize",
-  "onCreateCommand": "make create",
-  "postCreateCommand": "make post-create",
-  "postStartCommand": "make post-start",
-  "postAttachCommand": "make attach",
-  "updateContentCommand": "make update",
+  "initializeCommand": "./make.sh initialize",
+  "onCreateCommand": "./make.sh create",
+  "postCreateCommand": "./make.sh post-create",
+  "postStartCommand": "./make.sh post-start",
+  "postAttachCommand": "./make.sh attach",
+  "updateContentCommand": "./make.sh update",
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-vscode.makefile-tools"
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "foxundermoon.shell-format",
+        "ms-python.isort",
+        "ms-python.black-formatter",
+        "ms-python.pylint",
+        "ms-python.mypy-type-checker",
+        "monosans.djlint",
+        "batisteo.vscode-django",
+        "EditorConfig.EditorConfig",
+        "ms-python.vscode-python-envs",
+        "MS-CST-E.vscode-devskim",
+        "ms-vscode.vscode-copilot-data-analysis",
+        "alexcvzz.vscode-sqlite",
+        "bierner.markdown-mermaid",
+        "bierner.markdown-preview-github-styles",
+        "ms-vscode.makefile-tools",
+        "tamasfe.even-better-toml",
+        "nwgh.bandit",
+        "redhat.vscode-yaml",
+        "timonwong.shellcheck",
+        "GitHub.vscode-pull-request-github",
+        "GitHub.vscode-github-actions"
       ]
     }
   },
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
-    "source=${localWorkspaceFolder}/.devcontainer/scripts,target=/workspaces/scripts,type=bind,consistency=cached"
+    "source=${localWorkspaceFolder}/.devcontainer/scripts,target=/workspaces/scripts,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/.devcontainer/make.sh,target=/workspaces/make.sh,type=bind,consistency=cached"
   ],
   "remoteEnv": {
     "MAKE_PATH": "/usr/bin/make",

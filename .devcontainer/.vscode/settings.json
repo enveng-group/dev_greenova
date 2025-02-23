@@ -11,5 +11,10 @@
     "fish": {
       "path": "/usr/bin/fish"
     }
+  },
+  "editor.insertSpaces": false,
+  "[makefile]": {
+    "editor.insertSpaces": false,
+    "editor.detectIndentation": false
   }
 }
