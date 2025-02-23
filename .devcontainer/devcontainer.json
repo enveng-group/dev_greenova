@@ -17,7 +17,7 @@
                 "dev.containers.gpuAvailability": "none",
                 "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
                 "dotfiles.targetPath": "/home/vscode/dotfiles",
-                "dotfiles.installCommand": "cd /home/vscode/dotfiles && if [ -f setup.sh ]; then sudo chmod +x setup.sh && sudo ./setup.sh; else echo 'No setup.sh found'; fi",
+                "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
                 "python.interpreter.infoVisibility": "always",
                 "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
                 "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
@@ -72,16 +72,8 @@
             ]
         }
     },
-    "postStartCommand": [
-        "bash .devcontainer/post_start.sh"
-    ],
+    "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
     "forwardPorts": [
         8000
-    ],
-    "remoteEnv": {
-        "PYTHONPATH": "${containerWorkspaceFolder}",
-        "VENV_PATH": "${containerWorkspaceFolder}/.venv",
-        "PYTHONSTARTUP": "${containerWorkspaceFolder}/.devcontainer/pythonstartup.py",
-        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
-    }
+    ]
 }
