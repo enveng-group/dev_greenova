@@ -1,0 +1,15 @@
+{
+  "dev.containers.gpuAvailability": "none",
+  "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
+  "dotfiles.targetPath": "~/dotfiles",
+  "dotfiles.installCommand": "~/dotfiles/setup.sh",
+  "python.interpreter.infoVisibility": "always",
+  "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
+  "remoteHub.gitProtocol": "ssh",
+  "terminal.integrated.defaultProfile.linux": "fish",
+  "terminal.integrated.profiles.linux": {
+    "fish": {
+      "path": "/usr/bin/fish"
+    }
+  }
+}

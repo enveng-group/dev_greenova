@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - dev_greenova:/workspaces/dev_greenova:cached
+      - dotfiles:/home/vscode/dotfiles
+      - ${HOME}/.ssh:/home/vscode/.ssh:ro,delegated,z
+      - ./.devcontainer/Makefile:/workspaces/Makefile:ro
+      - ./.devcontainer/scripts:/workspaces/scripts:ro
+    command: sleep infinity
+    user: vscode
+    working_dir: /workspaces/dev_greenova
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/workspaces/dev_greenova
+      - NODE_PATH=/usr/local/share/nvm/versions/node/v23.8.0/lib/node_modules
+      - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+      - DOTFILES_REPO=git@github.com:enssol/dotfiles.git
+      - DEV_GREENOVA_REPO=git@github.com:enveng-group/dev_greenova.git
+      - MAKE_PATH=/usr/bin/make
+      - SCRIPTS_DIR=/workspaces/scripts
+    init: true
+
+volumes:
+  dev_greenova:
+    name: dev_greenova
+  dotfiles:
+    name: dotfiles

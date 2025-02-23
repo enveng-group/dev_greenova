@@ -1,97 +1,44 @@
-# OS generated files
-.DS_Store
-*.swp
-*.swo
-Thumbs.db
-
-# Python/Django
-*.py[cod]
-__pycache__/
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-eggs/
-parts/
-bin/
-var/
-sdist/
-develop-eggs/
-.installed.cfg
-lib/
-lib64/
-.Python
-.coverage
-htmlcov/
-**/staticfiles/**
-**/media/**
-
-# Virtual Environment
-.env
-.venv/
-env/
-venv/
-ENV/
-
-# Database
-*.sqlite3
-db.sqlite3
-*.db
-
-# Django
+# Django specific
 /staticfiles/
 /media/
 local_settings.py
+db.sqlite3
+**/__pycache__/**
 
-# Logs
-*.log
-logs/
+# Project specific directories
 greenova/logs/
+greenova/media/
+greenova/static/
+greenova/staticfiles/
 
-# Node
-node_modules/
-npm-debug.log
-package-lock.json
+# Local development settings
+.env.local
+.env.development
+.env.test
+.env.production
 
-# IDE
-.idea/
-.vscode/
-*.sublime-workspace
-*.sublime-project
-
-# Project specific
-greenova/db.sqlite3
-greenova/logs/django.log
-
-# Compiled files
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-
-# Testing
+# Coverage reports
 .coverage
-.tox/
-.pytest_cache/
+htmlcov/
 
-# Pipenv
+# Project dependencies
 Pipfile.lock
-.bandit
-.gitignore
-.env
-.editorconfig
-.eslintrc
-.env
-.npmrc
-.pylintrc
-.pythonstartup
-.shellcheckrc
-isort.cfg
-mypy.ini
-pnpm-lock.yaml
-home/vscode/.config/fish/config.fish
-home/vscode/.gitconfig
-.env
-.env
+poetry.lock
+
+# Build output
+/dist/
+/build/
+
+# Temporary files
+*.temp
+*.tmp
+.temp/
+.tmp/
+
+# Local database backups
+*.dump
+*.sql
+
+# Generated documentation
+/docs/_build/
+.DS_Store

@@ -12,47 +12,31 @@ setup.py text
 pyproject.toml text
 requirements*.txt text
 
-# Python specific
+# Docker files
 .dockerignore text
 docker-compose*.yml text
 Dockerfile text
 
-# Docker
-.vscode/* text
-
-# VS Code
-.gitconfig text
-.gitignore text
-.gitattributes text
-
-# Git config
-*secret* filter=git-crypt diff=git-crypt
-*.key filter=git-crypt diff=git-crypt
-.snyk filter=git-crypt diff=git-crypt
-.env* filter=git-crypt diff=git-crypt
-
-# Config files
-*.conf text
-*.cfg text
-*.ini text
-*.toml text
-*.yaml text
-*.yml text
-
 # Scripts
-*.ps1 text eol=crlf
-*.cmd text eol=crlf
-*.bat text eol=crlf
-Makefile text
-*.zsh text eol=lf
-*.fish text eol=lf
-*.bash text eol=lf
 *.sh text eol=lf
+Makefile text
 
-# Data files
+# Database files
 *.pkl binary
 *.db binary
 *.sqlite3 binary
+
+# Web files
+*.json text
+*.js text diff=javascript
+*.css text diff=css
+*.htm text diff=html
+*.html text diff=html
+
+# Documentation
+*.md text diff=markdown
+*.rst text
+LICENSE text
 
 # Graphics
 *.svg text
@@ -62,14 +46,16 @@ Makefile text
 *.png binary
 *.pdf binary
 
-# Documentation
-*.txt text
-*.rst text
-*.md text diff=markdown
+# Config files
+*.conf text
+*.cfg text
+*.ini text
+*.toml text
+*.yaml text
+*.yml text
 
-# Web files
-*.json text
-*.js text diff=javascript
-*.css text diff=css
-*.htm text diff=html
-*.html text diff=html
+# Git config files
+*secret* filter=git-crypt diff=git-crypt
+*.key filter=git-crypt diff=git-crypt
+.env* filter=git-crypt diff=git-crypt
+.snyk filter=git-crypt diff=git-crypt
