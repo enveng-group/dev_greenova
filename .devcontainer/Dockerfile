@@ -31,10 +31,6 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/instal
 RUN mkdir -p /workspaces/scripts && \
     chown -R vscode:vscode /workspaces/scripts
 
-# Set up workspace for Makefile
-COPY Makefile /workspaces/
-RUN chown vscode:vscode /workspaces/Makefile
-
 USER vscode
 
 # Initialize workspace
