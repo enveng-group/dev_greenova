@@ -41,11 +41,33 @@ RUN cd /tmp && \
 RUN python3 --version && \
     pip3 --version
 
-# Install Git
+# Install Git from source
 ARG GIT_VERSION=2.48.1
-RUN add-apt-repository ppa:git-core/ppa && \
-    apt-get update && \
-    apt-get install -y git=${GIT_VERSION}*
+RUN apt-get update && apt-get install -y \
+    dh-autoreconf \
+    libcurl4-gnutls-dev \
+    libexpat1-dev \
+    gettext \
+    libz-dev \
+    libssl-dev \
+    asciidoc \
+    xmlto \
+    docbook2x \
+    make \
+    gcc \
+    && rm -rf /var/lib/apt/lists/* \
+    && cd /tmp \
+    && wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VERSION}.tar.xz \
+    && tar xf git-${GIT_VERSION}.tar.xz \
+    && cd git-${GIT_VERSION} \
+    && make prefix=/usr/local all \
+    && make prefix=/usr/local install \
+    && cd .. \
+    && rm -rf git-${GIT_VERSION}* \
+    && git --version
+
+# Verify Git installation works
+RUN git --version | grep ${GIT_VERSION}
 
 # Install Node.js via nvm
 ARG NODE_VERSION=23.8.0
