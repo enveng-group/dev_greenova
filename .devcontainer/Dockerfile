@@ -6,9 +6,40 @@ RUN apt-get update && apt-get install -y \
     shellcheck \
     shfmt
 
-# Install Python
+# Install Python build dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libncursesw5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev
+
+# Download and install Python from source
 ARG PYTHON_VERSION=3.13.2
-RUN apt-get install -y python${PYTHON_VERSION} python3-pip
+RUN cd /tmp && \
+    wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz && \
+    tar -xf Python-${PYTHON_VERSION}.tar.xz && \
+    cd Python-${PYTHON_VERSION} && \
+    ./configure --enable-optimizations && \
+    make -j $(nproc) && \
+    make altinstall && \
+    cd .. && \
+    rm -rf Python-${PYTHON_VERSION}* && \
+    ln -s /usr/local/bin/python${PYTHON_VERSION%.*} /usr/local/bin/python3 && \
+    ln -s /usr/local/bin/pip${PYTHON_VERSION%.*} /usr/local/bin/pip3
+
+# Verify Python installation
+RUN python3 --version && \
+    pip3 --version
 
 # Install Git
 ARG GIT_VERSION=2.48.1
