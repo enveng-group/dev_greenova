@@ -4,11 +4,10 @@
   "service": "app",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode",
-  "postCreateCommand": [
+"postCreateCommand": [
     "chmod +x /workspaces/make.sh",
-    "/workspaces/make.sh initialize",
-    "/workspaces/make.sh create"
-  ],
+    "/workspaces/make.sh post-create"
+],
   "postStartCommand": "./make.sh post-start",
   "postAttachCommand": "./make.sh attach",
   "updateContentCommand": "./make.sh update",
