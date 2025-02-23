@@ -4,7 +4,7 @@
     "features": {},
     "mounts": [
         "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
-        "source=dotfiles,target=/home/vscode/.dotfiles,type=volume"
+        "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
     ],
     "workspaceMount": "source=dev_greenova,target=${containerWorkspaceFolder},type=volume",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -16,8 +16,8 @@
             "settings": {
                 "dev.containers.gpuAvailability": "none",
                 "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
-                "dotfiles.targetPath": "/home/vscode/.dotfiles",
-                "dotfiles.installCommand": "cd /home/vscode/.dotfiles && if [ -f setup.sh ]; then sudo chmod +x setup.sh && sudo ./setup.sh; else echo 'No setup.sh found'; fi",
+                "dotfiles.targetPath": "/home/vscode/dotfiles",
+                "dotfiles.installCommand": "cd /home/vscode/dotfiles && if [ -f setup.sh ]; then sudo chmod +x setup.sh && sudo ./setup.sh; else echo 'No setup.sh found'; fi",
                 "python.interpreter.infoVisibility": "always",
                 "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.8.0/bin/node",
                 "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
@@ -72,22 +72,8 @@
             ]
         }
     },
-    "postCreateCommand": {
-        "permissions": [
-            "sudo chown -R vscode:vscode ${containerWorkspaceFolder}",
-            "sudo chown -R vscode:vscode /home/vscode/.ssh",
-            "sudo chown -R vscode:vscode /home/vscode/.dotfiles",
-            "sudo chmod 700 /home/vscode/.ssh",
-            "sudo chmod 600 /home/vscode/.ssh/id_ed25519 2>/dev/null || true"
-        ]
-    },
     "postStartCommand": [
-        "bash .devcontainer/post_start.sh",
-        "sudo chown -R vscode:vscode /home/vscode/.vscode-server || true",
-        "sudo chown -R vscode:vscode /usr/local/share/nvm",
-        "sudo chmod 755 /usr/local/share/nvm",
-        "sudo chmod 644 /home/vscode/.ssh/id_ed25519.pub",
-        "sudo chmod 700 /home/vscode/.ssh/config"
+        "bash .devcontainer/post_start.sh"
     ],
     "forwardPorts": [
         8000
