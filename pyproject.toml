@@ -1,94 +1,98 @@
 [project]
-name = "greenova"
-version = "0.1.0"
-description = "Environmental obligations management system"
 authors = [
-    {name = "Adrian Gallo", email = "agallo@enveng-group.com.au"}
+    { name = "Adrian Gallo", email = "agallo@enveng-group.com.au" },
 ]
+description = "Environmental obligations management system"
+license = { text = "AGPL-3.0" }
+name = "greenova"
 requires-python = ">=3.13"
-license = {text = "AGPL-3.0"}
+version = "0.1.0"
 
 [tool.djlint]
 # Profile settings
-profile = "django"
+format     = false    # Add this line
 format_css = true
-format_js = true
+format_js  = true
+profile    = "django"
 
 # Formatting settings
-blank_line_after_tag = "load,extends,include,endblock"
-blank_line_before_tag = "block,include"
-close_void_tags = true
-create_datetime = false
+blank_line_after_tag           = "load,extends,include,endblock"
+blank_line_before_tag          = "block,include"
+close_void_tags                = true
+create_datetime                = false
 format_attribute_template_tags = true
-ignore_blocks = "raw,blocktranslate"
-indent = "2"
-max_attribute_length = "88"
-max_line_length = "88"
-preserve_blank_lines = true
-preserve_leading_space = true
+ignore_blocks                  = ["raw", "blocktranslate"]       # Update this line
+indent                         = "2"
+max_attribute_length           = "88"
+max_line_length                = "88"
+preserve_blank_lines           = true
+preserve_leading_space         = true
 
 # Extension settings
 extension = "html"
-include = "greenova/templates"
+include   = "greenova/templates"
 
 # Files to exclude
-exclude = "greenova/templates/admin/*,greenova/staticfiles/*"
+exclude = [
+    "greenova/templates/admin/*,greenova/staticfiles/*,greenova/demo/templates/demo/charts.html",
+]
 
 # Linting settings
-use_gitignore = true
+ignore         = ["H006", "T002"] # Add this line
 require_pragma = false
+use_gitignore  = true
 
-# Rule configuration
-[tool.djlint.rules]
-# Accessibility rules
-H006 = true  # Element should have an alt attribute
-H025 = true  # Tag seems to be an error
-H030 = true  # Consider adding a meta description
-H031 = true  # Consider adding a meta viewport
+    # Rule configuration
+    [tool.djlint.rules]
+    # Accessibility rules
+    H006 = true # Element should have an alt attribute
+    H025 = true # Tag seems to be an error
+    H030 = true # Consider adding a meta description
+    H031 = true # Consider adding a meta viewport
 
-# HTML best practices
-H007 = true  # Element should have an lang attribute
-H008 = true  # Don't use inline styles
-H013 = true  # Element should have a title attribute
-H019 = true  # Use semantic HTML elements
-H021 = true  # Inline event handlers should not be used
-H023 = true  # Form elements should have labels
-H024 = true  # lang attribute must contain valid language code
+    # HTML best practices
+    H007 = true # Element should have an lang attribute
+    H008 = true # Don't use inline styles
+    H013 = true # Element should have a title attribute
+    H019 = true # Use semantic HTML elements
+    H021 = true # Inline event handlers should not be used
+    H023 = true # Form elements should have labels
+    H024 = true # lang attribute must contain valid language code
 
-# Django template rules
-D005 = true  # Tag can be simplified to use {% tag %}
-D010 = true  # Missing {% csrf_token %} in form
-D018 = true  # Consider using spaceless tag
+    # Django template rules
+    D005 = true # Tag can be simplified to use {% tag %}
+    D010 = true # Missing {% csrf_token %} in form
+    D018 = true # Consider using spaceless tag
 
-# Custom HTML attributes
-custom_html_attrs = [
-    "hx-*",           # HTMX attributes
-    "data-*",         # Data attributes
-    "_",              # Hyperscript attributes
-    "role",           # ARIA roles
-    "aria-*"          # ARIA attributes
-]
+    # Custom HTML attributes
+    custom_html_attrs = [
+        "hx-*",   # HTMX attributes
+        "data-*", # Data attributes
+        "_",      # Hyperscript attributes
+        "role",   # ARIA roles
+        "aria-*", # ARIA attributes
+    ]
 
-# Custom blocks for Django templates
-custom_blocks = [
-    "blocktranslate",
-    "block",
-    "comment",
-    "csrf_token",
-    "extends",
-    "for",
-    "if",
-    "include",
-    "load",
-    "spaceless",
-    "trans",
-    "with"
-]
+    # Custom blocks for Django templates
+    custom_blocks = [
+        "blocktranslate",
+        "block",
+        "comment",
+        "csrf_token",
+        "extends",
+        "for",
+        "if",
+        "include",
+        "load",
+        "spaceless",
+        "trans",
+        "with",
+    ]
 
 [tool.autopep8]
+aggressive      = 3
+exclude         = [".git", "__pycache__", ".pytest_cache", ".venv", "node_modules"]
+experimental    = true
+ignore          = ["E226", "E302", "E41"]
 max_line_length = 88
-experimental = true
-aggressive = 3
-select = ["E", "W", "F"]
-ignore = ["E226", "E302", "E41"]
-exclude = [".git", "__pycache__", ".pytest_cache", ".venv", "node_modules"]
+select          = ["E", "W", "F"]

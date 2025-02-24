@@ -40,6 +40,8 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('obligations/', include('obligations.urls')),
     path('chat/', include('chatbot.urls')),
     path('mechanisms/', include('mechanisms.urls')),
+    path('charts/', include('charts.urls')),
+    path('demo/', include('demo.urls')),
 ]
 
 if settings.DEBUG:

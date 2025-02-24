@@ -82,34 +82,35 @@ INSTALLED_APPS = [
     "chatbot.apps.ChatbotConfig",
     "utils",
     "mechanisms.apps.MechanismsConfig",
+    "charts.apps.ChartsConfig",
+    "demo",
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
 ROOT_URLCONF = "greenova.urls"
 
+# Update TEMPLATES configuration to remove the conflict
 TEMPLATES: List[TemplateConfig] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
+        "APP_DIRS": True,  # Keep this for app template discovery
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "utils.context_processors.greenova_context",  # Corrected back to 'context_processors'
+                "utils.context_processors.greenova_context",
             ],
-            "debug": DEBUG,  # Add the required debug field
+            "debug": DEBUG,
         },
     },
 ]
@@ -162,8 +163,8 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-# Static files optimization
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+# Ensure static files are handled simply
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Basic storage without manifest
 
 # Authentication settings
 LOGIN_REDIRECT_URL = "dashboard:home"
@@ -177,20 +178,19 @@ APP_VERSION = "0.1.0"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Security settings
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = "DENY"
-CSRF_COOKIE_SECURE = False  # Set to False for HTTP in development
-SESSION_COOKIE_SECURE = False  # Set to False for HTTP in development
+# Disable security features for development
+SECURE_BROWSER_XSS_FILTER = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
+X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow frames for development tools
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
 SECURE_PROXY_SSL_HEADER = None
 
-# Cache settings
+# Simplify cache to basic memory cache
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "unique-snowflake",
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # No caching in development
     }
 }
 

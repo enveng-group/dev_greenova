@@ -6,7 +6,6 @@ from django.db.models import QuerySet
 from enum import Enum
 from typing import List
 from django.contrib.auth.models import AbstractUser
-from obligations.models import Obligation  # Add this import
 from utils.relationship_manager import relationship_manager
 
 logger = logging.getLogger(__name__)
@@ -108,7 +107,10 @@ class Project(models.Model):
 
     @property
     def obligations(self):
-        return Obligation.objects.filter(project_obligations__project=self)
+        """Get related obligations."""
+        # Move import inside method to avoid circular import
+        from obligations.models import Obligation
+        return Obligation.objects.filter(project=self)
 
 
 class ProjectMembership(models.Model):

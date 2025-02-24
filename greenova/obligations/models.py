@@ -1,7 +1,9 @@
 from django.db import models
 from utils.relationship_manager import relationship_manager
 from utils.constants import STATUS_CHOICES
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Obligation(models.Model):
     """Represents an environmental obligation."""
@@ -11,7 +13,13 @@ class Obligation(models.Model):
         on_delete=models.CASCADE,
         related_name='obligations'
     )
-    primary_environmental_mechanism = models.CharField(max_length=255)
+    # Change ForeignKey to string reference
+    primary_environmental_mechanism = models.ForeignKey(
+        'mechanisms.EnvironmentalMechanism',
+        on_delete=models.PROTECT,
+        related_name='obligations',
+        null=True
+    )
     procedure = models.TextField(blank=True, null=True)
     environmental_aspect = models.CharField(max_length=255)
     obligation = models.TextField()
@@ -22,7 +30,11 @@ class Obligation(models.Model):
     close_out_date = models.DateField(null=True, blank=True)
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
+        choices=[
+            ('not started', 'Not Started'),
+            ('in progress', 'In Progress'),
+            ('completed', 'Completed')
+        ],
         default='not started'
     )
     supporting_information = models.TextField(blank=True, null=True)

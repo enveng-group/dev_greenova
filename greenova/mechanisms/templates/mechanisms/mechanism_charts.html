@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_head %}
+  <script src="{% static 'js/vendor/chart.umd.js' %}"></script>
+{% endblock extra_head %}
+
+{% block content %}
+  <article>
+    <header>
+      <h2>
+Environmental Mechanism Status Distribution
+      </h2>
+      {% if project %}
+        <p>
+Project: {{ project.name }}
+        </p>
+      {% endif %}
+    </header>
+
+    {% if error %}
+      <div role="alert" class="error">
+{{ error }}
+      </div>
+    {% elif mechanisms %}
+      <div class="chart-grid">
+        {% for mechanism in mechanisms %}
+          <figure role="region" aria-label="{{ mechanism }} Distribution" class="chart-wrapper">
+            <canvas id="mechanism-chart-{{ forloop.counter }}"
+                    class="mechanism-chart"
+                    data-chart-type="polarArea"
+                    data-endpoint="{% url 'mechanisms:filtered' %}?project_id={{ project.id }}&mechanism={{ mechanism|urlencode }}">
+            </canvas>
+            <figcaption>
+{{ mechanism }}
+            </figcaption>
+            <div class="loading-indicator" hidden>
+Loading...
+            </div>
+          </figure>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>
+No environmental mechanisms found for this project.
+      </p>
+    {% endif %}
+  </article>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const charts = {};
+
+          document.querySelectorAll('.mechanism-chart').forEach(canvas => {
+              const endpoint = canvas.dataset.endpoint;
+              const chartId = canvas.id;
+              const loadingIndicator = canvas.parentElement.querySelector('.loading-indicator');
+
+              loadingIndicator.hidden = false;
+
+              fetch(endpoint)
+                  .then(response => response.json())
+                  .then(config => {
+                      loadingIndicator.hidden = true;
+                      charts[chartId] = new Chart(canvas, config);
+                  })
+                  .catch(error => {
+                      console.error('Chart loading error:', error);
+                      loadingIndicator.hidden = true;
+                      canvas.parentElement.innerHTML = '<p class="error">Failed to load chart</p>';
+                  });
+          });
+      });
+  </script>
+{% endblock content %}
+
+{% block extra_css %}
+  <style>
+      .chart-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+          margin: 2rem 0;
+      }
+
+      .chart-wrapper {
+          position: relative;
+          min-height: 300px;
+          padding: 1rem;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .loading-indicator {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+      }
+
+      .error {
+          color: #dc3545;
+          text-align: center;
+          margin: 1rem 0;
+      }
+  </style>
+{% endblock extra_css %}

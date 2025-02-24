@@ -1,7 +1,12 @@
 from django.db import models
 from django.db.models import Count, Q, QuerySet
 from datetime import datetime, timedelta
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Sequence, TypedDict
+
+class ChartDataPoint(TypedDict):
+    label: str
+    value: int
+
 from .utils import ObligationAnalyticsProcessor
 from .models import Obligation
 import logging
@@ -23,7 +28,7 @@ class AnalyticsManager(models.Manager[Obligation]):
             not_started=Count('id', filter=Q(status='not started'))
         )
 
-    def get_mechanism_stats(self) -> List[Dict[str, Any]]:
+    def get_mechanism_stats(self) -> Sequence[ChartDataPoint]:
         """Get statistics grouped by mechanism using ObligationAnalyticsProcessor."""
         processor = ObligationAnalyticsProcessor(self.get_queryset())
         return processor.get_mechanism_data()['data']

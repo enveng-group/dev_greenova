@@ -18,12 +18,19 @@
   },
   "[html]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "monosans.djlint",
+    "editor.defaultFormatter": "vscode.html-language-features",
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.suggest.insertMode": "replace"
   },
   "[django-html]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.suggest.insertMode": "replace"
+  },
+  "[django-txt]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "monosans.djlint",
     "editor.tabSize": 2,
@@ -204,6 +211,9 @@
   "python.analysis.enablePytestSupport": false,
   "python.analysis.languageServerMode": "light",
   "python.analysis.logLevel": "Error",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingModuleSource": "none"
+  },
   "evenBetterToml.formatter.alignEntries": true,
   "evenBetterToml.formatter.arrayAutoExpand": true,
   "evenBetterToml.formatter.arrayAutoCollapse": false,

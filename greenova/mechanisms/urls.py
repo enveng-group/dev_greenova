@@ -13,4 +13,7 @@ urlpatterns = [
 
     # Filtered mechanism data
     path('filtered/', views.FilteredMechanismView.as_view(), name='filtered'),
+
+    # Chart view for mechanism visualizations
+    path('chart-view/', views.MechanismChartView.as_view(), name='chart_view'),
 ]

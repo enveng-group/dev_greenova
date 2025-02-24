@@ -18,11 +18,9 @@ Hi {{ request.user|display_name }}
         </h2>
       </hgroup>
     </header>
-    <!-- Project Selection -->
-
+<!-- Project Selection -->
 {% include "projects/projects_selector.html" %}
-
-    {% if error %}
+{% if error %}
       <p role="alert">
 {{ error|format_error }}
       </p>

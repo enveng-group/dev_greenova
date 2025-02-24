@@ -67,10 +67,11 @@
         "ms-python.python",
         "ms-python.debugpy",
         "foxundermoon.shell-format",
-        "monosans.djlint",
         "EditorConfig.EditorConfig",
         "batisteo.vscode-django",
-        "tamasfe.even-better-toml"
+        "tamasfe.even-better-toml",
+        "monosans.djlint",
+        "ms-vscode.vscode-copilot-data-analysis"
       ]
     }
   },
