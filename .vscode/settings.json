@@ -16,13 +16,6 @@
     "editor.insertSpaces": true,
     "editor.fontFamily": "monospace"
   },
-  "[html]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "vscode.html-language-features",
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.suggest.insertMode": "replace"
-  },
   "[django-html]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "monosans.djlint",
@@ -214,25 +207,20 @@
   "python.analysis.diagnosticSeverityOverrides": {
     "reportMissingModuleSource": "none"
   },
-  "evenBetterToml.formatter.alignEntries": true,
-  "evenBetterToml.formatter.arrayAutoExpand": true,
-  "evenBetterToml.formatter.arrayAutoCollapse": false,
-  "evenBetterToml.formatter.compactArrays": true,
-  "evenBetterToml.formatter.compactEntries": false,
-  "evenBetterToml.formatter.indentTables": true,
-  "evenBetterToml.formatter.indentString": "    ",
-  "evenBetterToml.formatter.columnWidth": 80,
-  "evenBetterToml.taploConfig.enabled": true,
-  "evenBetterToml.schema.links": true,
-  "evenBetterToml.schema.enabled": true,
-  "evenBetterToml.formatter.reorderKeys": true,
-  "python.defaultInterpreterPath": "${workspaceFolder}/venv/bin/python",
-  "python.formatting.provider": "autopep8",
-  "python.formatting.autopep8Args": [
-    "--max-line-length=88",
-    "--experimental",
-    "--aggressive"
+  "python.defaultInterpreterPath": "/workspaces/dev_greenova/venv/bin/python",
+  "djlint.formatLanguages": [
+    "django-html"
   ],
-  "python.linting.enabled": true,
-  "python.linting.pylintEnabled": true
+  "djlint.profile": "django",
+  "djlint.extendExclude": [
+    "node_modules",
+    ".git",
+    ".venv",
+    ".pytest_cache",
+    "__pycache__",
+    "~/.vscode",
+    "~/.vscode-server",
+    "/workspaces/dev_greenova/greenova/static/js/vendor",
+    "/vscode"
+  ]
 }

@@ -6,7 +6,6 @@ from django.db.models import QuerySet
 from enum import Enum
 from typing import List
 from django.contrib.auth.models import AbstractUser
-from utils.relationship_manager import relationship_manager
 
 logger = logging.getLogger(__name__)
 

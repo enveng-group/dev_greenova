@@ -7,12 +7,18 @@ from django.db import transaction
 from projects.models import Project
 from obligations.models import Obligation
 from mechanisms.models import EnvironmentalMechanism
-from utils.mechanism_mapping import get_mechanism_id_mapping
 
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = 'Import obligations from CSV file'
+
+    # Mechanism mapping moved directly into the command
+    MECHANISM_ID_MAPPING = {
+        'Environmental Protection Act 1986': 'EP_ACT_1986',
+        'Environmental Protection Regulations 1987': 'EP_REGS_1987',
+        # Add other mappings as needed
+    }
 
     def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument('csv_file', type=str, help='Path to the CSV file')
@@ -32,11 +38,8 @@ class Command(BaseCommand):
             return None, False
 
         try:
-            # Get the ID mapping
-            id_mapping = get_mechanism_id_mapping()
-
             # Check if this mechanism should use a specific ID
-            desired_id = id_mapping.get(mechanism_name)
+            desired_id = self.MECHANISM_ID_MAPPING.get(mechanism_name)
 
             # Determine the name to use (either mapped ID or original name)
             mech_name = desired_id if desired_id else mechanism_name

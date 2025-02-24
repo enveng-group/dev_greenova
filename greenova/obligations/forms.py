@@ -11,7 +11,7 @@ class ObligationForm(forms.ModelForm):
         model = Obligation
         fields = [
             'obligation_number',
-            'primary_environmental_mechanism',
+            'mechanism',
             'environmental_aspect',
             'obligation',
             'accountability',

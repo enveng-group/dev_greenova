@@ -10,7 +10,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 def home_router(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponsePermanentRedirect]:
     """Route to appropriate home page based on auth status."""
     logger.debug(f"Home router - User authenticated: {request.user.is_authenticated}")
@@ -23,7 +22,6 @@ def home_router(request: HttpRequest) -> Union[HttpResponseRedirect, HttpRespons
     # Only redirect to dashboard if authenticated
     logger.info("Authenticated user - redirecting to dashboard")
     return redirect('dashboard:home')
-
 
 urlpatterns: List[Union[URLPattern, URLResolver]] = [
     # Landing page should be first to take precedence
@@ -40,8 +38,6 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('obligations/', include('obligations.urls')),
     path('chat/', include('chatbot.urls')),
     path('mechanisms/', include('mechanisms.urls')),
-    path('charts/', include('charts.urls')),
-    path('demo/', include('demo.urls')),
 ]
 
 if settings.DEBUG:

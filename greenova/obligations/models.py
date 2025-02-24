@@ -1,6 +1,4 @@
 from django.db import models
-from utils.relationship_manager import relationship_manager
-from utils.constants import STATUS_CHOICES
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,7 +6,7 @@ logger = logging.getLogger(__name__)
 class Obligation(models.Model):
     """Represents an environmental obligation."""
     obligation_number = models.CharField(max_length=20, primary_key=True)
-    project = relationship_manager.create_foreign_key(
+    project = models.ForeignKey(
         'projects.Project',
         on_delete=models.CASCADE,
         related_name='obligations'
@@ -18,7 +16,8 @@ class Obligation(models.Model):
         'mechanisms.EnvironmentalMechanism',
         on_delete=models.PROTECT,
         related_name='obligations',
-        null=True
+        null=True,
+        verbose_name='Environmental Mechanism'
     )
     procedure = models.TextField(blank=True, null=True)
     environmental_aspect = models.CharField(max_length=255)

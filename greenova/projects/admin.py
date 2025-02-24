@@ -1,18 +1,26 @@
 from django.contrib import admin
 from logging import getLogger
-from utils.django_type_safety import TypedModelAdmin, TypedTabularInline
+from typing import Optional, Sequence, TypeVar, Generic
+from django.http import HttpRequest
 from .models import Project, ProjectMembership
 
 logger = getLogger(__name__)
 
-class ProjectMembershipInline(TypedTabularInline):
+T = TypeVar('T')
+
+class BaseModelAdmin(admin.ModelAdmin, Generic[T]):
+    """Base admin class with type safety."""
+    def get_object(self, request: HttpRequest, object_id: str, from_field: Optional[str] = None) -> Optional[T]:
+        return super().get_object(request, object_id, from_field)
+
+class ProjectMembershipInline(admin.TabularInline):
     """Inline admin for project memberships."""
     model = ProjectMembership
     extra = 1
     raw_id_fields = ('user',)
 
 @admin.register(Project)
-class ProjectAdmin(TypedModelAdmin[Project]):
+class ProjectAdmin(BaseModelAdmin[Project]):
     """Admin configuration for Project model."""
     list_display = ('id', 'name', 'member_count', 'created_at')
     search_fields = ('name',)
@@ -26,7 +34,7 @@ class ProjectAdmin(TypedModelAdmin[Project]):
         return obj.get_member_count()
 
 @admin.register(ProjectMembership)
-class ProjectMembershipAdmin(TypedModelAdmin[ProjectMembership]):
+class ProjectMembershipAdmin(BaseModelAdmin[ProjectMembership]):
     """Admin configuration for ProjectMembership model."""
     list_display = ('id', 'get_project', 'get_user', 'get_role', 'get_created')
     list_filter = ('project', 'role', 'created_at')

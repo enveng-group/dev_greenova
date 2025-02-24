@@ -5,5 +5,4 @@ app_name = 'projects'
 
 urlpatterns = [
     path('select/', views.ProjectSelectionView.as_view(), name='select'),
-    path('content/', views.ProjectContentView.as_view(), name='content'),
 ]

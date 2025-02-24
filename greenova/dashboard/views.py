@@ -8,14 +8,14 @@ from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 from projects.models import Project
 from obligations.models import Obligation
-from utils.constants import SYSTEM_STATUS, APP_VERSION, LAST_UPDATED
-from utils.mixins import NavigationMixin
 import logging
-from utils.serializers import ChartDataSerializer
-from obligations.utils import ObligationAnalyticsProcessor
+
+# Constants for system information
+SYSTEM_STATUS = "operational"  # or fetch from settings/environment
+APP_VERSION = "1.0.0"  # or fetch from settings/environment
+LAST_UPDATED = datetime.now().date()  # or fetch from settings/environment
 
 logger = logging.getLogger(__name__)
-
 
 class DashboardContext(TypedDict):
     projects: QuerySet[Project]
@@ -28,25 +28,16 @@ class DashboardContext(TypedDict):
     error: Optional[str]
     user_roles: Dict[str, str]
 
-
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
     template_name = 'dashboard/dashboard.html'
     login_url = 'authentication:login'
     redirect_field_name = 'next'
-    navigation: Optional[NavigationMixin] = None
-
-    def get_navigation(self) -> NavigationMixin:
-        """Get or create navigation instance."""
-        if not self.navigation:
-            self.navigation = NavigationMixin()
-        return self.navigation
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         """Initialize view setup."""
         super().setup(request, *args, **kwargs)
-        nav = self.get_navigation()
-        setattr(nav, 'request', request)
+        self.request = request
 
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Get the context data for template rendering."""
@@ -87,15 +78,6 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                     obligations = Obligation.objects.filter(
                         projects=project
                     ).select_related('project')
-
-                    analytics = ObligationAnalyticsProcessor(obligations)
-                    mechanism_data = analytics.get_mechanism_data()
-
-                    if mechanism_data and 'data' in mechanism_data:
-                        chart_data = [
-                            point.__dict__ for point in mechanism_data['data']]
-                        context['chart_data'] = ChartDataSerializer.format_mechanism_data(
-                            chart_data)
 
                 except Project.DoesNotExist:
                     logger.error(f"Project not found: {selected_project_id}")

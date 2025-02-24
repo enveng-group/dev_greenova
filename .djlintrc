@@ -1,0 +1,28 @@
+{
+    "profile": "django",
+    "ignore": "H006,T002",
+    "indent": 2,
+    "max_line_length": 88,
+    "format_attribute_template_tags": true,
+    "close_void_tags": true,
+    "format_css": true,
+    "format_js": true,
+    "exclude": [
+        "**/.git/objects/**",
+        "**/.git/subtree-cache/**",
+        "**/node_modules/**",
+        "**/.venv/**",
+        "**/__pycache__/**",
+        "**/.env",
+        "**/.git/**",
+        "**/.svn/**",
+        "**/.hg/**",
+        "**/CVS/**",
+        "**/.DS_Store",
+        "**/*.pyc",
+        "**/.pytest_cache/**",
+        "**/.vscode-server/**",
+        "**/.vscode/**",
+        "**/site-packages/**"
+    ]
+}
