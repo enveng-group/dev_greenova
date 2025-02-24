@@ -1,24 +1,40 @@
-from typing import Any, Union
+from typing import Any, Union, Optional
 from django.http import JsonResponse, HttpResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.loader import render_to_string
+from django.utils.decorators import method_decorator
 import logging
-from .data_utils import AnalyticsDataProcessor
+from obligations.utils import ObligationAnalyticsProcessor
 from obligations.models import Obligation
 from .exceptions import ChartDataError
-from .error_handlers import handle_dashboard_error
+from .error_handlers import handle_error
 from .permissions import ProjectPermissionMixin
 from .messages import NO_DATA_AVAILABLE, CHART_DATA_UPDATED
 
 logger = logging.getLogger(__name__)
 
-@handle_dashboard_error
+
 class MechanismDataViewSet(ProjectPermissionMixin, LoginRequiredMixin, View):
-    """Handle mechanism-related data requests."""
+    """Handle mechanism-related data requests with analytics processing."""
+
+    processor_class = ObligationAnalyticsProcessor
+
+    @method_decorator(handle_error)
+    def dispatch(self, request: Any, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Override dispatch to add error handling."""
+        return super().dispatch(request, *args, **kwargs)
 
     def is_htmx_request(self, request: Any) -> bool:
+        """Check if request is coming from HTMX."""
         return request.headers.get('HX-Request') == 'true'
+
+    def get_processor(self, project_id: Optional[str] = None) -> ObligationAnalyticsProcessor:
+        """Get configured analytics processor instance."""
+        queryset = Obligation.objects.all()
+        if project_id:
+            queryset = queryset.filter(project_id=project_id)
+        return self.processor_class(queryset)
 
     def get(self, request: Any) -> Union[JsonResponse, HttpResponse]:
         """Handle GET requests for mechanism data."""
@@ -29,10 +45,7 @@ class MechanismDataViewSet(ProjectPermissionMixin, LoginRequiredMixin, View):
         mechanism_id = request.GET.get('mechanism')
 
         try:
-            processor = AnalyticsDataProcessor(
-                Obligation.objects.all(),
-                project_id=project_id if project_id else None
-            )
+            processor = self.get_processor(project_id)
             data = processor.get_mechanism_data(mechanism_id or "all")
 
             if not data['data']:

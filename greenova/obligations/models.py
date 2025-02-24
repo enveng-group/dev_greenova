@@ -1,14 +1,15 @@
 from django.db import models
-from projects.models import Project
+from utils.relationship_manager import relationship_manager
 from utils.constants import STATUS_CHOICES
+
 
 class Obligation(models.Model):
     """Represents an environmental obligation."""
     obligation_number = models.CharField(max_length=20, primary_key=True)
-    project = models.ForeignKey(
-        Project,
+    project = relationship_manager.create_foreign_key(
+        'projects.Project',
         on_delete=models.CASCADE,
-        related_name='obligations'  # Add this related_name
+        related_name='obligations'
     )
     primary_environmental_mechanism = models.CharField(max_length=255)
     procedure = models.TextField(blank=True, null=True)

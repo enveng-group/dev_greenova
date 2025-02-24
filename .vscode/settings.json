@@ -87,6 +87,12 @@
     "editor.formatOnSave": true,
     "files.eol": "\n"
   },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+  },
   "autopep8.args": [
     "--max-line-length=88",
     "--experimental",
@@ -160,18 +166,22 @@
     "*.json": "json",
     "*.md": "markdown",
     "*.txt": "plaintext",
-    "requirements*.txt": "pip-requirements"
+    "requirements*.txt": "pip-requirements",
+    "*.toml": "toml",
+    "pyproject.toml": "toml",
+    "poetry.toml": "toml",
+    "pdm.toml": "toml"
   },
   "html.format.wrapLineLength": 88,
   "html.format.wrapAttributes": "preserve-aligned",
   "javascript.format.semicolons": "insert",
   "javascript.preferences.quoteStyle": "single",
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "python.analysis.autoImportCompletions": false,
+  "python.analysis.autoImportCompletions": true,
   "python.analysis.extraPaths": [
     "${workspaceFolder}/.venv/lib/python3.13/site-packages"
   ],
-  "python.analysis.typeCheckingMode": "strict",
+  "python.analysis.typeCheckingMode": "basic",
   "python.analysis.inlayHints.functionReturnTypes": false,
   "python.analysis.inlayHints.variableTypes": false,
   "python.testing.unittestEnabled": true,
@@ -193,5 +203,26 @@
   "python.analysis.completeFunctionParens": true,
   "python.analysis.enablePytestSupport": false,
   "python.analysis.languageServerMode": "light",
-  "python.analysis.logLevel": "Error"
+  "python.analysis.logLevel": "Error",
+  "evenBetterToml.formatter.alignEntries": true,
+  "evenBetterToml.formatter.arrayAutoExpand": true,
+  "evenBetterToml.formatter.arrayAutoCollapse": false,
+  "evenBetterToml.formatter.compactArrays": true,
+  "evenBetterToml.formatter.compactEntries": false,
+  "evenBetterToml.formatter.indentTables": true,
+  "evenBetterToml.formatter.indentString": "    ",
+  "evenBetterToml.formatter.columnWidth": 80,
+  "evenBetterToml.taploConfig.enabled": true,
+  "evenBetterToml.schema.links": true,
+  "evenBetterToml.schema.enabled": true,
+  "evenBetterToml.formatter.reorderKeys": true,
+  "python.defaultInterpreterPath": "${workspaceFolder}/venv/bin/python",
+  "python.formatting.provider": "autopep8",
+  "python.formatting.autopep8Args": [
+    "--max-line-length=88",
+    "--experimental",
+    "--aggressive"
+  ],
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true
 }

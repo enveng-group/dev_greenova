@@ -1,27 +1,32 @@
 from typing import Dict, Any, List, TypedDict, Union, Sequence, cast
 
+
 class ChartDataset(TypedDict, total=False):
     data: Sequence[Union[int, float]]
     label: str
     backgroundColor: Sequence[str]
 
+
 class ChartData(TypedDict):
     type: str
     data: Dict[str, Union[List[str], List[ChartDataset]]]
+
 
 class ChartDataSerializer:
     """Serialize data for chart rendering."""
 
     @staticmethod
-    def format_mechanism_data(data: List[Dict[str, Any]]) -> ChartData:
+    def format_mechanism_data(data: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Format mechanism chart data."""
         return {
-            'type': 'doughnut',
+            'type': 'polarArea',
             'data': {
                 'labels': [item['label'] for item in data],
                 'datasets': [{
                     'data': [item['value'] for item in data],
-                    'backgroundColor': [item['color'] for item in data]
+                    'backgroundColor': [item['color'] for item in data],
+                    'borderColor': 'rgba(255, 255, 255, 0.5)',
+                    'borderWidth': 1
                 }]
             }
         }
@@ -39,8 +44,8 @@ class ChartDataSerializer:
             for date in dates:
                 count = sum(
                     item['count'] for item in data
-                    if item['action_due_date'] == date
-                    and item['status'] == status
+                    if item['action_due_date'] == date and
+                    item['status'] == status
                 )
                 status_data.append(count)
 

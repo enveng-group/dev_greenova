@@ -1,0 +1,130 @@
+{% load static %}
+<figure role="region"
+        aria-label="{{ mechanism }} Status Distribution"
+        class="chart-wrapper">
+  <canvas id="mechanism-chart-{{ counter }}"
+          class="mechanism-chart"
+          data-mechanism="{{ mechanism }}"
+          hx-get="{% url 'mechanisms:filtered' %}"
+          hx-trigger="load"
+          hx-vals='{"project_id": "{{ project.id }}", "mechanism": "{{ mechanism }}"}'
+          hx-swap="none">
+  </canvas>
+  <figcaption>{{ mechanism }}</figcaption>
+  <div class="htmx-indicator">Loading chart data...</div>
+</figure>
+<script>
+// Add this at the start of your script to debug
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Chart.js available:', typeof Chart !== 'undefined');
+});
+
+// Modify your HTMX event listener to include debugging
+document.addEventListener('htmx:afterSettle', function(evt) {
+    console.log('HTMX afterSettle triggered');
+    if (evt.detail.target.classList.contains('mechanism-chart')) {
+        const canvas = evt.detail.target;
+        console.log('Canvas found:', canvas.id);
+        try {
+            const response = JSON.parse(evt.detail.xhr.response);
+            console.log('Chart data:', response);
+            initializeChart(canvas, response);
+        } catch (error) {
+            console.error('Chart initialization error:', error);
+            console.log('Raw response:', evt.detail.xhr.response);
+        }
+    }
+});
+
+function initializeChart(canvas, data) {
+    console.log('Initializing chart for canvas:', canvas.id);
+
+    // Clean up existing chart if any
+    const existingChart = Chart.getChart(canvas);
+    if (existingChart) {
+        console.log('Destroying existing chart');
+        existingChart.destroy();
+    }
+
+    // Log the data being used
+    console.log('Chart configuration:', {
+        type: 'polarArea',
+        data: data.data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        color: '#495057'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    min: 0,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#495057'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+
+    return new Chart(canvas, {
+        type: 'polarArea',
+        data: data.data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        color: '#495057'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    min: 0,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#495057'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+}
+</script>

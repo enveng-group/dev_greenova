@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from typing import Any, Dict
 
+
 class GreenovaUserCreationForm(UserCreationForm):
     """Enhanced user registration form."""
     email = forms.EmailField(

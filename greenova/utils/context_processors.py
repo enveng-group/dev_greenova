@@ -6,6 +6,7 @@ from utils.constants import (
     LAST_UPDATED
 )
 
+
 def greenova_context(request: HttpRequest) -> Dict[str, Any]:
     """Add common Greenova context data to all templates."""
     return {

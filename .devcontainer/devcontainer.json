@@ -69,7 +69,8 @@
         "foxundermoon.shell-format",
         "monosans.djlint",
         "EditorConfig.EditorConfig",
-        "batisteo.vscode-django"
+        "batisteo.vscode-django",
+        "tamasfe.even-better-toml"
       ]
     }
   },

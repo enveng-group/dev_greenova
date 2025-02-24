@@ -7,15 +7,15 @@ from django.db.models import QuerySet
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 from projects.models import Project
+from obligations.models import Obligation
 from utils.constants import SYSTEM_STATUS, APP_VERSION, LAST_UPDATED
 from utils.mixins import NavigationMixin
 import logging
-from utils.data_utils import AnalyticsDataProcessor
 from utils.serializers import ChartDataSerializer
-from utils.filters import ObligationFilter
-from utils.pagination import ProjectPagination
+from obligations.utils import ObligationAnalyticsProcessor
 
 logger = logging.getLogger(__name__)
+
 
 class DashboardContext(TypedDict):
     projects: QuerySet[Project]
@@ -26,7 +26,8 @@ class DashboardContext(TypedDict):
     user: AbstractUser
     debug: bool
     error: Optional[str]
-    user_roles: Dict[int, str]
+    user_roles: Dict[str, str]
+
 
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
@@ -56,7 +57,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             # Use prefetch_related for ManyToMany relationships
             user_projects = Project.objects.filter(
                 memberships__user=user
-            ).prefetch_related('memberships').distinct()
+            ).prefetch_related('memberships', 'obligations').distinct()
 
             dashboard_context: DashboardContext = {
                 'projects': user_projects,
@@ -68,7 +69,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                 'error': None,
                 'user': user,
                 'user_roles': {
-                    project.id: project.get_user_role(user)
+                    str(project.pk): project.get_user_role(user)
                     for project in user_projects
                 }
             }
@@ -76,11 +77,32 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             context.update(dashboard_context)
             logger.info(f"Found {user_projects.count()} projects for user {user}")
 
-            # Add analytics data
-            analytics = AnalyticsDataProcessor(self.get_projects())
-            context['chart_data'] = ChartDataSerializer.format_mechanism_data(
-                analytics.get_mechanism_data()
-            )
+            # Add analytics data for selected project
+            selected_project_id = self.request.GET.get('project_id')
+            if selected_project_id:
+                try:
+                    project = user_projects.get(pk=selected_project_id)
+
+                    # Get obligations and force evaluation to QuerySet[Obligation]
+                    obligations = Obligation.objects.filter(
+                        projects=project
+                    ).select_related('project')
+
+                    analytics = ObligationAnalyticsProcessor(obligations)
+                    mechanism_data = analytics.get_mechanism_data()
+
+                    if mechanism_data and 'data' in mechanism_data:
+                        chart_data = [
+                            point.__dict__ for point in mechanism_data['data']]
+                        context['chart_data'] = ChartDataSerializer.format_mechanism_data(
+                            chart_data)
+
+                except Project.DoesNotExist:
+                    logger.error(f"Project not found: {selected_project_id}")
+                    context['error'] = "Selected project not found"
+                except Exception as e:
+                    logger.error(f"Error processing analytics: {str(e)}")
+                    context['error'] = "Error processing analytics data"
 
         except Exception as e:
             logger.error(f"Error loading dashboard: {str(e)}")

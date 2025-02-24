@@ -5,9 +5,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class ProjectPermissionMixin(UserPassesTestMixin):
     """Mixin to handle project-related permissions."""
-    
+
     def test_func(self) -> bool:
         """Test if user has permission to access the project."""
         try:
@@ -17,7 +18,7 @@ class ProjectPermissionMixin(UserPassesTestMixin):
         except Exception as e:
             logger.error(f"Permission check error: {str(e)}")
             raise
-    
+
     def has_project_permission(self, request: HttpRequest, **kwargs: Any) -> bool:
         """Check if user has permission for specific project actions."""
         project_id = kwargs.get('project_id')

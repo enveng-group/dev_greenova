@@ -2,22 +2,20 @@ import logging
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.db.models import Count
+from django.db.models import QuerySet
 from enum import Enum
-from typing import Dict, Any, List
+from typing import List
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth import get_user_model
-from typing import TYPE_CHECKING
+from obligations.models import Obligation  # Add this import
+from utils.relationship_manager import relationship_manager
 
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
-if TYPE_CHECKING:
-    from django.contrib.auth.models import User
 
 class ProjectRole(str, Enum):
-    """Project role types."""
+    """Define valid project roles."""
     OWNER = 'owner'
     MANAGER = 'manager'
     MEMBER = 'member'
@@ -28,15 +26,11 @@ class ProjectRole(str, Enum):
         """Get choices for model field."""
         return [(role.value, role.value.title()) for role in cls]
 
+
 class Project(models.Model):
     """Project model to group obligations."""
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    members = models.ManyToManyField(
-        User,
-        through='ProjectMembership',
-        related_name='projects'
-    )
     members = models.ManyToManyField(
         User,
         through='ProjectMembership',
@@ -45,193 +39,129 @@ class Project(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # Add type hints for reverse relations
-    memberships: models.Manager['ProjectMembership']
+    class Meta:
+        verbose_name = 'Project'
+        verbose_name_plural = 'Projects'
+        ordering = ['-created_at']
 
-    if TYPE_CHECKING:
-        obligations: models.Manager['Obligation']
+    def __str__(self) -> str:
+        return self.name
 
-    def get_all_obligations(self) -> models.QuerySet['Obligation']:
-        """Get all obligations for this project."""
-        from obligations.models import Obligation
-        return Obligation.objects.filter(project=self)
-
-    def get_completed_obligations(self) -> models.QuerySet['Obligation']:
-        """Get completed obligations for this project."""
-        from obligations.models import Obligation
-        return Obligation.objects.filter(project=self, status='completed')
-
-    def get_active_obligations(self) -> models.QuerySet['Obligation']:
-        """Get active obligations for this project."""
-        from obligations.models import Obligation
-        return Obligation.objects.filter(project=self, status='in progress')
-
-    def get_overdue_obligations(self) -> models.QuerySet['Obligation']:
-        """Get overdue obligations for this project."""
-        from obligations.models import Obligation
-        return Obligation.objects.filter(
-            project=self,
-            action__due_date__lt=timezone.now().date(),
-            status__in=['not started', 'in progress']
-        )
-
-    def get_analytics(self) -> Dict[str, Any]:
-        """Get analytics data for the project."""
-        return {
-            'total_obligations': self.obligations.count(),
-            'status_counts': {
-                'not_started': self.obligations.filter(status='Not Started').count(),
-                'in_progress': self.obligations.filter(status='In Progress').count(),
-                'completed': self.obligations.filter(status='Completed').count(),
-            },
-            'mechanisms': (self.obligations
-                         .values('primary_environmental_mechanism')
-                         .annotate(total=Count('id'))
-                         .order_by('primary_environmental_mechanism')),
-            'aspects': (self.obligations
-                       .values('environmental_aspect')
-                       .annotate(total=Count('id'))
-                       .order_by('environmental_aspect'))
-        }
+    def get_member_count(self) -> int:
+        """Get count of project members."""
+        return self.members.count()
 
     def get_user_role(self, user: AbstractUser) -> str:
-        """Get user's role in the project.
+        """
+        Get user's role in project.
 
         Args:
-            user: The user to check
+            user: The user to check role for
 
         Returns:
-            str: Role name or 'no_role' if not found
+            str: Role name or 'viewer' if no explicit role found
         """
         try:
-            membership = self.memberships.get(user=user)
+            membership = ProjectMembership.objects.get(project=self, user=user)
+            logger.debug(
+                f"Found role {membership.role} for user {user} in project {self.name}"
+            )
             return membership.role
         except ProjectMembership.DoesNotExist:
+            logger.debug(f"No membership found for user {user} in project {self.name}")
             return ProjectRole.VIEWER.value
         except Exception as e:
             logger.error(f"Error getting user role: {str(e)}")
             return ProjectRole.VIEWER.value
 
-    def get_user_context(self, user: AbstractUser) -> Dict[str, Any]:
-        """Get user-specific context for this project.
+    def has_member(self, user: AbstractUser) -> bool:
+        """Check if user is a member of the project."""
+        return ProjectMembership.objects.filter(project=self, user=user).exists()
 
-        Args:
-            user: The user to get context for
+    def add_member(
+            self,
+            user: AbstractUser,
+            role: str = ProjectRole.MEMBER.value) -> None:
+        """Add a user to the project with specified role."""
+        if not self.has_member(user):
+            ProjectMembership.objects.create(
+                project=self,
+                user=user,
+                role=role
+            )
+            logger.info(f"Added user {user} to project {self.name} with role {role}")
 
-        Returns:
-            Dict containing user role and permissions
-        """
-        role = self.get_user_role(user)
-        return {
-            'role': role,
-            'can_edit': role in [ProjectRole.OWNER.value, ProjectRole.MANAGER.value],
-            'can_delete': role == ProjectRole.OWNER.value,
-            'is_member': True
-        }
+    def remove_member(self, user: AbstractUser) -> None:
+        """Remove a user from the project."""
+        ProjectMembership.objects.filter(
+            project=self,
+            user=user
+        ).delete()
+        logger.info(f"Removed user {user} from project {self.name}")
 
-def __str__(self) -> str:
-    return self.name
+    def get_members_by_role(self, role: str) -> QuerySet[AbstractUser]:
+        """Get all users with specified role."""
+        return User.objects.filter(
+            project_memberships__project=self,
+            project_memberships__role=role
+        )
 
-def get_member_count(self) -> int:
-    """Get count of project members."""
-    return self.members.count()
+    @property
+    def obligations(self):
+        return Obligation.objects.filter(project_obligations__project=self)
 
-class Meta:
-    verbose_name = 'Project'
-    verbose_name_plural = 'Projects'
-    ordering = ['-created_at']
-
-def get_all_obligations(self) -> models.QuerySet['Obligation']:
-    """Get all obligations for this project."""
-    from obligations.models import Obligation
-    return Obligation.objects.filter(project=self)
-
-def get_completed_obligations(self) -> models.QuerySet['Obligation']:
-    """Get completed obligations for this project."""
-    from obligations.models import Obligation
-    return Obligation.objects.filter(project=self, status='completed')
-
-def get_active_obligations(self) -> models.QuerySet['Obligation']:
-    """Get active obligations for this project."""
-    from obligations.models import Obligation
-    return Obligation.objects.filter(project=self, status='in progress')
-
-def get_overdue_obligations(self) -> models.QuerySet['Obligation']:
-    """Get overdue obligations for this project."""
-    from obligations.models import Obligation
-    return Obligation.objects.filter(
-        project=self,
-        action__due_date__lt=timezone.now().date(),
-        status__in=['not started', 'in progress']
-    )
-
-def get_analytics(self) -> Dict[str, Any]:
-    """Get analytics data for the project."""
-    return {
-        'total_obligations': self.obligations.count(),
-        'status_counts': {
-            'not_started': self.obligations.filter(status='Not Started').count(),
-            'in_progress': self.obligations.filter(status='In Progress').count(),
-            'completed': self.obligations.filter(status='Completed').count(),
-        },
-        'mechanisms': (self.obligations
-                        .values('primary_environmental_mechanism')
-                        .annotate(total=Count('id'))
-                        .order_by('primary_environmental_mechanism')),
-        'aspects': (self.obligations
-                    .values('environmental_aspect')
-                    .annotate(total=Count('id'))
-                    .order_by('environmental_aspect'))
-    }
-
-def get_user_role(self, user: AbstractUser) -> str:
-    """Get user's role in the project."""
-    try:
-        membership = self.memberships.get(user=user)
-        return membership.role
-    except ProjectMembership.DoesNotExist:
-        return ProjectRole.VIEWER.value
-    except Exception as e:
-        logger.error(f"Error getting user role: {str(e)}")
-        return ProjectRole.VIEWER.value
-
-def get_user_context(self, user: AbstractUser) -> Dict[str, Any]:
-    """Get user-specific context for this project."""
-    role = self.get_user_role(user)
-    return {
-        'role': role,
-        'can_edit': role in [ProjectRole.OWNER.value, ProjectRole.MANAGER.value],
-        'can_delete': role == ProjectRole.OWNER.value,
-        'is_member': True
-    }
 
 class ProjectMembership(models.Model):
+    """Through model for project memberships."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='project_memberships'
-)
-project = models.ForeignKey(
-    Project,
-    on_delete=models.CASCADE,
-    related_name='memberships'  # This creates the reverse relation
-)
-role = models.CharField(
-    max_length=20,
-    choices=ProjectRole.choices(),
-    default=ProjectRole.MEMBER.value
-)
-created_at = models.DateTimeField(default=timezone.now)
-updated_at = models.DateTimeField(auto_now=True)
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='memberships'
+    )
+    role = models.CharField(
+        max_length=20,
+        choices=ProjectRole.choices(),
+        default=ProjectRole.MEMBER.value
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ['user', 'project']
+        ordering = ['project', 'user']
+        verbose_name = 'Project Membership'
+        verbose_name_plural = 'Project Memberships'
+
+    def __str__(self) -> str:
+        return f"{self.user.username} - {self.project.name} ({self.role})"
 
 
+class ProjectObligation(models.Model):
+    """Through model for project obligations."""
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='project_obligations'
+    )
+    obligation = models.ForeignKey(
+        'obligations.Obligation',
+        on_delete=models.CASCADE,
+        related_name='project_obligations'
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
-class Meta:
-    verbose_name = 'Project Membership'
-    verbose_name_plural = 'Project Memberships'
-    unique_together = ['user', 'project']
+    class Meta:
+        unique_together = ['project', 'obligation']
+        ordering = ['project', 'obligation']
+        verbose_name = 'Project Obligation'
+        verbose_name_plural = 'Project Obligations'
 
-def __str__(self: 'ProjectMembership') -> str:
-    """Return string representation of the project membership."""
-    # Type hints are available since self is properly typed
-    return f'{self.user.username} - {self.project.name} ({self.role})'
+    def __str__(self) -> str:
+        """Return string representation of ProjectObligation."""
+        return f"{self.project.name} - {self.obligation.obligation_number}"

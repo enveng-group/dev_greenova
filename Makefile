@@ -1,4 +1,4 @@
-.PHONY: check run migrations migrate static user db import
+.PHONY: check run migrations migrate static user db import lint-templates format-templates check-templates format-lint
 
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
@@ -27,14 +27,30 @@ import:
 # Combined command for database updates
 db: migrations migrate
 
+# Template linting commands
+lint-templates:
+	djlint greenova/**/templates --lint
+
+format-templates:
+	djlint greenova/**/templates --reformat
+
+check-templates:
+	djlint greenova/**/templates --check
+
+# Combined command for formatting and linting
+format-lint: format-templates lint-templates
+
 # Help command to list available commands
 help:
 	@echo "Available commands:"
 	@echo "  make check        - Run Django system check framework"
-	@echo "  make run          - Start development server"
-	@echo "  make migrations   - Create new migrations"
-	@echo "  make migrate      - Apply migrations"
-	@echo "  make static       - Collect static files (with --clear)"
-	@echo "  make db           - Run both migrations and migrate"
-	@echo "  make user         - Create superuser"
+	@echo "  make check-templates  - Check template formatting without changes"
+	@echo "  make format-templates - Format Django template files"
+	@echo "  make lint-templates   - Lint Django template files"
 	@echo "  make import       - Import data from CSV file"
+	@echo "  make user         - Create superuser"
+	@echo "  make db           - Run both migrations and migrate"
+	@echo "  make static       - Collect static files (with --clear)"
+	@echo "  make migrate      - Apply migrations"
+	@echo "  make migrations   - Create new migrations"
+	@echo "  make run          - Start development server"

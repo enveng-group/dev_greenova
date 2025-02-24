@@ -1,41 +1,68 @@
 from django.contrib import admin
-from django.http import HttpRequest
-from django.db.models import QuerySet
-from django.forms import ModelForm
 from logging import getLogger
+from utils.django_type_safety import TypedModelAdmin, TypedTabularInline
 from .models import Project, ProjectMembership
 
 logger = getLogger(__name__)
 
-class ProjectMembershipInline(admin.TabularInline):
+class ProjectMembershipInline(TypedTabularInline):
     """Inline admin for project memberships."""
     model = ProjectMembership
     extra = 1
+    raw_id_fields = ('user',)
 
 @admin.register(Project)
-class ProjectAdmin(admin.ModelAdmin):
+class ProjectAdmin(TypedModelAdmin[Project]):
     """Admin configuration for Project model."""
-    list_display = ('id', 'name', 'member_count')
+    list_display = ('id', 'name', 'member_count', 'created_at')
     search_fields = ('name',)
     inlines = [ProjectMembershipInline]
+    list_filter = ('created_at',)
+    date_hierarchy = 'created_at'
 
+    @admin.display(description='Members')
     def member_count(self, obj: Project) -> int:
         """Get number of project members."""
-        return obj.members.count()
-    member_count.short_description = 'Members'
-
-    def save_model(self, request: HttpRequest, obj: Project, form: ModelForm, change: bool) -> None:
-        try:
-            logger.info(f"Admin saving project: {obj.name}")
-            super().save_model(request, obj, form, change)
-        except Exception as e:
-            logger.error(f"Admin save error: {str(e)}")
-            raise
+        return obj.get_member_count()
 
 @admin.register(ProjectMembership)
-class ProjectMembershipAdmin(admin.ModelAdmin):
+class ProjectMembershipAdmin(TypedModelAdmin[ProjectMembership]):
     """Admin configuration for ProjectMembership model."""
-    list_display = ('user', 'project', 'role', 'created_at')
-    list_filter = ('role', 'project')
+    list_display = ('id', 'get_project', 'get_user', 'get_role', 'get_created')
+    list_filter = ('project', 'role', 'created_at')
     search_fields = ('user__username', 'project__name')
-    raw_id_fields = ('user', 'project')
+    raw_id_fields = ('user',)
+    date_hierarchy = 'created_at'
+    ordering = ('-created_at',)
+
+    def get_project(self, obj: ProjectMembership) -> str:
+        """Get project name."""
+        return str(obj.project.name)
+    get_project.short_description = 'Project'
+    get_project.admin_order_field = 'project__name'
+
+    def get_user(self, obj: ProjectMembership) -> str:
+        """Get username."""
+        return str(obj.user.username)
+    get_user.short_description = 'User'
+    get_user.admin_order_field = 'user__username'
+
+    def get_role(self, obj: ProjectMembership) -> str:
+        """Get role."""
+        return str(obj.role)
+    get_role.short_description = 'Role'
+    get_role.admin_order_field = 'role'
+
+    def get_created(self, obj: ProjectMembership) -> str:
+        """Get creation date."""
+        return obj.created_at.strftime('%Y-%m-%d %H:%M')
+    get_created.short_description = 'Created'
+    get_created.admin_order_field = 'created_at'
+
+    def save_model(self, request, obj, form, change):
+        """Log changes when saving model."""
+        action = 'updated' if change else 'created'
+        logger.info(
+            f'ProjectMembership {obj.id} {action} by {request.user.get_username()}'
+        )
+        super().save_model(request, obj, form, change)

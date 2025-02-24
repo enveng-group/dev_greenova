@@ -1,31 +1,50 @@
-from typing import Any, Dict, Optional, cast, TypedDict
+from typing import Any, Dict, Optional, TypedDict
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LogoutView
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
 from django.http import HttpResponse, HttpRequest
-from django.core.handlers.wsgi import WSGIRequest
-from .forms import GreenovaUserCreationForm  # Import the custom form
+from .forms import GreenovaUserCreationForm
 import logging
-from utils.error_handlers import handle_dashboard_error
-from utils.exceptions import GreenovaException
-from utils.commons import get_user_display_name
+from utils.error_handlers import handle_error
 
 logger = logging.getLogger(__name__)
+
 
 class AuthContext(TypedDict):
     form: UserCreationForm
     next: Optional[str]
     error: Optional[str]
 
-@handle_dashboard_error
+
+@handle_error
+class CustomLogoutView(LogoutView):
+    """Custom logout view that extends Django's LogoutView."""
+    next_page = reverse_lazy('landing:home')
+    template_name = 'authentication/auth/logout.html'
+    http_method_names = ['get', 'post']  # Explicitly allow POST
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle both GET and POST requests for logout."""
+        user = request.user
+        logger.info(f"User logout initiated: {user.get_username() if user.is_authenticated else 'anonymous'}")
+
+        # Handle the logout
+        response = super().dispatch(request, *args, **kwargs)
+
+        # Ensure we redirect to landing page after logout
+        if request.method == 'POST':
+            return redirect('landing:home')
+
+        return response
+
+
+@handle_error
 class RegisterView(CreateView):
     form_class = GreenovaUserCreationForm
-    template_name = 'authentication/auth/register.html'
+    template_name = 'authentication/register.html'
     success_url = reverse_lazy('dashboard:home')
 
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
@@ -47,63 +66,3 @@ class RegisterView(CreateView):
         except Exception as e:
             logger.error(f"Registration error: {str(e)}")
             raise
-
-@method_decorator(require_http_methods(['GET', 'POST']), name='dispatch')
-class CustomLogoutView(LogoutView):
-    """Custom logout view that handles both regular and HTMX requests."""
-    template_name = 'authentication/auth/logout.html'
-    next_page = reverse_lazy('landing:home')
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect(self.next_page)
-        return super().dispatch(request, *args, **kwargs)
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle GET requests - show logout confirmation page."""
-        if request.user.is_authenticated:
-            return super().get(request, *args, **kwargs)
-        return redirect(self.next_page)
-
-    def post(self, request: WSGIRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle POST requests - perform logout."""
-        try:
-            # Perform logout
-            response = super().post(request, *args, **kwargs)
-
-            # Check if this is an HTMX request
-            if request.headers.get('HX-Request'):
-                return HttpResponse(
-                    status=200,
-                    headers={
-                        'HX-Redirect': str(self.get_next_page())
-                    }
-                )
-
-            return response
-
-        except Exception as e:
-            logger.error(f"Logout error: {str(e)}")
-            if request.headers.get('HX-Request'):
-                return HttpResponse(
-                    "Logout failed",
-                    status=500
-                )
-            raise
-
-    def get_next_page(self) -> str:
-        """Get the URL to redirect to after logout."""
-        return str(self.next_page)
-
-class HomeView(TemplateView):
-    """Landing page view."""
-    template_name = 'landing/index.html'
-
-    def get(self, request: Any, *args: Any, **kwargs: Any) -> Any:
-        if request.user.is_authenticated:
-            return redirect('dashboard:home')
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        return context

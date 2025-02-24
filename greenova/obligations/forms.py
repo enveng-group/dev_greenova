@@ -1,9 +1,10 @@
 from django import forms
-from typing import Any, Dict
+from typing import Dict
 import logging
 from .models import Obligation
 
 logger = logging.getLogger(__name__)
+
 
 class ObligationForm(forms.ModelForm):
     class Meta:
@@ -26,7 +27,7 @@ class ObligationForm(forms.ModelForm):
     def clean_obligation_number(self) -> str:
         number = self.cleaned_data['obligation_number']
         if (Obligation.objects.filter(obligation_number=number)
-                            .exclude(pk=self.instance.pk if self.instance else None)
-                            .exists()):
+            .exclude(pk=self.instance.pk if self.instance else None)
+                .exists()):
             raise forms.ValidationError('This obligation number already exists.')
         return number

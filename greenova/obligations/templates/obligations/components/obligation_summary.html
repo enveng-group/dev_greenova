@@ -1,32 +1,51 @@
-{% extends 'obligations/layouts/obligations_base.html' %}
+{% extends "obligations/layouts/obligations_base.html" %}
+
 {% load common_tags %}
 
 <figure role="region" aria-label="Obligation Summary">
   {% if stats %}
-  <canvas id="obligation-summary"
-          data-stats="{{ stats|json_script:'chart-data' }}"
-          class="chart-container"
-          height="200">
-  </canvas>
+    <canvas id="obligation-summary"
+            data-stats="{{ stats|json_script:'chart-data' }}"
+            class="chart-container"
+            height="200">
+    </canvas>
 
-  <div class="htmx-indicator" role="status" aria-busy="true">
+    <div class="htmx-indicator" role="status" aria-busy="true">
     Loading obligation summary...
-  </div>
+    </div>
 
-  <figcaption>
-    <dl>
-      <dt>Total Obligations</dt>
-      <dd>{{ stats.total }}</dd>
-      <dt>Completed</dt>
-      <dd>{{ stats.completed }}</dd>
-      <dt>Active</dt>
-      <dd>{{ stats.active }}</dd>
-      <dt>Overdue</dt>
-      <dd>{{ stats.overdue }}</dd>
-    </dl>
-  </figcaption>
+    <figcaption>
+      <dl>
+        <dt>
+Total Obligations
+        </dt>
+        <dd>
+{{ stats.total }}
+        </dd>
+        <dt>
+Completed
+        </dt>
+        <dd>
+{{ stats.completed }}
+        </dd>
+        <dt>
+Active
+        </dt>
+        <dd>
+{{ stats.active }}
+        </dd>
+        <dt>
+Overdue
+        </dt>
+        <dd>
+{{ stats.overdue }}
+        </dd>
+      </dl>
+    </figcaption>
   {% else %}
-  <p>{{ chart_error_message|default:"Unable to load obligation summary." }}</p>
+    <p>
+{{ chart_error_message|default:"Unable to load obligation summary." }}
+    </p>
   {% endif %}
 </figure>
-{% endblock %}
+{% endblock content %}

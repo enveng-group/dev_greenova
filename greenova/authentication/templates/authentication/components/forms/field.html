@@ -3,8 +3,8 @@
     {{ field }}
 </label>
 {% if help_text %}
-    <small id="{{ field_id }}-help">{{ help_text }}</small>
+  <small id="{{ field_id }}-help">{{ help_text }}</small>
 {% endif %}
 {% if errors %}
-    <small class="error">{{ errors|join:", " }}</small>
+  <small class="error">{{ errors|join:", " }}</small>
 {% endif %}

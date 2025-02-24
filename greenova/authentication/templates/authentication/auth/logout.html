@@ -1,25 +1,36 @@
 {% extends "authentication/layouts/auth_base.html" %}
-{% block title %}Logged Out - Greenova{% endblock %}
-{% block page_title %}Successfully Logged Out{% endblock %}
-{% block page_subtitle %}<h2>Thank you for using Greenova</h2>{% endblock %}
+
+{% block title %}
+Logged Out - Greenova
+{% endblock title %}
+
+{% block page_title %}
+Successfully Logged Out
+{% endblock page_title %}
+
+{% block page_subtitle %}
+  <h2>
+Thank you for using Greenova
+  </h2>
+{% endblock page_subtitle %}
+
 {% block auth_content %}
   <section aria-labelledby="next-steps">
-    <h3 id="next-steps">What would you like to do?</h3>
+    <h3 id="next-steps">
+What would you like to do?
+    </h3>
     <nav>
       <ul>
         <li>
-          <a href="{% url 'authentication:login' %}" role="button">Log In
-          Again</a>
+          <a href="{% url 'authentication:login' %}" role="button">Log In Again</a>
         </li>
         <li>
-          <a href="{% url 'landing:home' %}" role="button" class="outline">Return
-          to Home</a>
+          <a href="{% url 'landing:home' %}" role="button" class="outline">Return to Home</a>
         </li>
       </ul>
     </nav>
   </section>
   <footer>
-    <small>For security, remember to close your browser when using shared
-    computers.</small>
+    <small>For security, remember to close your browser when using shared computers.</small>
   </footer>
-{% endblock %}
+{% endblock auth_content %}

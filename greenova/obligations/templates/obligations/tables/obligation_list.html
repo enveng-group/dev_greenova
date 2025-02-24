@@ -1,38 +1,47 @@
-{% extends 'obligations/layouts/obligations_base.html' %}
+{% extends "obligations/layouts/obligations_base.html" %}
+
 <div class="table-container" role="region" aria-labelledby="table-title">
-    <h2 id="table-title">{{ title }}</h2>
+  <h2 id="table-title">
+{{ title }}
+  </h2>
 
-    <progress class="htmx-indicator" aria-busy="true">
+  <progress class="htmx-indicator" aria-busy="true">
         Loading data...
-    </progress>
+  </progress>
 
-    {% if data %}
+  {% if data %}
     <table role="grid">
-        <thead>
-            <tr>
-                {% for header in headers %}
-                <th scope="col">{{ header }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in data %}
-            <tr>
-                {% for cell in item.values %}
-                <td>{{ cell }}</td>
-                {% endfor %}
-            </tr>
+      <thead>
+        <tr>
+          {% for header in headers %}
+            <th scope="col">
+{{ header }}
+            </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+          <tr>
+            {% for cell in item.values %}
+              <td>
+{{ cell }}
+              </td>
             {% endfor %}
-        </tbody>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
 
-    {% else %}
+  {% else %}
     <article role="alert">
-        <p>{{ empty_message|default:"No data found." }}</p>
-        {% if add_url %}
+      <p>
+{{ empty_message|default:"No data found." }}
+      </p>
+      {% if add_url %}
         <a href="{{ add_url }}" role="button">{{ add_text|default:"Add New" }}</a>
-        {% endif %}
+      {% endif %}
     </article>
-    {% endif %}
+  {% endif %}
 </div>
-{% endblock %}
+{% endblock content %}

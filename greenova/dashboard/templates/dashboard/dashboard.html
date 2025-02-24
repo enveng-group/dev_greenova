@@ -1,18 +1,31 @@
-{% extends 'base.html' %}
-{% load static common_tags %}
-{% block title %}Dashboard{% endblock %}
+{% extends "base.html" %}
+
+{% load static common_tags dashboard_tags %}
+
+{% block title %}
+  Dashboard
+{% endblock title %}
+
 {% block main %}
   <article>
     <header>
       <hgroup>
-        <h1>Hi {{ request.user|display_name }}</h1>
+        <h1>
+Hi {{ request.user|display_name }}
+        </h1>
         <h2>
           Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
         </h2>
       </hgroup>
     </header>
     <!-- Project Selection -->
-    {% include "projects/projects_selector.html" %}
-    {% if error %}<p role="alert">{{ error|format_error }}</p>{% endif %}
+
+{% include "projects/projects_selector.html" %}
+
+    {% if error %}
+      <p role="alert">
+{{ error|format_error }}
+      </p>
+    {% endif %}
   </article>
-{% endblock %}
+{% endblock main %}

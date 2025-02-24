@@ -1,8 +1,3 @@
-import { ChartManager } from './modules/chart-manager.js';
-
-// Initialize managers
-const chartManager = new ChartManager();
-
 // HTMX Events
 htmx.on('htmx:afterRequest', (evt) => {
     if (evt.detail.successful) {
@@ -13,7 +8,7 @@ htmx.on('htmx:afterRequest', (evt) => {
                 chartManager.init(canvas, chartData);
             }
         });
-        
+
     }
 });
 

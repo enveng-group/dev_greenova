@@ -3,10 +3,12 @@
       hx-post="{% url 'authentication:register' %}"
       hx-target="#form-errors"
       hx-swap="innerHTML">
-  {% csrf_token %}
+{% csrf_token %}
 
   <fieldset>
-    <legend>Account Information</legend>
+    <legend>
+Account Information
+    </legend>
     <label for="id_username">
       Username
       <input type="text"
@@ -21,10 +23,11 @@
              aria-describedby="username-help"
              hx-get="{% url 'authentication:validate_username' %}"
              hx-trigger="keyup changed delay:500ms"
-             hx-target="#username-error">
+             hx-target="#username-error" />
     </label>
     <small id="username-help">Letters, numbers, and underscores only</small>
-    <div id="username-error"></div>
+    <div id="username-error">
+    </div>
 
     <label for="id_email">
       Email
@@ -34,12 +37,14 @@
              autocomplete="email"
              required
              aria-required="true"
-             spellcheck="false">
+             spellcheck="false" />
     </label>
   </fieldset>
 
   <fieldset>
-    <legend>Security</legend>
+    <legend>
+Security
+    </legend>
     <label for="id_password1">
       Password
       <input type="password"
@@ -49,10 +54,10 @@
              required
              aria-required="true"
              minlength="8"
-             aria-describedby="password-help">
+             aria-describedby="password-help" />
     </label>
     <small id="password-help">At least 8 characters with numbers and special
-      characters</small>
+                  characters</small>
 
     <label for="id_password2">
       Confirm Password
@@ -62,13 +67,17 @@
              autocomplete="new-password"
              required
              aria-required="true"
-             minlength="8">
+             minlength="8" />
     </label>
   </fieldset>
 
   <div id="form-errors">
-    {% include "authentication/components/messages/form_errors.html" %}
+
+{% include "authentication/components/messages/form_errors.html" %}
+
   </div>
 
-  <button type="submit">{{ submit_text|default:"Create Account" }}</button>
+  <button type="submit">
+{{ submit_text|default:"Create Account" }}
+  </button>
 </form>

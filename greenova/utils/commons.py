@@ -1,12 +1,9 @@
 import logging
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
-from django.db.models.query import QuerySet
-from obligations.models import Obligation
 
 logger = logging.getLogger(__name__)
 
-ObligationQuerySet = QuerySet[Obligation]
 
 def get_status_badge(status: str) -> str:
     """Generate HTML for status badge."""
@@ -19,6 +16,7 @@ def get_status_badge(status: str) -> str:
     css_class = status_classes.get(status.lower(), 'secondary')
     logger.debug(f"Generated status badge for {status}")
     return mark_safe(f'<mark class="{css_class}">{status.title()}</mark>')
+
 
 def get_user_display_name(user: User) -> str:
     """Get best display name for user."""

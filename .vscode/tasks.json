@@ -92,6 +92,24 @@
       ]
     },
     {
+      "label": "Django: Lint Templates",
+      "type": "shell",
+      "command": "make lint-templates",
+      "group": "test",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
+      "label": "Django: Format and Lint",
+      "type": "shell",
+      "command": "make format-lint",
+      "group": "test",
+      "problemMatcher": [
+        "$python"
+      ]
+    },
+    {
       "label": "ESLint: Fix All",
       "type": "npm",
       "script": "eslint --fix",

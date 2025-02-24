@@ -1,5 +1,6 @@
 from django import forms
 
+
 class ChatMessageForm(forms.Form):
     """Form for handling chat messages."""
     message = forms.CharField(

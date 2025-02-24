@@ -3,14 +3,9 @@
   <button id="chat-toggle"
           aria-controls="chat-dialog"
           aria-expanded="false"
-          _="on click 
-             call #chat-dialog.showModal()
-             then put 'true' into me's @aria-expanded">
+          _="on click call #chat-dialog.showModal() then put 'true' into me's @aria-expanded">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round" />
+<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
     <span class="sr-only">Open Chat</span>
   </button>
@@ -18,9 +13,7 @@
   <!-- Chat dialog -->
   <dialog id="chat-dialog"
           aria-labelledby="chat-title"
-          _="on click if event.target is me
-             call close()
-             then put 'false' into #chat-toggle's @aria-expanded">
+          _="on click if event.target is me call close() then put 'false' into #chat-toggle's @aria-expanded">
     <article>
       <header>
         <a href="{% url 'dashboard:home' %}"
@@ -30,7 +23,9 @@
            onclick="document.getElementById('chat-dialog').close(); return true;">
           ✕
         </a>
-        <h2 id="chat-title">Chat with Greenova Assistant</h2>
+        <h2 id="chat-title">
+Chat with Greenova Assistant
+        </h2>
         <!-- Add close link -->
 
       </header>
@@ -57,13 +52,12 @@
             hx-swap="beforeend scroll:bottom"
             hx-indicator="#chat-loading"
             hx-trigger="submit">
-        {% csrf_token %}
+{% csrf_token %}
         <div class="input-group">
-          <input type="text"
-                 name="message"
-                 hx-on="htmx:afterRequest: this.value = ''"
-                 required>
-          <button type="submit">Send</button>
+          <input type="text" name="message" hx-on="htmx:afterRequest: this.value = ''" required />
+          <button type="submit">
+Send
+          </button>
         </div>
         <div id="chat-loading" class="htmx-indicator">
           Sending...

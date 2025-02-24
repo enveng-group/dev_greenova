@@ -2,7 +2,6 @@
 import atexit
 import os
 import readline
-import rlcompleter
 
 # Enable tab completion
 readline.parse_and_bind("tab: complete")

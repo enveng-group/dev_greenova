@@ -1,7 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import CustomLogoutView
 
 app_name = 'authentication'
 
@@ -10,13 +9,12 @@ urlpatterns = [
         template_name='authentication/auth/login.html'
     ), name='login'),
 
-    path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('logout/', views.CustomLogoutView.as_view(), name='logout'),
 
-    path('register/', views.RegisterView.as_view(
-        template_name='authentication/auth/register.html'
-    ), name='register'),
+    # Update this line to use the class directly
+    path('register/', views.RegisterView.as_view(), name='register'),
 
-    # Password reset URLs
+    # Password reset URLs remain unchanged
     path('password/reset/', auth_views.PasswordResetView.as_view(
         template_name='authentication/password/reset/form.html',
         email_template_name='authentication/password/email/reset.html',

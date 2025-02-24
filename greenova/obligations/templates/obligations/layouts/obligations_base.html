@@ -1,22 +1,49 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}{% block page_title %}Obligations{% endblock %} -
-Greenova{% endblock %}
+{% block title %}
 
-{% block extra_styles %}{% endblock %}
+  {% block page_title %}
+Obligations
+  {% endblock page_title %}
+
+ -
+Greenova
+{% endblock title %}
+
+{% block extra_styles %}
+{% endblock extra_styles %}
 
 {% block main %}
-<article>
+  <article>
     <header>
-        <hgroup>
-            <h1>{% block page_title %}Obligations{% endblock %}</h1>
-            <h2>{% block page_subtitle %}Environmental Compliance
-                Management{% endblock %}</h2>
-        </hgroup>
-        {% block page_actions %}{% endblock %}
-    </header>
-    {% block obligations_content %}{% endblock %}
-</article>
-{% endblock %}
+      <hgroup>
+        <h1>
 
-{% block sidebar %}{% endblock %}
+          {% block page_title %}
+Obligations
+          {% endblock page_title %}
+
+        </h1>
+        <h2>
+
+          {% block page_subtitle %}
+Environmental Compliance
+                Management
+          {% endblock page_subtitle %}
+
+        </h2>
+      </hgroup>
+
+      {% block page_actions %}
+      {% endblock page_actions %}
+
+    </header>
+
+    {% block obligations_content %}
+    {% endblock obligations_content %}
+
+  </article>
+{% endblock main %}
+
+{% block sidebar %}
+{% endblock sidebar %}

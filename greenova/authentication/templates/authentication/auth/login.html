@@ -1,21 +1,31 @@
 {% extends "authentication/layouts/auth_base.html" %}
+
 {% load static %}
+
 {% block title %}
   Login - Greenova
 {% endblock title %}
+
 {% block auth_title %}
   Welcome back
 {% endblock auth_title %}
+
 {% block auth_subheading %}
   Log in to your account
 {% endblock auth_subheading %}
+
 {% block auth_content %}
   {% if not request.user.is_authenticated %}
-    {% include "authentication/components/messages/form_errors.html" %}
-    {% include "authentication/components/forms/login_form.html" %}
+
+{% include "authentication/components/messages/form_errors.html" %}
+
+{% include "authentication/components/forms/login_form.html" %}
+
     <footer>
       <details>
-        <summary>Need help?</summary>
+        <summary>
+Need help?
+        </summary>
         <nav>
           <ul>
             <li>
@@ -29,6 +39,8 @@
       </details>
     </footer>
   {% else %}
-    <script>window.location.href = "{% url 'dashboard:home' %}";</script>
+    <script>
+        window.location.href = "{% url 'dashboard:home' %}";
+    </script>
   {% endif %}
 {% endblock auth_content %}

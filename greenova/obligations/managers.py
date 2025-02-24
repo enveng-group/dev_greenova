@@ -2,14 +2,17 @@ from django.db import models
 from django.db.models import Count, Q, QuerySet
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
-from obligations.models import Obligation  # Update import path
-from .data_utils import AnalyticsDataProcessor
-from .messages import NO_DATA_AVAILABLE
+from .utils import ObligationAnalyticsProcessor
+from .models import Obligation
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AnalyticsManager(models.Manager[Obligation]):
+    """Custom manager for analytics-related queries."""
+
     def get_queryset(self) -> QuerySet[Obligation]:
         return super().get_queryset()
-    """Custom manager for analytics-related queries."""
 
     def get_completion_metrics(self) -> Dict[str, Any]:
         """Calculate completion metrics."""
@@ -21,12 +24,9 @@ class AnalyticsManager(models.Manager[Obligation]):
         )
 
     def get_mechanism_stats(self) -> List[Dict[str, Any]]:
-        """Get statistics grouped by mechanism using AnalyticsDataProcessor."""
-        processor = AnalyticsDataProcessor(self.get_queryset())
-        data = processor.get_mechanism_data()
-        if not data['data']:
-            logger.warning(NO_DATA_AVAILABLE)
-        return data['data']
+        """Get statistics grouped by mechanism using ObligationAnalyticsProcessor."""
+        processor = ObligationAnalyticsProcessor(self.get_queryset())
+        return processor.get_mechanism_data()['data']
 
     def get_upcoming_due(self) -> QuerySet[Obligation]:
         """Get obligations due in the next 14 days."""

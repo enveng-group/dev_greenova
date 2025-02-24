@@ -1,9 +1,9 @@
-from typing import Dict, Any, Optional
-from django.http import JsonResponse
+from typing import Dict, Any, Optional, Union
 import logging
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
 
 class ChatState:
     """Chat dialog state singleton."""
@@ -28,6 +28,7 @@ class ChatState:
         """Toggle dialog open state."""
         self._state["isOpen"] = not self._state["isOpen"]
         return self.get_state()
+
 
 class ChatService:
     """Handle chat-related business logic."""
@@ -54,11 +55,12 @@ class ChatService:
         }
 
     @staticmethod
-    def process_message(message: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def process_message(
+            message: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Process an incoming chat message."""
         try:
             # TODO: Add actual message processing logic
-            response = {
+            response: Dict[str, Union[str, Dict[str, Any]]] = {
                 "status": "success",
                 "message": f"Echo: {message}",
                 "context": context or {}

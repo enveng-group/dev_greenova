@@ -1,17 +1,17 @@
 from typing import Any, Dict, TypedDict, List, Callable
 from functools import wraps
 from time import time
-from datetime import datetime
 import logging
 from django.db.models import QuerySet
-from obligations.models import Obligation
 
 logger = logging.getLogger(__name__)
+
 
 class DataPoint(TypedDict):
     name: str
     value: int
     status: str
+
 
 def log_action(action_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decorator to log method execution time and status."""
@@ -33,6 +33,7 @@ def log_action(action_name: str) -> Callable[[Callable[..., Any]], Callable[...,
         return wrapper
     return decorator
 
+
 class AnalyticsActions:
     """Handle analytics-related actions."""
 
@@ -53,20 +54,11 @@ class AnalyticsActions:
             logger.error(f"Data export failed: {e}")
             return {'error': str(e), 'success': False}
 
-    @staticmethod
-    @log_action("Generate performance report")
-    def generate_report(obligations: QuerySet[Obligation]) -> Dict[str, Any]:
-        """Generate performance metrics report."""
-        try:
-            metrics = {
-                'total': obligations.count(),
-                'completed': obligations.filter(status='completed').count(),
-                'overdue': obligations.filter(
-                    status='not started',
-                    due_date__lt=datetime.now().date()
-                ).count()
-            }
-            return {'metrics': metrics, 'success': True}
-        except Exception as e:
-            logger.error(f"Report generation failed: {e}")
-            return {'error': str(e), 'success': False}
+    def calculate_metrics(self, queryset: QuerySet) -> Dict[str, Any]:
+        """Calculate metrics from the given queryset."""
+        return {
+            'total': queryset.count(),
+            'active': queryset.filter(status='in progress').count(),
+            'completed': queryset.filter(status='completed').count(),
+            'not_started': queryset.filter(status='not started').count()
+        }

@@ -1,18 +1,15 @@
 {% autoescape off %}
-Hello,
+  Hello,
+  You're receiving this email because you requested a password reset for your Greenova
+  account.
+  Please go to the following page and choose a new password:
 
-You're receiving this email because you requested a password reset for your Greenova
-account.
+  {% block reset_link %}
+    {{ protocol }}://{{ domain }}{% url 'authentication:password_reset_confirm' uidb64=uid token=token %}
+  {% endblock reset_link %}
 
-Please go to the following page and choose a new password:
-{% block reset_link %}
-{{ protocol }}://{{ domain }}{% url 'authentication:password_reset_confirm' uidb64=uid token=token %}
-{% endblock %}
-
-Your username: {{ user.get_username }}
-
-If you didn't request this password reset, you can safely ignore this email.
-
-Thanks,
-The Greenova Team
+  Your username: {{ user.get_username }}
+  If you didn't request this password reset, you can safely ignore this email.
+  Thanks,
+  The Greenova Team
 {% endautoescape %}

@@ -1,7 +1,9 @@
 <form method="post" novalidate>
-  {% csrf_token %}
+{% csrf_token %}
   <fieldset>
-    <legend>Login</legend>
+    <legend>
+Login
+    </legend>
     <label for="id_username">
       Username
       <input type="text"
@@ -11,7 +13,7 @@
              required
              aria-required="true"
              spellcheck="false"
-             autocapitalize="none">
+             autocapitalize="none" />
     </label>
     <label for="id_password">
       Password
@@ -20,8 +22,10 @@
              id="id_password"
              autocomplete="current-password"
              required
-             aria-required="true">
+             aria-required="true" />
     </label>
   </fieldset>
-  <button type="submit">{{ submit_text|default:"Log In" }}</button>
+  <button type="submit">
+{{ submit_text|default:"Log In" }}
+  </button>
 </form>

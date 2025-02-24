@@ -1,13 +1,16 @@
 from django.contrib import admin
 from django.http import HttpRequest
 from django.db.models import QuerySet
+from django.forms import ModelForm
+from utils.django_type_safety import TypedModelAdmin
 from .models import Obligation
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 @admin.register(Obligation)
-class ObligationAdmin(admin.ModelAdmin):
+class ObligationAdmin(TypedModelAdmin[Obligation]):
     """Admin configuration for obligations."""
     list_display = (
         'obligation_number',
@@ -29,16 +32,18 @@ class ObligationAdmin(admin.ModelAdmin):
         'environmental_aspect'
     )
     date_hierarchy = 'action_due_date'
-    
+
     def get_queryset(self, request: HttpRequest) -> QuerySet[Obligation]:
         """Optimize queryset for admin view."""
-        return (
-            super()
-            .get_queryset(request)
-            .select_related('project')
-        )
+        qs = super().get_queryset(request)
+        return qs.select_related('project')
 
-    def save_model(self, request: HttpRequest, obj: Obligation, form, change: bool) -> None:
+    def save_model(
+            self,
+            request: HttpRequest,
+            obj: Obligation,
+            form: ModelForm,
+            change: bool) -> None:
         """Log obligation changes in admin."""
         try:
             action = "Updated" if change else "Created"

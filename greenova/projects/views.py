@@ -1,19 +1,33 @@
-from typing import Dict, Any, cast
+from typing import Dict, Any, cast, TypeVar, List, Sequence
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
-from .models import Project, ProjectMembership
+from .models import Project
 import logging
 from django.http import HttpRequest, HttpResponse
+from django.http.response import HttpResponseBase  # Changed import
 from django.shortcuts import get_object_or_404
-from utils.error_handlers import handle_dashboard_error
+from utils.error_handlers import handle_error
 from utils.serializers import ChartDataSerializer
-from utils.data_utils import AnalyticsDataProcessor
+from utils.data_utils import BaseAnalyticsProcessor
+from utils.mixins import ProjectContextMixin
+from django.utils.decorators import method_decorator
+from django.template.loader import render_to_string
+from django.db.models import QuerySet
+from obligations.models import Obligation
+from obligations.utils import ObligationAnalyticsProcessor
+from utils.response_handler import response_handler  # Add this import
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+
+T = TypeVar('T')
+
+def trigger_client_event(response: HttpResponse, event_name: str) -> None:
+    """Add HX-Trigger header for client-side events."""
+    response_handler.set_htmx_trigger(response, event_name)
+
 
 class ProjectSelectionView(LoginRequiredMixin, TemplateView):
     """Handle project selection."""
@@ -22,12 +36,14 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests with HTMX support."""
         htmx = getattr(request, 'htmx', None)
-        if htmx:
+        if (htmx):
             context = self.get_context_data(**kwargs)
             response = HttpResponse(
-                self.render_to_string('projects/partials/project_content.html', context)
+                self._render_template(
+                    'projects/partials/project_content.html',
+                    context
+                )
             )
-            # Trigger event for client-side updates
             trigger_client_event(response, 'projectSelected')
             return response
         return super().get(request, *args, **kwargs)
@@ -44,7 +60,7 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
                 'projects': projects,
                 'selected_project_id': self.request.GET.get('project_id', ''),
                 'user_roles': {
-                    project.id: project.get_user_role(user)
+                    str(project.pk): project.get_user_role(user)
                     for project in projects
                 }
             })
@@ -55,13 +71,13 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
 
         return context
 
-    def render_to_string(self, template: str, context: dict) -> str:
+    def _render_template(self, template: str, context: Dict[str, Any]) -> str:
         """Helper method to render template strings."""
-        from django.template.loader import render_to_string
         return render_to_string(template, context, request=self.request)
 
-@handle_dashboard_error
-class ProjectContentView(LoginRequiredMixin, TemplateView):
+
+@method_decorator(handle_error, name='dispatch')
+class ProjectContentView(LoginRequiredMixin, ProjectContextMixin, TemplateView):
     """Handle project content loading."""
     template_name = 'projects/partials/project_content.html'
 
@@ -75,16 +91,33 @@ class ProjectContentView(LoginRequiredMixin, TemplateView):
                 project = get_object_or_404(Project, pk=project_id)
                 user = cast(AbstractUser, self.request.user)
 
+                # Get unique mechanisms for this project
+                mechanisms: List[str] = list(  # Convert to List[str]
+                    project.obligations.values_list(
+                        'primary_environmental_mechanism',
+                        flat=True
+                    )
+                    .distinct()
+                    .order_by('primary_environmental_mechanism')
+                )
+
                 context.update({
                     'project': project,
                     'user_role': project.get_user_role(user),
-                    'analytics': project.get_analytics()
+                    'mechanisms': mechanisms
                 })
 
-                analytics = AnalyticsDataProcessor(project.obligations.all())
-                context['chart_data'] = ChartDataSerializer.format_mechanism_data(
-                    analytics.get_mechanism_data()
-                )
+                # Add chart data for each mechanism
+                obligations = cast(QuerySet[Obligation], project.obligations.all())
+                processor = ObligationAnalyticsProcessor(obligations)
+                chart_data: Dict[str, Dict[str, Any]] = {
+                    str(mechanism): ChartDataSerializer.format_mechanism_data([
+                        cast(Dict[str, Any], data_point)
+                        for data_point in processor.get_mechanism_data(mechanism)['data']
+                    ])
+                    for mechanism in mechanisms
+                }
+                context['chart_data'] = chart_data
 
         except Exception as e:
             logger.error(f"Error getting project content: {str(e)}")

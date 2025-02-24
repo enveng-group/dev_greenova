@@ -1,26 +1,63 @@
+import logging
 from django import template
 from django.db.models import QuerySet
 from typing import Dict, Any
-from ..models import Project
+from django.contrib.auth.models import AbstractUser
+from ..models import Project, ProjectRole
 from obligations.models import Obligation
 
+logger = logging.getLogger(__name__)
+
 register = template.Library()
+
 
 @register.inclusion_tag('obligations/components/tables/obligation_list.html')
 def obligation_table(obligations: QuerySet[Obligation]) -> Dict[str, Any]:
     """Render obligation list table."""
     return {'obligations': obligations}
 
+
 @register.filter
 def get_item(dictionary: Dict[str, Any], key: Any) -> Any:
     """Get item from dictionary by key."""
     return dictionary.get(key)
 
+
 @register.filter
-def get_user_role(project: Any, user: Any) -> str:
-    """Get user's role in project."""
+def get_user_role(project: Project, user: AbstractUser) -> str:
+    """
+    Get user's role in project.
+
+    Args:
+        project: The project to check
+        user: The user to get role for
+
+    Returns:
+        str: User's role or 'viewer' if none found
+    """
     try:
-        membership = project.memberships.get(user=user)
-        return membership.role
-    except Exception:
-        return "No Role"
+        return project.get_user_role(user)
+    except Exception as e:
+        logger.error(f"Error getting user role: {e}")
+        return ProjectRole.VIEWER.value
+
+
+@register.filter
+def format_role(role: str) -> str:
+    """Format role name for display."""
+    return role.replace('_', ' ').title()
+
+
+@register.inclusion_tag('projects/components/role_badge.html')
+def role_badge(role: str) -> Dict[str, str]:
+    """Render role badge."""
+    colors = {
+        ProjectRole.OWNER.value: 'primary',
+        ProjectRole.MANAGER.value: 'success',
+        ProjectRole.MEMBER.value: 'info',
+        ProjectRole.VIEWER.value: 'secondary'
+    }
+    return {
+        'role': role,
+        'color': colors.get(role, 'secondary')
+    }
