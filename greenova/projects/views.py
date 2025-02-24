@@ -8,6 +8,9 @@ from .models import Project, ProjectMembership
 import logging
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
+from utils.error_handlers import handle_dashboard_error
+from utils.serializers import ChartDataSerializer
+from utils.data_utils import AnalyticsDataProcessor
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -57,6 +60,7 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
         from django.template.loader import render_to_string
         return render_to_string(template, context, request=self.request)
 
+@handle_dashboard_error
 class ProjectContentView(LoginRequiredMixin, TemplateView):
     """Handle project content loading."""
     template_name = 'projects/partials/project_content.html'
@@ -76,6 +80,11 @@ class ProjectContentView(LoginRequiredMixin, TemplateView):
                     'user_role': project.get_user_role(user),
                     'analytics': project.get_analytics()
                 })
+
+                analytics = AnalyticsDataProcessor(project.obligations.all())
+                context['chart_data'] = ChartDataSerializer.format_mechanism_data(
+                    analytics.get_mechanism_data()
+                )
 
         except Exception as e:
             logger.error(f"Error getting project content: {str(e)}")

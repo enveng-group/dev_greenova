@@ -1,8 +1,14 @@
 {% extends "authentication/layouts/auth_base.html" %}
 {% load static %}
-{% block title %}Login - Greenova{% endblock %}
-{% block auth_title %}Welcome back{% endblock %}
-{% block auth_subheading %}Log in to your account{% endblock %}
+{% block title %}
+  Login - Greenova
+{% endblock title %}
+{% block auth_title %}
+  Welcome back
+{% endblock auth_title %}
+{% block auth_subheading %}
+  Log in to your account
+{% endblock auth_subheading %}
 {% block auth_content %}
   {% if not request.user.is_authenticated %}
     {% include "authentication/components/messages/form_errors.html" %}
@@ -25,4 +31,4 @@
   {% else %}
     <script>window.location.href = "{% url 'dashboard:home' %}";</script>
   {% endif %}
-{% endblock %}
+{% endblock auth_content %}

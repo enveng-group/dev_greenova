@@ -1,15 +1,13 @@
-import logging
-from typing import Dict, List, TypedDict, Any
-from datetime import datetime, date
-from django.db.models import QuerySet, Count
+from typing import Dict, List, TypedDict, Optional, Any
+from datetime import date
+from django.db.models import QuerySet
 from obligations.models import Obligation
 from utils.constants import STATUS_CHOICES
+import logging
+from .serializers import ChartDataSerializer
+from .exceptions import ChartDataError
 
 logger = logging.getLogger(__name__)
-
-class ChartDataError(Exception):
-    """Exception raised for errors in chart data processing."""
-    pass
 
 class ChartDataPoint(TypedDict):
     label: str
@@ -23,58 +21,50 @@ class TimeSeriesPoint(TypedDict):
 
 class AnalyticsDataProcessor:
     """Process data for analytics visualizations."""
-    
-    def __init__(self, queryset: QuerySet[Obligation]) -> None:
+
+    def __init__(self, queryset: QuerySet[Obligation], project_id: Optional[int] = None) -> None:
         self.queryset = queryset
+        if project_id:
+            self.queryset = self.queryset.filter(project_id=project_id)
 
-    def get_mechanism_data(self, mechanism: str) -> Dict[str, List[Any]]:
+    def get_mechanism_data(self, mechanism_name: str = "all") -> Dict[str, List[ChartDataPoint]]:
         """Get status distribution for a mechanism."""
-        try:
-            status_counts = (
-                self.queryset
-                .filter(primary_environmental_mechanism=mechanism)
-                .values('status')
-                .annotate(count=Count('status'))
-                .order_by('status')
-            )
-            
-            data: Dict[str, List[Any]] = {
-                'labels': [status[1] for status in STATUS_CHOICES],
-                'values': [0] * len(STATUS_CHOICES),
-                'colors': ['var(--error)', 'var(--primary)', 'var(--success)']
-            }
-            
-            status_map = {status[0]: i for i, status in enumerate(STATUS_CHOICES)}
-            for item in status_counts:
-                idx = status_map.get(item['status'])
-                if idx is not None:
-                    data['values'][idx] = item['count']
-                    
-            return data
-        except Exception as e:
-            logger.error(f"Error processing mechanism data: {str(e)}")
-            raise ChartDataError("Failed to process mechanism data")
+        queryset = self.queryset
+        if mechanism_name != "all":
+            queryset = queryset.filter(primary_environmental_mechanism=mechanism_name)
 
-    def get_time_series_data(
-        self,
-        start_date: datetime,
-        end_date: datetime
-    ) -> List[TimeSeriesPoint]:
-        """Get time series data for trend analysis."""
-        query_result = (
-            self.queryset
-            .filter(
-                action_due_date__range=(start_date, end_date)
-            )
-            .values('action_due_date', 'status')
-            .annotate(count=Count('id'))
-            .order_by('action_due_date')
-        )
-        
-        return [
-            TimeSeriesPoint(
-                date=item['action_due_date'],
-                count=item['count'],
-                status=item['status']
-            ) for item in query_result
-        ]
+        data: List[ChartDataPoint] = []
+        for status, _ in STATUS_CHOICES:
+            count = queryset.filter(status=status).count()
+            data.append({
+                "label": status.title(),
+                "value": count,
+                "color": self._get_status_color(status)
+            })
+        return {"data": data}
+
+    def _get_status_color(self, status: str) -> str:
+        """Get color for status."""
+        colors = {
+            'not started': '#6c757d',
+            'in progress': '#007bff',
+            'completed': '#28a745',
+            'overdue': '#dc3545'
+        }
+        return colors.get(status.lower(), '#6c757d')
+
+    def _calculate_completion_rate(self) -> float:
+        """Calculate completion percentage."""
+        total = self.queryset.count()
+        if total == 0:
+            return 0.0
+        completed = self.queryset.filter(status='completed').count()
+        return (completed / total) * 100
+
+    def get_chart_data(self, mechanism_name: str = "all") -> Dict[str, Any]:
+        """Get formatted chart data."""
+        try:
+            data = self.get_mechanism_data(mechanism_name)
+            return ChartDataSerializer.format_mechanism_data(data['data'])
+        except Exception as e:
+            raise ChartDataError(f"Error processing chart data: {str(e)}")

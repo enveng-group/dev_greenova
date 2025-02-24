@@ -4,25 +4,25 @@
 CD_CMD = cd greenova &&
 
 check:
-	$(CD_CMD) pipenv run python manage.py check
+	$(CD_CMD) python manage.py check
 
 run:
-	$(CD_CMD) pipenv run python manage.py runserver
+	$(CD_CMD) python manage.py runserver
 
 migrations:
-	$(CD_CMD) pipenv run python manage.py makemigrations
+	$(CD_CMD) python manage.py makemigrations
 
 migrate:
-	$(CD_CMD) pipenv run python manage.py migrate
+	$(CD_CMD) python manage.py migrate
 
 static:
-	$(CD_CMD) pipenv run python manage.py collectstatic --clear --noinput
+	$(CD_CMD) python manage.py collectstatic --clear --noinput
 
 user:
-	$(CD_CMD) pipenv run python manage.py createsuperuser
+	$(CD_CMD) python manage.py createsuperuser
 
 import:
-	$(CD_CMD) pipenv run python manage.py import_obligations clean_output_with_nulls.csv
+	$(CD_CMD) python manage.py import_obligations clean_output_with_nulls.csv
 
 # Combined command for database updates
 db: migrations migrate

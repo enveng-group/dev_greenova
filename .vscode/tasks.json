@@ -94,11 +94,7 @@
     {
       "label": "ESLint: Fix All",
       "type": "npm",
-      "script": "eslint",
-      "args": [
-        "--fix",
-        "."
-      ],
+      "script": "eslint --fix",
       "problemMatcher": [
         "$eslint-stylish"
       ]

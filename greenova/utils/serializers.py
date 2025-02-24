@@ -1,59 +1,60 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, TypedDict, Union, Sequence, cast
+
+class ChartDataset(TypedDict, total=False):
+    data: Sequence[Union[int, float]]
+    label: str
+    backgroundColor: Sequence[str]
+
+class ChartData(TypedDict):
+    type: str
+    data: Dict[str, Union[List[str], List[ChartDataset]]]
 
 class ChartDataSerializer:
     """Serialize data for chart rendering."""
-    
+
     @staticmethod
-    def format_mechanism_data(data: Dict[str, List[Any]]) -> Dict[str, Any]:
+    def format_mechanism_data(data: List[Dict[str, Any]]) -> ChartData:
         """Format mechanism chart data."""
         return {
             'type': 'doughnut',
             'data': {
-                'labels': data['labels'],
+                'labels': [item['label'] for item in data],
                 'datasets': [{
-                    'data': data['values'],
-                    'backgroundColor': data['colors']
+                    'data': [item['value'] for item in data],
+                    'backgroundColor': [item['color'] for item in data]
                 }]
-            },
-            'options': {
-                'responsive': True,
-                'maintainAspectRatio': True
             }
         }
 
     @staticmethod
-    def format_trend_data(
-        data: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+    def format_trend_data(data: List[Dict[str, Any]]) -> ChartData:
         """Format trend chart data."""
         dates = sorted(set(
             item['action_due_date'] for item in data
         ))
-        
-        datasets: List[Dict[str, Any]] = []
+
+        datasets: List[ChartDataset] = []
         for status in ['not started', 'in progress', 'completed']:
             status_data: List[int] = []
             for date in dates:
                 count = sum(
-                    item['count']
-                    for item in data
+                    item['count'] for item in data
                     if item['action_due_date'] == date
                     and item['status'] == status
                 )
                 status_data.append(count)
-            
-            datasets.append({
+
+            dataset: ChartDataset = {
                 'label': status.title(),
-                'data': status_data
-            })
-            
-        return {
+                'data': cast(Sequence[Union[int, float]], status_data),
+                'backgroundColor': []  # Add empty list to satisfy type requirements
+            }
+            datasets.append(dataset)
+
+        return cast(ChartData, {
             'type': 'line',
             'data': {
-                'labels': [
-                    d.strftime('%Y-%m-%d')
-                    for d in dates
-                ],
+                'labels': [date.strftime('%Y-%m-%d') for date in dates],
                 'datasets': datasets
             }
-        }
+        })

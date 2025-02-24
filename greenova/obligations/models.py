@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from projects.models import Project
 from utils.constants import STATUS_CHOICES
 
@@ -9,7 +8,7 @@ class Obligation(models.Model):
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name='obligations'
+        related_name='obligations'  # Add this related_name
     )
     primary_environmental_mechanism = models.CharField(max_length=255)
     procedure = models.TextField(blank=True, null=True)
@@ -22,7 +21,7 @@ class Obligation(models.Model):
     close_out_date = models.DateField(null=True, blank=True)
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,  
+        choices=STATUS_CHOICES,
         default='not started'
     )
     supporting_information = models.TextField(blank=True, null=True)

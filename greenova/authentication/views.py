@@ -11,6 +11,9 @@ from django.http import HttpResponse, HttpRequest
 from django.core.handlers.wsgi import WSGIRequest
 from .forms import GreenovaUserCreationForm  # Import the custom form
 import logging
+from utils.error_handlers import handle_dashboard_error
+from utils.exceptions import GreenovaException
+from utils.commons import get_user_display_name
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +22,7 @@ class AuthContext(TypedDict):
     next: Optional[str]
     error: Optional[str]
 
+@handle_dashboard_error
 class RegisterView(CreateView):
     form_class = GreenovaUserCreationForm
     template_name = 'authentication/auth/register.html'

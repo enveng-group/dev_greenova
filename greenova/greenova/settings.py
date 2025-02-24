@@ -14,8 +14,6 @@ import os
 from pathlib import Path
 from typing import Dict, List, TypedDict, Union
 
-from utils.constants import SYSTEM_STATUS_OPERATIONAL
-
 
 class DatabaseConfig(TypedDict):
     ENGINE: str

@@ -10,6 +10,10 @@ from projects.models import Project
 from utils.constants import SYSTEM_STATUS, APP_VERSION, LAST_UPDATED
 from utils.mixins import NavigationMixin
 import logging
+from utils.data_utils import AnalyticsDataProcessor
+from utils.serializers import ChartDataSerializer
+from utils.filters import ObligationFilter
+from utils.pagination import ProjectPagination
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +75,12 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
             context.update(dashboard_context)
             logger.info(f"Found {user_projects.count()} projects for user {user}")
+
+            # Add analytics data
+            analytics = AnalyticsDataProcessor(self.get_projects())
+            context['chart_data'] = ChartDataSerializer.format_mechanism_data(
+                analytics.get_mechanism_data()
+            )
 
         except Exception as e:
             logger.error(f"Error loading dashboard: {str(e)}")

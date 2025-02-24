@@ -23,8 +23,7 @@
           href="{% static 'css/vendor/modern-normalize.css' %}">
     <link rel="stylesheet"
           href="{% static 'css/vendor/pico.classless.min.css' %}">
-    <link rel="stylesheet"
-          href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     {% block extra_head %}{% endblock %}
   </head>
   <header>
@@ -122,6 +121,5 @@
       <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
       <script src="{% static 'js/vendor/chart.umd.js' %}" defer></script>
       <script src="{% static 'js/app.js' %}" type="module" defer></script>
-      {% block extra_scripts %}{% endblock %}
     </body>
   </html>

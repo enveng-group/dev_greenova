@@ -10,6 +10,8 @@ from .services import ChatService
 from .forms import ChatMessageForm
 import json
 import logging
+from utils.error_handlers import handle_dashboard_error
+from utils.exceptions import GreenovaException
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,7 @@ class ChatResponse(TypedDict):
     error: Optional[str]
 
 @method_decorator(csrf_exempt, name='dispatch')
+@handle_dashboard_error
 class ChatApiView(View):
     """Handle chat API requests."""
 
@@ -55,6 +58,9 @@ class ChatApiView(View):
 
             response = chat_service.process_message(message, context)
             return JsonResponse(response)
+
+        except GreenovaException as e:
+            return JsonResponse({'error': str(e)}, status=400)
 
         except Exception as e:
             logger.error(f"Chat error: {str(e)}")

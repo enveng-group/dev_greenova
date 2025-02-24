@@ -1,37 +1,25 @@
-from typing import Dict, Any
-from datetime import datetime
+import logging
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
-from projects.models import Project
+from django.db.models.query import QuerySet
+from obligations.models import Obligation
+
+logger = logging.getLogger(__name__)
+
+ObligationQuerySet = QuerySet[Obligation]
 
 def get_status_badge(status: str) -> str:
     """Generate HTML for status badge."""
     status_classes = {
         'not started': 'secondary',
-        'in progress': 'primary', 
+        'in progress': 'primary',
         'completed': 'success',
-        'overdue': 'error',
-        'operational': 'success',
-        'maintenance': 'warning',
-        'error': 'error'
+        'overdue': 'error'
     }
     css_class = status_classes.get(status.lower(), 'secondary')
-    return f'<mark class="{css_class}">{status.title()}</mark>'
+    logger.debug(f"Generated status badge for {status}")
+    return mark_safe(f'<mark class="{css_class}">{status.title()}</mark>')
 
 def get_user_display_name(user: User) -> str:
     """Get best display name for user."""
     return user.get_full_name() or user.username
-
-def get_project_stats(project: Project) -> Dict[str, Any]:
-    """Get project statistics."""
-    obligations = project.obligations.all()
-    return {
-        'total': obligations.count(),
-        'completed': obligations.filter(status='completed').count(),
-        'in_progress': obligations.filter(status='in progress').count(),
-        'not_started': obligations.filter(status='not started').count(),
-        'overdue': obligations.filter(
-            status='not started',
-            due_date__lt=datetime.now().date()
-        ).count()
-    }

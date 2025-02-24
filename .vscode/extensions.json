@@ -9,6 +9,7 @@
     "ms-python.debugpy",
     "foxundermoon.shell-format",
     "monosans.djlint",
-    "EditorConfig.EditorConfig"
+    "EditorConfig.EditorConfig",
+    "batisteo.vscode-django"
   ]
 }

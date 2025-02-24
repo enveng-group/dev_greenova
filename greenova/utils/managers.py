@@ -3,6 +3,8 @@ from django.db.models import Count, Q, QuerySet
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
 from obligations.models import Obligation  # Update import path
+from .data_utils import AnalyticsDataProcessor
+from .messages import NO_DATA_AVAILABLE
 
 class AnalyticsManager(models.Manager[Obligation]):
     def get_queryset(self) -> QuerySet[Obligation]:
@@ -17,18 +19,14 @@ class AnalyticsManager(models.Manager[Obligation]):
             in_progress=Count('id', filter=Q(status='in progress')),
             not_started=Count('id', filter=Q(status='not started'))
         )
+
     def get_mechanism_stats(self) -> List[Dict[str, Any]]:
-        """Get statistics grouped by mechanism."""
-        queryset = self.get_queryset()
-        stats = queryset.values('primary_environmental_mechanism').annotate(
-            total=Count('id'),
-            completed=Count('id', filter=Q(status='completed')),
-            completion_rate=Count(
-                'id',
-                filter=Q(status='completed')
-            ) * 100.0 / Count('id')
-        )
-        return list(stats)
+        """Get statistics grouped by mechanism using AnalyticsDataProcessor."""
+        processor = AnalyticsDataProcessor(self.get_queryset())
+        data = processor.get_mechanism_data()
+        if not data['data']:
+            logger.warning(NO_DATA_AVAILABLE)
+        return data['data']
 
     def get_upcoming_due(self) -> QuerySet[Obligation]:
         """Get obligations due in the next 14 days."""

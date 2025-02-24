@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Django: Run Server",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/greenova/manage.py",
       "args": [
@@ -21,7 +21,7 @@
     },
     {
       "name": "Django: Run Tests",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/greenova/manage.py",
       "args": [
@@ -40,7 +40,7 @@
     },
     {
       "name": "Python: Current File",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
@@ -54,7 +54,7 @@
     },
     {
       "name": "Django: Import Data",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/greenova/manage.py",
       "args": [
@@ -72,7 +72,7 @@
     },
     {
       "name": "Django: Shell",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/greenova/manage.py",
       "args": [
