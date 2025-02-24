@@ -1,109 +1,31 @@
 {% extends "base.html" %}
-
-{% load static %}
-
-{% block extra_head %}
-  <script src="{% static 'js/vendor/chart.umd.js' %}"></script>
-{% endblock extra_head %}
-
-{% block content %}
-  <article>
-    <header>
-      <h2>
-Environmental Mechanism Status Distribution
-      </h2>
-      {% if project %}
-        <p>
-Project: {{ project.name }}
-        </p>
-      {% endif %}
-    </header>
-
-    {% if error %}
-      <div role="alert" class="error">
-{{ error }}
-      </div>
-    {% elif mechanisms %}
-      <div class="chart-grid">
-        {% for mechanism in mechanisms %}
-          <figure role="region" aria-label="{{ mechanism }} Distribution" class="chart-wrapper">
-            <canvas id="mechanism-chart-{{ forloop.counter }}"
-                    class="mechanism-chart"
-                    data-chart-type="polarArea"
-                    data-endpoint="{% url 'mechanisms:filtered' %}?project_id={{ project.id }}&mechanism={{ mechanism|urlencode }}">
-            </canvas>
-            <figcaption>
-{{ mechanism }}
-            </figcaption>
-            <div class="loading-indicator" hidden>
-Loading...
+  {% load static %}
+    {% block content %}
+      {% if chart_data %}
+        <section aria-labelledby="charts-heading"
+                 class="charts-section"
+                 data-chart-data="{{ chart_data|escapejs }}">
+          <h2 id="charts-heading">Project Mechanisms Overview</h2>
+          <div id="mechanism-charts" class="charts-container">
+            <div class="row">
+              <article class="column">
+                <figure role="group" aria-label="Mechanism Status Distribution">
+                  <div id="pieChart" class="chart-container">
+                    <div class="loading-indicator" aria-hidden="true">Loading chart...</div>
+                  </div>
+                  <figcaption>Distribution of mechanism statuses</figcaption>
+                </figure>
+              </article>
+              <article class="column">
+                <figure role="group" aria-label="Mechanism Progress Overview">
+                  <div id="polarChart" class="chart-container">
+                    <div class="loading-indicator" aria-hidden="true">Loading chart...</div>
+                  </div>
+                  <figcaption>Progress overview across mechanisms</figcaption>
+                </figure>
+              </article>
             </div>
-          </figure>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p>
-No environmental mechanisms found for this project.
-      </p>
-    {% endif %}
-  </article>
-
-  <script>
-      document.addEventListener('DOMContentLoaded', function() {
-          const charts = {};
-
-          document.querySelectorAll('.mechanism-chart').forEach(canvas => {
-              const endpoint = canvas.dataset.endpoint;
-              const chartId = canvas.id;
-              const loadingIndicator = canvas.parentElement.querySelector('.loading-indicator');
-
-              loadingIndicator.hidden = false;
-
-              fetch(endpoint)
-                  .then(response => response.json())
-                  .then(config => {
-                      loadingIndicator.hidden = true;
-                      charts[chartId] = new Chart(canvas, config);
-                  })
-                  .catch(error => {
-                      console.error('Chart loading error:', error);
-                      loadingIndicator.hidden = true;
-                      canvas.parentElement.innerHTML = '<p class="error">Failed to load chart</p>';
-                  });
-          });
-      });
-  </script>
-{% endblock content %}
-
-{% block extra_css %}
-  <style>
-      .chart-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-          margin: 2rem 0;
-      }
-
-      .chart-wrapper {
-          position: relative;
-          min-height: 300px;
-          padding: 1rem;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      .loading-indicator {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-      }
-
-      .error {
-          color: #dc3545;
-          text-align: center;
-          margin: 1rem 0;
-      }
-  </style>
-{% endblock extra_css %}
+          </div>
+        </section>
+      {% endif %}
+    {% endblock content %}

@@ -775,7 +775,7 @@ CREATE TRIGGER update_obligations_timestamp
 3. **Docker**: Containerization platform.
 4. **GitHub CI/CD**: Continuous integration and deployment.
 5. **Python**: Programming language for backend development.
-6. **Chart.js**: JavaScript library for data visualization.
+6. **Apache ECharts Simple**: JavaScript library for data visualization.
 7. **Pip**: Python package manager.
 8. **HTMX**: Library for AJAX interactions.
 9. **Modern-Normalize**: CSS reset library.
@@ -807,9 +807,11 @@ CREATE TRIGGER update_obligations_timestamp
    - npm 11.1.0 (exact version)
 
 2. Required Libraries:
-   - chart.js==4.4.7
+   - @picocss/pico==2.0.6
    - htmx.org==2.0.4
    - modern-normalize==3.0.1
+   - hyperscrypt.org==0.9.14
+   - echarts==5.6.0
 
 ### NPM Configuration
 
@@ -875,7 +877,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 10. **Create Dynamic Charts**:
 
-    - Use Chart.js for visualizations in the dashboard.
+    - Use Apache ECharts for visualizations in the dashboard.
     - Pass data to templates using Django context or AJAX calls with HTMX.
 
 11. **Add Additional Features**:

@@ -8,7 +8,6 @@ from django.contrib.auth.views import LogoutView
 from django.http import HttpResponse, HttpRequest
 from .forms import GreenovaUserCreationForm
 import logging
-from utils.error_handlers import handle_error
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +17,6 @@ class AuthContext(TypedDict):
     next: Optional[str]
     error: Optional[str]
 
-
-@handle_error
 class CustomLogoutView(LogoutView):
     """Custom logout view that extends Django's LogoutView."""
     next_page = reverse_lazy('landing:home')
@@ -40,11 +37,9 @@ class CustomLogoutView(LogoutView):
 
         return response
 
-
-@handle_error
 class RegisterView(CreateView):
     form_class = GreenovaUserCreationForm
-    template_name = 'authentication/register.html'
+    template_name = 'authentication/auth/register.html'
     success_url = reverse_lazy('dashboard:home')
 
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:

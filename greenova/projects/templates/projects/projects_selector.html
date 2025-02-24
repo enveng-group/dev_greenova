@@ -1,51 +1,20 @@
 {% load project_tags %}
-
-<form>
-  <label for="project-select">
-    Please pick your project from the list below:
-  </label>
-  <br />
-  <select id="project-select"
-          name="project_id"
-          hx-get="{% url 'projects:content' %}"
-          hx-trigger="change"
-          hx-target="#project-content"
-          hx-swap="innerHTML"
-          hx-indicator=".htmx-indicator">
-    <option value="">
-Choose a project...
-    </option>
-    {% for project in projects %}
-      <option value="{{ project.id }}"
-              {% if project.id|stringformat:"s" == selected_project_id %}
-                selected
-              {% endif %}>
-      {{ project.name }} ({{ user_roles|get_item:project.id|title }})
-      </option>
-    {% endfor %}
-  </select>
-</form>
-
-<div id="project-content" aria-live="polite">
-</div>
-<div class="htmx-indicator" role="status" aria-busy="true">
-  Loading project data...
-</div>
-
-<style>
-    select#project-select {
-        width: auto;
-        max-width: none;
-        min-width: 300px;
-        padding: 0.5em;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    @media screen and (min-width: 768px) {
-        select#project-select {
-            width: auto;
-            min-width: 400px;
-        }
-    }
-</style>
+  <form>
+    <label for="project-select">Please pick your project from the list below:</label>
+    <br />
+    <select id="project-select"
+            name="project_id"
+            hx-get="{% url 'mechanisms:mechanism_charts' %}"
+            hx-trigger="change"
+            hx-target="#chart-container"
+            hx-swap="outerHTML"
+            hx-indicator=".htmx-indicator">
+      <option value="">Choose a project...</option>
+      {% for project in projects %}
+        <option value="{{ project.id }}"
+                {% if project.id|stringformat:"s" == selected_project_id %}selected{% endif %}>
+          {{ project.name }} ({{ user_roles|get_item:project.id|title }})
+        </option>
+      {% endfor %}
+    </select>
+  </form>

@@ -15,23 +15,19 @@ import os
 from pathlib import Path
 from typing import Dict, List, TypedDict, Union
 
-
 class DatabaseConfig(TypedDict):
     ENGINE: str
     NAME: Union[str, Path]
 
-
 class TemplateOptions(TypedDict):
     context_processors: List[str]
     debug: bool  # This was the missing required field
-
 
 class TemplateConfig(TypedDict):
     BACKEND: str
     DIRS: List[Path]
     APP_DIRS: bool
     OPTIONS: TemplateOptions
-
 
 # Update the LoggingHandlerConfig TypedDict
 class LoggingHandlerConfig(TypedDict, total=False):
@@ -40,7 +36,6 @@ class LoggingHandlerConfig(TypedDict, total=False):
     filename: str
     formatter: str
 
-
 class LoggingConfig(TypedDict):
     version: int
     disable_existing_loggers: bool
@@ -48,10 +43,8 @@ class LoggingConfig(TypedDict):
     handlers: Dict[str, LoggingHandlerConfig]
     loggers: Dict[str, Dict[str, Union[str, List[str], bool]]]
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -63,7 +56,6 @@ SECRET_KEY = "django-insecure-y4iiuwh@r27)q36u55%8k3l(gwyp7s&i$zl_+m0f+ljwm1c#hy
 DEBUG = True
 
 ALLOWED_HOSTS: List[str] = ["127.0.0.1", "localhost", "*"]  # Add '*' for development
-
 
 # Application definition
 
@@ -80,10 +72,7 @@ INSTALLED_APPS = [
     "projects.apps.ProjectsConfig",
     "obligations.apps.ObligationsConfig",
     "chatbot.apps.ChatbotConfig",
-    "utils",
     "mechanisms.apps.MechanismsConfig",
-    "charts.apps.ChartsConfig",
-    "demo",
 ]
 
 MIDDLEWARE = [
@@ -108,7 +97,6 @@ TEMPLATES: List[TemplateConfig] = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "utils.context_processors.greenova_context",
             ],
             "debug": DEBUG,
         },
@@ -134,7 +122,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -145,7 +132,6 @@ TIME_ZONE = "Australia/Perth"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

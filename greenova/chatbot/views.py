@@ -8,11 +8,8 @@ from django.views.decorators.http import require_http_methods
 from .services import ChatService
 from .forms import ChatMessageForm
 import logging
-from utils.error_handlers import handle_error
-from utils.exceptions import GreenovaException
 
 logger = logging.getLogger(__name__)
-
 
 class ChatResponse(TypedDict):
     status: str
@@ -20,14 +17,12 @@ class ChatResponse(TypedDict):
     context: Dict[str, str]
     error: Optional[str]
 
-
 @method_decorator(csrf_exempt, name='dispatch')
 class ChatApiView(View):
     """Handle chat API requests."""
 
     http_method_names = ['get', 'post']  # Explicitly define allowed methods
 
-    @method_decorator(handle_error)
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
 
@@ -65,15 +60,6 @@ class ChatApiView(View):
                 'error': None
             })
 
-        except GreenovaException as e:
-            logger.error(f"Chat error: {str(e)}")
-            return JsonResponse({
-                'status': 'error',
-                'message': str(e),
-                'context': {},
-                'error': str(e)
-            }, status=400)
-
         except Exception as e:
             logger.error(f"Unexpected error: {str(e)}")
             return JsonResponse({
@@ -90,7 +76,6 @@ class ChatToggleView(View):
 
     http_method_names = ['get', 'post']  # Explicitly define allowed methods
 
-    @method_decorator(handle_error)
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
 

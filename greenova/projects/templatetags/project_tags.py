@@ -10,18 +10,15 @@ logger = logging.getLogger(__name__)
 
 register = template.Library()
 
-
 @register.inclusion_tag('obligations/components/tables/obligation_list.html')
 def obligation_table(obligations: QuerySet[Obligation]) -> Dict[str, Any]:
     """Render obligation list table."""
     return {'obligations': obligations}
 
-
 @register.filter
 def get_item(dictionary: Dict[str, Any], key: Any) -> Any:
     """Get item from dictionary by key."""
     return dictionary.get(key)
-
 
 @register.filter
 def get_user_role(project: Project, user: AbstractUser) -> str:
@@ -41,12 +38,10 @@ def get_user_role(project: Project, user: AbstractUser) -> str:
         logger.error(f"Error getting user role: {e}")
         return ProjectRole.VIEWER.value
 
-
 @register.filter
 def format_role(role: str) -> str:
     """Format role name for display."""
     return role.replace('_', ' ').title()
-
 
 @register.inclusion_tag('projects/components/role_badge.html')
 def role_badge(role: str) -> Dict[str, str]:
@@ -56,6 +51,12 @@ def role_badge(role: str) -> Dict[str, str]:
         ProjectRole.MANAGER.value: 'success',
         ProjectRole.MEMBER.value: 'info',
         ProjectRole.VIEWER.value: 'secondary'
+    }
+    badge_icon = {
+        ProjectRole.OWNER.value: 'star',
+        ProjectRole.MANAGER.value: 'cog',
+        ProjectRole.MEMBER.value: 'user',
+        ProjectRole.VIEWER.value: 'eye'
     }
     return {
         'role': role,

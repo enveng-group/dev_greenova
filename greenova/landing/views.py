@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django.views.generic import TemplateView
 from django.http import HttpRequest
 import logging
-from utils.context_processors import greenova_context
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +20,10 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Add landing page context data."""
         context = super().get_context_data(**kwargs)
-        context.update(greenova_context(self.request))
-        # Add show_landing_content flag
-        context['show_landing_content'] = True
-        # Add dashboard link if authenticated
-        if self.request.user.is_authenticated:
-            context['show_dashboard_link'] = True
-
+        # Add basic context data that was previously in utils
+        context.update({
+            'app_version': getattr(settings, 'APP_VERSION', '0.1.0'),
+            'show_landing_content': True,
+            'show_dashboard_link': self.request.user.is_authenticated
+        })
         return context

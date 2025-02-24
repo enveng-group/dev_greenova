@@ -43,7 +43,20 @@
           "**/node_modules/**": true,
           "**/.venv/**": true,
           "**/__pycache__/**": true,
-          "**/.env": true
+          "**/.env": true,
+          "**/.git": true,
+          "**/.svn": true,
+          "**/.hg": true,
+          "**/CVS": true,
+          "**/.DS_Store": true,
+          "**/*.pyc": true,
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/node_modules": true,
+          "**/.venv": true,
+          "**~/.vscode-server/**": true,
+          "**~/.vscode/**": true,
+          ".venv": true
         },
         "files.exclude": {
           "**/.git": true,
@@ -55,7 +68,10 @@
           "**/__pycache__": true,
           "**/.pytest_cache": true,
           "**/node_modules": true,
-          "**/.venv": true
+          "**/.venv": true,
+          "**~/.vscode-server/**": true,
+          "**~/.vscode/**": true,
+          ".venv": true
         }
       },
       "extensions": [

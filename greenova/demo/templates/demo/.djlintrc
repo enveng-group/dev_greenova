@@ -1,6 +1,0 @@
-{
-    "ignore": "H006,T002",
-    "ignore_blocks": ["raw", "blocktranslate"],
-    "format": false,
-    "profile": "django"
-}

@@ -3,29 +3,17 @@ from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
 from projects.models import Project
 from obligations.models import Obligation
-from utils.mixins import LoggedActionMixin, ProjectContextMixin
 import logging
-from utils.pagination import ProjectPagination
-from .filters import ObligationFilter  # Updated to use local import
-from utils.error_handlers import handle_error
-from django.utils.decorators import method_decorator
 
 logger = logging.getLogger(__name__)
 
-
-class ObligationListView(
-        LoggedActionMixin,
-        ProjectContextMixin,
-        LoginRequiredMixin,
-        TemplateView):
+class ObligationListView(LoginRequiredMixin, TemplateView):
     """View for listing project obligations."""
     template_name = 'obligations/views/obligations.html'
-
-    @method_decorator(handle_error)
-    def dispatch(self, request: Any, *args: Any, **kwargs: Any) -> Any:
-        return super().dispatch(request, *args, **kwargs)
+    paginate_by = 20  # Number of items per page
 
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Get context data including project and obligations."""
@@ -42,30 +30,27 @@ class ObligationListView(
             # Get unique mechanisms for filter
             mechanisms = (
                 obligations
-                .values_list('primary_environmental_mechanism', flat=True)
+                .values_list('mechanism', flat=True)
                 .distinct()
-                .order_by('primary_environmental_mechanism')
+                .order_by('mechanism')
             )
 
-            # Initialize pagination and filtering
-            paginator = ProjectPagination(obligations)
-            obligation_filter = ObligationFilter(obligations)
-
-            # Convert page number to int with fallback
+            # Initialize pagination
+            paginator = Paginator(obligations, self.paginate_by)
             page_number = int(self.request.GET.get('page', 1))
+            page_obj = paginator.get_page(page_number)
 
-            # Create context updates with explicit typing
-            context_updates: Dict[str, Any] = {
-                'page_obj': paginator.get_page(page_number),
-                'filtered_obligations': obligation_filter.filter_by_status(
-                    self.request.GET.get('status', '')
-                ),
+            # Filter obligations if status parameter exists
+            status = self.request.GET.get('status', '')
+            if status:
+                obligations = obligations.filter(status=status)
+
+            context.update({
+                'page_obj': page_obj,
+                'filtered_obligations': obligations,
                 'mechanisms': list(mechanisms),
                 'project': project
-            }
-
-            # Update context
-            context.update(context_updates)
+            })
 
         except Exception as e:
             logger.error(f"Error in ObligationListView: {str(e)}")
@@ -73,13 +58,11 @@ class ObligationListView(
 
         return context
 
-
-class FilteredObligationsView(LoggedActionMixin, LoginRequiredMixin, ListView):
+class FilteredObligationsView(LoginRequiredMixin, ListView):
     """View for filtered obligations list."""
     template_name = 'obligations/tables/obligation_list.html'
     context_object_name = 'obligations'
 
-    @method_decorator(handle_error)
     def dispatch(self, request: Any, *args: Any, **kwargs: Any) -> Any:
         return super().dispatch(request, *args, **kwargs)
 
@@ -90,7 +73,7 @@ class FilteredObligationsView(LoggedActionMixin, LoginRequiredMixin, ListView):
 
         mechanism = self.request.GET.get('mechanism')
         if mechanism:
-            queryset = queryset.filter(primary_environmental_mechanism=mechanism)
+            queryset = queryset.filter(mechanism=mechanism)
 
         return queryset.select_related('project').order_by('action_due_date')
 
