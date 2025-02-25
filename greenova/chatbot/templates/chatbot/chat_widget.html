@@ -1,23 +1,40 @@
 <aside id="chat-widget" aria-label="Chat Assistant">
   <!-- Chat toggle button -->
-  <button id="chat-toggle" aria-controls="chat-dialog" aria-expanded="false">
+  <button id="chat-toggle"
+          aria-controls="chat-dialog"
+          aria-expanded="false"
+          _="on click
+             call #chat-dialog.showModal()
+             then put 'true' into me's @aria-expanded">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round" />
     </svg>
     <span class="sr-only">Open Chat</span>
   </button>
+
   <!-- Chat dialog -->
-  <dialog id="chat-dialog" aria-labelledby="chat-title">
+  <dialog id="chat-dialog"
+          aria-labelledby="chat-title"
+          _="on click if event.target is me
+             call close()
+             then put 'false' into #chat-toggle's @aria-expanded">
     <article>
       <header>
         <a href="{% url 'dashboard:home' %}"
            class="close-chat"
            aria-label="Close chat and return to dashboard"
            role="button"
-           onclick="document.getElementById('chat-dialog').close(); return true;">✕</a>
+           onclick="document.getElementById('chat-dialog').close(); return true;">
+          ✕
+        </a>
         <h2 id="chat-title">Chat with Greenova Assistant</h2>
         <!-- Add close link -->
+
       </header>
+
       <!-- Messages container -->
       <div id="chat-messages"
            role="log"
@@ -26,8 +43,11 @@
            hx-trigger="load"
            hx-swap="innerHTML"
            hx-target="this">
-        <div id="chat-loading" class="loading" aria-hidden="true">Loading messages...</div>
+        <div id="chat-loading" class="loading" aria-hidden="true">
+          Loading messages...
+        </div>
       </div>
+
       <!-- Chat form -->
       <form id="chat-form"
             method="post"
@@ -38,12 +58,18 @@
             hx-indicator="#chat-loading"
             hx-trigger="submit">
         {% csrf_token %}
-          <div class="input-group">
-            <input type="text" name="message" hx-on="htmx:afterRequest: this.value = ''" required />
-            <button type="submit">Send</button>
-          </div>
-          <div id="chat-loading" class="htmx-indicator">Sending...</div>
-        </form>
-      </article>
-    </dialog>
-  </aside>
+        <div class="input-group">
+          <input type="text"
+                 name="message"
+                 hx-on="htmx:afterRequest: this.value = ''"
+                 required>
+          <button type="submit">Send</button>
+        </div>
+        <div id="chat-loading" class="htmx-indicator">
+          Sending...
+        </div>
+      </form>
+    </article>
+  </dialog>
+
+</aside>

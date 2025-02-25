@@ -1,20 +1,17 @@
 {% load project_tags %}
-  <form>
-    <label for="project-select">Please pick your project from the list below:</label>
-    <br />
-    <select id="project-select"
-            name="project_id"
-            hx-get="{% url 'mechanisms:mechanism_charts' %}"
-            hx-trigger="change"
-            hx-target="#chart-container"
-            hx-swap="outerHTML"
-            hx-indicator=".htmx-indicator">
-      <option value="">Choose a project...</option>
-      {% for project in projects %}
-        <option value="{{ project.id }}"
-                {% if project.id|stringformat:"s" == selected_project_id %}selected{% endif %}>
-          {{ project.name }} ({{ user_roles|get_item:project.id|title }})
-        </option>
-      {% endfor %}
-    </select>
-  </form>
+<form>
+  <label for="project-select">Please pick your project from the list below:</label>
+  <br />
+  <select id="project-select"
+          name="project"
+          hx-get="{% url 'mechanisms:mechanism_charts' %}"
+          hx-trigger="change"
+          hx-target="#chart-container"
+          hx-swap="innerHTML">
+    <option value="">Select a project...</option>
+    {% for project in projects %}
+      <option value="{{ project.id }}"
+              {% if project.id == selected_project_id %}selected{% endif %}>{{ project.name }}</option>
+    {% endfor %}
+  </select>
+</form>

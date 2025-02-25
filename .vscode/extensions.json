@@ -11,7 +11,7 @@
     "EditorConfig.EditorConfig",
     "batisteo.vscode-django",
     "tamasfe.even-better-toml",
-    "monosans.djlint",
-    "ms-vscode.vscode-copilot-data-analysis"
+    "ms-vscode.vscode-copilot-data-analysis",
+    "github.vscode-pull-request-github"
   ]
 }

@@ -1,31 +1,13 @@
-{% extends "base.html" %}
-  {% load static %}
-    {% block content %}
-      {% if chart_data %}
-        <section aria-labelledby="charts-heading"
-                 class="charts-section"
-                 data-chart-data="{{ chart_data|escapejs }}">
-          <h2 id="charts-heading">Project Mechanisms Overview</h2>
-          <div id="mechanism-charts" class="charts-container">
-            <div class="row">
-              <article class="column">
-                <figure role="group" aria-label="Mechanism Status Distribution">
-                  <div id="pieChart" class="chart-container">
-                    <div class="loading-indicator" aria-hidden="true">Loading chart...</div>
-                  </div>
-                  <figcaption>Distribution of mechanism statuses</figcaption>
-                </figure>
-              </article>
-              <article class="column">
-                <figure role="group" aria-label="Mechanism Progress Overview">
-                  <div id="polarChart" class="chart-container">
-                    <div class="loading-indicator" aria-hidden="true">Loading chart...</div>
-                  </div>
-                  <figcaption>Progress overview across mechanisms</figcaption>
-                </figure>
-              </article>
-            </div>
-          </div>
-        </section>
-      {% endif %}
-    {% endblock content %}
+<div id="chart-container">
+  {% if mechanism_charts %}
+    {% include "mechanisms/components/_charts.html" %}
+  {% elif error %}
+    <div class="notice error" role="alert">
+      <p>{{ error }}</p>
+    </div>
+  {% else %}
+    <div class="notice" role="status">
+      <p>Please select a project to view mechanism charts.</p>
+    </div>
+  {% endif %}
+</div>

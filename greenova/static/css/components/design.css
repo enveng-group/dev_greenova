@@ -1,0 +1,88 @@
+/* This is the Ubuntu font we're using for the website */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+
+:root {
+  --greenova-font-family: "Ubuntu", serif;
+  --greenova-font-weight: normal;
+  --greenova-line-height: 1.125;
+
+  --pico-font-family: var(--greenova-font-family);
+  --pico-font-weight: var(--greenova-font-weight);
+  --pico-line-height: var(--greenova-line-height);
+}
+
+* {
+  font-family: var(--greenova-font-family);
+  font-weight: normal;
+}
+
+
+/*Font: Ubuntu
+Title: 24
+Sub Titles: 18 (Bold)
+Text Entries: 16
+Table Entries: 14 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+  /* Title */
+  &:first-child {
+    font-size: 24px;
+  }
+
+  /* Subtitle */
+  &:not(:first-child) {
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
+
+/* Text Entries: 16 */
+p,
+article {
+  font-size: 16px;
+}
+
+
+
+/*Component Corner Radius: 8
+Inter Component Spacing: 15
+Component Padding: 10*/
+/* Buttons: 16(Bold) */
+button,
+[type='submit'],
+[type='reset'],
+[role='button'] {
+  font-size: 16px;
+  font-weight: bold !important;
+
+  min-height: 41px;
+  /* Stops top from looking weird */
+
+  border-radius: 8px;
+  margin: 0px 15px;
+  margin-bottom: 0px;
+  padding: 10px;
+}
+
+/* Navigation */
+[role='navigation'],
+[role='navigation'] ul,
+[role='navigation'] ul li {
+  border-radius: 8px;
+
+  margin: 0px;
+  padding: 0px;
+}
+
+[role='navigation'] [role="menuitem"] {
+  border-radius: 8px;
+
+  margin: 0px;
+  padding: 10px;
+}
