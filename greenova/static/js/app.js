@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0694859 (refactor: migrate from ECharts to Matplotlib for chart generation)
 // Chart scrolling functionality
 function scrollCharts(direction) {
   const container = document.getElementById('chartScroll');
@@ -37,8 +33,3 @@ document.addEventListener('htmx:beforeRequest', function(evt) {
     evt.detail.target.innerHTML = '<div class="notice" role="status" aria-busy="true">Loading charts...</div>';
   }
 });
-<<<<<<< HEAD
-=======
->>>>>>> 8ebefd8 (feat(charts): working matplotlib implementation before refinement)
-=======
->>>>>>> 0694859 (refactor: migrate from ECharts to Matplotlib for chart generation)
