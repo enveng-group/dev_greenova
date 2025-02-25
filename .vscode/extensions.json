@@ -11,7 +11,11 @@
     "EditorConfig.EditorConfig",
     "batisteo.vscode-django",
     "tamasfe.even-better-toml",
+<<<<<<< HEAD
     "ms-vscode.vscode-copilot-data-analysis",
     "github.vscode-pull-request-github"
+=======
+    "ms-vscode.vscode-copilot-data-analysis"
+>>>>>>> 0694859 (refactor: migrate from ECharts to Matplotlib for chart generation)
   ]
 }
