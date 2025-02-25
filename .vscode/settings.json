@@ -1,7 +1,7 @@
 {
   "[css]": {
     "editor.defaultFormatter": "vscode.css-language-features",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.suggest.insertMode": "replace",
     "editor.tabSize": 2,
     "editor.insertSpaces": true
@@ -16,16 +16,9 @@
     "editor.insertSpaces": true,
     "editor.fontFamily": "monospace"
   },
-  "[django-html]": {
+  "[html]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "monosans.djlint",
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.suggest.insertMode": "replace"
-  },
-  "[django-txt]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "monosans.djlint",
+    "editor.defaultFormatter": "vscode.html-language-features",
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.suggest.insertMode": "replace"
@@ -53,7 +46,7 @@
     }
   },
   "[pip-requirements]": {
-    "editor.defaultFormatter": "ms-python.python",
+    "editor.defaultFormatter": "ms-python.autopep8",
     "editor.insertFinalNewline": true,
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
@@ -107,7 +100,6 @@
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
   "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
   "editor.linkedEditing": true,
   "editor.renderWhitespace": "boundary",
   "editor.rulers": [
@@ -158,6 +150,8 @@
     "javascript"
   ],
   "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
+  "eslint.run": "onSave",
   "files.associations": {
     "*.html": "django-html",
     "*.js": "javascript",
@@ -192,35 +186,15 @@
     "-p",
     "*test*.py"
   ],
-  "eslint.codeActionsOnSave.rules": [
-    "!prettier/*",
-    "*"
-  ],
   "python.testing.pytestEnabled": false,
-  "remoteHub.gitProtocol": "ssh",
   "github.gitProtocol": "ssh",
   "python.analysis.autoFormatStrings": true,
   "python.analysis.completeFunctionParens": true,
   "python.analysis.enablePytestSupport": false,
-  "python.analysis.languageServerMode": "light",
+  "python.analysis.languageServerMode": "full",
   "python.analysis.logLevel": "Error",
   "python.analysis.diagnosticSeverityOverrides": {
     "reportMissingModuleSource": "none"
   },
-  "python.defaultInterpreterPath": "/workspaces/dev_greenova/venv/bin/python",
-  "djlint.formatLanguages": [
-    "django-html"
-  ],
-  "djlint.profile": "django",
-  "djlint.extendExclude": [
-    "node_modules",
-    ".git",
-    ".venv",
-    ".pytest_cache",
-    "__pycache__",
-    "~/.vscode",
-    "~/.vscode-server",
-    "/workspaces/dev_greenova/greenova/static/js/vendor",
-    "/vscode"
-  ]
+  "python.defaultInterpreterPath": "/workspaces/dev_greenova/venv/bin/python"
 }

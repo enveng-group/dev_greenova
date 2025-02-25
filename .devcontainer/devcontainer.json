@@ -86,7 +86,6 @@
         "EditorConfig.EditorConfig",
         "batisteo.vscode-django",
         "tamasfe.even-better-toml",
-        "monosans.djlint",
         "ms-vscode.vscode-copilot-data-analysis"
       ]
     }

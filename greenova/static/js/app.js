@@ -1,14 +1,35 @@
-// HTMX Events
-htmx.on('htmx:afterRequest', (evt) => {
-    if (evt.detail.successful) {
-        document.querySelectorAll('canvas[data-chart-data]').forEach(canvas => {
-            chartManager.init(canvas, canvas.dataset.chartData);
-        });
-    }
+// Chart scrolling functionality
+function scrollCharts(direction) {
+  const container = document.getElementById('chartScroll');
+  if (!container) return;
+
+  const scrollAmount = 320;
+  container.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth'
+  });
+}
+
+// Initialize chart navigation
+document.addEventListener('htmx:afterSettle', function() {
+  const chartScroll = document.getElementById('chartScroll');
+  if (chartScroll) {
+    // Add keyboard navigation
+    chartScroll.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        scrollCharts('left');
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        scrollCharts('right');
+      }
+    });
+  }
 });
 
-htmx.on('htmx:beforeCleanupElement', (evt) => {
-    if (evt.detail.elt.tagName === 'CANVAS') {
-        chartManager.cleanup(evt.detail.elt.id);
-    }
+// Add loading indicator
+document.addEventListener('htmx:beforeRequest', function(evt) {
+  if (evt.detail.target.id === 'chart-container') {
+    evt.detail.target.innerHTML = '<div class="notice" role="status" aria-busy="true">Loading charts...</div>';
+  }
 });

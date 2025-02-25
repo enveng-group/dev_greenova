@@ -1,0 +1,80 @@
+{% load mechanism_tags %}
+<section aria-labelledby="charts-heading" class="charts-section">
+  <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
+  {% if error %}
+    <div role="alert">{{ error }}</div>
+  {% else %}
+    <!-- Chart Navigation -->
+    <nav role="navigation" aria-label="Mechanism charts navigation" class="chart-nav">
+      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
+      <button type="button" onclick="scrollCharts('right')" aria-label="Scroll right">→</button>
+    </nav>
+
+    <!-- Charts Container -->
+    <div class="chart-scroll-container"
+         id="chartScroll"
+         role="region"
+         aria-label="Chart gallery"
+         tabindex="0">
+      {% for mech in mechanism_charts %}
+        <article class="mechanism-chart">
+          <header>
+            <h3>{{ mech.name }}</h3>
+          </header>
+          <figure>
+            <img src="data:image/png;base64,{{ mech.chart }}"
+                 alt="Chart showing status distribution for {{ mech.name }}"
+                 width="300"
+                 height="250"
+                 loading="lazy">
+            <figcaption>
+              <dl class="stats-list">
+                {% for status, count in mech.stats.items %}
+                  <div class="stats-row">
+                    <dt>{{ status }}:</dt>
+                    <dd>{{ count }}</dd>
+                  </div>
+                {% endfor %}
+              </dl>
+            </figcaption>
+          </figure>
+        </article>
+      {% endfor %}
+    </div>
+
+    {% if table_data %}
+      <!-- Data Table -->
+      <article class="data-table">
+        <header>
+          <h3>Detailed Statistics</h3>
+        </header>
+        <div class="table-container">
+          <table role="grid">
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Project</th>
+                <th scope="col">Not Started</th>
+                <th scope="col">In Progress</th>
+                <th scope="col">Completed</th>
+                <th scope="col">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in table_data %}
+                <tr>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.project }}</td>
+                  <td>{{ item.not_started }}</td>
+                  <td>{{ item.in_progress }}</td>
+                  <td>{{ item.completed }}</td>
+                  <td>{{ item.total }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    {% endif %}
+  {% endif %}
+</section>

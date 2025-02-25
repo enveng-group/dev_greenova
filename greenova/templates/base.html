@@ -1,113 +1,120 @@
 {% load static %}
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="keywords"
-            content="environmental compliance, management system, greenova, sustainability" />
-      <meta name="description"
-            content=" {% block meta_description %}Environmental Compliance Management System{% endblock meta_description %} " />
-      <title>
-        {% block title %}
-          {% block page_title %}
-            Greenova
-          {% endblock page_title %}
-        {% endblock title %}
-      </title>
-      <!-- Critical CSS -->
-      <link rel="preload" href="{% static 'css/vendor/modern-normalize.css' %}" as="style" />
-      <link rel="preload" href="{% static 'css/vendor/pico.classless.min.css' %}" as="style" />
-      <!-- CSS files -->
-      <link rel="stylesheet" href="{% static 'css/vendor/modern-normalize.css' %}" />
-      <link rel="stylesheet" href="{% static 'css/vendor/pico.classless.min.css' %}" />
-      <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-      {% block extra_head %}
-      {% endblock extra_head %}
-    </head>
-    <body>
-      <!-- Header with semantic nav -->
-      <header role="banner">
-        <nav role="navigation" aria-label="Primary navigation">
-          {% if request.user.is_authenticated %}
-            <!-- Primary nav group (left) -->
-            <ul>
-              <li>
-                <strong>Greenova</strong>
-              </li>
-              <li>
-                <a href="{% url 'dashboard:home' %}">Dashboard</a>
-              </li>
-              <li>
-                <a href="{% url 'projects:select' %}">Projects</a>
-              </li>
-            </ul>
-            <!-- Secondary nav group (right) -->
-            <ul>
-              <li>
-                <details role="list">
-                  <summary aria-haspopup="listbox">
-                    <!-- Add chat button here -->
-                    {% load chatbot_tags %}
-                      {% chat_widget %}
-                    </summary>
-                    <ul role="listbox">
-                      <li>
-                        <form method="post" action="{% url 'authentication:logout' %}">
-                          {% csrf_token %}
-                            <button type="submit">Logout</button>
-                          </form>
-                        </li>
-                      </ul>
-                    </details>
-                  </li>
-                </ul>
-              {% else %}
-                <!-- Primary nav group (left) -->
-                <ul>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords"
+          content="environmental compliance, management system, greenova, sustainability" />
+    <meta name="description"
+          content=" {% block meta_description %}Environmental Compliance Management System{% endblock meta_description %} " />
+    <title>
+      {% block title %}
+        {% block page_title %}
+          Greenova
+        {% endblock page_title %}
+      {% endblock title %}
+    </title>
+    <!-- Critical CSS -->
+    <link rel="preload"
+          href="{% static 'css/vendor/modern-normalize.css' %}"
+          as="style" />
+    <link rel="preload"
+          href="{% static 'css/vendor/pico.classless.min.css' %}"
+          as="style" />
+    <!-- CSS files -->
+    <link rel="stylesheet"
+          href="{% static 'css/vendor/modern-normalize.css' %}" />
+    <link rel="stylesheet"
+          href="{% static 'css/vendor/pico.classless.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    {% block extra_head %}
+    {% endblock extra_head %}
+  </head>
+  <body>
+    <!-- Header with semantic nav -->
+    <header role="banner">
+      <nav role="navigation" aria-label="Primary navigation">
+        {% if request.user.is_authenticated %}
+          <!-- Primary nav group (left) -->
+          <ul>
+            <li>
+              <strong>Greenova</strong>
+            </li>
+            <li>
+              <a href="{% url 'dashboard:home' %}">Dashboard</a>
+            </li>
+            <li>
+              <a href="{% url 'projects:select' %}">Projects</a>
+            </li>
+          </ul>
+          <!-- Secondary nav group (right) -->
+          <ul>
+            <li>
+              <details role="list">
+                <summary aria-haspopup="listbox">
+                  <!-- Add chat button here -->
+                  {% load chatbot_tags %}
+                  {% chat_widget %}
+                </summary>
+                <ul role="listbox">
                   <li>
-                    <strong>Greenova</strong>
+                    <form method="post" action="{% url 'authentication:logout' %}">
+                      {% csrf_token %}
+                      <button type="submit">Logout</button>
+                    </form>
                   </li>
                 </ul>
-                <!-- Secondary nav group (right) -->
-                <ul>
-                  <li>
-                    <a href="{% url 'authentication:login' %}" role="button">Login</a>
-                  </li>
-                </ul>
-              {% endif %}
-            </nav>
-          </header>
-          <!-- Main content area -->
-          <main role="main">
-            {% block main %}
-            {% endblock main %}
-          </main>
-          <!-- Footer -->
-          {% block footer %}
-            <footer role="contentinfo">
-              <article>
-                <small>
-                  <mark>System Status: {{ system_status }}</mark> |
-                  Version: {{ app_version }} |
-                  Last Updated: {{ last_updated|date:"j M Y" }}
-                </small>
-                <hr>
-                <small>
-                  © {% now "Y" %}
-                  <a href="https://www.enveng-group.com.au/" target="_blank" rel="noopener noreferrer">Enveng Group</a> |
-                  Licensed under
-                  <a href="https://www.gnu.org/licenses/agpl-3.0.html"
-                     target="_blank"
-                     rel="noopener noreferrer">GNU AGPL v3.0</a>
-                </small>
-              </article>
-            </footer>
-          {% endblock footer %}
-          <!-- Scripts -->
-          <script src="{% static 'js/vendor/htmx.min.js' %}" defer></script>
-          <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
-          <script src="{% static 'js/vendor/echarts.simple.min.js' %}" defer></script>
-          <script src="{% static 'js/app.js' %}" type="module" defer></script>
-        </body>
-      </html>
+              </details>
+            </li>
+          </ul>
+        {% else %}
+          <!-- Primary nav group (left) -->
+          <ul>
+            <li>
+              <strong>Greenova</strong>
+            </li>
+          </ul>
+          <!-- Secondary nav group (right) -->
+          <ul>
+            <li>
+              <a href="{% url 'authentication:login' %}" role="button">Login</a>
+            </li>
+          </ul>
+        {% endif %}
+      </nav>
+    </header>
+    <!-- Main content area -->
+    <main role="main">
+      {% block main %}
+      {% endblock main %}
+    </main>
+    <!-- Footer -->
+    {% block footer %}
+      <footer role="contentinfo">
+        <article>
+          <small>
+            <mark>System Status: {{ system_status }}</mark> |
+            Version: {{ app_version }} |
+            Last Updated: {{ last_updated|date:"j M Y" }}
+          </small>
+          <hr>
+          <small>
+            © {% now "Y" %}
+            <a href="https://www.enveng-group.com.au/"
+               target="_blank"
+               rel="noopener noreferrer">Enveng Group</a> |
+            Licensed under
+            <a href="https://www.gnu.org/licenses/agpl-3.0.html"
+               target="_blank"
+               rel="noopener noreferrer">GNU AGPL v3.0</a>
+          </small>
+        </article>
+      </footer>
+    {% endblock footer %}
+    <!-- Scripts -->
+    <script src="{% static 'js/vendor/htmx.min.js' %}" defer></script>
+    <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
+    <script src="{% static 'js/app.js' %}" defer></script>
+  </body>
+</html>

@@ -28,7 +28,6 @@ project = Project.objects.create(name="Test Project", description="Test Descript
 obligation = Obligation.objects.create(
     obligation_number="TEST-001",
     project=project,
-    primary_environmental_mechanism="Test Mechanism",
     environmental_aspect="Test Aspect",
     obligation="Test Obligation",
     accountability="Test Account",
