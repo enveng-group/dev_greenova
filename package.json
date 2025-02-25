@@ -1,7 +1,10 @@
 {
+  "name": "greenova",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "dependencies": {
     "@picocss/pico": "2.0.6",
-    "eslint": "9.21.0",
     "htmx.org": "1.9.12",
     "hyperscript.org": "0.9.14",
     "modern-normalize": "3.0.1"
@@ -9,5 +12,12 @@
   "engines": {
     "node": "23.8.0"
   },
-  "packageManager": "npm@11.1.0"
+  "packageManager": "npm@11.1.0",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "eslint": "9.21.0"
+  }
 }

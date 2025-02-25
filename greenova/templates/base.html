@@ -33,88 +33,90 @@
   </head>
   <body>
     <!-- Header with semantic nav -->
-    <header role="banner">
-      <nav role="navigation" aria-label="Primary navigation">
-        {% if request.user.is_authenticated %}
-          <!-- Primary nav group (left) -->
-          <ul>
-            <li>
-              <strong>Greenova</strong>
-            </li>
-            <li>
-              <a href="{% url 'dashboard:home' %}">Dashboard</a>
-            </li>
-            <li>
-              <a href="{% url 'projects:select' %}">Projects</a>
-            </li>
-          </ul>
-          <!-- Secondary nav group (right) -->
-          <ul>
-            <li>
-              <details role="list">
-                <summary aria-haspopup="listbox">
-                  <!-- Add chat button here -->
+    <header>
+      <nav>
+        <ul role="menubar"
+            aria-label="Primary navigation"
+            style="display: flex;
+                   width: 100%;
+                   align-items: center">
+          {% if request.user.is_authenticated %}
+            <!-- Left side navigation items -->
+            <li role="none" style="margin-left: 2rem">
+              <li role="none" style="margin-left: 2rem">
+                <nav aria-label="Primary navigation" role="navigation">
+                  <ul>
+                    <li>
+                      <a href="{% url 'dashboard:home' %}"
+                         role="menuitem"
+                         aria-current="{% if request.resolver_match.namespace == 'dashboard' %}page{% endif %}">
+                        Dashboard
+                      </a>
+                    </li>
+                    {% if request.resolver_match.namespace != 'dashboard' %}
+                      <li>
+                        <span>{{ request.resolver_match.namespace|title }}</span>
+                      </li>
+                    {% endif %}
+                    {% block breadcrumbs %}{% endblock %}
+                  </ul>
+                </nav>
+              </li>
+              <!-- Auth Actions (right-aligned) -->
+              <li role="none"
+                  style="margin-left: auto;
+                         display: flex;
+                         align-items: center;
+                         gap: 1rem">
+                {% if request.user.is_authenticated %}
                   {% load chatbot_tags %}
                   {% chat_widget %}
-                </summary>
-                <ul role="listbox">
-                  <li>
-                    <form method="post" action="{% url 'authentication:logout' %}">
+                  <!-- Logout -->
+                  <form hx-post="{% url 'authentication:logout' %}"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                        hx-push-url="true"
+                        hx-target="body"
+                        hx-redirect="/"
+                        _="on htmx:afterRequest
+                           if event.detail.successful
+                           window.location.href = '/'">
                       {% csrf_token %}
-                      <button type="submit">Logout</button>
-                    </form>
-                  </li>
-                </ul>
-              </details>
-            </li>
+                      <button type="submit" role="menuitem">Logout</button>
+                  </form>
+                {% endif %}
+              </li>
+            {% else %}
+              <li role="none" style="margin-left: auto">
+                <a href="{% url 'authentication:login' %}"
+                   role="menuitem"
+                   aria-label="Login"
+                   hx-boost="true"
+                   _="on click call alert('Redirecting to login...')">Login</a>
+              </li>
+            {% endif %}
           </ul>
-        {% else %}
-          <!-- Primary nav group (left) -->
-          <ul>
-            <li>
-              <strong>Greenova</strong>
-            </li>
-          </ul>
-          <!-- Secondary nav group (right) -->
-          <ul>
-            <li>
-              <a href="{% url 'authentication:login' %}" role="button">Login</a>
-            </li>
-          </ul>
-        {% endif %}
-      </nav>
-    </header>
-    <!-- Main content area -->
-    <main role="main">
-      {% block main %}
-      {% endblock main %}
-    </main>
-    <!-- Footer -->
-    {% block footer %}
-      <footer role="contentinfo">
-        <article>
-          <small>
-            <mark>System Status: {{ system_status }}</mark> |
-            Version: {{ app_version }} |
-            Last Updated: {{ last_updated|date:"j M Y" }}
-          </small>
-          <hr>
-          <small>
-            © {% now "Y" %}
-            <a href="https://www.enveng-group.com.au/"
-               target="_blank"
-               rel="noopener noreferrer">Enveng Group</a> |
-            Licensed under
-            <a href="https://www.gnu.org/licenses/agpl-3.0.html"
-               target="_blank"
-               rel="noopener noreferrer">GNU AGPL v3.0</a>
-          </small>
-        </article>
-      </footer>
-    {% endblock footer %}
-    <!-- Scripts -->
-    <script src="{% static 'js/vendor/htmx.min.js' %}" defer></script>
-    <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
-    <script src="{% static 'js/app.js' %}" defer></script>
-  </body>
-</html>
+        </nav>
+      </header>
+      <body>
+        <!-- Main content -->
+        <main role="main">
+          {% block main %}{% endblock %}
+        </main>
+        {% block footer %}
+        <!-- Footer -->
+        <footer role="contentinfo">
+          <p>
+            © {% now "Y" %} <a href="https://www.enveng-group.com.au/"
+    target="_blank"
+    rel="noopener noreferrer">Enveng Group</a> |
+            Licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html"
+    target="_blank"
+    rel="noopener noreferrer">GNU AGPL v3.0</a>
+          </p>
+        </footer>
+        {% endblock footer %}
+        <script src="{% static 'js/vendor/htmx.min.js' %}" defer></script>
+        <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
+        <script src="{% static 'js/app.js' %}" defer></script>
+      </body>
+    </html>

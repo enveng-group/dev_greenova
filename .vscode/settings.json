@@ -16,7 +16,7 @@
     "editor.insertSpaces": true,
     "editor.fontFamily": "monospace"
   },
-  "[html]": {
+  "[django-html]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "vscode.html-language-features",
     "editor.tabSize": 2,
@@ -27,7 +27,10 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
-    "editor.insertSpaces": true
+    "editor.insertSpaces": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
   },
   "[json]": {
     "editor.formatOnSave": true,
@@ -92,7 +95,6 @@
     "--aggressive",
     "--aggressive",
     "--in-place",
-    "--recursive",
     "--select=E,W,F",
     "--ignore=E226,E302,E41",
     "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules"
@@ -151,6 +153,47 @@
   ],
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
+  "python.analysis.aiCodeActions": {
+    "enabled": true
+  },
+  "python.analysis.generateWithTypeAnnotation": true,
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.analysis.autoIndent": true,
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.supportDocstringTemplate": true,
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.globalModuleInstallation": false,
+  "python.languageServer": "Pylance",
+  "eslint.useFlatConfig": false,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.shellIntegration.enabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.testing.promptToConfigure": true,
+  "html.autoClosingTags": true,
+  "html.format.indentInnerHtml": true,
+  "html.format.indentHandlebars": true,
+  "html.hover.references": true,
+  "html.suggest.html5": true,
+  "css.hover.references": true,
+  "css.lint.duplicateProperties": "error",
+  "css.lint.emptyRules": "error",
+  "css.lint.float": "error",
+  "css.lint.idSelector": "error",
+  "css.lint.boxModel": "error",
+  "css.lint.hexColorLength": "error",
+  "css.validate": true,
+  "javascript.autoClosingTags": true,
+  "javascript.suggest.autoImports": true,
+  "javascript.suggest.completeJSDocs": true,
+  "javascript.validate.enable": true,
+  "eslint.enable": true,
+  "eslint.lintTask.options": "/workspaces/dev_greenova/.eslintrc.js",
+  "eslint.probe": [
+    "javascript"
+  ],
+  "json.validate.enable": true,
+  "django.snippets.use": true,
   "eslint.run": "onSave",
   "files.associations": {
     "*.html": "django-html",
@@ -189,6 +232,11 @@
   "python.testing.pytestEnabled": false,
   "github.gitProtocol": "ssh",
   "python.analysis.autoFormatStrings": true,
+  "html.format.enable": true,
+  "css.format.enable": true,
+  "javascript.format.enable": true,
+  "json.format.enable": true,
+  "markdown.validate.enabled": true,
   "python.analysis.completeFunctionParens": true,
   "python.analysis.enablePytestSupport": false,
   "python.analysis.languageServerMode": "full",

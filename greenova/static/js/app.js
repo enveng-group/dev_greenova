@@ -33,3 +33,10 @@ document.addEventListener('htmx:beforeRequest', function(evt) {
     evt.detail.target.innerHTML = '<div class="notice" role="status" aria-busy="true">Loading charts...</div>';
   }
 });
+
+// Add this to your existing app.js
+document.addEventListener('htmx:afterRequest', (evt) => {
+  if (evt.detail.elt.matches('form[hx-post*="logout"]') && evt.detail.successful) {
+    window.location.href = '/';
+  }
+});

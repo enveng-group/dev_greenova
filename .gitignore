@@ -28,7 +28,7 @@ htmlcov/
 **/media/**
 
 # Virtual Environment
-.env
+#.env
 .venv/
 env/
 venv/
@@ -56,7 +56,7 @@ package-lock.json
 
 # IDE
 .idea/
-.vscode/
+#.vscode/
 *.sublime-workspace
 *.sublime-project
 
@@ -78,20 +78,8 @@ greenova/logs/django.log
 
 # Pipenv
 Pipfile.lock
-.bandit
-.gitignore
-.env
-.editorconfig
-.eslintrc
-.env
-.npmrc
-.pylintrc
-.pythonstartup
-.shellcheckrc
-isort.cfg
-mypy.ini
-pnpm-lock.yaml
-home/vscode/.config/fish/config.fish
-home/vscode/.gitconfig
-.env
-.env
+
+#.editorconfig
+#.eslintrc.cjs
+#.npmrc
+#.pythonstartup

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load static dashboard_tags %}
+
 {% block title %}
   Dashboard
 {% endblock title %}
+
 {% block main %}
   <article>
     <header>
@@ -28,3 +30,21 @@
     </div>
   </article>
 {% endblock main %}
+
+{% block footer %}
+  <footer role="contentinfo">
+    <!-- Dashboard-specific footer content -->
+    <p>
+      System Status:
+      <mark>{{ system_status }}</mark> |
+      Version: {{ app_version }} |
+      Last Updated: {{ last_updated|date:"j M Y" }}
+    </p>
+    <p>
+      Need help? Contact
+      <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+    </p>
+  </footer>
+  <!-- Include the base template's footer content after dashboard footer -->
+  {{ block.super }}
+{% endblock footer %}
