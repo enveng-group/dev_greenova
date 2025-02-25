@@ -11,6 +11,7 @@
     "EditorConfig.EditorConfig",
     "batisteo.vscode-django",
     "tamasfe.even-better-toml",
-    "ms-vscode.vscode-copilot-data-analysis"
+    "ms-vscode.vscode-copilot-data-analysis",
+    "github.vscode-pull-request-github"
   ]
 }
