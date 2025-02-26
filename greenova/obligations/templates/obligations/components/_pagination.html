@@ -1,0 +1,36 @@
+<!-- Pagination Controls -->
+<nav class="pagination" aria-label="Obligations pagination">
+  <ul class="pagination-list">
+    {% if page_obj.has_previous %}
+      <li>
+        <a href="#"
+           hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&page={{ page_obj.previous_page_number }}"
+           hx-target=".obligations-section"
+           hx-swap="outerHTML"
+           rel="prev"
+           aria-label="Previous page">
+          Previous
+        </a>
+      </li>
+    {% endif %}
+
+    <li>
+      <span class="pagination-info">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li>
+        <a href="#"
+           hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&page={{ page_obj.next_page_number }}"
+           hx-target=".obligations-section"
+           hx-swap="outerHTML"
+           rel="next"
+           aria-label="Next page">
+          Next
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>

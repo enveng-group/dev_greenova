@@ -85,9 +85,7 @@
         "foxundermoon.shell-format",
         "EditorConfig.EditorConfig",
         "batisteo.vscode-django",
-        "tamasfe.even-better-toml",
-        "ms-vscode.vscode-copilot-data-analysis",
-        "GitHub.vscode-pull-request-github"
+        "tamasfe.even-better-toml"
       ]
     }
   },
