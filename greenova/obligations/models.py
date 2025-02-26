@@ -1,13 +1,15 @@
 from django.db import models
+from projects.models import Project
+from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
 
 class Obligation(models.Model):
     """Represents an environmental obligation."""
-    obligation_number = models.CharField(max_length=20, primary_key=True)
-    project = models.ForeignKey(
-        'projects.Project',
+    obligation_number: str = models.CharField(max_length=20, primary_key=True)  # Add type hint
+    project: Project = models.ForeignKey(  # Add type hint
+        Project,
         on_delete=models.CASCADE,
         related_name='obligations'
     )
@@ -76,3 +78,6 @@ class Obligation(models.Model):
             models.Index(fields=['action_due_date']),
             models.Index(fields=['project'])
         ]
+
+    def __str__(self) -> str:
+        return f"{self.obligation_number}"

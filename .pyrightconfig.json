@@ -1,0 +1,40 @@
+{
+  "include": [
+    "greenova"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.venv",
+    "**/node_modules",
+    "**/.vscode-server"
+  ],
+  "ignore": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.venv",
+    "**/node_modules",
+    "**/.vscode-server"
+  ],
+  "defineConstant": {
+    "DEBUG": true
+  },
+  "venvPath": ".venv",
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Linux",
+  "typeCheckingMode": "strict",
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": "warning",
+  "reportGeneralTypeIssues": "error",
+  "reportPrivateUsage": "warning",
+  "reportUnknownMemberType": "warning",
+  "reportUnknownParameterType": "warning",
+  "reportUnknownVariableType": "warning",
+  "reportUnknownArgumentType": "warning",
+  "reportUnusedCoroutine": "warning",
+  "reportUntypedFunctionDecorator": "warning",
+  "stubPath": ".venv/lib/python3.13/site-packages/django-stubs"
+}

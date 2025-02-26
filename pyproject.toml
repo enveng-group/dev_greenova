@@ -1,0 +1,2 @@
+[tool.django-stubs]
+django_settings_module = "greenova.settings"

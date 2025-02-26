@@ -52,3 +52,58 @@ mark.success {
 .upcoming {
   border-left: 4px solid var(--info-color);
 }
+
+/* Status badges */
+mark[role="status"] {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+mark.warning {
+  background: var(--warning-background);
+  color: var(--warning-text);
+}
+
+mark.info {
+  background: var(--info-background);
+  color: var(--info-text);
+}
+
+mark.success {
+  background: var(--success-background);
+  color: var(--success-text);
+}
+
+/* Table improvements */
+.table-container {
+  margin: var(--spacing) 0;
+  overflow-x: auto;
+  background: var(--card-background-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing);
+}
+
+.table-container table {
+  margin: 0;
+  min-width: 100%;
+}
+
+/* Loading states */
+[aria-busy="true"] {
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Error notices */
+.notice.error {
+  background: var(--error-background);
+  color: var(--error-text);
+  padding: var(--spacing);
+  border-radius: var(--border-radius);
+  margin: var(--spacing) 0;
+}

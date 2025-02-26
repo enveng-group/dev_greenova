@@ -4,6 +4,7 @@ from django.db.models import Count, Q
 from obligations.models import Obligation
 from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project
+from typing import Any
 import logging
 
 logger = logging.getLogger(__name__)
@@ -48,8 +49,7 @@ class Command(BaseCommand):
             # Return True since we've fixed the NULL values
             return True
         return True
-
-    def handle(self, *args, **options):
+    def handle(self, *args: tuple[Any, ...], **options: dict[str, Any]) -> None:
         try:
             with transaction.atomic():
                 if not self.validate_obligations():
@@ -81,6 +81,7 @@ class Command(BaseCommand):
                 mechanisms_processed = 0
 
                 for data in mechanisms_data:
+                    mech_name = None  # Initialize before try block
                     try:
                         project = Project.objects.get(id=data['project'])
                         mech_name = data['primary_environmental_mechanism__name']
@@ -107,7 +108,7 @@ class Command(BaseCommand):
                             status = 'not started'
 
                         # Update or create mechanism
-                        mechanism, created = EnvironmentalMechanism.objects.update_or_create(
+                        _, created = EnvironmentalMechanism.objects.update_or_create(
                             name=mech_name,
                             project=project,
                             defaults={

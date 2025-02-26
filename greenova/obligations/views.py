@@ -2,10 +2,12 @@ from typing import Dict, Any
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
-from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 from .models import Obligation
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ObligationSummaryView(LoginRequiredMixin, TemplateView):
     """View for obligations summary and table."""
@@ -21,7 +23,15 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Get context data for template."""
         context = super().get_context_data(**kwargs)
-        project_id = self.request.GET.get('project')
+
+        # Try both project_id and project parameters
+        project_id = (
+            self.request.GET.get('project_id') or
+            self.request.GET.get('project')
+        )
+
+        logger.debug(f"Request GET params: {self.request.GET}")
+        logger.debug(f"Looking for project_id: {project_id}")
 
         if not project_id:
             context['error'] = 'No project selected.'
@@ -30,8 +40,13 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
         try:
             today = timezone.now().date()
 
-            # Get all obligations for project
-            obligations = Obligation.objects.filter(project_id=project_id)
+            # Get all obligations for project with select_related for optimization
+            obligations = Obligation.objects.filter(
+                project_id=project_id
+            ).select_related(
+                'project',
+                'primary_environmental_mechanism'
+            )
 
             # Calculate summary stats
             context['summary'] = {
@@ -51,12 +66,15 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
             }
 
             # Get table data
-            context['obligations'] = obligations.select_related(
-                'project',
-                'primary_environmental_mechanism'
-            ).order_by('action_due_date')
+            context['obligations'] = obligations.order_by('action_due_date')
+            context['project_id'] = project_id
+
+            logger.info(
+                f"Found {obligations.count()} obligations for project {project_id}"
+            )
 
         except Exception as e:
+            logger.error(f"Error loading obligations for project {project_id}: {e}")
             context['error'] = f'Error loading obligations: {str(e)}'
 
         return context
