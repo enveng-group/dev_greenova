@@ -1,0 +1,54 @@
+/* Summary Cards Layout */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing);
+  margin-bottom: var(--spacing);
+}
+
+.summary-cards article {
+  padding: var(--spacing);
+  border-radius: var(--border-radius);
+  background: var(--card-background-color);
+}
+
+.summary-cards .count {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Table Styles */
+.table-container {
+  overflow-x: auto;
+  margin: var(--spacing) 0;
+}
+
+.table-container table {
+  min-width: 100%;
+}
+
+/* Status colors */
+mark.warning {
+  background: var(--warning-color);
+  color: var(--warning-text);
+}
+
+mark.info {
+  background: var(--info-color);
+  color: var(--info-text);
+}
+
+mark.success {
+  background: var(--success-color);
+  color: var(--success-text);
+}
+
+/* Card colors */
+.overdue {
+  border-left: 4px solid var(--warning-color);
+}
+
+.upcoming {
+  border-left: 4px solid var(--info-color);
+}

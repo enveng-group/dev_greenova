@@ -218,7 +218,7 @@
   "python.analysis.extraPaths": [
     "${workspaceFolder}/.venv/lib/python3.13/site-packages"
   ],
-  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.typeCheckingMode": "strict",
   "python.analysis.inlayHints.functionReturnTypes": false,
   "python.analysis.inlayHints.variableTypes": false,
   "python.testing.unittestEnabled": true,

@@ -1,0 +1,76 @@
+{% load obligation_tags %}
+
+<section aria-labelledby="obligations-heading" class="obligations-section">
+  <h2 id="obligations-heading">Obligations Overview</h2>
+
+  {% if error %}
+    <div class="notice error" role="alert">
+      <p>{{ error }}</p>
+    </div>
+  {% else %}
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <article class="overdue">
+        <header>
+          <h3>Overdue</h3>
+          <p class="count">{{ summary.overdue }}</p>
+        </header>
+      </article>
+
+      <article class="upcoming">
+        <header>
+          <h3>Next 7 Days</h3>
+          <p class="count">{{ summary.due_7days }}</p>
+        </header>
+      </article>
+
+      <article class="upcoming">
+        <header>
+          <h3>Next 14 Days</h3>
+          <p class="count">{{ summary.due_14days }}</p>
+        </header>
+      </article>
+
+      <article class="upcoming">
+        <header>
+          <h3>Next 30 Days</h3>
+          <p class="count">{{ summary.due_30days }}</p>
+        </header>
+      </article>
+    </div>
+
+    <!-- Obligations Table -->
+    <div class="table-container">
+      <table role="grid">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Mechanism</th>
+            <th scope="col">Obligation</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Accountability</th>
+            <th scope="col">Responsibility</th>
+            <th scope="col">Project Phase</th>
+            <th scope="col">Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obligation in obligations %}
+            <tr>
+              <td>{{ obligation.obligation_number }}</td>
+              <td>{{ obligation.primary_environmental_mechanism.name }}</td>
+              <td>{{ obligation.obligation|truncatewords:30 }}</td>
+              <td>{{ obligation.action_due_date|format_due_date }}</td>
+              <td>{% status_badge obligation.status %}</td>
+              <td>{{ obligation.accountability }}</td>
+              <td>{{ obligation.responsibility }}</td>
+              <td>{{ obligation.project_phase }}</td>
+              <td>{{ obligation.evidence|yesno:"Yes,No" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</section>
