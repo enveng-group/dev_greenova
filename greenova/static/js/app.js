@@ -148,3 +148,122 @@ document.addEventListener('htmx:responseError', function(evt) {
   `;
 });
 
+// Handle table scrolling
+document.addEventListener('htmx:afterSettle', function() {
+  const tableContainer = document.querySelector('.horizontal-scroll');
+  const scrollThumb = document.querySelector('.scroll-thumb');
+
+  if (tableContainer && scrollThumb) {
+    // Update scroll indicator
+    const updateScrollIndicator = () => {
+      const scrollWidth = tableContainer.scrollWidth;
+      const viewportWidth = tableContainer.clientWidth;
+      const scrollLeft = tableContainer.scrollLeft;
+
+      // Calculate thumb width and position
+      const thumbWidth = (viewportWidth / scrollWidth) * 100;
+      const thumbPosition = (scrollLeft / (scrollWidth - viewportWidth)) * (100 - thumbWidth);
+
+      // Update thumb style
+      scrollThumb.style.width = `${thumbWidth}%`;
+      scrollThumb.style.marginLeft = `${thumbPosition}%`;
+    };
+
+    // Initial update
+    updateScrollIndicator();
+
+    // Update on scroll
+    tableContainer.addEventListener('scroll', updateScrollIndicator);
+
+    // Make top scroll indicator interactive
+    const scrollIndicator = document.getElementById('scroll-indicator');
+    scrollIndicator.addEventListener('click', (e) => {
+      const rect = scrollIndicator.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      const maxScroll = tableContainer.scrollWidth - tableContainer.clientWidth;
+      tableContainer.scrollLeft = maxScroll * ratio;
+    });
+  }
+});
+
+// Filter form submission handler
+document.addEventListener('submit', function(e) {
+  if (e.target.matches('#obligations-filter-form')) {
+    // The form will be handled by HTMX, this is just for additional functionality
+    e.preventDefault();
+
+    // Update any UI elements related to filtering
+    const filterCount = document.getElementById('filter-count');
+    if (filterCount) {
+      const activeFilters = Array.from(e.target.querySelectorAll('select, input[type="text"]'))
+        .filter(el => el.value && el.value !== '')
+        .length;
+      filterCount.textContent = activeFilters;
+      filterCount.hidden = activeFilters === 0;
+    }
+  }
+});
+
+// Print handler
+document.addEventListener('click', function(e) {
+  if (e.target.matches('#print-obligations')) {
+    e.preventDefault();
+    window.print();
+  }
+});
+
+// Export handler
+document.addEventListener('click', function(e) {
+  if (e.target.matches('#export-obligations')) {
+    const table = document.querySelector('table');
+    if (!table) return;
+
+    // Function to download CSV
+    const exportToCSV = (filename) => {
+      // Extract headers
+      const rows = Array.from(table.querySelectorAll('tr'));
+      const headers = Array.from(rows[0].querySelectorAll('th'))
+        .map(cell => `"${cell.textContent.trim().replace(/"/g, '""')}"`);
+
+      // Extract data rows
+      const data = rows.slice(1).map(row => {
+        return Array.from(row.querySelectorAll('td'))
+          .map(cell => `"${cell.textContent.trim().replace(/"/g, '""')}"`);
+      });
+
+      // Combine headers and data
+      const csvContent = [
+        headers.join(','),
+        ...data.map(row => row.join(','))
+      ].join('\n');
+
+      // Create download link
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.display = 'none';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    exportToCSV('obligations_export.csv');
+  }
+});
+
+// Function to remove filter
+function removeFilter(type, value) {
+  const select = document.querySelector(`select[name="${type}"]`);
+  if (select) {
+    Array.from(select.options).forEach(option => {
+      if (option.value === value) {
+        option.selected = false;
+      }
+    });
+    select.dispatchEvent(new Event('change'));
+  }
+}

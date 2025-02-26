@@ -32,7 +32,7 @@
 
     <!-- Obligations Container -->
     <div id="obligations-container"
-         hx-get="{% url 'obligations:obligation_summary' %}"
+         hx-get="{% url 'obligations:summary' %}"
          hx-trigger="change from:#project-select"
          hx-include="#project-form"
          hx-target="this">
