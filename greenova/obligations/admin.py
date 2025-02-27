@@ -103,3 +103,37 @@ class ObligationAdmin(admin.ModelAdmin):
         except Exception as e:
             logger.error(f"Error saving obligation: {str(e)}")
             raise
+
+    def save_model(
+            self,
+            request: HttpRequest,
+            obj: Obligation,
+            form: ModelForm,
+            change: bool) -> None:
+        """
+        Log obligation changes in admin and ensure proper obligation number.
+
+        Args:
+            request: The HTTP request object
+            obj: The obligation instance being saved
+            form: The model form instance
+            change: Boolean indicating if this is an update
+        """
+        try:
+            # For new obligations without a number, generate one
+            if not change and (not obj.obligation_number or obj.obligation_number.strip() == ''):
+                obj.obligation_number = Obligation.get_next_obligation_number()
+
+            action = "Updated" if change else "Created"
+            logger.info(
+                f"{action} obligation {obj.obligation_number} "
+                f"for project {obj.project.name}"
+            )
+            super().save_model(request, obj, form, change)
+
+            # Update mechanism counts
+            if obj.primary_environmental_mechanism:
+                obj.primary_environmental_mechanism.update_obligation_counts()
+        except Exception as e:
+            logger.error(f"Error saving obligation: {str(e)}")
+            raise

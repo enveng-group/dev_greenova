@@ -298,7 +298,36 @@
           <tbody>
             {% for obligation in obligations %}
               <tr>
-                <td>{{ obligation.obligation_number }}</td>
+                <td>
+                  <!-- Make obligation number clickable -->
+                  <a href="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
+                     class="obligation-link"
+                     aria-label="Edit obligation {{ obligation.obligation_number }}">
+                    {{ obligation.obligation_number }}
+                  </a>
+                </td>
+                <td class="actions-column">
+                  <div class="action-buttons">
+                    <a href="{% url 'obligations:detail' obligation_number=obligation.obligation_number %}"
+                       class="action-btn view"
+                       title="View details"
+                       aria-label="View obligation {{ obligation.obligation_number }}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </a>
+                    <a href="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
+                       class="action-btn edit"
+                       title="Edit"
+                       aria-label="Edit obligation {{ obligation.obligation_number }}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </a>
+                  </div>
+                </td>
                 <td>{{ obligation.primary_environmental_mechanism.name }}</td>
                 <td>{{ obligation.procedure|default:"-" }}</td>
                 <td>{{ obligation.environmental_aspect }}</td>

@@ -41,68 +41,71 @@
           <li><a href="#" data-theme-switcher="light">Light</a></li>
           <li><a href="#" data-theme-switcher="dark">Dark</a></li>
         </ul>
-        <ul role="menubar"
-            aria-label="Primary navigation"
-            style="display: flex;
-                   width: 100%;
-                   align-items: center">
+        <ul role="menubar">
           {% if request.user.is_authenticated %}
-            <!-- Left side navigation items -->
             <li role="none" style="margin-left: 2rem">
-              <li role="none" style="margin-left: 2rem">
-                <nav aria-label="Primary navigation" role="navigation">
-                  <ul>
+              <a href="{% url 'dashboard:home' %}" role="menuitem">Dashboard</a>
+            </li>
+            <li role="none" style="margin-left: 2rem">
+              <nav aria-label="Primary navigation" role="navigation">
+                <ul>
+                  {% if request.resolver_match.namespace != 'dashboard' %}
                     <li>
-                      <a href="{% url 'dashboard:home' %}"
-                         role="menuitem"
-                         aria-current="{% if request.resolver_match.namespace == 'dashboard' %}page{% endif %}">
-                        Dashboard
-                      </a>
+                      <span>{{ request.resolver_match.namespace|title }}</span>
                     </li>
-                    {% if request.resolver_match.namespace != 'dashboard' %}
-                      <li>
-                        <span>{{ request.resolver_match.namespace|title }}</span>
-                      </li>
-                    {% endif %}
-                    {% block breadcrumbs %}{% endblock %}
-                  </ul>
-                </nav>
-              </li>
-              <!-- Auth Actions (right-aligned) -->
-              <li role="none"
-                  style="margin-left: auto;
-                         display: flex;
-                         align-items: center;
-                         gap: 1rem">
-                {% if request.user.is_authenticated %}
-                  {% load chatbot_tags %}
-                  {% chat_widget %}
-                  <!-- Logout -->
-                  <form hx-post="{% url 'authentication:logout' %}"
-                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                        hx-push-url="true"
-                        hx-target="body"
-                        hx-redirect="/"
-                        _="on htmx:afterRequest
-                           if event.detail.successful
-                           window.location.href = '/'">
-                      {% csrf_token %}
-                      <button type="submit" role="menuitem">Logout</button>
-                  </form>
-                {% endif %}
-              </li>
-            {% else %}
-              <li role="none" style="margin-left: auto">
-                <a href="{% url 'authentication:login' %}"
-                   role="menuitem"
-                   aria-label="Login"
-                   hx-boost="true"
-                   _="on click call alert('Redirecting to login...')">Login</a>
-              </li>
-            {% endif %}
-          </ul>
-        </nav>
-      </header>
+                  {% endif %}
+                  {% block breadcrumbs %}{% endblock %}
+                </ul>
+              </nav>
+            </li>
+            <!-- Auth Actions (right-aligned) -->
+            <li role="none"
+                style="margin-left: auto;
+                       display: flex;
+                       align-items: center;
+                       gap: 1rem">
+              {% if request.user.is_authenticated %}
+                <!-- Add Obligation Button -->
+                <a href="{% url 'obligations:create' %}{% if request.GET.project_id %}?project_id={{ request.GET.project_id }}{% endif %}"
+                   class="add-obligation-btn"
+                   role="button"
+                   aria-label="Add new obligation">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Add Obligation
+                </a>
+
+                {% load chatbot_tags %}
+                {% chat_widget %}
+                <!-- Logout -->
+                <form hx-post="{% url 'authentication:logout' %}"
+                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                      hx-push-url="true"
+                      hx-target="body"
+                      hx-redirect="/"
+                      _="on htmx:afterRequest
+                         if event.detail.successful
+                         window.location.href = '/'">
+                    {% csrf_token %}
+                    <button type="submit" role="menuitem">Logout</button>
+                </form>
+              {% endif %}
+            </li>
+          {% else %}
+            <li role="none" style="margin-left: auto">
+              <a href="{% url 'authentication:login' %}"
+                 role="menuitem"
+                 aria-label="Login"
+                 hx-boost="true">
+                Login
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
       <body>
         <!-- Main content -->
         <main role="main">

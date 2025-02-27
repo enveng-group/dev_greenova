@@ -119,3 +119,53 @@ mark[role="status"] {
   padding: 2rem;
   color: var(--text-muted);
 }
+
+/* Clickable obligation number styling */
+.obligation-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.obligation-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* Action buttons styling */
+.actions-column {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  color: var(--primary);
+  transition: background-color 0.2s, color 0.2s;
+  color: var(--text-color);
+  background-color: transparent;
+  border-radius: 4px;
+  height: 24px;
+  width: 24px;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  background-color: var(--background-alt);
+}
+
+.action-btn.edit:hover {
+  color: var(--info);
+}
+
+.action-btn.view:hover {
+  color: var(--primary);
+}
