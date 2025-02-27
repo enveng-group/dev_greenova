@@ -1,14 +1,16 @@
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from projects.models import Project
-from typing import Optional
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 import logging
 
 logger = logging.getLogger(__name__)
 
 class Obligation(models.Model):
     """Represents an environmental obligation."""
-    obligation_number: str = models.CharField(max_length=20, primary_key=True)  # Add type hint
-    project: Project = models.ForeignKey(  # Add type hint
+    obligation_number = models.CharField(max_length=20, primary_key=True)
+    project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
         related_name='obligations'
@@ -81,3 +83,23 @@ class Obligation(models.Model):
 
     def __str__(self) -> str:
         return f"{self.obligation_number}"
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """Override save to update mechanism counts."""
+        super().save(*args, **kwargs)
+        # Update mechanism counts
+        if self.primary_environmental_mechanism:
+            self.primary_environmental_mechanism.update_obligation_counts()
+
+# Signal handlers to update mechanism counts
+@receiver(post_save, sender=Obligation)
+def update_mechanism_counts_on_save(sender: Type[Obligation], instance: Obligation, **kwargs: Any) -> None:
+    """Update mechanism counts when an obligation is saved."""
+    if instance.primary_environmental_mechanism:
+        instance.primary_environmental_mechanism.update_obligation_counts()
+
+@receiver(post_delete, sender=Obligation)
+def update_mechanism_counts_on_delete(sender: Type[Obligation], instance: Obligation, **kwargs: Any) -> None:
+    """Update mechanism counts when an obligation is deleted."""
+    if instance.primary_environmental_mechanism:
+        instance.primary_environmental_mechanism.update_obligation_counts()

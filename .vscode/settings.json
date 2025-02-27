@@ -1,7 +1,7 @@
 {
   "[css]": {
     "editor.defaultFormatter": "vscode.css-language-features",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.suggest.insertMode": "replace",
     "editor.tabSize": 2,
     "editor.insertSpaces": true
@@ -17,7 +17,7 @@
     "editor.fontFamily": "monospace"
   },
   "[django-html]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "vscode.html-language-features",
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
@@ -25,7 +25,7 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.codeActionsOnSave": {
@@ -33,13 +33,13 @@
     }
   },
   "[json]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "vscode.json-language-features",
     "editor.tabSize": 2,
     "editor.insertSpaces": true
   },
   "[markdown]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "vscode.markdown-language-features",
     "editor.wordWrap": "on",
     "editor.quickSuggestions": {
@@ -66,7 +66,7 @@
     "files.insertFinalNewline": true
   },
   "[python]": {
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit",
@@ -80,12 +80,12 @@
   },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "files.eol": "\n"
   },
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.tabSize": 4,
     "editor.insertSpaces": true
   },
@@ -101,7 +101,8 @@
   ],
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": true,
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
   "editor.linkedEditing": true,
   "editor.renderWhitespace": "boundary",
   "editor.rulers": [
