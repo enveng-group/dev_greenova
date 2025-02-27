@@ -805,7 +805,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Node.js Environment:
 
-   - Node.js 23.8.0 (exact version)
+   - Node.js 23.9.0 (exact version)
    - npm 11.1.0 (exact version)
 
 2. Required Libraries:
