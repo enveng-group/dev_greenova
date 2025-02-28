@@ -9,13 +9,18 @@
 
 
 
-:root[data-theme=light], :root[data-theme=dark] {
+:root[data-theme=light],
+:root[data-theme=dark] {
   /**************************************************
    *                                                *
    *              Pico Defaults colours             *
+   *
+   * Basic colours used in the CSS, these are changed dynamic based on
+   * the theme selected.
+   *
    *                                                *
    **************************************************/
-   
+
   /* Button backgrounds*/
   --pico-primary-background: var(--greenova-green-primary);
 
@@ -25,7 +30,7 @@
   /* Background Primary */
   --pico-background-color: var(--greenova-background-primary);
 
-  /* Container Backgrounds */ 
+  /* Container Backgrounds */
   --pico-card-background-color: var(--greenova-background-secondary);
 
   /* Container Headers/Borders */
@@ -42,7 +47,7 @@
   --pico-h5-color: var(--greenova-text-secondary-dark);
   --pico-h6-color: var(--greenova-text-secondary-dark);
   --pico-color: var(--greenova-text-primary-dark);
-  
+
   /**************************************************
    *                                                *
    *              Notification  colours             *
@@ -60,7 +65,7 @@
 
   /*Notification Primary Mid - Use Cases: Middle priority notification marker */
   --greenova-notif-primary-mid: #FAE100;
-  
+
   --greenova-info-background: var(--greenova-notif-primary-mid);
   --greenova-info-text: #000000;
 
@@ -75,7 +80,7 @@
 
   /* Notification Secondary Low - Use Cases: outline of notification marker */
   --greenova-notif-secondary-low: #B1E5A4;
-  
+
   --pico-mark-background-color: var(--greenova-notif-secondary-low);
   --pico-mark-color: #000000;
 
@@ -121,7 +126,10 @@ header {
 }
 
 /* Element is used for placeholder text before you type. */
-input[type='text']::placeholder /*input, optgroup, select, textarea*/ {
+input[type='text']::placeholder
+
+/*input, optgroup, select, textarea*/
+  {
   color: var(--greenova-tertiary-dark);
   /* Mutable Text, for text box hints */
 }
