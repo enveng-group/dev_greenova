@@ -74,7 +74,7 @@
           ".venv": true
         }
       },
-      "extensions": [
+  "dev.containers.defaultExtensions": [
         "ms-python.autopep8",
         "dbaeumer.vscode-eslint",
         "GitHub.copilot",
@@ -85,10 +85,9 @@
         "foxundermoon.shell-format",
         "EditorConfig.EditorConfig",
         "batisteo.vscode-django",
-        "tamasfe.even-better-toml"
-      ]
-    }
-  },
+        "tamasfe.even-better-toml",
+        "mutantdino.resourcemonitor"
+      ],
   "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
   "forwardPorts": [
     8000
