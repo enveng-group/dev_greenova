@@ -1,53 +1,44 @@
-:root:not([data-theme=dark]),
-[data-theme=light] {
+@import 'theme-light.css';
+@import 'theme-dark.css';
 
+/**************************************************
+ *                                                *
+ *          Non-theme  Specific  Colours          *
+ *                                                *
+ **************************************************/
+
+
+
+:root[data-theme=light],
+:root[data-theme=dark] {
   /**************************************************
    *                                                *
-   *                 Primary colours                *
+   *              Pico Defaults colours             *
+   *
+   * Basic colours used in the CSS, these are changed dynamic based on
+   * the theme selected.
+   *
    *                                                *
    **************************************************/
 
-  /* Green Primary - Use Cases: Body backgrounds, icon backgrounds, buttons */
-  --greenova-green-primary: #909E77;
-
-  --pico-primary-background: var(--greenova-green-primary);
   /* Button backgrounds*/
+  --pico-primary-background: var(--greenova-green-primary);
 
-  /* Green Secondary - Use Cases: Header backgrounds */
-  --greenova-green-secondary: #B5C495;
-
-  --pico-secondary-background: var(--greenova-green-secondary);
   /* Header background */
+  --pico-secondary-background: var(--greenova-green-secondary);
 
-  /* Green Tertiary - Use Cases: Focus Areas on header or background backgrounds */
-  --greenova-green-tertiary: #697454;
-
-  /* Beige Primary - Use Cases: Secondary accent, navigation bars, icons in focus */
-  --greenova-beige-primary: #E5DED0;
-
-  /* Beige Secondary - Use Cases: Beige alternate, when Beige Primary in use */
-  --greenova-beige-secondary: #CCBDAC;
-
-  /* Background Primary - Use Cases: Frame Colour, main background*/
-  --greenova-background-primary: #E8EBE4;
-
-  --pico-background-color: var(--greenova-background-primary);
   /* Background Primary */
+  --pico-background-color: var(--greenova-background-primary);
 
-  /* Background Secondary - Use Cases: Container background colour*/
-  --greenova-background-secondary: #E2E7DD;
-
-  --pico-card-background-color: var(--greenova-background-secondary);
   /* Container Backgrounds */
+  --pico-card-background-color: var(--greenova-background-secondary);
 
-  /* Text Primary Dark - Use Cases: Immutable Text, for Titles. Icons */
-  --greenova-text-primary-dark: #000000;
+  /* Container Headers/Borders */
+  --pico-card-border-color: var(--greenova-green-secondary);
+  --pico-card-sectioning-background-color: var(--greenova-green-secondary);
 
-  --pico-h1-color: var(--greenova-text-primary-dark);
   /* Titles */
-
-  /* Text Secondary Dark - Use Cases: Immutable Text, Headings and body*/
-  --greenova-text-secondary-dark: #303030;
+  --pico-h1-color: var(--greenova-text-primary-dark);
 
   /* Headers */
   --pico-h2-color: var(--greenova-text-secondary-dark);
@@ -55,20 +46,7 @@
   --pico-h4-color: var(--greenova-text-secondary-dark);
   --pico-h5-color: var(--greenova-text-secondary-dark);
   --pico-h6-color: var(--greenova-text-secondary-dark);
-
   --pico-color: var(--greenova-text-primary-dark);
-  /* Body text */
-
-  /* Text Tertiary Dark - Use Cases: Mutable Text, for text box hints */
-  --greenova-tertiary-dark: #B3B3B3;
-
-
-  /*Text Primary Light - Use Cases: All text on coloured backgrounds*/
-  --greenova-primary-light: #FFFFFF;
-
-
-
-
 
   /**************************************************
    *                                                *
@@ -79,11 +57,17 @@
   /* Notification Primary High - Use Cases: Highest priority notification marker */
   --greenova-notif-primary-high: #FF1F1F;
 
+  --greenova-warning-background: var(--greenova-notif-primary-high);
+  --greenova-warning-text: #000000;
+
   /* Notification Secondary High - Use Cases: outline of notification marker */
   --greenova-notif-secondary-high: #FFB6B6;
 
   /*Notification Primary Mid - Use Cases: Middle priority notification marker */
   --greenova-notif-primary-mid: #FAE100;
+
+  --greenova-info-background: var(--greenova-notif-primary-mid);
+  --greenova-info-text: #000000;
 
   /* Notification Secondary Mid - Use Cases: outline of notification marker */
   --greenova-notif-secondary-mid: #FFEF9C;
@@ -91,8 +75,14 @@
   /* Notification Primary Low - Use Cases: Lowest priority notification marker */
   --greenova-notif-primary-low: #2FC709;
 
+  --greenova-success-background: var(--greenova-notif-primary-low);
+  --greenova-success-text: #000000;
+
   /* Notification Secondary Low - Use Cases: outline of notification marker */
   --greenova-notif-secondary-low: #B1E5A4;
+
+  --pico-mark-background-color: var(--greenova-notif-secondary-low);
+  --pico-mark-color: #000000;
 
 
 
@@ -136,7 +126,10 @@ header {
 }
 
 /* Element is used for placeholder text before you type. */
-input[type='text']::placeholder {
+input[type='text']::placeholder
+
+/*input, optgroup, select, textarea*/
+  {
   color: var(--greenova-tertiary-dark);
   /* Mutable Text, for text box hints */
 }
@@ -145,8 +138,6 @@ p,
 article {
   color: var(--greenova-text-secondary-dark);
 }
-
-
 
 /* Navigation */
 [role='navigation'],

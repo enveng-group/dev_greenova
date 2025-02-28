@@ -1,0 +1,47 @@
+/**************************************************
+ *                                                *
+ *               Dark-mode Coloring               *
+ *                                                *
+ **************************************************/        
+ :root:not([data-theme=light]), [data-theme=dark] {
+
+  /**************************************************
+   *                                                *
+   *                 Primary colours                *
+   *                                                *
+   **************************************************/
+
+  /* Green Primary - Use Cases: Body backgrounds, icon backgrounds, buttons */
+  --greenova-green-primary: #A0AE87;
+
+  /* Green Secondary - Use Cases: Header backgrounds */
+  --greenova-green-secondary: #697959;
+
+  /* Green Tertiary - Use Cases: Focus Areas on header or background backgrounds */
+  --greenova-green-tertiary: #697454;
+
+  /* Beige Primary - Use Cases: Secondary accent, navigation bars, icons in focus */
+  --greenova-beige-primary: #9C8D7C;
+
+  /* Beige Secondary - Use Cases: Beige alternate, when Beige Primary in use */
+  --greenova-beige-secondary: #AC9D8C;
+
+  /* Background Primary - Use Cases: Frame Colour, main background*/
+  --greenova-background-primary: #697454;
+
+  /* Background Secondary - Use Cases: Container background colour*/
+  --greenova-background-secondary: #809070;
+
+  /* Text Primary Dark - Use Cases: Immutable Text, for Titles. Icons */
+  --greenova-text-primary-dark: #FFFFFF;
+
+  /* Text Secondary Dark - Use Cases: Immutable Text, Headings and body*/
+  --greenova-text-secondary-dark: #CFCFCF;
+
+  /* Text Tertiary Dark - Use Cases: Mutable Text, for text box hints */
+  --greenova-tertiary-dark: #4C4C4C;
+
+  /* Text Primary Light - Use Cases: All text on coloured backgrounds*/
+  --greenova-primary-light: #000000;
+
+}
