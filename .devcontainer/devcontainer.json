@@ -15,7 +15,7 @@
     "vscode": {
       "settings": {
         "dev.containers.gpuAvailability": "none",
-        "dotfiles.repository": "git@github.com:enssol/dotfiles.git",
+        "dotfiles.repository": "https://github.com/enssol/dotfiles.git",
         "dotfiles.targetPath": "/home/vscode/dotfiles",
         "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
         "python.interpreter.infoVisibility": "always",
