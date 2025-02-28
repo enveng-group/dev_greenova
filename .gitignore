@@ -40,9 +40,10 @@ db.sqlite3
 *.db
 
 # Django
-/staticfiles/
-/media/
+#/staticfiles/
+#/media/
 local_settings.py
+**/migrations/**
 
 # Logs
 *.log
