@@ -35,36 +35,22 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
 
             mechanism_charts = []
 
-            # Generate overall status distribution - include overdue
+            # Generate overall status distribution
             overall_status_data = {
-                'Overdue': sum(m.overdue_count for m in mechanisms),
-                'Not Started': sum(m.not_started_count for m in mechanisms) - sum(m.overdue_count for m in mechanisms if m.not_started_count > 0),
+                'Not Started': sum(m.not_started_count for m in mechanisms),
                 'In Progress': sum(m.in_progress_count for m in mechanisms),
                 'Completed': sum(m.completed_count for m in mechanisms)
             }
 
-            # Remove categories with zero values
-            overall_status_data = {k: v for k, v in overall_status_data.items() if v > 0}
-
             if sum(overall_status_data.values()) > 0:
                 plt.figure(figsize=(10, 6))
                 try:
-                    # Use appropriate colors including red for overdue
-                    colors = {
-                        'Overdue': '#ff0000',       # Red for overdue
-                        'Not Started': '#ff9999',   # Light red
-                        'In Progress': '#66b3ff',   # Blue
-                        'Completed': '#99ff99'      # Green
-                    }
-
-                    chart_colors = [colors[status] for status in overall_status_data.keys()]
-
-                    # Create the pie chart
+                    # Fix: Use format string for autopct
                     wedges, texts, autotexts = plt.pie(
-                        list(overall_status_data.values()),
+                        overall_status_data.values(),
                         labels=list(overall_status_data.keys()),
-                        autopct=lambda pct: f'{pct:.1f}%' if pct > 5 else '',
-                        colors=chart_colors
+                        autopct=lambda pct: f'{pct:.1f}%',
+                        colors=['#ff9999', '#66b3ff', '#99ff99']
                     )
                     plt.title('Overall Status Distribution')
 
@@ -75,78 +61,54 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                     status_buffer = io.BytesIO()
                     plt.savefig(status_buffer, format='png', bbox_inches='tight', dpi=100)
                     status_buffer.seek(0)
-
-                    overall_status_chart = base64.b64encode(status_buffer.getvalue()).decode('utf-8')
-                    plt.close()
-
-                except Exception as e:
-                    logger.error(f"Error creating overall chart: {e}")
-                    overall_status_chart = None
+                    overall_status_chart = base64.b64encode(status_buffer.getvalue()).decode()
+                finally:
                     plt.close()
             else:
                 overall_status_chart = None
 
             # Generate individual mechanism charts
             for mechanism in mechanisms:
-                # Include overdue in individual charts
                 mech_status_data = {
-                    'Overdue': mechanism.overdue_count,
-                    'Not Started': max(0, mechanism.not_started_count - mechanism.overdue_count),
+                    'Not Started': mechanism.not_started_count,
                     'In Progress': mechanism.in_progress_count,
                     'Completed': mechanism.completed_count
                 }
 
-                # Remove categories with zero values
-                mech_status_data = {k: v for k, v in mech_status_data.items() if v > 0}
-
                 if sum(mech_status_data.values()) > 0:
+                    plt.figure(figsize=(8, 6))
                     try:
-                        plt.figure(figsize=(7, 5))
-
-                        # Use appropriate colors
-                        colors = {
-                            'Overdue': '#ff0000',       # Red for overdue
-                            'Not Started': '#ff9999',   # Light red
-                            'In Progress': '#66b3ff',   # Blue
-                            'Completed': '#99ff99'      # Green
-                        }
-
-                        chart_colors = [colors[status] for status in mech_status_data.keys()]
-
+                        # Fix: Use format string for autopct
                         wedges, texts, autotexts = plt.pie(
-                            list(mech_status_data.values()),
+                            mech_status_data.values(),
                             labels=list(mech_status_data.keys()),
-                            autopct=lambda pct: f'{pct:.1f}%' if pct > 5 else '',
-                            colors=chart_colors
+                            autopct=lambda pct: f'{pct:.1f}%',
+                            colors=['#ff9999', '#66b3ff', '#99ff99']
                         )
-                        plt.title(mechanism.name, fontsize=10)
+                        plt.title(f'{mechanism.name or mechanism.primary_environmental_mechanism}')
 
+                        # Improve text visibility
                         plt.setp(autotexts, size=8, weight="bold")
                         plt.setp(texts, size=8)
 
                         chart_buffer = io.BytesIO()
                         plt.savefig(chart_buffer, format='png', bbox_inches='tight', dpi=100)
                         chart_buffer.seek(0)
-
-                        chart_data = base64.b64encode(chart_buffer.getvalue()).decode('utf-8')
-                        plt.close()
+                        chart_data = base64.b64encode(chart_buffer.getvalue()).decode()
 
                         mechanism_charts.append({
-                            'name': mechanism.name,
+                            'name': mechanism.name or mechanism.primary_environmental_mechanism,
                             'chart': chart_data,
                             'stats': mech_status_data
                         })
-
-                    except Exception as e:
-                        logger.error(f"Error creating chart for {mechanism.name}: {e}")
+                    finally:
                         plt.close()
 
-            # Prepare table data - include overdue column
+            # Prepare table data
             table_data = [{
                 'name': m.name or m.primary_environmental_mechanism,
                 'project': m.project.name,
-                'overdue': m.overdue_count,
-                'not_started': max(0, m.not_started_count - m.overdue_count),
+                'not_started': m.not_started_count,
                 'in_progress': m.in_progress_count,
                 'completed': m.completed_count,
                 'total': m.not_started_count + m.in_progress_count + m.completed_count
@@ -165,13 +127,12 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                 'mechanisms': mechanisms,
                 'mechanism_charts': mechanism_charts,
                 'table_data': table_data,
-                'has_charts': bool(mechanism_charts)
+                'has_charts': bool(mechanism_charts)  # Add this flag
             })
-            
-            return context
-            
+
         except Exception as e:
             logger.error(f'Error generating charts: {str(e)}')
             context['error'] = f'Error loading charts: {str(e)}'
             plt.close('all')  # Ensure all figures are closed on error
-            return context
+
+        return context

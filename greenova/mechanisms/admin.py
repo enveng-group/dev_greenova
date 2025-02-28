@@ -10,7 +10,6 @@ class EnvironmentalMechanismAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'project',
-        'overdue_count',
         'not_started_count',
         'in_progress_count',
         'completed_count',
@@ -19,8 +18,7 @@ class EnvironmentalMechanismAdmin(admin.ModelAdmin):
     )
     list_filter = ('project__name', 'status', 'updated_at')
     search_fields = ('name', 'project__name')
-    readonly_fields = ('updated_at', 'overdue_count', 'not_started_count',
-                       'in_progress_count', 'completed_count')
+    readonly_fields = ('updated_at',)
     ordering = ('name', '-updated_at')
 
     def get_queryset(self, request: HttpRequest) -> Any:
@@ -31,8 +29,3 @@ class EnvironmentalMechanismAdmin(admin.ModelAdmin):
         """Get total obligations count."""
         return obj.total_obligations
     get_total_obligations.short_description = 'Total'  # type: ignore
-
-    def save_model(self, request, obj, form, change):
-        """Update counts when saving model in admin."""
-        super().save_model(request, obj, form, change)
-        obj.update_obligation_counts()
