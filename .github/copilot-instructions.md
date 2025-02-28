@@ -37,30 +37,11 @@
 </form>
 ```
 
-   - Layer 2: CSS for styling (classless-PicoCSS directly in html)
+   - Layer 2: CSS for styling (classless-PicoCSS directly in html) and only use Vanilla-Framework for utility classes as a last resort
 
-```html
-<!-- No CSS classes needed - PicoCSS styles semantic elements -->
-<article>
-  <header>
-    <h2>Dashboard</h2>
-    <p>Current status: <mark>Active</mark></p>
-  </header>
-</article>
-```
 
-   - Layer 3: HTMX for interactivity
+   - Layer 3: Hyperscript first and then HTMX second for interactivity
 
-```html
-<div hx-get="/api/data" 
-     hx-trigger="load"
-     hx-target="#content"
-     hx-swap="innerHTML"
-     hx-indicator="#loading">
-  <div id="loading" aria-busy="true">Loading...</div>
-  <div id="content"></div>
-</div>
-```
 
    - Layer 4: Web APIs for data
 
@@ -789,6 +770,7 @@ CREATE TRIGGER update_obligations_timestamp
 19. **Hyperscript**: JavaScript library for creating HTML elements.
 20. **venv**: Python virtual environment tool.
 21. **PicoCSS-classless**: Minimal CSS framework.
+22. **Vanilla-Framework**: Ubuntu's utility-CSS framework for frontend development.
 
 ### Dependencies
 
@@ -805,7 +787,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Node.js Environment:
 
-   - Node.js 23.8.0 (exact version)
+   - Node.js 23.9.0 (exact version)
    - npm 11.1.0 (exact version)
 
 2. Required Libraries:

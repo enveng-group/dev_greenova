@@ -1,0 +1,29 @@
+/* Pagination styling */
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination-list {
+  display: flex;
+  list-style: none;
+  gap: 1rem;
+  align-items: center;
+  padding: 0;
+}
+
+.pagination-info {
+  color: var(--text-muted);
+}
+
+.pagination a {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.pagination a:hover {
+  background-color: var(--background-alt);
+}

@@ -28,3 +28,5 @@ tqdm==4.67.1
 types-PyYAML==6.0.12.20241230
 typing_extensions==4.12.2
 tzdata==2025.1
+django-hyperscript==1.0.2
+django-htmx==1.22.0

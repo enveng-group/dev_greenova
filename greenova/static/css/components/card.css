@@ -1,0 +1,35 @@
+/* Summary Cards Layout */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing);
+  margin-bottom: var(--spacing);
+}
+
+.summary-cards article {
+  padding: var(--spacing);
+  border-radius: var(--border-radius);
+  background: var(--card-background-color);
+}
+
+.summary-cards .count {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Card colors */
+.overdue {
+  border-left: 4px solid var(--warning-color);
+}
+
+.upcoming {
+  border-left: 4px solid var(--info-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+}

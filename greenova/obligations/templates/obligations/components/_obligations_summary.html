@@ -15,136 +15,183 @@
     <div class="filter-section" aria-labelledby="filter-heading">
       <div class="filter-header">
         <h3 id="filter-heading">Filter and Sort</h3>
-        <details>
-          <summary role="button">Filters</summary>
-          <div class="controls-container">
-            <!-- Search Bar -->
-            <div class="search-control">
-              <label for="obligation-search">Search:</label>
-              <input type="search"
-                     id="obligation-search"
-                     name="search"
-                     placeholder="Search obligations..."
-                     value="{{ active_filters.search }}"
-                     hx-get="{% url 'obligations:summary' %}"
-                     hx-trigger="keyup changed delay:500ms"
-                     hx-target=".obligations-section"
-                     hx-push-url="true">
+        <div class="filter-actions">
+          <!-- Quick filter buttons -->
+          <button type="button"
+                  class="quick-filter-btn {% if active_filters.date_filter == '14day_lookahead' %}active{% endif %}"
+                  hx-get="{% url 'obligations:summary' %}"
+                  hx-include="[name='project_id']"
+                  hx-vals='{"date_filter": "14day_lookahead", "sort": "action_due_date", "order": "asc"}'
+                  hx-target=".obligations-section"
+                  hx-push-url="true"
+                  aria-label="Show obligations due in next 14 days">
+            14-day Lookahead
+          </button>
+          <button type="button"
+                  class="quick-filter-btn {% if active_filters.date_filter == 'overdue' %}active{% endif %}"
+                  hx-get="{% url 'obligations:summary' %}"
+                  hx-include="[name='project_id']"
+                  hx-vals='{"date_filter": "overdue", "sort": "action_due_date", "order": "asc"}'
+                  hx-target=".obligations-section"
+                  hx-push-url="true"
+                  aria-label="Show overdue obligations">
+            Overdue
+          </button>
+          <details>
+            <summary role="button">Filters</summary>
+            <div class="controls-container">
+              <!-- Search Bar -->
+              <div class="search-control">
+                <label for="obligation-search">Search:</label>
+                <input type="search"
+                       id="obligation-search"
+                       name="search"
+                       placeholder="Search obligations..."
+                       value="{{ active_filters.search }}"
+                       hx-get="{% url 'obligations:summary' %}"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-target=".obligations-section"
+                       hx-push-url="true">
+              </div>
+
+              <!-- Filter Controls -->
+              <fieldset class="filter-fieldset">
+                <legend>Filter By:</legend>
+
+                <div class="filter-group">
+                  <label for="status-filter">Status:</label>
+                  <select id="status-filter"
+                          name="status"
+                          multiple
+                          hx-get="{% url 'obligations:summary' %}"
+                          hx-trigger="change"
+                          hx-target=".obligations-section"
+                          hx-push-url="true"
+                          aria-label="Filter by status">
+                    <option value="">All Statuses</option>
+                    {% for status in filter_options.status %}
+                      <option value="{{ status }}"
+                              {% if status in active_filters.status %}selected{% endif %}>
+                        {{ status|title }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label for="mechanism-filter">Mechanism:</label>
+                  <select id="mechanism-filter"
+                          name="mechanism"
+                          multiple
+                          hx-get="{% url 'obligations:summary' %}"
+                          hx-trigger="change"
+                          hx-target=".obligations-section"
+                          hx-push-url="true"
+                          aria-label="Filter by mechanism">
+                    <option value="">All Mechanisms</option>
+                    {% for mechanism in filter_options.mechanism %}
+                      <option value="{{ mechanism }}"
+                              {% if mechanism in active_filters.mechanism %}selected{% endif %}>
+                        {{ mechanism }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label for="phase-filter">Phase:</label>
+                  <select id="phase-filter"
+                          name="phase"
+                          multiple
+                          hx-get="{% url 'obligations:summary' %}"
+                          hx-trigger="change"
+                          hx-target=".obligations-section"
+                          hx-push-url="true"
+                          aria-label="Filter by project phase">
+                    <option value="">All Phases</option>
+                    {% for phase in filter_options.phase %}
+                      <option value="{{ phase }}"
+                              {% if phase in active_filters.phase %}selected{% endif %}>
+                        {{ phase }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </fieldset>
+
+              <!-- Sort Controls -->
+              <fieldset class="sort-fieldset">
+                <legend>Sort By:</legend>
+
+                <div class="sort-group">
+                  <label for="sort-field">Field:</label>
+                  <select id="sort-field"
+                          name="sort"
+                          hx-get="{% url 'obligations:summary' %}"
+                          hx-trigger="change"
+                          hx-target=".obligations-section"
+                          hx-push-url="true"
+                          aria-label="Sort by field">
+                    {% for sort in sort_options %}
+                      <option value="{{ sort.field }}"
+                              {% if sort.field == active_filters.sort %}selected{% endif %}>
+                        {{ sort.label }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="sort-group">
+                  <label for="sort-order">Order:</label>
+                  <select id="sort-order"
+                          name="order"
+                          hx-get="{% url 'obligations:summary' %}"
+                          hx-trigger="change"
+                          hx-target=".obligations-section"
+                          hx-push-url="true"
+                          aria-label="Sort order">
+                    <option value="asc" {% if active_filters.order == 'asc' %}selected{% endif %}>
+                      Ascending
+                    </option>
+                    <option value="desc" {% if active_filters.order == 'desc' %}selected{% endif %}>
+                      Descending
+                    </option>
+                  </select>
+                </div>
+              </fieldset>
             </div>
-
-            <!-- Filter Controls -->
-            <fieldset class="filter-fieldset">
-              <legend>Filter By:</legend>
-
-              <div class="filter-group">
-                <label for="status-filter">Status:</label>
-                <select id="status-filter"
-                        name="status"
-                        multiple
-                        hx-get="{% url 'obligations:summary' %}"
-                        hx-trigger="change"
-                        hx-target=".obligations-section"
-                        hx-push-url="true"
-                        aria-label="Filter by status">
-                  <option value="">All Statuses</option>
-                  {% for status in filter_options.status %}
-                    <option value="{{ status }}"
-                            {% if status in active_filters.status %}selected{% endif %}>
-                      {{ status|title }}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <div class="filter-group">
-                <label for="mechanism-filter">Mechanism:</label>
-                <select id="mechanism-filter"
-                        name="mechanism"
-                        multiple
-                        hx-get="{% url 'obligations:summary' %}"
-                        hx-trigger="change"
-                        hx-target=".obligations-section"
-                        hx-push-url="true"
-                        aria-label="Filter by mechanism">
-                  <option value="">All Mechanisms</option>
-                  {% for mechanism in filter_options.mechanism %}
-                    <option value="{{ mechanism }}"
-                            {% if mechanism in active_filters.mechanism %}selected{% endif %}>
-                      {{ mechanism }}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <div class="filter-group">
-                <label for="phase-filter">Phase:</label>
-                <select id="phase-filter"
-                        name="phase"
-                        multiple
-                        hx-get="{% url 'obligations:summary' %}"
-                        hx-trigger="change"
-                        hx-target=".obligations-section"
-                        hx-push-url="true"
-                        aria-label="Filter by project phase">
-                  <option value="">All Phases</option>
-                  {% for phase in filter_options.phase %}
-                    <option value="{{ phase }}"
-                            {% if phase in active_filters.phase %}selected{% endif %}>
-                      {{ phase }}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
-            </fieldset>
-
-            <!-- Sort Controls -->
-            <fieldset class="sort-fieldset">
-              <legend>Sort By:</legend>
-
-              <div class="sort-group">
-                <label for="sort-field">Field:</label>
-                <select id="sort-field"
-                        name="sort"
-                        hx-get="{% url 'obligations:summary' %}"
-                        hx-trigger="change"
-                        hx-target=".obligations-section"
-                        hx-push-url="true"
-                        aria-label="Sort by field">
-                  {% for sort in sort_options %}
-                    <option value="{{ sort.field }}"
-                            {% if sort.field == active_filters.sort %}selected{% endif %}>
-                      {{ sort.label }}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <div class="sort-group">
-                <label for="sort-order">Order:</label>
-                <select id="sort-order"
-                        name="order"
-                        hx-get="{% url 'obligations:summary' %}"
-                        hx-trigger="change"
-                        hx-target=".obligations-section"
-                        hx-push-url="true"
-                        aria-label="Sort order">
-                  <option value="asc" {% if active_filters.order == 'asc' %}selected{% endif %}>
-                    Ascending
-                  </option>
-                  <option value="desc" {% if active_filters.order == 'desc' %}selected{% endif %}>
-                    Descending
-                  </option>
-                </select>
-              </div>
-            </fieldset>
-          </div>
-        </details>
+          </details>
+        </div>
       </div>
 
       <!-- Active Filters Display -->
-      {% if active_filters.search or active_filters.status or active_filters.mechanism or active_filters.phase %}
+      {% if active_filters.search or active_filters.status or active_filters.mechanism or active_filters.phase or active_filters.date_filter %}
         <div class="active-filters" aria-label="Active filters">
           <small>Active filters:</small>
+          {% if active_filters.date_filter == '14day_lookahead' %}
+            <span class="filter-tag">
+              14-day Lookahead
+              <button type="button"
+                      hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}"
+                      hx-target=".obligations-section"
+                      hx-push-url="true"
+                      aria-label="Clear 14-day lookahead filter">
+                ×
+              </button>
+            </span>
+          {% endif %}
+          {% if active_filters.date_filter == 'overdue' %}
+            <span class="filter-tag">
+              Overdue
+              <button type="button"
+                      hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}"
+                      hx-target=".obligations-section"
+                      hx-push-url="true"
+                      aria-label="Clear overdue filter">
+                ×
+              </button>
+            </span>
+          {% endif %}
           {% if active_filters.search %}
             <span class="filter-tag">
               Search: {{ active_filters.search }}
@@ -251,14 +298,43 @@
           <tbody>
             {% for obligation in obligations %}
               <tr>
-                <td>{{ obligation.obligation_number }}</td>
+                <td>
+                  <!-- Make obligation number clickable -->
+                  <a href="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
+                     class="obligation-link"
+                     aria-label="Edit obligation {{ obligation.obligation_number }}">
+                    {{ obligation.obligation_number }}
+                  </a>
+                </td>
+                <td class="actions-column">
+                  <div class="action-buttons">
+                    <a href="{% url 'obligations:detail' obligation_number=obligation.obligation_number %}"
+                       class="action-btn view"
+                       title="View details"
+                       aria-label="View obligation {{ obligation.obligation_number }}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </a>
+                    <a href="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
+                       class="action-btn edit"
+                       title="Edit"
+                       aria-label="Edit obligation {{ obligation.obligation_number }}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </a>
+                  </div>
+                </td>
                 <td>{{ obligation.primary_environmental_mechanism.name }}</td>
                 <td>{{ obligation.procedure|default:"-" }}</td>
                 <td>{{ obligation.environmental_aspect }}</td>
                 <td>{{ obligation.obligation|truncatewords:30 }}</td>
                 <td>{{ obligation.action_due_date|format_due_date }}</td>
                 <td>{{ obligation.close_out_date|default:"-" }}</td>
-                <td>{% status_badge obligation.status %}</td>
+                <td>{% status_badge obligation|display_status %}</td>
                 <td>{{ obligation.accountability }}</td>
                 <td>{{ obligation.responsibility }}</td>
                 <td>{{ obligation.project_phase|default:"-" }}</td>
@@ -323,141 +399,3 @@
     </div>
   {% endif %}
 </section>
-
-<style>
-  /* Improved filter and sort layout */
-  .filter-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .filter-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  .filter-header h3 {
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  .controls-container {
-    display: grid;
-    gap: 1rem;
-    margin: 1rem 0;
-    grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 768px) {
-    .controls-container {
-      grid-template-columns: 1fr 2fr;
-    }
-  }
-
-  .search-control {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .search-control label {
-    margin-bottom: 0.25rem;
-    font-size: 0.875rem;
-  }
-
-  .filter-fieldset, .sort-fieldset {
-    padding: 0.75rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-  }
-
-  .filter-fieldset legend, .sort-fieldset legend {
-    font-size: 0.875rem;
-    padding: 0 0.5rem;
-  }
-
-  .filter-group, .sort-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0.75rem;
-  }
-
-  .filter-group:last-child, .sort-group:last-child {
-    margin-bottom: 0;
-  }
-
-  .filter-group label, .sort-group label {
-    margin-bottom: 0.25rem;
-    font-size: 0.875rem;
-  }
-
-  @media (min-width: 992px) {
-    .filter-fieldset {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-
-    .filter-group {
-      margin-bottom: 0;
-    }
-
-    .sort-fieldset {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-  }
-
-  /* Active filters */
-  .active-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: center;
-    margin-top: 0.75rem;
-  }
-
-  .active-filters small {
-    color: var(--text-muted);
-  }
-
-  .filter-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    background: var(--background-alt);
-    border-radius: var(--border-radius);
-    font-size: 0.75rem;
-  }
-
-  .filter-tag button {
-    border: none;
-    background: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    font-size: 1rem;
-    line-height: 1;
-    color: var(--text-muted);
-  }
-
-  .filter-tag button:hover {
-    color: var(--text);
-  }
-
-  /* Results count */
-  .results-count {
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
-    text-align: right;
-  }
-
-  /* Empty state */
-  .centered-message {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-muted);
-  }
-</style>

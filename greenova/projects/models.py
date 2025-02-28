@@ -18,6 +18,7 @@ class ProjectRole(str, Enum):
     MANAGER = 'manager'
     MEMBER = 'member'
     VIEWER = 'viewer'
+    SIMON = 'simon'
 
     @classmethod
     def choices(cls) -> List[tuple[str, str]]:
