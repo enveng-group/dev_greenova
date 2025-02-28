@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class EnvironmentalMechanism(models.Model):
     """Represents an environmental mechanism that governs obligations."""
@@ -29,6 +29,7 @@ class EnvironmentalMechanism(models.Model):
     not_started_count = models.IntegerField(default=0)
     in_progress_count = models.IntegerField(default=0)
     completed_count = models.IntegerField(default=0)
+    overdue_count = models.IntegerField(default=0)  # Add overdue count
 
     primary_environmental_mechanism = models.CharField(max_length=255, blank=True, null=True)
 
@@ -47,3 +48,38 @@ class EnvironmentalMechanism(models.Model):
     def total_obligations(self) -> int:
         """Total number of obligations."""
         return self.not_started_count + self.in_progress_count + self.completed_count
+
+    def update_obligation_counts(self):
+        """Update obligation counts based on related obligations."""
+        from obligations.models import Obligation
+
+        # Get all related obligations
+        obligations = Obligation.objects.filter(primary_environmental_mechanism=self)
+
+        # Reset counts
+        self.not_started_count = 0
+        self.in_progress_count = 0
+        self.completed_count = 0
+        self.overdue_count = 0
+
+        today = timezone.now().date()
+
+        # Count obligations by status
+        for obligation in obligations:
+            status = obligation.status
+
+            # Check if overdue (not completed and past due date)
+            if (status in ['not started', 'in progress'] and
+                obligation.action_due_date and
+                obligation.action_due_date < today):
+                self.overdue_count += 1
+
+            # Also count by regular status
+            if status == 'not started':
+                self.not_started_count += 1
+            elif status == 'in progress':
+                self.in_progress_count += 1
+            elif status == 'completed':
+                self.completed_count += 1
+
+        self.save()
