@@ -2,6 +2,11 @@
   "name": "Greenova Development",
   "image": "mcr.microsoft.com/devcontainers/python:3",
   "features": {},
+  "hostRequirements": {
+   "cpus": 4,
+   "memory": "2gb",
+   "storage": "32gb"
+},
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
@@ -88,7 +93,8 @@
         "tamasfe.even-better-toml",
         "mutantdino.resourcemonitor"
       ],
-  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
+  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",,
+  "postCreateCommand": "sudo chown vscode:vscode /home && sudo chown vscode:vscode /usr/local && sudo chown vscode:vscode /workspaces",
   "forwardPorts": [
     8000
   ]
