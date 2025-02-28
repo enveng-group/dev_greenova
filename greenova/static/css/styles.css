@@ -2,4 +2,9 @@
 @import 'components/colours.css';
 @import 'components/design.css';
 @import 'components/charts.css';
-@import 'components/obligations.css';
+@import 'components/list.css';
+@import 'components/card.css';
+@import 'components/filter.css';
+@import 'components/pagination.css';
+@import 'components/form.css';
+@import 'components/button.css';
