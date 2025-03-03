@@ -3,10 +3,10 @@
   "image": "mcr.microsoft.com/devcontainers/python:3",
   "features": {},
   "hostRequirements": {
-   "cpus": 4,
-   "memory": "2gb",
-   "storage": "32gb"
-},
+    "cpus": 4,
+    "memory": "2gb",
+    "storage": "32gb"
+  },
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
@@ -79,7 +79,7 @@
           ".venv": true
         }
       },
-  "dev.containers.defaultExtensions": [
+      "dev.containers.defaultExtensions": [
         "ms-python.autopep8",
         "dbaeumer.vscode-eslint",
         "GitHub.copilot",
@@ -91,9 +91,13 @@
         "EditorConfig.EditorConfig",
         "batisteo.vscode-django",
         "tamasfe.even-better-toml",
-        "mutantdino.resourcemonitor"
-      ],
-  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",,
+        "mutantdino.resourcemonitor",
+        "GitHub.vscode-pull-request-github",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
   "postCreateCommand": "sudo chown vscode:vscode /home && sudo chown vscode:vscode /usr/local && sudo chown vscode:vscode /workspaces",
   "forwardPorts": [
     8000

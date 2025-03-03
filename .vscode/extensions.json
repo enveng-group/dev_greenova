@@ -12,6 +12,7 @@
     "batisteo.vscode-django",
     "tamasfe.even-better-toml",
     "ms-vscode.vscode-copilot-data-analysis",
-    "github.vscode-pull-request-github"
+    "github.vscode-pull-request-github",
+    "ms-azuretools.vscode-docker"
   ]
 }
