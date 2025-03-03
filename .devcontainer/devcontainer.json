@@ -18,6 +18,22 @@
   "updateRemoteUserUID": true,
   "customizations": {
     "vscode": {
+      "extensions": [
+        "ms-python.autopep8",
+        "dbaeumer.vscode-eslint",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "foxundermoon.shell-format",
+        "EditorConfig.EditorConfig",
+        "batisteo.vscode-django",
+        "tamasfe.even-better-toml",
+        "mutantdino.resourcemonitor",
+        "GitHub.vscode-pull-request-github",
+        "ms-azuretools.vscode-docker"
+      ],
       "settings": {
         "dev.containers.gpuAvailability": "none",
         "dotfiles.repository": "https://github.com/enssol/dotfiles.git",
@@ -78,23 +94,7 @@
           "**~/.vscode/**": true,
           ".venv": true
         }
-      },
-      "dev.containers.defaultExtensions": [
-        "ms-python.autopep8",
-        "dbaeumer.vscode-eslint",
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "ms-python.vscode-pylance",
-        "ms-python.python",
-        "ms-python.debugpy",
-        "foxundermoon.shell-format",
-        "EditorConfig.EditorConfig",
-        "batisteo.vscode-django",
-        "tamasfe.even-better-toml",
-        "mutantdino.resourcemonitor",
-        "GitHub.vscode-pull-request-github",
-        "ms-azuretools.vscode-docker"
-      ]
+      }
     }
   },
   "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
