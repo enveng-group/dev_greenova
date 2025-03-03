@@ -32,7 +32,9 @@
         "tamasfe.even-better-toml",
         "mutantdino.resourcemonitor",
         "GitHub.vscode-pull-request-github",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "DavidAnson.vscode-markdownlint",
+        "mechatroner.rainbow-csv"
       ],
       "settings": {
         "dev.containers.gpuAvailability": "none",

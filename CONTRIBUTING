@@ -1,0 +1,70 @@
+# Git Workflow for Feature Integration
+
+This document outlines the recommended git workflow for integrating feature branches into the main branch.
+
+## Overview
+The process follows these steps:
+1. Update main branch to the latest version
+2. Squash and merge the feature branch into main
+3. Push the changes to the remote repository
+4. Clean up by removing the feature branch
+
+## Prerequisites
+- Appropriate permissions to push to the main branch
+- Completed and tested feature in a separate branch
+- Understanding of git commands and conflict resolution
+
+## Important Notes
+- Always ensure your feature is fully tested before merging
+- The squash merge creates a single commit from all changes in the feature branch
+- This workflow keeps the commit history clean and linear
+- Make sure the feature branch is no longer needed before deletion
+
+## After Completion
+Once completed, the feature's changes will be integrated into the main branch as a single commit, and the feature branch will be removed from both local and remote repositories.
+
+# Contributing Guide
+
+Thank you for contributing to our project! This document outlines our git workflow for integrating feature branches into the main branch.
+
+## Git Workflow Overview
+
+Our integration process follows these key steps:
+
+1. Update your main branch to the latest version
+2. Squash and merge your feature branch into main
+3. Push the changes to the remote repository
+4. Clean up by removing the feature branch
+
+## Prerequisites
+
+Before you begin:
+- Ensure you have appropriate permissions to push to the main branch
+- Complete and thoroughly test your feature in a separate branch
+- Be familiar with git commands and conflict resolution
+
+## Step-by-Step Process
+
+# 1. Switch to main and get latest changes
+
+`git checkout main`
+`git pull origin main`
+
+# 2. Squash and merge the feature branch (resolve any conflicts if they arise)
+
+`git merge --squash feature-branch`
+`git commit -m "feat: squashed commit message"`
+
+# 3. Push changes to main
+
+`git push origin main`
+
+# 4. Delete feature branch locally
+
+`git branch -D feature-branch`
+
+# 5. Delete feature branch remotely
+
+`git push origin --delete feature-branch`
+
+# Note: Ensure the feature branch is no longer needed before deleting it remotely.

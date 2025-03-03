@@ -1,4 +1,4 @@
-.PHONY: check run migrations migrate static user db import sync lint-templates format-templates check-templates format-lint
+.PHONY: check run migrations migrate static user db import sync clean-csv lint-templates format-templates check-templates format-lint
 
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
@@ -27,6 +27,9 @@ import:
 sync:
 	$(CD_CMD) python manage.py sync_mechanisms
 
+clean-csv:
+	$(CD_CMD) python manage.py clean_csv_to_import dirty.csv
+
 # Combined command for database updates
 db: migrations migrate
 
@@ -51,7 +54,8 @@ help:
 	@echo "  make format-templates - Format Django template files"
 	@echo "  make lint-templates   - Lint Django template files"
 	@echo "  make import       - Import data from CSV file"
-	@echo " make sync          - Sync mechanisms"
+	@echo "  make sync          - Sync mechanisms"
+	@echo "  make clean-csv     - Clean CSV file"
 	@echo "  make user         - Create superuser"
 	@echo "  make db           - Run both migrations and migrate"
 	@echo "  make static       - Collect static files (with --clear)"
