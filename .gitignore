@@ -24,11 +24,8 @@ lib64/
 .Python
 .coverage
 htmlcov/
-**/staticfiles/**
-**/media/**
 
 # Virtual Environment
-#.env
 .venv/
 env/
 venv/
@@ -40,9 +37,10 @@ db.sqlite3
 *.db
 
 # Django
-/staticfiles/
-/media/
+**/staticfiles/**
+**/media/**
 local_settings.py
+**/migrations/**
 
 # Logs
 *.log
@@ -56,7 +54,6 @@ package-lock.json
 
 # IDE
 .idea/
-#.vscode/
 *.sublime-workspace
 *.sublime-project
 
@@ -79,6 +76,13 @@ greenova/logs/django.log
 # Pipenv
 Pipfile.lock
 
+# Use global gitignore for common patterns
+
+# Keep these commented for now (uncomment if needed)
+#.env
+#/staticfiles/
+#/media/
+#.vscode/
 #.editorconfig
 #.eslintrc.cjs
 #.npmrc

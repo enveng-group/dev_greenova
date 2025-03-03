@@ -1,0 +1,258 @@
+/* Summary Cards Layout */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--greenova-spacing);
+  margin-bottom: var(--greenova-spacing);
+}
+
+.summary-cards article {
+  padding: var(--greenova-spacing);
+  border-radius: var(--greenova-border-radius);
+  background: var(--card-background-color);
+}
+
+.summary-cards .count {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Table Styles */
+.table-container {
+  overflow-x: auto;
+  margin: var(--greenova-spacing) 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+  /* Limit table height */
+  max-width: 100%;
+}
+
+.table-container table {
+  min-width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  white-space: nowrap;
+}
+
+/* Status colors */
+mark.warning {
+  background: var(--greenova-warning-background);
+  color: var(--greenova-warning-text);
+}
+
+mark.info {
+  background: var(--greenova-info-background);
+  color: var(--greenova-info-text);
+}
+
+mark.success {
+  background: var(--greenova-success-background);
+  color: var(--greenova-success-text);
+}
+
+/* Card colors */
+.overdue {
+  border-left: 4px solid var(--greenova-warning-color);
+}
+
+.upcoming {
+  border-left: 4px solid var(--greenova-info-color);
+}
+
+/* Status badges */
+mark[role="status"] {
+  display: inline-block;
+  padding: var(--greenova-padding-small);
+  border-radius: var(--greenova-border-radius);
+  font-weight: bold !important;
+}
+
+/* Table improvements */
+td,
+th {
+  padding: var(--greenova-padding);
+  text-align: left;
+  text-wrap: initial;
+}
+
+/* Make the table header sticky */
+table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--greenova-green-primary);
+  color: var(--greenova-text-primary-dark);
+  z-index: 1;
+  /* Add shadow for visual separation */
+  box-shadow: var(--greenova-shadow);
+}
+
+/* Make the table data pretty */
+table tbody tr td {
+  background: var(--greenova-beige-primary);
+  color: var(--greenova-text-secondary-dark);
+
+  /* Add shadow for visual clarity */
+  box-shadow: var(--greenova-shadow);
+}
+
+/* Ensure certain columns have max width */
+td:nth-child(5),
+/* Obligation */
+td:nth-child(12),
+/* Supporting Info */
+td:nth-child(13),
+/* General Comments */
+td:nth-child(14),
+/* Compliance Comments */
+td:nth-child(15),
+/* Non-Conformance */
+td:nth-child(21),
+/* Gap Analysis */
+td:nth-child(22) {
+  /* Gap Analysis Notes */
+  max-width: 300px;
+  white-space: normal;
+}
+
+/* Create a horizontal scrollbar wrapper */
+.horizontal-scroll {
+  overflow-x: auto;
+  margin-bottom: var(greenova-spacing);
+}
+
+/* Style the scroll indicator */
+.scroll-indicator {
+  height: 8px;
+  background: var(--greenova-green-tertiary);
+  border-radius: var(--greenova-border-radius-small);
+}
+
+.scroll-thumb {
+  height: 100%;
+  background: var(--greenova-green-primary);
+  border-radius: var(--greenova-border-radius-small);
+  width: 20%;
+  /* Will be updated by JavaScript */
+}
+
+/* Loading states */
+[aria-busy="true"] {
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Error notices */
+.notice.error {
+  background: var(--greenova-error-background);
+  color: var(--greenova-error-text);
+  padding: var(--greenova-spacing);
+  border-radius: var(--greenova-border-radius);
+  margin: var(--greenova-spacing) 0;
+}
+
+/* Pagination styling */
+.pagination {
+  margin-top: var(--greenova-spacing);
+  display: flex;
+  justify-content: center;
+}
+
+.pagination-list {
+  display: flex;
+  list-style: none;
+  gap: var(--greenova-spacing);
+  align-items: center;
+  padding: 0;
+}
+
+/* Filter and control styling */
+.controls-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-controls {
+  display: flex;
+  gap: var(--greenova-spacing);
+  flex-wrap: wrap;
+}
+
+.filter-controls select,
+.sort-controls select {
+  min-width: 150px;
+}
+
+.active-filters {
+  margin: var(--greenova-spacing) 0;
+  display: flex;
+  gap: var(--greenova-spacing);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--greenova-spacing);
+  padding: var(--greenova-padding);;
+  background: var(--background-alt);
+  border-radius: var(--greenova-border-radius);
+  font-size: var(--greenova-table-size);
+}
+
+.filter-tag button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--greenova-tertiary-dark);
+}
+
+.filter-tag button:hover {
+  color: var(--greenova-text-primary-dark);
+}
+
+.filter-container {
+  display: flex;
+  margin-bottom: var(--greenova-spacing);
+  flex-wrap: wrap;
+  gap: var(--greenova-spacing);
+  align-items: flex-end;
+  width: 100%;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+  flex-direction: column;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  .filter-container {
+    display: none !important;
+  }
+}

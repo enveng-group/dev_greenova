@@ -1,22 +1,39 @@
 /* This is the Ubuntu font we're using for the website */
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@font-face {
+  /* Imported statically to not rely on Google. */
+  font-family: 'Ubuntu';
+  src: url('/static/fonts/Ubuntu-Regular.ttf');
+}
 
 
 :root {
-  --greenova-font-family: "Ubuntu", serif;
+  --greenova-font-family: "Ubuntu";
   --greenova-font-weight: normal;
   --greenova-line-height: 1.125;
+  --greenova-letter-spacing: 1px;
 
   --pico-font-family: var(--greenova-font-family);
   --pico-font-weight: var(--greenova-font-weight);
   --pico-line-height: var(--greenova-line-height);
+
+  --greenova-border-radius: 8px;
+  --greenova-border-radius-small: 4px;
+  --greenova-spacing: 7.5px;
+  --greenova-padding: 10px;
+  --greenova-padding-small: 5px;
+  --greenova-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+
+  --greenova-title-size: 24px;
+  --greenova-subtitle-size: 18px;
+  --greenova-text-size: 16px;
+  --greenova-table-size: 14px;
+
+  --greenova-button-size: 16px;
 }
 
 * {
-  font-family: var(--greenova-font-family);
-  font-weight: normal;
+  letter-spacing: var(--greenova-letter-spacing);
 }
-
 
 /*Font: Ubuntu
 Title: 24
@@ -32,22 +49,36 @@ h6 {
 
   /* Title */
   &:first-child {
-    font-size: 24px;
+    font-size: var(--greenova-title-size);
   }
 
   /* Subtitle */
   &:not(:first-child) {
-    font-size: 18px;
+    font-size: var(--greenova-subtitle-size);
     font-weight: bold;
   }
+}
+
+/* Mutable Text Entries */
+input,
+optgroup,
+select,
+textarea {
+  font-size: var(--greenova-text-size);
 }
 
 /* Text Entries: 16 */
 p,
 article {
-  font-size: 16px;
+  font-size: var(--greenova-text-size);
 }
 
+/* Table Entries: 14 */
+table,
+table thead,
+table tbody {
+  font-size: var(--greenova-table-size) !important;
+}
 
 
 /*Component Corner Radius: 8
@@ -58,31 +89,39 @@ button,
 [type='submit'],
 [type='reset'],
 [role='button'] {
-  font-size: 16px;
+  font-size: var(--greenova-button-size);
   font-weight: bold !important;
 
-  min-height: 41px;
   /* Stops top from looking weird */
+  min-height: 41px;
 
-  border-radius: 8px;
-  margin: 0px 15px;
-  margin-bottom: 0px;
-  padding: 10px;
+  border-radius: var(--greenova-border-radius);
+  padding: var(--greenova-padding);
 }
+
+button#chat-toggle>span {
+  font-weight: normal !important;
+}
+
+/* If the button is apart of a menu... */
+[role='menuitem'] {
+  margin: 0px var(--greenova-spacing);
+}
+
 
 /* Navigation */
 [role='navigation'],
 [role='navigation'] ul,
 [role='navigation'] ul li {
-  border-radius: 8px;
+  border-radius: var(--greenova-border-radius);
 
   margin: 0px;
   padding: 0px;
 }
 
 [role='navigation'] [role="menuitem"] {
-  border-radius: 8px;
+  border-radius: var(--greenova-border-radius);
 
   margin: 0px;
-  padding: 10px;
+  padding: var(--greenova-padding);
 }

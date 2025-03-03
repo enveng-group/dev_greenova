@@ -4,6 +4,7 @@
     {% if page_obj.has_previous %}
       <li>
         <a href="#"
+           role="button"
            hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&page={{ page_obj.previous_page_number }}"
            hx-target=".obligations-section"
            hx-swap="outerHTML"
@@ -23,6 +24,7 @@
     {% if page_obj.has_next %}
       <li>
         <a href="#"
+           role="button"
            hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&page={{ page_obj.next_page_number }}"
            hx-target=".obligations-section"
            hx-swap="outerHTML"
