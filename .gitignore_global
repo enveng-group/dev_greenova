@@ -16,17 +16,16 @@ Thumbs.db
 *.sublime-workspace
 *.sublime-project
 
-# Logs and databases
+# Common log and database files
 *.log
 *.sqlite
-*.sqlite3
-*.db
 
-# Environment and package files
+# Environment and package management
 .env
 .venv/
 env/
 venv/
+ENV/
 node_modules/
 npm-debug.log
 yarn-debug.log
@@ -35,7 +34,7 @@ yarn-error.log
 package-lock.json
 pnpm-lock.yaml
 
-# Python
+# Python - general patterns
 *.py[cod]
 __pycache__/
 *.so
