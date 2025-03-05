@@ -12,7 +12,7 @@ import logging
 
 # Constants for system information
 SYSTEM_STATUS = "operational"  # or fetch from settings/environment
-APP_VERSION = "1.0.0"  # or fetch from settings/environment
+APP_VERSION = "0.0.1"  # or fetch from settings/environment
 LAST_UPDATED = datetime.now().date()  # or fetch from settings/environment
 
 logger = logging.getLogger(__name__)

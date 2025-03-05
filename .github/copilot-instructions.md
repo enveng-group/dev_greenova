@@ -776,7 +776,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Core Dependencies:
 
-   - Django==5.1.6
+   - Django==4.2.19
    - matplotlib==3.10.0
 
 2. Development Tools:
@@ -787,8 +787,8 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Node.js Environment:
 
-   - Node.js 23.9.0 (exact version)
-   - npm 11.1.0 (exact version)
+   - Node.js 18.20.7 (exact version)
+   - npm 10.8.2 (exact version)
 
 2. Required Libraries:
    - @picocss/pico==2.0.6
@@ -872,12 +872,12 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Python Version:
 
-   - Python 3.13.1 (exact version)
+   - Python 3.9.13 (exact version)
    - Email: `agallo@enveng-group.com.au`
 
 ### Project Metadata
 2. Django Version:
-   - Django 5.1.6 (exact version)
+   - Django 4.2.19 (exact version)
    - Ensure compatibility with Django 5.1.x features
    - Email: <agallo@enveng-group.com.au>
 ### Project Metadata

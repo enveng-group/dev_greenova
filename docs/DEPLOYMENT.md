@@ -2,7 +2,7 @@
 # Deployment Guide
 
 ## Prerequisites
-- Python 3.13.1
+- Python 3.9.13
 - SQLite3
 - Virtual environment tool
 

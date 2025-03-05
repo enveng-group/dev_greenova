@@ -189,7 +189,7 @@
   "javascript.suggest.completeJSDocs": true,
   "javascript.validate.enable": true,
   "eslint.enable": true,
-  "eslint.lintTask.options": "/workspaces/dev_greenova/.eslintrc.js",
+  "eslint.lintTask.options": "/workspaces/greenova/.eslintrc.js",
   "eslint.probe": [
     "javascript"
   ],

@@ -1,17 +1,17 @@
 {
   "name": "Greenova Development",
-  "image": "mcr.microsoft.com/devcontainers/python:3",
+  "image": "mcr.microsoft.com/devcontainers/python:3.9",
   "features": {},
   "hostRequirements": {
     "cpus": 4,
     "memory": "2gb",
-    "storage": "32gb"
+    "storage": "16gb"
   },
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
   ],
-  "workspaceMount": "source=dev_greenova,target=${containerWorkspaceFolder},type=volume",
+  "workspaceMount": "source=greenova,target=${containerWorkspaceFolder},type=volume",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "vscode",
   "containerUser": "vscode",
@@ -42,11 +42,11 @@
         "dotfiles.targetPath": "/home/vscode/dotfiles",
         "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
         "python.interpreter.infoVisibility": "always",
-        "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v23.9.0/bin/node",
+        "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
         "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
         "python.envFile": "${containerWorkspaceFolder}/.env",
         "python.analysis.extraPaths": [
-          "${containerWorkspaceFolder}/.venv/lib/python3.13/site-packages"
+          "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
         ],
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",
         "terminal.integrated.defaultProfile.linux": "bash",
@@ -55,7 +55,8 @@
           "PYTHONPATH": "${containerWorkspaceFolder}",
           "VENV_PATH": "${containerWorkspaceFolder}/.venv",
           "PYTHONSTARTUP": "${containerWorkspaceFolder}/.devcontainer/pythonstartup.py",
-          "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
+          "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+          "PYTHONUNBUFFERED": "1"
         },
         "python.terminal.activateEnvInCurrentTerminal": true,
         "python.terminal.activateEnvironment": true,

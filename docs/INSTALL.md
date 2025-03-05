@@ -2,7 +2,7 @@
 # Installation Guide
 
 ## System Requirements
-- Python 3.13.1
+- Python 3.9.13
 - SQLite3
 - pip package manager
 

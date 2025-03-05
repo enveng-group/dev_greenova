@@ -6,7 +6,7 @@ Documentation on the System Architecture of a Django-based environmental obligat
 ## Software Components
 
 ### Backend
-- Django 5.1.6
+- Django 4.2.19
 - SQLite3 Database
 - MatPlotlib for data visualization
 
