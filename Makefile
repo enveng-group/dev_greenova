@@ -4,28 +4,28 @@
 CD_CMD = cd greenova &&
 
 check:
-	$(CD_CMD) python3 manage.py check
+	$(CD_CMD) python3.9 manage.py check
 
 run:
-	$(CD_CMD) python3 manage.py runserver
+	$(CD_CMD) python3.9 manage.py runserver
 
 migrations:
-	$(CD_CMD) python3 manage.py makemigrations
+	$(CD_CMD) python3.9 manage.py makemigrations
 
 migrate:
-	$(CD_CMD) python3 manage.py migrate
+	$(CD_CMD) python3.9 manage.py migrate
 
 static:
-	$(CD_CMD) python3 manage.py collectstatic --clear --noinput
+	$(CD_CMD) python3.9 manage.py collectstatic --clear --noinput
 
 user:
-	$(CD_CMD) python3 manage.py createsuperuser
+	$(CD_CMD) python3.9 manage.py createsuperuser
 
 import:
-	$(CD_CMD) python3 manage.py import_obligations clean_output_with_nulls.csv
+	$(CD_CMD) python3.9 manage.py import_obligations clean_output_with_nulls.csv
 
 sync:
-	$(CD_CMD) python3 manage.py sync_mechanisms
+	$(CD_CMD) python3.9 manage.py sync_mechanisms
 
 clean-csv:
 	$(CD_CMD) python manage.py clean_csv_to_import dirty.csv

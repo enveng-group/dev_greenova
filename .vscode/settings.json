@@ -217,7 +217,7 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "python.analysis.autoImportCompletions": true,
   "python.analysis.extraPaths": [
-    "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages",
     "${workspaceFolder}/greenova"
   ],
   "python.analysis.typeCheckingMode": "strict",
@@ -263,7 +263,7 @@
       "depth": 2
     }
   ],
-  "python.analysis.stubPath": "${workspaceFolder}/.venv/lib/python3.13/site-packages/django-stubs",
+  "python.analysis.stubPath": "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
   "python.analysis.exclude": [
     "**/__pycache__",
     "**/.pytest_cache",

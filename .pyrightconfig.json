@@ -36,5 +36,5 @@
   "reportUnknownArgumentType": "warning",
   "reportUnusedCoroutine": "warning",
   "reportUntypedFunctionDecorator": "warning",
-  "stubPath": ".venv/lib/python3.13/site-packages/django-stubs"
+  "stubPath": ".venv/lib/python3.9/site-packages/django-stubs"
 }

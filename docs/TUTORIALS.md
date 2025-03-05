@@ -8,7 +8,7 @@ Welcome to the tutorials section. Here you will find step-by-step guides to help
 ## Tutorial 1: Setting Up the Development Environment
 
 ### Prerequisites
-- Python 3.9.13
+- Python 3.9.21
 - SQLite3
 - Virtual environment tool
 

@@ -872,7 +872,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Python Version:
 
-   - Python 3.9.13 (exact version)
+   - Python 3.9.21 (exact version)
    - Email: `agallo@enveng-group.com.au`
 
 ### Project Metadata
