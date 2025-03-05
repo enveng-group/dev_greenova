@@ -1,15 +1,10 @@
 # TODO
 
-obligation list
-- 14 day lookahead button
-- overdue button
-- new obligation button
-- update action due date to be just a date
-- if obligation is overdue, update the status to overdue
-obligation crud
+
 profile
 company
 detailed chart view
 reset password
 register
 interactivity of the mechanism charts
+html first by design principles, python and django first, html second picoclasscss third, custom plain css fourth, hyperscript fifth, htmx sixth, native web apis seventh, plain javascript eighth

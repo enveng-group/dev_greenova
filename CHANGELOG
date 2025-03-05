@@ -1,0 +1,26 @@
+
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+### Added
+- Initial project setup
+- Basic Django environment configuration
+- Core database models for obligations management
+
+### Changed
+- None
+
+### Deprecated
+- None
+
+### Removed
+- None
+
+### Fixed
+- None
+
+### Security
+- None

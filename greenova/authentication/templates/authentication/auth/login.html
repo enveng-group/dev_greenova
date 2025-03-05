@@ -17,14 +17,14 @@
 {% block auth_content %}
   {% if not request.user.is_authenticated %}
 
-{% include "authentication/components/messages/form_errors.html" %}
+    {% include "authentication/components/messages/form_errors.html" %}
 
-{% include "authentication/components/forms/login_form.html" %}
+    {% include "authentication/components/forms/login_form.html" %}
 
     <footer>
       <details>
         <summary>
-Need help?
+          Need help?
         </summary>
         <nav>
           <ul>
@@ -39,8 +39,8 @@ Need help?
       </details>
     </footer>
   {% else %}
-    <script>
-        window.location.href = "{% url 'dashboard:home' %}";
-    </script>
+  <script>
+    window.location.href = "{% url 'dashboard:home' %}";
+</script>
   {% endif %}
 {% endblock auth_content %}

@@ -267,3 +267,56 @@ function removeFilter(type, value) {
     select.dispatchEvent(new Event('change'));
   }
 }
+
+// Update the Add Obligation button to include the current project_id
+document.addEventListener('DOMContentLoaded', function() {
+  function updateAddObligationButton() {
+    const projectSelect = document.getElementById('project-select');
+    const addObligationBtn = document.querySelector('.add-obligation-btn');
+
+    if (projectSelect && addObligationBtn) {
+      const projectId = projectSelect.value;
+      if (projectId) {
+        const currentHref = addObligationBtn.getAttribute('href');
+        const baseUrl = currentHref.split('?')[0];
+        addObligationBtn.setAttribute('href', `${baseUrl}?project_id=${projectId}`);
+      }
+    }
+  }
+
+  // Initial update
+  updateAddObligationButton();
+
+  // Update when project selection changes
+  document.addEventListener('change', function(e) {
+    if (e.target.matches('#project-select')) {
+      updateAddObligationButton();
+    }
+  });
+});
+
+// Handle obligation link clicks to show loading state
+document.addEventListener('click', function(e) {
+  if (e.target.matches('.obligation-link') || e.target.closest('.obligation-link')) {
+    // Show loading indicator
+    document.body.classList.add('loading');
+
+    // Store the current project ID in session storage so we can return to it
+    const projectId = document.querySelector('input[name="project_id"]')?.value;
+    if (projectId) {
+      sessionStorage.setItem('lastProjectId', projectId);
+    }
+  }
+});
+
+// Restore project selection when returning from obligation edit
+document.addEventListener('DOMContentLoaded', function() {
+  const projectSelect = document.getElementById('project-select');
+  const lastProjectId = sessionStorage.getItem('lastProjectId');
+
+  if (projectSelect && lastProjectId) {
+    projectSelect.value = lastProjectId;
+    // Trigger change event if needed by your implementation
+    projectSelect.dispatchEvent(new Event('change'));
+  }
+});

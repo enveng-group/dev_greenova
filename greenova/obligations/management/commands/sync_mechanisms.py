@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count, Q
+from django.utils import timezone
 from obligations.models import Obligation
 from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project
@@ -10,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
-    help = 'Sync environmental mechanisms from obligations'
+    help = 'Sync environmental mechanisms from obligations and update all counts including overdue status'
 
     def update_null_statuses(self):
         """Update NULL statuses to 'not started'."""
@@ -49,18 +50,41 @@ class Command(BaseCommand):
             # Return True since we've fixed the NULL values
             return True
         return True
+
+    def update_mechanism_counts(self):
+        """Update all mechanism counts including overdue status."""
+        mechanisms = EnvironmentalMechanism.objects.all().select_related('project')
+        count = mechanisms.count()
+
+        self.stdout.write(f"Updating counts for {count} mechanisms...")
+
+        mechanisms_updated = 0
+        for i, mechanism in enumerate(mechanisms, 1):
+            if i % 10 == 0 or i == count:
+                self.stdout.write(f"Processed {i}/{count} mechanisms")
+
+            try:
+                mechanism.update_obligation_counts()
+                mechanisms_updated += 1
+            except Exception as e:
+                logger.error(f"Error updating counts for {mechanism.name}: {str(e)}")
+
+        return mechanisms_updated
+
     def handle(self, *args: tuple[Any, ...], **options: dict[str, Any]) -> None:
         try:
             with transaction.atomic():
+                # Validate existing obligations first
                 if not self.validate_obligations():
                     raise ValueError("Invalid obligation statuses found")
 
+                # Create/update mechanisms based on obligations
                 mechanisms_data = (
                     Obligation.objects
                     .filter(primary_environmental_mechanism__isnull=False)
                     .values(
                         'project',
-                        'primary_environmental_mechanism__name'  # Changed to get name
+                        'primary_environmental_mechanism__name'
                     )
                     .annotate(
                         not_started_count=Count(
@@ -107,14 +131,11 @@ class Command(BaseCommand):
                         else:
                             status = 'not started'
 
-                        # Update or create mechanism
-                        _, created = EnvironmentalMechanism.objects.update_or_create(
+                        # Create/update mechanism (don't set counts here - we'll do it in update_obligation_counts)
+                        mechanism, created = EnvironmentalMechanism.objects.update_or_create(
                             name=mech_name,
                             project=project,
                             defaults={
-                                'not_started_count': counts['not_started'],
-                                'in_progress_count': counts['in_progress'],
-                                'completed_count': counts['completed'],
                                 'status': status,
                                 'description': f'Environmental mechanism for {project.name}'
                             }
@@ -135,9 +156,12 @@ class Command(BaseCommand):
                         )
                         continue
 
+                # Now update all mechanism counts including overdue status
+                mechanisms_updated = self.update_mechanism_counts()
+
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f'Successfully synced {mechanisms_processed} mechanisms'
+                        f'Successfully synchronized {mechanisms_processed} mechanisms and updated counts for {mechanisms_updated} mechanisms'
                     )
                 )
 

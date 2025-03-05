@@ -1,0 +1,170 @@
+{% extends "obligations/layouts/crud_base.html" %}
+{% load static obligation_tags %}
+
+{% block crud_title %}Obligation Details{% endblock crud_title %}
+{% block breadcrumb_active %}Obligation Details{% endblock %}
+{% block form_title %}Obligation: {{ obligation.obligation_number }}{% endblock form_title %}
+{% block form_heading %}Obligation Details{% endblock %}
+
+{% block form_content %}
+<div class="obligation-details">
+    <div class="form-grid">
+        <!-- Basic details -->
+        <fieldset>
+            <legend>Basic Details</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Obligation Number</label>
+                    <div class="detail-value">{{ obligation.obligation_number }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Project</label>
+                    <div class="detail-value">{{ obligation.project.name }}</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Environmental Aspect</label>
+                    <div class="detail-value">{{ obligation.environmental_aspect }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <div class="detail-value">{% status_badge obligation|display_status %}</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Obligation details -->
+        <fieldset>
+            <legend>Obligation Details</legend>
+
+            <div class="form-group">
+                <label>Obligation</label>
+                <div class="detail-value">{{ obligation.obligation|linebreaks }}</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Environmental Mechanism</label>
+                    <div class="detail-value">
+                        {% if obligation.primary_environmental_mechanism %}
+                            {{ obligation.primary_environmental_mechanism.name }}
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Procedure</label>
+                    <div class="detail-value">{{ obligation.procedure|default:"Not specified"|linebreaks }}</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Timeline details -->
+        <fieldset>
+            <legend>Timeline</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Action Due Date</label>
+                    <div class="detail-value">{{ obligation.action_due_date|format_due_date }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Close Out Date</label>
+                    <div class="detail-value">{{ obligation.close_out_date|format_due_date }}</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Recurring details -->
+        <fieldset>
+            <legend>Recurring Information</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Recurring Obligation</label>
+                    <div class="detail-value">{{ obligation.recurring_obligation|yesno:"Yes,No" }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <div class="detail-value">{{ obligation.recurring_frequency|default:"N/A" }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Forecasted Date</label>
+                    <div class="detail-value">{{ obligation.recurring_forcasted_date|format_due_date }}</div>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Comments and additional info -->
+        <fieldset>
+            <legend>Comments and Additional Information</legend>
+
+            <div class="form-group">
+                <label>General Comments</label>
+                <div class="detail-value">{{ obligation.general_comments|default:"No comments"|linebreaks }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>Supporting Information</label>
+                <div class="detail-value">{{ obligation.supporting_information|default:"None provided"|linebreaks }}</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Compliance Comments</label>
+                    <div class="detail-value">{{ obligation.compliance_comments|default:"No comments"|linebreaks }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Non-Conformance Comments</label>
+                    <div class="detail-value">{{ obligation.non_conformance_comments|default:"No comments"|linebreaks }}</div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="form-actions">
+        <a href="{% url 'obligations:update' obligation_number=obligation.obligation_number %}" class="btn-primary">Edit</a>
+        <button type="button" class="btn-secondary" _="on click call history.back()">Back</button>
+        <button type="button"
+                class="btn-danger"
+                _="on click
+                   if confirm('Are you sure you want to delete this obligation? This action cannot be undone.')
+                     fetch '{% url 'obligations:delete' obligation_number=obligation.obligation_number %}' {
+                       method: 'POST',
+                       headers: {
+                         'X-CSRFToken': '{{ csrf_token }}'
+                       }
+                     }
+                     then if result.ok
+                       set response to JSON.parse(result.response)
+                       set window.location.href = response.redirect_url
+                     else
+                       alert('Failed to delete obligation')
+                   end">
+            Delete
+        </button>
+    </div>
+</div>
+
+<style>
+    .obligation-details .detail-value {
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: var(--background-alt);
+        min-height: 1.5rem;
+    }
+</style>
+{% endblock form_content %}

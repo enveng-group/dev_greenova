@@ -1,45 +1,45 @@
 {% extends "authentication/layouts/auth_base.html" %}
-  {% load static %}
-    {% load auth_tags %}
-      {% load form_tags %}
-        {% block auth_title %}
-          Register
-        {% endblock auth_title %}
-        {% block auth_heading %}
-          Create an account
-        {% endblock auth_heading %}
-        {% block auth_subheading %}
-          Join Greenova to manage your environmental obligations
-        {% endblock auth_subheading %}
-        {% block auth_content %}
-          {% include "authentication/components/messages/form_errors.html" %}
-            <form method="post" novalidate>
-              {% csrf_token %}
-                <fieldset>
-                  <legend>Account Information</legend>
-                  {% render_field form.username "Letters, numbers, and underscores only" %}
-                  {% render_field form.email %}
-                </fieldset>
-                <fieldset>
-                  <legend>Security</legend>
-                  {% render_field form.password1 "At least 8 characters with numbers and special characters" %}
-                  {% render_field form.password2 %}
-                </fieldset>
-                <button type="submit">Create Account</button>
-              </form>
-              <footer>
-                <nav aria-label="Account options">
-                  <details>
-                    <summary>Already have an account?</summary>
-                    <ul>
-                      <li>
-                        <a href="{% url 'authentication:login' %}">Log in to your account</a>
-                      </li>
-                      <li>
-                        <a href="{% url 'authentication:password_reset' %}">Forgot your password?</a>
-                      </li>
-                    </ul>
-                  </details>
-                </nav>
-              </footer>
-            {% endblock auth_content %}
+{% load static %}
+{% load auth_tags %}
+{% load form_tags %}
+{% block auth_title %}
+  Register
+{% endblock auth_title %}
+{% block auth_heading %}
+  Create an account
+{% endblock auth_heading %}
+{% block auth_subheading %}
+  Join Greenova to manage your environmental obligations
+{% endblock auth_subheading %}
+{% block auth_content %}
+  {% include "authentication/components/messages/form_errors.html" %}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <fieldset>
+      <legend>Account Information</legend>
+      {% render_field form.username "Letters, numbers, and underscores only" %}
+      {% render_field form.email %}
+    </fieldset>
+    <fieldset>
+      <legend>Security</legend>
+      {% render_field form.password1 "At least 8 characters with numbers and special characters" %}
+      {% render_field form.password2 %}
+    </fieldset>
+    <button type="submit">Create Account</button>
+  </form>
+  <footer>
+    <nav aria-label="Account options">
+      <details>
+        <summary>Already have an account?</summary>
+        <ul>
+          <li>
+            <a href="{% url 'authentication:login' %}">Log in to your account</a>
+          </li>
+          <li>
+            <a href="{% url 'authentication:password_reset' %}">Forgot your password?</a>
+          </li>
+        </ul>
+      </details>
+    </nav>
+  </footer>
+{% endblock auth_content %}

@@ -1,0 +1,188 @@
+/* Filter section layout */
+.filter-section {
+  margin-bottom: 1.5rem;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.filter-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Filter controls */
+.controls-container {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .controls-container {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.search-control {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-control label {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Fieldsets for filters and sorting */
+.filter-fieldset,
+.sort-fieldset {
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.filter-fieldset legend,
+.sort-fieldset legend {
+  font-size: 0.875rem;
+  padding: 0 0.5rem;
+}
+
+.filter-group,
+.sort-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.75rem;
+}
+
+.filter-group:last-child,
+.sort-group:last-child {
+  margin-bottom: 0;
+}
+
+.filter-group label,
+.sort-group label {
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 992px) {
+  .filter-fieldset {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .filter-group {
+    margin-bottom: 0;
+  }
+
+  .sort-fieldset {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* Filter controls */
+.filter-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-controls select,
+.sort-controls select {
+  min-width: 150px;
+}
+
+.filter-container {
+  display: flex;
+  margin-bottom: var(--spacing);
+  flex-wrap: wrap;
+  gap: var(--spacing);
+  align-items: flex-end;
+  width: 100%;
+}
+
+/* Active filters */
+.active-filters {
+  margin: 1rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.active-filters small {
+  color: var(--text-muted);
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--background-alt);
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+}
+
+.filter-tag button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--text-muted);
+}
+
+.filter-tag button:hover {
+  color: var(--text);
+}
+
+/* Quick filter buttons */
+.quick-filter-btn {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: var(--border-radius);
+  background-color: var(--background-alt);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-filter-btn:hover {
+  background-color: var(--primary-hover);
+  color: var(--primary-inverse);
+}
+
+.quick-filter-btn.active {
+  background-color: var(--primary);
+  color: var(--primary-inverse);
+  border-color: var(--primary);
+}
+
+@media print {
+  .filter-container {
+    display: none !important;
+  }
+}

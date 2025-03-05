@@ -14,7 +14,7 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}/greenova",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.9/site-packages",
         "DJANGO_SETTINGS_MODULE": "greenova.settings"
       },
       "envFile": "${workspaceFolder}/.env"
@@ -33,7 +33,7 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}/greenova",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.9/site-packages",
         "DJANGO_SETTINGS_MODULE": "greenova.settings"
       },
       "envFile": "${workspaceFolder}/.env"
@@ -47,7 +47,7 @@
       "justMyCode": false,
       "cwd": "${fileDirname}",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.9/site-packages",
         "DJANGO_SETTINGS_MODULE": "greenova.settings"
       },
       "envFile": "${workspaceFolder}/.env"
@@ -65,7 +65,7 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}/greenova",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.9/site-packages",
         "DJANGO_SETTINGS_MODULE": "greenova.settings"
       },
       "envFile": "${workspaceFolder}/.env"
@@ -82,7 +82,7 @@
       "justMyCode": false,
       "cwd": "${workspaceFolder}/greenova",
       "env": {
-        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.13/site-packages",
+        "PYTHONPATH": "${workspaceFolder}/.venv/lib/python3.9/site-packages",
         "DJANGO_SETTINGS_MODULE": "greenova.settings"
       },
       "envFile": "${workspaceFolder}/.env"
@@ -91,7 +91,9 @@
   "compounds": [
     {
       "name": "Django: Full Stack",
-      "configurations": ["Django: Run Server"]
+      "configurations": [
+        "Django: Run Server"
+      ]
     }
   ]
 }

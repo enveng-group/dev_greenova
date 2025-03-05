@@ -1,0 +1,11 @@
+<div class="alert error" role="alert">
+    <h4>Error</h4>
+    <p>{{ message }}</p>
+    {% if errors %}
+        <ul>
+            {% for field, field_errors in errors.items %}
+                <li>{{ field }}: {{ field_errors|join:", " }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

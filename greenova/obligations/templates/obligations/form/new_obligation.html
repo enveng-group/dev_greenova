@@ -1,0 +1,299 @@
+{% extends "obligations/layouts/crud_base.html" %}
+{% load static %}
+
+{% block crud_title %}New Obligation{% endblock crud_title %}
+{% block breadcrumb_active %}New Obligation{% endblock %}
+{% block form_title %}Create New Obligation{% endblock form_title %}
+{% block form_heading %}New Obligation Form{% endblock %}
+
+{% block form_content %}
+<form method="post" action="{% url 'obligations:create' %}" id="obligation-form" class="obligation-form">
+    {% csrf_token %}
+
+    <!-- Hidden project input if project is pre-selected -->
+    {% if project_id %}
+        <input type="hidden" name="project" value="{{ project_id }}">
+    {% endif %}
+
+    <div class="form-grid">
+        <!-- Basic details -->
+        <fieldset>
+            <legend>Basic Details</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.obligation_number.id_for_label }}">{{ form.obligation_number.label }}*</label>
+                    {{ form.obligation_number }}
+                    {% if form.obligation_number.help_text %}
+                        <small id="obligation_number_help">{{ form.obligation_number.help_text }}</small>
+                    {% endif %}
+                    {% if form.obligation_number.errors %}
+                        <small class="error">{{ form.obligation_number.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.status.id_for_label }}">{{ form.status.label }}*</label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <small class="error">{{ form.status.errors }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.primary_environmental_mechanism.id_for_label }}">{{ form.primary_environmental_mechanism.label }}</label>
+                    {{ form.primary_environmental_mechanism }}
+                    {% if form.primary_environmental_mechanism.errors %}
+                        <small class="error">{{ form.primary_environmental_mechanism.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.environmental_aspect.id_for_label }}">{{ form.environmental_aspect.label }}</label>
+                    {{ form.environmental_aspect }}
+                    {% if form.environmental_aspect.errors %}
+                        <small class="error">{{ form.environmental_aspect.errors }}</small>
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Obligation details -->
+        <fieldset>
+            <legend>Obligation Details</legend>
+
+            <div class="form-group">
+                <label for="{{ form.obligation.id_for_label }}">{{ form.obligation.label }}*</label>
+                {{ form.obligation }}
+                {% if form.obligation.errors %}
+                    <small class="error">{{ form.obligation.errors }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.accountability.id_for_label }}">{{ form.accountability.label }}</label>
+                    {{ form.accountability }}
+                    {% if form.accountability.errors %}
+                        <small class="error">{{ form.accountability.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.responsibility.id_for_label }}">{{ form.responsibility.label }}</label>
+                    {{ form.responsibility }}
+                    {% if form.responsibility.errors %}
+                        <small class="error">{{ form.responsibility.errors }}</small>
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Timeline details -->
+        <fieldset>
+            <legend>Timeline</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.project_phase.id_for_label }}">{{ form.project_phase.label }}</label>
+                    {{ form.project_phase }}
+                    {% if form.project_phase.errors %}
+                        <small class="error">{{ form.project_phase.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.action_due_date.id_for_label }}">{{ form.action_due_date.label }}</label>
+                    {{ form.action_due_date }}
+                    {% if form.action_due_date.help_text %}
+                        <small id="due_date_help">{{ form.action_due_date.help_text }}</small>
+                    {% endif %}
+                    {% if form.action_due_date.errors %}
+                        <small class="error">{{ form.action_due_date.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.close_out_date.id_for_label }}">{{ form.close_out_date.label }}</label>
+                    {{ form.close_out_date }}
+                    {% if form.close_out_date.errors %}
+                        <small class="error">{{ form.close_out_date.errors }}</small>
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Recurring details -->
+        <fieldset>
+            <legend>Recurring Information</legend>
+
+            <div class="form-row">
+                <div class="form-group checkbox-group">
+                    <label for="{{ form.recurring_obligation.id_for_label }}">
+                        {{ form.recurring_obligation }}
+                        {{ form.recurring_obligation.label }}
+                    </label>
+                    {% if form.recurring_obligation.help_text %}
+                        <small>{{ form.recurring_obligation.help_text }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.recurring_frequency.id_for_label }}">{{ form.recurring_frequency.label }}</label>
+                    {{ form.recurring_frequency }}
+                    {% if form.recurring_frequency.errors %}
+                        <small class="error">{{ form.recurring_frequency.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.recurring_forcasted_date.id_for_label }}">{{ form.recurring_forcasted_date.label }}</label>
+                    {{ form.recurring_forcasted_date }}
+                    {% if form.recurring_forcasted_date.errors %}
+                        <small class="error">{{ form.recurring_forcasted_date.errors }}</small>
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Inspection details -->
+        <fieldset>
+            <legend>Inspection Details</legend>
+
+            <div class="form-row">
+                <div class="form-group checkbox-group">
+                    <label for="{{ form.inspection.id_for_label }}">
+                        {{ form.inspection }}
+                        {{ form.inspection.label }}
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.inspection_frequency.id_for_label }}">{{ form.inspection_frequency.label }}</label>
+                    {{ form.inspection_frequency }}
+                    {% if form.inspection_frequency.errors %}
+                        <small class="error">{{ form.inspection_frequency.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.site_or_desktop.id_for_label }}">{{ form.site_or_desktop.label }}</label>
+                    {{ form.site_or_desktop }}
+                    {% if form.site_or_desktop.errors %}
+                        <small class="error">{{ form.site_or_desktop.errors }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.covered_in_which_inspection_checklist.id_for_label }}">{{ form.covered_in_which_inspection_checklist.label }}</label>
+                {{ form.covered_in_which_inspection_checklist }}
+                {% if form.covered_in_which_inspection_checklist.errors %}
+                    <small class="error">{{ form.covered_in_which_inspection_checklist.errors }}</small>
+                {% endif %}
+            </div>
+        </fieldset>
+
+        <!-- Comments and additional info -->
+        <fieldset>
+            <legend>Comments and Additional Information</legend>
+
+            <div class="form-group">
+                <label for="{{ form.supporting_information.id_for_label }}">{{ form.supporting_information.label }}</label>
+                {{ form.supporting_information }}
+                {% if form.supporting_information.errors %}
+                    <small class="error">{{ form.supporting_information.errors }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.general_comments.id_for_label }}">{{ form.general_comments.label }}</label>
+                {{ form.general_comments }}
+                {% if form.general_comments.errors %}
+                    <small class="error">{{ form.general_comments.errors }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.compliance_comments.id_for_label }}">{{ form.compliance_comments.label }}</label>
+                    {{ form.compliance_comments }}
+                    {% if form.compliance_comments.errors %}
+                        <small class="error">{{ form.compliance_comments.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.non_conformance_comments.id_for_label }}">{{ form.non_conformance_comments.label }}</label>
+                    {{ form.non_conformance_comments }}
+                    {% if form.non_conformance_comments.errors %}
+                        <small class="error">{{ form.non_conformance_comments.errors }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.evidence.id_for_label }}">{{ form.evidence.label }}</label>
+                {{ form.evidence }}
+                {% if form.evidence.errors %}
+                    <small class="error">{{ form.evidence.errors }}</small>
+                {% endif %}
+            </div>
+        </fieldset>
+
+        <!-- Additional fields -->
+        <fieldset>
+            <legend>Additional Fields</legend>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.person_email.id_for_label }}">{{ form.person_email.label }}</label>
+                    {{ form.person_email }}
+                    {% if form.person_email.errors %}
+                        <small class="error">{{ form.person_email.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.obligation_type.id_for_label }}">{{ form.obligation_type.label }}</label>
+                    {{ form.obligation_type }}
+                    {% if form.obligation_type.errors %}
+                        <small class="error">{{ form.obligation_type.errors }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label for="{{ form.new_control_action_required.id_for_label }}">
+                        {{ form.new_control_action_required }}
+                        {{ form.new_control_action_required.label }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.gap_analysis.id_for_label }}">{{ form.gap_analysis.label }}</label>
+                {{ form.gap_analysis }}
+                {% if form.gap_analysis.errors %}
+                    <small class="error">{{ form.gap_analysis.errors }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.notes_for_gap_analysis.id_for_label }}">{{ form.notes_for_gap_analysis.label }}</label>
+                {{ form.notes_for_gap_analysis }}
+                {% if form.notes_for_gap_analysis.errors %}
+                    <small class="error">{{ form.notes_for_gap_analysis.errors }}</small>
+                {% endif %}
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- Form actions -->
+    <div class="form-actions">
+        <button type="submit" class="btn-primary">Save Obligation</button>
+        <button type="button" class="btn-secondary" _="on click call history.back()">Cancel</button>
+    </div>
+</form>
+{% endblock form_content %}

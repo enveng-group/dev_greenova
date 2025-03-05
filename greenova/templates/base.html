@@ -36,7 +36,7 @@
     <!-- Header with semantic nav -->
     <header>
       <nav>
-        <ul>
+        <ul style="margin-left: 1rem;">
           <li><a href="#" data-theme-switcher="auto">Auto</a></li>
           <li><a href="#" data-theme-switcher="light">Light</a></li>
           <li><a href="#" data-theme-switcher="dark">Dark</a></li>
@@ -48,7 +48,6 @@
                    align-items: center">
           {% if request.user.is_authenticated %}
             <!-- Left side navigation items -->
-            <li role="none" style="margin-left: 2rem">
               <li role="none" style="margin-left: 2rem">
                 <nav aria-label="Primary navigation" role="navigation">
                   <ul>
@@ -69,12 +68,25 @@
                 </nav>
               </li>
               <!-- Auth Actions (right-aligned) -->
-              <li role="none"
+              <li _="on load if user_authenticated then hide else show"
+              role="none"
                   style="margin-left: auto;
+                         margin-right: 2rem;
                          display: flex;
                          align-items: center;
                          gap: 1rem">
                 {% if request.user.is_authenticated %}
+                                <!-- Add Obligation Button -->
+                <a href="{% url 'obligations:create' %}{% if request.GET.project_id %}?project_id={{ request.GET.project_id }}{% endif %}"
+                   class="add-obligation-btn"
+                   role="button"
+                   aria-label="Add new obligation">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  Add Obligation
+                </a>
                   {% load chatbot_tags %}
                   {% chat_widget %}
                   <!-- Logout -->
@@ -92,13 +104,20 @@
                 {% endif %}
               </li>
             {% else %}
-              <li role="none" style="margin-left: auto">
-                <a href="{% url 'authentication:login' %}"
-                   role="menuitem"
-                   aria-label="Login"
-                   hx-boost="true"
-                   _="on click call alert('Redirecting to login...')">Login</a>
-              </li>
+            <li role="none" style="margin-left: auto">
+              <a href="{% url 'authentication:register' %}"
+                 role="menuitem"
+                 aria-label="Register"
+                 _="on load if location.pathname is '{% url 'authentication:register' %}' then hide me">
+                Register
+              </a>
+              <a href="{% url 'authentication:login' %}"
+                 role="menuitem"
+                 aria-label="Login"
+                 _="on load if location.pathname is '{% url 'authentication:login' %}' then hide me">
+                Login
+              </a>
+            </li>
             {% endif %}
           </ul>
         </nav>
