@@ -1,0 +1,95 @@
+from typing import Union, Optional, Dict, Any
+from datetime import date
+from django.utils import timezone
+from .constants import (
+    STATUS_COMPLETED, FREQUENCY_ALIASES, FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL,
+    FREQUENCY_DAILY, FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY,
+    FREQUENCY_WEEKLY
+)
+
+def is_obligation_overdue(obligation: Union['Obligation', Dict[str, Any]], reference_date: Optional[date] = None) -> bool:
+    """
+    Determine if an obligation is overdue based on its status and due date.
+
+    This is the canonical implementation for determining overdue status that should
+    be used throughout the application to ensure consistency.
+
+    Args:
+        obligation: An Obligation model instance or a dictionary with obligation attributes
+        reference_date: Optional date to compare against (defaults to today)
+
+    Returns:
+        bool: True if the obligation is overdue, False otherwise
+    """
+    # Use today as reference date if none provided
+    if reference_date is None:
+        reference_date = timezone.now().date()
+
+    # Get status - handle both model instances and dictionaries
+    if isinstance(obligation, dict):
+        status = obligation.get('status')
+        due_date = obligation.get('action_due_date')
+    else:
+        status = obligation.status
+        due_date = obligation.action_due_date
+
+    # Rule 1: Completed obligations are never overdue
+    if status == STATUS_COMPLETED:
+        return False
+
+    # Rule 2: Obligations without a due date cannot be overdue
+    if not due_date:
+        return False
+
+    # Rule 3: If the due date is in the past and not completed, it's overdue
+    return due_date < reference_date
+
+def normalize_frequency(frequency: str) -> str:
+    """
+    Normalize a frequency string to its canonical form.
+
+    This handles variations in terminology and ensures consistency
+    across the application.
+
+    Args:
+        frequency: A string representing the frequency
+
+    Returns:
+        str: The normalized frequency string
+    """
+    if not frequency:
+        return ""
+
+    # Convert to lowercase for case-insensitive matching
+    frequency_lower = frequency.lower().strip()
+
+    # Check if it's one of our canonical values
+    if frequency_lower in [
+        FREQUENCY_DAILY, FREQUENCY_WEEKLY, FREQUENCY_FORTNIGHTLY,
+        FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL, FREQUENCY_ANNUAL
+    ]:
+        return frequency_lower
+
+    # Check aliases
+    for alias, canonical in FREQUENCY_ALIASES.items():
+        if alias in frequency_lower:
+            return canonical
+
+    # Handle common variations
+    if 'day' in frequency_lower or 'daily' in frequency_lower:
+        return FREQUENCY_DAILY
+    elif 'week' in frequency_lower:
+        return FREQUENCY_WEEKLY
+    elif 'fortnight' in frequency_lower or 'bi-week' in frequency_lower or 'biweek' in frequency_lower:
+        return FREQUENCY_FORTNIGHTLY
+    elif 'month' in frequency_lower:
+        return FREQUENCY_MONTHLY
+    elif 'quarter' in frequency_lower or '3 month' in frequency_lower or 'three month' in frequency_lower:
+        return FREQUENCY_QUARTERLY
+    elif 'biannual' in frequency_lower or 'bi annual' in frequency_lower or 'semi' in frequency_lower or 'twice a year' in frequency_lower or '6 month' in frequency_lower:
+        return FREQUENCY_BIANNUAL
+    elif 'annual' in frequency_lower or 'year' in frequency_lower or '12 month' in frequency_lower or 'twelve month' in frequency_lower:
+        return FREQUENCY_ANNUAL
+
+    # If we can't normalize it, return as-is
+    return frequency_lower

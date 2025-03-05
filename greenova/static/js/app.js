@@ -320,3 +320,10 @@ document.addEventListener('DOMContentLoaded', function() {
     projectSelect.dispatchEvent(new Event('change'));
   }
 });
+
+document.addEventListener('htmx:afterSettle', function(evt) {
+  if (evt.detail.triggerSpec && evt.detail.triggerSpec.includes('obligation:statusChanged')) {
+    htmx.trigger('#chart-container', 'refreshCharts');
+    // Refresh mechanism charts or other affected components
+  }
+});

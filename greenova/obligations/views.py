@@ -6,13 +6,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from datetime import timedelta
-from .models import Obligation
-from .forms import ObligationForm
+from .models import Obligation, ObligationEvidence
+from .forms import ObligationForm, EvidenceUploadForm  # Added ObligationForm import here
 from projects.models import Project
+from django.shortcuts import render
+from django.views import View
+from django.forms import inlineformset_factory
 
 # Create a logger for this module
 logger = logging.getLogger(__name__)
@@ -236,6 +239,12 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if self.request.headers.get('HX-Request'):
+            response['HX-Trigger'] = 'obligation:statusChanged'
+        return response
+
 
 class ObligationDeleteView(LoginRequiredMixin, DeleteView):
     """View for deleting an obligation."""
@@ -269,3 +278,37 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
                 "status": "error",
                 "message": f"Error deleting obligation: {str(e)}"
             }, status=400)
+
+class ToggleCustomAspectView(View):
+    def get(self, request):
+        aspect = request.GET.get('environmental_aspect')
+        if aspect == 'Other':
+            return render(request, 'obligations/partials/custom_aspect_field.html', {
+                'show_field': True
+            })
+        return render(request, 'obligations/partials/custom_aspect_field.html', {
+                'show_field': False
+            })
+
+def upload_evidence(request, obligation_id):
+    obligation = get_object_or_404(Obligation, pk=obligation_id)
+
+    # Check if obligation already has 5 files
+    if ObligationEvidence.objects.filter(obligation=obligation).count() >= 5:
+        messages.error(request, "This obligation already has the maximum of 5 evidence files")
+        return redirect('obligation_detail', obligation_id=obligation_id)
+
+    if request.method == 'POST':
+        form = EvidenceUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            evidence = form.save(commit=False)
+            evidence.obligation = obligation
+            evidence.save()
+            messages.success(request, "Evidence file uploaded successfully")
+            return redirect('obligation_detail', obligation_id=obligation_id)
+    else:
+        form = EvidenceUploadForm()
+        return render(request, 'upload_evidence.html', {
+            'obligation': obligation,
+            'form': form,
+        })

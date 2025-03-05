@@ -1,0 +1,17 @@
+<div id="custom-aspect-container">
+  {% if show_field %}
+  <div class="form-group">
+    <label for="id_custom_environmental_aspect">Custom Environmental Aspect:</label>
+    <input
+      type="text"
+      name="custom_environmental_aspect"
+      id="id_custom_environmental_aspect"
+      class="form-control"
+      required
+      aria-describedby="custom-aspect-help">
+    <small id="custom-aspect-help" class="form-text text-muted">
+      Please specify the custom environmental aspect
+    </small>
+  </div>
+  {% endif %}
+</div>

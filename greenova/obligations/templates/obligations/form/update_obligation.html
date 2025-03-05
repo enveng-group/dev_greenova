@@ -6,11 +6,32 @@
 {% block form_heading %}Edit Obligation Form{% endblock %}
 
 {% block form_content %}
-<form method="post" action="{% url 'obligations:update' obligation_number=obligation.obligation_number %}" id="obligation-form" class="obligation-form">
+<form method="post"
+      action="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
+      id="obligation-form"
+      class="obligation-form"
+      hx-post="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
+      hx-target="#obligation-detail"
+      hx-swap="outerHTML"
+      hx-trigger="submit">
     {% csrf_token %}
 
     <!-- Same form fields as in new_obligation.html -->
     {{ block.super }}
+
+    <input type="date"
+           name="action_due_date"
+           id="id_action_due_date"
+           _="on change
+              if my.value < Date.now().toISOString().split('T')[0] and #id_status.value != 'completed'
+                add .border-warning to me
+                put 'This date is in the past. The obligation will be marked as overdue.' into #date-warning.innerText
+                show #date-warning
+              else
+                remove .border-warning from me
+                hide #date-warning
+              end" />
+    <small id="date-warning" class="warning" style="display:none;"></small>
 
     <!-- Override the form actions section -->
     <div class="form-actions">

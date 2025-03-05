@@ -102,67 +102,11 @@ class Command(BaseCommand):
                     )
                 )
 
-                mechanisms_processed = 0
-
-                for data in mechanisms_data:
-                    mech_name = None  # Initialize before try block
-                    try:
-                        project = Project.objects.get(id=data['project'])
-                        mech_name = data['primary_environmental_mechanism__name']
-
-                        if not mech_name:
-                            continue
-
-                        # Calculate counts
-                        counts = {
-                            'not_started': data['not_started_count'],
-                            'in_progress': data['in_progress_count'],
-                            'completed': data['completed_count']
-                        }
-
-                        # Determine status
-                        total = sum(counts.values())
-                        if total == 0:
-                            status = 'not started'
-                        elif counts['completed'] == total:
-                            status = 'completed'
-                        elif counts['in_progress'] > 0:
-                            status = 'in progress'
-                        else:
-                            status = 'not started'
-
-                        # Create/update mechanism (don't set counts here - we'll do it in update_obligation_counts)
-                        mechanism, created = EnvironmentalMechanism.objects.update_or_create(
-                            name=mech_name,
-                            project=project,
-                            defaults={
-                                'status': status,
-                                'description': f'Environmental mechanism for {project.name}'
-                            }
-                        )
-
-                        mechanisms_processed += 1
-                        logger.info(
-                            f"{'Created' if created else 'Updated'} mechanism "
-                            f"{mech_name} for {project.name}"
-                        )
-
-                    except Project.DoesNotExist:
-                        logger.error(f"Project {data['project']} not found")
-                        continue
-                    except Exception as e:
-                        logger.error(
-                            f"Error processing mechanism {mech_name}: {str(e)}"
-                        )
-                        continue
-
                 # Now update all mechanism counts including overdue status
                 mechanisms_updated = self.update_mechanism_counts()
 
                 self.stdout.write(
-                    self.style.SUCCESS(
-                        f'Successfully synchronized {mechanisms_processed} mechanisms and updated counts for {mechanisms_updated} mechanisms'
-                    )
+                    self.style.SUCCESS(f"Synchronized mechanisms: {mechanisms_updated} updated")
                 )
 
         except Exception as e:
