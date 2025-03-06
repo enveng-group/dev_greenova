@@ -1,65 +1,65 @@
 {% extends "base.html" %}
-{% block title %}
-  Welcome to Greenova
-{% endblock title %}
-{% block main %}
-  <article>
-    <header>
-      <hgroup>
+  {% block title %}
+    Welcome to Greenova
+  {% endblock title %}
+  {% block main %}
+    <article>
+      <header>
+        <hgroup>
           <h1>Welcome to Greenova</h1>
           <h2>Environmental Compliance Management System</h2>
-      </hgroup>
+        </hgroup>
         <p>Track, manage, and report on environmental obligations with ease.</p>
-    </header>
-    <section>
-      <!-- Landing page content -->
-      <nav _="on load if user_authenticated then show else hide">
-        <a href="{% url 'authentication:register' %}"
-           role="button"
-           class="primary">Get Started</a>
-        <a href="#features" role="button" class="outline">Learn More</a>
-      </nav>
-    </section>
-    <section id="features" aria-labelledby="features-heading">
+      </header>
+      <section>
+        <!-- Landing page content -->
+        <nav _="on load if user_authenticated then show else hide">
+          <a href="{% url 'authentication:register' %}"
+            role="button"
+            class="primary">Get Started</a>
+          <a href="#features" role="button" class="outline">Learn More</a>
+        </nav>
+      </section>
+      <section id="features" aria-labelledby="features-heading">
         <h2 id="features-heading">Key Features</h2>
-      <div class="grid">
-        <article>
-          <header>
+        <div class="grid">
+          <article>
+            <header>
               <h3>Obligation Tracking</h3>
-          </header>
+            </header>
             <p>Monitor and manage environmental obligations across multiple projects</p>
-        </article>
-        <article>
-          <header>
+          </article>
+          <article>
+            <header>
               <h3>Compliance Dashboard</h3>
-          </header>
+            </header>
             <p>Real-time insights into your environmental compliance status</p>
-        </article>
-        <article>
-          <header>
+          </article>
+          <article>
+            <header>
               <h3>Automated Reporting</h3>
-          </header>
+            </header>
             <p>Generate comprehensive reports with just a few clicks</p>
-        </article>
-      </div>
-    </section>
-    <section id="about" aria-labelledby="about-heading">
+          </article>
+        </div>
+      </section>
+      <section id="about" aria-labelledby="about-heading">
         <h2 id="about-heading">About Greenova</h2>
-      <p>
-        Greenova is designed to help environmental professionals manage their
-        obligations effectively. Our platform simplifies compliance tracking,
-        reporting, and team collaboration.
-      </p>
-    </section>
-    <section aria-labelledby="cta-heading">
+        <p>
+          Greenova is designed to help environmental professionals manage their
+          obligations effectively. Our platform simplifies compliance tracking,
+          reporting, and team collaboration.
+        </p>
+      </section>
+      <section aria-labelledby="cta-heading">
         <h2 id="cta-heading">Ready to get started?</h2>
-      <p>
-        Join environmental professionals who trust Greenova for their
-        compliance management needs.
-      </p>
-      <nav aria-label="Sign up">
-        <a href="{% url 'authentication:register' %}" role="button">Sign Up Now</a>
-      </nav>
-    </section>
-  </article>
-{% endblock main %}
+        <p>
+          Join environmental professionals who trust Greenova for their
+          compliance management needs.
+        </p>
+        <nav aria-label="Sign up">
+          <a href="{% url 'authentication:register' %}" role="button">Sign Up Now</a>
+        </nav>
+      </section>
+    </article>
+  {% endblock main %}
