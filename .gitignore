@@ -1,8 +1,14 @@
 # OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 *.swp
 *.swo
-Thumbs.db
+*~
 
 # Python/Django
 *.py[cod]
@@ -23,7 +29,13 @@ lib/
 lib64/
 .Python
 .coverage
+.pytest_cache/
+.tox/
 htmlcov/
+**/staticfiles/**
+**/media/**
+local_settings.py
+**/migrations/**
 
 # Virtual Environment
 .venv/
@@ -35,55 +47,40 @@ ENV/
 *.sqlite3
 db.sqlite3
 *.db
-
-# Django
-**/staticfiles/**
-**/media/**
-local_settings.py
-**/migrations/**
+*.sqlite
 
 # Logs
 *.log
 logs/
 greenova/logs/
+greenova/logs/django.log
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
 
 # Node
 node_modules/
-npm-debug.log
 package-lock.json
+pnpm-lock.yaml
+yarn.lock
 
-# IDE
+# IDE/Editor
 .idea/
+.vscode/
 *.sublime-workspace
 *.sublime-project
+.editorconfig
+
+# Environment
+.env
 
 # Project specific
 greenova/db.sqlite3
-greenova/logs/django.log
-
-# Compiled files
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-
-# Testing
-.coverage
-.tox/
-.pytest_cache/
-
-# Pipenv
-Pipfile.lock
-
-# Use global gitignore for common patterns
 
 # Keep these commented for now (uncomment if needed)
-#.env
 #/staticfiles/
 #/media/
-#.vscode/
-#.editorconfig
 #.eslintrc.cjs
 #.npmrc
 #.pythonstartup

@@ -41,21 +41,52 @@
 
             {% block form_content %}
             <!-- Form placeholder - will be overridden by child templates -->
-            {% endblock form_content %}
-        </section>
-    </article>
+            <div class="form-group">
+              {{ form.environmental_aspect.label_tag }}
+              {{ form.environmental_aspect }}
+              {% if form.environmental_aspect.help_text %}
+                <small class="form-text text-muted">{{ form.environmental_aspect.help_text }}</small>
+              {% endif %}
+              {% if form.environmental_aspect.errors %}
+                <div class="invalid-feedback">
+                  {% for error in form.environmental_aspect.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Container for the custom aspect field -->
+            <div id="custom-aspect-container">
+              {% if form.instance.environmental_aspect == 'Other' %}
+              <div class="form-group">
+                {{ form.custom_environmental_aspect.label_tag }}
+                {{ form.custom_environmental_aspect }}
+                {% if form.custom_environmental_aspect.help_text %}
+                  <small class="form-text text-muted">{{ form.custom_environmental_aspect.help_text }}</small>
+                {% endif %}
+                {% if form.custom_environmental_aspect.errors %}
+                  <div class="invalid-feedback">
+
+{% for error in form.custom_environmental_aspect.errors %}
+  {{ error }}
+{% endfor %}
+  </div>
+{% endif %}
+  </div>
+{% endif %}
+</div>
+{% endblock form_content %}
+</section>
+</article>
 </main>
-{% endblock main %}
 
 {% block footer %}
 <footer role="contentinfo">
-    <p>
-        © {% now "Y" %} <a href="https://www.enveng-group.com.au/"
-target="_blank"
-rel="noopener noreferrer">Enveng Group</a> |
-        Licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html"
-target="_blank"
-rel="noopener noreferrer">GNU AGPL v3.0</a>
-    </p>
+<p>
+© {% now "Y" %} <a href="https://www.enveng-group.com.au/" target="_blank" rel="noopener noreferrer">Enveng Group</a> |
+Licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">GNU AGPL v3.0</a>
+</p>
 </footer>
 {% endblock footer %}
+{% endblock main %}

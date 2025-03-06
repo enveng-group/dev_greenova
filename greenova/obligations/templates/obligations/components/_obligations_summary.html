@@ -16,6 +16,16 @@
       <div class="filter-header">
         <h3 id="filter-heading">Filter and Sort</h3>
         <div class="filter-actions">
+          <button type="button"
+                  class="filter-btn"
+                  hx-get="{% url 'obligations:summary' %}"
+                  hx-target=".obligations-section"
+                  hx-include="[name='project_id']"
+                  hx-vals='{"status": "overdue"}'
+                  hx-trigger="click">
+            <span class="badge danger">Overdue</span>
+          </button>
+          <!-- Other filter buttons -->
           <!-- Quick filter buttons -->
           <button type="button"
                   class="quick-filter-btn {% if active_filters.date_filter == '14day_lookahead' %}active{% endif %}"
@@ -75,6 +85,22 @@
                         {{ status|title }}
                       </option>
                     {% endfor %}
+                  </select>
+                </div>
+
+                <div class="filter-group">
+                  <label for="status-filter">Status:</label>
+                  <select id="status-filter"
+                          name="status"
+                          hx-get="{% url 'obligations:summary' %}"
+                          hx-include="[name='project_id']"
+                          hx-target=".obligations-section"
+                          hx-trigger="change">
+                    <option value="">All</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="not started">Not Started</option>
+                    <option value="in progress">In Progress</option>
+                    <option value="completed">Completed</option>
                   </select>
                 </div>
 
@@ -236,7 +262,7 @@
             <span class="filter-tag">
               Phase: {{ phase }}
               <button type="button"
-                      hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&{% for s in active_filters.status %}status={{ s }}&{% endfor %}{% for m in active_filters.mechanism %}mechanism={{ m }}&{% endfor %}{% for p in active_filters.phase %}{% if p != phase %}phase={{ p }}&{% endif %}{% endfor %}{% if active_filters.search %}search={{ active_filters.search }}&{% endif %}sort={{ active_filters.sort }}&order={{ active_filters.order }}"
+                      hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&{% for s in active_filters.status %}status={{ s }}&{% endfor %}{% for m in active_filters.mechanism %}mechanism={{ m }}&{% endfor %}{% for p in active_filters.phase %}{% if p != phase %}phase={{ p }}&{% endif %}{% endfor %}{% if active_filters.search %}search={{ active_filters.search }}{% endif %}&sort={{ active_filters.sort }}&order={{ active_filters.order }}"
                       hx-target=".obligations-section"
                       hx-push-url="true"
                       aria-label="Remove {{ phase }} phase filter">
@@ -286,13 +312,11 @@
               <th scope="col">Compliance Comments</th>
               <th scope="col">Non-Conformance</th>
               <th scope="col">Evidence</th>
-              <th scope="col">Contact Email</th>
               <th scope="col">Site/Desktop</th>
               <th scope="col">New Control Action</th>
               <th scope="col">Obligation Type</th>
               <th scope="col">Gap Analysis</th>
               <th scope="col">Gap Analysis Notes</th>
-              <th scope="col">Inspection Checklist</th>
             </tr>
           </thead>
           <tbody>
@@ -334,7 +358,17 @@
                 <td>{{ obligation.obligation|truncatewords:30 }}</td>
                 <td>{{ obligation.action_due_date|format_due_date }}</td>
                 <td>{{ obligation.close_out_date|default:"-" }}</td>
-                <td>{% status_badge obligation|display_status %}</td>
+                <td class="status-cell">
+                  <span class="status-badge"
+                        _="on htmx:afterSettle
+                           if I.innerText == 'Overdue'
+                             add .pulse-animation to me
+                             wait 2s
+                             remove .pulse-animation from me
+                           end">
+                    {% status_badge obligation|display_status %}
+                  </span>
+                </td>
                 <td>{{ obligation.accountability }}</td>
                 <td>{{ obligation.responsibility }}</td>
                 <td>{{ obligation.project_phase|default:"-" }}</td>
@@ -343,13 +377,11 @@
                 <td>{{ obligation.compliance_comments|default:"-"|truncatewords:20 }}</td>
                 <td>{{ obligation.non_conformance_comments|default:"-"|truncatewords:20 }}</td>
                 <td>{{ obligation.evidence|default:"-" }}</td>
-                <td>{{ obligation.person_email|default:"-" }}</td>
                 <td>{{ obligation.site_or_desktop|default:"-" }}</td>
                 <td>{{ obligation.new_control_action_required|yesno:"Yes,No" }}</td>
                 <td>{{ obligation.obligation_type|default:"-" }}</td>
                 <td>{{ obligation.gap_analysis|default:"-"|truncatewords:20 }}</td>
                 <td>{{ obligation.notes_for_gap_analysis|default:"-"|truncatewords:20 }}</td>
-                <td>{{ obligation.covered_in_which_inspection_checklist|default:"-" }}</td>
               </tr>
             {% empty %}
               <tr>

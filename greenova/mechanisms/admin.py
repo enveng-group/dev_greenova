@@ -2,6 +2,7 @@ from django.contrib import admin
 from typing import Any
 from django.http import HttpRequest
 from .models import EnvironmentalMechanism
+from django.utils import timezone
 
 
 @admin.register(EnvironmentalMechanism)
@@ -36,3 +37,13 @@ class EnvironmentalMechanismAdmin(admin.ModelAdmin):
         """Update counts when saving model in admin."""
         super().save_model(request, obj, form, change)
         obj.update_obligation_counts()
+
+    def is_overdue(self, obj):
+        """Display whether an obligation is overdue."""
+        if obj.status == 'completed':
+            return False
+            
+        if not obj.action_due_date:
+            return False
+            
+        return obj.action_due_date < timezone.now().date()

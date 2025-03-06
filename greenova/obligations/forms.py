@@ -4,6 +4,9 @@ from django.utils import timezone
 from .models import Obligation
 from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project
+from django.core.exceptions import ValidationError
+from .models import ObligationEvidence
+from .constants import STATUS_CHOICES, STATUS_COMPLETED, FREQUENCY_CHOICES
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +37,19 @@ class ObligationForm(forms.ModelForm):
             ('Other', 'Other')
         ],
         widget=forms.Select(attrs={
-            'class': 'form-input'
+            'class': 'form-input',
+            'hx-get': '/obligations/toggle-custom-aspect/',
+            'hx-target': '#custom-aspect-container',
+            'hx-trigger': 'change',
+            'hx-swap': 'innerHTML'
+        })
+    )
+
+    custom_environmental_aspect = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'style': 'display:none;'
         })
     )
 
@@ -82,11 +97,7 @@ class ObligationForm(forms.ModelForm):
     )
 
     status = forms.ChoiceField(
-        choices=[
-            ('not started', 'Not Started'),
-            ('in progress', 'In Progress'),
-            ('completed', 'Completed')
-        ],
+        choices=STATUS_CHOICES,
         widget=forms.Select(attrs={'class': 'form-input'})
     )
 
@@ -149,22 +160,18 @@ class ObligationForm(forms.ModelForm):
         })
     )
 
-    person_email = forms.EmailField(
-        required=False,
-        widget=forms.EmailInput(attrs={'class': 'form-input'})
-    )
-
     recurring_obligation = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-checkbox'})
     )
 
-    recurring_frequency = forms.CharField(
-        max_length=50,
+    recurring_frequency = forms.ChoiceField(
+        choices=FREQUENCY_CHOICES,
         required=False,
-        widget=forms.TextInput(attrs={
+        widget=forms.Select(attrs={
             'class': 'form-input',
-            'placeholder': 'e.g., Monthly, Quarterly'
+            'id': 'id_recurring_frequency',
+            'aria-describedby': 'recurring_frequency_help'
         })
     )
 
@@ -226,12 +233,6 @@ class ObligationForm(forms.ModelForm):
         })
     )
 
-    covered_in_which_inspection_checklist = forms.CharField(
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-input'})
-    )
-
     # Additional help text for fields
     def __init__(self, *args, **kwargs):
         self.project = kwargs.pop('project', None)
@@ -268,6 +269,12 @@ class ObligationForm(forms.ModelForm):
             if not isinstance(field.widget, (forms.HiddenInput, forms.CheckboxInput)):
                 field.widget.attrs.update({'class': 'form-input'})
 
+        # If 'Other' is already selected, show the custom field
+        if self.initial.get('environmental_aspect') == 'Other':
+            self.fields['custom_environmental_aspect'].widget.attrs['style'] = 'display:block;'
+        else:
+            self.fields['custom_environmental_aspect'].widget.attrs['style'] = 'display:none;'
+
     def clean_obligation_number(self):
         """Ensure obligation_number format is valid if provided."""
         obligation_number = self.cleaned_data.get('obligation_number')
@@ -292,6 +299,21 @@ class ObligationForm(forms.ModelForm):
 
         return obligation_number
 
+    def clean_recurring_frequency(self):
+        """Ensure recurring frequency is normalized."""
+        frequency = self.cleaned_data.get('recurring_frequency')
+        recurring = self.cleaned_data.get('recurring_obligation')
+
+        if recurring and not frequency:
+            raise forms.ValidationError("Frequency is required for recurring obligations")
+
+        if not recurring:
+            return ''
+
+        # Normalize the frequency
+        from .utils import normalize_frequency
+        return normalize_frequency(frequency)
+
     def clean(self):
         """Custom validation to enforce business rules."""
         cleaned_data = super().clean()
@@ -305,7 +327,7 @@ class ObligationForm(forms.ModelForm):
             self.add_error('close_out_date', 'Close out date must be after action due date')
 
         # If status is completed, require close_out_date
-        if status == 'completed' and not close_out_date:
+        if status == STATUS_COMPLETED and not close_out_date:
             self.add_error('close_out_date', 'Close out date is required when status is completed')
 
         # If recurring is checked, require frequency
@@ -314,8 +336,32 @@ class ObligationForm(forms.ModelForm):
         if recurring and not recurring_frequency:
             self.add_error('recurring_frequency', 'Frequency is required for recurring obligations')
 
+        # Validate custom aspect is provided if 'Other' is selected
+        environmental_aspect = cleaned_data.get('environmental_aspect')
+        custom_aspect = cleaned_data.get('custom_environmental_aspect')
+        if environmental_aspect == 'Other' and not custom_aspect:
+            self.add_error('custom_environmental_aspect',
+                          'Please specify the custom environmental aspect.')
+
         return cleaned_data
 
     class Meta:
         model = Obligation
         fields = '__all__'
+
+class EvidenceUploadForm(forms.ModelForm):
+    class Meta:
+        model = ObligationEvidence
+        fields = ['file', 'description']
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        if file:
+            if file.size > 26214400:  # 25MB limit
+                raise ValidationError("File size must be under 25MB")
+
+            # Check if this obligation already has 5 files
+            if self.instance and self.instance.obligation:
+                if ObligationEvidence.objects.filter(obligation=self.instance.obligation).count() >= 5:
+                    raise ValidationError("Maximum of 5 evidence files allowed per obligation")
+        return file

@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from obligations.constants import STATUS_CHOICES, STATUS_COMPLETED, STATUS_IN_PROGRESS, STATUS_NOT_STARTED
+from obligations.utils import is_obligation_overdue
 
 class EnvironmentalMechanism(models.Model):
     """Represents an environmental mechanism that governs obligations."""
@@ -17,12 +19,8 @@ class EnvironmentalMechanism(models.Model):
     # Add status field
     status = models.CharField(
         max_length=20,
-        choices=[
-            ('not started', 'Not Started'),
-            ('in progress', 'In Progress'),
-            ('completed', 'Completed')
-        ],
-        default='not started'
+        choices=STATUS_CHOICES,
+        default=STATUS_NOT_STARTED
     )
 
     # Add count fields
@@ -62,24 +60,20 @@ class EnvironmentalMechanism(models.Model):
         self.completed_count = 0
         self.overdue_count = 0
 
-        today = timezone.now().date()
-
         # Count obligations by status
         for obligation in obligations:
             status = obligation.status
 
-            # Check if overdue (not completed and past due date)
-            if (status in ['not started', 'in progress'] and
-                obligation.action_due_date and
-                obligation.action_due_date < today):
+            # Check if overdue using the utility function
+            if is_obligation_overdue(obligation):
                 self.overdue_count += 1
 
             # Also count by regular status
-            if status == 'not started':
+            if status == STATUS_NOT_STARTED:
                 self.not_started_count += 1
-            elif status == 'in progress':
+            elif status == STATUS_IN_PROGRESS:
                 self.in_progress_count += 1
-            elif status == 'completed':
+            elif status == STATUS_COMPLETED:
                 self.completed_count += 1
 
         self.save()

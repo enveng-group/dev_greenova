@@ -23,6 +23,17 @@
     <div class="project-data-container">
       <!-- Charts and Obligations will be loaded by HTMX from projects_selector.html -->
     </div>
+
+    <!-- Add to dashboard.html -->
+    <div class="stat-card overdue">
+      <h3>Overdue</h3>
+      <span class="count"
+            hx-get="{% url 'dashboard:overdue_count' %}"
+            hx-trigger="load every:60s"
+            hx-swap="innerHTML">
+        Loading...
+      </span>
+    </div>
   </article>
 {% endblock main %}
 

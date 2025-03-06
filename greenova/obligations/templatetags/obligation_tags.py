@@ -2,6 +2,7 @@ from django import template
 from django.utils import timezone
 from datetime import datetime, date
 from typing import Optional, Dict, Union
+from obligations.utils import is_obligation_overdue
 
 register = template.Library()
 
@@ -66,17 +67,8 @@ def display_status(obligation) -> str:
     Returns:
         str: Status for display, including 'Overdue' when applicable
     """
-    # If the obligation is already completed, keep its status
-    if obligation.status == 'completed':
-        return obligation.status
-
-    # If there's no due date, we can't determine if it's overdue
-    if not obligation.action_due_date:
-        return obligation.status
-
-    # Check if the obligation is overdue
-    today = timezone.now().date()
-    if obligation.action_due_date < today and obligation.status in ['not started', 'in progress']:
+    # Use the utility function to check if obligation is overdue
+    if is_obligation_overdue(obligation):
         return 'overdue'
 
     # Otherwise return the original status

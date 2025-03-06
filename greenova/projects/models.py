@@ -3,27 +3,13 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.db.models import QuerySet
-from enum import Enum
 from typing import List
 from django.contrib.auth.models import AbstractUser
+from core.utils.roles import ProjectRole, get_role_choices
 
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
-
-
-class ProjectRole(str, Enum):
-    """Define valid project roles."""
-    OWNER = 'owner'
-    MANAGER = 'manager'
-    MEMBER = 'member'
-    VIEWER = 'viewer'
-    SIMON = 'simon'
-
-    @classmethod
-    def choices(cls) -> List[tuple[str, str]]:
-        """Get choices for model field."""
-        return [(role.value, role.value.title()) for role in cls]
 
 
 class Project(models.Model):
@@ -126,8 +112,8 @@ class ProjectMembership(models.Model):
         related_name='memberships'
     )
     role = models.CharField(
-        max_length=20,
-        choices=ProjectRole.choices(),
+        max_length=50,  # Increased length for compatibility
+        choices=get_role_choices(),
         default=ProjectRole.MEMBER.value
     )
     created_at = models.DateTimeField(default=timezone.now)

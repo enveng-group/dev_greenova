@@ -38,8 +38,8 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             # Generate overall status distribution - include overdue
             overall_status_data = {
                 'Overdue': sum(m.overdue_count for m in mechanisms),
-                'Not Started': sum(m.not_started_count for m in mechanisms) - sum(m.overdue_count for m in mechanisms if m.not_started_count > 0),
-                'In Progress': sum(m.in_progress_count for m in mechanisms),
+                'Not Started': sum(m.not_started_count for m in mechanisms) - sum(m.overdue_count for m in mechanisms if m.status == 'not started'),
+                'In Progress': sum(m.in_progress_count for m in mechanisms) - sum(m.overdue_count for m in mechanisms if m.status == 'in progress'),
                 'Completed': sum(m.completed_count for m in mechanisms)
             }
 
@@ -167,9 +167,9 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                 'table_data': table_data,
                 'has_charts': bool(mechanism_charts)
             })
-            
+
             return context
-            
+
         except Exception as e:
             logger.error(f'Error generating charts: {str(e)}')
             context['error'] = f'Error loading charts: {str(e)}'

@@ -26,7 +26,7 @@ class Command(BaseCommand):
             dest='output_file',
             type=str,
             help='Path where the cleaned CSV will be saved',
-            default='clean_output_with_nullsV2.csv'
+            default='clean_output_with_nulls.csv'
         )
 
     def handle(self, *args, **options):
@@ -92,7 +92,6 @@ class Command(BaseCommand):
             'Compliance Comments': 'compliance__comments',
             'NonConformance Comments': 'non_conformance__comments',
             'Evidence': 'evidence',
-            'PersonEmail': 'person_email',
             'Recurring Obligation': 'recurring__obligation',
             'Recurring Frequency': 'recurring__frequency',
             'Recurring Status': 'recurring__status',
@@ -103,8 +102,7 @@ class Command(BaseCommand):
             'New Control, action required ': 'new__control__action_required',
             'Obligation type': 'obligation_type',
             'Gap Analysis': 'gap__analysis',
-            'Notes for Gap Analysis': 'notes_for__gap__analysis',
-            'Covered in which inspection checklist?': 'covered_in_which_inspection_checklist'
+            'Notes for Gap Analysis': 'notes_for__gap__analysis'
         }
 
         # Print available columns in the CSV for debugging
@@ -155,45 +153,12 @@ class Command(BaseCommand):
                 null_count = df[col].isna().sum()
                 self.stdout.write(f"After conversion: True={true_count}, False={false_count}, Null={null_count}")
 
-        # Convert and clean date columns - fix all date formats
+        # Convert and clean date columns
         date_columns = ['action__due_date', 'close__out__date', 'recurring__forcasted__date']
 
         for col in date_columns:
             if col in df.columns:
-                self.stdout.write(f"Processing date column: {col}")
-                # Show original date formats
-                non_null_dates = df[col][df[col].notna()]
-                if len(non_null_dates) > 0:
-                    self.stdout.write(f"Sample dates before processing: {non_null_dates.iloc[:5].tolist()}")
-
-                # Handle common date formats
-                try:
-                    # First try to handle explicit formats
-                    df[col] = pd.to_datetime(df[col], errors='coerce',
-                                           format=None, dayfirst=False)
-
-                    # For any values that failed conversion, try different formats
-                    mask = df[col].isna() & df[col].notna()
-                    if mask.any():
-                        for date_format in ['%m/%d/%Y', '%d/%m/%Y', '%Y/%m/%d', '%Y-%m-%d']:
-                            df.loc[mask, col] = pd.to_datetime(
-                                df.loc[mask, col], errors='coerce', format=date_format
-                            )
-
-                    # Fix dates far in the future (likely typos)
-                    df[col] = df[col].apply(
-                        lambda x: pd.Timestamp(x.year - 100, x.month, x.day)
-                        if pd.notna(x) and x.year > 2100
-                        else x
-                    )
-
-                    # Show processed dates
-                    non_null_processed = df[col][df[col].notna()]
-                    if len(non_null_processed) > 0:
-                        self.stdout.write(f"Sample dates after processing: {non_null_processed.iloc[:5].tolist()}")
-
-                except Exception as e:
-                    self.stderr.write(f"Error processing dates in column {col}: {str(e)}")
+                df[col] = pd.to_datetime(df[col], errors='coerce').dt.strftime('%Y-%m-%d')
 
         # Normalize status values to match model choices
         if 'status' in df.columns:
