@@ -2,7 +2,7 @@ from typing import Dict, Any, cast, Optional, TypedDict
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.db.models import QuerySet
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
@@ -12,7 +12,7 @@ import logging
 
 # Constants for system information
 SYSTEM_STATUS = "operational"  # or fetch from settings/environment
-APP_VERSION = "0.0.1"  # or fetch from settings/environment
+APP_VERSION = "0.0.2"  # or fetch from settings/environment
 LAST_UPDATED = datetime.now().date()  # or fetch from settings/environment
 
 logger = logging.getLogger(__name__)
@@ -102,3 +102,18 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         except Exception as e:
             logger.error(f"Error fetching projects: {str(e)}")
             return Project.objects.none()
+
+    def overdue_count(self):
+        """
+        Returns the count of overdue obligations as plain text for HTMX to swap into the page.
+        This endpoint is designed to be called via hx-get and refreshed periodically.
+        """
+        try:
+            count = Obligation.objects.filter(
+            recurring_status='overdue'
+            ).count()
+
+            return HttpResponse(str(count))
+        except Exception as e:
+            logger.error(f"Error counting overdue items: {str(e)}")
+            return HttpResponse("0")

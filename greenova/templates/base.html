@@ -48,8 +48,7 @@
                    align-items: center">
           {% if request.user.is_authenticated %}
             <!-- Left side navigation items -->
-            <li role="none">
-              <li role="none">
+              <li role="none" style="margin-left: 2rem">
                 <nav aria-label="Primary navigation" role="navigation">
                   <ul>
                     <li>
@@ -69,7 +68,8 @@
                 </nav>
               </li>
               <!-- Auth Actions (right-aligned) -->
-              <li role="none"
+              <li _="on load if user_authenticated then hide else show"
+              role="none"
                   style="margin-left: auto;
                          margin-right: 2rem;
                          display: flex;
@@ -104,13 +104,20 @@
                 {% endif %}
               </li>
             {% else %}
-              <li role="none" style="margin-left: auto">
-                <a href="{% url 'authentication:login' %}"
-                   role="menuitem"
-                   aria-label="Login"
-                   hx-boost="true"
-                   _="on click call alert('Redirecting to login...')">Login</a>
-              </li>
+            <li role="none" style="margin-left: auto">
+              <a href="{% url 'authentication:register' %}"
+                 role="menuitem"
+                 aria-label="Register"
+                 _="on load if location.pathname is '{% url 'authentication:register' %}' then hide me">
+                Register
+              </a>
+              <a href="{% url 'authentication:login' %}"
+                 role="menuitem"
+                 aria-label="Login"
+                 _="on load if location.pathname is '{% url 'authentication:login' %}' then hide me">
+                Login
+              </a>
+            </li>
             {% endif %}
           </ul>
         </nav>

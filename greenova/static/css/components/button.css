@@ -1,85 +1,80 @@
 /* Button styles */
-.btn-primary {
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+
+/* Buttons */
+button,
+[type='submit'],
+[type='reset'],
+[role='button'],
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.action-btn,
+.quick-filter-btn {
+  font-size: var(--greenova-button-size);
+  font-weight: bold !important;
+  min-height: 41px;
+  border-radius: var(--greenova-border-radius);
+  padding: var(--greenova-padding);
+
   cursor: pointer;
-  font-weight: 500;
   transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--greenova-green-tertiary);
+    border-color: var(--greenova-green-tertiary)
+  }
 }
 
-.btn-primary:hover {
-  background-color: var(--primary-hover);
+button#chat-toggle>span {
+  font-weight: normal !important;
 }
+
+[role='menuitem'] {
+  margin: 0px var(--greenova-spacing);
+}
+
 
 .btn-secondary {
-  background-color: var(--secondary);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.btn-secondary:hover {
-  background-color: var(--secondary-hover);
+  background-color: var(--greenova-green-secondary);
 }
 
 .btn-danger {
-  background-color: var(--danger);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.btn-danger:hover {
-  background-color: var(--danger-hover);
+  background-color: var(--greenova-warning-background);
 }
 
 /* Add obligation button in navbar */
-.add-obligation-btn {
-  background-color: var(--success);
-  color: white;
-  border: none;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-right: 1rem;
-  text-decoration: none;
-  /* Add this to remove underline */
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
+.add-obligation-btn {}
 
-.add-obligation-btn:hover {
-  background-color: var(--success-hover);
-  opacity: 0.9;
-  /* Add this for a subtle hover effect */
-}
+.add-obligation-btn:hover {}
 
 .add-obligation-btn svg {
   width: 16px;
   height: 16px;
-  fill: currentColor;
+  fill: var(--greenova-text-primary-dark);
 }
 
 /* Form action buttons */
 .form-actions {
   display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
+  gap: var(--greenova-spacing-small);
+  margin-top: var(--greenova-spacing);
+  padding-top: var(--greenova-padding);
+
+}
+
+
+/* Pico CSS Override */
+nav li [role=button],
+nav li [type=button],
+nav li button,
+nav li input:not([type=checkbox], [type=radio], [type=range], [type=file]),
+nav li select {
+  /* Keeps add obligation inline with other buttons */
+  margin: 0;
+}
+
+a[role='button'] {
+  /* Used to make it look more like a proper button */
+  padding-top: 0.55rem !important;
+
 }

@@ -61,8 +61,13 @@ setup_venv() {
 
   # Install requirements if present
   if [ -f "requirements.txt" ]; then
-    echo "Installing Python requirements..."
-    pip install -r requirements.txt
+    echo "Installing Python requirements with constraints..."
+    if [ -f "constraints.txt" ]; then
+      pip install -r requirements.txt -c constraints.txt
+    else
+      echo "Warning: constraints.txt not found, installing without constraints"
+      pip install -r requirements.txt
+    fi
   fi
 }
 

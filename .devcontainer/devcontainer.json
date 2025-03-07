@@ -1,9 +1,9 @@
 {
   "name": "Greenova Development",
-  "image": "mcr.microsoft.com/devcontainers/python:3.9",
+  "image": "mcr.microsoft.com/devcontainers/python:3.10",
   "features": {},
   "hostRequirements": {
-    "cpus": 4,
+    "cpus": 2,
     "memory": "2gb",
     "storage": "16gb"
   },
@@ -20,20 +20,14 @@
     "vscode": {
       "extensions": [
         "ms-python.autopep8",
-        "dbaeumer.vscode-eslint",
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "ms-python.vscode-pylance",
         "ms-python.python",
         "ms-python.debugpy",
-        "foxundermoon.shell-format",
         "EditorConfig.EditorConfig",
         "batisteo.vscode-django",
-        "tamasfe.even-better-toml",
-        "mutantdino.resourcemonitor",
         "GitHub.vscode-pull-request-github",
-        "ms-azuretools.vscode-docker",
-        "DavidAnson.vscode-markdownlint",
         "mechatroner.rainbow-csv"
       ],
       "settings": {
@@ -46,7 +40,7 @@
         "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
         "python.envFile": "${containerWorkspaceFolder}/.env",
         "python.analysis.extraPaths": [
-          "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
+          "${containerWorkspaceFolder}/.venv/lib/python3.10/site-packages"
         ],
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",
         "terminal.integrated.defaultProfile.linux": "bash",

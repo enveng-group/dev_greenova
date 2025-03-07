@@ -1,3 +1,4 @@
+
 {% load project_tags %}
 <div id="project-selector-container">
   <form id="project-form"
@@ -24,7 +25,9 @@
          hx-get="{% url 'mechanisms:mechanism_charts' %}"
          hx-trigger="change from:#project-select"
          hx-include="#project-form"
-         hx-target="this">
+         hx-target="this"
+         _="on htmx:beforeRequest
+            set this.innerHTML to '<div class=\'notice\' role=\'status\' aria-busy=\'true\'>Loading...</div>'">
       <div class="notice" role="status">
         <p>Select a project to view mechanism charts.</p>
       </div>
@@ -35,7 +38,9 @@
          hx-get="{% url 'obligations:summary' %}"
          hx-trigger="change from:#project-select"
          hx-include="#project-form"
-         hx-target="this">
+         hx-target="this"
+         _="on htmx:beforeRequest
+            set this.innerHTML to '<div class=\'notice\' role=\'status\' aria-busy=\'true\'>Loading...</div>'">
       <div class="notice" role="status">
         <p>Select a project to view obligations.</p>
       </div>
@@ -51,13 +56,6 @@
     const obligationsContainer = document.getElementById('obligations-container');
 
     if (selector && chartContainer && obligationsContainer) {
-      // Add loading state handler
-      document.body.addEventListener('htmx:beforeRequest', function(evt) {
-        const target = evt.detail.target;
-        if (target.matches('#chart-container, #obligations-container')) {
-          target.innerHTML = '<div class="notice" role="status" aria-busy="true">Loading...</div>';
-        }
-      });
 
       // Add error handler
       document.body.addEventListener('htmx:responseError', function(evt) {

@@ -13,12 +13,12 @@
       </header>
       <section>
         <!-- Landing page content -->
-        {% if not request.user.is_authenticated %}
-          <nav>
-            <a href="{% url 'authentication:register' %}" role="button" class="primary">Get Started</a>
-            <a href="#features" role="button" class="outline">Learn More</a>
-          </nav>
-        {% endif %}
+        <nav _="on load if user_authenticated then show else hide">
+          <a href="{% url 'authentication:register' %}"
+            role="button"
+            class="primary">Get Started</a>
+          <a href="#features" role="button" class="outline">Learn More</a>
+        </nav>
       </section>
       <section id="features" aria-labelledby="features-heading">
         <h2 id="features-heading">Key Features</h2>

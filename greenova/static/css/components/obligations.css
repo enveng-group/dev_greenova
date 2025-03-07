@@ -9,7 +9,7 @@
 .summary-cards article {
   padding: var(--greenova-spacing);
   border-radius: var(--greenova-border-radius);
-  background: var(--card-background-color);
+  background: var(--greenova-background-secondary);
 }
 
 .summary-cards .count {
@@ -85,8 +85,9 @@ table thead th {
   background: var(--greenova-green-primary);
   color: var(--greenova-text-primary-dark);
   z-index: 1;
+
   /* Add shadow for visual separation */
-  box-shadow: var(--greenova-shadow);
+  border-bottom: var(--greenova-table-border);
 }
 
 /* Make the table data pretty */
@@ -95,7 +96,11 @@ table tbody tr td {
   color: var(--greenova-text-secondary-dark);
 
   /* Add shadow for visual clarity */
-  box-shadow: var(--greenova-shadow);
+  border-bottom: var(--greenova-table-border);
+}
+
+table tbody tr:nth-child(even) td {
+  background: var(--greenova-beige-secondary);
 }
 
 /* Ensure certain columns have max width */
@@ -208,8 +213,9 @@ td:nth-child(22) {
   display: inline-flex;
   align-items: center;
   gap: var(--greenova-spacing);
-  padding: var(--greenova-padding);;
-  background: var(--background-alt);
+  padding: var(--greenova-padding);
+  ;
+  background: var(--greenova-background-secondary);
   border-radius: var(--greenova-border-radius);
   font-size: var(--greenova-table-size);
 }

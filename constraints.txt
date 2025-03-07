@@ -1,0 +1,15 @@
+# Version constraints for indirect dependencies
+# These constraints help ensure compatibility without directly requiring packages
+
+# Django ecosystem
+sqlparse>=0.4.4
+asgiref>=3.7.0
+
+# Data processing & visualization
+numpy>=2.0.0,<3.0.0
+pillow>=10.0.0
+matplotlib>=3.8.0
+
+# General utilities
+typing_extensions>=4.8.0
+importlib_resources>=6.0.0

@@ -5,4 +5,5 @@ app_name = 'dashboard'
 
 urlpatterns = [
     path('', views.DashboardHomeView.as_view(), name='home'),
+    path('overdue-count/', views.DashboardHomeView.overdue_count, name='overdue_count'),
 ]

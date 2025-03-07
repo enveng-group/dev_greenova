@@ -78,7 +78,7 @@ my_python_project/
 
 1. **Dockerfile:**
    - Create a Dockerfile to build a container for the Python project.
-   - Ensure the Dockerfile includes instructions to set up the environment, install Python 3.9.21, Node 18.20.7, npm 10.8.2, and Django 4.2.19, and run the application.
+   - Ensure the Dockerfile includes instructions to set up the environment, install Python 3.9.21, Node 18.20.7, npm 10.8.2, and Django 4.2.20, and run the application.
 
 2. **.dockerignore:**
    - Create a .dockerignore file to exclude unnecessary files from the Docker build context.

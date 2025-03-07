@@ -5,43 +5,43 @@ CD_CMD = cd greenova &&
 
 app:
 	@if [ -z "$(name)" ]; then echo "Error: Please provide app name with 'make app name=yourappname'"; exit 1; fi
-	$(CD_CMD) python3.9 manage.py startapp $(name)
+	$(CD_CMD) python3.10 manage.py startapp $(name)
 
 check:
-	$(CD_CMD) python3.9 manage.py check
+	$(CD_CMD) python3.10 manage.py check
 
 run:
-	$(CD_CMD) python3.9 manage.py runserver
+	$(CD_CMD) python3.10 manage.py runserver
 
 migrations:
-	$(CD_CMD) python3.9 manage.py makemigrations
+	$(CD_CMD) python3.10 manage.py makemigrations
 
 migrate:
-	$(CD_CMD) python3.9 manage.py migrate
+	$(CD_CMD) python3.10 manage.py migrate
 
 static:
-	$(CD_CMD) python3.9 manage.py collectstatic --clear --noinput
+	$(CD_CMD) python3.10 manage.py collectstatic --clear --noinput
 
 user:
-	$(CD_CMD) python3.9 manage.py createsuperuser
+	$(CD_CMD) python3.10 manage.py createsuperuser
 
 import:
-	$(CD_CMD) python3.9 manage.py import_obligations clean_output_with_nulls.csv
+	$(CD_CMD) python3.10 manage.py import_obligations clean_output_with_nulls.csv
 
 update:
-	$(CD_CMD) python3.9 manage.py import_obligations clean_output_with_nulls.csv --force-update
+	$(CD_CMD) python3.10 manage.py import_obligations clean_output_with_nulls.csv --force-update
 
 sync:
-	$(CD_CMD) python3.9 manage.py sync_mechanisms
+	$(CD_CMD) python3.10 manage.py sync_mechanisms
 
 update-recurring-dates:
-	$(CD_CMD) python3.9 manage.py update-recurring-inspection-dates
+	$(CD_CMD) python3.10 manage.py update-recurring-inspection-dates
 
 normalize-frequencies:
-	$(CD_CMD) python3.9 manage.py normalize_existing_frequencies
+	$(CD_CMD) python3.10 manage.py normalize_existing_frequencies
 
 clean-csv:
-	$(CD_CMD) python3.9 manage.py clean_csv_to_import dirty.csv
+	$(CD_CMD) python3.10 manage.py clean_csv_to_import dirty.csv
 
 prod:
 	$(CD_CMD) /bin/sh scripts/prod_urls.sh

@@ -1,13 +1,10 @@
 {
   "name": "greenova",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@picocss/pico": "2.0.6",
-    "htmx.org": "1.9.12",
-    "hyperscript.org": "0.9.14",
-    "modern-normalize": "3.0.1"
+    "@picocss/pico": "2.0.6"
   },
   "engines": {
     "node": "18.20.7"

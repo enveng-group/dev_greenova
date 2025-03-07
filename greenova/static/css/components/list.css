@@ -1,7 +1,18 @@
+/* Tables */
+table,
+table thead,
+table tbody {
+  font-size: var(--greenova-table-size) !important;
+}
+
+
+
+
+
 /* Table Styles */
 .table-container {
   overflow-x: auto;
-  margin: var(--spacing) 0;
+  margin: var(--greenova-spacing) 0;
   display: flex;
   flex-direction: column;
   max-height: 600px;
@@ -27,9 +38,9 @@ th {
 table thead th {
   position: sticky;
   top: 0;
-  background: var(--card-background-color);
+  background: var(--greenova-green-primary);
   z-index: 1;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--greenova-shadow);
 }
 
 /* Ensure certain columns have max width */
@@ -53,31 +64,31 @@ td:nth-child(22) {
 /* Style the scroll indicator */
 .scroll-indicator {
   height: 8px;
-  background: var(--background-color);
+  background: var(--greenova-green-primary);
   border-radius: 4px;
 }
 
 .scroll-thumb {
   height: 100%;
-  background: var(--primary);
+  background: var(--greenova-green-primary);
   border-radius: 4px;
   width: 20%;
 }
 
 /* Status colors */
 mark.warning {
-  background: var(--warning-background);
-  color: var(--warning-text);
+  background: var(--greenova-warning-background);
+  color: var(--greenova-warning-text);
 }
 
 mark.info {
-  background: var(--info-background);
-  color: var(--info-text);
+  background: var(--greenova-info-background);
+  color: var(--greenova-info-text);
 }
 
 mark.success {
-  background: var(--success-background);
-  color: var(--success-text);
+  background: var(--greenova-success-background);
+  color: var(--greenova-success-text);
 }
 
 /* Status badges */
@@ -99,17 +110,17 @@ mark[role="status"] {
 
 /* Error notices */
 .notice.error {
-  background: var(--error-background);
-  color: var(--error-text);
-  padding: var(--spacing);
-  border-radius: var(--border-radius);
-  margin: var(--spacing) 0;
+  background: var(--greenova-error-background);
+  color: var(--greenova-error-text);
+  padding: var(--greenova-spacing);
+  border-radius: var(--greenova-border-radius);
+  margin: var(--greenova-spacing) 0;
 }
 
 /* Results count */
 .results-count {
   margin-bottom: 0.5rem;
-  color: var(--text-muted);
+  color: var(--greenova-tertiary-dark);
   text-align: right;
 }
 
@@ -117,19 +128,18 @@ mark[role="status"] {
 .centered-message {
   text-align: center;
   padding: 2rem;
-  color: var(--text-muted);
+  color: var(--greenova-tertiary-dark);
 }
 
 /* Clickable obligation number styling */
 .obligation-link {
-  color: var(--primary);
+  color: var(--greenova-text-primary-dark);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 
 .obligation-link:hover {
-  color: var(--primary-hover);
   text-decoration: underline;
 }
 
@@ -147,25 +157,18 @@ mark[role="status"] {
 
 .action-btn {
   display: inline-flex;
-  align-items: center;
-  color: var(--primary);
   transition: background-color 0.2s, color 0.2s;
-  color: var(--text-color);
   background-color: transparent;
-  border-radius: 4px;
   height: 24px;
   width: 24px;
-  justify-content: center;
 }
 
-.action-btn:hover {
-  background-color: var(--background-alt);
-}
 
 .action-btn.edit:hover {
-  color: var(--info);
+  background: var(--greenova-info-background);
+  color: var(--greenova-info-text);
 }
 
 .action-btn.view:hover {
-  color: var(--primary);
+  color: var(--greenova-text-primary-dark);
 }

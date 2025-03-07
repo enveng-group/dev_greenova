@@ -58,12 +58,15 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 .pnpm-debug.log
+.pythonstartup
 
 # Node
 node_modules/
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+.eslintrc.cjs
+.npmrc
 
 # IDE/Editor
 .idea/
@@ -76,11 +79,7 @@ yarn.lock
 .env
 
 # Project specific
-greenova/db.sqlite3
+*.sqlite3
+*.csv
 
-# Keep these commented for now (uncomment if needed)
-#/staticfiles/
-#/media/
-#.eslintrc.cjs
-#.npmrc
-#.pythonstartup
+

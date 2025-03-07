@@ -14,16 +14,16 @@
 }
 
 .pagination-info {
-  color: var(--text-muted);
+  color: var(--greenova-tertiary-dark);
 }
 
 .pagination a {
   text-decoration: none;
   padding: 0.5rem 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--greenova-background-primary);
   border-radius: 4px;
 }
 
 .pagination a:hover {
-  background-color: var(--background-alt);
+  background-color: var(--greemova-background-secondary);
 }
