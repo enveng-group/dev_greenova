@@ -154,7 +154,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     "django_htmx.middleware.HtmxMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
-    ]
+
 
 ROOT_URLCONF = "greenova.urls"
 
