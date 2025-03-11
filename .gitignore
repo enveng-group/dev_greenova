@@ -95,4 +95,3 @@ yarn.lock
 .flaskenv*
 !.env.project
 !.env.vault
-!.env.vault
