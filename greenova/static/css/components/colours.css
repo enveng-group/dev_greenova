@@ -6,22 +6,6 @@
  *          Non-theme  Specific  Colours          *
  *                                                *
  **************************************************/
-
-
-
-:root[data-theme=light],
-:root[data-theme=dark] {
-@import 'theme-light.css';
-@import 'theme-dark.css';
-
-/**************************************************
- *                                                *
- *          Non-theme  Specific  Colours          *
- *                                                *
- **************************************************/
-
-
-
 :root[data-theme=light],
 :root[data-theme=dark] {
   /**************************************************
@@ -30,20 +14,12 @@
    *
    * Basic colours used in the CSS, these are changed dynamic based on
    * the theme selected.
-   *
-   *              Pico Defaults colours             *
-   *
-   * Basic colours used in the CSS, these are changed dynamic based on
-   * the theme selected.
-   *
    *                                                *
    **************************************************/
 
   /* Button backgrounds*/
-  /* Button backgrounds*/
   --pico-primary-background: var(--greenova-green-primary);
 
-  /* Header background */
   /* Header background */
   --pico-secondary-background: var(--greenova-green-secondary);
 
@@ -53,17 +29,12 @@
   --pico-background-color: var(--greenova-background-primary);
 
   /* Container Backgrounds */
-  /* Container Backgrounds */
   --pico-card-background-color: var(--greenova-background-secondary);
 
   /* Container Headers/Borders */
   --pico-card-border-color: var(--greenova-green-secondary);
   --pico-card-sectioning-background-color: var(--greenova-green-secondary);
-  /* Container Headers/Borders */
-  --pico-card-border-color: var(--greenova-green-secondary);
-  --pico-card-sectioning-background-color: var(--greenova-green-secondary);
 
-  /* Titles */
   /* Titles */
   --pico-h1-color: var(--greenova-text-primary-dark);
 
@@ -99,9 +70,6 @@
   --greenova-info-background: var(--greenova-notif-primary-mid);
   --greenova-info-text: #000000;
 
-  --greenova-info-background: var(--greenova-notif-primary-mid);
-  --greenova-info-text: #000000;
-
   /* Notification Secondary Mid - Use Cases: outline of notification marker */
   --greenova-notif-secondary-mid: #FFEF9C;
 
@@ -110,15 +78,8 @@
 
   --greenova-success-background: var(--greenova-notif-primary-low);
   --greenova-success-text: #000000;
-
-  --greenova-success-background: var(--greenova-notif-primary-low);
-  --greenova-success-text: #000000;
-
   /* Notification Secondary Low - Use Cases: outline of notification marker */
   --greenova-notif-secondary-low: #B1E5A4;
-
-  --pico-mark-background-color: var(--greenova-notif-secondary-low);
-  --pico-mark-color: #000000;
 
   --pico-mark-background-color: var(--greenova-notif-secondary-low);
   --pico-mark-color: #000000;
