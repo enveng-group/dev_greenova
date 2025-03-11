@@ -28,3 +28,13 @@ header {
   margin: 0;
   padding: var(--greenova-padding);
 }
+
+nav ul[role="menubar"] li[role="none"] {
+  /* Place to the right, make all on one file */
+  margin-left: auto;
+  margin-right: var(--greenova-spacing-large);
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--greenova-spacing);
+}

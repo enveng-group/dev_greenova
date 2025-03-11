@@ -17,19 +17,17 @@
   --pico-line-height: var(--greenova-line-height);
 
   --greenova-border-radius: 0.5rem;
-  /* 8px */
   --greenova-border-radius-small: 0.25rem;
-  /* 4px */
+
+  --greenova-spacing-large: 0.75rem;
   --greenova-spacing: 0.46875rem;
-  /* 7.5px */
   --greenova-spacing-small: 0.3125rem;
-  /* 5px */
+
+  --greenova-padding-large: 1.25rem;
   --greenova-padding: 0.625rem;
-  /* 10px */
   --greenova-padding-small: 0.3125rem;
-  /* 5px */
+
   --greenova-shadow: 0 0.125rem 0.125rem rgba(0, 0, 0, 0.1);
-  /* 0 2px 2px */
 
   --greenova-title-size: 1.2rem;
   --greenova-subtitle-size: 0.9rem;

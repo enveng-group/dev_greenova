@@ -78,7 +78,14 @@ INSTALLED_APPS = [
     "mechanisms.apps.MechanismsConfig",
     "django_htmx",
     "django_hyperscript",
+    'tailwind',
+    'theme',
 ]
+
+# TAILWIND
+# Including configurations for Tailwind CSS
+TAILWIND_APP_NAME = 'theme'
+
 
 MIDDLEWARE = [
         'django.contrib.sessions.middleware.SessionMiddleware',

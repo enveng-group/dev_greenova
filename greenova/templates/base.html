@@ -1,4 +1,5 @@
 {% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,6 +17,10 @@
         {% endblock page_title %}
       {% endblock title %}
     </title>
+
+<!-- Tailwind -->
+{% tailwind_css %}
+
     <!-- Critical CSS -->
     <link rel="preload"
           href="{% static 'css/vendor/modern-normalize.css' %}"
@@ -29,6 +34,8 @@
     <link rel="stylesheet"
           href="{% static 'css/vendor/pico.classless.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    
+    
     {% block extra_head %}
     {% endblock extra_head %}
   </head>
@@ -68,13 +75,7 @@
                 </nav>
               </li>
               <!-- Auth Actions (right-aligned) -->
-              <li _="on load if user_authenticated then hide else show"
-              role="none"
-                  style="margin-left: auto;
-                         margin-right: 2rem;
-                         display: flex;
-                         align-items: center;
-                         gap: 1rem">
+              <li role="none">
                 {% if request.user.is_authenticated %}
                                 <!-- Add Obligation Button -->
                 <a href="{% url 'obligations:create' %}{% if request.GET.project_id %}?project_id={{ request.GET.project_id }}{% endif %}"
@@ -85,7 +86,7 @@
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
-                  Add Obligation
+                  <span>Add Obligation</span>
                 </a>
                   {% load chatbot_tags %}
                   {% chat_widget %}
