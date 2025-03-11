@@ -13,6 +13,7 @@ button,
   font-size: var(--greenova-button-size);
   font-weight: bold !important;
   min-height: 41px;
+  max-height: 41px;
   border-radius: var(--greenova-border-radius);
   padding: var(--greenova-padding);
 

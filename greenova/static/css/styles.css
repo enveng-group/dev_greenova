@@ -11,3 +11,6 @@
 @import 'components/obligations.css';
 @import 'components/pagination.css';
 @import 'components/table.css';
+
+/* Import custom normaliser to fit our rules */
+@import 'vendor/moderniser-normaliser.css';
