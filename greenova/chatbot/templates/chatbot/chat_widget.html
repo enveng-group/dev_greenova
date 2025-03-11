@@ -41,6 +41,10 @@
            hx-trigger="load"
            hx-swap="innerHTML"
            hx-target="this">
+        <!-- Loading indicator -->
+        <div data-loading="flex" style="align-items: center; justify-content: center; padding: 2rem;">
+          <span class="loading-spinner"></span>
+          <span style="margin-left: 0.5rem;">Loading messages...</span>
         </div>
       </div>
 
@@ -58,7 +62,12 @@
                  name="message"
                  hx-on="htmx:afterRequest: this.value = ''"
                  data-loading-disable
+                 data-loading-disable
                  required>
+          <button type="submit" data-loading-disable data-loading-aria-busy>
+            <span data-loading>Sending...</span>
+            Send
+          </button>
           <button type="submit" data-loading-disable data-loading-aria-busy>
             <span data-loading>Sending...</span>
             Send
