@@ -13,6 +13,7 @@
     - Python-specific usage: [Earthly Python Makefile](https://earthly.dev/blog/python-makefile/)
     - Automating Python workflows: [Stack Abuse Python Makefile Guide](https://stackabuse.com/how-to-write-a-makefile-automating-python-setup-compilation-and-testing/)
     - Streamlining Python projects: [Mark AI Code Makefile Tutorial](https://markaicode.com/mastering-makefile-for-python-projects-streamline-processes-with-ease/)
+    - Combining build systems: [Combining Autotools and Setuptools](https://blog.kevin-brown.com/programming/2014/09/24/combining-autotools-and-setuptools.html)
 
 ## Video Tutorials
 

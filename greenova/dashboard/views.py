@@ -5,6 +5,18 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.db.models import QuerySet
 from django.contrib.auth.models import AbstractUser
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_control
+from django.utils.decorators import method_decorator
+from django.shortcuts import render
+from django_htmx.http import (
+    HttpResponseClientRedirect,
+    HttpResponseClientRefresh,
+    trigger_client_event,
+    push_url,
+    reswap,
+    retarget
+)
 from datetime import datetime
 from projects.models import Project
 from obligations.models import Obligation
@@ -28,6 +40,8 @@ class DashboardContext(TypedDict):
     error: Optional[str]
     user_roles: Dict[str, str]
 
+@method_decorator(cache_control(max_age=60), name='dispatch')
+@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
     template_name = 'dashboard/dashboard.html'
@@ -39,12 +53,42 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         super().setup(request, *args, **kwargs)
         self.request = request
 
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['dashboard/partials/dashboard_content.html']
+        return [self.template_name]
+
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests with enhanced HTMX support."""
+        response = super().get(request, *args, **kwargs)
+
+        # If this is an HTMX request, handle history and URL management
+        if request.htmx:
+            # Push the URL to browser history for navigation
+            current_url = request.build_absolute_uri()
+            push_url(response, current_url)
+
+            # Trigger dashboard refresh events
+            trigger_client_event(response, 'dashboardLoaded')
+
+            # If the dashboard data is stale, force a refresh
+            if self._is_data_stale():
+                return HttpResponseClientRefresh()
+
+        return response
+
+    def _is_data_stale(self) -> bool:
+        """Check if dashboard data is stale and needs refresh."""
+        # Implement your staleness check logic here
+        return False
+
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Get the context data for template rendering."""
         context = super().get_context_data(**kwargs)
 
         try:
             user = cast(AbstractUser, self.request.user)
+
             # Use prefetch_related for ManyToMany relationships
             user_projects = Project.objects.filter(
                 memberships__user=user
@@ -103,17 +147,33 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             logger.error(f"Error fetching projects: {str(e)}")
             return Project.objects.none()
 
-    def overdue_count(self):
+    @classmethod
+    @method_decorator(cache_control(max_age=30))
+    def overdue_count(cls, request):
         """
         Returns the count of overdue obligations as plain text for HTMX to swap into the page.
         This endpoint is designed to be called via hx-get and refreshed periodically.
         """
         try:
             count = Obligation.objects.filter(
-            recurring_status='overdue'
+                recurring_status='overdue'
             ).count()
 
-            return HttpResponse(str(count))
+            if request.htmx:
+                response = render(
+                    request,
+                    "dashboard/partials/overdue_count.html",
+                    {"count": count}
+                )
+            else:
+                response = HttpResponse(str(count))
+
+            # When the count is over a threshold, highlight it by triggering a CSS change
+            if count > 5:
+                trigger_client_event(response, 'highOverdueCount', params={'count': count})
+
+            return response
+
         except Exception as e:
             logger.error(f"Error counting overdue items: {str(e)}")
             return HttpResponse("0")

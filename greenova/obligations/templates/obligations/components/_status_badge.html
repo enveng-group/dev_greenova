@@ -1,8 +1,1 @@
-<mark class="{{ color }}" role="status">
-  {% if status == 'overdue' %}
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-      <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm1 11.4V13H7v-1.6H8zm0-7.8v6.4H7V3.6h2z"/>
-    </svg>
-  {% endif %}
-  {{ status }}
-</mark>
+<mark class="{{ color }}" role="status">{{ status|title }}</mark>

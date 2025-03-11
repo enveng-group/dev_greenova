@@ -27,49 +27,71 @@ def format_due_date(target_date: Optional[Union[datetime, date]]) -> str:
     # Just return the formatted date
     return target_date.strftime('%d %b %Y')  # Format: 01 Jan 2023
 
+@register.filter
+def multiply(value, arg):
+    """
+    Multiply the value by the argument
+
+    Usage: {{ value|multiply:2 }}
+
+    Args:
+        value: The value to multiply
+        arg: The factor to multiply by
+
+    Returns:
+        The result of value * arg
+    """
+    try:
+        return float(value) * float(arg)
+    except (ValueError, TypeError):
+        return 0
+
 @register.inclusion_tag('obligations/components/_status_badge.html')
 def status_badge(status: str) -> Dict[str, str]:
     """
-    Render status badge with proper styling.
+    Return a styled status badge.
 
     Args:
-        status: Current status string
+        status: The status string
 
     Returns:
-        Dict containing formatted status and color class
+        Dict with status text and color class
     """
-    colors: Dict[str, str] = {
-        'not started': 'warning',
-        'in progress': 'info',
-        'completed': 'success',
-        'on hold': 'secondary',
-        'cancelled': 'danger',
-        'overdue': 'danger'  # Add overdue status with danger color
-    }
+    status = status.lower() if status else ''
 
-    formatted_status = status.replace('_', ' ').title()
-    color = colors.get(status.lower(), 'secondary')
+    if status == 'not started':
+        color = 'warning'
+    elif status == 'in progress':
+        color = 'info'
+    elif status == 'completed':
+        color = 'success'
+    elif status == 'overdue':
+        color = 'error'
+    else:
+        color = 'secondary'
 
     return {
-        'status': formatted_status,
+        'status': status,
         'color': color
     }
 
-@register.filter
-def display_status(obligation) -> str:
+@register.inclusion_tag('obligations/components/_status_badge.html')
+def display_status(obligation) -> Dict[str, str]:
     """
-    Determine the display status of an obligation, showing 'overdue' for
-    past-due obligations that aren't completed.
+    Display the effective status of an obligation, showing 'overdue'
+    when appropriate.
 
     Args:
         obligation: The obligation object
 
     Returns:
-        str: Status for display, including 'Overdue' when applicable
+        Dict with status text and color class
     """
-    # Use the utility function to check if obligation is overdue
+    # Check if it's overdue using the utility function
     if is_obligation_overdue(obligation):
-        return 'overdue'
-
-    # Otherwise return the original status
-    return obligation.status
+        return {
+            'status': 'overdue',
+            'color': 'error'
+        }
+    else:
+        return status_badge(obligation.status)

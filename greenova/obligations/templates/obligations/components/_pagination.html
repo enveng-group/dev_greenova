@@ -9,7 +9,10 @@
            hx-target=".obligations-section"
            hx-swap="outerHTML"
            rel="prev"
-           aria-label="Previous page">
+           aria-label="Previous page"
+           data-loading-disable
+           data-loading-aria-busy>
+          <span data-loading class="loading-spinner"></span>
           Previous
         </a>
       </li>
@@ -29,7 +32,10 @@
            hx-target=".obligations-section"
            hx-swap="outerHTML"
            rel="next"
-           aria-label="Next page">
+           aria-label="Next page"
+           data-loading-disable
+           data-loading-aria-busy>
+          <span data-loading class="loading-spinner"></span>
           Next
         </a>
       </li>

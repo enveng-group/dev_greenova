@@ -24,6 +24,8 @@ def home_router(request: HttpRequest) -> Union[HttpResponseRedirect, HttpRespons
     return redirect('dashboard:home')
 
 urlpatterns: List[Union[URLPattern, URLResolver]] = [
+
+    path("__reload__/", include("django_browser_reload.urls")),
     # Landing page should be first to take precedence
     path('', home_router, name='home'),
     path('landing/', include('landing.urls')),

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django_matplotlib.fields import MatplotlibFigureField
 from obligations.constants import STATUS_CHOICES, STATUS_COMPLETED, STATUS_IN_PROGRESS, STATUS_NOT_STARTED
 from obligations.utils import is_obligation_overdue
 
@@ -33,6 +34,16 @@ class EnvironmentalMechanism(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Add matplotlib figure fields
+    status_chart = MatplotlibFigureField(
+        figure='get_mechanism_chart',
+        plt_args=lambda obj: (obj.id,),
+        fig_width=300,
+        fig_height=250,
+        output_format='png',
+        silent=True
+    )
 
     class Meta:
         verbose_name = 'Environmental Mechanism'
@@ -77,3 +88,12 @@ class EnvironmentalMechanism(models.Model):
                 self.completed_count += 1
 
         self.save()
+
+    def get_status_data(self):
+        """Return a dictionary of status counts for charting."""
+        return {
+            'Overdue': self.overdue_count,
+            'Not Started': max(0, self.not_started_count - self.overdue_count),
+            'In Progress': self.in_progress_count,
+            'Completed': self.completed_count
+        }

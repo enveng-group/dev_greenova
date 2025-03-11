@@ -1,5 +1,5 @@
 {% load mechanism_tags %}
-<section aria-labelledby="charts-heading" class="charts-section">
+<section aria-labelledby="charts-heading" class="charts-section" hx-ext="path-deps" path-deps="/obligations/" hx-trigger="path-deps">
   <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
   {% if error %}
     <div role="alert">{{ error }}</div>
@@ -25,23 +25,8 @@
             <h3>{{ mech.name }}</h3>
           </header>
           <figure>
-            <img src="data:image/png;base64,{{ mech.chart }}"
-                 alt="Chart showing status distribution for {{ mech.name }}"
-                 width="300"
-                 height="250"
-                 loading="lazy">
-            <figcaption>
-              <dl class="stats-list">
-                {% for status, count in mech.stats.items %}
-                  <div class="stats-row">
-                    <dt>{{ status }}:</dt>
-                    <dd>
-                      {{ count }}
-                    </dd>
-                  </div>
-                {% endfor %}
-              </dl>
-            </figcaption>
+            <figcaption>Status Distribution</figcaption>
+            {{ mech.chart|safe }}
           </figure>
         </article>
       {% endfor %}
@@ -56,26 +41,24 @@
           <table role="grid">
             <thead>
               <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Project</th>
-                <th scope="col">Overdue</th>
+                <th scope="col">Mechanism</th>
                 <th scope="col">Not Started</th>
                 <th scope="col">In Progress</th>
                 <th scope="col">Completed</th>
+                <th scope="col">Overdue</th>
                 <th scope="col">Total</th>
               </tr>
             </thead>
             <tbody>
               {% for item in table_data %}
-                <tr>
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.project }}</td>
-                  <td>{{ item.overdue }}</td>
-                  <td>{{ item.not_started }}</td>
-                  <td>{{ item.in_progress }}</td>
-                  <td>{{ item.completed }}</td>
-                  <td>{{ item.total }}</td>
-                </tr>
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.not_started }}</td>
+                <td>{{ item.in_progress }}</td>
+                <td>{{ item.completed }}</td>
+                <td>{{ item.overdue }}</td>
+                <td>{{ item.total }}</td>
+              </tr>
               {% endfor %}
             </tbody>
           </table>

@@ -1,10 +1,12 @@
 {% load static %}
-{% load static tailwind_tags %}
+{% load django_htmx %}
+{% load tailwind_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="color-scheme" content="light dark" />
     <meta name="keywords"
           content="environmental compliance, management system, greenova, sustainability" />
@@ -28,18 +30,25 @@
     <link rel="preload"
           href="{% static 'css/vendor/pico.classless.min.css' %}"
           as="style" />
+    {% tailwind_preload_css %}
     <!-- CSS files -->
     <link rel="stylesheet"
           href="{% static 'css/vendor/modern-normalize.css' %}" />
     <link rel="stylesheet"
           href="{% static 'css/vendor/pico.classless.min.css' %}" />
+    {% tailwind_css %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    
-    
+
+
     {% block extra_head %}
     {% endblock extra_head %}
   </head>
-  <body>
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-ext="head-support, loading-states, class-tools, path-deps">
+    <!-- Skip to main content link for accessibility -->
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    {% load hyperscript %}
+
     <!-- Header with semantic nav -->
     <header>
       <nav>
@@ -92,13 +101,9 @@
                   {% chat_widget %}
                   <!-- Logout -->
                   <form hx-post="{% url 'authentication:logout' %}"
-                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                         hx-push-url="true"
                         hx-target="body"
-                        hx-redirect="/"
-                        _="on htmx:afterRequest
-                           if event.detail.successful
-                           window.location.href = '/'">
+                        hx-redirect="/">
                       {% csrf_token %}
                       <button type="submit" role="menuitem">Logout</button>
                   </form>
@@ -123,26 +128,44 @@
           </ul>
         </nav>
       </header>
-      <body>
-        <!-- Main content -->
-        <main role="main">
-          {% block main %}{% endblock %}
-        </main>
-        {% block footer %}
-        <!-- Footer -->
-        <footer role="contentinfo">
-          <p>
-            © {% now "Y" %} <a href="https://www.enveng-group.com.au/"
-    target="_blank"
-    rel="noopener noreferrer">Enveng Group</a> |
-            Licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html"
-    target="_blank"
-    rel="noopener noreferrer">GNU AGPL v3.0</a>
-          </p>
-        </footer>
-        {% endblock footer %}
-        <script src="{% static 'js/vendor/htmx.min.js' %}" defer></script>
-        <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
-        <script src="{% static 'js/app.js' %}" defer></script>
-      </body>
-    </html>
+      <!-- Main content -->
+      <main id="main-content" role="main">
+        {% block main %}{% endblock %}
+      </main>
+      {% block footer %}
+      <!-- Footer -->
+      <footer role="contentinfo">
+        <p>
+          © {% now "Y" %} <a href="https://www.enveng-group.com.au/"
+target="_blank"
+rel="noopener noreferrer">Enveng Group</a> |
+          Licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html"
+target="_blank"
+rel="noopener noreferrer">GNU AGPL v3.0</a>
+        </p>
+      </footer>
+      {% endblock footer %}
+      <script src="{% static 'js/vendor/htmx/htmx.min.js' %}" defer></script>
+      {% django_htmx_script %}
+        <!-- Extensions -->
+  <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}" defer></script>
+  <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}" defer></script>
+   <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}" defer></script>
+  <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}" defer></script>
+      <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
+      <script src="{% static 'js/app.js' %}" defer></script>
+
+      <!-- Initialize extensions -->
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          htmx.config.useTemplateFragments = true;
+          htmx.defineExtension('head-support');
+          htmx.defineExtension('loading-states');
+          htmx.defineExtension('response-targets');
+          htmx.defineExtension('class-tools');
+          htmx.defineExtension('path-deps');
+        });
+      </script>
+  </body>
+</html>
+

@@ -10,22 +10,91 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from datetime import timedelta
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_control
+from django.utils.decorators import method_decorator
 from .models import Obligation, ObligationEvidence
-from .forms import ObligationForm, EvidenceUploadForm  # Added ObligationForm import here
+from .forms import ObligationForm, EvidenceUploadForm
 from projects.models import Project
-from django.shortcuts import render
+from mechanisms.models import EnvironmentalMechanism  # Added missing import
 from django.views import View
 from django.forms import inlineformset_factory
+from django_htmx.http import trigger_client_event
+from .utils import is_obligation_overdue  # Add explicit import for is_obligation_overdue
+from core.types import HttpRequest  # Use the enhanced HttpRequest with htmx property
 
 # Create a logger for this module
 logger = logging.getLogger(__name__)
 
+@method_decorator(cache_control(max_age=300), name='dispatch')
+@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class ObligationSummaryView(LoginRequiredMixin, TemplateView):
-    template_name = 'obligations/components/_obligations_summary.html'
-    items_per_page = 10
+    template_name = 'obligations/summary.html'
+
+    def get_template_names(self):
+        """Return appropriate template based on request type."""
+        if self.request.htmx:
+            return ['obligations/components/_obligations_summary.html']
+        return [self.template_name]
+
+    def apply_filters(self, queryset: QuerySet, filters: Dict[str, Any]) -> QuerySet:
+        """Apply filters to the queryset."""
+        # Handle the date filter first (14-day lookahead)
+        if filters['date_filter'] == '14days':
+            today = timezone.now().date()
+            two_weeks = today + timedelta(days=14)
+            queryset = queryset.filter(
+                action_due_date__gte=today,
+                action_due_date__lte=two_weeks
+            )
+
+        # Apply status filter
+        if filters['status']:
+            # Handle the special case of 'overdue' status which isn't in the database
+            if 'overdue' in filters['status'] and len(filters['status']) == 1:
+                from obligations.utils import is_obligation_overdue
+                # Filter for items that are overdue
+                filtered_ids = []
+                for obligation in queryset:
+                    if is_obligation_overdue(obligation):
+                        filtered_ids.append(obligation.obligation_number)
+                queryset = queryset.filter(obligation_number__in=filtered_ids)
+            elif 'overdue' in filters['status'] and len(filters['status']) > 1:
+                # Handle mix of 'overdue' and other statuses
+                other_statuses = [s for s in filters['status'] if s != 'overdue']
+                filtered_ids = []
+                for obligation in queryset.filter(status__in=other_statuses):
+                    if is_obligation_overdue(obligation):
+                        filtered_ids.append(obligation.obligation_number)
+                queryset = queryset.filter(
+                    Q(status__in=other_statuses) | Q(obligation_number__in=filtered_ids)
+                )
+            else:
+                # Normal status filtering
+                queryset = queryset.filter(status__in=filters['status'])
+
+        # Apply mechanism filter if provided
+        if filters['mechanism']:
+            queryset = queryset.filter(
+                primary_environmental_mechanism__id__in=filters['mechanism']
+            )
+
+        # Apply phase filter if provided
+        if filters['phase']:
+            queryset = queryset.filter(project_phase__in=filters['phase'])
+
+        # Apply search if provided
+        if filters['search']:
+            queryset = queryset.filter(
+                Q(obligation_number__icontains=filters['search']) |
+                Q(obligation__icontains=filters['search']) |
+                Q(supporting_information__icontains=filters['search'])
+            )
+
+        return queryset
 
     def get_filters(self) -> Dict[str, Any]:
-        """Get active filters from request."""
+        """Extract filters from request."""
         return {
             'status': self.request.GET.getlist('status'),
             'mechanism': self.request.GET.getlist('mechanism'),
@@ -36,102 +105,55 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
             'date_filter': self.request.GET.get('date_filter', ''),
         }
 
-    def apply_filters(self, queryset: QuerySet[Obligation], filters: Dict[str, Any]) -> QuerySet[Obligation]:
-        """Apply filters to queryset."""
-        if filters['status']:
-            if 'overdue' in filters['status']:
-                # Handle overdue status separately since it's not in the database
-                today = timezone.now().date()
-                status_filters = [s for s in filters['status'] if s != 'overdue']
-
-                # Start with a query for overdue items
-                overdue_query = Q(
-                    action_due_date__lt=today,
-                    status__in=['not started', 'in progress']
-                )
-
-                # If there are other statuses, add them as OR conditions
-                if status_filters:
-                    status_query = Q(status__in=status_filters)
-                    queryset = queryset.filter(overdue_query | status_query)
-                else:
-                    queryset = queryset.filter(overdue_query)
-            else:
-                queryset = queryset.filter(status__in=filters['status'])
-
-        # Rest of the filter logic remains unchanged
-        if filters['mechanism']:
-            queryset = queryset.filter(
-                primary_environmental_mechanism__name__in=filters['mechanism']
-            )
-
-        if filters['phase']:
-            queryset = queryset.filter(project_phase__in=filters['phase'])
-
-        if filters['search']:
-            queryset = queryset.filter(
-                Q(obligation_number__icontains=filters['search']) |
-                Q(obligation__icontains=filters['search']) |
-                Q(environmental_aspect__icontains=filters['search'])
-            )
-
-        # Apply date-based filters
-        today = timezone.now().date()
-        if filters['date_filter'] == '14day_lookahead':
-            fourteen_days_later = today + timedelta(days=14)
-            queryset = queryset.filter(
-                action_due_date__gte=today,
-                action_due_date__lte=fourteen_days_later
-            ).exclude(status='completed')
-        elif filters['date_filter'] == 'overdue':
-            queryset = queryset.filter(
-                action_due_date__lt=today
-            ).exclude(status='completed')
-
-        # Apply sorting
-        order_prefix = '-' if filters['order'] == 'desc' else ''
-        queryset = queryset.order_by(f"{order_prefix}{filters['sort']}")
-
-        return queryset
-
-    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs):
+        """Get context data for the template."""
         context = super().get_context_data(**kwargs)
 
-        project_id = (
-            self.request.GET.get('project_id') or
-            self.request.GET.get('project')
-        )
-
+        project_id = self.request.GET.get('project_id')
         if not project_id:
-            context['error'] = 'No project selected.'
+            context['error'] = "Please select a project"
             return context
 
         try:
-            # Get base queryset filtered by project_id
-            obligations = Obligation.objects.filter(project_id=project_id)
+            # Verify project exists
+            project = get_object_or_404(Project, id=project_id)
+
+            # Get filters from request
+            filters = self.get_filters()
+
+            # Get obligations for this project
+            queryset = Obligation.objects.filter(project_id=project_id)
 
             # Apply filters
-            filters = self.get_filters()
-            filtered_obligations = self.apply_filters(obligations, filters)
+            queryset = self.apply_filters(queryset, filters)
 
-            # Paginate the results
+            # Sort results
+            sort_field = filters['sort']
+            if filters['order'] == 'desc':
+                sort_field = f"-{sort_field}"
+            queryset = queryset.order_by(sort_field)
+
+            # Paginate results
+            paginator = Paginator(queryset, 15)
             page_number = self.request.GET.get('page', 1)
-            paginator = Paginator(filtered_obligations, self.items_per_page)
             page_obj = paginator.get_page(page_number)
 
-            # Add to context
             context.update({
                 'obligations': page_obj,
                 'page_obj': page_obj,
+                'project': project,
                 'project_id': project_id,
-                'active_filters': filters,
-                'total_count': obligations.count(),
-                'filtered_count': filtered_obligations.count(),
+                'filters': filters,
+                'total_count': paginator.count,
             })
+
+            context['mechanisms'] = EnvironmentalMechanism.objects.filter(project_id=project_id)
+            context['phases'] = Obligation.objects.filter(project_id=project_id).values_list('project_phase', flat=True).distinct()
+            context['user_can_edit'] = self.request.user.has_perm('obligations.change_obligation')
 
         except Exception as e:
             logger.error(f"Error in ObligationSummaryView: {str(e)}")
-            context['error'] = f"An error occurred: {str(e)}"
+            context['error'] = f"Error loading obligations: {str(e)}"
 
         return context
 
@@ -192,17 +214,40 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
 
 
 class ObligationUpdateView(LoginRequiredMixin, UpdateView):
-    """View for updating an existing obligation."""
+    """Update an existing obligation."""
     model = Obligation
     form_class = ObligationForm
     template_name = 'obligations/form/update_obligation.html'
-    context_object_name = 'obligation'
-    pk_url_kwarg = 'obligation_number'
+    slug_field = 'obligation_number'
+    slug_url_kwarg = 'obligation_number'
+
+    def get_template_names(self):
+        if self.request.htmx:
+            return ['obligations/form/partial_update_obligation.html']
+        return [self.template_name]
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['project'] = self.object.project
         return kwargs
+
+    def form_valid(self, form):
+        """Process the form submission."""
+        response = super().form_valid(form)
+
+        # If this is an HTMX request, return appropriate headers
+        if self.request.htmx:
+            # Using path-deps to refresh dependent components
+            response = HttpResponse("Obligation updated successfully")
+
+            # Explicitly trigger a refresh for path-deps components
+            trigger_client_event(response, "path-deps-refresh", {
+                "path": "/obligations/"
+            })
+
+            return response
+
+        return response
 
     def form_valid(self, form):
         try:
@@ -239,12 +284,6 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if self.request.headers.get('HX-Request'):
-            response['HX-Trigger'] = 'obligation:statusChanged'
-        return response
-
 
 class ObligationDeleteView(LoginRequiredMixin, DeleteView):
     """View for deleting an obligation."""
@@ -279,6 +318,7 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
                 "message": f"Error deleting obligation: {str(e)}"
             }, status=400)
 
+@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class ToggleCustomAspectView(View):
     def get(self, request):
         aspect = request.GET.get('environmental_aspect')
@@ -287,8 +327,8 @@ class ToggleCustomAspectView(View):
                 'show_field': True
             })
         return render(request, 'obligations/partials/custom_aspect_field.html', {
-                'show_field': False
-            })
+            'show_field': False
+        })
 
 def upload_evidence(request, obligation_id):
     obligation = get_object_or_404(Obligation, pk=obligation_id)

@@ -39,7 +39,7 @@ This document outlines our strategy for managing Git repository health, addressi
 For your fork:
 ```bash
 # Add upstream if not already done
-git remote add upstream git@github.com:enssol/greenova.git
+git remote add upstream git@github.com:enveng-group/dev_greenova.git
 git fetch upstream
 
 # For each branch that needs fixing

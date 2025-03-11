@@ -1,79 +1,56 @@
+{% load project_tags static hyperscript %}
 
-{% load project_tags %}
-<div id="project-selector-container">
-  <form id="project-form"
-        hx-trigger="change from:#project-select"
-        hx-swap="multi:#chart-container:innerHTML,#obligations-container:innerHTML">
-    <label for="project-select">Please pick your project from the list below:</label>
-    <br />
-    <select id="project-select"
-            name="project"
-            aria-controls="data-containers">
-      <option value="">Select a project...</option>
-      {% for project in projects %}
-        <option value="{{ project.id }}"
-                {% if project.id == selected_project_id %}selected{% endif %}>
-          {{ project.name }}
-        </option>
-      {% endfor %}
-    </select>
-  </form>
+<section aria-labelledby="project-selection-heading" class="project-selection" hx-ext="class-tools path-deps">
+  <h2 id="project-selection-heading">Select Project</h2>
 
-  <div id="data-containers">
-    <!-- Charts Container -->
-    <div id="chart-container"
-         hx-get="{% url 'mechanisms:mechanism_charts' %}"
-         hx-trigger="change from:#project-select"
-         hx-include="#project-form"
-         hx-target="this"
-         _="on htmx:beforeRequest
-            set this.innerHTML to '<div class=\'notice\' role=\'status\' aria-busy=\'true\'>Loading...</div>'">
-      <div class="notice" role="status">
-        <p>Select a project to view mechanism charts.</p>
-      </div>
+  {% if projects %}
+    {% comment %}
+    <!-- Replace QuerySet with JSON-serializable structure -->
+    {% endcomment %}
+    {% with project_list=projects|map:"to_dict"|to_list %}
+      {% hs_dump project_list 'projectsData' show=True %}
+    {% endwith %}
+
+    <div class="selector-container" _="on projectSelected(id) set #project-selector.value to id trigger change on #project-selector">
+      <form id="project-form">
+        <div class="form-group">
+          <label for="project-selector">Project:</label>
+          <select id="project-selector" name="project_id" class="form-select"
+                  hx-get="/mechanisms/charts/"
+                  hx-target="#mechanism-data-container"
+                  hx-trigger="change"
+                  hx-swap="innerHTML"
+                  hx-include="this"
+                  data-loading-disable
+                  data-loading-aria-busy>
+            <option value="">Select a project</option>
+            {% for project in projects %}
+              <option value="{{ project.id }}">{{ project.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <div class="notice warning" role="alert">
+      <p>No projects available. Please contact your administrator to be added to a project.</p>
+    </div>
+  {% endif %}
+
+  <div id="data-containers" hx-ext="class-tools">
+    <!-- Single container for mechanism data -->
+    <div id="mechanism-data-container"
+         hx-on::after-settle="if(!this.dataset.loadedObligations) {
+                              this.dataset.loadedObligations = 'true';
+                              htmx.ajax('GET', '/obligations/summary/?project_id=' + document.getElementById('project-selector').value,
+                              {target:'#obligations-container', swap:'innerHTML'})
+                              }">
+      <!-- Charts will be loaded here -->
     </div>
 
     <!-- Obligations Container -->
-    <div id="obligations-container"
-         hx-get="{% url 'obligations:summary' %}"
-         hx-trigger="change from:#project-select"
-         hx-include="#project-form"
-         hx-target="this"
-         _="on htmx:beforeRequest
-            set this.innerHTML to '<div class=\'notice\' role=\'status\' aria-busy=\'true\'>Loading...</div>'">
-      <div class="notice" role="status">
-        <p>Select a project to view obligations.</p>
-      </div>
+    <div id="obligations-container">
+      <!-- Obligations will be loaded here -->
     </div>
   </div>
-</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Get initial elements
-    const selector = document.getElementById('project-select');
-    const chartContainer = document.getElementById('chart-container');
-    const obligationsContainer = document.getElementById('obligations-container');
-
-    if (selector && chartContainer && obligationsContainer) {
-
-      // Add error handler
-      document.body.addEventListener('htmx:responseError', function(evt) {
-        const target = evt.detail.target;
-        if (target.matches('#chart-container, #obligations-container')) {
-          target.innerHTML = `
-            <div class="notice error" role="alert">
-              <p>Error loading data. Please try again.</p>
-            </div>
-          `;
-        }
-      });
-
-      // Initial load if project is selected
-      if (selector.value) {
-        htmx.trigger('#chart-container', 'change');
-        htmx.trigger('#obligations-container', 'change');
-      }
-    }
-  });
-</script>
+</section>

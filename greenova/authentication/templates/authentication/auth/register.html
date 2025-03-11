@@ -1,5 +1,5 @@
 {% extends "authentication/layouts/auth_base.html" %}
-{% load static %}
+{% load static hyperscript %}
 {% load auth_tags %}
 {% load form_tags %}
 {% block auth_title %}
@@ -13,19 +13,57 @@
 {% endblock auth_subheading %}
 {% block auth_content %}
   {% include "authentication/components/messages/form_errors.html" %}
-  <form method="post" novalidate>
+  <form method="post"
+        novalidate
+        _="on submit
+            /* Form validation */
+            if #id_username.value === ''
+               add .error to #id_username
+               put 'Username is required' into #username-error.innerText
+               halt
+            end
+
+            if #id_email.value === ''
+               add .error to #id_email
+               put 'Email is required' into #email-error.innerText
+               halt
+            end
+
+            if #id_password1.value === ''
+               add .error to #id_password1
+               put 'Password is required' into #password1-error.innerText
+               halt
+            end
+
+            if #id_password1.value !== #id_password2.value
+               add .error to #id_password2
+               put 'Passwords do not match' into #password2-error.innerText
+               halt
+            end">
     {% csrf_token %}
     <fieldset>
       <legend>Account Information</legend>
       {% render_field form.username "Letters, numbers, and underscores only" %}
+      <small id="username-error" class="error-text"></small>
+
       {% render_field form.email %}
+      <small id="email-error" class="error-text"></small>
     </fieldset>
     <fieldset>
       <legend>Security</legend>
       {% render_field form.password1 "At least 8 characters with numbers and special characters" %}
+      <small id="password1-error" class="error-text"></small>
+
       {% render_field form.password2 %}
+      <small id="password2-error" class="error-text"></small>
     </fieldset>
-    <button type="submit">Create Account</button>
+    <button type="submit"
+           _="on click
+              if not closest <form/>.checkValidity()
+                add .shake-animation to me
+                wait 500ms
+                remove .shake-animation from me
+              end">Create Account</button>
   </form>
   <footer>
     <nav aria-label="Account options">

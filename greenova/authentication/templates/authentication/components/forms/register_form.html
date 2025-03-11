@@ -23,10 +23,12 @@ Account Information
              aria-describedby="username-help"
              hx-get="{% url 'authentication:validate_username' %}"
              hx-trigger="keyup changed delay:500ms"
-             hx-target="#username-error" />
+             hx-target="#username-error"
+             data-loading-disable />
     </label>
     <small id="username-help">Letters, numbers, and underscores only</small>
     <div id="username-error">
+      <span data-loading>Checking username...</span>
     </div>
 
     <label for="id_email">
@@ -37,7 +39,8 @@ Account Information
              autocomplete="email"
              required
              aria-required="true"
-             spellcheck="false" />
+             spellcheck="false"
+             data-loading-disable />
     </label>
   </fieldset>
 
@@ -54,7 +57,8 @@ Security
              required
              aria-required="true"
              minlength="8"
-             aria-describedby="password-help" />
+             aria-describedby="password-help"
+             data-loading-disable />
     </label>
     <small id="password-help">At least 8 characters with numbers and special
                   characters</small>
@@ -67,17 +71,18 @@ Security
              autocomplete="new-password"
              required
              aria-required="true"
-             minlength="8" />
+             minlength="8"
+             data-loading-disable />
     </label>
   </fieldset>
 
   <div id="form-errors">
-
-{% include "authentication/components/messages/form_errors.html" %}
-
+    {% include "authentication/components/messages/form_errors.html" %}
+    <div data-loading>Validating form...</div>
   </div>
 
-  <button type="submit">
-{{ submit_text|default:"Create Account" }}
+  <button type="submit" data-loading-disable data-loading-aria-busy>
+    <span data-loading>Processing...</span>
+    {{ submit_text|default:"Create Account" }}
   </button>
 </form>

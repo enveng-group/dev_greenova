@@ -13,7 +13,9 @@
       hx-post="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
       hx-target="#obligation-detail"
       hx-swap="outerHTML"
-      hx-trigger="submit">
+      hx-trigger="submit"
+      hx-ext="path-deps"
+      hx-on="htmx:afterRequest: if(event.detail.successful) PathDeps.refresh('/obligations/')">
     {% csrf_token %}
 
     <!-- Same form fields as in new_obligation.html -->

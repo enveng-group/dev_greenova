@@ -44,20 +44,67 @@ class LoggingConfig(TypedDict):
     handlers: Dict[str, LoggingHandlerConfig]
     loggers: Dict[str, Dict[str, Union[str, List[str], bool]]]
 
+# Add TypedDict for matplotlib figure defaults
+class MatplotlibFigDefaults(TypedDict):
+    silent: bool
+    fig_width: int
+    fig_height: int
+    output_type: str
+    output_format: str
+    cleanup: bool
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Settings validation function
+def validate_settings() -> None:
+    """
+    Validate critical environment variables and provide proper defaults.
+    Raises ValueError for missing required settings.
+    """
+    # Check SECRET_KEY is set
+    if not os.environ.get("DJANGO_SECRET_KEY"):
+        raise ValueError("DJANGO_SECRET_KEY environment variable is required")
+
+    # Convert DEBUG to boolean and validate
+    debug_setting = os.environ.get("DJANGO_DEBUG", "False")
+    if isinstance(debug_setting, str):
+        if debug_setting.lower() not in ("true", "false", "1", "0"):
+            raise ValueError("DJANGO_DEBUG must be True, False, 1, or 0")
+
+    # Parse and validate ALLOWED_HOSTS
+    allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
+    if not allowed_hosts and DEBUG is False:
+        raise ValueError("DJANGO_ALLOWED_HOSTS must be set in production (DEBUG=False)")
+
+    # Check for insecure default SECRET_KEY
+    if "django-insecure" in os.environ.get("DJANGO_SECRET_KEY", ""):
+        import warnings
+        warnings.warn(
+            "Using an insecure SECRET_KEY! Please set a secure SECRET_KEY in production.",
+            UserWarning
+        )
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-y4iiuwh@r27)q36u55%8k3l(gwyp7s&i$zl_+m0f+ljwm1c#hy"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1")
 
 # Update allowed hosts for production
-ALLOWED_HOSTS: List[str] = ["app.enssol.com.au", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").replace('"', '').split(",") if host.strip()]
+
+# Run validation
+validate_settings()
+
+# Tailwind CSS configuration
+TAILWIND_APP_NAME = 'theme'
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 # Application definition
 
@@ -78,21 +125,35 @@ INSTALLED_APPS = [
     "mechanisms.apps.MechanismsConfig",
     "django_htmx",
     "django_hyperscript",
-    'tailwind',
-    'theme',
+    "django_matplotlib",
+    "template_partials",
+    "tailwind",
+    "theme",  # Make sure this is present
+    "django_browser_reload",
 ]
 
-# TAILWIND
-# Including configurations for Tailwind CSS
-TAILWIND_APP_NAME = 'theme'
+# Django-Matplotlib configuration
+DJANGO_MATPLOTLIB_TMP = 'matplotlib_tmp'
+DJANGO_MATPLOTLIB_MODULE = 'figures'  # Instead of figures.py
 
+# Django-Matplotlib Field configurations
+DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
+    'silent': True,
+    'fig_width': 300,
+    'fig_height': 250,
+    'output_type': 'string',
+    'output_format': 'png',
+    'cleanup': True
+}
 
 MIDDLEWARE = [
-        'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    "django_htmx.middleware.HtmxMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]
 
 ROOT_URLCONF = "greenova.urls"
@@ -254,4 +315,7 @@ if "runserver" in sys.argv:
     import os
 
     os.environ["PYTHONHTTPSVERIFY"] = "0"
-    os.environ["DJANGO_SETTINGS_MODULE"] = "greenova.settings"
+    os.environ.get("DJANGO_SETTINGS_MODULE")
+
+# Configure NPM path for Django Tailwind
+NPM_BIN_PATH = '/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'

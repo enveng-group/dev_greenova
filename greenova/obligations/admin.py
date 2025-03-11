@@ -33,15 +33,29 @@ class OverdueFilter(admin.SimpleListFilter):
             ).exclude(status='completed')
 
 class ObligationAdminForm(forms.ModelForm):
-    # Make these fields explicitly required in the form
+    # Make recurring_obligation required but inspection optional
     recurring_obligation = forms.BooleanField(
         required=True,
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
 
     inspection = forms.BooleanField(
-        required=True,
+        required=False,  # Changed to False to make it non-mandatory
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
+    # Add this to ensure inspection_frequency is also not required
+    inspection_frequency = forms.ChoiceField(
+        choices=[('', '---------')] + [
+            ('Daily', 'Daily'),
+            ('Weekly', 'Weekly'),
+            ('Fortnightly', 'Fortnightly'),
+            ('Monthly', 'Monthly'),
+            ('Quarterly', 'Quarterly'),
+            ('Annually', 'Annually'),
+        ],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
 
     class Meta:

@@ -7,7 +7,12 @@
 {% block form_heading %}New Obligation Form{% endblock %}
 
 {% block form_content %}
-<form method="post" action="{% url 'obligations:create' %}" id="obligation-form" class="obligation-form">
+<form method="post"
+      action="{% url 'obligations:create' %}"
+      id="obligation-form"
+      class="obligation-form"
+      hx-ext="path-deps"
+      hx-on="htmx:afterRequest: if(event.detail.successful) PathDeps.refresh('/obligations/')">
     {% csrf_token %}
 
     <!-- Hidden project input if project is pre-selected -->

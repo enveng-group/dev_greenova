@@ -9,6 +9,13 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_control
+from django_htmx.http import (
+    HttpResponseClientRedirect,
+    trigger_client_event,
+    push_url
+)
 from .forms import GreenovaUserCreationForm
 import logging
 
@@ -20,6 +27,7 @@ class AuthContext(TypedDict):
     error: Optional[str]
 
 @method_decorator(require_http_methods(['GET', 'POST']), name='dispatch')
+@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class CustomLoginView(UserPassesTestMixin, LoginView):
     """Custom login view that extends Django's LoginView."""
     next_page = reverse_lazy('dashboard:home')
@@ -37,6 +45,29 @@ class CustomLoginView(UserPassesTestMixin, LoginView):
         """
         return HttpResponseRedirect(str(self.next_page))
 
+    def form_valid(self, form):
+        """Process valid form data."""
+        response = super().form_valid(form)
+
+        # If using HTMX, use client-side redirect for better UX
+        if self.request.htmx:
+            redirect_url = self.get_success_url()
+            return HttpResponseClientRedirect(redirect_url)
+
+        return response
+
+    def form_invalid(self, form):
+        """Process invalid form data."""
+        response = super().form_invalid(form)
+
+        # If using HTMX, trigger client-side validation errors
+        if self.request.htmx:
+            trigger_client_event(response, 'loginValidationFailed',
+                                params={'errors': form.errors})
+
+        return response
+
+@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class CustomLogoutView(LogoutView):
     """Custom logout view that extends Django's LogoutView."""
     next_page = reverse_lazy('landing:home')
@@ -46,17 +77,21 @@ class CustomLogoutView(LogoutView):
         """Handle both GET and POST requests for logout."""
         response = super().dispatch(request, *args, **kwargs)
 
-        # Check if request is HTMX
-        if request.headers.get('HX-Request'):
-            return HttpResponseRedirect(str(self.next_page))
+        # If using HTMX, use client-side redirect
+        if request.htmx:
+            return HttpResponseClientRedirect(str(self.next_page))
 
         return response
 
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle POST requests."""
         auth_logout(request)
+
+        if request.htmx:
+            return HttpResponseClientRedirect(str(self.next_page))
         return HttpResponseRedirect(str(self.next_page))
 
+@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class RegisterView(CreateView):
     form_class = GreenovaUserCreationForm
     template_name = 'authentication/auth/register.html'
@@ -74,10 +109,26 @@ class RegisterView(CreateView):
             response = super().form_valid(form)
             user = form.save()
             login(self.request, user)
-            next_url = self.request.GET.get('next')
+
+            # Determine redirect URL
+            next_url = self.request.GET.get('next', self.success_url)
+
+            # If HTMX request, use client-side redirect
+            if self.request.htmx:
+                return HttpResponseClientRedirect(next_url)
+
+            # Standard redirect for non-HTMX requests
             if next_url:
                 return redirect(next_url)
             return response
+
         except Exception as e:
             logger.error(f"Registration error: {str(e)}")
+
+            # If HTMX, return error with event trigger
+            if self.request.htmx:
+                response = HttpResponse(status=500)
+                trigger_client_event(response, 'registrationError',
+                                    params={'error': str(e)})
+                return response
             raise

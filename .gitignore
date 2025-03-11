@@ -82,3 +82,16 @@ yarn.lock
 *.sqlite3
 *.csv
 
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.vault.example
+.env.keys
+
+
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

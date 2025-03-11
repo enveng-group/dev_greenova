@@ -263,7 +263,7 @@
       "depth": 2
     }
   ],
-  "python.analysis.stubPath": "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
+  "python.analysis.stubPath": "${workspaceFolder}/.venv/lib/python3.10/site-packages/django-stubs",
   "python.analysis.exclude": [
     "**/__pycache__",
     "**/.pytest_cache",
@@ -272,5 +272,12 @@
     "**/node_modules",
     "**/.vscode-server"
   ],
+  "mypy-type-checker.interpreter": [
+    "${workspaceFolder}/.venv/bin/python"
+  ],
+  "mypy-type-checker.path": [
+    "${workspaceFolder}/.venv/lib/python3.10/site-packages"
+  ],
+  "mypy-type-checker.reportingScope": "file",
   "github.copilot.editor.enableCodeActions": true
 }

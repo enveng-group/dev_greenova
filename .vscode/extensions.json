@@ -13,6 +13,8 @@
     "tamasfe.even-better-toml",
     "ms-vscode.vscode-copilot-data-analysis",
     "github.vscode-pull-request-github",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "dotenv.dotenv-vscode",
+    "ms-python.mypy-type-checker"
   ]
 }

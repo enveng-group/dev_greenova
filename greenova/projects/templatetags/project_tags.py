@@ -62,3 +62,15 @@ def role_badge(role: str) -> Dict[str, str]:
         'role': role,
         'color': colors.get(role, 'secondary')
     }
+
+@register.filter
+def map(queryset, method_name):
+    """Call a method on each object in the queryset and return a list of results"""
+    if method_name == "to_dict":
+        return [{"id": str(obj.id), "name": obj.name} for obj in queryset]
+    return [getattr(obj, method_name)() if callable(getattr(obj, method_name)) else getattr(obj, method_name) for obj in queryset]
+
+@register.filter
+def to_list(value):
+    """Convert an iterable to a list"""
+    return list(value)

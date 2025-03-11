@@ -1,13 +1,15 @@
-{% extends "base.html" %}
-{% load static dashboard_tags %}
+{% extends base_template|default:"base.html" %}
+{% load static dashboard_tags partials hyperscript project_tags %}
 
 {% block title %}
   Dashboard
 {% endblock title %}
 
 {% block main %}
-  <article>
-    <header>
+  <article hx-ext="class-tools path-deps" classes="add fade-in">
+    <!-- Define the partial content first -->
+    {% partialdef dashboard_header %}
+    <header hx-ext="class-tools" classes="add slide-in-from-top:0.3s">
       <hgroup>
         <h1>Hi {{ request.user|display_name }}</h1>
         <h2>
@@ -15,30 +17,73 @@
         </h2>
       </hgroup>
     </header>
+    {% endpartialdef dashboard_header %}
 
+    {% partialdef project_selection %}
     <!-- Project Selection -->
     {% include "projects/projects_selector.html" %}
+    {% endpartialdef project_selection %}
 
+    {% if projects %}
+      {% with project_list=projects|map:"to_dict"|to_list %}
+        {% hs_dump project_list 'availableProjects' scope='element' %}
+      {% endwith %}
+      {% hs_dump user_roles 'userRoles' scope='element' %}
+    {% endif %}
+
+    {% partialdef data_container %}
     <!-- Data Container -->
-    <div class="project-data-container">
+    <div class="project-data-container"
+         hx-ext="class-tools"
+         classes="add fade-in:0.5s"
+         _="on projectChanged(projectId)
+            add .loading to me
+            fetch `/obligations/?project_id=${projectId}` as response
+            put response into #obligations-container
+            remove .loading from me">
+      <!-- Loading state for dynamic content -->
+      <div data-loading="block" style="text-align: center; padding: 2rem;">
+        <span class="loading-spinner"></span>
+        <p>Loading project data...</p>
+      </div>
+      <div id="obligations-container"></div>
       <!-- Charts and Obligations will be loaded by HTMX from projects_selector.html -->
     </div>
+    {% endpartialdef %}
 
+    {% partialdef overdue_card %}
     <!-- Add to dashboard.html -->
-    <div class="stat-card overdue">
+    <div class="stat-card overdue"
+         hx-ext="class-tools path-deps"
+         path-deps="/obligations/"
+         hx-trigger="path-deps"
+         _="on highOverdueCount
+            if event.detail.count > 5
+              add .alert-pulse to me
+              wait 2s
+              remove .alert-pulse from me
+            end">
       <h3>Overdue Obligations</h3>
       <span class="count"
             hx-get="{% url 'dashboard:overdue_count' %}"
-            hx-trigger="load every:60s"
+            hx-trigger="load every:60s, path-deps"
             hx-swap="innerHTML">
-        Loading...
+        <span data-loading>Loading...</span>
+        <span class="loading-spinner" data-loading></span>
       </span>
     </div>
+    {% endpartialdef %}
+
+    <!-- Now use the defined partials -->
+    {% partial dashboard_header %}
+    {% partial project_selection %}
+    {% partial data_container %}
+    {% partial overdue_card %}
   </article>
 {% endblock main %}
 
 {% block footer %}
-  <footer role="contentinfo">
+  <footer role="contentinfo" hx-ext="class-tools" classes="add fade-in:1s">
     <p>
       System Status:
       <mark>{{ system_status }}</mark> |

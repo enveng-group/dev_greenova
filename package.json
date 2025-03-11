@@ -4,7 +4,13 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@picocss/pico": "2.0.6"
+    "@picocss/pico": "2.0.6",
+    "htmx-ext-class-tools": "2.0.2",
+    "htmx-ext-head-support": "2.0.4",
+    "htmx-ext-loading-states": "2.0.1",
+    "htmx-ext-path-deps": "2.0.1",
+    "htmx.org": "1.9.12",
+    "hyperscript.org": "0.9.14"
   },
   "engines": {
     "node": "18.20.7"

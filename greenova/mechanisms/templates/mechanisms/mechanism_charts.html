@@ -1,13 +1,69 @@
-<div id="chart-container">
-  {% if mechanism_charts %}
-    {% include "mechanisms/components/_charts.html" %}
-  {% elif error %}
-    <div class="notice error" role="alert">
-      <p>{{ error }}</p>
+{% if mechanism_charts %}
+  <section aria-labelledby="charts-heading" class="charts-section" hx-ext="path-deps" path-deps="/obligations/" hx-trigger="path-deps">
+    <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
+
+    <!-- Chart Navigation -->
+    <nav role="navigation" aria-label="Mechanism charts navigation" class="chart-nav">
+      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
+      <button type="button" onclick="scrollCharts('right')" aria-label="Scroll right">→</button>
+    </nav>
+
+    <!-- Charts Container -->
+    <div class="chart-scroll-container" id="chartScroll" role="region" aria-label="Chart gallery" tabindex="0">
+      {% for mech in mechanism_charts %}
+        <article class="mechanism-chart">
+          <header>
+            <h3>{{ mech.name }}</h3>
+          </header>
+          <figure>
+            <figcaption>Status Distribution</figcaption>
+            {{ mech.chart|safe }}
+          </figure>
+        </article>
+      {% endfor %}
     </div>
-  {% else %}
-    <div class="notice" role="status">
-      <p>Please select a project to view mechanism charts.</p>
-    </div>
-  {% endif %}
-</div>
+
+    {% if table_data %}
+      <!-- Data Table -->
+      <article class="data-table">
+        <header>
+          <h3>Detailed Statistics</h3>
+        </header>
+        <div class="table-container">
+          <table role="grid">
+            <thead>
+              <tr>
+                <th scope="col">Mechanism</th>
+                <th scope="col">Not Started</th>
+                <th scope="col">In Progress</th>
+                <th scope="col">Completed</th>
+                <th scope="col">Overdue</th>
+                <th scope="col">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in table_data %}
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.not_started }}</td>
+                <td>{{ item.in_progress }}</td>
+                <td>{{ item.completed }}</td>
+                <td>{{ item.overdue }}</td>
+                <td>{{ item.total }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    {% endif %}
+  </section>
+{% elif error %}
+  <div class="notice error" role="alert">
+    <p>{{ error }}</p>
+  </div>
+{% else %}
+  <div class="notice" role="status">
+    <p>Please select a project to view mechanism charts.</p>
+  </div>
+{% endif %}

@@ -25,6 +25,8 @@
    </body>
 ```
 
+Reference: See `/docs/resources/htmx.md` for more examples of semantic HTML structure with proper ARIA attributes for accessibility.
+
 
 2. Follow progressive enhancement layers:
    - Layer 1: Semantic HTML
@@ -39,9 +41,11 @@
 
    - Layer 2: CSS for styling (classless-PicoCSS directly in html) and only use Django-Tailwind-Framework for utility classes as a last resort
 
+Reference: See `/docs/resources/pico.md` for comprehensive PicoCSS documentation and `/docs/resources/tailwind.md` for guidance on using Tailwind CSS as a last resort.
 
    - Layer 3: Django-Hyperscript first and then Django-HTMX second for interactivity
 
+Reference: See `/docs/resources/hyperscript.md` for django-hyperscript implementation and `/docs/resources/htmx.md` for django-htmx integration patterns.
 
    - Layer 4: Web APIs for data
 
@@ -51,6 +55,8 @@
   <figcaption>Monthly transaction volume</figcaption>
 </figure>
 ```
+
+Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with Django for data visualization.
 
    - Layer 5: JavaScript as fallback
 

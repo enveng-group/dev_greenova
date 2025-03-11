@@ -28,7 +28,9 @@
         "EditorConfig.EditorConfig",
         "batisteo.vscode-django",
         "GitHub.vscode-pull-request-github",
-        "mechatroner.rainbow-csv"
+        "mechatroner.rainbow-csv",
+        "dotenv.dotenv-vscode",
+        "ms-python.mypy-type-checker"
       ],
       "settings": {
         "dev.containers.gpuAvailability": "none",

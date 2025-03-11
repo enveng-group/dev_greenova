@@ -1,6 +1,5 @@
 {% extends "authentication/layouts/auth_base.html" %}
-
-{% load static %}
+{% load static hyperscript %}
 
 {% block auth_heading %}
   Authentication
@@ -11,12 +10,92 @@
 {% endblock auth_subheading %}
 
 {% block auth_content %}
+    <div hx-ext="class-tools" classes="add fade-in:0.3s">
+        {% include "authentication/components/messages/form_errors.html" %}
 
-    {% include "authentication/components/messages/form_errors.html" %}
+        <form method="post"
+              novalidate
+              hx-post="{% url 'authentication:login' %}"
+              hx-target="#form-errors"
+              _="on submit
+                  add .is-submitting to me
 
-    {% include "authentication/components/forms/login_form.html" %}
+                  /* Basic validation */
+                  if #id_username.value === ''
+                     put 'Username is required' into #username-error.innerText
+                     add .error-text to #username-error
+                     add .error to #id_username
+                     halt
+                  else
+                     remove .error from #id_username
+                     remove .error-text from #username-error
+                  end
 
-    <footer>
+                  if #id_password.value === ''
+                     put 'Password is required' into #password-error.innerText
+                     add .error-text to #password-error
+                     add .error to #id_password
+                     halt
+                  else
+                     remove .error from #id_password
+                     remove .error-text from #password-error
+                  end
+
+                  on loginValidationFailed(errors)
+                     remove .is-submitting from me
+                     put JSON.stringify(errors) into #form-errors.innerHTML
+                  end">
+            {% csrf_token %}
+            <fieldset hx-ext="class-tools" classes="add slide-in-from-left:0.5s">
+                <legend>
+                Login
+                </legend>
+                <label for="id_username">
+                Username
+                <input type="text"
+                       name="username"
+                       id="id_username"
+                       autocomplete="username"
+                       required
+                       aria-required="true"
+                       spellcheck="false"
+                       autocapitalize="none"
+                       hx-ext="class-tools" />
+                </label>
+                <small id="username-error"></small>
+
+                <label for="id_password">
+                Password
+                <input type="password"
+                       name="password"
+                       id="id_password"
+                       autocomplete="current-password"
+                       required
+                       aria-required="true"
+                       hx-ext="class-tools" />
+                </label>
+                <small id="password-error"></small>
+            </fieldset>
+            <button type="submit"
+                   hx-ext="class-tools"
+                   classes="add btn-hover-effect"
+                   data-loading-disable
+                   _="on click
+                      if not closest <form/>.checkValidity()
+                        add .shake-animation to me
+                        halt
+                      end">
+                <span data-loading>Logging in...</span>
+                Log In
+            </button>
+
+            <div id="form-errors">
+                <!-- Form errors will be swapped here by HTMX -->
+            </div>
+        </form>
+    </div>
+
+    <footer hx-ext="class-tools" classes="add fade-in:0.8s">
       <details>
         <summary>
           Need help?
