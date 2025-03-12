@@ -21,7 +21,7 @@ app:
 	$(CD_CMD) python3 manage.py startapp $(name)
 
 check:
-	$(CD_CMD) python3 manage.py check
+	$(CD_CMD) python3 manage.py check 
 
 # Updated run command with better process management
 run:
