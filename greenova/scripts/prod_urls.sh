@@ -48,8 +48,6 @@ urlpatterns = [
     # Admin URL - this is the main access point for users
     path('admin/', admin.site.urls),
 
-    # Keep these for functionality but they won't be directly accessible
-    path('authentication/', include('authentication.urls')),
 ]
 EOF
 then

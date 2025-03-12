@@ -45,7 +45,7 @@ class DashboardContext(TypedDict):
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
     template_name = 'dashboard/dashboard.html'
-    login_url = 'authentication:login'
+    login_url = 'account_login'
     redirect_field_name = 'next'
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
@@ -181,5 +181,5 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 class DashboardProfileView(TemplateView):
     """Profile view."""
     template_name = 'dashboard/profile.html'
-    login_url = 'authentication:login'
+    login_url = 'account_login'
     redirect_field_name = 'next'

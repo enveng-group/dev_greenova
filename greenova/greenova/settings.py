@@ -119,13 +119,15 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "landing.apps.LandingConfig",
-    #"authentication",
-    "dashboard.apps.DashboardConfig",
-    "projects.apps.ProjectsConfig",
-    "obligations.apps.ObligationsConfig",
-    "chatbot.apps.ChatbotConfig",
-    "mechanisms.apps.MechanismsConfig",
+    "allauth.socialaccount.providers.google", #TODO must setup google cloud api
+    "allauth.usersessions",
+    "landing",
+    #removed "authentication",
+    "dashboard",
+    "projects",
+    "obligations",
+    "chatbot",
+    "mechanisms",
     "django_htmx",
     "django_hyperscript",
     "django_matplotlib",
@@ -160,6 +162,18 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
+# Authentication settings
+AUTHENTICATION_BACKENDS = ('allauth.account.auth_backends.AuthenticationBackend',)
+
+LOGIN_REDIRECT_URL = "dashboard:home" # OR LOGIN_REDIRECT_URL = "dashboard:profile"
+#LOGOUT_REDIRECT_URL = "landing:home"
+LOGIN_URL = "authentication:login"
+#LOGIN_REDIRECT_URL = "admin:index"
+#LOGOUT_REDIRECT_URL = "admin:login"
+#LOGIN_URL = "admin:login"
+SOCIALACCOUNT_PROVIDERS = {}
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 ROOT_URLCONF = "greenova.urls"
 
 # Update TEMPLATES configuration to remove the conflict
@@ -192,10 +206,13 @@ DATABASES: Dict[str, DatabaseConfig] = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    "OPTIONS": {
+            "min_length": 9,
+        },
+    },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },]
 
@@ -228,22 +245,6 @@ STATICFILES_FINDERS = [
 
 # Ensure static files are handled simply
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Basic storage without manifest
-
-# Authentication settings
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backend.AuthenticationBackend'
-]
-LOGIN_REDIRECT_URL = "dashboard:profile"
-#LOGOUT_REDIRECT_URL = "landing:home"
-LOGIN_URL = "authentication:login"
-#LOGIN_REDIRECT_URL = "admin:index"
-#LOGOUT_REDIRECT_URL = "admin:login"
-#LOGIN_URL = "admin:login"
-SOCIALACCOUNT_PROVIDERS = {}
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-
 
 # Application version
 APP_VERSION = "0.1.0"
