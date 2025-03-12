@@ -3,6 +3,19 @@
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
 
+# Create virtual environment
+venv:
+	@echo "Creating virtual environment..."
+	@python3 -m venv .venv
+	@echo "Virtual environment created."
+
+# Install dependencies
+install:
+	@echo "Installing dependencies..."
+	$(VENV)/bin/python -m pip install --upgrade pip
+	$(VENV)/bin/pip install -r requirements.txt
+	@echo "Dependencies installed."
+
 app:
 	@if [ -z "$(name)" ]; then echo "Error: Please provide app name with 'make app name=yourappname'"; exit 1; fi
 	$(CD_CMD) python3 manage.py startapp $(name)
@@ -96,6 +109,15 @@ check-templates:
 # Combined command for formatting and linting
 format-lint: format-templates lint-templates
 
+
+# Remove virtual environment and temporary files
+clean:
+	@echo "Removing virtual environment and temporary files..."
+	@rm -rf $(VENV)
+	@find . -name "*.pyc" -delete
+	@find . -name "__pycache__" -delete
+	@echo "Clean completed."
+
 # Help command to list available commands
 help:
 	@echo "Available commands:"
@@ -118,3 +140,6 @@ help:
 	@echo "  make migrations   - Create new migrations"
 	@echo "  make run          - Start development server"
 	@echo "  make tailwind     - Start Tailwind CSS server"
+	@echo "make venv           - Create virtual environment"
+	@echo "make install        - Install dependencies"
+	@echo "make clean          - Remove virtual environment and clean temporary files"
