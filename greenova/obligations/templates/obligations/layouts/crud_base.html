@@ -17,7 +17,7 @@
             <nav role="navigation" aria-label="Breadcrumbs">
                 <ol class="breadcrumbs">
                     <li><a href="{% url 'dashboard:home' %}">Dashboard</a></li>
-                    <li><a href="#" id="go-back-link" _="on click call history.back()">Back to Project</a></li>
+                    <li><a href="{% url 'dashboard:home' %}?project_id={{ project_id }}" id="go-back-link">Back to Project</a></li>
                     <li>{% block breadcrumb_active %}Obligation Form{% endblock %}</li>
                 </ol>
             </nav>
@@ -89,4 +89,24 @@ Licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_bla
 </p>
 </footer>
 {% endblock footer %}
+
+<!-- Script to store project ID when navigating away -->
+<script>
+    // Store current project ID for return navigation
+    document.addEventListener('DOMContentLoaded', function() {
+        const projectId = '{{ project_id }}';
+        if (projectId) {
+            sessionStorage.setItem('lastProjectId', projectId);
+        }
+
+        // Enhance back to project link
+        const backLink = document.getElementById('go-back-link');
+        if (backLink) {
+            backLink.addEventListener('click', function(e) {
+                // No longer using HTMX boost to ensure full page reload
+                sessionStorage.setItem('returnToDashboard', 'true');
+            });
+        }
+    });
+</script>
 {% endblock main %}

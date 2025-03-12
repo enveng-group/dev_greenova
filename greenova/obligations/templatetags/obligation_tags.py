@@ -1,8 +1,10 @@
 from django import template
 from django.utils import timezone
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from typing import Optional, Dict, Union
 from obligations.utils import is_obligation_overdue
+from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 register = template.Library()
 
@@ -75,23 +77,84 @@ def status_badge(status: str) -> Dict[str, str]:
         'color': color
     }
 
-@register.inclusion_tag('obligations/components/_status_badge.html')
-def display_status(obligation) -> Dict[str, str]:
+@register.filter
+def display_status(obligation):
     """
-    Display the effective status of an obligation, showing 'overdue'
-    when appropriate.
+    Display an obligation status with appropriate styling.
 
-    Args:
-        obligation: The obligation object
-
-    Returns:
-        Dict with status text and color class
+    Checks if an obligation is overdue based on the due date and
+    current status, then returns an appropriate styled status badge.
     """
-    # Check if it's overdue using the utility function
-    if is_obligation_overdue(obligation):
-        return {
-            'status': 'overdue',
-            'color': 'error'
-        }
+    status = getattr(obligation, 'status', '').lower()
+    due_date = getattr(obligation, 'action_due_date', None)
+    today = timezone.now().date()
+
+    # Handle overdue obligations (past due date and not completed)
+    if due_date and due_date < today and status != 'completed':
+        return format_html(
+            '<mark role="status" class="warning">Overdue</mark>'
+        )
+
+    # Handle upcoming obligations (due within 14 days)
+    elif due_date and today <= due_date <= today + timedelta(days=14) and status != 'completed':
+        return format_html(
+            '<mark role="status" class="info">Upcoming</mark>'
+        )
+
+    # Handle completed obligations
+    elif status == 'completed':
+        return format_html(
+            '<mark role="status" class="success">Completed</mark>'
+        )
+
+    # Default status display
+    elif status:
+        return format_html(
+            '<mark role="status">{}</mark>', status.capitalize()
+        )
+
+    # No status
     else:
-        return status_badge(obligation.status)
+        return format_html(
+            '<mark role="status">Not Started</mark>'
+        )
+
+@register.filter
+def format_due_date(due_date):
+    """
+    Format a due date or indicate if it's missing.
+    """
+    if not due_date:
+        return "-"
+
+    today = timezone.now().date()
+
+    # Check if overdue
+    if due_date < today:
+        return format_html(
+            '<span class="overdue-date">{}</span>', due_date.strftime("%d %b %Y")
+        )
+
+    return due_date.strftime("%d %b %Y")
+
+@register.simple_tag
+def status_badge(status):
+    """
+    Generate an HTML badge based on the provided status.
+
+    This tag takes a status string and returns an HTML span element with appropriate
+    styling based on the status.
+    """
+    status = status.lower() if isinstance(status, str) else 'unknown'
+
+    badge_classes = {
+        'completed': 'status-badge status-completed',
+        'in progress': 'status-badge status-in-progress',
+        'not started': 'status-badge status-not-started',
+        'overdue': 'status-badge status-overdue',
+        'unknown': 'status-badge status-unknown'
+    }
+
+    badge_class = badge_classes.get(status, badge_classes['unknown'])
+
+    return mark_safe(f'<span class="{badge_class}">{status}</span>')

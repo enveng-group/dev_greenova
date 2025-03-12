@@ -298,7 +298,7 @@
     <!-- Form actions -->
     <div class="form-actions">
         <button type="submit" class="btn-primary">Save Obligation</button>
-        <button type="button" class="btn-secondary" _="on click call history.back()">Cancel</button>
+        <a href="{% url 'dashboard:home' %}?project_id={{ project_id|default:request.GET.project_id }}" class="btn-secondary">Cancel</a>
     </div>
 </form>
 {% endblock form_content %}

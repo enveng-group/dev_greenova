@@ -38,7 +38,7 @@
          classes="add fade-in:0.5s"
          _="on projectChanged(projectId)
             add .loading to me
-            fetch `/obligations/?project_id=${projectId}` as response
+            fetch `/obligations/summary/?project_id=${projectId}` as response
             put response into #obligations-container
             remove .loading from me">
       <!-- Loading state for dynamic content -->
@@ -80,6 +80,37 @@
     {% partial data_container %}
     {% partial overdue_card %}
   </article>
+
+  <!-- Add script to initialize project selection and data loading -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if there's a project_id in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const projectId = urlParams.get('project_id');
+
+      if (projectId) {
+        console.log("Initializing dashboard with project:", projectId);
+
+        // Set the project selector to the project_id from URL
+        const projectSelector = document.getElementById('project-selector');
+        if (projectSelector) {
+          projectSelector.value = projectId;
+
+          // Load mechanism charts
+          htmx.ajax('GET', '/mechanisms/charts/?project_id=' + projectId, {
+            target: '#mechanism-data-container',
+            swap: 'innerHTML'
+          });
+
+          // Load obligation summary with the correct path
+          htmx.ajax('GET', '/obligations/summary/?project_id=' + projectId, {
+            target: '#obligations-container',
+            swap: 'innerHTML'
+          });
+        }
+      }
+    });
+  </script>
 {% endblock main %}
 
 {% block footer %}

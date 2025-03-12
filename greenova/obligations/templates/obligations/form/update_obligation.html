@@ -38,7 +38,7 @@
     <!-- Override the form actions section -->
     <div class="form-actions">
         <button type="submit" class="btn-primary">Update Obligation</button>
-        <button type="button" class="btn-secondary" _="on click call history.back()">Cancel</button>
+        <a href="{% url 'dashboard:home' %}?project_id={{ project_id }}" class="btn-secondary">Cancel</a>
         <button type="button"
                 class="btn-danger"
                 _="on click
@@ -50,7 +50,7 @@
                        }
                      }
                      then if result.ok
-                       set window.location.href = '{% url 'dashboard:home' %}?project_id={{ obligation.project_id }}'
+                       set window.location.href to '{% url 'dashboard:home' %}?project_id={{ obligation.project_id }}'
                      else
                        showError('Failed to delete obligation')
                    end">

@@ -12,6 +12,7 @@ cryptography==41.0.7
 cycler==0.12.1
 Django==4.2.20
 django-browser-reload==1.18.0
+django-debug-toolbar==5.0.1
 django-htmx==1.22.0
 django-hyperscript==1.0.2
 django-matplotlib==0.1
