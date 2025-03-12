@@ -15,6 +15,8 @@ import os
 from pathlib import Path
 from typing import Dict, List, TypedDict, Union
 from django.contrib import admin
+from dotenv import load_dotenv
+load_dotenv()
 
 class DatabaseConfig(TypedDict):
     ENGINE: str
@@ -319,3 +321,10 @@ if "runserver" in sys.argv:
 
 # Configure NPM path for Django Tailwind
 NPM_BIN_PATH = '/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'
+
+
+
+
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+DEBUG = os.getenv("DEBUG", "False") =="Ture"
+ENV_ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "")
