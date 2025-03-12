@@ -16,6 +16,8 @@ from pathlib import Path
 from typing import Dict, List, TypedDict, Union
 from django.contrib import admin
 import mimetypes
+from dotenv import load_dotenv
+load_dotenv()
 
 class DatabaseConfig(TypedDict):
     ENGINE: str
@@ -357,3 +359,9 @@ mimetypes.add_type("image/tiff", ".tif", True)
 mimetypes.add_type("image/vnd.microsoft.icon", ".ico", True)
 mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/plain", ".txt", True)
+
+
+
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+DEBUG = os.getenv("DEBUG", "False") =="Ture"
+ENV_ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "")
