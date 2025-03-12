@@ -87,17 +87,6 @@
               <!-- Auth Actions (right-aligned) -->
               <li role="none">
                 {% if request.user.is_authenticated %}
-                                <!-- Add Obligation Button -->
-                <a href="{% url 'obligations:create' %}{% if request.GET.project_id %}?project_id={{ request.GET.project_id }}{% endif %}"
-                   class="add-obligation-btn"
-                   role="button"
-                   aria-label="Add new obligation">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                  <span>Add Obligation</span>
-                </a>
                   {% load chatbot_tags %}
                   {% chat_widget %}
                   <!-- Logout -->
@@ -151,7 +140,7 @@ rel="noopener noreferrer">GNU AGPL v3.0</a>
         <!-- Extensions -->
   <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}" defer></script>
   <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}" defer></script>
-   <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}" defer></script>
+  <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}" defer></script>
   <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}" defer></script>
       <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
       <script src="{% static 'js/app.js' %}" defer></script>
@@ -160,11 +149,20 @@ rel="noopener noreferrer">GNU AGPL v3.0</a>
       <script>
         document.addEventListener('DOMContentLoaded', function() {
           htmx.config.useTemplateFragments = true;
-          htmx.defineExtension('head-support');
-          htmx.defineExtension('loading-states');
-          htmx.defineExtension('response-targets');
-          htmx.defineExtension('class-tools');
-          htmx.defineExtension('path-deps');
+          // Don't try to define extensions, they're already registered via the hx-ext attribute
+
+          {% if debug %}
+            if (typeof window.htmx !== "undefined") {
+                htmx.on("htmx:afterSettle", function(detail) {
+                    if (
+                        typeof window.djdt !== "undefined"
+                        && detail.target instanceof HTMLBodyElement
+                    ) {
+                        djdt.show_toolbar();
+                    }
+                });
+            }
+          {% endif %}
         });
       </script>
   </body>
