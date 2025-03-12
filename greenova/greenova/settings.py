@@ -116,8 +116,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core.apps.CoreConfig",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
     "landing.apps.LandingConfig",
-    "authentication.apps.AuthenticationConfig",
+    #"authentication",
     "dashboard.apps.DashboardConfig",
     "projects.apps.ProjectsConfig",
     "obligations.apps.ObligationsConfig",
@@ -152,9 +155,10 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    "django_htmx.middleware.HtmxMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
-
+    'django_htmx.middleware.HtmxMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+]
 
 ROOT_URLCONF = "greenova.urls"
 
@@ -226,12 +230,20 @@ STATICFILES_FINDERS = [
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Basic storage without manifest
 
 # Authentication settings
-LOGIN_REDIRECT_URL = "dashboard:home"
-LOGOUT_REDIRECT_URL = "landing:home"
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backend.AuthenticationBackend'
+]
+LOGIN_REDIRECT_URL = "dashboard:profile"
+#LOGOUT_REDIRECT_URL = "landing:home"
 LOGIN_URL = "authentication:login"
 #LOGIN_REDIRECT_URL = "admin:index"
 #LOGOUT_REDIRECT_URL = "admin:login"
 #LOGIN_URL = "admin:login"
+SOCIALACCOUNT_PROVIDERS = {}
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 
 # Application version
 APP_VERSION = "0.1.0"

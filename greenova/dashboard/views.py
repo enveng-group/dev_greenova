@@ -177,3 +177,9 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         except Exception as e:
             logger.error(f"Error counting overdue items: {str(e)}")
             return HttpResponse("0")
+
+class DashboardProfileView(TemplateView):
+    """Profile view."""
+    template_name = 'dashboard/profile.html'
+    login_url = 'authentication:login'
+    redirect_field_name = 'next'

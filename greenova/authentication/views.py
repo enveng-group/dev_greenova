@@ -28,44 +28,14 @@ class AuthContext(TypedDict):
 
 @method_decorator(require_http_methods(['GET', 'POST']), name='dispatch')
 @method_decorator(vary_on_headers("HX-Request"), name='dispatch')
-class CustomLoginView(UserPassesTestMixin, LoginView):
+class CustomLoginView(LoginView):
     """Custom login view that extends Django's LoginView."""
-    next_page = reverse_lazy('dashboard:home')
     template_name = 'authentication/auth/login.html'
-
-    def test_func(self) -> bool:
-        """
-        Prevent logged-in users from accessing login page.
-        """
-        return not self.request.user.is_authenticated
-
-    def handle_no_permission(self) -> HttpResponseRedirect:
-        """
-        Redirect authenticated users to the home page.
-        """
-        return HttpResponseRedirect(str(self.next_page))
-
-    def form_valid(self, form):
-        """Process valid form data."""
-        response = super().form_valid(form)
-
-        # If using HTMX, use client-side redirect for better UX
-        if self.request.htmx:
-            redirect_url = self.get_success_url()
-            return HttpResponseClientRedirect(redirect_url)
-
-        return response
+    next_page = reverse_lazy('dashboard:home')
+    redirect_authenticated_user = True
 
     def form_invalid(self, form):
-        """Process invalid form data."""
-        response = super().form_invalid(form)
-
-        # If using HTMX, trigger client-side validation errors
-        if self.request.htmx:
-            trigger_client_event(response, 'loginValidationFailed',
-                                params={'errors': form.errors})
-
-        return response
+        return super().form_invalid(form)
 
 @method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class CustomLogoutView(LogoutView):
