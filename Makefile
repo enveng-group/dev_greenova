@@ -7,13 +7,14 @@ CD_CMD = cd greenova &&
 venv:
 	@echo "Creating virtual environment..."
 	@python3 -m venv .venv
+	@source .venv/bin/activate
 	@echo "Virtual environment created."
 
 # Install dependencies
 install:
 	@echo "Installing dependencies..."
 	$(VENV)/bin/python -m pip install --upgrade pip
-	$(VENV)/bin/pip install -r requirements.txt
+	$(VENV)/bin/pip install -r requirements.txt -c constraints.txt
 	@echo "Dependencies installed."
 
 app:
@@ -21,7 +22,7 @@ app:
 	$(CD_CMD) python3 manage.py startapp $(name)
 
 check:
-	$(CD_CMD) python3 manage.py check 
+	$(CD_CMD) python3 manage.py check
 
 # Updated run command with better process management
 run:
