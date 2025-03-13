@@ -43,7 +43,7 @@ The goal of this project is to automate the setup, development, staging, product
 ### Tasks
 
 #### Week 1: Dockerfile and .dockerignore
-1. **Create Dockerfile**: Write instructions to set up the environment, install Python 3.9.21, Node 18.20.7, npm 10.8.2, and Django 4.2.19, and run the application.
+1. **Create Dockerfile**: Write instructions to set up the environment, install Alpine Linux, Python 3.10.16, Node 18.20.7, npm 10.8.2, and Django 4.2.20, and run the application.
 2. **Create .dockerignore**: Exclude unnecessary files from the Docker build context.
 
 #### Week 2: Docker Compose and Environment Variables

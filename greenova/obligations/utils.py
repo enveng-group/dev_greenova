@@ -1,8 +1,8 @@
 from typing import Union, Optional, Dict, Any
-from datetime import date
+from datetime import date, timedelta
 from django.utils import timezone
 from .constants import (
-    STATUS_COMPLETED, FREQUENCY_ALIASES, FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL,
+    STATUS_COMPLETED, STATUS_OVERDUE, STATUS_UPCOMING, FREQUENCY_ALIASES, FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL,
     FREQUENCY_DAILY, FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY,
     FREQUENCY_WEEKLY
 )
@@ -43,6 +43,31 @@ def is_obligation_overdue(obligation: Union['Obligation', Dict[str, Any]], refer
 
     # Rule 3: If the due date is in the past and not completed, it's overdue
     return due_date < reference_date
+
+def get_obligation_status(obligation):
+    """
+    Determine the real status of an obligation based on its due date and current status.
+
+    Returns one of: 'overdue', 'upcoming', 'completed', or the original status.
+    """
+    status = getattr(obligation, 'status', '').lower()
+    due_date = getattr(obligation, 'action_due_date', None)
+    today = timezone.now().date()
+
+    # Completed obligations keep their status
+    if status == STATUS_COMPLETED:
+        return STATUS_COMPLETED
+
+    # Check for overdue obligations
+    if due_date and due_date < today:
+        return STATUS_OVERDUE
+
+    # Check for upcoming obligations (due within 14 days)
+    if due_date and today <= due_date <= today + timedelta(days=14):
+        return STATUS_UPCOMING
+
+    # Return original status if not overdue or upcoming
+    return status
 
 def normalize_frequency(frequency: str) -> str:
     """

@@ -136,7 +136,7 @@
     <!-- Action buttons -->
     <div class="form-actions">
         <a href="{% url 'obligations:update' obligation_number=obligation.obligation_number %}" class="btn-primary">Edit</a>
-        <button type="button" class="btn-secondary" _="on click call history.back()">Back</button>
+        <a href="{% url 'dashboard:home' %}?project_id={{ project_id }}" class="btn-secondary">Back</a>
         <button type="button"
                 class="btn-danger"
                 _="on click
@@ -149,7 +149,7 @@
                      }
                      then if result.ok
                        set response to JSON.parse(result.response)
-                       set window.location.href = response.redirect_url
+                       set window.location.href to response.redirect_url
                      else
                        alert('Failed to delete obligation')
                    end">

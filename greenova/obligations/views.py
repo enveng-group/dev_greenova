@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 @method_decorator(cache_control(max_age=300), name='dispatch')
 @method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class ObligationSummaryView(LoginRequiredMixin, TemplateView):
-    template_name = 'obligations/summary.html'
+    template_name = 'obligations/components/_obligations_summary.html'
 
     def get_template_names(self):
         """Return appropriate template based on request type."""
@@ -212,6 +212,12 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'obligation'
     pk_url_kwarg = 'obligation_number'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add project_id to context for back navigation
+        context['project_id'] = self.object.project_id
+        return context
+
 
 class ObligationUpdateView(LoginRequiredMixin, UpdateView):
     """Update an existing obligation."""
@@ -230,6 +236,12 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['project'] = self.object.project
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add project_id to context for back navigation
+        context['project_id'] = self.object.project_id
+        return context
 
     def form_valid(self, form):
         """Process the form submission."""

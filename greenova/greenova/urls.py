@@ -7,6 +7,7 @@ from django.urls.resolvers import URLPattern, URLResolver
 from django.shortcuts import redirect
 from django.http import HttpRequest, HttpResponseRedirect, HttpResponsePermanentRedirect
 import logging
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('obligations/', include('obligations.urls')),
     path('chat/', include('chatbot.urls')),
     path('mechanisms/', include('mechanisms.urls')),
-]
+] + debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

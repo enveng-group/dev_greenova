@@ -177,12 +177,14 @@ document.addEventListener('htmx:afterSettle', function() {
 
     // Make top scroll indicator interactive
     const scrollIndicator = document.getElementById('scroll-indicator');
-    scrollIndicator.addEventListener('click', (e) => {
-      const rect = scrollIndicator.getBoundingClientRect();
-      const ratio = (e.clientX - rect.left) / rect.width;
-      const maxScroll = tableContainer.scrollWidth - tableContainer.clientWidth;
-      tableContainer.scrollLeft = maxScroll * ratio;
-    });
+    if (scrollIndicator) {
+      scrollIndicator.addEventListener('click', (e) => {
+        const rect = scrollIndicator.getBoundingClientRect();
+        const ratio = (e.clientX - rect.left) / rect.width;
+        const maxScroll = tableContainer.scrollWidth - tableContainer.clientWidth;
+        tableContainer.scrollLeft = maxScroll * ratio;
+      });
+    }
   }
 });
 
@@ -487,15 +489,6 @@ function createHeadFragment(title, styles = []) {
 /**
  * Main application JavaScript
  */
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialize the application
-  initializeApp();
-});
-
-/**
- * Initialize application components
- */
 function initializeApp() {
   // Set up scroll listeners for tables
   setupTableScroll();
@@ -553,24 +546,6 @@ function setupHtmxListeners() {
 /**
  * Handle chart navigation with scroll buttons
  */
-function scrollCharts(direction) {
-  const container = document.getElementById('chartScroll');
-  if (!container) return;
-
-  const scrollAmount = container.clientWidth * 0.8;
-  const targetPosition = direction === 'left'
-    ? container.scrollLeft - scrollAmount
-    : container.scrollLeft + scrollAmount;
-
-  container.scrollTo({
-    left: targetPosition,
-    behavior: 'smooth'
-  });
-}
-
-/**
- * Set up chart navigation buttons
- */
 function setupChartNavigation() {
   const container = document.getElementById('chartScroll');
   if (!container) return;
@@ -584,28 +559,18 @@ function setupChartNavigation() {
   });
 }
 
-// Initialize HTMX extensions
+// Initialize app after DOM content is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  // Register HTMX extensions
-  htmx.defineExtension('class-tools', window.htmxClassToolsExtension);
-
-  // Setup scroll handling for chart scrolling
-  window.scrollCharts = function(direction) {
-    const container = document.getElementById('chartScroll');
-    if (!container) return;
-
-    const scrollAmount = container.clientWidth * 0.8;
-    container.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth'
-    });
-  };
+  // Initialize the application
+  initializeApp();
 
   // Setup flash messages with auto-dismiss
   const flashMessages = document.querySelectorAll('.message[data-auto-dismiss]');
   flashMessages.forEach(message => {
     setTimeout(() => {
-      message.setAttribute('classes', 'add fade-out:0s, remove message:1s');
+      if (message.getAttribute) {
+        message.setAttribute('classes', 'add fade-out:0s, remove message:1s');
+      }
     }, 5000); // 5 second delay before starting fade-out
   });
 });
@@ -627,42 +592,123 @@ document.body.addEventListener('highOverdueCount', function(event) {
 });
 
 /**
- * Path-Deps extension integration
+ * Path-Deps extension integration - only execute if extension exists
  */
 document.addEventListener('DOMContentLoaded', function() {
-  // Listen for obligation changes to refresh related components
-  document.body.addEventListener('htmx:afterRequest', function(evt) {
-    // Only handle successful POST/PUT/DELETE requests (mutations)
-    if (!evt.detail.successful || evt.detail.xhr.method === 'GET') return;
+  // Check if PathDeps extension exists before using it
+  if (typeof window.PathDeps !== 'undefined') {
+    // Listen for obligation changes to refresh related components
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+      // Only handle successful POST/PUT/DELETE requests (mutations)
+      if (!evt.detail.successful || evt.detail.xhr.method === 'GET') return;
 
-    const path = evt.detail.requestConfig.path;
+      const path = evt.detail.requestConfig.path;
 
-    // Handle obligation path changes
-    if (path && path.includes('/obligations/')) {
-      // Manually refresh charts and lists that depend on obligations
-      if (PathDeps) {
-        PathDeps.refresh('/obligations/');
-        PathDeps.refresh('/mechanisms/charts/');
-        PathDeps.refresh('/dashboard/overdue-count/');
+      // Handle obligation path changes
+      if (path && path.includes('/obligations/')) {
+        // Manually refresh charts and lists that depend on obligations
+        window.PathDeps.refresh('/obligations/');
+        window.PathDeps.refresh('/mechanisms/charts/');
+        window.PathDeps.refresh('/dashboard/overdue-count/');
       }
-    }
-  });
+    });
+  }
 });
 
 // Helper function to refresh specific components
 function refreshDependentComponents(path) {
-  if (window.PathDeps) {
-    PathDeps.refresh(path);
+  if (typeof window.PathDeps !== 'undefined') {
+    window.PathDeps.refresh(path);
   }
 }
-
-// Make sure you're not redefining HTMX extensions - only use them
 
 // Check if htmx is loaded before trying to use it
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof htmx !== 'undefined') {
-        // Your htmx-dependent code here
+        console.log('HTMX loaded successfully');
     } else {
         console.error('HTMX not loaded');
     }
+});
+
+/**
+ * Handle return navigation from obligation forms to dashboard
+ * This ensures when returning back to project, all data is loaded properly
+ */
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if we're on the dashboard page
+  const projectSelector = document.getElementById('project-selector');
+  if (projectSelector) {
+    // Check if we're returning from an obligation form
+    if (sessionStorage.getItem('returnToDashboard') === 'true') {
+      // Clear the flag
+      sessionStorage.removeItem('returnToDashboard');
+
+      // Get the project ID we need to load
+      const projectId = sessionStorage.getItem('lastProjectId');
+
+      if (projectId) {
+        console.log("Restoring project selection:", projectId);
+
+        // Set the project selector value
+        projectSelector.value = projectId;
+
+        // Trigger change event to load data
+        setTimeout(function() {
+          // Use setTimeout to ensure DOM is fully loaded
+          const event = new Event('change');
+          projectSelector.dispatchEvent(event);
+
+          // Manually trigger the mechanism charts and obligation summary loading
+          if (document.getElementById('mechanism-data-container')) {
+            htmx.ajax('GET', '/mechanisms/charts/?project_id=' + projectId, {
+              target: '#mechanism-data-container',
+              swap: 'innerHTML'
+            });
+          }
+
+          if (document.getElementById('obligations-container')) {
+            htmx.ajax('GET', '/obligations/summary/?project_id=' + projectId, {
+              target: '#obligations-container',
+              swap: 'innerHTML'
+            });
+          }
+        }, 100);
+      }
+    }
+  }
+});
+
+// Fix toolbar.js error by adding a safety check
+if (typeof ensureHandleVisibility === 'function') {
+  const originalFunction = ensureHandleVisibility;
+  window.ensureHandleVisibility = function() {
+    try {
+      // Add safety check before calling original function
+      const element = document.getElementById('djDebug');
+      if (element && element.offsetWidth !== null) {
+        originalFunction.apply(this, arguments);
+      }
+    } catch (e) {
+      console.warn('Debug toolbar error suppressed:', e);
+    }
+  };
+}
+
+// Enhance the back button handling to maintain project state
+window.addEventListener('popstate', function(event) {
+  // When using browser back/forward buttons, maintain project state
+  const urlParams = new URLSearchParams(window.location.search);
+  const projectId = urlParams.get('project_id');
+
+  if (projectId) {
+    const projectSelector = document.getElementById('project-selector');
+    if (projectSelector && projectSelector.value !== projectId) {
+      // Update selector and trigger data loading
+      projectSelector.value = projectId;
+
+      // Trigger change event to load data
+      projectSelector.dispatchEvent(new Event('change'));
+    }
+  }
 });

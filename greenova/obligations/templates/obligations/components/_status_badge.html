@@ -1,1 +1,9 @@
-<mark class="{{ color }}" role="status">{{ status|title }}</mark>
+{% if status == 'overdue' %}
+  <mark role="status" class="warning">Overdue</mark>
+{% elif status == 'upcoming' %}
+  <mark role="status" class="info">Upcoming</mark>
+{% elif status == 'completed' %}
+  <mark role="status" class="success">Completed</mark>
+{% else %}
+  <mark role="status">{{ status|default:"Not Started"|title }}</mark>
+{% endif %}

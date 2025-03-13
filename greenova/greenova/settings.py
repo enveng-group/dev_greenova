@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, TypedDict, Union
 from django.contrib import admin
+import mimetypes
 
 class DatabaseConfig(TypedDict):
     ENGINE: str
@@ -135,6 +136,7 @@ INSTALLED_APPS = [
     "tailwind",
     "theme",  # Make sure this is present
     "django_browser_reload",
+    "debug_toolbar",
 ]
 
 # Django-Matplotlib configuration
@@ -152,6 +154,7 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 }
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
@@ -332,3 +335,22 @@ if "runserver" in sys.argv:
 
 # Configure NPM path for Django Tailwind
 NPM_BIN_PATH = '/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'
+
+# Mimetypes configuration
+mimetypes.add_type("text/css", ".css", True)
+mimetypes.add_type("text/javascript", ".js", True)
+mimetypes.add_type("application/javascript", ".js", True)
+mimetypes.add_type("application/json", ".json", True)
+mimetypes.add_type("image/svg+xml", ".svg", True)
+mimetypes.add_type("image/png", ".png", True)
+mimetypes.add_type("image/jpeg", ".jpg", True)
+mimetypes.add_type("image/jpeg", ".jpeg", True)
+mimetypes.add_type("image/gif", ".gif", True)
+mimetypes.add_type("image/webp", ".webp", True)
+mimetypes.add_type("image/x-icon", ".ico", True)
+mimetypes.add_type("image/bmp", ".bmp", True)
+mimetypes.add_type("image/tiff", ".tiff", True)
+mimetypes.add_type("image/tiff", ".tif", True)
+mimetypes.add_type("image/vnd.microsoft.icon", ".ico", True)
+mimetypes.add_type("text/html", ".html", True)
+mimetypes.add_type("text/plain", ".txt", True)
