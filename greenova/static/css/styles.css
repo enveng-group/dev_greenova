@@ -6,14 +6,14 @@
 @import 'components/theme-light.css';
 
 /* Main stylesheet that imports all modular components  */
-@import 'components/button.css';
-@import 'components/card.css';
-@import 'components/charts.css';
 @import 'components/colours.css';
 @import 'components/design.css';
-@import 'components/filter.css';
-@import 'components/form.css';
-@import 'components/list.css';
 @import 'components/navigation.css';
+@import 'components/button.css';
+@import 'components/form.css';
+@import 'components/card.css';
+@import 'components/charts.css';
+@import 'components/filter.css';
+@import 'components/list.css';
 @import 'components/obligations.css';
 @import 'components/pagination.css';
