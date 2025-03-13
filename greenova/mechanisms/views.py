@@ -64,6 +64,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                 chart_img = f"<img src='data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}' alt='{mechanism.name} Chart'>"
 
                 mechanism_charts.append({
+                    'id': mechanism.id,  # Add the mechanism ID for clickable links
                     'name': mechanism.name,
                     'chart': chart_img
                 })
@@ -71,9 +72,10 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             context['mechanism_charts'] = mechanism_charts
             context['project'] = project
 
-            # Add table data
+            # Add table data with mechanism ID
             context['table_data'] = [
                 {
+                    'id': m.id,  # Include ID for linking
                     'name': m.name,
                     'not_started': m.not_started_count,
                     'in_progress': m.in_progress_count,

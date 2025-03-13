@@ -52,16 +52,16 @@ input[type='text']::placeholder {
 .form-group textarea {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid var(--greenova-background-secondary);
+  border: 1px solid var(--greenova-beige-secondary);
   border-radius: 4px;
-  background-color: var(--greenova-background-secondary);
+  background-color: var(--greenova-beige-secondary);
   color: var(--greenova-text-primary-dark);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  border-color: var(--greenova-text-primary-dark);
+  border-color: var(--greenova-beige-secondary);
   outline: none;
   box-shadow: var(--greenova-shadow);
 }

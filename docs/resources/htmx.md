@@ -339,7 +339,7 @@ INSTALLED_APPS = [
 
 {% load partials %}
 
-{% block main %}
+{% block body %}
   <h1>Countries</h1>
 
   {% partialdef country-table inline %}
@@ -362,7 +362,7 @@ INSTALLED_APPS = [
   {% endpartialdef %}
 
   <!-- The table will render here due to 'inline' parameter -->
-{% endblock main %}
+{% endblock body %}
 ```
 
 The `inline` argument makes the partial render when the full page renders.
@@ -427,7 +427,7 @@ def partial_rendering(request):
 ```html
 {% extends base_template %}
 
-{% block main %}
+{% block body %}
   <!-- Content that will be rendered in both full page and HTMX requests -->
   <div id="items-container">
     {% for item in items %}
@@ -455,7 +455,7 @@ Main base template (_base.html):
     </nav>
   </header>
   <main id="main">
-    {% block main %}{% endblock %}
+    {% block body %}{% endblock %}
   </main>
   <footer>
     <!-- Footer content -->
@@ -467,7 +467,7 @@ Main base template (_base.html):
 Partial template (_partial.html):
 ```html
 <main id="main">
-  {% block main %}{% endblock %}
+  {% block body %}{% endblock %}
 </main>
 ```
 

@@ -76,9 +76,10 @@ td:nth-child(22) {
 }
 
 /* Status colors */
-mark.warning {
-  background: var(--greenova-warning-background);
-  color: var(--greenova-warning-text);
+mark,
+mark.success {
+  background: var(--greenova-success-background);
+  color: var(--greenova-success-text);
 }
 
 mark.info {
@@ -86,10 +87,11 @@ mark.info {
   color: var(--greenova-info-text);
 }
 
-mark.success {
-  background: var(--greenova-success-background);
-  color: var(--greenova-success-text);
+mark.warning {
+  background: var(--greenova-warning-background);
+  color: var(--greenova-warning-text);
 }
+
 
 /* Status badges */
 mark[role="status"] {
@@ -109,7 +111,8 @@ mark[role="status"] {
 }
 
 /* Error notices */
-.notice.error {
+.notice,
+.error {
   background: var(--greenova-error-background);
   color: var(--greenova-error-text);
   padding: var(--greenova-spacing);
@@ -149,20 +152,21 @@ mark[role="status"] {
   text-align: center;
 }
 
+/* Obligation View and Edit buttons, they help make it look nice*/
 .action-buttons {
   display: flex;
-  gap: 0.5rem;
+  flex-flow: column;
   justify-content: center;
 }
 
+/* Edit or View Obligations... */
 .action-btn {
   display: inline-flex;
   transition: background-color 0.2s, color 0.2s;
   background-color: transparent;
   height: 24px;
-  width: 24px;
+  width: 100%;
 }
-
 
 .action-btn.edit:hover {
   background: var(--greenova-info-background);

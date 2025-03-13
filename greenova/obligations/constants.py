@@ -4,12 +4,21 @@ from typing import List, Tuple
 STATUS_NOT_STARTED = 'not started'
 STATUS_IN_PROGRESS = 'in progress'
 STATUS_COMPLETED = 'completed'
+STATUS_OVERDUE = 'overdue'
+STATUS_UPCOMING = 'upcoming'
 
 STATUS_CHOICES: List[Tuple[str, str]] = [
     (STATUS_NOT_STARTED, 'Not Started'),
     (STATUS_IN_PROGRESS, 'In Progress'),
     (STATUS_COMPLETED, 'Completed')
 ]
+
+# Due date periods for filtering
+DUE_PERIOD_OVERDUE = 'overdue'
+DUE_PERIOD_THIS_WEEK = 'this_week'
+DUE_PERIOD_NEXT_WEEK = 'next_week'
+DUE_PERIOD_THIS_MONTH = 'this_month'
+DUE_PERIOD_NEXT_MONTH = 'next_month'
 
 # Recurring frequency constants
 FREQUENCY_DAILY = 'daily'

@@ -1,0 +1,131 @@
+<article>
+  <header>
+    <nav aria-label="Breadcrumb" class="breadcrumbs">
+      <ol>
+        <li><a href="{% url 'dashboard:home' %}?project_id={{ mechanism.project.id }}">Dashboard</a></li>
+        <li><a href="javascript:history.back()">Mechanisms</a></li>
+        <li>{{ mechanism.name }}</li>
+      </ol>
+    </nav>
+
+    <h1>Procedure Analysis</h1>
+    <h2>{{ mechanism.name }}</h2>
+  </header>
+
+  {% if error %}
+    <div class="notice error" role="alert">
+      <p>{{ error }}</p>
+    </div>
+  {% elif procedure_charts %}
+    <!-- New Responsibility Distribution Section -->
+    <section aria-labelledby="responsibility-heading" class="charts-section">
+      <h2 id="responsibility-heading">Responsibility Distribution</h2>
+
+      <article class="overall-chart">
+        <figure>
+          <figcaption>Obligations by Responsibility</figcaption>
+          {{ responsibility_chart|safe }}
+        </figure>
+      </article>
+    </section>
+
+    <section aria-labelledby="charts-heading" class="charts-section">
+      <h2 id="charts-heading">Procedures by Status</h2>
+
+      <!-- Chart Navigation -->
+      <nav role="navigation" aria-label="Procedure charts navigation" class="chart-nav">
+        <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
+        <button type="button" onclick="scrollCharts('right')" aria-label="Scroll right">→</button>
+      </nav>
+
+      <!-- Charts Container -->
+      <div class="chart-scroll-container" id="chartScroll" role="region" aria-label="Chart gallery" tabindex="0">
+        {% for proc in procedure_charts %}
+          <article class="mechanism-chart">
+            <header>
+              <h3>{{ proc.name }}</h3>
+            </header>
+            <figure>
+              <figcaption>
+                <dl class="chart-stats">
+                  <div class="stat-row">
+                    <dt>Total:</dt>
+                    <dd>{{ proc.stats.total }}</dd>
+                  </div>
+                  <div class="stat-row">
+                    <dt>Not Started:</dt>
+                    <dd>{{ proc.stats.not_started }}</dd>
+                  </div>
+                  <div class="stat-row">
+                    <dt>In Progress:</dt>
+                    <dd>{{ proc.stats.in_progress }}</dd>
+                  </div>
+                  <div class="stat-row">
+                    <dt>Completed:</dt>
+                    <dd>{{ proc.stats.completed }}</dd>
+                  </div>
+                  <div class="stat-row">
+                    <dt>Overdue:</dt>
+                    <dd>{{ proc.stats.overdue }}</dd>
+                  </div>
+                </dl>
+              </figcaption>
+              {{ proc.chart|safe }}
+            </figure>
+          </article>
+        {% endfor %}
+      </div>
+
+      <!-- Data Table -->
+      <article class="data-table">
+        <header>
+          <h3>Detailed Statistics</h3>
+        </header>
+        <div class="table-container">
+          <table role="grid">
+            <thead>
+              <tr>
+                <th scope="col">Procedure</th>
+                <th scope="col">Not Started</th>
+                <th scope="col">In Progress</th>
+                <th scope="col">Completed</th>
+                <th scope="col">Overdue</th>
+                <th scope="col">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in table_data %}
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.not_started }}</td>
+                <td>{{ item.in_progress }}</td>
+                <td>{{ item.completed }}</td>
+                <td>{{ item.overdue }}</td>
+                <td>{{ item.total }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  {% else %}
+    <div class="notice" role="status">
+      <p>No procedure data available for this mechanism.</p>
+    </div>
+  {% endif %}
+</article>
+
+<script>
+  // Add the chart scrolling function
+  function scrollCharts(direction) {
+    const container = document.getElementById('chartScroll');
+    const scrollAmount = 350; // Adjust as needed
+
+    if (direction === 'left') {
+      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  }
+</script>

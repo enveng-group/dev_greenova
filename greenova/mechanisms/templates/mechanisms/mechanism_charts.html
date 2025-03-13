@@ -11,12 +11,22 @@
     <!-- Charts Container -->
     <div class="chart-scroll-container" id="chartScroll" role="region" aria-label="Chart gallery" tabindex="0">
       {% for mech in mechanism_charts %}
-        <article class="mechanism-chart">
+        <article class="mechanism-chart"
+                {% if forloop.counter > 1 %}
+                onclick="window.location.href='{% url 'procedures:procedure_charts' mechanism_id=mech.id %}'"
+                style="cursor: pointer;"
+                title="Click to view procedure details for {{ mech.name }}"
+                {% endif %}>
           <header>
             <h3>{{ mech.name }}</h3>
           </header>
           <figure>
-            <figcaption>Status Distribution</figcaption>
+            <figcaption>
+              Status Distribution
+              {% if forloop.counter > 1 %}
+              <small><br>(Click for procedure analysis)</small>
+              {% endif %}
+            </figcaption>
             {{ mech.chart|safe }}
           </figure>
         </article>
@@ -39,6 +49,7 @@
                 <th scope="col">Completed</th>
                 <th scope="col">Overdue</th>
                 <th scope="col">Total</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -50,6 +61,16 @@
                 <td>{{ item.completed }}</td>
                 <td>{{ item.overdue }}</td>
                 <td>{{ item.total }}</td>
+                <td>
+                  {% if item.id %}
+                  <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
+                     role="button"
+                     class="btn-secondary"
+                     aria-label="View procedure details for {{ item.name }}">
+                     View Procedures
+                  </a>
+                  {% endif %}
+                </td>
               </tr>
               {% endfor %}
             </tbody>
@@ -67,3 +88,17 @@
     <p>Please select a project to view mechanism charts.</p>
   </div>
 {% endif %}
+
+<script>
+  // Enhanced scrollCharts function
+  function scrollCharts(direction) {
+    const container = document.getElementById('chartScroll');
+    const scrollAmount = 350; // Adjust as needed
+
+    if (direction === 'left') {
+      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  }
+</script>

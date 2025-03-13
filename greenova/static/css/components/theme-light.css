@@ -2,14 +2,15 @@
  *                                                *
  *              Light-mode  Coloring              *
  *                                                *
- **************************************************/        
- :root:not([data-theme=dark]), [data-theme=light] {
+ **************************************************/
+:root:not([data-theme=dark]),
+:root[data-theme=light] {
 
   /**************************************************
-   *                                                *
-   *                 Primary colours                *
-   *                                                *
-   **************************************************/
+    *                                                *
+    *                 Primary colours                *
+    *                                                *
+    **************************************************/
 
   /* Green Primary - Use Cases: Body backgrounds, icon backgrounds, buttons */
   --greenova-green-primary: #909E77;

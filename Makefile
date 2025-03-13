@@ -3,6 +3,20 @@
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
 
+# Create virtual environment
+venv:
+	@echo "Creating virtual environment..."
+	@python3 -m venv .venv
+	@source .venv/bin/activate
+	@echo "Virtual environment created."
+
+# Install dependencies
+install:
+	@echo "Installing dependencies..."
+	$(VENV)/bin/python -m pip install --upgrade pip
+	$(VENV)/bin/pip install -r requirements.txt -c constraints.txt
+	@echo "Dependencies installed."
+
 app:
 	@if [ -z "$(name)" ]; then echo "Error: Please provide app name with 'make app name=yourappname'"; exit 1; fi
 	$(CD_CMD) python3 manage.py startapp $(name)
@@ -13,35 +27,35 @@ check:
 # Updated run command with better process management
 run:
 	@echo "Starting Tailwind CSS and Django server..."
-	@$(CD_CMD) (python manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && python manage.py runserver
+	@$(CD_CMD) (python3 manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && python3 manage.py runserver
 
 # Alternative approach with separate commands
 run-django:
-	$(CD_CMD) python manage.py runserver
+	$(CD_CMD) python3 manage.py runserver
 
 run-tailwind:
-	$(CD_CMD) python manage.py tailwind start
+	$(CD_CMD) python3 manage.py tailwind start
 
 # Run command for development - opens two terminal tabs (for Mac/Linux)
 dev:
 	@echo "Starting development environment..."
-	@gnome-terminal --tab -- bash -c "$(CD_CMD) python manage.py tailwind start; bash" 2>/dev/null || \
-	xterm -e "$(CD_CMD) python manage.py tailwind start" 2>/dev/null || \
-	osascript -e 'tell app "Terminal" to do script "cd $(shell pwd)/greenova && python manage.py tailwind start"' 2>/dev/null || \
+	@gnome-terminal --tab -- bash -c "$(CD_CMD) python3 manage.py tailwind start; bash" 2>/dev/null || \
+	xterm -e "$(CD_CMD) python3 manage.py tailwind start" 2>/dev/null || \
+	osascript -e 'tell app "Terminal" to do script "cd $(shell pwd)/greenova && python3 manage.py tailwind start"' 2>/dev/null || \
 	echo "Could not open terminal automatically. Please run 'make run-tailwind' in a separate terminal."
-	@$(CD_CMD) python manage.py runserver
+	@$(CD_CMD) python3 manage.py runserver
 
 # Check Tailwind installation status
 check-tailwind:
-	$(CD_CMD) python manage.py tailwind check-updates
+	$(CD_CMD) python3 manage.py tailwind check-updates
 
 # Tailwind commands
 tailwind-build:
-	$(CD_CMD) python manage.py tailwind build
+	$(CD_CMD) python3 manage.py tailwind build
 
 # Add a tailwind install command
 tailwind-install:
-	$(CD_CMD) python manage.py tailwind install
+	$(CD_CMD) python3 manage.py tailwind install
 
 migrations:
 	$(CD_CMD) python3 manage.py makemigrations
@@ -96,6 +110,15 @@ check-templates:
 # Combined command for formatting and linting
 format-lint: format-templates lint-templates
 
+
+# Remove virtual environment and temporary files
+clean:
+	@echo "Removing virtual environment and temporary files..."
+	@rm -rf $(VENV)
+	@find . -name "*.pyc" -delete
+	@find . -name "__pycache__" -delete
+	@echo "Clean completed."
+
 # Help command to list available commands
 help:
 	@echo "Available commands:"
@@ -118,3 +141,6 @@ help:
 	@echo "  make migrations   - Create new migrations"
 	@echo "  make run          - Start development server"
 	@echo "  make tailwind     - Start Tailwind CSS server"
+	@echo "make venv           - Create virtual environment"
+	@echo "make install        - Install dependencies"
+	@echo "make clean          - Remove virtual environment and clean temporary files"

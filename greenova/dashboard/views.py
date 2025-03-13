@@ -45,7 +45,7 @@ class DashboardContext(TypedDict):
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
     template_name = 'dashboard/dashboard.html'
-    login_url = 'authentication:login'
+    login_url = 'account_login'
     redirect_field_name = 'next'
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
@@ -71,6 +71,11 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             # Trigger dashboard refresh events
             trigger_client_event(response, 'dashboardLoaded')
 
+            # Also trigger project selection if project_id is in the request
+            project_id = request.GET.get('project_id')
+            if project_id:
+                trigger_client_event(response, 'projectSelected', {"projectId": project_id})
+
             # If the dashboard data is stale, force a refresh
             if self._is_data_stale():
                 return HttpResponseClientRefresh()
@@ -94,9 +99,12 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                 memberships__user=user
             ).prefetch_related('memberships', 'obligations').distinct()
 
+            # Get the selected project ID from query parameters
+            selected_project_id = self.request.GET.get('project_id')
+
             dashboard_context: DashboardContext = {
                 'projects': user_projects,
-                'selected_project_id': self.request.GET.get('project_id'),
+                'selected_project_id': selected_project_id,  # Add this to context explicitly
                 'system_status': SYSTEM_STATUS,
                 'app_version': APP_VERSION,
                 'last_updated': datetime.combine(LAST_UPDATED, datetime.min.time()),
@@ -113,14 +121,13 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             logger.info(f"Found {user_projects.count()} projects for user {user}")
 
             # Add analytics data for selected project
-            selected_project_id = self.request.GET.get('project_id')
             if selected_project_id:
                 try:
                     project = user_projects.get(pk=selected_project_id)
 
-                    # Get obligations and force evaluation to QuerySet[Obligation]
+                    # Fix the query - use project directly instead of projects field
                     obligations = Obligation.objects.filter(
-                        projects=project
+                        project=project  # Changed from projects=project
                     ).select_related('project')
 
                 except Project.DoesNotExist:
@@ -177,3 +184,9 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         except Exception as e:
             logger.error(f"Error counting overdue items: {str(e)}")
             return HttpResponse("0")
+
+class DashboardProfileView(TemplateView):
+    """Profile view."""
+    template_name = 'dashboard/profile.html'
+    login_url = 'account_login'
+    redirect_field_name = 'next'

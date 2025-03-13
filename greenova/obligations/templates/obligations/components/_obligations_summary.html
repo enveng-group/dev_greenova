@@ -15,6 +15,17 @@
     <div class="filter-section" aria-labelledby="filter-heading">
       <div class="filter-header">
         <h3 id="filter-heading">Filter Obligations</h3>
+                                        <!-- Add Obligation Button -->
+                                        <a href="{% url 'obligations:create' %}{% if request.GET.project_id %}?project_id={{ request.GET.project_id }}{% endif %}"
+                                        class="add-obligation-btn"
+                                        role="button"
+                                        aria-label="Add new obligation">
+                                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                         <line x1="12" y1="5" x2="12" y2="19"></line>
+                                         <line x1="5" y1="12" x2="19" y2="12"></line>
+                                       </svg>
+                                       <span>Add Obligation</span>
+                                     </a>
         <div class="filter-actions">
           <!-- Quick filter buttons -->
           <button type="button"
@@ -163,7 +174,7 @@
                   </td>
                   <td>{{ obligation.obligation|truncatechars:50 }}</td>
                   <td>{{ obligation.action_due_date|format_due_date }}</td>
-                  <td>{% display_status obligation %}</td>
+                  <td>{{ obligation|display_status }}</td>
                   <td>{{ obligation.primary_environmental_mechanism.name|default:"-" }}</td>
                   <td>{{ obligation.project_phase|default:"-" }}</td>
                   <td>{% if obligation.recurring_obligation %}Yes{% else %}No{% endif %}</td>

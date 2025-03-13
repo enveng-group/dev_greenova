@@ -7,298 +7,411 @@
 {% block form_heading %}New Obligation Form{% endblock %}
 
 {% block form_content %}
-<form method="post"
-      action="{% url 'obligations:create' %}"
-      id="obligation-form"
-      class="obligation-form"
-      hx-ext="path-deps"
-      hx-on="htmx:afterRequest: if(event.detail.successful) PathDeps.refresh('/obligations/')">
+<form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
 
-    <!-- Hidden project input if project is pre-selected -->
     {% if project_id %}
-        <input type="hidden" name="project" value="{{ project_id }}">
+    <input type="hidden" name="project" value="{{ project_id }}">
     {% endif %}
 
-    <div class="form-grid">
-        <!-- Basic details -->
-        <fieldset>
-            <legend>Basic Details</legend>
+    <!-- Basic Information Fieldset -->
+    <fieldset>
+        <legend>Basic Information</legend>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.obligation_number.id_for_label }}">{{ form.obligation_number.label }}*</label>
-                    {{ form.obligation_number }}
-                    {% if form.obligation_number.help_text %}
-                        <small id="obligation_number_help">{{ form.obligation_number.help_text }}</small>
-                    {% endif %}
-                    {% if form.obligation_number.errors %}
-                        <small class="error">{{ form.obligation_number.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.status.id_for_label }}">{{ form.status.label }}*</label>
-                    {{ form.status }}
-                    {% if form.status.errors %}
-                        <small class="error">{{ form.status.errors }}</small>
-                    {% endif %}
-                </div>
+        {% if not project_id %}
+        <div class="form-group">
+            {{ form.project.label_tag }}
+            {{ form.project }}
+            {% if form.project.help_text %}<small>{{ form.project.help_text }}</small>{% endif %}
+            {% if form.project.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.project.errors %}{{ error }}{% endfor %}
             </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.primary_environmental_mechanism.id_for_label }}">{{ form.primary_environmental_mechanism.label }}</label>
-                    {{ form.primary_environmental_mechanism }}
-                    {% if form.primary_environmental_mechanism.errors %}
-                        <small class="error">{{ form.primary_environmental_mechanism.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.environmental_aspect.id_for_label }}">{{ form.environmental_aspect.label }}</label>
-                    {{ form.environmental_aspect }}
-                    {% if form.environmental_aspect.errors %}
-                        <small class="error">{{ form.environmental_aspect.errors }}</small>
-                    {% endif %}
-                </div>
+        <div class="form-group">
+            {{ form.primary_environmental_mechanism.label_tag }}
+            {{ form.primary_environmental_mechanism }}
+            {% if form.primary_environmental_mechanism.help_text %}<small>{{ form.primary_environmental_mechanism.help_text }}</small>{% endif %}
+            {% if form.primary_environmental_mechanism.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.primary_environmental_mechanism.errors %}{{ error }}{% endfor %}
             </div>
-        </fieldset>
+            {% endif %}
+        </div>
 
-        <!-- Obligation details -->
-        <fieldset>
-            <legend>Obligation Details</legend>
+        <div class="form-group">
+            {{ form.environmental_aspect.label_tag }}
+            {{ form.environmental_aspect }}
+            {% if form.environmental_aspect.help_text %}<small>{{ form.environmental_aspect.help_text }}</small>{% endif %}
+            {% if form.environmental_aspect.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.environmental_aspect.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
 
+        <!-- Custom Environmental Aspect Field (conditionally shown) -->
+        <div id="custom-aspect-container" style="display:none;">
             <div class="form-group">
-                <label for="{{ form.obligation.id_for_label }}">{{ form.obligation.label }}*</label>
-                {{ form.obligation }}
-                {% if form.obligation.errors %}
-                    <small class="error">{{ form.obligation.errors }}</small>
+                {{ form.custom_environmental_aspect.label_tag }}
+                {{ form.custom_environmental_aspect }}
+                {% if form.custom_environmental_aspect.help_text %}<small>{{ form.custom_environmental_aspect.help_text }}</small>{% endif %}
+                {% if form.custom_environmental_aspect.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.custom_environmental_aspect.errors %}{{ error }}{% endfor %}
+                </div>
                 {% endif %}
             </div>
+        </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.accountability.id_for_label }}">{{ form.accountability.label }}</label>
-                    {{ form.accountability }}
-                    {% if form.accountability.errors %}
-                        <small class="error">{{ form.accountability.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.responsibility.id_for_label }}">{{ form.responsibility.label }}</label>
-                    {{ form.responsibility }}
-                    {% if form.responsibility.errors %}
-                        <small class="error">{{ form.responsibility.errors }}</small>
-                    {% endif %}
-                </div>
+        <div class="form-group">
+            {{ form.obligation.label_tag }}
+            {{ form.obligation }}
+            {% if form.obligation.help_text %}<small>{{ form.obligation.help_text }}</small>{% endif %}
+            {% if form.obligation.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.obligation.errors %}{{ error }}{% endfor %}
             </div>
-        </fieldset>
+            {% endif %}
+        </div>
 
-        <!-- Timeline details -->
-        <fieldset>
-            <legend>Timeline</legend>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.project_phase.id_for_label }}">{{ form.project_phase.label }}</label>
-                    {{ form.project_phase }}
-                    {% if form.project_phase.errors %}
-                        <small class="error">{{ form.project_phase.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.action_due_date.id_for_label }}">{{ form.action_due_date.label }}</label>
-                    {{ form.action_due_date }}
-                    {% if form.action_due_date.help_text %}
-                        <small id="due_date_help">{{ form.action_due_date.help_text }}</small>
-                    {% endif %}
-                    {% if form.action_due_date.errors %}
-                        <small class="error">{{ form.action_due_date.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.close_out_date.id_for_label }}">{{ form.close_out_date.label }}</label>
-                    {{ form.close_out_date }}
-                    {% if form.close_out_date.errors %}
-                        <small class="error">{{ form.close_out_date.errors }}</small>
-                    {% endif %}
-                </div>
+        <div class="form-group">
+            {{ form.obligation_type.label_tag }}
+            {{ form.obligation_type }}
+            {% if form.obligation_type.help_text %}<small>{{ form.obligation_type.help_text }}</small>{% endif %}
+            {% if form.obligation_type.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.obligation_type.errors %}{{ error }}{% endfor %}
             </div>
-        </fieldset>
+            {% endif %}
+        </div>
+    </fieldset>
 
-        <!-- Recurring details -->
-        <fieldset>
-            <legend>Recurring Information</legend>
+    <!-- Dates and Status Fieldset -->
+    <fieldset>
+        <legend>Dates and Status</legend>
 
-            <div class="form-row">
-                <div class="form-group checkbox-group">
-                    <label for="{{ form.recurring_obligation.id_for_label }}">
-                        {{ form.recurring_obligation }}
-                        {{ form.recurring_obligation.label }}
-                    </label>
-                    {% if form.recurring_obligation.help_text %}
-                        <small>{{ form.recurring_obligation.help_text }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.recurring_frequency.id_for_label }}">{{ form.recurring_frequency.label }}</label>
-                    {{ form.recurring_frequency }}
-                    {% if form.recurring_frequency.errors %}
-                        <small class="error">{{ form.recurring_frequency.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.recurring_forcasted_date.id_for_label }}">{{ form.recurring_forcasted_date.label }}</label>
-                    {{ form.recurring_forcasted_date }}
-                    {% if form.recurring_forcasted_date.errors %}
-                        <small class="error">{{ form.recurring_forcasted_date.errors }}</small>
-                    {% endif %}
-                </div>
+        <div class="form-group">
+            {{ form.action_due_date.label_tag }}
+            {{ form.action_due_date }}
+            {% if form.action_due_date.help_text %}<small>{{ form.action_due_date.help_text }}</small>{% endif %}
+            {% if form.action_due_date.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.action_due_date.errors %}{{ error }}{% endfor %}
             </div>
-        </fieldset>
+            {% endif %}
+        </div>
 
-        <!-- Inspection details -->
-        <fieldset>
-            <legend>Inspection Details</legend>
-
-            <div class="form-row">
-                <div class="form-group checkbox-group">
-                    <label for="{{ form.inspection.id_for_label }}">
-                        {{ form.inspection }}
-                        {{ form.inspection.label }}
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.inspection_frequency.id_for_label }}">{{ form.inspection_frequency.label }}</label>
-                    {{ form.inspection_frequency }}
-                    {% if form.inspection_frequency.errors %}
-                        <small class="error">{{ form.inspection_frequency.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.site_or_desktop.id_for_label }}">{{ form.site_or_desktop.label }}</label>
-                    {{ form.site_or_desktop }}
-                    {% if form.site_or_desktop.errors %}
-                        <small class="error">{{ form.site_or_desktop.errors }}</small>
-                    {% endif %}
-                </div>
+        <div class="form-group">
+            {{ form.close_out_date.label_tag }}
+            {{ form.close_out_date }}
+            {% if form.close_out_date.help_text %}<small>{{ form.close_out_date.help_text }}</small>{% endif %}
+            {% if form.close_out_date.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.close_out_date.errors %}{{ error }}{% endfor %}
             </div>
+            {% endif %}
+        </div>
 
+        <div class="form-group">
+            {{ form.status.label_tag }}
+            {{ form.status }}
+            {% if form.status.help_text %}<small>{{ form.status.help_text }}</small>{% endif %}
+            {% if form.status.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.status.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </fieldset>
+
+    <!-- Recurring Details Fieldset -->
+    <fieldset>
+        <legend>Recurring Details</legend>
+
+        <div class="form-group checkbox-group">
+            <label>
+                {{ form.recurring_obligation }}
+                {{ form.recurring_obligation.label }}
+            </label>
+            {% if form.recurring_obligation.help_text %}<small>{{ form.recurring_obligation.help_text }}</small>{% endif %}
+            {% if form.recurring_obligation.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.recurring_obligation.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recurring Fields (Initially Hidden) -->
+        <div class="recurring-fields" style="display:none;">
             <div class="form-group">
-                <label for="{{ form.covered_in_which_inspection_checklist.id_for_label }}">{{ form.covered_in_which_inspection_checklist.label }}</label>
-                {{ form.covered_in_which_inspection_checklist }}
-                {% if form.covered_in_which_inspection_checklist.errors %}
-                    <small class="error">{{ form.covered_in_which_inspection_checklist.errors }}</small>
-                {% endif %}
-            </div>
-        </fieldset>
-
-        <!-- Comments and additional info -->
-        <fieldset>
-            <legend>Comments and Additional Information</legend>
-
-            <div class="form-group">
-                <label for="{{ form.supporting_information.id_for_label }}">{{ form.supporting_information.label }}</label>
-                {{ form.supporting_information }}
-                {% if form.supporting_information.errors %}
-                    <small class="error">{{ form.supporting_information.errors }}</small>
+                {{ form.recurring_frequency.label_tag }}
+                {{ form.recurring_frequency }}
+                {% if form.recurring_frequency.help_text %}<small>{{ form.recurring_frequency.help_text }}</small>{% endif %}
+                {% if form.recurring_frequency.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.recurring_frequency.errors %}{{ error }}{% endfor %}
+                </div>
                 {% endif %}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.general_comments.id_for_label }}">{{ form.general_comments.label }}</label>
-                {{ form.general_comments }}
-                {% if form.general_comments.errors %}
-                    <small class="error">{{ form.general_comments.errors }}</small>
+                {{ form.recurring_status.label_tag }}
+                {{ form.recurring_status }}
+                {% if form.recurring_status.help_text %}<small>{{ form.recurring_status.help_text }}</small>{% endif %}
+                {% if form.recurring_status.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.recurring_status.errors %}{{ error }}{% endfor %}
+                </div>
                 {% endif %}
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.compliance_comments.id_for_label }}">{{ form.compliance_comments.label }}</label>
-                    {{ form.compliance_comments }}
-                    {% if form.compliance_comments.errors %}
-                        <small class="error">{{ form.compliance_comments.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.non_conformance_comments.id_for_label }}">{{ form.non_conformance_comments.label }}</label>
-                    {{ form.non_conformance_comments }}
-                    {% if form.non_conformance_comments.errors %}
-                        <small class="error">{{ form.non_conformance_comments.errors }}</small>
-                    {% endif %}
-                </div>
-            </div>
-
             <div class="form-group">
-                <label for="{{ form.evidence.id_for_label }}">{{ form.evidence.label }}</label>
-                {{ form.evidence }}
-                {% if form.evidence.errors %}
-                    <small class="error">{{ form.evidence.errors }}</small>
+                {{ form.recurring_forcasted_date.label_tag }}
+                {{ form.recurring_forcasted_date }}
+                {% if form.recurring_forcasted_date.help_text %}<small>{{ form.recurring_forcasted_date.help_text }}</small>{% endif %}
+                {% if form.recurring_forcasted_date.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.recurring_forcasted_date.errors %}{{ error }}{% endfor %}
+                </div>
                 {% endif %}
             </div>
-        </fieldset>
+        </div>
+    </fieldset>
 
-        <!-- Additional fields -->
-        <fieldset>
-            <legend>Additional Fields</legend>
+    <!-- Inspection Details Fieldset -->
+    <fieldset>
+        <legend>Inspection Details</legend>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.person_email.id_for_label }}">{{ form.person_email.label }}</label>
-                    {{ form.person_email }}
-                    {% if form.person_email.errors %}
-                        <small class="error">{{ form.person_email.errors }}</small>
-                    {% endif %}
+        <div class="form-group checkbox-group">
+            <label>
+                {{ form.inspection }}
+                {{ form.inspection.label }}
+            </label>
+            {% if form.inspection.help_text %}<small>{{ form.inspection.help_text }}</small>{% endif %}
+            {% if form.inspection.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.inspection.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Inspection Fields (Initially Hidden) -->
+        <div class="inspection-fields" style="display:none;">
+            <div class="form-group">
+                {{ form.inspection_frequency.label_tag }}
+                {{ form.inspection_frequency }}
+                {% if form.inspection_frequency.help_text %}<small>{{ form.inspection_frequency.help_text }}</small>{% endif %}
+                {% if form.inspection_frequency.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.inspection_frequency.errors %}{{ error }}{% endfor %}
                 </div>
-
-                <div class="form-group">
-                    <label for="{{ form.obligation_type.id_for_label }}">{{ form.obligation_type.label }}</label>
-                    {{ form.obligation_type }}
-                    {% if form.obligation_type.errors %}
-                        <small class="error">{{ form.obligation_type.errors }}</small>
-                    {% endif %}
-                </div>
-
-                <div class="form-group checkbox-group">
-                    <label for="{{ form.new_control_action_required.id_for_label }}">
-                        {{ form.new_control_action_required }}
-                        {{ form.new_control_action_required.label }}
-                    </label>
-                </div>
+                {% endif %}
             </div>
 
             <div class="form-group">
-                <label for="{{ form.gap_analysis.id_for_label }}">{{ form.gap_analysis.label }}</label>
+                {{ form.site_or_desktop.label_tag }}
+                {{ form.site_or_desktop }}
+                {% if form.site_or_desktop.help_text %}<small>{{ form.site_or_desktop.help_text }}</small>{% endif %}
+                {% if form.site_or_desktop.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.site_or_desktop.errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- Additional Information Fieldset -->
+    <fieldset>
+        <legend>Additional Information</legend>
+
+        <div class="form-group">
+            {{ form.accountability.label_tag }}
+            {{ form.accountability }}
+            {% if form.accountability.help_text %}<small>{{ form.accountability.help_text }}</small>{% endif %}
+            {% if form.accountability.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.accountability.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.responsibility.label_tag }}
+            {{ form.responsibility }}
+            {% if form.responsibility.help_text %}<small>{{ form.responsibility.help_text }}</small>{% endif %}
+            {% if form.responsibility.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.responsibility.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.project_phase.label_tag }}
+            {{ form.project_phase }}
+            {% if form.project_phase.help_text %}<small>{{ form.project_phase.help_text }}</small>{% endif %}
+            {% if form.project_phase.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.project_phase.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.supporting_information.label_tag }}
+            {{ form.supporting_information }}
+            {% if form.supporting_information.help_text %}<small>{{ form.supporting_information.help_text }}</small>{% endif %}
+            {% if form.supporting_information.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.supporting_information.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.general_comments.label_tag }}
+            {{ form.general_comments }}
+            {% if form.general_comments.help_text %}<small>{{ form.general_comments.help_text }}</small>{% endif %}
+            {% if form.general_comments.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.general_comments.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.compliance_comments.label_tag }}
+            {{ form.compliance_comments }}
+            {% if form.compliance_comments.help_text %}<small>{{ form.compliance_comments.help_text }}</small>{% endif %}
+            {% if form.compliance_comments.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.compliance_comments.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.non_conformance_comments.label_tag }}
+            {{ form.non_conformance_comments }}
+            {% if form.non_conformance_comments.help_text %}<small>{{ form.non_conformance_comments.help_text }}</small>{% endif %}
+            {% if form.non_conformance_comments.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.non_conformance_comments.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.evidence_notes.label_tag }}
+            {{ form.evidence_notes }}
+            {% if form.evidence_notes.help_text %}<small>{{ form.evidence_notes.help_text }}</small>{% endif %}
+            {% if form.evidence_notes.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.evidence_notes.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
+                {{ form.new_control_action_required }}
+                {{ form.new_control_action_required.label }}
+            </label>
+            {% if form.new_control_action_required.help_text %}<small>{{ form.new_control_action_required.help_text }}</small>{% endif %}
+            {% if form.new_control_action_required.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.new_control_action_required.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
                 {{ form.gap_analysis }}
-                {% if form.gap_analysis.errors %}
-                    <small class="error">{{ form.gap_analysis.errors }}</small>
-                {% endif %}
+                {{ form.gap_analysis.label }}
+            </label>
+            {% if form.gap_analysis.help_text %}<small>{{ form.gap_analysis.help_text }}</small>{% endif %}
+            {% if form.gap_analysis.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.gap_analysis.errors %}{{ error }}{% endfor %}
             </div>
+            {% endif %}
+        </div>
 
-            <div class="form-group">
-                <label for="{{ form.notes_for_gap_analysis.id_for_label }}">{{ form.notes_for_gap_analysis.label }}</label>
-                {{ form.notes_for_gap_analysis }}
-                {% if form.notes_for_gap_analysis.errors %}
-                    <small class="error">{{ form.notes_for_gap_analysis.errors }}</small>
-                {% endif %}
+        <div class="form-group">
+            {{ form.notes_for_gap_analysis.label_tag }}
+            {{ form.notes_for_gap_analysis }}
+            {% if form.notes_for_gap_analysis.help_text %}<small>{{ form.notes_for_gap_analysis.help_text }}</small>{% endif %}
+            {% if form.notes_for_gap_analysis.errors %}
+            <div class="invalid-feedback">
+                {% for error in form.notes_for_gap_analysis.errors %}{{ error }}{% endfor %}
             </div>
-        </fieldset>
-    </div>
+            {% endif %}
+        </div>
+    </fieldset>
 
-    <!-- Form actions -->
+    <!-- Form Actions -->
     <div class="form-actions">
-        <button type="submit" class="btn-primary">Save Obligation</button>
-        <button type="button" class="btn-secondary" _="on click call history.back()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Obligation</button>
+        <a href="{% url 'dashboard:home' %}?project_id={{ project_id }}" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
+
+<!-- Add JavaScript for dynamic form behaviors -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show/hide custom environmental aspect based on selection
+        const environmentalAspectField = document.querySelector('[name="environmental_aspect"]');
+        const customAspectContainer = document.getElementById('custom-aspect-container');
+
+        if (environmentalAspectField && customAspectContainer) {
+            // Initial check
+            if (environmentalAspectField.value === 'Other') {
+                customAspectContainer.style.display = 'block';
+            }
+
+            // Add event listener for changes
+            environmentalAspectField.addEventListener('change', function() {
+                customAspectContainer.style.display = this.value === 'Other' ? 'block' : 'none';
+            });
+        }
+
+        // Toggle recurring fields
+        const recurringCheckbox = document.querySelector('[name="recurring_obligation"]');
+        const recurringFields = document.querySelectorAll('.recurring-fields');
+
+        if (recurringCheckbox && recurringFields.length > 0) {
+            // Initial check
+            if (recurringCheckbox.checked) {
+                recurringFields.forEach(el => el.style.display = 'block');
+            }
+
+            // Add event listener for changes
+            recurringCheckbox.addEventListener('change', function() {
+                recurringFields.forEach(el => el.style.display = this.checked ? 'block' : 'none');
+            });
+        }
+
+        // Toggle inspection fields
+        const inspectionCheckbox = document.querySelector('[name="inspection"]');
+        const inspectionFields = document.querySelectorAll('.inspection-fields');
+
+        if (inspectionCheckbox && inspectionFields.length > 0) {
+            // Initial check
+            if (inspectionCheckbox.checked) {
+                inspectionFields.forEach(el => el.style.display = 'block');
+            }
+
+            // Add event listener for changes
+            inspectionCheckbox.addEventListener('change', function() {
+                inspectionFields.forEach(el => el.style.display = this.checked ? 'block' : 'none');
+            });
+        }
+    });
+</script>
 {% endblock form_content %}
