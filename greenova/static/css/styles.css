@@ -1,6 +1,3 @@
-/* Import custom normaliser to fit our rules */
-@import 'vendor/moderniser-normaliser.css';
-
 /* Load themes */
 @import 'components/theme-dark.css';
 @import 'components/theme-light.css';
