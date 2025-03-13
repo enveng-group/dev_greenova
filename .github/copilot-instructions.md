@@ -839,7 +839,7 @@ CREATE TRIGGER update_obligations_timestamp
 
 5. **Create the Login Page**:
 
-   - Use Django’s built-in authentication system.
+   - Use Django-allauth authentication system.
    - Create a `LoginView` and customize the template for user-friendly design.
    - Add password reset views and templates.
 

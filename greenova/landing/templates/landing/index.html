@@ -2,7 +2,7 @@
   {% block title %}
     Welcome to Greenova
   {% endblock title %}
-  {% block main %}
+  {% block body %}
     <article>
       <header>
         <hgroup>
@@ -14,7 +14,7 @@
       <section>
         <!-- Landing page content -->
         <nav _="on load if user_authenticated then show else hide">
-          <a href="{% url 'authentication:register' %}"
+          <a href="{% url 'account_signup' %}"
             role="button"
             class="primary">Get Started</a>
           <a href="#features" role="button" class="outline">Learn More</a>
@@ -58,8 +58,8 @@
           compliance management needs.
         </p>
         <nav aria-label="Sign up">
-          <a href="{% url 'authentication:register' %}" role="button">Sign Up Now</a>
+          <a href="{% url 'account_signup' %}" role="button">Sign Up Now</a>
         </nav>
       </section>
     </article>
-  {% endblock main %}
+  {% endblock body %}

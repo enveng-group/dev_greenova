@@ -43,6 +43,7 @@ Greenova is a POSIX-compliant Django web application that prioritizes semantic H
 - Django-HTMX 1.22.0
 - Django-Hyperscript 1.0.2
 - Django-Tailwind 3.6.0
+- Django-Allauth 65.4.1
 
 ### Frontend
 - HTML5

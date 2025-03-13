@@ -5,7 +5,7 @@
   Dashboard
 {% endblock title %}
 
-{% block main %}
+{% block body %}
   <article hx-ext="class-tools path-deps" classes="add fade-in">
     <!-- Define the partial content first -->
     {% partialdef dashboard_header %}
@@ -80,7 +80,6 @@
     {% partial data_container %}
     {% partial overdue_card %}
   </article>
-
   <!-- Add script to initialize project selection and data loading -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -111,8 +110,7 @@
       }
     });
   </script>
-{% endblock main %}
-
+{% endblock body %}
 {% block footer %}
   <footer role="contentinfo" hx-ext="class-tools" classes="add fade-in:1s">
     <p>
