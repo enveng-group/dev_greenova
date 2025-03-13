@@ -38,15 +38,10 @@
           href="{% static 'css/vendor/pico.classless.min.css' %}" />
     {% tailwind_css %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/components/theme-light.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/components/theme-dark.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/components/navigation.css' %}" />
     {% block extra_head %}
     {% endblock extra_head %}
   </head>
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-ext="head-support, loading-states, class-tools, path-deps">
-    <!-- Skip to main content link for accessibility -->
-    <a class="skip-link" href="#main-content">Skip to content</a>
 
     {% load hyperscript %}
 
@@ -60,12 +55,10 @@
         </ul>
         <ul role="menubar"
             aria-label="Primary navigation"
-            style="display: flex;
-                   width: 100%;
-                   align-items: center">
+            style="display: flex; width: 100%; padding-right: var(--greenova-spacing-large);">
           {% if request.user.is_authenticated %}
             <!-- Left side navigation items -->
-              <li role="none" style="margin-left: 2rem">
+              <li role="none" style="margin-left:0;">
                 <nav aria-label="Primary navigation" role="navigation">
                   <ul>
                     <li>
@@ -77,7 +70,7 @@
                     </li>
                     {% if request.resolver_match.namespace != 'dashboard' %}
                       <li>
-                        <span>{{ request.resolver_match.namespace|title }}</span>
+                        <span role="menuitem">{{ request.resolver_match.namespace|title }}</span>
                       </li>
                     {% endif %}
                     {% block breadcrumbs %}{% endblock %}

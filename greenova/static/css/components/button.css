@@ -20,6 +20,7 @@ button,
   cursor: pointer;
   transition: background-color 0.2s;
 
+
   &:hover {
     background-color: var(--greenova-green-tertiary);
     border-color: var(--greenova-green-tertiary)

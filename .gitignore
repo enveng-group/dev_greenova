@@ -89,9 +89,8 @@ yarn.lock
 !.env.vault.example
 .env.keys
 
-
-
 .env*
 .flaskenv*
 !.env.project
 !.env.vault
+Makefile

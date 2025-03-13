@@ -75,6 +75,13 @@ button,
 [type='submit'] {
   -webkit-appearance: button;
   appearance: button;
+
+
+  width: fit-content;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  text-overflow: ellipsis;
 }
 
 /* Improves media defaults, these make these elements more consistent and less frustrating to deal with. */
@@ -92,5 +99,4 @@ video {
 
 svg {
   display: inline;
-}
 }

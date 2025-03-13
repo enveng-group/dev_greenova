@@ -1,3 +1,7 @@
+/* Load themes */
+@import 'components/theme-dark.css';
+@import 'components/theme-light.css';
+
 /* Main stylesheet that imports all modular components  */
 @import 'components/button.css';
 @import 'components/card.css';
