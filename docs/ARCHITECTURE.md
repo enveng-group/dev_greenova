@@ -112,7 +112,7 @@ aws ec2 run-instances --image-id "ami-0b87a8055f0211d32" \
 ## Security Architecture
 
 ### Authentication
-- Django authentication system with MFA support
+- Django-allauth authentication system with MFA support
 - AWS IAM for infrastructure access
 
 ### Authorization

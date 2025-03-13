@@ -117,13 +117,18 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core.apps.CoreConfig",
-    "landing.apps.LandingConfig",
-    "authentication.apps.AuthenticationConfig",
-    "dashboard.apps.DashboardConfig",
-    "projects.apps.ProjectsConfig",
-    "obligations.apps.ObligationsConfig",
-    "chatbot.apps.ChatbotConfig",
-    "mechanisms.apps.MechanismsConfig",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google", #TODO must setup google cloud api
+    "allauth.usersessions",
+    "landing",
+    #removed "authentication",
+    "dashboard",
+    "projects",
+    "obligations",
+    "chatbot",
+    "mechanisms",
     "django_htmx",
     "django_hyperscript",
     "django_matplotlib",
@@ -155,9 +160,22 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    "django_htmx.middleware.HtmxMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
-    ]
+    'django_htmx.middleware.HtmxMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+]
+
+# Authentication settings
+AUTHENTICATION_BACKENDS = ('allauth.account.auth_backends.AuthenticationBackend',)
+
+LOGIN_REDIRECT_URL = "dashboard:home" # OR LOGIN_REDIRECT_URL = "dashboard:profile"
+#LOGOUT_REDIRECT_URL = "landing:home"
+LOGIN_URL = "authentication:login"
+#LOGIN_REDIRECT_URL = "admin:index"
+#LOGOUT_REDIRECT_URL = "admin:login"
+#LOGIN_URL = "admin:login"
+SOCIALACCOUNT_PROVIDERS = {}
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 ROOT_URLCONF = "greenova.urls"
 
@@ -165,7 +183,10 @@ ROOT_URLCONF = "greenova.urls"
 TEMPLATES: List[TemplateConfig] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [
+            BASE_DIR / "authentication", # route to custom django-allauth template!
+            BASE_DIR / "templates",
+        ],
         "APP_DIRS": True,  # Keep this for app template discovery
         "OPTIONS": {
             "context_processors": [
@@ -191,10 +212,13 @@ DATABASES: Dict[str, DatabaseConfig] = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    "OPTIONS": {
+            "min_length": 9,
+        },
+    },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },]
 
@@ -227,14 +251,6 @@ STATICFILES_FINDERS = [
 
 # Ensure static files are handled simply
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Basic storage without manifest
-
-# Authentication settings
-LOGIN_REDIRECT_URL = "dashboard:home"
-LOGOUT_REDIRECT_URL = "landing:home"
-LOGIN_URL = "authentication:login"
-#LOGIN_REDIRECT_URL = "admin:index"
-#LOGOUT_REDIRECT_URL = "admin:login"
-#LOGIN_URL = "admin:login"
 
 # Application version
 APP_VERSION = "0.1.0"
