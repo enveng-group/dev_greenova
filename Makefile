@@ -13,35 +13,35 @@ check:
 # Updated run command with better process management
 run:
 	@echo "Starting Tailwind CSS and Django server..."
-	@$(CD_CMD) (python manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && python manage.py runserver
+	@$(CD_CMD) (python3 manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && python3 manage.py runserver
 
 # Alternative approach with separate commands
 run-django:
-	$(CD_CMD) python manage.py runserver
+	$(CD_CMD) python3 manage.py runserver
 
 run-tailwind:
-	$(CD_CMD) python manage.py tailwind start
+	$(CD_CMD) python3 manage.py tailwind start
 
 # Run command for development - opens two terminal tabs (for Mac/Linux)
 dev:
 	@echo "Starting development environment..."
-	@gnome-terminal --tab -- bash -c "$(CD_CMD) python manage.py tailwind start; bash" 2>/dev/null || \
-	xterm -e "$(CD_CMD) python manage.py tailwind start" 2>/dev/null || \
-	osascript -e 'tell app "Terminal" to do script "cd $(shell pwd)/greenova && python manage.py tailwind start"' 2>/dev/null || \
+	@gnome-terminal --tab -- bash -c "$(CD_CMD) python3 manage.py tailwind start; bash" 2>/dev/null || \
+	xterm -e "$(CD_CMD) python3 manage.py tailwind start" 2>/dev/null || \
+	osascript -e 'tell app "Terminal" to do script "cd $(shell pwd)/greenova && python3 manage.py tailwind start"' 2>/dev/null || \
 	echo "Could not open terminal automatically. Please run 'make run-tailwind' in a separate terminal."
-	@$(CD_CMD) python manage.py runserver
+	@$(CD_CMD) python3 manage.py runserver
 
 # Check Tailwind installation status
 check-tailwind:
-	$(CD_CMD) python manage.py tailwind check-updates
+	$(CD_CMD) python3 manage.py tailwind check-updates
 
 # Tailwind commands
 tailwind-build:
-	$(CD_CMD) python manage.py tailwind build
+	$(CD_CMD) python3 manage.py tailwind build
 
 # Add a tailwind install command
 tailwind-install:
-	$(CD_CMD) python manage.py tailwind install
+	$(CD_CMD) python3 manage.py tailwind install
 
 migrations:
 	$(CD_CMD) python3 manage.py makemigrations

@@ -1,11 +1,9 @@
-@import 'theme-light.css';
-@import 'theme-dark.css';
-
 /**************************************************
  *                                                *
  *          Non-theme  Specific  Colours          *
  *                                                *
  **************************************************/
+:root,
 :root[data-theme=light],
 :root[data-theme=dark] {
   /**************************************************
@@ -18,33 +16,31 @@
    **************************************************/
 
   /* Button backgrounds*/
-  --pico-primary-background: var(--greenova-green-primary);
+  --pico-primary-background: var(--greenova-green-primary) !important;
 
   /* Header background */
-  --pico-secondary-background: var(--greenova-green-secondary);
+  --pico-secondary-background: var(--greenova-green-secondary) !important;
 
   /* Background Primary */
-
-  /* Background Primary */
-  --pico-background-color: var(--greenova-background-primary);
+  --pico-background-color: var(--greenova-background-primary) !important;
 
   /* Container Backgrounds */
-  --pico-card-background-color: var(--greenova-background-secondary);
+  --pico-card-background-color: var(--greenova-background-secondary) !important;
 
   /* Container Headers/Borders */
-  --pico-card-border-color: var(--greenova-green-secondary);
-  --pico-card-sectioning-background-color: var(--greenova-green-secondary);
+  --pico-card-border-color: var(--greenova-green-secondary) !important;
+  --pico-card-sectioning-background-color: var(--greenova-green-secondary) !important;
 
   /* Titles */
-  --pico-h1-color: var(--greenova-text-primary-dark);
+  --pico-h1-color: var(--greenova-text-primary-dark) !important;
 
   /* Headers */
-  --pico-h2-color: var(--greenova-text-secondary-dark);
-  --pico-h3-color: var(--greenova-text-secondary-dark);
-  --pico-h4-color: var(--greenova-text-secondary-dark);
-  --pico-h5-color: var(--greenova-text-secondary-dark);
-  --pico-h6-color: var(--greenova-text-secondary-dark);
-  --pico-color: var(--greenova-text-primary-dark);
+  --pico-h2-color: var(--greenova-text-secondary-dark) !important;
+  --pico-h3-color: var(--greenova-text-secondary-dark) !important;
+  --pico-h4-color: var(--greenova-text-secondary-dark) !important;
+  --pico-h5-color: var(--greenova-text-secondary-dark) !important;
+  --pico-h6-color: var(--greenova-text-secondary-dark) !important;
+  --pico-color: var(--greenova-text-primary-dark) !important;
 
   /**************************************************
    *                                                *
