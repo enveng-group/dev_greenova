@@ -15,8 +15,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, TypedDict, Union
 from django.contrib import admin
-from dotenv import load_dotenv
-load_dotenv()
+import mimetypes
 
 class DatabaseConfig(TypedDict):
     ENGINE: str
