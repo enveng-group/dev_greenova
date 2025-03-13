@@ -183,7 +183,10 @@ ROOT_URLCONF = "greenova.urls"
 TEMPLATES: List[TemplateConfig] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [
+            BASE_DIR / "authentication", # route to custom django-allauth template!
+            BASE_DIR / "templates",
+        ],
         "APP_DIRS": True,  # Keep this for app template discovery
         "OPTIONS": {
             "context_processors": [
