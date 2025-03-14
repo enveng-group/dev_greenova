@@ -29,6 +29,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* We want a specific spacing for our main and header*/
+main,
+#main-content,
+[role="main"] {
+  max-width: calc(100% - 2*var(--greenova-main-spacing));
+  margin: 0 var(--greenova-main-spacing);
+  padding: var(--greenova-spacing-large) 0;
+}
+
 /* Typography */
 /* Headings, paragraphs, etc. */
 
@@ -201,9 +210,14 @@ sup {
 }
 
 sub {
-  bottom: -0.25em;
+  bottom: -1*var(--greenova-spacing-small);
 }
 
 sup {
-  top: -0.5em;
+  top: -1*var(--greenova-spacing-small);
+}
+
+/* Remove navigation */
+.skip-link {
+  display: none;
 }

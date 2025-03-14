@@ -2,8 +2,17 @@
 
 /* Header */
 header {
+
   background: var(--greenova-green-secondary);
 }
+
+/* If it is a child of the body */
+body>header {
+  max-width: calc(100% - 2 * var(--greenova-head-spacing));
+  margin: 0 var(--greenova-head-spacing);
+  padding: var(--greenova-padding);
+}
+
 
 [role='navigation'],
 [role='navigation'] [role="menuitem"] {
@@ -29,12 +38,36 @@ header {
   padding: var(--greenova-padding);
 }
 
+nav ul[role="menubar"] {
+  width: 100%;
+}
+
 nav ul[role="menubar"] li[role="none"] {
   /* Place to the right, make all on one file */
-  margin-left: auto;
-  margin-right: var(--greenova-spacing-large);
-  align-items: center;
   display: flex;
   justify-content: flex-end;
   gap: var(--greenova-spacing);
+
+  margin-right: var(--greenova-spacing-large);
+  padding-right: var(--greenova-spacing-large);
+  margin-left: auto;
+}
+
+nav ul[role="menubar"] li[role="none"].menubar-breadcrumbs {
+  display: flex;
+  justify-content: flex-start;
+  margin-left: var(--greenova-spacing-large);
+  margin-right: 0;
+}
+
+ul.theme-container {
+  margin-left: var(--greenova-spacing-large) !important;
+  flex-flow: column !important;
+  padding: 0;
+
+}
+
+ul.theme-container>li {
+  margin: var(--greenova-spacing-small) 0;
+  padding: 0;
 }

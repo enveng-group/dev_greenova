@@ -29,13 +29,20 @@
 
 /* Chart card layout */
 .mechanism-chart {
-  flex: 0 0 300px;
+  flex: 0 0 var(--greenova-charts-width);
+  min-width: var(--greenova-charts-width);
+  flex-grow: 1;
   scroll-snap-align: start;
+  margin: var(--greenova-spacing);
   padding: var(--greenova-padding);
   background: var(--greenova-background-secondary);
   border-radius: var(--greenova-border-radius);
   box-shadow: var(--greenova-shadow);
-  margin: var(--greenova-spacing);
+}
+
+.mechanism-chart header {
+  margin: 0;
+  padding: var(--greenova-padding);
 }
 
 .mechanism-chart figure {
@@ -47,9 +54,6 @@
   /* Add padding to make it look pretty */
   padding: var(--greenova-padding);
 
-  /* Make the height of the figure caption the same size*/
-  min-height: 7rem;
-
 }
 
 .mechanism-chart img {
@@ -57,9 +61,6 @@
   height: auto;
   display: block;
   margin: 0 auto;
-
-  /* Make all the images the same height */
-  aspect-ratio: 1/1;
 }
 
 .mechanism-chart h3 {
