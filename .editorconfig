@@ -13,7 +13,6 @@ indent_style = space
 [*.py]
 indent_size = 4
 max_line_length = 88
-profile = black
 
 # Django HTML templates
 [*.{html,htm,djhtml}]
@@ -50,7 +49,6 @@ indent_style = tab
 # Shell scripts
 [*.sh]
 indent_size = 2
-switch_case_indent = true
 
 # Documentation
 [*.rst]
@@ -77,13 +75,6 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 max_line_length = 80
-quote_type = double
-array_trailing_comma = false
-array_auto_collapse = false
-array_auto_expand = true
-align_entries = true
-compact_arrays = true
-compact_entries = false
 
 [pyproject.toml]
 indent_size = 4
@@ -97,5 +88,4 @@ indent_style = tab
 
 [Makefile]
 indent_style = tab
-indent_size = 4
 max_line_length = 88

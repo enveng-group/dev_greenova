@@ -19,31 +19,54 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.autopep8",
         "GitHub.copilot",
         "GitHub.copilot-chat",
-        "ms-python.vscode-pylance",
+        "ms-python.autopep8",
         "ms-python.python",
-        "ms-python.debugpy",
         "EditorConfig.EditorConfig",
-        "batisteo.vscode-django",
         "GitHub.vscode-pull-request-github",
         "mechatroner.rainbow-csv",
         "dotenv.dotenv-vscode",
-        "ms-python.mypy-type-checker"
+        "dbaeumer.vscode-eslint",
+        "monosans.djlint",
+        "batisteo.vscode-django",
+        "esbenp.prettier-vscode"
       ],
       "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.semanticHighlighting.enabled": false,
+        "editor.occurrencesHighlight": "off",
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "ms-python.autopep8",
+          "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
+          "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+          "python.envFile": "${containerWorkspaceFolder}/.env",
+          "python.analysis.extraPaths": [
+            "${containerWorkspaceFolder}/.venv/lib/python3.10/site-packages"
+          ],
+          "python.terminal.activateEnvInCurrentTerminal": true,
+          "python.terminal.activateEnvironment": true,
+          "python.terminal.shellIntegration.enabled": true,
+          "python.languageServer": "Default",
+          "python.analysis.languageServerMode": "light",
+          "python.analysis.typeCheckingMode": "off"
+        },
+        "[javascript]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        },
+        "[django-html]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "monosans.djlint"
+        },
+        "eslint.format.enable": true,
+        "eslint.lintTask.enable": true,
         "dev.containers.gpuAvailability": "none",
         "dotfiles.repository": "https://github.com/enssol/dotfiles.git",
         "dotfiles.targetPath": "/home/vscode/dotfiles",
         "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
-        "python.interpreter.infoVisibility": "always",
-        "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
-        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
-        "python.envFile": "${containerWorkspaceFolder}/.env",
-        "python.analysis.extraPaths": [
-          "${containerWorkspaceFolder}/.venv/lib/python3.10/site-packages"
-        ],
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",
         "terminal.integrated.defaultProfile.linux": "bash",
         "terminal.integrated.shellIntegration.enabled": true,
@@ -54,9 +77,6 @@
           "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
           "PYTHONUNBUFFERED": "1"
         },
-        "python.terminal.activateEnvInCurrentTerminal": true,
-        "python.terminal.activateEnvironment": true,
-        "python.terminal.shellIntegration.enabled": true,
         "files.watcherExclude": {
           "**/.git/objects/**": true,
           "**/.git/subtree-cache/**": true,
@@ -92,6 +112,21 @@
           "**~/.vscode-server/**": true,
           "**~/.vscode/**": true,
           ".venv": true
+        },
+        "files.associations": {
+          "*.html": "django-html",
+          "*.js": "javascript",
+          "*.py": "python",
+          "*.css": "css",
+          "*.json": "json",
+          "*.md": "markdown",
+          "*.txt": "plaintext",
+          "requirements*.txt": "pip-requirements",
+          "*.toml": "toml",
+          "pyproject.toml": "toml",
+          "poetry.toml": "toml",
+          "pdm.toml": "toml",
+          ".env*": "dotenv"
         }
       }
     }

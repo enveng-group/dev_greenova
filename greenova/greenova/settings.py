@@ -125,8 +125,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     'allauth.socialaccount.providers.github',
     "allauth.usersessions",
-    "landing",
     "allauth.mfa",
+    "landing",
     "dashboard",
     "projects",
     "obligations",
@@ -169,8 +169,8 @@ MIDDLEWARE = [
     'django_htmx.middleware.HtmxMiddleware',
     'django_browser_reload.middleware.BrowserReloadMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    #'allauth.usersessions.middleware.UserSessionMiddleware',
-    ]
+    # 'allauth.usersessions.middleware.UserSessionMiddleware',
+]
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
@@ -181,12 +181,12 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = "dashboard:home" # OR LOGIN_REDIRECT_URL = "dashboard:profile"
-#LOGOUT_REDIRECT_URL = "landing:home"
+LOGIN_REDIRECT_URL = "dashboard:home"  # OR LOGIN_REDIRECT_URL = "dashboard:profile"
+# LOGOUT_REDIRECT_URL = "landing:home"
 LOGIN_URL = "authentication:login"
-#LOGIN_REDIRECT_URL = "admin:index"
-#LOGOUT_REDIRECT_URL = "admin:login"
-#LOGIN_URL = "admin:login"
+# LOGIN_REDIRECT_URL = "admin:index"
+# LOGOUT_REDIRECT_URL = "admin:login"
+# LOGIN_URL = "admin:login"
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         'SCOPE': [
@@ -210,7 +210,7 @@ TEMPLATES: List[TemplateConfig] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            BASE_DIR / "authentication", # route to custom django-allauth template!
+            BASE_DIR / "authentication",  # route to custom django-allauth template!
             BASE_DIR / "templates",
         ],
         "APP_DIRS": True,  # Keep this for app template discovery
@@ -241,10 +241,10 @@ DATABASES: Dict[str, DatabaseConfig] = {
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    "OPTIONS": {
-            "min_length": 9,
-        },
-    },
+     "OPTIONS": {
+         "min_length": 9,
+     },
+     },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },]
 

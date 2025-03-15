@@ -33,15 +33,6 @@ setup_nvm() {
   }
 }
 
-# Setup NVM and Node.js
-setup_nvm || exit 1
-command -v npm >/dev/null 2>&1 &&
-  npm install -g npm@10.8.2 || {
-  echo "Error: npm upgrade failed" >&2
-  exit 1
-}
-[ -f package.json ] && npm install || exit 1
-
 # Setup Python virtual environment
 setup_venv() {
   VENV_PATH="/workspaces/greenova/.venv"
@@ -54,7 +45,7 @@ setup_venv() {
 
   # Activate virtual environment
   echo "Activating virtual environment..."
-  source $VENV_PATH/bin/activate
+  source "$VENV_PATH/bin/activate"
 
   # Upgrade pip
   python -m pip install --upgrade pip
@@ -63,18 +54,22 @@ setup_venv() {
   if [ -f "requirements.txt" ]; then
     echo "Installing Python requirements with constraints..."
     if [ -f "constraints.txt" ]; then
-      pip install -r requirements.txt -c constraints.txt
+      pip --no-cache-dir install -r requirements.txt -c constraints.txt
     else
       echo "Warning: constraints.txt not found, installing without constraints"
       pip install -r requirements.txt
     fi
+    pre-commit install
   fi
 }
 
 main() {
   # Setup NVM and Node.js
   echo "Setting up NVM and Node.js..."
-  setup_nvm
+  setup_nvm || {
+    echo "NVM setup failed. Exiting." >&2
+    exit 1
+  }
 
   # Install npm 10.8.2 (compatible with Node.js 18.20.7)
   echo "Installing npm 10.8.2..."

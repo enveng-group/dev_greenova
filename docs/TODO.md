@@ -18,14 +18,14 @@ Tuesday - company
 Wednesday - reset password
 Thursday - register
 
-https://djlint.com/
+https://djlint.com/ - DONE
 https://stylelint.io/
-https://prettier.io/
-https://pypi.org/project/autopep8/
+https://prettier.io/ - DONE
+https://pypi.org/project/autopep8/ - DONE
 https://docs.djangoproject.com/en/4.2/topics/testing/overview/
-https://github.com/microsoft/pyright
+https://github.com/microsoft/pylance - DONE
 https://github.com/hadolint/hadolint
-https://eslint.org/
+https://eslint.org/ - DONE
 https://setuptools.pypa.io/en/latest/index.html
 
 

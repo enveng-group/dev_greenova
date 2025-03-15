@@ -1,5 +1,16 @@
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
+exclude = '\.md$'
 
 [tool.django-stubs]
 django_settings_module = "greenova.settings"
+
+[tool.autopep8]
+max_line_length = 120
+ignore = ["E501", "E302", "E305"]
+in-place = true
+recursive = true
+aggressive = 3
+
+[tool.djlint]
+ignore="H014,H015"
