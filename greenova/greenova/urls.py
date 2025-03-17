@@ -1,13 +1,14 @@
-from django.contrib import admin
-from django.urls import path, include
+import logging
+from typing import List, Union
+
+from debug_toolbar.toolbar import debug_toolbar_urls
 from django.conf import settings
 from django.conf.urls.static import static
-from typing import List, Union
-from django.urls.resolvers import URLPattern, URLResolver
+from django.contrib import admin
+from django.http import HttpRequest, HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.shortcuts import redirect
-from django.http import HttpRequest, HttpResponseRedirect, HttpResponsePermanentRedirect
-import logging
-from debug_toolbar.toolbar import debug_toolbar_urls
+from django.urls import include, path
+from django.urls.resolvers import URLPattern, URLResolver
 
 logger = logging.getLogger(__name__)
 
