@@ -2,20 +2,12 @@
 import logging
 from typing import Any, Dict
 
-<<<<<<< HEAD
-=======
-from django.conf import settings
->>>>>>> 0294b58 (refactor(project): implement comprehensive project enhancements)
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
-<<<<<<< HEAD
 from django_htmx.http import push_url
-=======
-from django_htmx.http import HttpResponseClientRedirect, push_url, trigger_client_event
->>>>>>> 0294b58 (refactor(project): implement comprehensive project enhancements)
 
 logger = logging.getLogger(__name__)
 

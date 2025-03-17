@@ -629,8 +629,14 @@
   "python.analysis.supportRestructuredText": true,
   "python.analysis.typeCheckingMode": "strict",
   "python.analysis.typeshedPaths": [
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs-ext"
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/django_stubs_ext",
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/typing_extensions.py",
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/setuptools-stubs",
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/dateutil-stubs",
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/stdlib_list-stubs",
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/distutils-stubs",
+      "${workspaceFolder}/.venv/lib/python3.9/site-packages/yaml-stubs"
   ],
   "python.analysis.useLibraryCodeForTypes": true,
   "python.createEnvironment.contentButton": "show",
