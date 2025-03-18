@@ -64,6 +64,7 @@ check:
 	$(CD_CMD) python3 manage.py check
 
 # Updated run command with better process management
+#run Tailwind CSS and Django server
 run:
 	@echo "Starting Tailwind CSS and Django server..."
 	@mkdir -p logs

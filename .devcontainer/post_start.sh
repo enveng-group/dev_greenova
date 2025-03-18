@@ -87,6 +87,7 @@ setup_venv() {
     else
       echo "Warning: pre-commit not found, skipping installation"
     fi
+    pre-commit install
   fi
 }
 
