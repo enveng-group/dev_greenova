@@ -1,0 +1,10 @@
+#chat-widget {
+  /* Aligh in center space */
+  position: fixed;
+  bottom: var(--greenova-spacing);
+  right: var(--greenova-spacing);
+}
+
+#chat-toggle {
+  max-height: 48px;
+}

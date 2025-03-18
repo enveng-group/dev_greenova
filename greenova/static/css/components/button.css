@@ -10,6 +10,7 @@ button,
 .btn-danger,
 .action-btn,
 .quick-filter-btn {
+  /* Set default style attributes. */
   font-size: var(--greenova-button-size);
   font-weight: bold !important;
   min-height: 41px;
@@ -17,23 +18,41 @@ button,
   border-radius: var(--greenova-border-radius);
   padding: var(--greenova-padding);
 
+  /* If there is any text styling get rid of it */
+  text-decoration: none;
+  color: var(--greenova-dark-tertiary);
+
+  /* Show that the button is overable */
   cursor: pointer;
   transition: background-color 0.2s;
 
+  /* Prevent the buttons from being too large and overflowing */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* Change colour on hovering. */
   &:hover {
     background-color: var(--greenova-green-tertiary);
-    border-color: var(--greenova-green-tertiary)
+    border-color: var(--greenova-green-tertiary);
+    color: var(--greenova-text-dark);
   }
 }
 
+/* Font on */
 button#chat-toggle>span {
   font-weight: normal !important;
 }
 
+/* If the button is apart of a menu */
 [role='menuitem'] {
   margin: 0px var(--greenova-spacing);
 }
 
+
+.btn-primary {
+  background-color: var(--greenova-green-primary);
+}
 
 .btn-secondary {
   background-color: var(--greenova-green-secondary);

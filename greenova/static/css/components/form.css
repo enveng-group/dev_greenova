@@ -137,35 +137,6 @@ legend {
   margin-bottom: 0;
 }
 
-/* Breadcrumbs */
-.breadcrumbs {
-  display: flex;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem 0;
-  flex-wrap: wrap;
-}
-
-.breadcrumbs li {
-  display: flex;
-  align-items: center;
-}
-
-.breadcrumbs li:not(:last-child)::after {
-  content: "/";
-  margin: 0 0.5rem;
-  color: var(--greenova-tertiary-dark);
-}
-
-.breadcrumbs a {
-  color: var(--greenova-text-primary-dark);
-  text-decoration: none;
-}
-
-.breadcrumbs a:hover {
-  text-decoration: underline;
-}
-
 /* Visually hidden elements */
 .visually-hidden {
   position: absolute;

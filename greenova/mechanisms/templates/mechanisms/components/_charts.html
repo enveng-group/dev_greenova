@@ -1,56 +1,52 @@
-{% load mechanism_tags %}
-<section aria-labelledby="charts-heading" class="charts-section" hx-ext="path-deps" path-deps="/obligations/" hx-trigger="path-deps">
-  <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
-  {% if error %}
-    <div role="alert">{{ error }}</div>
-  {% else %}
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <section class="charts-container">
+    <h2 class="charts-heading">Environmental Mechanism Status Charts</h2>
+
     <!-- Chart Navigation -->
-    <nav role="navigation"
-         aria-label="Mechanism charts navigation"
-         class="chart-nav">
-      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
-      <button type="button"
-              onclick="scrollCharts('right')"
-              aria-label="Scroll right">→</button>
+    <nav class="chart-nav">
+      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left through charts">←</button>
+      <button type="button" onclick="scrollCharts('right')" aria-label="Scroll right through charts">→</button>
     </nav>
-    <!-- Charts Container -->
-    <div class="chart-scroll-container"
-         id="chartScroll"
-         role="region"
-         aria-label="Chart gallery"
-         tabindex="0">
-      {% for mech in mechanism_charts %}
-        <article class="mechanism-chart">
-          <header>
-            <h3>{{ mech.name }}</h3>
-          </header>
-          <figure>
-            <figcaption>Status Distribution</figcaption>
-            {{ mech.chart|safe }}
-          </figure>
-        </article>
-      {% endfor %}
+
+    <!-- Chart Gallery -->
+    <div id="chartGallery" class="chart-gallery">
+      {% if mechanism_charts %}
+        {% for chart in mechanism_charts %}
+          <article class="mechanism-chart">
+            <header>
+              <h3>{{ chart.name }}</h3>
+            </header>
+            <figure>
+              <figcaption>{{ chart.name }} - Status Distribution</figcaption>
+              <img src="{{ chart.chart }}" alt="Pie chart for {{ chart.name }} mechanism" class="chart-image">
+            </figure>
+          </article>
+        {% endfor %}
+      {% else %}
+        <p>No charts available at the moment. Please check back later.</p>
+      {% endif %}
     </div>
+
+    <!-- Data Table Section -->
     {% if table_data %}
-      <!-- Data Table -->
-      <article class="data-table">
-        <header>
-          <h3>Detailed Statistics</h3>
-        </header>
-        <div class="table-container">
-          <table role="grid">
-            <thead>
-              <tr>
-                <th scope="col">Mechanism</th>
-                <th scope="col">Not Started</th>
-                <th scope="col">In Progress</th>
-                <th scope="col">Completed</th>
-                <th scope="col">Overdue</th>
-                <th scope="col">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in table_data %}
+      <section class="data-table-section">
+        <h3>Mechanism Status Overview</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mechanism</th>
+              <th>Not Started</th>
+              <th>In Progress</th>
+              <th>Completed</th>
+              <th>Overdue</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in table_data %}
               <tr>
                 <td>{{ item.name }}</td>
                 <td>{{ item.not_started }}</td>
@@ -58,12 +54,26 @@
                 <td>{{ item.completed }}</td>
                 <td>{{ item.overdue }}</td>
                 <td>{{ item.total }}</td>
+                <td>
+                  <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}" class="btn btn-secondary">View Chart</a>
+                </td>
               </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </article>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
     {% endif %}
-  {% endif %}
-</section>
+  </section>
+
+  <script>
+    function scrollCharts(direction) {
+      const container = document.getElementById('chartGallery');
+      const scrollAmount = 350;
+      if (direction === 'left') {
+        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      } else {
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }
+  </script>
+{% endblock %}

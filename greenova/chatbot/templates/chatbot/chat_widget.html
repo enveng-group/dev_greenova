@@ -1,19 +1,21 @@
 <aside id="chat-widget" aria-label="Chat Assistant">
-  <!-- Chat toggle button -->
-  <button id="chat-toggle"
-          aria-controls="chat-dialog"
-          aria-expanded="false"
-          _="on click
-             call #chat-dialog.showModal()
-             then put 'true' into me's @aria-expanded">
+    <!-- Chat toggle button -->
+    <button id="chat-toggle"
+        aria-controls="chat-dialog"
+        aria-expanded="false"
+        _="on click
+          call #chat-dialog.showModal()
+          then put 'true' into me's @aria-expanded">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round" />
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round" />
     </svg>
     <!--<span class="sr-only">Open Chat</span>-->
-  </button>
+    </button>
+
+  
 
   <!-- Chat dialog -->
   <dialog id="chat-dialog"
@@ -41,7 +43,6 @@
            hx-trigger="load"
            hx-swap="innerHTML"
            hx-target="this">
-        </div>
       </div>
 
       <!-- Chat form -->

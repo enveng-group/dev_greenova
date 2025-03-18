@@ -1,40 +1,30 @@
 {% if mechanism_charts %}
-  <section aria-labelledby="charts-heading" class="charts-section" hx-ext="path-deps" path-deps="/obligations/" hx-trigger="path-deps">
+  <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
 
     <!-- Chart Navigation -->
-    <nav role="navigation" aria-label="Mechanism charts navigation" class="chart-nav">
+    <nav class="chart-nav" aria-label="Mechanism charts navigation">
       <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
       <button type="button" onclick="scrollCharts('right')" aria-label="Scroll right">→</button>
     </nav>
 
-    <!-- Charts Container -->
-    <div class="chart-scroll-container" id="chartScroll" role="region" aria-label="Chart gallery" tabindex="0">
+    <!-- Chart Gallery -->
+    <div id="chartGallery" class="chart-gallery" role="region" aria-label="Chart gallery">
       {% for mech in mechanism_charts %}
-        <article class="mechanism-chart"
-                {% if forloop.counter > 1 %}
-                onclick="window.location.href='{% url 'procedures:procedure_charts' mechanism_id=mech.id %}'"
-                style="cursor: pointer;"
-                title="Click to view procedure details for {{ mech.name }}"
-                {% endif %}>
+        <article class="mechanism-chart">
           <header>
             <h3>{{ mech.name }}</h3>
           </header>
           <figure>
-            <figcaption>
-              Status Distribution
-              {% if forloop.counter > 1 %}
-              <small><br>(Click for procedure analysis)</small>
-              {% endif %}
-            </figcaption>
-            {{ mech.chart|safe }}
+            <figcaption>{{ mech.name }} Status Distribution</figcaption>
+            <img src="{{ mech.chart }}" alt="Chart for {{ mech.name }}" class="chart-image">
           </figure>
         </article>
       {% endfor %}
     </div>
 
     {% if table_data %}
-      <!-- Data Table -->
+      <!-- Detailed Data Table -->
       <article class="data-table">
         <header>
           <h3>Detailed Statistics</h3>
@@ -43,35 +33,30 @@
           <table role="grid">
             <thead>
               <tr>
-                <th scope="col">Mechanism</th>
-                <th scope="col">Not Started</th>
-                <th scope="col">In Progress</th>
-                <th scope="col">Completed</th>
-                <th scope="col">Overdue</th>
-                <th scope="col">Total</th>
-                <th scope="col">Actions</th>
+                <th>Mechanism</th>
+                <th>Not Started</th>
+                <th>In Progress</th>
+                <th>Completed</th>
+                <th>Overdue</th>
+                <th>Total</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {% for item in table_data %}
-              <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.not_started }}</td>
-                <td>{{ item.in_progress }}</td>
-                <td>{{ item.completed }}</td>
-                <td>{{ item.overdue }}</td>
-                <td>{{ item.total }}</td>
-                <td>
-                  {% if item.id %}
-                  <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
-                     role="button"
-                     class="btn-secondary"
-                     aria-label="View procedure details for {{ item.name }}">
-                     View Procedures
-                  </a>
-                  {% endif %}
-                </td>
-              </tr>
+                <tr>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.not_started }}</td>
+                  <td>{{ item.in_progress }}</td>
+                  <td>{{ item.completed }}</td>
+                  <td>{{ item.overdue }}</td>
+                  <td>{{ item.total }}</td>
+                  <td>
+                    {% if item.id %}
+                    <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}" class="btn-secondary" aria-label="View details for {{ item.name }}">View</a>
+                    {% endif %}
+                  </td>
+                </tr>
               {% endfor %}
             </tbody>
           </table>
@@ -79,22 +64,20 @@
       </article>
     {% endif %}
   </section>
+
 {% elif error %}
-  <div class="notice error" role="alert">
+  <div role="alert" class="notice error">
     <p>{{ error }}</p>
   </div>
 {% else %}
-  <div class="notice" role="status">
+  <div role="status" class="notice">
     <p>Please select a project to view mechanism charts.</p>
   </div>
 {% endif %}
-
 <script>
-  // Enhanced scrollCharts function
   function scrollCharts(direction) {
-    const container = document.getElementById('chartScroll');
-    const scrollAmount = 350; // Adjust as needed
-
+    const container = document.getElementById('chartGallery');
+    const scrollAmount = 350;
     if (direction === 'left') {
       container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     } else {

@@ -3,6 +3,8 @@
 {% load tailwind_tags %}
 {% load user_tags %}
 {% load core_tags %}
+{% load user_tags %}
+{% load core_tags %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light dark">
   <head>
@@ -46,16 +48,6 @@
         <!-- LEFT ALIGNED: Theme switcher -->
         {% theme_switcher %}
 
-        <!-- RIGHT ALIGNED: Authentication links -->
-        <div class="auth-status-container">
-          {% auth_menu %}
-        </div>
-      </nav>
-    </header>
-
-    <!-- Main content -->
-    <main id="main-content" role="main">
-      {% block body %}
         <!-- BREADCRUMB NAVIGATION: Top of content area -->
         <nav aria-label="Breadcrumb navigation" role="navigation" class="breadcrumb-container">
           <ul>
@@ -66,23 +58,7 @@
 
             <!-- RIGHT ALIGNED: Additional auth actions -->
             <li class="auth-actions">
-              {% if user.is_authenticated %}
-                <!-- AUTHENTICATED: Chat widget and logout -->
-                <div class="authenticated-actions">
-                  {% load chatbot_tags %}
-                  {% chat_widget %}
-
-                  <!-- Logout form -->
-                  <form hx-post="{% url 'account_logout' %}"
-                        hx-push-url="true"
-                        hx-target="body"
-                        hx-redirect="/"
-                        class="logout-form">
-                      {% csrf_token %}
-                      <button type="submit" role="menuitem">Logout</button>
-                  </form>
-                </div>
-              {% else %}
+              {% if not user.is_authenticated %}
                 <!-- UNAUTHENTICATED: Login links -->
                 <div class="unauthenticated-actions">
                   <a href="{% url 'account_signup' %}"
@@ -108,6 +84,23 @@
             </li>
           </ul>
         </nav>
+
+        <!-- RIGHT ALIGNED: Authentication links -->
+        <div class="auth-status-container">
+          <!-- Load authenticated user menu -->
+          {% auth_menu %}
+        </div>
+      </nav>
+    </header>
+
+    <!-- Load Chatbot element -->
+    {% load chatbot_tags %}
+    {% chat_widget %}
+
+    <!-- Main content -->
+    <main id="main-content" role="main">
+      {% block body %}
+
 
         <!-- MAIN CONTENT AREA -->
         <div class="page-content">

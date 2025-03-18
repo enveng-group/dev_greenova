@@ -38,6 +38,10 @@ main,
   padding: var(--greenova-spacing-large) 0;
 }
 
+.page-content {
+  margin: var(--greenova-spacing-large) 0;
+}
+
 /* Typography */
 /* Headings, paragraphs, etc. */
 

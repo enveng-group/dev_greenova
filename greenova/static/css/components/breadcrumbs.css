@@ -1,0 +1,46 @@
+/* Pertains to the breadcrumbs menu */
+
+/* The menu for breadcrumbs */
+nav.breadcrumb-container {
+  margin-left: var(--greenova-spacing);
+  margin-right: auto;
+  padding: var(--greenova-padding) var(--greenova-padding-large);
+}
+
+/* The list of elements (breadcrumbs menu and chatbot) */
+nav.breadcrumb-container>ul {
+  display: flex;
+  width: 100%;
+  margin-left: var(--greenova-spacing-small);
+}
+
+/* Breadcrumbs */
+nav.breadcrumb-container>ul>li.menubar-breadcrumbs {
+  display: flex;
+  flex-flow: row;
+}
+
+/* Container for individual breadcrumbs */
+nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] {
+  /* Align left*/
+  margin: 0;
+  padding: 0;
+  border-radius: var(--greenova-border-radius);
+  background: var(--greenova-beige-primary);
+  align-self: flex-start;
+}
+
+/* Force styling to be in a straight row*/
+nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation]>ol {
+  display: flex;
+}
+
+/* Styling for individual breadcrumb */
+nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] [role=menuitem] {
+  background: var(--greenova-beige-primary);
+  color: var(--greenova-text-primary-dark);
+
+  &[aria-current] {
+    background: var(--greenova-beige-secondary);
+  }
+}

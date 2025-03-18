@@ -4,19 +4,21 @@
 /* Import PicoCSS */
 @import url('vendor/pico-classless.min.css');
 
-/* Import design variables */
-@import url('components/design.css');
+/* Import design/colour variables */
+@import url('defines/design.css');
+@import url('defines/colours.css');
 
 /* Import theme-specific colors */
-@import url('components/colours.css');
-@import url('components/theme-light.css');
-@import url('components/theme-dark.css');
+@import url('themes/light.css');
+@import url('themes/dark.css');
 
 /* Import component-specific styles */
 @import url('components/navigation.css');
+@import url('components/breadcrumbs.css');
 @import url('components/button.css');
 @import url('components/card.css');
 @import url('components/charts.css');
+@import url('components/chat.css');
 @import url('components/form.css');
 @import url('components/list.css');
 @import url('components/filter.css');
