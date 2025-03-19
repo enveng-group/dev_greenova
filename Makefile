@@ -212,4 +212,4 @@ help:
 	@echo "  make dotenv-push	 - Push .env file to dotenv-vault"
 	@echo "  make setup			 - Install the package with setup.py"
 	@echo "  make pythonstartup	 - Run python start up script"
-	@echo "  make setuptools	 - Install setuptools"
+	@echo "  make setuptools	 - Install setuptools" 
