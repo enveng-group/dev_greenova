@@ -1,87 +1,71 @@
 {% extends base_template|default:"base.html" %}
 {% load static dashboard_tags partials hyperscript project_tags %}
-
 {% block title %}
-  Dashboard
+    Dashboard
 {% endblock title %}
-
 {% block body %}
-  <article hx-ext="class-tools path-deps" classes="add fade-in">
-    <!-- Define the partial content first -->
-    {% partialdef dashboard_header %}
-    <header hx-ext="class-tools" classes="add slide-in-from-top:0.3s">
-      <hgroup>
-        <h1>Hi {{ request.user|display_name }}</h1>
-        <h2>
-          Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
-        </h2>
-      </hgroup>
-    </header>
+    <article hx-ext="class-tools path-deps" classes="add fade-in">
+        <!-- Define the partial content first -->
+        {% partialdef dashboard_header %}
+        <header hx-ext="class-tools" classes="add slide-in-from-top:0.3s">
+            <hgroup>
+                <h1>Hi {{ request.user|display_name }}</h1>
+                <h2>
+                    Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
+                </h2>
+            </hgroup>
+        </header>
     {% endpartialdef dashboard_header %}
-
     {% partialdef project_selection %}
     <!-- Project Selection -->
     {% include "projects/projects_selector.html" %}
-    {% endpartialdef project_selection %}
-
-    {% if projects %}
-      {% with project_list=projects|map:"to_dict"|to_list %}
+{% endpartialdef project_selection %}
+{% if projects %}
+    {% with project_list=projects|map:"to_dict"|to_list %}
         {% hs_dump project_list 'availableProjects' scope='element' %}
-      {% endwith %}
-      {% hs_dump user_roles 'userRoles' scope='element' %}
-    {% endif %}
-
-    {% partialdef data_container %}
-    <!-- Data Container -->
-    <div class="project-data-container"
-         hx-ext="class-tools"
-         classes="add fade-in:0.5s"
-         _="on projectChanged(projectId)
-            add .loading to me
-            fetch `/obligations/summary/?project_id=${projectId}` as response
-            put response into #obligations-container
-            remove .loading from me">
-      <!-- Loading state for dynamic content -->
-      <div data-loading="block" style="text-align: center; padding: 2rem;">
+    {% endwith %}
+    {% hs_dump user_roles 'userRoles' scope='element' %}
+{% endif %}
+{% partialdef data_container %}
+<!-- Data Container -->
+<div class="project-data-container"
+     hx-ext="class-tools"
+     classes="add fade-in:0.5s"
+     _="on projectChanged(projectId) add .loading to me fetch `/obligations/summary/?project_id=${projectId}` as response put response into #obligations-container remove .loading from me">
+    <!-- Loading state for dynamic content -->
+    <div data-loading="block" style="text-align: center; padding: 2rem;">
         <span class="loading-spinner"></span>
         <p>Loading project data...</p>
-      </div>
-      <div id="obligations-container"></div>
-      <!-- Charts and Obligations will be loaded by HTMX from projects_selector.html -->
     </div>
-    {% endpartialdef %}
-
-    {% partialdef overdue_card %}
-    <!-- Add to dashboard.html -->
-    <div class="stat-card overdue"
-         hx-ext="class-tools path-deps"
-         path-deps="/obligations/"
-         hx-trigger="path-deps"
-         _="on highOverdueCount
-            if event.detail.count > 5
-              add .alert-pulse to me
-              wait 2s
-              remove .alert-pulse from me
-            end">
-      <h3>Overdue Obligations</h3>
-      <span class="count"
-            hx-get="{% url 'dashboard:overdue_count' %}"
-            hx-trigger="load every:60s, path-deps"
-            hx-swap="innerHTML">
+    <div id="obligations-container"></div>
+    <!-- Charts and Obligations will be loaded by HTMX from projects_selector.html -->
+</div>
+{% endpartialdef %}
+{% partialdef overdue_card %}
+<!-- Add to dashboard.html -->
+<div class="stat-card overdue"
+     hx-ext="class-tools path-deps"
+     path-deps="/obligations/"
+     hx-trigger="path-deps"
+     _="on highOverdueCount if event.detail.count > 5 add .alert-pulse to me wait 2s remove .alert-pulse from me end">
+    <h3>Overdue Obligations</h3>
+    <span class="count"
+          hx-get="{% url 'dashboard:overdue_count' %}?project_id={{ request.GET.project_id }}"
+          hx-trigger="load every:60s, path-deps"
+          hx-swap="innerHTML">
         <span data-loading>Loading...</span>
         <span class="loading-spinner" data-loading></span>
-      </span>
-    </div>
-    {% endpartialdef %}
-
-    <!-- Now use the defined partials -->
-    {% partial dashboard_header %}
-    {% partial project_selection %}
-    {% partial data_container %}
-    {% partial overdue_card %}
-  </article>
-  <!-- Add script to initialize project selection and data loading -->
-  <script>
+    </span>
+</div>
+{% endpartialdef %}
+<!-- Now use the defined partials -->
+{% partial dashboard_header %}
+{% partial project_selection %}
+{% partial data_container %}
+{% partial overdue_card %}
+</article>
+<!-- Add script to initialize project selection and data loading -->
+<script>
     document.addEventListener('DOMContentLoaded', function() {
       // Check if there's a project_id in the URL
       const urlParams = new URLSearchParams(window.location.search);
@@ -109,20 +93,20 @@
         }
       }
     });
-  </script>
+</script>
 {% endblock body %}
 {% block footer %}
-  <footer role="contentinfo" hx-ext="class-tools" classes="add fade-in:1s">
-    <p>
-      System Status:
-      <mark>{{ system_status }}</mark> |
-      Version: {{ app_version }} |
-      Last Updated: {{ last_updated|date:"j M Y" }}
-    </p>
-    <p>
-      Need help? Contact
-      <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
-    </p>
-  </footer>
-  {{ block.super }}
+    <footer role="contentinfo" hx-ext="class-tools" classes="add fade-in:1s">
+        <p>
+            System Status:
+            <mark>{{ system_status }}</mark> |
+            Version: {{ app_version }} |
+            Last Updated: {{ last_updated|date:"j M Y" }}
+        </p>
+        <p>
+            Need help? Contact
+            <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+        </p>
+    </footer>
+    {{ block.super }}
 {% endblock footer %}

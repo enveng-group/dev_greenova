@@ -156,15 +156,15 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
     @classmethod
     @method_decorator(cache_control(max_age=30))
-    def overdue_count(cls, request):
+    def overdue_count(self, request):
         """
         Returns the count of overdue obligations as plain text for HTMX to swap into the page.
         This endpoint is designed to be called via hx-get and refreshed periodically.
         """
         try:
-            count = Obligation.objects.filter(
-                recurring_status='overdue'
-            ).count()
+            selected_project_id = request.GET.get('project_id')
+
+            count = Obligation.objects.filter(project=selected_project_id, recurring_status="Overdue").select_related('project').count()
 
             if request.htmx:
                 response = render(
