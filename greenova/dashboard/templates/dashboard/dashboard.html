@@ -50,7 +50,7 @@
      _="on highOverdueCount if event.detail.count > 5 add .alert-pulse to me wait 2s remove .alert-pulse from me end">
     <h3>Overdue Obligations</h3>
     <span class="count"
-          hx-get="{% url 'dashboard:overdue_count' %}?project_id={{ request.GET.project_id }}"
+          hx-get="{% url 'obligations:overdue' %}?project_id={{ request.GET.project_id }}"
           hx-trigger="load every:60s, path-deps"
           hx-swap="innerHTML">
         <span data-loading>Loading...</span>
