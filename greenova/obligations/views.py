@@ -157,6 +157,18 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
 
         return context
 
+class TotalOverdueObligationsView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        project_id = request.GET.get('project_id')
+
+        if not project_id:
+            return JsonResponse({'error': 'Project ID is required'}, status=400)
+
+        obligations = Obligation.objects.filter(project_id=project_id)
+
+        overdue_count = sum(1 for obligation in obligations if is_obligation_overdue(obligation))
+
+        return JsonResponse(overdue_count, safe=False)
 
 class ObligationCreateView(LoginRequiredMixin, CreateView):
     """View for creating a new obligation."""
