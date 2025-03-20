@@ -24,6 +24,10 @@ def home_router(request: HttpRequest) -> Union[HttpResponseRedirect, HttpRespons
     logger.info("Authenticated user - redirecting to dashboard")
     return redirect('dashboard:home')
 
+# This is a view that will trigger an error
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path("__reload__/", include("django_browser_reload.urls")),
     # Landing page should be first to take precedence
@@ -44,6 +48,8 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('company/', include('company.urls', namespace="company")),
     # Add responsibility URLs - create a new file for this
     path('responsibility/', include('responsibility.urls')),
+    # Sentry error page to verify Sentry is working
+    path('sentry-debug/', trigger_error),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:

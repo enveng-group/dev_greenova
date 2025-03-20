@@ -3,6 +3,7 @@
 A Django-based web application focused on HTML-first development and progressive enhancement strategies.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://www.djlint.com)
 
 ## 📋 Table of Contents
 
