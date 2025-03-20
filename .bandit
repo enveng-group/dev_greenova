@@ -1,0 +1,37 @@
+
+[bandit]
+# Number of lines of context to display for each issue
+context_lines = 3
+
+# Files or directories to skip (comma-separated)
+exclude = /tests,/env,/venv,/.git,*.pyc
+
+# Tests to skip (comma-separated)
+skips = B101,B104,B105,B110
+
+# Test for possible hardcoded passwords
+hardcoded_password_string = ['password', 'passwd', 'pwd', 'secret']
+
+# Severity level threshold (LOW, MEDIUM, HIGH)
+severity = LOW
+
+# Confidence level threshold (LOW, MEDIUM, HIGH)
+confidence = LOW
+
+# Output format (csv, json, txt, yaml)
+format = txt
+
+# Set the output file
+output = bandit-results.txt
+
+# Number of processes to use (default=1)
+processes = 4
+
+# Exit with 0 even with results found
+exit_zero = False
+
+# Recursive mode
+recursive = True
+
+# Show progress
+verbose = True
