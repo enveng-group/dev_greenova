@@ -21,6 +21,9 @@
     "ms-toolsai.jupyter",
     "ms-python.pylint",
     "snyk-security.snyk-vulnerability-scanner",
-    "ms-cst-e.vscode-devskim"
+    "ms-cst-e.vscode-devskim",
+    "timonwong.shellcheck",
+    "ms-vscode.makefile-tools",
+    "redhat.vscode-yaml"
   ]
 }
