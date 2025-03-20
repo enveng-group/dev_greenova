@@ -1,0 +1,85 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ignore Git 
+.git/
+.github/
+.gitattributes
+.gitmessage
+.gitignore
+
+# ignore python cache and Virtual Environment
+__pycache__/
+bin/
+lib/
+lib64/
+.Python
+.coverage
+.pytest_cache/
+.tox/
+htmlcov/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+develop-eggs/
+.installed.cfg
+**/staticfiles/**
+**/media/**
+local_settings.py
+
+.venv/
+venv/
+env/
+ENV/
+
+# database
+*.sqlite3
+db.sqlite3
+*.db
+*.sqlite
+
+# nodejs dependencies
+node_modules/
+.eslintrc.cjs
+.npmrc
+
+# environment variables
+.env
+.env.*
+!.env.example
+!.env.vault.example
+.env.keys
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
+
+
+# IDE
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# logs
+logs/
+*.log
+tmp/
+*.tmp
+*.temp
+
+# Project specific
+*.csv
