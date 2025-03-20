@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  greenova:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - greenova:/workspace/greenova
+    environment:
+      PYTHONUNBUFFERED: 1
+    command: ["/bin/bash"]
+
+volumes:
+  greenova:
