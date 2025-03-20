@@ -94,6 +94,5 @@ yarn.lock
 .flaskenv*
 !.env.project
 !.env.vault
-*.bak
 .venvmake/
-setup.py
+*.bak

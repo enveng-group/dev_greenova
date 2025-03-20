@@ -1,9 +1,5 @@
 .PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-update_recurring-inspection-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint
 
-#load .env file to read environment veriables
-include .env
-export $(shell sed 's/=.*//' .env)
-
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
 
@@ -25,7 +21,7 @@ venv:
 install:
 	@echo "Installing dependencies..."
 	$(PYTHON) -m pip install --upgrade pip
-	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINS)
+	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINTS)
 	@echo "Dependencies installed."
 
 #Freeze installed dependencies to requirements.txt
