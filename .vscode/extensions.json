@@ -15,6 +15,15 @@
     "github.vscode-pull-request-github",
     "ms-azuretools.vscode-docker",
     "dotenv.dotenv-vscode",
-    "ms-python.mypy-type-checker"
+    "ms-python.mypy-type-checker",
+    "monosans.djlint",
+    "ms-python.isort",
+    "ms-toolsai.jupyter",
+    "ms-python.pylint",
+    "snyk-security.snyk-vulnerability-scanner",
+    "ms-cst-e.vscode-devskim",
+    "timonwong.shellcheck",
+    "ms-vscode.makefile-tools",
+    "redhat.vscode-yaml"
   ]
 }
