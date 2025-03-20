@@ -58,17 +58,17 @@ proto-compile:
 check:
 	$(CD_CMD) python3 manage.py check
 
-# Updated run command with better process management
-#run Tailwind CSS and Django server
+# Updated run command with better process management and gunicorn config
 run:
 	@echo "Starting Tailwind CSS and Django server..."
-	@$(CD_CMD) (python3 manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") &
-	@$(CD_CMD) python3 manage.py runserver
+	@mkdir -p logs
+	@$(CD_CMD) (python3 manage.py tailwind start > ../logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && \
+	gunicorn greenova.wsgi -c ../gunicorn.conf.py
 
 # Alternative approach with separate commands
 #start only Django server
 run-django:
-	$(CD_CMD) python3 manage.py runserver
+	$(CD_CMD) gunicorn greenova.wsgi -c ../gunicorn.conf.py
 
 #Start only Tailwind CSS
 run-tailwind:
@@ -148,6 +148,12 @@ prod:
 tailwind:
 	$(CD_CMD) python3 manage.py tailwind start
 
+# Add a new command for running just gunicorn with config
+run-gunicorn:
+	@echo "Starting Gunicorn server..."
+	@mkdir -p logs
+	@gunicorn greenova.wsgi -c gunicorn.conf.py
+
 # Combined command for database updates
 db: migrations migrate
 
@@ -221,4 +227,4 @@ help:
 	@echo "  make dotenv-push	 - Push .env file to dotenv-vault"
 	@echo "  make setup			 - Install the package with setup.py"
 	@echo "  make pythonstartup	 - Run python start up script"
-	@echo "  make setuptools	 - Install setuptools" 
+	@echo "  make setuptools	 - Install setuptools"
