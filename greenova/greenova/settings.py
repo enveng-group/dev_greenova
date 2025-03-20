@@ -114,39 +114,47 @@ INTERNAL_IPS = [
 # Application definition
 
 INSTALLED_APPS = [
+    # Core Django apps (must be first)
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core.apps.CoreConfig",
+    "django.contrib.humanize",
+
+    # Third-party authentication (keep together)
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    'allauth.socialaccount.providers.github',
+    "allauth.socialaccount.providers.github",
     "allauth.usersessions",
     "allauth.mfa",
-    "landing",
-    "dashboard",
-    "projects",
-    "obligations",
-    "chatbot",
-    "mechanisms",
-    "procedures",
-    "responsibility",
+
+    # Other third-party libraries
     "django_htmx",
     "django_hyperscript",
     "django_matplotlib",
     "template_partials",
     "tailwind",
-    "theme",  # Make sure this is present
     "django_browser_reload",
     "debug_toolbar",
-    "django.contrib.humanize",
-    "users",
-    "company",
+
+    # Your local apps (ordered by dependency)
+    "core.apps.CoreConfig",  # Core logic, should be initialized early
+    "company",  # Base models (used in other apps, so placed first)
+    "projects",  # Likely depends on `company`
+    "users",  # User management, might depend on `company`
+    "mechanisms",  # Business logic modules
+    "responsibility",  # Likely domain-specific
+    "obligations",  # Related to `responsibility`
+    "procedures",  # Depends on `obligations`
+    "dashboard",  # UI and analytics
+    "landing",  # Landing page or homepage
+    "theme",  # UI Styling
+    "chatbot",  # Standalone feature, placed last
 ]
+
 
 # Django-Matplotlib configuration
 DJANGO_MATPLOTLIB_TMP = 'matplotlib_tmp'
