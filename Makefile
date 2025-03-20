@@ -93,6 +93,10 @@ tailwind-install:
 
 #Create database migrations
 migrations:
+	$(CD_CMD) python3 manage.py makemigrations company
+	$(CD_CMD) python3 manage.py makemigrations projects
+	$(CD_CMD) python3 manage.py makemigrations mechanisms
+	$(CD_CMD) python3 manage.py makemigrations obligations
 	$(CD_CMD) python3 manage.py makemigrations
 
 #Apply database migrations
