@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Dict, List, TypedDict, Union
 from django.contrib import admin
 import mimetypes
+import sentry_sdk
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -388,3 +389,13 @@ mimetypes.add_type("text/plain", ".txt", True)
 
 # User sessions configuration
 # USERSESSIONS_TRACK_ACTIVITY = True
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+# Sentry.io configuration
+sentry_sdk.init(
+    dsn="https://c6f88e890b90e554dcf731d6c4358341@o4508301862371328.ingest.us.sentry.io/4509008399761408",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)

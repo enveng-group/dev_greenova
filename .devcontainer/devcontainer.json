@@ -35,7 +35,11 @@
         "dbaeumer.vscode-eslint",
         "monosans.djlint",
         "batisteo.vscode-django",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "ms-python.isort",
+        "ms-toolsai.jupyter",
+        "ms-python.pylint",
+        "snyk-security.snyk-vulnerability-scanner"
       ],
       "settings": {
         "editor.formatOnSave": true,
