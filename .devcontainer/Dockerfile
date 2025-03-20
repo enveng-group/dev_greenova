@@ -32,7 +32,7 @@ COPY run.sh /usr/local/scripts/run.sh
 RUN chmod +x /usr/local/scripts/*.sh
 
 # install Node.js dependencies
-#RUN npm install 
+#RUN npm install
 
 # install Python dependencies
 #RUN pip install -r requirements.txt -c constraints.txt --no-deps
