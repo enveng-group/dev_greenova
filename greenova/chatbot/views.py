@@ -33,15 +33,15 @@ class ChatApiView(View):
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests - return API info."""
         response: ChatResponse = {
             'status': 'active',
-            'message': 'Chat API endpoint is ready',
+            'message': "<div class=\"chat-dialog chatbot-dialog\">Hello, how may I help you today?!</div>",#'Chat API endpoint is ready',
             'context': {},
             'error': None
         }
-        return JsonResponse(response)
+        return HttpResponse(response["message"], status=200)
 
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle POST requests for chat messages."""

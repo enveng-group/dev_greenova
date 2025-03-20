@@ -81,7 +81,16 @@
   --pico-mark-color: #000000;
 
 
+  /**************************************************
+    *                                                *
+    *                  Chat colours                  *
+    *                                                *
+    **************************************************/
+  --greenova-chat-user-background: #dedeff;
+  --greenova-chat-user-color: #000000;
 
+  --greenova-chat-bot-background: #9999ff;
+  --greenova-chat-bot-color: #000000;
 
 
   /**************************************************
