@@ -76,3 +76,4 @@ https://setuptools.pypa.io/en/latest/index.html
 - [SASS](https://sass-lang.com)
 - [PostCSS](https://postcss.org)
 - [Pyodide](https://pyodide.org/en/stable/index.html)
+- [pre-commit](https://pre-commit.com)
