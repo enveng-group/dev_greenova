@@ -19,7 +19,7 @@
   -ms-overflow-style: none;
 
   /* Padding to make the layout fit within the app */
-  padding-top: 1.1rem;
+  padding-top: var(--greenova-spacing-large);
 
 }
 

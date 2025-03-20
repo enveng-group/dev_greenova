@@ -60,9 +60,21 @@ class ChatService:
         """Process an incoming chat message."""
         try:
             # TODO: Add actual message processing logic
+            #
+            # The variable "message" is the string input that the client has given us
+            # The variable "context" is JSON data.
+            #
+
+            # This is the message that we sent the server, place this before response message...
+            request_msg = f" <div class=\"chat-dialog user-dialog\">{message}</div>"
+
+            response_text = "This is the text that we want to respond with."
+            response_msg = f"<div class=\"chat-dialog chatbot-dialog\">{response_text}</div>"
+            content_msg = request_msg + response_msg
+
             response: Dict[str, Union[str, Dict[str, Any]]] = {
                 "status": "success",
-                "message": f"Echo: {message}",
+                "message": content_msg,
                 "context": context or {}
             }
             logger.info(f"Processed chat message: {message[:50]}...")
