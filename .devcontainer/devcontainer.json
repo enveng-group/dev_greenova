@@ -5,7 +5,14 @@
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
       "version": "latest"
-    }
+    },
+    "ghcr.io/devcontainers-extra/features/snyk-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {}
   },
   "hostRequirements": {
     "cpus": 2,
@@ -39,7 +46,8 @@
         "ms-python.isort",
         "ms-toolsai.jupyter",
         "ms-python.pylint",
-        "snyk-security.snyk-vulnerability-scanner"
+        "snyk-security.snyk-vulnerability-scanner",
+        "MS-CST-E.vscode-devskim"
       ],
       "settings": {
         "editor.formatOnSave": true,

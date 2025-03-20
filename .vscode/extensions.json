@@ -20,6 +20,7 @@
     "ms-python.isort",
     "ms-toolsai.jupyter",
     "ms-python.pylint",
-    "snyk-security.snyk-vulnerability-scanner"
+    "snyk-security.snyk-vulnerability-scanner",
+    "ms-cst-e.vscode-devskim"
   ]
 }
