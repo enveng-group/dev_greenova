@@ -1,0 +1,39 @@
+
+# Permit following sourceable files that were not specified as input
+external-sources=true
+
+# Turn on optional checks
+enable=add-default-case
+enable=avoid-nullary-conditions
+enable=check-unassigned-uppercase
+enable=deprecated-which
+enable=quote-safe-variables
+
+# Disable specific checks
+disable=SC1090  # Can't follow non-constant source
+disable=SC1091  # Not following external sources
+
+# Shell dialect
+shell=bash
+
+# Minimum version
+disable=SC2039  # Allow bash-specific features
+disable=SC2312  # Allow process substitution
+
+# Formatting
+# Require double quotes for strings containing variables
+enable=quote-safe-variables
+
+# Performance
+enable=avoid-subshells
+
+# Sourcing
+source-path=SCRIPTDIR
+source-path=/usr/local/bin
+source-path=/usr/bin
+
+# Severity thresholds (error, warning, info, style)
+error=SC2034  # Unused variables
+warning=SC2154  # Referenced but not assigned
+info=SC2295  # Expansion inside arithmetic
+style=SC2001  # See if you can use ${variable//search/replace}
