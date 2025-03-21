@@ -58,33 +58,6 @@
           </ul>
         </nav>
 
-        <!-- RIGHT ALIGNED: Authentication links -->
-        <div class="auth-status-container">
-          <!-- Load authenticated user menu -->
-          {% auth_menu %}
-        </div>
-      </nav>
-    </header>
-
-    <!-- Load Chatbot element -->
-    {% load chatbot_tags %}
-    {% chat_widget %}
-
-    <!-- Main content -->
-    <main id="main-content" role="main">
-      {% block body %}
-
-
-        <!-- MAIN CONTENT AREA -->
-        <div class="page-content">
-          {% block content %}
-          {% endblock content %}
-        </div>
-      {% endblock body %}
-      {% block extra_body %}
-      {% endblock extra_body %}
-    </main>
-
     <!-- FOOTER: Full-width at bottom of page -->
     {% block footer %}
     <footer role="contentinfo">

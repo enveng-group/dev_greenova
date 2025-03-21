@@ -15,6 +15,8 @@ from .services import ChatService
 from .forms import ChatMessageForm
 import logging
 
+
+
 logger = logging.getLogger(__name__)
 
 class ChatResponse(TypedDict):
@@ -27,8 +29,6 @@ class ChatResponse(TypedDict):
 @method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class ChatApiView(View):
     """Handle chat API requests."""
-
-    http_method_names = ['get', 'post']  # Explicitly define allowed methods
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().dispatch(request, *args, **kwargs)
@@ -43,6 +43,8 @@ class ChatApiView(View):
         }
         return HttpResponse(response["message"], status=200)
 
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle POST requests for chat messages."""
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle POST requests for chat messages."""
         try:
