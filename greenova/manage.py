@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from dotenv import load_dotenv
+from dotenv_vault import load_dotenv
 load_dotenv()
 
 def main():
@@ -24,5 +24,5 @@ if __name__ == "__main__":
 
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
-DEBUG = os.getenv("DEBUG", "False") =="Ture"
+DEBUG = os.getenv("DEBUG", "False") == "Ture"
 ENV_ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "")

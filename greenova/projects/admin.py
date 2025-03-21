@@ -10,7 +10,8 @@ T = TypeVar('T')
 
 class BaseModelAdmin(admin.ModelAdmin, Generic[T]):
     """Base admin class with type safety."""
-    def get_object(self, request: HttpRequest, object_id: str, from_field: None = None) -> Optional[T]:
+
+    def dispatch(self, request: HttpRequest, object_id: str, from_field: Optional[str] = None) -> Optional[T]:
         return super().get_object(request, object_id, from_field)
 
 class ProjectMembershipInline(admin.TabularInline):

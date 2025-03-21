@@ -17,7 +17,7 @@ from typing import Dict, List, TypedDict, Union
 from django.contrib import admin
 import mimetypes
 import sentry_sdk
-from dotenv import load_dotenv
+from dotenv_vault import load_dotenv
 load_dotenv()
 
 
@@ -290,7 +290,7 @@ STATICFILES_FINDERS = [
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Basic storage without manifest
 
 # Application version
-APP_VERSION = "0.0.3"
+APP_VERSION = "0.0.4"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

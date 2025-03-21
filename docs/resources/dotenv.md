@@ -42,7 +42,7 @@ Dotenv implementations are available for multiple languages:
 # Install the package
 # pip install python-dotenv
 
-from dotenv import load_dotenv
+from dotenv_vault import load_dotenv
 import os
 
 # Load environment variables from .env file
@@ -55,7 +55,7 @@ secret_key = os.environ.get("SECRET_KEY")
 
 ### Advanced Options
 ```python
-from dotenv import load_dotenv, find_dotenv
+from dotenv_vault import load_dotenv, find_dotenv
 
 # Automatically find .env file
 load_dotenv(find_dotenv())
@@ -73,7 +73,7 @@ load_dotenv("/path/to/custom/.env")
 ```python
 # settings.py
 import os
-from dotenv import load_dotenv
+from dotenv_vault import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -138,7 +138,7 @@ For production, you can encrypt your environment variables:
    ```
 
 4. This creates:
-   - `.env.vault`: Contains encrypted variables 
+   - `.env.vault`: Contains encrypted variables
    - `.env.keys`: Contains encryption keys
 
 5. **Set the `DOTENV_KEY` environment variable** on your production server using the appropriate key from `.env.keys`.
@@ -149,7 +149,7 @@ For production, you can encrypt your environment variables:
 
 Create different environment files for different deployment environments:
 - `.env.development`
-- `.env.staging` 
+- `.env.staging`
 - `.env.production`
 
 Build all of them into your vault:
