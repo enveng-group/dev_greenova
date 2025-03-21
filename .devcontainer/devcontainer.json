@@ -53,7 +53,11 @@
         "MS-CST-E.vscode-devskim",
         "timonwong.shellcheck",
         "ms-vscode.makefile-tools",
-        "redhat.vscode-yaml"
+        "redhat.vscode-yaml",
+        "foxundermoon.shell-format",
+        "tamasfe.even-better-toml",
+        "ms-python.mypy-type-checker",
+        "DavidAnson.vscode-markdownlint"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -72,12 +76,14 @@
           "python.terminal.activateEnvInCurrentTerminal": true,
           "python.terminal.activateEnvironment": true,
           "python.terminal.shellIntegration.enabled": true,
-          "python.languageServer": "Default",
-          "python.analysis.languageServerMode": "light",
-          "python.analysis.typeCheckingMode": "off",
+          "python.languageServer": "Pylance",
+          "python.analysis.languageServerMode": "Jedi",
+          "python.analysis.typeCheckingMode": "strict",
           "python.autoComplete.extraPaths": [
             "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
-          ]
+          ],
+          "python.linting.enabled": true,
+          "python.linting.pylintEnabled": true
         },
         "[javascript]": {
           "editor.formatOnSave": true,
@@ -153,7 +159,9 @@
           "pyproject.toml": "toml",
           "poetry.toml": "toml",
           "pdm.toml": "toml",
-          ".env*": "dotenv"
+          ".env*": "dotenv",
+          ".pylintrc-django": "ini",
+          ".pylintrc": "ini"
         },
         "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk"
       }

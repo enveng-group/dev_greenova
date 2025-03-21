@@ -3,7 +3,7 @@ from datetime import datetime
 from django.views.generic import View
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.vary import vary_on_headers
 from django_htmx.http import (
@@ -37,7 +37,7 @@ class ChatApiView(View):
         """Handle GET requests - return API info."""
         response: ChatResponse = {
             'status': 'active',
-            'message': "<div class=\"chat-dialog chatbot-dialog\">Hello, how may I help you today?!</div>",#'Chat API endpoint is ready',
+            'message': "<div class=\"chat-dialog chatbot-dialog\">Hello, how may I help you today?!</div>",  # 'Chat API endpoint is ready',
             'context': {},
             'error': None
         }
@@ -56,7 +56,7 @@ class ChatApiView(View):
                     response = HttpResponse("Invalid form data", status=400)
                     # Trigger client side validation errors
                     trigger_client_event(response, 'validationFailed',
-                                        params={'errors': form.errors})
+                                         params={'errors': form.errors})
                     return response
 
                 message = form.cleaned_data['message']
@@ -64,7 +64,7 @@ class ChatApiView(View):
                 result = chat_service.process_message(message)
 
                 # Create HTML response for HTMX
-                response = HttpResponse(result['message'])
+                response = JsonResponse(result)
 
                 # Add client events for animations or UI updates
                 trigger_client_event(response, 'messageSent')
@@ -102,7 +102,7 @@ class ChatApiView(View):
             if request.htmx:
                 response = HttpResponse("An unexpected error occurred", status=500)
                 trigger_client_event(response, 'chatError',
-                                    params={'error': str(e)})
+                                     params={'error': str(e)})
                 return response
             else:
                 return JsonResponse({
@@ -150,7 +150,7 @@ class ChatToggleView(View):
             })
 
 
-@csrf_exempt
+@csrf_protect
 @require_http_methods(["POST"])
 def chat_api_legacy(request: HttpRequest) -> JsonResponse:
     """Legacy function-based view for chat API - redirects to class-based view."""

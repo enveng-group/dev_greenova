@@ -1,4 +1,4 @@
-# GitHub Copilot Instructions for Django Development with POSIX-Compliant Python
+# GitHub Copilot Instructions for Django Development with Python
 
 ## Core Development Principles
 
@@ -7,26 +7,26 @@
 1. Templates must prioritize semantic HTML structure
 
 ```html
-   <body>
-     <header role="banner">
-       <nav role="navigation" aria-label="Main navigation">...</nav>
-     </header>
-     <main role="main">
-       <article>
-         <header>
-           <h1>...</h1>
-         </header>
-         <section aria-labelledby="section-heading">
-           <h2 id="section-heading">...</h2>
-         </section>
-       </article>
-     </main>
-     <footer role="contentinfo">...</footer>
-   </body>
+<body>
+  <header role="banner">
+    <nav role="navigation" aria-label="Main navigation">...</nav>
+  </header>
+  <main role="main">
+    <article>
+      <header>
+        <h1>...</h1>
+      </header>
+      <section aria-labelledby="section-heading">
+        <h2 id="section-heading">...</h2>
+      </section>
+    </article>
+  </main>
+  <footer role="contentinfo">...</footer>
+</body>
 ```
 
-Reference: See `/docs/resources/htmx.md` for more examples of semantic HTML structure with proper ARIA attributes for accessibility.
-
+Reference: See `/docs/resources/htmx.md` for more examples of semantic HTML
+structure with proper ARIA attributes for accessibility.
 
 2. Follow progressive enhancement layers:
    - Layer 1: Semantic HTML
@@ -34,20 +34,26 @@ Reference: See `/docs/resources/htmx.md` for more examples of semantic HTML stru
 ```html
 <form method="post" action="/submit">
   <label for="name">Name:</label>
-  <input type="text" id="name" name="name" required>
+  <input type="text" id="name" name="name" required />
   <button type="submit">Submit</button>
 </form>
 ```
 
-   - Layer 2: CSS for styling (classless-PicoCSS directly in html) and only use Django-Tailwind-Framework for utility classes as a last resort
+- Layer 2: CSS for styling (classless-PicoCSS directly in html) and only use
+  Django-Tailwind-Framework for utility classes as a last resort
 
-Reference: See `/docs/resources/pico.md` for comprehensive PicoCSS documentation and `/docs/resources/tailwind.md` for guidance on using Tailwind CSS as a last resort.
+Reference: See `/docs/resources/pico.md` for comprehensive PicoCSS
+documentation and `/docs/resources/tailwind.md` for guidance on using Tailwind
+CSS as a last resort.
 
-   - Layer 3: Django-Hyperscript first and then Django-HTMX second for interactivity
+- Layer 3: Django-Hyperscript first and then Django-HTMX second for
+  interactivity
 
-Reference: See `/docs/resources/hyperscript.md` for django-hyperscript implementation and `/docs/resources/htmx.md` for django-htmx integration patterns.
+Reference: See `/docs/resources/hyperscript.md` for django-hyperscript
+implementation and `/docs/resources/htmx.md` for django-htmx integration
+patterns.
 
-   - Layer 4: Web APIs for data
+- Layer 4: Web APIs for data
 
 ```html
 <figure role="region" aria-label="Monthly Statistics">
@@ -56,13 +62,14 @@ Reference: See `/docs/resources/hyperscript.md` for django-hyperscript implement
 </figure>
 ```
 
-Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with Django for data visualization.
+Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with
+Django for data visualization.
 
-   - Layer 5: JavaScript as fallback
+- Layer 5: JavaScript as fallback
 
 ```html
 <div data-widget="datepicker">
-  <input type="date" name="start_date">
+  <input type="date" name="start_date" />
   <noscript>Please enter date in YYYY-MM-DD format</noscript>
 </div>
 ```
@@ -70,10 +77,12 @@ Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with D
 3. Use data-attributes for behavior definition
 
 ```html
-<button type="button"
-        data-action="filter"
-        data-target="results"
-        data-param="status=active">
+<button
+  type="button"
+  data-action="filter"
+  data-target="results"
+  data-param="status=active"
+>
   Filter Active
 </button>
 ```
@@ -86,11 +95,13 @@ Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with D
   <fieldset>
     <legend>Contact Information</legend>
     <label for="email">Email:</label>
-    <input type="email" 
-           id="email" 
-           name="email" 
-           required 
-           aria-describedby="email-help">
+    <input
+      type="email"
+      id="email"
+      name="email"
+      required
+      aria-describedby="email-help"
+    />
     <small id="email-help">We'll never share your email</small>
   </fieldset>
   <button type="submit">Submit</button>
@@ -135,18 +146,18 @@ Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with D
 ```html
 <!-- Base functionality -->
 <form method="post" action="/search">
-  <input type="search" name="q">
+  <input type="search" name="q" />
   <button type="submit">Search</button>
 </form>
 
 <!-- HTMX enhancement -->
-<div hx-target="#results" 
-     hx-swap="innerHTML"
-     hx-include="[name='q']">
-  <input type="search" 
-         name="q" 
-         hx-get="/search"
-         hx-trigger="keyup delay:500ms">
+<div hx-target="#results" hx-swap="innerHTML" hx-include="[name='q']">
+  <input
+    type="search"
+    name="q"
+    hx-get="/search"
+    hx-trigger="keyup delay:500ms"
+  />
   <div id="results" role="region" aria-live="polite"></div>
 </div>
 ```
@@ -189,8 +200,8 @@ Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with D
    - Limit lines to a maximum of 79 characters.
    - Include blank lines to separate top-level function and class definitions.
 
-2. Use `snake_case` for function and variable names, `CamelCase` for class names,
-   and `UPPER_CASE` for constants.
+2. Use `snake_case` for function and variable names, `CamelCase` for class
+   names, and `UPPER_CASE` for constants.
 
 3. Place all imports at the top of the file, grouped as:
    - Standard library imports.
@@ -200,12 +211,13 @@ Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with D
 ### Comments and Documentation
 
 1. Use comments to explain why the code exists, not what it does.
-2. Write docstrings for all public modules, functions, classes, and methods using
-   triple quotes.
+2. Write docstrings for all public modules, functions, classes, and methods
+   using triple quotes.
 3. Ensure inline comments are concise and placed at least two spaces away from
    the statement.
 
-3. Ensure inline comments are concise and placed at least two spaces away from the statement.
+4. Ensure inline comments are concise and placed at least two spaces away from
+   the statement.
 
 ### Logging
 
@@ -222,7 +234,8 @@ Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with D
 2. Include a `pyproject.toml` file and `requirements.txt` for dependency
    management.
 
-2. Include a `pyproject.toml` file and `requirements.txt` for dependency management with `pip`.
+3. Include a `pyproject.toml` file and `requirements.txt` for dependency
+   management with `pip`.
 
 ## Code Generation Workflow - Generic Framework Template
 
@@ -382,7 +395,7 @@ FUNCTION shutdownSystem():
 - Orchestrate workflow execution.
 - Ensure fault tolerance and scalability.
 
-```pseudocode
+````pseudocode
 FUNCTION main():
     initializeSystem()
     processAutomatedTransaction()
@@ -468,7 +481,7 @@ This template provides a **modular, scalable, and fault-tolerant** approach, int
    # Example of proper environment variable usage
    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
    DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-   ```
+````
 
 2. Follow Django's settings module structure for organization.
 
@@ -500,7 +513,8 @@ This template provides a **modular, scalable, and fault-tolerant** approach, int
 
 ### Middleware
 
-1. Write middleware to handle cross-cutting concerns (e.g., authentication, logging).
+1. Write middleware to handle cross-cutting concerns (e.g., authentication,
+   logging).
 
 2. Ensure middleware adheres to Django’s lifecycle and compatibility.
 
@@ -522,11 +536,11 @@ This template provides a **modular, scalable, and fault-tolerant** approach, int
 
 ### Template Structure Guidelines
 
+{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
+Pipeline{% endblock title %} {% block dashboard_content %}
+{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
+Pipeline{% endblock title %} {% block dashboard_content %}
 
-{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
-Pipeline{% endblock title %} {% block dashboard_content %}
-{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
-Pipeline{% endblock title %} {% block dashboard_content %}
 ```html
 {% extends 'layouts/dashboard_base.html' %} {% block title %}Transaction
 Pipeline{% endblock %} {% block dashboard_content %}
@@ -542,7 +556,7 @@ Pipeline{% endblock %} {% block dashboard_content %}
   <tr>
     <td>{{ transaction.id }}</td>
     <td>{{ transaction.userId }}</td>
-{% endblock dashboard_content %}
+    {% endblock dashboard_content %}
     <td>{{ transaction.timestamp }}</td>
   </tr>
   {% endfor %}
@@ -552,7 +566,7 @@ Pipeline{% endblock %} {% block dashboard_content %}
 
 2. **Data Processing Templates**
 
-```html
+````html
 {% for transaction in enriched_transactions %}
 <tr>
   <td>{{ transaction.id }}</td>
@@ -560,39 +574,28 @@ Pipeline{% endblock %} {% block dashboard_content %}
   <td>{{ transaction.status }}</td>
   <td>{{ transaction.timestamp }}</td>
 </tr>
-{% endfor %}
-{% extends "layouts/dashboard_base.html" %} {% block title %}System
-Monitoring{% endblock title %} {% block dashboard_content %}
-3. **Pipeline Management Templates**
-
-```html
-{% extends 'layouts/dashboard_base.html' %} {% block title %}System
-Monitoring{% endblock %} {% block dashboard_content %}
+{% endfor %} {% extends "layouts/dashboard_base.html" %} {% block title
+%}System Monitoring{% endblock title %} {% block dashboard_content %} 3.
+**Pipeline Management Templates** ```html {% extends
+'layouts/dashboard_base.html' %} {% block title %}System Monitoring{% endblock
+%} {% block dashboard_content %}
 <h2>Pipeline Status</h2>
 <p>Active Transactions: {{ active_transactions }}</p>
 <p>Pending Retries: {{ pending_retries }}</p>
-{% endblock %}
-{% extends "base.html" %} {% block title %}Server Error{% endblock title %} 
-{% block content %}
-4. **Error Management Templates**
-
-```html
+{% endblock %} {% extends "base.html" %} {% block title %}Server Error{%
+endblock title %} {% block content %} 4. **Error Management Templates** ```html
 {% extends 'base.html' %} {% block title %}Server Error{% endblock %} {% block
 content %}
 <h1>500 - Server Error</h1>
 <p>Something went wrong. Our team is investigating.</p>
-{% endblock %}
-{% extends "base.html" %} {% block title %}Access Denied{% endblock title %} 
-{% block content %}
-5. **Security Templates**
-
-```html
-{% extends 'base.html' %} {% block title %}Access Denied{% endblock %} {% block
+{% endblock %} {% extends "base.html" %} {% block title %}Access Denied{%
+endblock title %} {% block content %} 5. **Security Templates** ```html {%
+extends 'base.html' %} {% block title %}Access Denied{% endblock %} {% block
 content %}
 <h1>403 - Forbidden</h1>
 <p>You do not have permission to access this page.</p>
 {% endblock %}
-```
+````
 
 #### Template Design Principles
 
@@ -694,7 +697,7 @@ CREATE TABLE Obligations (
     covered_in_which_inspection_checklist VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Added audit fields
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- Add indexes for frequently queried fields
     INDEX idx_project_name (project__name),
     INDEX idx_status (status),
@@ -703,48 +706,58 @@ CREATE TABLE Obligations (
 );
 
 -- Trigger to update the updated_at timestamp
-CREATE TRIGGER update_obligations_timestamp 
+CREATE TRIGGER update_obligations_timestamp
     BEFORE UPDATE ON Obligations
     FOR EACH ROW
     SET NEW.updated_at = CURRENT_TIMESTAMP;
 ```
 
 ## User Journey
-- Create a basic homepage template with welcome message, navigation links, and 
+
+- Create a basic homepage template with welcome message, navigation links, and
   app info.
+
 ### Develop the Landing Page
 
-- Create a basic homepage template with welcome message, navigation links, and information about the app.
+- Create a basic homepage template with welcome message, navigation links, and
+  information about the app.
 - Add sections like social media links, testimonials, and FAQ.
 
 ### Create the Login Page
 
-- Implement the login form with handling for both successful and unsuccessful logins.
+- Implement the login form with handling for both successful and unsuccessful
+  logins.
 - Set up password reset functionality.
 
 ### Develop the Dashboard
 
-- Create a dashboard view displaying user activity, notifications, and quick links.
+- Create a dashboard view displaying user activity, notifications, and quick
+  links.
 - Add a logout feature that redirects to the landing home page.
-- Implement CRUD operations for user info updates, password changes, and profile 
-  pictures.
+- Implement CRUD operations for user info updates, password changes, and
+  profile pictures.
+
 ### Implement User Profile Management
 
 - Create views for viewing and editing user profiles.
-- Implement CRUD operations for updating user information, changing passwords, and uploading profile pictures.
+- Implement CRUD operations for updating user information, changing passwords,
+  and uploading profile pictures.
 
 ### Set Up Admin Panel for User Management
 
-- Enable Django’s admin interface to manage users, assign roles, and perform CRUD operations.
+- Enable Django’s admin interface to manage users, assign roles, and perform
+  CRUD operations.
 
 ### Set Up Auditing for User Changes
 
-- Implement logging for user actions (e.g., changes to profiles, user deletions).
+- Implement logging for user actions (e.g., changes to profiles, user
+  deletions).
 - Use Django's built-in logging system.
 
 ### Create Dynamic Charts for Project Database Records
 
-- Implement basic data visualizations for 14-day lookahead, overdue obligations, and obligations progress.
+- Implement basic data visualizations for 14-day lookahead, overdue
+  obligations, and obligations progress.
 - Provide CRUD operations for managing database records.
 
 ### Create Additional Features
@@ -764,19 +777,20 @@ CREATE TRIGGER update_obligations_timestamp
 5. **Python**: Programming language for backend development.
 6. **MatPlotLib**: Python plotting library.
 7. **Pip**: Python package manager.
-8. **Django-HTMX**: Python implementation of the library for AJAX interactions with HTMX to use in Django.
+8. **Django-HTMX**: Python implementation of the library for AJAX interactions
+   with HTMX to use in Django.
 9. **Modern-Normalize**: CSS reset library.
 10. **NVM**: Node Version Manager for managing Node.js versions.
 11. **Node.js**: JavaScript runtime for frontend development.
 12. **NPM**: Node Package Manager for frontend dependencies.
 13. **Autopep8**: Python code formatter.
 14. **Pylance**: Python language server for Visual Studio Code.
-17. **Eslint**: JavaScript linter.
-18. **Debugpy**: Python debugger for VS Code.
-19. **Django-Hyperscript**: Python implementation to use hyperscript in Django.
-20. **venv**: Python virtual environment tool.
-21. **PicoCSS-classless**: Minimal CSS framework.
-22. **Django-Tailwind**: Python implementation of TailwindCSS for Django.
+15. **Eslint**: JavaScript linter.
+16. **Debugpy**: Python debugger for VS Code.
+17. **Django-Hyperscript**: Python implementation to use hyperscript in Django.
+18. **venv**: Python virtual environment tool.
+19. **PicoCSS-classless**: Minimal CSS framework.
+20. **Django-Tailwind**: Python implementation of TailwindCSS for Django.
 
 ### Dependencies
 
@@ -790,7 +804,6 @@ CREATE TRIGGER update_obligations_timestamp
 
 2. Development Tools:
    - djlint==1.36.4
-   
 
 ### Frontend Dependencies
 
@@ -826,15 +839,18 @@ CREATE TRIGGER update_obligations_timestamp
 
 3. **Create Database Schema**:
 
-   - Use the Django ORM to define models based on the provided SQL schema for the obligations table.
+   - Use the Django ORM to define models based on the provided SQL schema for
+     the obligations table.
    - Run `python manage.py makemigrations` to generate migrations.
-   - Run `python manage.py migrate` to apply the schema to the SQLite3 database.
+   - Run `python manage.py migrate` to apply the schema to the SQLite3
+     database.
 
 4. **Develop the Landing Page**:
 
    - Create a new app using `python manage.py startapp landing`.
    - Add the app to `INSTALLED_APPS` in `settings.py`.
-   - Define a `LandingPageView` class in `views.py` and create a corresponding template.
+   - Define a `LandingPageView` class in `views.py` and create a corresponding
+     template.
    - Use HTMX to add interactivity for sections like FAQs or testimonials.
 
 5. **Create the Login Page**:
@@ -852,7 +868,8 @@ CREATE TRIGGER update_obligations_timestamp
 7. **Implement User Profile Management**:
 
    - Add a `UserProfile` model to store additional user information.
-   - Create views and forms for profile editing, password changes, and profile picture uploads.
+   - Create views and forms for profile editing, password changes, and profile
+     picture uploads.
 
 8. **Set Up the Admin Panel**:
 
@@ -882,10 +899,12 @@ CREATE TRIGGER update_obligations_timestamp
    - Email: `agallo@enveng-group.com.au`
 
 ### Project Metadata
+
 2. Django Version:
    - Django 4.2.20 (exact version)
    - Ensure compatibility with Django 5.1.x features
    - Email: <agallo@enveng-group.com.au>
+
 ### Project Metadata
 
 1. Author Information:
