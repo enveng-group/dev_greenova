@@ -6,18 +6,22 @@ CD_CMD = cd greenova &&
 # Define the virtual environment path
 VENV = .venv
 
+# Define the pthon and pip path
+PYTHON = $(VENV)/bin/python3
+PIP = $(VENV)/bin/pip
+
 # Create virtual environment
 venv:
 	@echo "Creating virtual environment..."
-	@python3 -m venv .venv
+	@python3 -m venv $(VENV)
 	@echo "Virtual environment created."
 	@echo "To activate it, run: source .venv/bin/activate"
 
 # Install dependencies
 install:
 	@echo "Installing dependencies..."
-	$(VENV)/bin/python -m pip install --upgrade pip
-	$(VENV)/bin/pip install -r requirements.txt -c constraints.txt
+	$(PYTHON) -m pip install --upgrade pip
+	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINTS)
 	@echo "Dependencies installed."
 
 #Freeze installed dependencies to requirements.txt
@@ -49,7 +53,8 @@ check:
 #run Tailwind CSS and Django server
 run:
 	@echo "Starting Tailwind CSS and Django server..."
-	@$(CD_CMD) (python3 manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && python3 manage.py runserver
+	@$(CD_CMD) (python3 manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") &
+	@$(CD_CMD) python3 manage.py runserver
 
 # Alternative approach with separate commands
 #start only Django server
@@ -162,6 +167,21 @@ clean:
 	@find . -name "__pycache__" -delete
 	@echo "Clean completed."
 
+#install the package with setup.py
+setup:
+	@echo "Running setup.py..."
+	$(PYTHON) $(SETUP_SCRIPT) install
+
+#run python start up script
+pythonstartup:
+	@echo "Setting up Python startup..."
+	$(VENV)/bin/$(PYTHON) -M pythonstartup
+
+#install setuptools
+setuptools:
+	@echo "Installing setuptools..."
+	$(PYTHON) -m pip install setuptools
+
 # Help command to list available commands
 help:
 	@echo "Available commands:"
@@ -190,3 +210,6 @@ help:
 	@echo "  make freeze		 - Freeze dependencies"
 	@echo "  make dotenv-pull	 - Pull .env file from dotenv-vault"
 	@echo "  make dotenv-push	 - Push .env file to dotenv-vault"
+	@echo "  make setup			 - Install the package with setup.py"
+	@echo "  make pythonstartup	 - Run python start up script"
+	@echo "  make setuptools	 - Install setuptools" 
