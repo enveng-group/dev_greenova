@@ -1,17 +1,19 @@
+import base64
+import io
 import logging
+
 import matplotlib
-from django.views.generic import TemplateView
+import matplotlib.pyplot as plt
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.utils.decorators import method_decorator
-from django.http import HttpResponse
-from .models import EnvironmentalMechanism
-from .figures import get_overall_chart, get_mechanism_chart
+from django.views.generic import TemplateView
 from projects.models import Project
-import matplotlib.pyplot as plt
-import io
-import base64
+
+from .figures import get_mechanism_chart, get_overall_chart
+from .models import EnvironmentalMechanism
 
 matplotlib.use('Agg')  # Use Agg backend for non-interactive plotting
 
@@ -41,32 +43,21 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             mechanism_charts = []
 
             # Add overall chart first
-            overall_fig = get_overall_chart(project_id)
-
-            # Convert figure to base64 for embedding in HTML
-            buf = io.BytesIO()
-            overall_fig.savefig(buf, format='png', bbox_inches='tight')
-            buf.seek(0)
-            overall_chart_img = f"<img src='data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}' alt='Overall Status Chart'>"
+            _, overall_chart_data = get_overall_chart(project_id)
 
             mechanism_charts.append({
                 'name': 'Overall Status',
-                'chart': overall_chart_img
+                'image_data': overall_chart_data
             })
 
             # Generate charts for individual mechanisms
             for mechanism in mechanisms:
-                fig = get_mechanism_chart(mechanism.id)
-
-                buf = io.BytesIO()
-                fig.savefig(buf, format='png', bbox_inches='tight')
-                buf.seek(0)
-                chart_img = f"<img src='data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}' alt='{mechanism.name} Chart'>"
+                _, chart_data = get_mechanism_chart(mechanism.id)
 
                 mechanism_charts.append({
-                    'id': mechanism.id,  # Add the mechanism ID for clickable links
+                    'id': mechanism.id,
                     'name': mechanism.name,
-                    'chart': chart_img
+                    'image_data': chart_data
                 })
 
             context['mechanism_charts'] = mechanism_charts
@@ -75,7 +66,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             # Add table data with mechanism ID
             context['table_data'] = [
                 {
-                    'id': m.id,  # Include ID for linking
+                    'id': m.id,
                     'name': m.name,
                     'not_started': m.not_started_count,
                     'in_progress': m.in_progress_count,

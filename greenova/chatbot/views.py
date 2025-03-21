@@ -25,7 +25,7 @@ class ChatResponse(TypedDict):
     context: Dict[str, str]
     error: Optional[str]
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class ChatApiView(View):
     """Handle chat API requests."""
@@ -113,7 +113,7 @@ class ChatApiView(View):
                 }, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_protect, name='dispatch')
 @method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class ChatToggleView(View):
     """Handle chat widget toggle state."""
