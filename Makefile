@@ -45,6 +45,15 @@ dotenv-push:
 	@echo "Pushing .env file to dotenv-vault"
 	@npx dotenv-vault@latest push
 
+# Compiles our chatbot protocol buffer 
+# protoc --proto_path=./greenova/chatbot/ --python_out=./greenova/chatbot/ ./greenova/chatbot/chatdata.proto
+CHAT_BOT_DIR = ./greenova/chatbot/
+CHAT_BOT_DATA_DIR = $(CHAT_BOT_DIR)data/
+CHAT_BOT_FNAME = chatdata.proto
+proto-compile:
+	protoc --proto_path=$(CHAT_BOT_DATA_DIR) --python_out=$(CHAT_BOT_DATA_DIR) $(CHAT_BOT_DATA_DIR)$(CHAT_BOT_FNAME)
+	cd $(CHAT_BOT_DIR) && python3 create_input.py
+
 #run django system check
 check:
 	$(CD_CMD) python3 manage.py check

@@ -2,6 +2,19 @@ from typing import Dict, Any, Optional, Union
 import logging
 from datetime import datetime
 
+####################################
+from .data.chatdata_pb2 import ChatBotResponse
+from .data.chatdata_pb2 import ChatBotPrompts
+
+# Read existing data...
+prompt_list = ChatBotPrompts()
+prompt_list_fname = "./chatbot/data/chatdata-serialised.protobin"
+
+with open(prompt_list_fname, "rb") as f:
+    prompt_list.ParseFromString(f.read())
+
+####################################
+
 logger = logging.getLogger(__name__)
 
 
@@ -44,19 +57,6 @@ class ChatService:
         """Toggle dialog open/closed."""
         return self.state.toggle()
 
-    @staticmethod
-    def format_message(message: str, user: str) -> Dict[str, Any]:
-        """Format a chat message for display."""
-        return {
-            "type": "user" if user != "assistant" else "assistant",
-            "content": message,
-            "timestamp": "now",  # TODO: Add proper timestamp
-            "sender": user
-        }
-
-    @staticmethod
-    def process_message(
-            message: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Process an incoming chat message."""
         try:
             # TODO: Add actual message processing logic
@@ -69,6 +69,48 @@ class ChatService:
             request_msg = f" <div class=\"chat-dialog user-dialog\">{message}</div>"
 
             response_text = "This is the text that we want to respond with."
+            response_msg = f"<div class=\"chat-dialog chatbot-dialog\">{response_text}</div>"
+            content_msg = request_msg + response_msg
+
+            response: Dict[str, Union[str, Dict[str, Any]]] = {
+                "status": "success",
+                "message": content_msg,
+                "context": context or {}
+            }
+            logger.info(f"Processed chat message: {message[:50]}...")
+
+    @staticmethod
+    def process_message(
+            message: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Process an incoming chat message."""
+        try:
+            # TODO: Add actual message processing logic
+            #
+            # The variable "message" is the string input that the client has given us
+            # The variable "context" is JSON data.
+            #
+
+            #
+            # message ChatBotResponse {
+            #     required string prompt = 1;
+            #     required string response = 2;
+            #     required int32 id = 3;
+            # }
+            #
+            # message ChatBotPrompts {
+            #     repeated ChatBotResponse responses = 1;
+            # }
+            #
+
+            # This is the message that we sent the server, place this before response message...
+            request_msg = f" <div class=\"chat-dialog user-dialog\">{message}</div>"
+
+            response_text = "This is the text that we want to respond with."
+
+            for response in prompt_list.responses:
+                if response.prompt == message:
+                    response_text = response.response
+
             response_msg = f"<div class=\"chat-dialog chatbot-dialog\">{response_text}</div>"
             content_msg = request_msg + response_msg
 
