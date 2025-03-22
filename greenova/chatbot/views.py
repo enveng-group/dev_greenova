@@ -1,159 +1,120 @@
-from typing import Any, TypedDict, Dict, Optional
-from datetime import datetime
-from django.views.generic import View
-from django.http import HttpRequest, JsonResponse, HttpResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.vary import vary_on_headers
-from django_htmx.http import (
-    HttpResponseClientRefresh,
-    trigger_client_event,
-    HttpResponseStopPolling
-)
-from .services import ChatService
-from .forms import ChatMessageForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.utils.html import escape
+
+from .models import Conversation, ChatMessage
+from .services import ChatbotService
+from .forms import ConversationForm
+
+import json
 import logging
-
-
 
 logger = logging.getLogger(__name__)
 
-class ChatResponse(TypedDict):
-    status: str
-    message: str
-    context: Dict[str, str]
-    error: Optional[str]
+@login_required
+def chatbot_home(request):
+    """Main chatbot interface showing conversation list and a selected conversation."""
+    user = request.user
+    conversations = Conversation.objects.filter(user=user).order_by('-updated_at')
 
-@method_decorator(csrf_protect, name='dispatch')
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
-class ChatApiView(View):
-    """Handle chat API requests."""
+    active_conversation_id = request.GET.get('conversation_id')
+    active_conversation = None
+    messages = []
 
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return super().dispatch(request, *args, **kwargs)
+    if active_conversation_id:
+        active_conversation = get_object_or_404(Conversation, id=active_conversation_id, user=user)
+        messages = ChatMessage.objects.filter(conversation=active_conversation).order_by('timestamp')
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle GET requests - return API info."""
-        response: ChatResponse = {
-            'status': 'active',
-            'message': "<div class=\"chat-dialog chatbot-dialog\">Hello, how may I help you today?!</div>",  # 'Chat API endpoint is ready',
-            'context': {},
-            'error': None
-        }
-        return HttpResponse(response["message"], status=200)
+    context = {
+        'conversations': conversations,
+        'active_conversation': active_conversation,
+        'messages': messages,
+    }
 
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle POST requests for chat messages."""
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle POST requests for chat messages."""
-        try:
-            # Check if this is an HTMX request
-            if request.htmx:
-                form = ChatMessageForm(request.POST)
+    return render(request, 'chatbot/home.html', context)
 
-                if not form.is_valid():
-                    response = HttpResponse("Invalid form data", status=400)
-                    # Trigger client side validation errors
-                    trigger_client_event(response, 'validationFailed',
-                                         params={'errors': form.errors})
-                    return response
+@login_required
+def create_conversation(request):
+    """Create a new conversation."""
+    if request.method == 'POST':
+        form = ConversationForm(request.POST)
+        if form.is_valid():
+            conversation = form.save(commit=False)
+            conversation.user = request.user
+            conversation.save()
 
-                message = form.cleaned_data['message']
-                chat_service = ChatService()
-                result = chat_service.process_message(message)
+            # Add initial bot greeting
+            ChatbotService.add_message(
+                conversation_id=conversation.id,
+                content="Hello! How can I help you today?",
+                is_bot=True
+            )
 
-                # Create HTML response for HTMX
-                response = JsonResponse(result)
+            return redirect('chatbot:chatbot_home', conversation_id=conversation.id)
+    else:
+        form = ConversationForm()
 
-                # Add client events for animations or UI updates
-                trigger_client_event(response, 'messageSent')
+    return render(request, 'chatbot/create_conversation.html', {'form': form})
 
-                # If the chat service indicates we should stop polling
-                if result.get('stop_polling', False):
-                    return HttpResponseStopPolling(result['message'])
+@login_required
+def conversation_detail(request, conversation_id):
+    """View a specific conversation."""
+    conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
+    messages = ChatMessage.objects.filter(conversation=conversation).order_by('timestamp')
 
-                return response
-            else:
-                # Handle regular JSON requests as before
-                form = ChatMessageForm(request.POST)
+    return render(request, 'chatbot/conversation_detail.html', {
+        'conversation': conversation,
+        'messages': messages,
+    })
 
-                if not form.is_valid():
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Invalid form data',
-                        'context': {},
-                        'error': form.errors
-                    }, status=400)
+@login_required
+@require_POST
+def send_message(request, conversation_id):
+    """Process a new message in a conversation."""
+    conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
 
-                message = form.cleaned_data['message']
-                chat_service = ChatService()
-                result = chat_service.process_message(message)
+    try:
+        data = json.loads(request.body)
+        message_text = data.get('message', '').strip()
 
-                return JsonResponse({
-                    'status': 'success',
-                    'message': result['message'],
-                    'context': result['context'],
-                    'error': None
-                })
+        if not message_text:
+            return JsonResponse({'error': 'Message cannot be empty'}, status=400)
 
-        except Exception as e:
-            logger.error(f"Unexpected error: {str(e)}")
-            if request.htmx:
-                response = HttpResponse("An unexpected error occurred", status=500)
-                trigger_client_event(response, 'chatError',
-                                     params={'error': str(e)})
-                return response
-            else:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'An unexpected error occurred',
-                    'context': {},
-                    'error': str(e)
-                }, status=500)
+        # Save user message
+        user_message = ChatbotService.add_message(
+            conversation_id=conversation.id,
+            content=message_text,
+            is_bot=False
+        )
 
+        # Process and get bot response
+        bot_response = ChatbotService.process_user_message(conversation.id, message_text)
 
-@method_decorator(csrf_protect, name='dispatch')
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
-class ChatToggleView(View):
-    """Handle chat widget toggle state."""
+        return JsonResponse({
+            'user_message': {
+                'id': user_message.id,
+                'content': escape(user_message.content),
+                'timestamp': user_message.timestamp.isoformat(),
+            },
+            'bot_response': {
+                'content': escape(bot_response),
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error processing message: {str(e)}")
+        return JsonResponse({'error': 'Failed to process message'}, status=500)
 
-    http_method_names = ['get', 'post']  # Explicitly define allowed methods
+@login_required
+def delete_conversation(request, conversation_id):
+    """Delete a conversation."""
+    conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
 
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return super().dispatch(request, *args, **kwargs)
+    if request.method == 'POST':
+        conversation.delete()
+        return redirect('chatbot:chatbot_home')
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Return chat dialog state."""
-        if request.htmx:
-            response = HttpResponse()
-            trigger_client_event(response, 'chatStateChanged', params={"isOpen": False})
-            return response
-        else:
-            return JsonResponse({
-                "isOpen": False,
-                "messages": [],
-                "timestamp": datetime.now().isoformat()
-            })
-
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle dialog state toggle."""
-        if request.htmx:
-            response = HttpResponse()
-            trigger_client_event(response, 'chatStateChanged', params={"isOpen": True})
-            return response
-        else:
-            return JsonResponse({
-                "isOpen": True,
-                "messages": [],
-                "timestamp": datetime.now().isoformat()
-            })
-
-
-@csrf_protect
-@require_http_methods(["POST"])
-def chat_api_legacy(request: HttpRequest) -> JsonResponse:
-    """Legacy function-based view for chat API - redirects to class-based view."""
-    view = ChatApiView.as_view()
-    response = view(request)
-    return JsonResponse(response.content, safe=False)
+    return render(request, 'chatbot/delete_conversation.html', {'conversation': conversation})
