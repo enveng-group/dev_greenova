@@ -10,6 +10,11 @@ VENV = .venv
 PYTHON = $(VENV)/bin/python3
 PIP = $(VENV)/bin/pip
 
+#Variables
+REQUIREMENTS=requirements.txt
+CONSTRAINTS=constraints.txt
+SETUP_SCRIPT=setup.py
+
 # Create virtual environment
 venv:
 	@echo "Creating virtual environment..."
@@ -27,7 +32,7 @@ install:
 #Freeze installed dependencies to requirements.txt
 freeze:
 	@echo "Freezing dependencies..."
-	$(VENV)/bin/pip freeze > requirements.txt
+	$(VENV)/bin/pip freeze > $(REQUIREMENTS)
 	@echo "Dependencies frozen."
 
 #Create a Django new app
@@ -190,7 +195,7 @@ setup:
 #run python start up script
 pythonstartup:
 	@echo "Setting up Python startup..."
-	$(VENV)/bin/$(PYTHON) -M pythonstartup
+	$(PYTHON) -M pythonstartup
 
 #install setuptools
 setuptools:
