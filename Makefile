@@ -58,17 +58,17 @@ proto-compile:
 check:
 	$(CD_CMD) python3 manage.py check
 
-# Updated run command with better process management
+# Updated run command with better process management and gunicorn config
 run:
 	@echo "Starting Tailwind CSS and Django server..."
 	@mkdir -p logs
 	@$(CD_CMD) (python3 manage.py tailwind start > ../logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && \
-	daphne greenova.asgi:application
+	gunicorn greenova.wsgi -c ../gunicorn.conf.py
 
 # Alternative approach with separate commands
 #start only Django server
 run-django:
-	$(CD_CMD) daphne greenova.asgi:application
+	$(CD_CMD) gunicorn greenova.wsgi -c ../gunicorn.conf.py
 
 #Start only Tailwind CSS
 run-tailwind:
