@@ -139,6 +139,7 @@ INSTALLED_APPS = [
     "tailwind",
     "django_browser_reload",
     "debug_toolbar",
+    "daphne",
 
     # Your local apps (ordered by dependency)
     "core.apps.CoreConfig",  # Core logic, should be initialized early
@@ -407,3 +408,5 @@ sentry_sdk.init(
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
 )
+
+ASGI_APPLICATION = "greenova.asgi.application"

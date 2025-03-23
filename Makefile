@@ -45,7 +45,7 @@ dotenv-push:
 	@echo "Pushing .env file to dotenv-vault"
 	@npx dotenv-vault@latest push
 
-# Compiles our chatbot protocol buffer 
+# Compiles our chatbot protocol buffer
 # protoc --proto_path=./greenova/chatbot/ --python_out=./greenova/chatbot/ ./greenova/chatbot/chatdata.proto
 CHAT_BOT_DIR = ./greenova/chatbot/
 CHAT_BOT_DATA_DIR = $(CHAT_BOT_DIR)data/
@@ -58,17 +58,17 @@ proto-compile:
 check:
 	$(CD_CMD) python3 manage.py check
 
-# Updated run command with better process management and gunicorn config
+# Updated run command with better process management
 run:
 	@echo "Starting Tailwind CSS and Django server..."
 	@mkdir -p logs
 	@$(CD_CMD) (python3 manage.py tailwind start > ../logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && \
-	gunicorn greenova.wsgi -c ../gunicorn.conf.py
+	daphne greenova.asgi:application
 
 # Alternative approach with separate commands
 #start only Django server
 run-django:
-	$(CD_CMD) gunicorn greenova.wsgi -c ../gunicorn.conf.py
+	$(CD_CMD) daphne greenova.asgi:application
 
 #Start only Tailwind CSS
 run-tailwind:
