@@ -4,11 +4,13 @@ set -e
 
 # Function to setup NVM environment
 setup_nvm() {
-  # Create .bash_env file
-  touch "${HOME}/.bash_env" || {
-    echo "Error: Could not create .bash_env file" >&2
-    return 1
-  }
+  # First, update NVM to latest version
+  echo "Updating NVM to latest version..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+
+  # Force reload NVM
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
   # Setup NVM environment variables
   {
@@ -19,16 +21,22 @@ setup_nvm() {
   # Source the environment file
   . "${HOME}/.bash_env"
 
-  # Install and configure Node.js
+  # Rest of your existing setup...
   command -v nvm >/dev/null 2>&1 || {
     echo "Error: NVM not found" >&2
     return 1
   }
 
-  if ! nvm install 18.20.7; then
+  # Continue with Node.js installation
+  if ! nvm install 18.20.7 -b; then
     echo "Error: Failed to install Node.js 18.20.7" >&2
     return 1
   fi
+
+  command -v nvm >/dev/null 2>&1 || {
+    echo "Error: NVM not found" >&2
+    return 1
+  }
 
   if ! nvm use 18.20.7; then
     echo "Error: Failed to use Node.js 18.20.7" >&2
@@ -215,7 +223,7 @@ main() {
   npm install -g npm@10.8.2
 
   # Install snyk globally only if not already installed
-  if ! command -v snyk &> /dev/null; then
+  if ! command -v snyk &>/dev/null; then
     echo "Installing snyk globally..."
     npm install snyk -g
   else
