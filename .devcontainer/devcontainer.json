@@ -17,11 +17,6 @@
       "version": "latest"
     }
   },
-  "hostRequirements": {
-    "cpus": 2,
-    "memory": "2gb",
-    "storage": "16gb"
-  },
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
