@@ -9,7 +9,7 @@ company
 1. **Select Project on Dashboard**
    - **Context**: The dashboard is a central part of the application’s user interface. It provides users with an overview of projects and other critical information.
    - **Implementation**: Ensure the dashboard allows users to easily select and switch between projects. This could involve adding a dropdown or a list of projects with clickable links.
-   - **Example**:
+   - **Example**: 
      ```html
      <nav>
        <ul>
@@ -93,7 +93,6 @@ company
      </a>
      <div id="obligation-list"></div>
      ```
-
 8. **Leverage CSS Frameworks and Libraries Effectively**
    - **Context**: The project uses PicoCSS, but there may be opportunities to leverage more of its features or integrate additional frameworks like Tailwind CSS to enhance styling.
    - **Implementation**:
@@ -355,7 +354,6 @@ Replacing `app.js` with a combination of TypeScript and AssemblyScript can enhan
          const add = module.instance.exports.add as (a: number, b: number) => number;
          console.log(add(2, 3)); // Output: 5
        }
-
        loadWasm();
        ```
 
