@@ -28,7 +28,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         project_id = self.request.GET.get('project_id')
 
-        if not project_id:
+        if not project_id or project_id < "1":
             context['error'] = "No project selected"
             return context
 

@@ -71,7 +71,7 @@
                            hx-get="/obligations/summary/"
                            hx-target="#obligations-container"
                            hx-trigger="keyup changed delay:500ms"
-                           hx-include="input[name='project_id'], select[name='status'], select[name='phase']">
+                           hx-include="input[name='project_id'], select[name='status'], select[name='mechanism'], select[name='phase']">
                 </div>
                 <!-- Filter Controls -->
                 <div class="filter-controls">
@@ -84,12 +84,25 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="[name='project_id'], [name='search'], [name='phase']"
+                                hx-include="[name='project_id'], [name='search'], [name='mechanism'], [name='phase']"
                                 hx-push-url="true">
                             <option value="not started">Not Started</option>
                             <option value="in progress">In Progress</option>
                             <option value="completed">Completed</option>
                             <option value="overdue">Overdue</option>
+                        </select>
+                    </div>
+                    <!-- Mechanism Filter -->
+                    <div class="filter-group">
+                        <label for="mechanism-filter">Mechanism:</label>
+                        <select id="mechanism-filter"
+                                name="mechanism"
+                                multiple
+                                hx-get="/obligations/summary/"
+                                hx-target="#obligations-container"
+                                hx-trigger="change"
+                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='phase']">
+                            {% for mechanism in mechanisms %}<option value="{{ mechanism.id }}">{{ mechanism.name }}</option>{% endfor %}
                         </select>
                     </div>
                     <!-- Phase Filter -->
@@ -101,7 +114,7 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="input[name='project_id'], input[name='search'], select[name='status']">
+                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='mechanism']">
                             {% for phase in phases %}<option value="{{ phase }}">{{ phase }}</option>{% endfor %}
                         </select>
                     </div>
@@ -113,7 +126,7 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='phase'], select[name='order']">
+                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='mechanism'], select[name='phase'], select[name='order']">
                             <option value="obligation_number">Number</option>
                             <option value="action_due_date" selected>Due Date</option>
                             <option value="status">Status</option>
@@ -125,7 +138,7 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='phase'], select[name='sort']">
+                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='mechanism'], select[name='phase'], select[name='sort']">
                             <option value="asc" selected>Ascending</option>
                             <option value="desc">Descending</option>
                         </select>
