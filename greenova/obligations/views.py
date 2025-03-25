@@ -109,20 +109,22 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
         """Get context data for the template."""
         context = super().get_context_data(**kwargs)
 
-        project_id = self.request.GET.get('project_id')
-        if not project_id:
-            context['error'] = "Please select a project"
-            return context
+        mechanism_id = self.request.GET.get('mechanism_id')
 
+        '''
+        if not mechanism_id:
+            context['error'] = "No procedure selected"
+            return context
+        '''
         try:
             # Verify project exists
-            project = get_object_or_404(Project, id=project_id)
+            project = get_object_or_404(EnvironmentalMechanism, id=mechanism_id)
 
             # Get filters from request
             filters = self.get_filters()
 
             # Get obligations for this project
-            queryset = Obligation.objects.filter(project_id=project_id)
+            queryset = Obligation.objects.filter(primary_environmental_mechanism=mechanism_id)
 
             # Apply filters
             queryset = self.apply_filters(queryset, filters)
@@ -142,19 +144,21 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
                 'obligations': page_obj,
                 'page_obj': page_obj,
                 'project': project,
-                'project_id': project_id,
+                # 'project_id': project_id,
                 'filters': filters,
                 'total_count': paginator.count,
             })
+            # Get only unique phases
+            phases = Obligation.objects.filter(primary_environmental_mechanism=mechanism_id).exclude(project_phase__isnull=True).exclude(project_phase='').values_list('project_phase', flat=True).distinct()
+            phases_cleaned = set(phase.strip() for phase in phases)
+            context['phases'] = list(phases_cleaned)
 
-            context['mechanisms'] = EnvironmentalMechanism.objects.filter(project_id=project_id)
-            context['phases'] = Obligation.objects.filter(project_id=project_id).values_list('project_phase', flat=True).distinct()
+            context['mechanisms'] = mechanism_id
             context['user_can_edit'] = self.request.user.has_perm('obligations.change_obligation')
 
         except Exception as e:
             logger.error(f"Error in ObligationSummaryView: {str(e)}")
             context['error'] = f"Error loading obligations: {str(e)}"
-
         return context
 
 class TotalOverdueObligationsView(LoginRequiredMixin, View):

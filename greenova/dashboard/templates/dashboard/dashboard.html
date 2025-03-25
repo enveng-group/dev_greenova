@@ -4,6 +4,17 @@
 {% partialdef dashboard_header %}
 <header hx-ext="class-tools" classes="add slide-in-from-top:0.3s">
     <hgroup>
+        <nav aria-label="Breadcrumb" class="breadcrumbs">
+            <ol>
+                <li>
+                    <a href="{% url 'procedures:procedure_charts_query' %}">Procedures</a>
+                </li>
+                <li>
+                    <a href="{% url 'mechanisms:mechanism_charts' %}">Mechanisms</a>
+                </li>
+                <li>{{ mechanism.name }}</li>
+            </ol>
+        </nav>
         <h1>Hi {{ request.user|display_name }}</h1>
         <h2>
             Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
@@ -49,7 +60,6 @@
 <span class="count"
       id="overdue-container"
       hx-get="{% url 'obligations:overdue' %}"
-      hx-trigger="load every:60s, path-deps"
       hx-swap="innerHTML"
       hx-trigger="load, change"
       hx-include="#project-selector">
