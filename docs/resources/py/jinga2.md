@@ -232,23 +232,20 @@ def environment(**options):
 ```html
 <!-- base.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Your site description" />
-    <meta name="keywords" content="your, keywords, here" />
-    <title>{% block title %}Default Title{% endblock title %}</title>
+    <title>{% block title %}Default Title{% endblock %}</title>
   </head>
   <body>
-    {% block content %}{% endblock content %}
+    {% block content %}{% endblock %}
   </body>
 </html>
 
 <!-- child.html -->
-{% extends "base.html" %} {% block title %}Page Title{% endblock title %} {%
-block content %}
+{% extends "base.html" %} {% block title %}Page Title{% endblock %} {% block
+content %}
 <h1>Hello World</h1>
-{% endblock content %}
+{% endblock %}
 ```
 
 **Django Template Language (similar):**
@@ -343,60 +340,42 @@ Use template inheritance, includes, and macros to avoid duplication:
 {% endmacro %}
 ```
 
-{% block javascript %}
-{{ super() }}
+### 2. Use Block Super for Extending Content
 
-<!-- Include parent block content -->
-<script src="my-script.js"></script>
-
-{% endblock javascript %}
+```html
 {% block javascript %} {{ super() }}
-
 <!-- Include parent block content -->
 <script src="my-script.js"></script>
-
 {% endblock %}
-{% block content %}
+```
 
+### 3. Organize Block Structure Hierarchically
+
+```html
+{% block content %}
 <div class="container">
   {% block page_header %}
-  <h1>{% block page_title %}Default Title{% endblock page_title %}</h1>
-  {% endblock page_header %}
-
-{% block main_content %}
-
+  <h1>{% block page_title %}Default Title{% endblock %}</h1>
+  {% endblock %} {% block main_content %}
   <!-- Main page content goes here -->
-
-{% endblock main_content %}
-
-{% block sidebar %}
-
-  <!-- Sidebar content goes here -->
-
-{% endblock sidebar %}
-
-</div>
-{% endblock content %}
   {% endblock %} {% block sidebar %}
+  <!-- Sidebar content goes here -->
+  {% endblock %}
+</div>
+{% endblock %}
+```
+
+### 4. Create Base Templates for Different Layout Types
+
+```
 templates/
 ├── base.html                    # Project-wide base
 ├── layouts/
     ├── base_dashboard.html      # Dashboard-specific base
     ├── base_public.html         # Public-facing base
     └── base_email.html          # Email template base
-### 4. Create Base Templates for Different Layout Types
+```
 
-````
-templates/
-├── base.html                    # Project-wide base
-├── layouts/
-    ├── base_dashboard.html      # Dashboard-specific base
-    ├── base_public.html         # Public-facing base
-{% block meta_tags %}{% endblock meta_tags %}
-{% block title %}{% endblock title %}
-{% block extra_css %}{% endblock extra_css %}
-{% block content %}{% endblock content %}
-{% block javascript %}{% endblock javascript %}
 ### 5. Use Named Blocks Consistently
 
 Maintain consistent block names across templates to make inheritance
@@ -406,7 +385,7 @@ predictable:
 {% block meta_tags %}{% endblock %} {% block title %}{% endblock %} {% block
 extra_css %}{% endblock %} {% block content %}{% endblock %} {% block
 javascript %}{% endblock %}
-````
+```
 
 ## Common Pitfalls and Solutions
 

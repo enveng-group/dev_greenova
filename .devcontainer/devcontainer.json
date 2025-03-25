@@ -24,6 +24,12 @@
     },
     "ghcr.io/r3dpoint/devcontainer-features/tailwindcss-standalone-cli:1": {
       "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/markdownlint-cli2:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/prettier:1": {
+      "version": "latest"
     }
   },
   "mounts": [
@@ -168,7 +174,8 @@
           "pdm.toml": "toml",
           ".env*": "dotenv",
           ".pylintrc-django": "ini",
-          ".pylintrc": "ini"
+          ".pylintrc": "ini",
+          "tailwindcss.lint": "json"
         },
         "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk",
         "snyk.trustedFolders": [
