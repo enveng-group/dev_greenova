@@ -243,6 +243,15 @@
         "Python: Lint with pylint (standard)",
         "Python: Type check with mypy (standard)"
       ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Python: Fix all (Django)",
       "dependsOrder": "sequence",
       "group": "none",
       "label": "Python: Fix all (standard)",
