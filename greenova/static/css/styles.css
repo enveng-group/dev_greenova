@@ -13,6 +13,7 @@
 @import url('themes/dark.css');
 
 /* Import component-specific styles */
+@import url('components/debug.css');
 @import url('components/navigation.css');
 @import url('components/breadcrumbs.css');
 @import url('components/button.css');
