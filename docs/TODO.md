@@ -10,7 +10,6 @@ company
    - **Context**: The dashboard is a central part of the application’s user interface. It provides users with an overview of projects and other critical information.
    - **Implementation**: Ensure the dashboard allows users to easily select and switch between projects. This could involve adding a dropdown or a list of projects with clickable links.
    - **Example**:
-   - **Example**:
      ```html
      <nav>
        <ul>
@@ -488,9 +487,6 @@ github copilot prompts
 proper direnv setup
 proper gh-cli setup
 better use of git-crypt and git-lfs
-add `npx dotenv-vault@latest pull` to `post_create.sh` in `.devcontainer/` directory
-MOdularise base.html
-combine and collate numerous commmands into makefile to automate the setup development environment process
 add `npx dotenv-vault@latest pull` to `post_create.sh` in `.devcontainer/` directory
 MOdularise base.html
 combine and collate numerous commmands into makefile to automate the setup development environment process
