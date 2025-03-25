@@ -70,8 +70,7 @@ INTERNAL_IPS = [
 ]
 
 # For production:
-TAILWIND_CSS_PATH = 'css/dist/styles.css'  # the path where the compiled CSS
-                                          # is located
+TAILWIND_CSS_PATH = 'css/dist/styles.css'  # the path where the compiled CSS is located
 ```
 
 ### 6. Install Tailwind CSS dependencies
@@ -93,14 +92,11 @@ changes are detected.
 
 ### 2. Include Tailwind CSS in your base template
 
+```html
 {% load tailwind_tags %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>{% block title %}Site Title{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Site description{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}keywords, go, here{% endblock %}">
     <!-- ... -->
     {% tailwind_css %}
     <!-- ... -->
@@ -108,7 +104,6 @@ changes are detected.
   <body>
     <!-- ... -->
   </body>
-</html>
 </html>
 ```
 
@@ -186,35 +181,31 @@ module.exports = {
 };
 ```
 
-/_theme/static_src/src/input.css _/
+### 2. Add custom utilities in the base CSS file
+
+```css
+/* theme/static_src/src/input.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/_Custom component classes_/
+/* Custom component classes */
 @layer components {
-.btn-primary {
-@apply py-2 px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90
-focus:outline-none focus:ring-2 focus:ring-brand-primary
-focus:ring-opacity-50;
+  .btn-primary {
+    @apply py-2 px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50;
+  }
 }
-}
-.btn-primary {
-@apply py-2 px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50;
-}
-}
-
 ```
+
+## Accessibility Considerations
+
+When using Tailwind CSS, maintain proper HTML semantics and ARIA attributes:
+
+```html
 <nav
   role="navigation"
   aria-label="Main navigation"
   class="bg-gray-800 text-white p-4"
->
-  <ul class="flex space-x-4">
-    <li><a href="{% url 'home' %}" class="hover:text-brand-primary">Home</a></li>
-    <li><a href="{% url 'about' %}" class="hover:text-brand-primary">About</a></li>
-  </ul>
-</nav>
 >
   <ul class="flex space-x-4">
     <li><a href="/" class="hover:text-brand-primary">Home</a></li>
@@ -244,7 +235,6 @@ focus:ring-opacity-50;
 3. **Use Django-HTMX for dynamic behavior**
 
 4. **Only then, enhance with Tailwind utilities when necessary**:
-
    ```html
    <article class="max-w-prose mx-auto">
      <header class="border-b border-gray-200 mb-4 pb-2">
@@ -287,19 +277,17 @@ python manage.py tailwind check-updates
 Or if you have a Makefile set up:
 
 ```bash
+make check-tailwind
+```
+
+This will show you which packages need updating, for example:
+
+```
 Package         Current  Wanted  Latest  Location                     Depended by
 postcss-import   15.1.0  15.1.0  16.1.0  node_modules/postcss-import  static_src
 postcss-nested    6.2.0   6.2.0   7.0.2  node_modules/postcss-nested  static_src
 tailwindcss      3.4.17  3.4.17  4.0.15  node_modules/tailwindcss     static_src
-
 ```
-
-Package Current Wanted Latest Location Depended by
-postcss-import 15.1.0 15.1.0 16.1.0 node_modules/postcss-import static_src
-postcss-nested 6.2.0 6.2.0 7.0.2 node_modules/postcss-nested static_src
-tailwindcss 3.4.17 3.4.17 4.0.15 node_modules/tailwindcss static_src
-
-````
 
 ### Updating Dependencies Manually
 
@@ -309,10 +297,9 @@ If you need to update your Tailwind dependencies manually:
 
    ```bash
    cd your_project/theme/static_src
-````
+   ```
 
 2. Update specific packages:
-
    ```bash
    npm install tailwindcss@latest
    npm install postcss-import@latest
@@ -359,13 +346,13 @@ For easier management, you can add these commands to your project's Makefile:
 
 ```makefile
 check-tailwind:
- cd your_project && python manage.py tailwind check-updates
+	cd your_project && python manage.py tailwind check-updates
 
 tailwind-build:
- cd your_project && python manage.py tailwind build
+	cd your_project && python manage.py tailwind build
 
 tailwind-start:
- cd your_project && python manage.py tailwind start
+	cd your_project && python manage.py tailwind start
 ```
 
 ## Resources
