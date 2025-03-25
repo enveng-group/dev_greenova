@@ -314,6 +314,12 @@ main() {
   # Configure Fish shell with direnv (after venv is set up)
   echo "Setting up Fish shell with direnv..."
   setup_fish_direnv
+
+  # Ensure Pre-Commit is updated
+  if command -v pre-commit >/dev/null 2>&1; then
+    echo "Updating pre-commit hooks..."
+    pre-commit autoupdate
+  fi
 }
 
 main "$@"

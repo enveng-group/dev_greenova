@@ -357,8 +357,9 @@ https://setuptools.pypa.io/en/latest/index.html
 - [Pyodide](https://pyodide.org/en/stable/index.html)
 - [pre-commit](https://pre-commit.com)
 
-mysql
-caddy
+mysql or python-postgresql devcontainer
+caddy with devcontainer feature
+cloudflared devcontainer feature
 https://pypi.org/project/doltpy/
 django-channels
 web server: daphne
@@ -382,3 +383,5 @@ better use of git-crypt and git-lfs
 add `npx dotenv-vault@latest pull` to `post_create.sh` in `.devcontainer/` directory
 MOdularise base.html
 combine and collate numerous commmands into makefile to automate the setup development environment process
+https://pre-commit.com/hooks.html
+https://github.com/orgs/pre-commit/repositories?language=&q=%22mirrors-%22+archived%3AFalse&sort=
