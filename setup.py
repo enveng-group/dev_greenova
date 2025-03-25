@@ -26,21 +26,6 @@ setup(
         'django-template-partials==24.4',
         'python-dotenv-vault==0.6.4',
     ],
-    extras_require={
-        'dev': [
-            'pytest>=7.3.1',
-            'pytest-django>=4.5.2',
-            'pytest-cov>=4.1.0',
-            'pytest-xdist>=3.3.1',
-            'selenium>=4.11.2',
-            'webdriver-manager>=4.0.0',
-            'django-stubs>=4.2.3',
-            'mypy>=1.4.1',
-            'pylint>=2.17.4',
-            'pylint-django>=2.5.3',
-            'black>=23.3.0',
-        ],
-    },
     include_package_data=True,
     classifiers=[
         'Programming Language :: Python :: 3',
@@ -48,7 +33,7 @@ setup(
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: OS Independent',
         'Framework :: Django',
-        'Framework :: Django :: 4.1',
+        'Framework :: Django :: 4.1',  # Updated to match Django version
     ],
     project_urls={
         'Source': 'https://github.com/enssol/greenova.git',

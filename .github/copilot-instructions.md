@@ -66,7 +66,7 @@ We use mypy with django-stubs for type checking Python code.
 
 ## Dependencies
 
-We maintain compatible versions of dependencies:
+We maintain exact versions of dependencies:
 
 - Python 3.9.21
 - Django 4.1.13
