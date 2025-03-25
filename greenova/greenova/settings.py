@@ -140,6 +140,7 @@ INSTALLED_APPS = [
     "django_browser_reload",
     "debug_toolbar",
     "gunicorn",
+    "pb_model",
 
     # Your local apps (ordered by dependency)
     "core.apps.CoreConfig",  # Core logic, should be initialized early

@@ -3,8 +3,39 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from pb_model.models import ProtoBufMixin
 
-# Import generated protobuf modules
-from . import chatbot_pb2
+# Import generated protobuf modules with improved error handling
+try:
+    from . import chatbot_pb2
+except ImportError:
+    import logging
+    import os
+    logger = logging.getLogger(__name__)
+
+    # Check if the proto file exists
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    proto_file = os.path.join(current_dir, 'data', 'chatbot.proto')
+
+    if os.path.exists(proto_file):
+        logger.error("Protocol buffer file exists but Python module not generated.")
+        logger.error("Please run 'python manage.py shell' and then run:")
+        logger.error("from chatbot.compile_proto import compile_proto; compile_proto()")
+    else:
+        logger.error("Failed to import chatbot_pb2. Protocol buffer definition missing.")
+        logger.error("Please ensure chatbot.proto exists in the data directory.")
+
+    # Create a minimal stub for the module to allow Django to continue loading
+    import sys
+    from types import ModuleType
+    chatbot_pb2 = ModuleType('chatbot_pb2')
+    sys.modules['chatbot.chatbot_pb2'] = chatbot_pb2
+
+    # Set minimal attributes needed by the models
+    class DummyMessage:
+        pass
+    chatbot_pb2.Conversation = DummyMessage
+    chatbot_pb2.ChatMessage = DummyMessage
+    chatbot_pb2.PredefinedResponse = DummyMessage
+    chatbot_pb2.TrainingData = DummyMessage
 
 User = get_user_model()
 
