@@ -11,7 +11,7 @@ another site.
 CORS is a mechanism that allows servers to specify who can access their
 resources and what operations are permitted.
 
-## About django-cors-headers
+## Django CORS Headers
 
 [django-cors-headers](https://pypi.org/project/django-cors-headers/) is a
 Django application that adds Cross-Origin Resource Sharing (CORS) headers to
