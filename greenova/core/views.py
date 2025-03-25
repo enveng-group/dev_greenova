@@ -1,29 +1,29 @@
-"""Core views for the Greenova application."""
-import logging
 from typing import Any, Dict
-
+from django.views.generic import TemplateView
 from django.http import HttpRequest, HttpResponse
-from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import TemplateView
-from django_htmx.http import push_url
+from django.utils.decorators import method_decorator
+from django_htmx.http import (
+    trigger_client_event,
+    push_url,
+    HttpResponseClientRedirect
+)
+from django.conf import settings
+import logging
 
 logger = logging.getLogger(__name__)
 
-
 @method_decorator(cache_control(max_age=300), name='dispatch')
-@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
+@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
 class HomeView(TemplateView):
     """Landing page view."""
-
     template_name = 'landing/index.html'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests."""
         logger.debug(
-            f'Landing page access - User authenticated: {request.user.is_authenticated}'
-        )
+            f"Landing page access - User authenticated: {request.user.is_authenticated}")
 
         response = super().get(request, *args, **kwargs)
 

@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     "allauth.mfa",
 
     # Other third-party libraries
+    "corsheaders",
     "django_htmx",
     "django_hyperscript",
     "django_matplotlib",
@@ -172,6 +173,7 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 }
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -298,13 +300,16 @@ APP_VERSION = "0.0.4"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Disable security features for development
-SECURE_BROWSER_XSS_FILTER = False
-SECURE_CONTENT_TYPE_NOSNIFF = False
-X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow frames for development tools
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+# SECURE_BROWSER_XSS_FILTER = False
+# SECURE_CONTENT_TYPE_NOSNIFF = False
+# X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow frames for development tools
+# CSRF_COOKIE_SECURE = False
+# SESSION_COOKIE_SECURE = False
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Simplify cache to basic memory cache
 CACHES = {
