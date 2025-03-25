@@ -154,37 +154,6 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             logger.error(f"Error fetching projects: {str(e)}")
             return Project.objects.none()
 
-    @classmethod
-    @method_decorator(cache_control(max_age=30))
-    def overdue_count(cls, request):
-        """
-        Returns the count of overdue obligations as plain text for HTMX to swap into the page.
-        This endpoint is designed to be called via hx-get and refreshed periodically.
-        """
-        try:
-            count = Obligation.objects.filter(
-                recurring_status='overdue'
-            ).count()
-
-            if request.htmx:
-                response = render(
-                    request,
-                    "dashboard/partials/overdue_count.html",
-                    {"count": count}
-                )
-            else:
-                response = HttpResponse(str(count))
-
-            # When the count is over a threshold, highlight it by triggering a CSS change
-            if count > 5:
-                trigger_client_event(response, 'highOverdueCount', params={'count': count})
-
-            return response
-
-        except Exception as e:
-            logger.error(f"Error counting overdue items: {str(e)}")
-            return HttpResponse("0")
-
 class DashboardProfileView(TemplateView):
     """Profile view."""
     template_name = 'dashboard/profile.html'
