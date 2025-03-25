@@ -21,6 +21,9 @@
     },
     "ghcr.io/devcontainers-extra/features/shfmt:1": {
       "version": "latest"
+    },
+    "ghcr.io/r3dpoint/devcontainer-features/tailwindcss-standalone-cli:1": {
+      "version": "latest"
     }
   },
   "mounts": [
@@ -60,7 +63,8 @@
         "ms-python.mypy-type-checker",
         "DavidAnson.vscode-markdownlint",
         "zxh404.vscode-proto3",
-        "Plex.vscode-protolint"
+        "Plex.vscode-protolint",
+        "bradlc.vscode-tailwindcss"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -70,7 +74,7 @@
         "[python]": {
           "editor.formatOnSave": true,
           "editor.defaultFormatter": "ms-python.autopep8",
-          "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
+          "python.analysis.nodeExecutable": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
           "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
           "python.envFile": "${containerWorkspaceFolder}/.env",
           "python.analysis.extraPaths": [
@@ -166,7 +170,10 @@
           ".pylintrc-django": "ini",
           ".pylintrc": "ini"
         },
-        "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk"
+        "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk",
+        "snyk.trustedFolders": [
+          "${containerWorkspaceFolder}"
+        ]
       }
     }
   },

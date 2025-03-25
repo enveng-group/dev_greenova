@@ -393,8 +393,8 @@
   "eslint.debug": true,
   "eslint.ignoreUntitled": true,
   "eslint.nodeEnv": "development",
-  "eslint.nodePath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
-  "eslint.runtime": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
+  "eslint.nodePath": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
+  "eslint.runtime": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
   "eslint.useESLintClass": true,
   "eslint.workingDirectories": ["./greenova"],
   "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
@@ -516,5 +516,12 @@
       "path": "/usr/local/bin/protolint"
     }
   },
-  "protolint.path": "/usr/local/bin/protolint"
+  "protolint.path": "/usr/local/bin/protolint",
+  "tailwindCSS.codeActions": true,
+  "tailwindCSS.codeLens": true,
+  "tailwindCSS.includeLanguages": {
+    "django-html": "html"
+  },
+  "tailwindCSS.suggestions": true,
+  "tailwindCSS.validate": true
 }
