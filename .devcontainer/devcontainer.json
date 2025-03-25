@@ -15,6 +15,12 @@
     },
     "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
       "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/protoc:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/shfmt:1": {
+      "version": "latest"
     }
   },
   "mounts": [
@@ -52,7 +58,9 @@
         "foxundermoon.shell-format",
         "tamasfe.even-better-toml",
         "ms-python.mypy-type-checker",
-        "DavidAnson.vscode-markdownlint"
+        "DavidAnson.vscode-markdownlint",
+        "zxh404.vscode-proto3",
+        "Plex.vscode-protolint"
       ],
       "settings": {
         "editor.formatOnSave": true,

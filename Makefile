@@ -1,4 +1,4 @@
-.PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-update_recurring-inspection-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint
+.PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev compile-proto check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-update_recurring-inspection-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint
 
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
@@ -98,10 +98,6 @@ tailwind-install:
 
 #Create database migrations
 migrations:
-	$(CD_CMD) python3 manage.py makemigrations company
-	$(CD_CMD) python3 manage.py makemigrations projects
-	$(CD_CMD) python3 manage.py makemigrations mechanisms
-	$(CD_CMD) python3 manage.py makemigrations obligations
 	$(CD_CMD) python3 manage.py makemigrations
 
 #Apply database migrations
@@ -118,11 +114,11 @@ user:
 
 #Import data from CSV file
 import:
-	$(CD_CMD) python3 manage.py import_obligations clean_output_with_nulls.csv
+	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --no-transaction
 
 #Update data from CSV file
 update:
-	$(CD_CMD) python3 manage.py import_obligations clean_output_with_nulls.csv --force-update
+	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --force-update
 
 #synchronize mechanisms
 sync:
@@ -139,6 +135,10 @@ normalize-frequencies:
 #Clean CSV file
 clean-csv:
 	$(CD_CMD) python3 manage.py clean_csv_to_import dirty.csv
+
+# Compile proto file
+compile-proto:
+	$(CD_CMD) python3 manage.py compile_proto
 
 #Run production server
 prod:
@@ -215,6 +215,7 @@ help:
 	@echo "  make user         - Create superuser"
 	@echo "  make db           - Run both migrations and migrate"
 	@echo "  make static       - Collect static files (with --clear)"
+	@echo "  make compile-proto - Compile proto file"
 	@echo "  make migrate      - Apply migrations"
 	@echo "  make migrations   - Create new migrations"
 	@echo "  make run          - Start development server"
