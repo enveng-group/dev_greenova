@@ -55,62 +55,8 @@
             <li class="menubar-breadcrumbs">
               {% breadcrumb_navigation %}
             </li>
-
-            <!-- RIGHT ALIGNED: Additional auth actions -->
-            <li class="auth-actions">
-              {% if not user.is_authenticated %}
-                <!-- UNAUTHENTICATED: Login links -->
-                <div class="unauthenticated-actions">
-                  <a href="{% url 'account_signup' %}"
-                     role="menuitem"
-                     aria-label="Register"
-                     _="on load if location.pathname is '{% url 'account_signup' %}' then hide me">
-                    Register
-                  </a>
-                  <a href="{% url 'account_login' %}"
-                     role="menuitem"
-                     aria-label="Login"
-                     _="on load if location.pathname is '{% url 'account_login' %}' then hide me">
-                    Login
-                  </a>
-                  <a href="{% url 'admin:index' %}"
-                    role="menuitem"
-                    aria-label="Admin"
-                    _="on load if location.pathname.startsWith('/admin/') then hide me">
-                    Admin
-                  </a>
-                </div>
-              {% endif %}
-            </li>
           </ul>
         </nav>
-
-        <!-- RIGHT ALIGNED: Authentication links -->
-        <div class="auth-status-container">
-          <!-- Load authenticated user menu -->
-          {% auth_menu %}
-        </div>
-      </nav>
-    </header>
-
-    <!-- Load Chatbot element -->
-    {% load chatbot_tags %}
-    {% chat_widget %}
-
-    <!-- Main content -->
-    <main id="main-content" role="main">
-      {% block body %}
-
-
-        <!-- MAIN CONTENT AREA -->
-        <div class="page-content">
-          {% block content %}
-          {% endblock content %}
-        </div>
-      {% endblock body %}
-      {% block extra_body %}
-      {% endblock extra_body %}
-    </main>
 
     <!-- FOOTER: Full-width at bottom of page -->
     {% block footer %}

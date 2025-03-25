@@ -246,7 +246,7 @@ def company_delete(request: HttpRequest, company_id: int) -> HttpResponse:
             )
             # We could check membership.role here if needed
         except CompanyMembership.DoesNotExist:
-            messages.error(request, 'Only the owner can delete this company.')
+            messages.error(request, "Only the owner can delete this company.")
             return redirect('company:detail', company_id=company.id)
 
     if request.method == 'POST':
@@ -311,7 +311,7 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
 
 
 @login_required
-@require_http_methods(['POST'])
+@require_http_methods(["POST"])
 def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for adding a member to a company."""
     company = get_object_or_404(Company, id=company_id)
@@ -375,7 +375,7 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
 
 
 @login_required
-@require_http_methods(['POST'])
+@require_http_methods(["POST"])
 def remove_member(request: HttpRequest, company_id: int, member_id: int) -> HttpResponse:
     """View for removing a member from a company."""
     company = get_object_or_404(Company, id=company_id)

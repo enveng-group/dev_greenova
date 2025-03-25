@@ -1,6 +1,6 @@
-import logging
 import os
 import subprocess
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -19,21 +19,21 @@ def compile_proto():
         # Check if proto directory exists
         if not os.path.exists(proto_dir):
             os.makedirs(proto_dir)
-            logger.info(f'Created proto directory at {proto_dir}')
-            logger.warning('No .proto files found. Please add your proto files to the proto directory.')
+            logger.info(f"Created proto directory at {proto_dir}")
+            logger.warning("No .proto files found. Please add your proto files to the proto directory.")
             return
 
         # Find all .proto files
         proto_files = [f for f in os.listdir(proto_dir) if f.endswith('.proto')]
 
         if not proto_files:
-            logger.warning('No .proto files found in proto directory.')
+            logger.warning("No .proto files found in proto directory.")
             return
 
         # Compile each .proto file
         for proto_file in proto_files:
             proto_path = os.path.join(proto_dir, proto_file)
-            logger.info(f'Compiling {proto_file}...')
+            logger.info(f"Compiling {proto_file}...")
 
             # Run protoc compiler
             result = subprocess.run(
@@ -48,17 +48,17 @@ def compile_proto():
             )
 
             if result.returncode == 0:
-                logger.info(f'Successfully compiled {proto_file}')
+                logger.info(f"Successfully compiled {proto_file}")
             else:
-                logger.error(f'Failed to compile {proto_file}: {result.stderr}')
+                logger.error(f"Failed to compile {proto_file}: {result.stderr}")
 
-        logger.info('Protocol buffer compilation complete')
+        logger.info("Protocol buffer compilation complete")
 
     except Exception as e:
-        logger.error(f'Error compiling protocol buffers: {str(e)}')
+        logger.error(f"Error compiling protocol buffers: {str(e)}")
         raise
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Set up logging when run directly
     logging.basicConfig(level=logging.INFO)
     compile_proto()

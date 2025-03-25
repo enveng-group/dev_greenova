@@ -1,304 +1,241 @@
 {
+  "version": "2.0.0",
   "tasks": [
     {
-      "args": [
-        "--in-place",
-        "${file}"
-      ],
-      "command": "autopep8",
-      "group": "none",
       "label": "Python: Format with autopep8",
+      "type": "shell",
+      "command": "autopep8",
+      "args": ["--in-place", "${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
     {
-      "args": [
-        "${file}"
-      ],
-      "command": "isort",
-      "group": "none",
       "label": "Python: Sort imports with isort",
+      "type": "shell",
+      "command": "isort",
+      "args": ["${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
     {
-      "args": [
-        "${file}"
-      ],
-      "command": "pylint",
-      "group": "none",
       "label": "Python: Lint with pylint",
+      "type": "shell",
+      "command": "pylint",
+      "args": ["${file}"],
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
-          "column": 3,
-          "file": 1,
-          "line": 2,
-          "message": 5,
           "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
-          "severity": 4
-        }
-      },
-      "type": "shell"
-    },
-    {
-      "args": [
-        "${file}"
-      ],
-      "command": "mypy",
-      "group": "none",
-      "label": "Python: Type check with mypy",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
-        "owner": "python",
-        "pattern": {
           "file": 1,
           "line": 2,
-          "message": 4,
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "severity": 3
+          "column": 3,
+          "severity": 4,
+          "message": 5
         }
       },
-      "type": "shell"
+      "group": "none"
     },
     {
+      "label": "Python: Type check with mypy",
+      "type": "shell",
+      "command": "mypy",
+      "args": ["${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      },
+      "group": "none"
+    },
+    {
+      "label": "Python: Type check with mypy (standard)",
+      "type": "shell",
+      "command": "mypy",
       "args": [
         "--ignore-missing-imports",
         "--disallow-untyped-defs",
         "--no-implicit-optional",
         "${file}"
       ],
-      "command": "mypy",
-      "group": "none",
-      "label": "Python: Type check with mypy (standard)",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
+          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
           "file": 1,
           "line": 2,
-          "message": 4,
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "severity": 3
+          "severity": 3,
+          "message": 4
         }
       },
-      "type": "shell"
+      "group": "none"
     },
     {
-      "args": [
-        "--config-file",
-        "${workspaceFolder}/mypy.ini",
-        "${file}"
-      ],
-      "command": "mypy",
-      "group": "none",
       "label": "Python: Type check with mypy (Django)",
+      "type": "shell",
+      "command": "mypy",
+      "args": ["--config-file", "${workspaceFolder}/mypy.ini", "${file}"],
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
+          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
           "file": 1,
           "line": 2,
-          "message": 4,
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "severity": 3
+          "severity": 3,
+          "message": 4
         }
       },
-      "type": "shell"
+      "group": "none"
     },
     {
-      "args": [
-        "-r",
-        "${file}"
-      ],
-      "command": "bandit",
-      "group": "none",
       "label": "Python: Security check with bandit",
+      "type": "shell",
+      "command": "bandit",
+      "args": ["-r", "${file}"],
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
     {
+      "label": "Python: Fix all",
+      "dependsOrder": "sequence",
       "dependsOn": [
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint",
         "Python: Type check with mypy (standard)"
       ],
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": "none"
     },
     {
-      "args": [
-        "--rcfile=${workspaceFolder}/.pylintrc",
-        "${file}"
-      ],
-      "command": "pylint",
-      "group": "none",
       "label": "Python: Lint with pylint (standard)",
+      "type": "shell",
+      "command": "pylint",
+      "args": ["--rcfile=${workspaceFolder}/.pylintrc", "${file}"],
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
-          "column": 3,
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
           "file": 1,
           "line": 2,
-          "message": 5,
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
-          "severity": 4
+          "column": 3,
+          "severity": 4,
+          "message": 5
         }
       },
-      "type": "shell"
+      "group": "none"
     },
     {
+      "label": "Python: Lint with pylint (Django)",
+      "type": "shell",
+      "command": "pylint",
       "args": [
         "--rcfile=${workspaceFolder}/.pylintrc-django",
         "--load-plugins=pylint_django",
         "--django-settings-module=greenova.settings",
         "${file}"
       ],
-      "command": "pylint",
-      "group": "none",
-      "label": "Python: Lint with pylint (Django)",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
-          "column": 3,
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
           "file": 1,
           "line": 2,
-          "message": 5,
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
-          "severity": 4
+          "column": 3,
+          "severity": 4,
+          "message": 5
         }
       },
-      "type": "shell"
+      "group": "none"
     },
     {
+      "label": "Python: Fix all (standard)",
+      "dependsOrder": "sequence",
       "dependsOn": [
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint (standard)",
         "Python: Type check with mypy (standard)"
       ],
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (standard)",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": "none"
     },
     {
+      "label": "Python: Fix all (Django)",
       "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (standard)",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (standard)",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (standard)",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
       "dependsOn": [
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint (Django)",
         "Python: Type check with mypy (Django)"
       ],
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (Django)",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": "none"
     },
     {
+      "label": "Python: Type check with mypy (config files)",
+      "type": "shell",
+      "command": "mypy",
       "args": [
         "--no-config",
         "--ignore-missing-imports",
@@ -306,362 +243,311 @@
         "--no-implicit-optional",
         "${file}"
       ],
-      "command": "mypy",
-      "group": "none",
-      "label": "Python: Type check with mypy (config files)",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
+          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
           "file": 1,
           "line": 2,
-          "message": 4,
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "severity": 3
+          "severity": 3,
+          "message": 4
         }
       },
-      "type": "shell"
+      "group": "none"
     },
+
     {
-      "args": [
-        "${file}",
-        "--reformat"
-      ],
-      "command": "djlint",
-      "group": "none",
       "label": "HTML: Format with djlint",
+      "type": "shell",
+      "command": "djlint",
+      "args": ["${file}", "--reformat"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
     {
-      "args": [
-        "${file}"
-      ],
-      "command": "djlint",
-      "group": "none",
       "label": "HTML: Lint with djlint",
+      "type": "shell",
+      "command": "djlint",
+      "args": ["${file}"],
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "djlint",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
-          "column": 3,
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(\\w+)\\s+(.+)$",
           "file": 1,
           "line": 2,
-          "message": 5,
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(\\w+)\\s+(.+)$",
-          "severity": 4
+          "column": 3,
+          "severity": 4,
+          "message": 5
         }
       },
-      "type": "shell"
+      "group": "none"
     },
+
     {
-      "args": [
-        "prettier",
-        "--write",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "JavaScript: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
     {
-      "args": [
-        "eslint",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "JavaScript: Lint with eslint",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [
-        "$eslint-stylish"
-      ],
-      "type": "shell"
-    },
-    {
-      "args": [
-        "eslint",
-        "--fix",
-        "${file}"
-      ],
+      "type": "shell",
       "command": "npx",
-      "group": "none",
-      "label": "JavaScript: Fix eslint issues",
+      "args": ["eslint", "${file}"],
       "presentation": {
-        "clear": true,
-        "panel": "shared",
-        "reveal": "silent"
+        "reveal": "always",
+        "panel": "shared"
       },
-      "problemMatcher": [
-        "$eslint-stylish"
-      ],
-      "type": "shell"
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "none"
     },
     {
+      "label": "JavaScript: Fix eslint issues",
+      "type": "shell",
+      "command": "npx",
+      "args": ["eslint", "--fix", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "none"
+    },
+    {
+      "label": "JavaScript: Fix all",
+      "dependsOrder": "sequence",
       "dependsOn": [
         "JavaScript: Format with prettier",
         "JavaScript: Fix eslint issues"
       ],
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "JavaScript: Fix all",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": "none"
     },
+
     {
-      "args": [
-        "prettier",
-        "--write",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "CSS: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
+
     {
-      "args": [
-        "prettier",
-        "--write",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "JSON: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
+
     {
-      "args": [
-        "prettier",
-        "--config",
-        "${workspaceFolder}/.prettierrc",
-        "--write",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "YAML: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
+
     {
-      "args": [
-        "prettier",
-        "--write",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "TOML: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
+
     {
-      "args": [
-        "prettier",
-        "--write",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "Markdown: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
       "presentation": {
-        "clear": true,
+        "reveal": "silent",
         "panel": "shared",
-        "reveal": "silent"
+        "clear": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
     {
-      "args": [
-        "markdownlint",
-        "${file}"
-      ],
-      "command": "npx",
-      "group": "none",
       "label": "Markdown: Lint with markdownlint",
+      "type": "shell",
+      "command": "npx",
+      "args": ["markdownlint", "${file}"],
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "markdownlint",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
-          "column": 3,
+          "regexp": "^(.+?):(\\d+)(?::(\\d+))? (.+)$",
           "file": 1,
           "line": 2,
-          "message": 4,
-          "regexp": "^(.+?):(\\d+)(?::(\\d+))? (.+)$"
+          "column": 3,
+          "message": 4
         }
       },
-      "type": "shell"
+      "group": "none"
     },
     {
+      "label": "Markdown: Fix all",
+      "dependsOrder": "sequence",
       "dependsOn": [
         "Markdown: Format with prettier",
         "Markdown: Lint with markdownlint"
       ],
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Markdown: Fix all",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": "none"
     },
+
     {
-      "args": [
-        "${file}"
-      ],
-      "command": "shellcheck",
-      "group": "none",
       "label": "Shell: Check with shellcheck",
+      "type": "shell",
+      "command": "shellcheck",
+      "args": ["${file}"],
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
         "owner": "shellcheck",
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "pattern": {
-          "column": 3,
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(note|warning|error|style):\\s+(.*)$",
           "file": 1,
           "line": 2,
-          "message": 5,
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(note|warning|error|style):\\s+(.*)$",
-          "severity": 4
+          "column": 3,
+          "severity": 4,
+          "message": 5
         }
       },
-      "type": "shell"
+      "group": "none"
     },
+
     {
-      "command": "${command:workbench.action.terminal.clear}",
-      "group": {
-        "isDefault": true,
-        "kind": "build"
-      },
       "label": "Format current file",
+      "type": "shell",
+      "command": "${command:workbench.action.terminal.clear}",
+      "windows": {
+        "command": "cls"
+      },
       "linux": {
         "command": "clear"
       },
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": [],
-      "type": "shell",
-      "windows": {
-        "command": "cls"
+      "group": {
+        "kind": "build",
+        "isDefault": true
       }
     },
+
     {
+      "label": "Auto-detect and format file",
+      "type": "shell",
+      "command": "bash",
       "args": [
         "-c",
         "if [[ \"${file}\" == *.py ]]; then autopep8 --in-place \"${file}\" && isort \"${file}\"; elif [[ \"${file}\" == *.html ]]; then djlint \"${file}\" --reformat; elif [[ \"${file}\" == *.js || \"${file}\" == *.css || \"${file}\" == *.json || \"${file}\" == *.md || \"${file}\" == *.yaml || \"${file}\" == *.yml || \"${file}\" == *.toml ]]; then npx prettier --write \"${file}\"; elif [[ \"${file}\" == *.sh ]]; then echo \"Shell files can't be formatted automatically, running shellcheck...\"; shellcheck \"${file}\"; fi"
       ],
-      "command": "bash",
-      "group": "none",
-      "label": "Auto-detect and format file",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
+
     {
+      "label": "Auto-detect and lint file",
+      "type": "shell",
+      "command": "bash",
       "args": [
         "-c",
         "if [[ \"${file}\" == */greenova/*.py ]]; then pylint --rcfile=${workspaceFolder}/.pylintrc-django --load-plugins=pylint_django --django-settings-module=greenova.settings \"${file}\"; elif [[ \"${file}\" == *.py ]]; then pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\"; elif [[ \"${file}\" == *.html ]]; then djlint \"${file}\"; elif [[ \"${file}\" == *.js ]]; then npx eslint \"${file}\"; elif [[ \"${file}\" == *.md ]]; then npx markdownlint \"${file}\"; elif [[ \"${file}\" == *.sh ]]; then shellcheck \"${file}\"; fi"
       ],
-      "command": "bash",
-      "group": "none",
-      "label": "Auto-detect and lint file",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     },
+
     {
+      "label": "Auto-detect and fix all issues",
+      "type": "shell",
+      "command": "bash",
       "args": [
         "-c",
         "if [[ \"${file}\" == */greenova/*.py ]]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc-django --load-plugins=pylint_django --django-settings-module=greenova.settings \"${file}\" && mypy --config-file ${workspaceFolder}/mypy.ini \"${file}\"; elif [[ \"${file}\" == */setup.py || \"${file}\" == */pyproject.toml || \"${file}\" == */.pylintrc* ]]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\" && mypy --no-config --ignore-missing-imports \"${file}\"; elif [[ \"${file}\" == *.py ]]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\" && mypy --ignore-missing-imports --disallow-untyped-defs \"${file}\"; elif [[ \"${file}\" == *.html ]]; then djlint \"${file}\" --reformat; elif [[ \"${file}\" == *.js ]]; then npx prettier --write \"${file}\" && npx eslint --fix \"${file}\"; elif [[ \"${file}\" == *.md ]]; then npx prettier --write \"${file}\" && npx markdownlint \"${file}\"; elif [[ \"${file}\" == *.css || \"${file}\" == *.json || \"${file}\" == *.yaml || \"${file}\" == *.yml || \"${file}\" == *.toml ]]; then npx prettier --write \"${file}\"; elif [[ \"${file}\" == *.sh ]]; then shellcheck \"${file}\"; fi"
       ],
-      "command": "bash",
-      "group": "none",
-      "label": "Auto-detect and fix all issues",
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": [],
-      "type": "shell"
+      "group": "none"
     }
-  ],
-  "version": "2.0.0"
+  ]
 }

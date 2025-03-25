@@ -93,7 +93,6 @@ company
      </a>
      <div id="obligation-list"></div>
      ```
-     
 8. **Leverage CSS Frameworks and Libraries Effectively**
    - **Context**: The project uses PicoCSS, but there may be opportunities to leverage more of its features or integrate additional frameworks like Tailwind CSS to enhance styling.
    - **Implementation**:
@@ -355,7 +354,6 @@ Replacing `app.js` with a combination of TypeScript and AssemblyScript can enhan
          const add = module.instance.exports.add as (a: number, b: number) => number;
          console.log(add(2, 3)); // Output: 5
        }
-       
        loadWasm();
        ```
 
@@ -487,3 +485,6 @@ github copilot prompts
 proper direnv setup
 proper gh-cli setup
 better use of git-crypt and git-lfs
+add `npx dotenv-vault@latest pull` to `post_create.sh` in `.devcontainer/` directory
+MOdularise base.html
+combine and collate numerous commmands into makefile to automate the setup development environment process

@@ -1,17 +1,17 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.utils.html import escape
+
+from .models import Conversation, ChatMessage
+from .services import ChatbotService
+from .forms import ConversationForm
+
 import json
 import logging
-
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.html import escape
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
-
-from .forms import ConversationForm
-from .models import ChatMessage, Conversation
-from .services import ChatbotService
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ def create_conversation(request):
             # Add initial bot greeting
             ChatbotService.add_message(
                 conversation_id=conversation.id,
-                content='Hello! How can I help you today?',
+                content="Hello! How can I help you today?",
                 is_bot=True
             )
 
@@ -105,7 +105,7 @@ def send_message(request, conversation_id):
             }
         })
     except Exception as e:
-        logger.error(f'Error processing message: {str(e)}')
+        logger.error(f"Error processing message: {str(e)}")
         return JsonResponse({'error': 'Failed to process message'}, status=500)
 
 @login_required

@@ -1,16 +1,14 @@
 {
   "[css]": {
-    "editor.defaultFormatter": "vscode.css-language-features",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "editor.suggest.insertMode": "replace",
     "editor.tabSize": 2,
     "editor.insertSpaces": true
   },
   "[git-commit]": {
-    "editor.rulers": [
-      72,
-      50
-    ],
+    "editor.defaultFormatter": "vscode.git",
+    "editor.rulers": [72, 50],
     "editor.wordWrap": "on",
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
@@ -18,10 +16,16 @@
   },
   "[django-html]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "vscode.html-language-features",
+    "editor.defaultFormatter": "monosans.djlint",
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.suggest.insertMode": "replace"
+  },
+  "[proto3]": {
+    "editor.defaultFormatter": "zxh404.vscode-proto3",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
   },
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
@@ -32,15 +36,32 @@
       "source.fixAll.eslint": "explicit"
     }
   },
+  "[dockerfile]": {
+    "editor.quickSuggestions": {
+      "strings": true
+    }
+  },
+  "[shellcheckrc]": {
+    "editor.defaultFormatter": "timonwong.shellcheck",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
   "[json]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[editorconfig]": {
+    "editor.defaultFormatter": "EditorConfig.EditorConfig",
+    "editor.formatOnSave": true,
     "editor.tabSize": 2,
     "editor.insertSpaces": true
   },
   "[markdown]": {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "vscode.markdown-language-features",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.wordWrap": "on",
     "editor.quickSuggestions": {
       "comments": "off",
@@ -72,10 +93,7 @@
       "source.organizeImports": "explicit",
       "source.fixAll": "explicit"
     },
-    "editor.rulers": [
-      88,
-      100
-    ],
+    "editor.rulers": [88, 100],
     "editor.wordBasedSuggestions": "off"
   },
   "[shellscript]": {
@@ -88,6 +106,20 @@
     "editor.formatOnSave": true,
     "editor.tabSize": 4,
     "editor.insertSpaces": true
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "dotenv.dotenv-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[makefile]": {
+    "editor.defaultFormatter": "ms-vscode.makefile-tools",
+    "editor.insertSpaces": false
   },
   "autopep8.args": [
     "--max-line-length=88",
@@ -105,19 +137,10 @@
   "editor.formatOnType": true,
   "editor.linkedEditing": true,
   "editor.renderWhitespace": "boundary",
-  "editor.rulers": [
-    79,
-    88,
-    100
-  ],
+  "editor.rulers": [79, 88, 100],
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 500,
-  "files.watcherInclude": [
-    "**/*.py",
-    "**/*.html",
-    "**/*.css",
-    "**/*.js"
-  ],
+  "files.watcherInclude": ["**/*.py", "**/*.html", "**/*.css", "**/*.js"],
   "extensions.ignoreRecommendations": true,
   "python.analysis.diagnosticMode": "workspace",
   "python.analysis.indexing": true,
@@ -149,9 +172,7 @@
   "debug.toolBarLocation": "docked",
   "debugpy.debugJustMyCode": false,
   "editor.stickyScroll.enabled": true,
-  "eslint.validate": [
-    "javascript"
-  ],
+  "eslint.validate": ["javascript"],
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
   "python.analysis.aiCodeActions": {
@@ -190,9 +211,7 @@
   "javascript.validate.enable": true,
   "eslint.enable": true,
   "eslint.lintTask.options": "/workspaces/greenova/.eslintrc.js",
-  "eslint.probe": [
-    "javascript"
-  ],
+  "eslint.probe": ["javascript"],
   "json.validate.enable": true,
   "django.snippets.use": true,
   "eslint.run": "onSave",
@@ -224,13 +243,7 @@
   "python.analysis.inlayHints.functionReturnTypes": false,
   "python.analysis.inlayHints.variableTypes": false,
   "python.testing.unittestEnabled": true,
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    "./greenova",
-    "-p",
-    "*test*.py"
-  ],
+  "python.testing.unittestArgs": ["-v", "-s", "./greenova", "-p", "*test*.py"],
   "python.testing.pytestEnabled": false,
   "github.gitProtocol": "ssh",
   "python.analysis.autoFormatStrings": true,
@@ -272,9 +285,7 @@
     "**/node_modules",
     "**/.vscode-server"
   ],
-  "mypy-type-checker.interpreter": [
-    "${workspaceFolder}/.venv/bin/python"
-  ],
+  "mypy-type-checker.interpreter": ["${workspaceFolder}/.venv/bin/python"],
   "mypy-type-checker.path": [
     "${workspaceFolder}/.venv/lib/python3.9/site-packages"
   ],
@@ -326,5 +337,184 @@
   "githubIssues.userCompletions.enabled": true,
   "githubIssues.issueCompletions.enabled": true,
   "editor.suggest.showIssues": true,
-  "terminal.integrated.shellIntegration.enabled": true
+  "terminal.integrated.shellIntegration.enabled": true,
+  "dotenv.enableAutocloaking": true,
+  "dotenv.enableSecretpeeking": true,
+  "chat.detectParticipant.enabled": true,
+  "chat.renderRelatedFiles": true,
+  "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
+  "djlint.configuration": "/workspaces/greenova/pyproject.toml",
+  "djlint.closeVoidTags": true,
+  "djlint.enableLinting": true,
+  "djlint.formatAttributeTemplateTags": true,
+  "djlint.formatCss": false,
+  "djlint.formatJs": false,
+  "djlint.formatLanguages": ["django-html", "html"],
+  "djlint.profile": "django",
+  "djlint.pythonPath": "${workspaceFolder}/.venv/bin/python3.9",
+  "djlint.showInstallError": true,
+  "djlint.useGitignore": true,
+  "djlint.useNewLinterOutputParser": true,
+  "djlint.useVenv": true,
+  "isort.check": true,
+  "isort.importStrategy": "fromEnvironment",
+  "isort.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "isort.path": ["${workspaceFolder}/.venv/lib/python3.9/site-packages/isort"],
+  "jupyter.interactiveWindow.textEditor.executeSelection": true,
+  "jupyter.jupyterLaunchTimeout": 60000,
+  "jupyter.themeMatplotlibPlots": true,
+  "pylint.enabled": true,
+  "pylint.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "python.defaultInterpreterPath": "python3.9",
+  "pylint.path": [
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/pylint"
+  ],
+  "shellcheck.disableVersionCheck": true,
+  "shellcheck.enable": true,
+  "shellcheck.enableQuickFix": true,
+  "shellcheck.executablePath": "shellcheck",
+  "shellcheck.run": "onType",
+  "makefile.makefilePath": "${workspaceFolder}/Makefile",
+  "makefile.makePath": "make",
+  "problems.defaultViewMode": "table",
+  "problems.decorations.enabled": true,
+  "problems.showCurrentInStatus": true,
+  "problems.sortOrder": "severity",
+  "problems.visibility": true,
+  "autopep8.importStrategy": "fromEnvironment",
+  "autopep8.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "autopep8.path": [
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/autopep8"
+  ],
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.debug": true,
+  "eslint.ignoreUntitled": true,
+  "eslint.nodeEnv": "development",
+  "eslint.nodePath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
+  "eslint.runtime": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
+  "eslint.useESLintClass": true,
+  "eslint.workingDirectories": ["./greenova"],
+  "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
+  "github.copilot.chat.languageContext.typescript.enabled": true,
+  "github.copilot.chat.completionContext.typescript.mode": "on",
+  "github.copilot.chat.newWorkspaceCreation.enabled": true,
+  "github.copilot.chat.useProjectTemplates": true,
+  "github.copilot.chat.search.semanticTextResults": true,
+  "python.analysis.fixAll": [
+    "source.unusedImports",
+    "source.convertImportFormat"
+  ],
+  "python.analysis.ignore": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.venv",
+    "**/node_modules",
+    "**/.vscode-server",
+    "**/.github",
+    "**/.git",
+    "**/.devcontainer",
+    "**/docs"
+  ],
+  "python.analysis.persistAllIndices": true,
+  "python.analysis.regenerateStdLibIndices": true,
+  "python.analysis.supportRestructuredText": true,
+  "python.analysis.typeshedPaths": [
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs-ext"
+  ],
+  "python.createEnvironment.contentButton": "show",
+  "python.createEnvironment.trigger": "prompt",
+  "python.REPL.enableREPLSmartSend": true,
+  "python.REPL.sendToNativeREPL": true,
+  "python.terminal.executeInFileDir": true,
+  "python.terminal.focusAfterLaunch": true,
+  "debugpy.showPythonInlineValues": true,
+  "debug.showVariableTypes": true,
+  "debug.autoExpandLazyVariables": "auto",
+  "debug.allowBreakpointsEverywhere": true,
+  "shellformat.effectLanguages": [
+    "shellscript",
+    "dockerfile",
+    "dotenv",
+    "hosts",
+    "ignore",
+    "gitignore",
+    "properties"
+  ],
+  "shellformat.path": "/usr/local/bin/shfmt",
+  "shellformat.useEditorConfig": true,
+  "editorconfig.generateAuto": true,
+  "editorconfig.showMenuEntry": true,
+  "prettier.useEditorConfig": true,
+  "django.i18n": true,
+  "evenBetterToml.taplo.bundled": true,
+  "githubPullRequests.createDefaultBaseBranch": "auto",
+  "githubPullRequests.defaultCommentType": "review",
+  "githubPullRequests.defaultCreateOption": "create",
+  "githubPullRequests.postCreate": "checkoutDefaultBranch",
+  "githubPullRequests.pushBranch": "always",
+  "githubPullRequests.quickDiff": true,
+  "githubPullRequests.showPullRequestNumberInTree": true,
+  "githubPullRequests.upstreamRemote": "add",
+  "dotenv.cloakColor": "#000000",
+  "dotenv.cloakIcon": "█",
+  "mypy-type-checker.args": [
+    "--configuration",
+    "/workspaces/greenova/mypy.ini"
+  ],
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "mypy-type-checker.preferDaemon": true,
+  "jupyter.askForKernelRestart": true,
+  "jupyter.exportWithOutputEnabled": true,
+  "pylint.importStrategy": "fromEnvironment",
+  "snyk.features.codeQuality": true,
+  "snyk.features.codeSecurity": true,
+  "snyk.features.openSourceSecurity": true,
+  "snyk.features.infrastructureAsCode": true,
+  "snyk.scanningMode": "auto",
+  "snyk.trustedFolders": ["./greenova", "/home/vscode/dotfiles"],
+  "MS-CST-E.vscode-devskim.ignores.ignoreFiles": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.venv",
+    "**/node_modules",
+    "**/.vscode-server",
+    "**/.github",
+    "**/.git",
+    "**/.devcontainer",
+    "**/docs"
+  ],
+  "MS-CST-E.vscode-devskim.rules.enableBestPracticeSeverityRules": true,
+  "MS-CST-E.vscode-devskim.rules.enableCriticalSeverityRules": true,
+  "MS-CST-E.vscode-devskim.rules.enableHighConfidenceRules": true,
+  "MS-CST-E.vscode-devskim.rules.enableImportantSeverityRules": true,
+  "MS-CST-E.vscode-devskim.rules.enableLowConfidenceRules": true,
+  "MS-CST-E.vscode-devskim.rules.enableManualReviewSeverityRules": true,
+  "MS-CST-E.vscode-devskim.rules.enableMediumConfidenceRules": true,
+  "MS-CST-E.vscode-devskim.rules.enableModerateSeverityRules": true,
+  "MS-CST-E.vscode-devskim.triggers.scanOnChange": true,
+  "MS-CST-E.vscode-devskim.triggers.scanOnOpen": true,
+  "MS-CST-E.vscode-devskim.triggers.scanOnSave": true,
+  "makefile.configurations": [
+    {
+      "name": "default",
+      "path": "${workspaceFolder}/Makefile"
+    }
+  ],
+  "yaml.completion": true,
+  "yaml.validate": true,
+  "yaml.format.enable": true,
+  "protoc": {
+    "path": "/usr/local/bin/protoc",
+    "lint": {
+      "enabled": true,
+      "path": "/usr/local/bin/protolint"
+    }
+  },
+  "protolint.path": "/usr/local/bin/protolint"
 }

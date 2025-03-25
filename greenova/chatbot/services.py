@@ -1,8 +1,6 @@
 import logging
-
 from django.db.models import Q
-
-from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
+from .models import Conversation, ChatMessage, PredefinedResponse, TrainingData
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +10,7 @@ class ChatbotService:
     @staticmethod
     def create_conversation(user, title=None):
         """Create a new conversation for a user."""
-        title = title or 'New Conversation'
+        title = title or "New Conversation"
         conversation = Conversation.objects.create(
             user=user,
             title=title
@@ -36,7 +34,7 @@ class ChatbotService:
 
             return message
         except Conversation.DoesNotExist:
-            logger.error(f'Conversation with ID {conversation_id} does not exist')
+            logger.error(f"Conversation with ID {conversation_id} does not exist")
             return None
 
     @staticmethod
@@ -45,7 +43,7 @@ class ChatbotService:
         try:
             return ChatMessage.objects.filter(conversation_id=conversation_id).order_by('timestamp')
         except Exception as e:
-            logger.error(f'Error retrieving messages: {str(e)}')
+            logger.error(f"Error retrieving messages: {str(e)}")
             return []
 
     @staticmethod

@@ -1,54 +1,37 @@
-bandit:
-  # Bandit configuration file for Greenova project
 
-  # Number of lines of context to display for each issue
+[bandit]
+# Number of lines of context to display for each issue
+context_lines = 3
 
-  context_lines: 3
+# Files or directories to skip (comma-separated)
+exclude = /tests,/env,/venv,/.git,*.pyc
 
-  # Files or directories to skip (comma-separated)
+# Tests to skip (comma-separated)
+skips = B101,B104,B105,B110
 
-  exclude: /tests,/env,/venv,/.git,*.pyc
+# Test for possible hardcoded passwords
+hardcoded_password_string = ['password', 'passwd', 'pwd', 'secret']
 
-  # Tests to skip (comma-separated)
+# Severity level threshold (LOW, MEDIUM, HIGH)
+severity = LOW
 
-  skips: ['B311', 'B101']
+# Confidence level threshold (LOW, MEDIUM, HIGH)
+confidence = LOW
 
-  # Test for possible hardcoded passwords
+# Output format (csv, json, txt, yaml)
+format = txt
 
-  hardcoded_password_string: ['password', 'passwd', 'pwd', 'secret']
+# Set the output file
+output = bandit-results.txt
 
-  # Severity level threshold (LOW, MEDIUM, HIGH)
+# Number of processes to use (default=1)
+processes = 4
 
-  severity: LOW
+# Exit with 0 even with results found
+exit_zero = False
 
-  # Confidence level threshold (LOW, MEDIUM, HIGH)
+# Recursive mode
+recursive = True
 
-  confidence: LOW
-
-  # Output format (csv, json, txt, yaml)
-
-  format: txt
-
-  # Set the output file
-
-  output: bandit-results.txt
-
-  # Number of processes to use (default=1)
-
-  processes: 4
-
-  # Exit with 0 even with results found
-
-  exit_zero: false
-
-  # Recursive mode
-
-  recursive: true
-
-  # Show progress
-
-  verbose: true
-
-  # Exclude directories
-
-  exclude_dirs: ['tests', 'migrations', 'docs']
+# Show progress
+verbose = True

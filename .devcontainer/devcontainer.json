@@ -5,12 +5,23 @@
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
       "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {},
+    "ghcr.io/devcontainers-extra/features/direnv:1": {
+      "version": "latest"
+    },
+    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/protoc:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/shfmt:1": {
+      "version": "latest"
     }
-  },
-  "hostRequirements": {
-    "cpus": 2,
-    "memory": "2gb",
-    "storage": "16gb"
   },
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
@@ -35,7 +46,21 @@
         "dbaeumer.vscode-eslint",
         "monosans.djlint",
         "batisteo.vscode-django",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "ms-python.isort",
+        "ms-toolsai.jupyter",
+        "ms-python.pylint",
+        "snyk-security.snyk-vulnerability-scanner",
+        "MS-CST-E.vscode-devskim",
+        "timonwong.shellcheck",
+        "ms-vscode.makefile-tools",
+        "redhat.vscode-yaml",
+        "foxundermoon.shell-format",
+        "tamasfe.even-better-toml",
+        "ms-python.mypy-type-checker",
+        "DavidAnson.vscode-markdownlint",
+        "zxh404.vscode-proto3",
+        "Plex.vscode-protolint"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -49,14 +74,19 @@
           "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
           "python.envFile": "${containerWorkspaceFolder}/.env",
           "python.analysis.extraPaths": [
-            "${containerWorkspaceFolder}/.venv/lib/python3.10/site-packages"
+            "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
           ],
           "python.terminal.activateEnvInCurrentTerminal": true,
           "python.terminal.activateEnvironment": true,
           "python.terminal.shellIntegration.enabled": true,
-          "python.languageServer": "Default",
-          "python.analysis.languageServerMode": "light",
-          "python.analysis.typeCheckingMode": "off"
+          "python.languageServer": "Pylance",
+          "python.analysis.languageServerMode": "Jedi",
+          "python.analysis.typeCheckingMode": "strict",
+          "python.autoComplete.extraPaths": [
+            "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
+          ],
+          "python.linting.enabled": true,
+          "python.linting.pylintEnabled": true
         },
         "[javascript]": {
           "editor.formatOnSave": true,
@@ -73,7 +103,7 @@
         "dotfiles.targetPath": "/home/vscode/dotfiles",
         "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",
-        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.defaultProfile.linux": "fish",
         "terminal.integrated.shellIntegration.enabled": true,
         "terminal.integrated.env.linux": {
           "PYTHONPATH": "${containerWorkspaceFolder}",
@@ -127,18 +157,20 @@
           "*.md": "markdown",
           "*.txt": "plaintext",
           "requirements*.txt": "pip-requirements",
+          "constraints*.txt": "pip-requirements",
           "*.toml": "toml",
           "pyproject.toml": "toml",
           "poetry.toml": "toml",
           "pdm.toml": "toml",
-          ".env*": "dotenv"
-        }
+          ".env*": "dotenv",
+          ".pylintrc-django": "ini",
+          ".pylintrc": "ini"
+        },
+        "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk"
       }
     }
   },
   "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
   "postCreateCommand": "sudo chown vscode:vscode /home && sudo chown vscode:vscode /usr/local && sudo chown vscode:vscode /workspaces",
-  "forwardPorts": [
-    8000
-  ]
+  "forwardPorts": [8000]
 }

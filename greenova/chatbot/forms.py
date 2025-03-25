@@ -1,7 +1,5 @@
 from django import forms
-
 from .models import Conversation, TrainingData
-
 
 class ConversationForm(forms.ModelForm):
     """Form for creating a new conversation."""

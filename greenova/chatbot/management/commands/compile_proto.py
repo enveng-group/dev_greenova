@@ -1,8 +1,7 @@
-import logging
+from django.core.management.base import BaseCommand
 import os
 import subprocess
-
-from django.core.management.base import BaseCommand
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -41,14 +40,14 @@ class Command(BaseCommand):
             proto_files = [f for f in os.listdir(proto_dir) if f.endswith('.proto')]
 
             if not proto_files:
-                self.stdout.write(self.style.WARNING(f'No .proto files found in {proto_dir}, skipping'))
+                self.stdout.write(self.style.WARNING(f"No .proto files found in {proto_dir}, skipping"))
                 continue
 
             proto_files_found = True
 
             for proto_file in proto_files:
                 proto_path = os.path.join(proto_dir, proto_file)
-                self.stdout.write(f'Compiling {proto_path} to {output_dir}')
+                self.stdout.write(f"Compiling {proto_path} to {output_dir}")
 
                 try:
                     # Ensure the protoc command is available
@@ -58,10 +57,10 @@ class Command(BaseCommand):
                                        stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE)
                     except (subprocess.SubprocessError, FileNotFoundError):
-                        self.stdout.write(self.style.ERROR('protoc command not found. Please install Protocol Buffers compiler.'))
-                        self.stdout.write(self.style.WARNING('On Ubuntu: sudo apt-get install protobuf-compiler'))
-                        self.stdout.write(self.style.WARNING('On macOS: brew install protobuf'))
-                        self.stdout.write(self.style.WARNING('See https://grpc.io/docs/protoc-installation/ for more details'))
+                        self.stdout.write(self.style.ERROR("protoc command not found. Please install Protocol Buffers compiler."))
+                        self.stdout.write(self.style.WARNING("On Ubuntu: sudo apt-get install protobuf-compiler"))
+                        self.stdout.write(self.style.WARNING("On macOS: brew install protobuf"))
+                        self.stdout.write(self.style.WARNING("See https://grpc.io/docs/protoc-installation/ for more details"))
                         return
 
                     # Run the protoc command
@@ -73,18 +72,18 @@ class Command(BaseCommand):
                     ], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                     # Verify the generated file exists
-                    expected_output = os.path.join(output_dir, f'{os.path.splitext(proto_file)[0]}_pb2.py')
+                    expected_output = os.path.join(output_dir, f"{os.path.splitext(proto_file)[0]}_pb2.py")
                     if os.path.exists(expected_output):
-                        self.stdout.write(self.style.SUCCESS(f'Generated file: {expected_output}'))
+                        self.stdout.write(self.style.SUCCESS(f"Generated file: {expected_output}"))
                     else:
-                        self.stdout.write(self.style.ERROR(f'Expected output file {expected_output} not found!'))
+                        self.stdout.write(self.style.ERROR(f"Expected output file {expected_output} not found!"))
 
                 except subprocess.CalledProcessError as e:
-                    self.stdout.write(self.style.ERROR(f'Failed to compile {proto_file}: {str(e)}'))
+                    self.stdout.write(self.style.ERROR(f"Failed to compile {proto_file}: {str(e)}"))
                     self.stdout.write(self.style.ERROR(f"Command output: {e.stderr.decode() if e.stderr else 'No output'}"))
 
         if not proto_files_found:
-            self.stdout.write(self.style.WARNING('No protocol buffer files were found to compile!'))
+            self.stdout.write(self.style.WARNING("No protocol buffer files were found to compile!"))
             return
 
-        self.stdout.write(self.style.SUCCESS('Protocol buffer compilation completed successfully'))
+        self.stdout.write(self.style.SUCCESS("Protocol buffer compilation completed successfully"))
