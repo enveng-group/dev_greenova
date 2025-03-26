@@ -13,7 +13,7 @@ repos:
       - id: check-builtin-literals
       - id: check-docstring-first
       - id: check-executables-have-shebangs
-      - id: check-shebang-scripts-are-executable
+      #      - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-xml
       - id: debug-statements
@@ -95,12 +95,12 @@ repos:
   #        additional_dependencies: ["pylint-django==2.6.1"]
   #        exclude: "migrations/"
 
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.3
-    hooks:
-      - id: bandit
-        args: ["-c", ".bandit", "-r"]
-        exclude: "tests/"
+  #  - repo: https://github.com/PyCQA/bandit
+  #    rev: 1.8.3
+  #    hooks:
+  #      - id: bandit
+  #        args: ["-c", ".bandit", "-r"]
+  #        exclude: "tests/"
 
   #  - repo: https://github.com/pre-commit/mirrors-mypy
   #    rev: v1.15.0

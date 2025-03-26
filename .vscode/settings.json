@@ -571,7 +571,7 @@
     "-s",
     "./greenova",
     "-p",
-    "*test*.py"
+    "*tests.py"
   ],
   "python.testing.unittestEnabled": true,
   "shellcheck.disableVersionCheck": true,

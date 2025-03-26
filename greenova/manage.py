@@ -2,13 +2,17 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+
 from dotenv_vault import load_dotenv
-load_dotenv()
+
+load_dotenv()  # Ensure environment variables are loaded
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "greenova.settings")
     try:
+        import django
+        django.setup()  # Ensure Django is initialized
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
