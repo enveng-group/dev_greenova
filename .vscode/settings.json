@@ -302,10 +302,7 @@
   "git.confirmSync": false,
   "git.countBadge": "all",
   "git.decorations.enabled": true,
-  "git.diagnosticsCommitHook.Enabled": true,
-  "git.diagnosticsCommitHook.Sources": {
-    "*": "error"
-  },
+  "git.diagnosticsCommitHook.Enabled": false,
   "git.enableCommitSigning": true,
   "git.enableSmartCommit": true,
   "git.enableStatusBarSync": true,

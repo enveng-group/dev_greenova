@@ -3,7 +3,7 @@ plugins = ["mypy_django_plugin.main"]
 exclude = '\.md$'
 
 [tool.django-stubs]
-django_settings_module = "greenova.settings"
+django_settings_module = "greenova.greenova.settings"
 
 [tool.autopep8]
 max_line_length = 88

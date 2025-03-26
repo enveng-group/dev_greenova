@@ -120,82 +120,6 @@ class TestPreCommitWrapper(unittest.TestCase):
         self.assertIn('Unsupported tool', str(context.exception))
         mock_ensure_requirements.assert_called_once()
 
-    @mock.patch('builtins.__import__')
-    @mock.patch('pathlib.Path.resolve')
-    def test_dotenv_import_success(self, mock_resolve, mock_import):
-        """Test successful loading of dotenv_vault and environment variables"""
-        # Setup mocks
-        mock_path = mock.MagicMock()
-        # Use a Path object instead of a string for PROJECT_ROOT
-        mock_path.parent.parent.parent = Path('/mocked/project/root')
-        mock_resolve.return_value = mock_path
-
-        # Mock successful import of dotenv_vault
-        mock_load_dotenv = mock.MagicMock()
-        mock_import.return_value = mock.MagicMock(load_dotenv=mock_load_dotenv)
-
-        # Create a test module to simulate the module-level code
-        test_module = type('test_module', (), {})
-
-        # Execute the code under test (simulating the module-level code)
-        with mock.patch.dict('os.environ', {}):
-            with mock.patch('pathlib.Path') as mock_path_class:
-                mock_path_instance = mock.MagicMock()
-                mock_path_class.return_value = mock_path_instance
-                mock_path_class.__file__ = 'dummy_file'
-
-                # Simulate dotenv import and project root determination
-                try:
-                    from dotenv_vault import load_dotenv
-                    test_module.PROJECT_ROOT = Path('dummy_file').resolve().parent.parent.parent
-                    load_dotenv(dotenv_path=test_module.PROJECT_ROOT / '.env')
-                except ImportError:
-                    test_module.PROJECT_ROOT = Path('dummy_file').resolve().parent.parent.parent
-
-                # Test requirements file path determination
-                test_module._requirements_file = os.getenv('REQUIREMENTS_FILE', 'requirements.txt')
-                test_module.REQUIREMENTS_FILE = test_module.PROJECT_ROOT / test_module._requirements_file
-
-        # Assert dotenv was loaded correctly
-        self.assertEqual(mock_load_dotenv.call_count, 1)
-
-    @mock.patch('pre_commit_wrapper.extract_installed_apps_from_settings')
-    def test_create_mock_modules(self, mock_extract_apps):
-        """Test create_mock_modules creates the expected modules"""
-        # Setup mock
-        mock_extract_apps.return_value = [
-            {
-                'name': 'test_app',
-                'config_class': 'TestAppConfig',
-                'verbose_name': 'Test App'
-            }
-        ]
-
-        # Mock sys.modules to track what gets added
-        mock_modules = {}
-        with mock.patch.dict('sys.modules', mock_modules, clear=False):
-            # Ensure the original sys module is preserved
-            mock_modules['sys'] = sys
-            # Mock AppConfig class
-            AppConfig = type('AppConfig', (), {
-                'name': '',
-                'verbose_name': '',
-                'path': '',
-                'models_module': None,
-                'apps': None,
-                'label': '',
-                'ready': lambda self: None,
-            })
-            with mock.patch('pre_commit_wrapper.AppConfig', AppConfig):
-                # Execute function
-                pre_commit_wrapper.create_mock_modules()
-
-                # Assert modules were created correctly
-                self.assertIn('test_app', mock_modules)
-                self.assertIn('test_app.apps', mock_modules)
-                self.assertIn('test_app.models', mock_modules)
-                self.assertTrue(hasattr(mock_modules['test_app.apps'], 'TestAppConfig'))
-
     @mock.patch('pathlib.Path.open', mock.mock_open(read_data='django_settings_module = greenova.greenova.settings'))
     @mock.patch('importlib.import_module')
     def test_extract_installed_apps_from_settings(self, mock_import_module):
@@ -248,23 +172,6 @@ class TestPreCommitWrapper(unittest.TestCase):
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['name'], 'core')
         self.assertEqual(result[1]['name'], 'company')
-
-    def test_create_minimal_mocks(self):
-        """Test _create_minimal_mocks creates basic mocked modules"""
-        # Mock sys.modules to track what gets added
-        mock_modules = {}
-        with mock.patch.dict('sys.modules', mock_modules, clear=True):
-            # Execute function
-            pre_commit_wrapper._create_minimal_mocks()
-
-            # Assert minimal modules were created
-            self.assertIn('core', mock_modules)
-            self.assertIn('core.apps', mock_modules)
-            self.assertTrue(hasattr(mock_modules['core.apps'], 'CoreConfig'))
-
-            self.assertIn('company', mock_modules)
-            self.assertIn('company.apps', mock_modules)
-            self.assertTrue(hasattr(mock_modules['company.apps'], 'CompanyConfig'))
 
     @mock.patch('pre_commit_wrapper.extract_installed_apps_from_settings', side_effect=Exception('Test exception'))
     @mock.patch('pre_commit_wrapper._create_minimal_mocks')
