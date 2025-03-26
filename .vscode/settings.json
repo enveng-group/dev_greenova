@@ -90,7 +90,7 @@
       "other": "off",
       "strings": "off"
     },
-    "editor.wordWrap": "on",
+    "editor.wordWrap": "on"
   },
   "[pip-requirements]": {
     "editor.defaultFormatter": "ms-python.autopep8",
@@ -116,11 +116,13 @@
     "editor.tabSize": 2
   },
   "[python]": {
+    "editor.autoClosingQuotes": "always",
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
       "source.organizeImports": "explicit"
     },
     "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
     "editor.rulers": [
       88,
@@ -146,7 +148,7 @@
     "editor.tabSize": 4
   },
   "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "files.eol": "\n"
   },
@@ -158,7 +160,10 @@
     "--in-place",
     "--select=E,W,F",
     "--ignore=E226,E302,E41",
-    "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules"
+    "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules",
+    "--recursive",
+    "--aggressive",
+    "--single-quotes"
   ],
   "autopep8.importStrategy": "fromEnvironment",
   "autopep8.interpreter": [
@@ -280,10 +285,50 @@
     "**/*.css",
     "**/*.js"
   ],
+  "git.allowNoVerifyCommit": true,
+  "git.alwaysSignOff": true,
+  "git.autoRepositoryDetection": true,
   "git.autoStash": true,
   "git.autofetch": true,
+  "git.blame.editorDecoration.enabled": true,
+  "git.blame.statusBarItem.enabled": true,
+  "git.branchProtection": [
+    "main",
+    "master"
+  ],
+  "git.branchProtectionPrompt": "alwaysPrompt",
+  "git.closeDiffOnOperation": true,
+  "git.confirmNoVerifyCommit": true,
   "git.confirmSync": false,
+  "git.countBadge": "all",
+  "git.decorations.enabled": true,
+  "git.diagnosticsCommitHook.Enabled": true,
+  "git.diagnosticsCommitHook.Sources": {
+    "*": "error"
+  },
+  "git.enableCommitSigning": true,
   "git.enableSmartCommit": true,
+  "git.enableStatusBarSync": true,
+  "git.enabled": true,
+  "git.fetchOnPull": true,
+  "git.inputValidation": true,
+  "git.mergeEditor": true,
+  "git.openDiffOnClick": true,
+  "git.optimisticUpdate": true,
+  "git.postCommitCommand": "sync",
+  "git.promptToSaveFilesBeforeCommit": "always",
+  "git.promptToSaveFilesBeforeStash": "always",
+  "git.pruneOnFetch": true,
+  "git.rebaseWhenSync": true,
+  "git.replaceTagsWhenPull": true,
+  "git.requireGitUserConfig": true,
+  "git.showCommitInput": true,
+  "git.showProgress": true,
+  "git.smartCommitChanges": "all",
+  "git.suggestSmartCommit": true,
+  "git.terminalAuthentication": true,
+  "git.terminalGitEditor": true,
+  "git.useEditorAsCommitInput": true,
   "github.copilot.advanced": {
     "debug.enable": false,
     "inlineSuggestCount": 3,
@@ -369,7 +414,7 @@
   "githubPullRequests.defaultCreateOption": "create",
   "githubPullRequests.defaultDeletionMethod.selectLocalBranch": true,
   "githubPullRequests.defaultDeletionMethod.selectRemote": true,
-  "githubPullRequests.defaultMergeMethod": "squash",
+  "githubPullRequests.defaultMergeMethod": "rebase",
   "githubPullRequests.experimental.chat": true,
   "githubPullRequests.experimental.notificationsView": true,
   "githubPullRequests.experimental.useQuickChat": true,
@@ -573,9 +618,9 @@
   "python.testing.unittestArgs": [
     "-v",
     "-s",
-    "./greenova",
+    ".",
     "-p",
-    "*tests.py"
+    "*test*.py"
   ],
   "python.testing.unittestEnabled": true,
   "shellcheck.disableVersionCheck": true,

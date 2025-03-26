@@ -1,7 +1,7 @@
 # Greenova Project TODO
 
 This document tracks tasks and action items for the Greenova environmental
- management application.
+management application.
 
 ## Todo.txt Format Task List
 

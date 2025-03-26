@@ -1,5 +1,6 @@
-from django.db import migrations, models
 import django.db.models.deletion
+from django.db import migrations, models
+
 
 class Migration(migrations.Migration):
 
@@ -12,6 +13,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='obligation',
             name='responsibility',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='responsibility.Responsibility'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to='responsibility.Responsibility',
+            ),
         ),
     ]

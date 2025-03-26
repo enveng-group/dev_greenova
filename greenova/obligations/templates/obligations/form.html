@@ -10,10 +10,16 @@
                 <label for="responsibility">Responsibility:</label>
                 <select id="responsibility" name="responsibility" class="form-input">
                     {% for role in RESPONSIBILITY_ROLES %}
-                        <option value="{{ role.0 }}"
-                                {% if role.0 == form.instance.responsibility %}selected{% endif %}>
-                            {{ role.1 }}
-                        </option>
+                        <option
+                            value="{{ role.0 }}"
+                            {%
+                            if
+                            role.0=""
+                            ="form.instance.responsibility"
+                            %}selected{%
+                            endif
+                            %}
+                            >{{ role.1 }}</option>
                     {% endfor %}
                 </select>
             </div>
