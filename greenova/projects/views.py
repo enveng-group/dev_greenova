@@ -1,23 +1,17 @@
-from typing import Dict, Any, cast, TypeVar, List, Sequence
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+import logging
+from typing import Any, Dict, TypeVar
+
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
+from django.http import HttpRequest, HttpResponse
+from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.utils.decorators import method_decorator
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404
-from django.core.paginator import Paginator
-from django_htmx.http import (
-    HttpResponseClientRedirect,
-    HttpResponseClientRefresh,
-    trigger_client_event,
-    push_url
-)
+from django.views.generic import TemplateView
+from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
+
 from .models import Project
-from obligations.models import Obligation
-import logging
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -45,6 +39,21 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
                 return HttpResponseClientRedirect('/permissions-check/')
 
         return response
+
+    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        """Get context data for project selection."""
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # Get user's projects
+        projects = Project.objects.filter(memberships__user=user).distinct()
+        context['projects'] = projects
+
+        # Get selected project ID from query parameters
+        selected_project_id = self.request.GET.get('project_id')
+        context['selected_project_id'] = selected_project_id
+
+        return context
 
     def requires_special_access(self, project_id: str, user: AbstractUser) -> bool:
         """Check if a project requires special access permissions."""
