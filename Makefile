@@ -103,7 +103,7 @@ tailwind-install:
 
 #Create database migrations
 migrations:
-	$(CD_CMD) python3 manage.py makemigrations
+	$(CD_CMD) python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures
 
 #Apply database migrations
 migrate:
