@@ -13,7 +13,7 @@
         </div>
     {% else %}
         <!-- Hidden project ID that will be included in all requests -->
-        <input type="hidden" name="project_id" value="{{ project_id }}">
+        <input type="hidden" name="mechanism_id" value="{{ mechanism_id }}">
         <!-- Filter and Search Controls -->
         <div class="filter-section" aria-labelledby="filter-heading">
             <div class="filter-header">
@@ -42,22 +42,19 @@
                     <button type="button"
                             class="quick-filter-btn"
                             hx-get="/obligations/summary/"
-                            hx-include="input[name='project_id']"
                             hx-target="#obligations-container"
                             hx-vals='{"status": "overdue"}'
                             aria-label="Show overdue obligations">Overdue</button>
                     <button type="button"
                             class="quick-filter-btn"
                             hx-get="/obligations/summary/"
-                            hx-include="input[name='project_id']"
                             hx-target="#obligations-container"
                             hx-vals='{"date_filter": "14days"}'
                             aria-label="Show obligations due in next 14 days">14-day Lookahead</button>
                     <button type="button"
                             class="btn-secondary"
                             hx-get="/obligations/summary/"
-                            hx-target="#obligations-container"
-                            hx-include="input[name='project_id']">Reset Filters</button>
+                            hx-target="#obligations-container">Reset Filters</button>
                 </div>
             </div>
             <div class="controls-container">
@@ -71,7 +68,7 @@
                            hx-get="/obligations/summary/"
                            hx-target="#obligations-container"
                            hx-trigger="keyup changed delay:500ms"
-                           hx-include="input[name='project_id'], select[name='status'], select[name='phase']">
+                           hx-include="select[name='status'], select[name='phase']">
                 </div>
                 <!-- Filter Controls -->
                 <div class="filter-controls">
@@ -84,7 +81,7 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="[name='project_id'], [name='search'], [name='phase']"
+                                hx-include="[name='search'], [name='phase']"
                                 hx-push-url="true">
                             <option value="not started">Not Started</option>
                             <option value="in progress">In Progress</option>
@@ -101,7 +98,7 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="input[name='project_id'], input[name='search'], select[name='status']">
+                                hx-include="input[name='search'], select[name='status']">
                             {% for phase in phases %}<option value="{{ phase }}">{{ phase }}</option>{% endfor %}
                         </select>
                     </div>
@@ -113,7 +110,7 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='phase'], select[name='order']">
+                                hx-include="input[name='search'], select[name='status'], select[name='phase'], select[name='order']">
                             <option value="obligation_number">Number</option>
                             <option value="action_due_date" selected>Due Date</option>
                             <option value="status">Status</option>
@@ -125,7 +122,7 @@
                                 hx-get="/obligations/summary/"
                                 hx-target="#obligations-container"
                                 hx-trigger="change"
-                                hx-include="input[name='project_id'], input[name='search'], select[name='status'], select[name='phase'], select[name='sort']">
+                                hx-include="input[name='search'], select[name='status'], select[name='phase'], select[name='sort']">
                             <option value="asc" selected>Ascending</option>
                             <option value="desc">Descending</option>
                         </select>
