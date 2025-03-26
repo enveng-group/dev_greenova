@@ -46,4 +46,9 @@
 
   /* For visual clearity */
   --greenova-table-border: 0.05rem solid #000000;
+
+  /* Chat Radius Box */
+  --greenova-chat-border-radius: 1rem;
+  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
+  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
 }

@@ -1,0 +1,73 @@
+# Version control
+.git/
+.github/
+.gitattributes
+.gitignore
+.gitmessage
+
+# Python virtual environments and cache
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+ENV/
+*.so
+.Python
+.coverage
+.pytest_cache/
+.tox/
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Database files (for dev environment)
+*.sqlite3
+db.sqlite3
+*.db
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.vault
+
+# Development/IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Project specific
+/logs/
+/media/*
+/staticfiles/*
+local_settings.py
+*.log
+*.csv
+*.bak
+*.tmp
+
+# Docker specific files (to avoid recursion)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Unnecessary configuration files
+.editorconfig
+.eslintrc
+.pre-commit-config.yaml
+.pylintrc

@@ -23,7 +23,7 @@
           _="on click if event.target is me
              call close()
              then put 'false' into #chat-toggle's @aria-expanded">
-    <article>
+    <article id="chat-container">
       <header>
         <a href="{% url 'dashboard:home' %}"
            class="close-chat"
@@ -43,7 +43,27 @@
            hx-trigger="load"
            hx-swap="innerHTML"
            hx-target="this">
-      </div>
+          <!--<div class="chat-dialog chatbot-dialog">This is a message</div>
+          <div class="chat-dialog user-dialog">This is another message</div>
+          <div class="chat-dialog chatbot-dialog">This is a third message</div>
+          <div class="chat-dialog user-dialog">This is a fourth message</div>
+          <div class="chat-dialog chatbot-dialog">This is a very long long message which appears over different lines, the text box should be at maximum 50% of the parents' width.</div>
+          <div class="chat-dialog user-dialog">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+          <div class="chat-dialog chatbot-dialog">This is a fifth message</div>
+          <div class="chat-dialog chatbot-dialog">This is a sixth message</div>
+          <div class="chat-dialog chatbot-dialog">This is a seventh message</div>-->
+
+        </div>
+
+      <!-- Chat form -->
+      <form id="chat-form"
+          <div class="chat-dialog chatbot-dialog">This is a very long long message which appears over different lines, the text box should be at maximum 50% of the parents' width.</div>
+          <div class="chat-dialog user-dialog">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+          <div class="chat-dialog chatbot-dialog">This is a fifth message</div>
+          <div class="chat-dialog chatbot-dialog">This is a sixth message</div>
+          <div class="chat-dialog chatbot-dialog">This is a seventh message</div>-->
+
+        </div>
 
       <!-- Chat form -->
       <form id="chat-form"

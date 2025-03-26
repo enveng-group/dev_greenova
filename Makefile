@@ -1,4 +1,4 @@
-.PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-update_recurring-inspection-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint
+.PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev compile-proto check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-update_recurring-inspection-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint
 
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
@@ -6,24 +6,33 @@ CD_CMD = cd greenova &&
 # Define the virtual environment path
 VENV = .venv
 
+# Define the pthon and pip path
+PYTHON = $(VENV)/bin/python3
+PIP = $(VENV)/bin/pip
+
+#Variables
+REQUIREMENTS=requirements.txt
+CONSTRAINTS=constraints.txt
+SETUP_SCRIPT=setup.py
+
 # Create virtual environment
 venv:
 	@echo "Creating virtual environment..."
-	@python3 -m venv .venv
+	@python3 -m venv $(VENV)
 	@echo "Virtual environment created."
 	@echo "To activate it, run: source .venv/bin/activate"
 
 # Install dependencies
 install:
 	@echo "Installing dependencies..."
-	$(VENV)/bin/python -m pip install --upgrade pip
-	$(VENV)/bin/pip install -r requirements.txt -c constraints.txt
+	$(PYTHON) -m pip install --upgrade pip
+	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINTS)
 	@echo "Dependencies installed."
 
 #Freeze installed dependencies to requirements.txt
 freeze:
 	@echo "Freezing dependencies..."
-	$(VENV)/bin/pip freeze > requirements.txt
+	$(VENV)/bin/pip freeze > $(REQUIREMENTS)
 	@echo "Dependencies frozen."
 
 #Create a Django new app
@@ -41,15 +50,25 @@ dotenv-push:
 	@echo "Pushing .env file to dotenv-vault"
 	@npx dotenv-vault@latest push
 
+# Compiles our chatbot protocol buffer
+# protoc --proto_path=./greenova/chatbot/ --python_out=./greenova/chatbot/ ./greenova/chatbot/chatdata.proto
+CHAT_BOT_DIR = ./greenova/chatbot/
+CHAT_BOT_DATA_DIR = $(CHAT_BOT_DIR)data/
+CHAT_BOT_FNAME = chatdata.proto
+proto-compile:
+	protoc --proto_path=$(CHAT_BOT_DATA_DIR) --python_out=$(CHAT_BOT_DATA_DIR) $(CHAT_BOT_DATA_DIR)$(CHAT_BOT_FNAME)
+	cd $(CHAT_BOT_DIR) && python3 create_input.py
+
 #run django system check
 check:
 	$(CD_CMD) python3 manage.py check
 
 # Updated run command with better process management
-#run Tailwind CSS and Django server
 run:
 	@echo "Starting Tailwind CSS and Django server..."
-	@$(CD_CMD) (python3 manage.py tailwind start > logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && python3 manage.py runserver
+	@mkdir -p logs
+	@$(CD_CMD) (python3 manage.py tailwind start > ../logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && \
+	python3 manage.py runserver
 
 # Alternative approach with separate commands
 #start only Django server
@@ -84,11 +103,7 @@ tailwind-install:
 
 #Create database migrations
 migrations:
-	$(CD_CMD) python3 manage.py makemigrations company
-	$(CD_CMD) python3 manage.py makemigrations projects
-	$(CD_CMD) python3 manage.py makemigrations mechanisms
-	$(CD_CMD) python3 manage.py makemigrations obligations
-	$(CD_CMD) python3 manage.py makemigrations
+	$(CD_CMD) python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures
 
 #Apply database migrations
 migrate:
@@ -104,11 +119,11 @@ user:
 
 #Import data from CSV file
 import:
-	$(CD_CMD) python3 manage.py import_obligations clean_output_with_nulls.csv
+	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv
 
 #Update data from CSV file
 update:
-	$(CD_CMD) python3 manage.py import_obligations clean_output_with_nulls.csv --force-update
+	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --force-update
 
 #synchronize mechanisms
 sync:
@@ -125,6 +140,10 @@ normalize-frequencies:
 #Clean CSV file
 clean-csv:
 	$(CD_CMD) python3 manage.py clean_csv_to_import dirty.csv
+
+# Compile proto file
+compile-proto:
+	$(CD_CMD) python3 manage.py compile_proto
 
 #Run production server
 prod:
@@ -162,6 +181,21 @@ clean:
 	@find . -name "__pycache__" -delete
 	@echo "Clean completed."
 
+#install the package with setup.py
+setup:
+	@echo "Running setup.py..."
+	$(PYTHON) $(SETUP_SCRIPT) install
+
+#run python start up script
+pythonstartup:
+	@echo "Setting up Python startup..."
+	$(PYTHON) -M pythonstartup
+
+#install setuptools
+setuptools:
+	@echo "Installing setuptools..."
+	$(PYTHON) -m pip install setuptools
+
 # Help command to list available commands
 help:
 	@echo "Available commands:"
@@ -180,6 +214,7 @@ help:
 	@echo "  make user         - Create superuser"
 	@echo "  make db           - Run both migrations and migrate"
 	@echo "  make static       - Collect static files (with --clear)"
+	@echo "  make compile-proto - Compile proto file"
 	@echo "  make migrate      - Apply migrations"
 	@echo "  make migrations   - Create new migrations"
 	@echo "  make run          - Start development server"
@@ -190,3 +225,6 @@ help:
 	@echo "  make freeze		 - Freeze dependencies"
 	@echo "  make dotenv-pull	 - Pull .env file from dotenv-vault"
 	@echo "  make dotenv-push	 - Push .env file to dotenv-vault"
+	@echo "  make setup			 - Install the package with setup.py"
+	@echo "  make pythonstartup	 - Run python start up script"
+	@echo "  make setuptools	 - Install setuptools"

@@ -81,7 +81,25 @@
   --pico-mark-color: #000000;
 
 
+  /**************************************************
+    *                                                *
+    *                  Chat colours                  *
+    *                                                *
+    **************************************************/
+  --greenova-chat-user-background: #dedeff;
+  --greenova-chat-user-color: #000000;
 
+  --greenova-chat-bot-background: #9999ff;
+  --greenova-chat-bot-color: #000000;
+
+
+  /**************************************************
+    **************************************************/
+  --greenova-chat-user-background: #dedeff;
+  --greenova-chat-user-color: #000000;
+
+  --greenova-chat-bot-background: #9999ff;
+  --greenova-chat-bot-color: #000000;
 
 
   /**************************************************
@@ -89,15 +107,6 @@
     *                  Data colours                  *
     *                                                *
     **************************************************/
-
-  /* Data Primary - Use Cases: Primary colour for data visualisations */
-  --greenova-data-primary: #095256;
-
-  /* Data Secondary - Use Cases: Secondary colour for data visualisations */
-  --greenova-data-secondary: #477D80;
-
-  /* Data Tertiary - Use Cases: Tertiary colour for data visualisations */
-  --greenova-data-tertiary: #659395;
 
   /* Data Null - Use Cases: Colour for when data points are out of focus of the chart. */
   --greenova-data-null: #9C9F93;

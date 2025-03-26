@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}
+  New Conversation
+{% endblock title %}
+{% block content %}
+  <main role="main">
+    <article>
+      <header>
+        <h1>Start a New Conversation</h1>
+      </header>
+      <section aria-labelledby="new-conversation-form">
+        <h2 id="new-conversation-form">New Conversation</h2>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <fieldset>
+            <legend>Conversation Details</legend>
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            {{ form.title }}
+            {% if form.title.errors %}<small class="error">{{ form.title.errors }}</small>{% endif %}
+          </fieldset>
+          <button type="submit">Create Conversation</button>
+          <a href="{% url 'chatbot:chatbot_home' %}"
+             role="button"
+             class="secondary">Cancel</a>
+        </form>
+      </section>
+    </article>
+  </main>
+{% endblock content %}

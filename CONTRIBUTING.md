@@ -1,39 +1,50 @@
 # Git Workflow for Feature Integration
 
-This document outlines the recommended git workflow for integrating feature branches into the main branch.
+This document outlines the recommended git workflow for integrating feature
+branches into the main branch.
 
 ## Overview
+
 The process follows these steps:
+
 1. Update main branch to the latest version
 2. Squash and merge the feature branch into main
 3. Push the changes to the remote repository
 4. Clean up by removing the feature branch
 
 ## Prerequisites
+
 - Appropriate permissions to push to the main branch
 - Completed and tested feature in a separate branch
 - Understanding of git commands and conflict resolution
 
 ## Important Notes
+
 - Always ensure your feature is fully tested before merging
-- The squash merge creates a single commit from all changes in the feature branch
+- The squash merge creates a single commit from all changes in the feature
+  branch
 - This workflow keeps the commit history clean and linear
 - Make sure the feature branch is no longer needed before deletion
 
 ## After Completion
-Once completed, the feature's changes will be integrated into the main branch as a single commit, and the feature branch will be removed from both local and remote repositories.
+
+Once completed, the feature's changes will be integrated into the main branch
+as a single commit, and the feature branch will be removed from both local and
+remote repositories.
 
 # Contributing Guide
 
-Thank you for contributing to our project! This document outlines our git workflow for integrating feature branches into the main branch.
+Thank you for contributing to our project! This document outlines our git
+workflow for integrating feature branches into the main branch.
 
 ## Project Status
-Current release: v0.0.3
-Next pre-release branch: pre-release/v0.0.4
+
+Current release: v0.0.4 Next pre-release branch: pre-release/v0.0.4
 
 ## Fork-Based Development Workflow
 
-For contributors working with a forked repository, follow these steps to avoid divergent branches and ensure smooth integration:
+For contributors working with a forked repository, follow these steps to avoid
+divergent branches and ensure smooth integration:
 
 ### Initial Setup
 
@@ -55,6 +66,7 @@ For contributors working with a forked repository, follow these steps to avoid d
 ### Daily Development Workflow
 
 1. Always sync your fork with upstream before starting new work:
+
    ```bash
    git fetch upstream
    git checkout main
@@ -63,16 +75,19 @@ For contributors working with a forked repository, follow these steps to avoid d
    ```
 
 2. Create a feature branch for your work:
+
    ```bash
    git checkout -b feature-branch
    ```
 
 3. Make your changes and commit frequently with meaningful messages:
+
    ```bash
    git commit -m "feat: descriptive message about the change"
    ```
 
 4. Keep your branch up to date with upstream:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
@@ -89,6 +104,7 @@ For contributors working with a forked repository, follow these steps to avoid d
 ### Creating a Pull Request
 
 1. Before submitting a PR, ensure your branch is up to date:
+
    ```bash
    git fetch upstream
    git rebase upstream/main
@@ -97,6 +113,7 @@ For contributors working with a forked repository, follow these steps to avoid d
 2. Resolve any conflicts and test your changes thoroughly
 
 3. Push your updated branch to your fork:
+
    ```bash
    git push origin feature-branch --force-with-lease
    ```
@@ -108,11 +125,13 @@ For contributors working with a forked repository, follow these steps to avoid d
 ### After Your PR is Merged
 
 1. Delete your local feature branch:
+
    ```bash
    git branch -D feature-branch
    ```
 
 2. Delete the remote branch on your fork:
+
    ```bash
    git push origin --delete feature-branch
    ```
@@ -149,6 +168,7 @@ Our integration process follows these key steps:
 ## Prerequisites
 
 Before you begin:
+
 - Ensure you have appropriate permissions to push to the main branch
 - Complete and thoroughly test your feature in a separate branch
 - Be familiar with git commands and conflict resolution
@@ -157,8 +177,7 @@ Before you begin:
 
 # 1. Switch to main and get latest changes
 
-`git checkout main`
-`git pull origin main`
+`git checkout main` `git pull origin main`
 
 # 2. Squash and merge the feature branch (resolve any conflicts if they arise)
 
@@ -194,4 +213,5 @@ If you encounter merge conflicts:
 
 ## Need Help?
 
-If you encounter any issues with the git workflow, please reach out to the team lead or open a discussion on GitHub.
+If you encounter any issues with the git workflow, please reach out to the team
+lead or open a discussion on GitHub.

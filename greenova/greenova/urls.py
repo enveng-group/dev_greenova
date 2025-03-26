@@ -38,10 +38,12 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     # Authentication URLs
     path('authentication/', include('allauth.urls')),
     path('dashboard/', include('dashboard.urls', namespace="dashboard")),
+    path('chatbot/', include('chatbot.urls', namespace="chatbot")),
     path('users/', include('users.urls', namespace="users")),
     path('projects/', include('projects.urls')),
     path('obligations/', include('obligations.urls')),
-    path('chat/', include('chatbot.urls')),
+    # Use a different namespace for the /chat/ URL pattern
+    path('chat/', include('chatbot.urls', namespace="chat")),
     path('mechanisms/', include('mechanisms.urls')),
     path('procedures/', include('procedures.urls')),
     # Add company URLs

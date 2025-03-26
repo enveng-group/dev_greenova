@@ -19,8 +19,7 @@
   -ms-overflow-style: none;
 
   /* Padding to make the layout fit within the app */
-  padding-top: 1.1rem;
-
+  padding-top: var(--greenova-spacing-large);
 }
 
 .chart-scroll-container::-webkit-scrollbar {
@@ -53,7 +52,6 @@
 .mechanism-chart figure figcaption {
   /* Add padding to make it look pretty */
   padding: var(--greenova-padding);
-
 }
 
 .mechanism-chart img {
@@ -101,7 +99,7 @@
 
 /* Navigation buttons */
 /*.chart-nav*/
-nav[role="navigation"].chart-nav {
+nav[role='navigation'].chart-nav {
   display: flex;
   justify-content: flex-end;
   gap: var(--greenova-padding);
@@ -113,7 +111,7 @@ nav[role="navigation"].chart-nav {
   padding: var(--greenova-spacing) 0;
 }
 
-nav[role="navigation"].chart-nav button {
+nav[role='navigation'].chart-nav button {
   cursor: pointer;
   color: var(--greenova-text-primary-dark);
   background: none;
@@ -192,7 +190,6 @@ nav[role="navigation"].chart-nav button {
     flex: 0 0 280px;
   }
 
-
   .chart-scroll {
     padding-bottom: var(--greenova-padding-small);
   }
@@ -207,4 +204,44 @@ nav[role="navigation"].chart-nav button {
   .chart-nav {
     display: none !important;
   }
+}
+
+/* Add styles for chart gallery */
+.chart-gallery {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  gap: var(--greenova-spacing);
+  padding: var(--greenova-padding);
+  margin: var(--greenova-spacing) 0;
+  -webkit-overflow-scrolling: touch;
+  align-items: stretch;
+  min-height: 400px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chart-gallery::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ensure mechanism-chart styles apply properly */
+.chart-gallery .mechanism-chart {
+  flex: 0 0 var(--greenova-charts-width);
+  min-width: var(--greenova-charts-width);
+  scroll-snap-align: start;
+  margin: var(--greenova-spacing-small);
+  padding: var(--greenova-padding);
+  background: var(--greenova-background-secondary);
+  border-radius: var(--greenova-border-radius);
+  box-shadow: var(--greenova-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-gallery .mechanism-chart img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
 }

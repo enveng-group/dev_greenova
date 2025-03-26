@@ -1,0 +1,137 @@
+{
+  "extends": ["stylelint-config-recommended"],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "tailwind",
+          "apply",
+          "variants",
+          "responsive",
+          "screen"
+        ]
+      }
+    ],
+    "declaration-block-trailing-semicolon": null,
+    "no-descending-specificity": null,
+    "max-line-length": 100,
+    "selector-class-pattern": "^[a-z][a-zA-Z0-9-_]*$",
+    "selector-max-universal": 1,
+    "selector-max-type": [2, { "ignore": ["child", "descendant"] }],
+    "selector-max-class": 3,
+    "selector-max-combinators": 2,
+    "no-duplicate-selectors": true,
+    "block-no-empty": true,
+    "comment-no-empty": true,
+    "declaration-block-no-duplicate-properties": true,
+    "declaration-block-no-shorthand-property-overrides": true,
+    "font-family-no-duplicate-names": true,
+    "font-family-no-missing-generic-family-keyword": true,
+    "function-calc-no-unspaced-operator": true
+  },
+  "plugins": ["stylelint-order"],
+  "customSyntax": "postcss-html",
+  "ignoreFiles": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/node_modules/**"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.html"],
+      "rules": {
+        "order/properties-order": [
+          "content",
+          "position",
+          "top",
+          "right",
+          "bottom",
+          "left",
+          "z-index",
+          "display",
+          "flex",
+          "flex-direction",
+          "flex-wrap",
+          "flex-basis",
+          "flex-grow",
+          "flex-shrink",
+          "flex-flow",
+          "grid",
+          "grid-template",
+          "grid-template-columns",
+          "grid-template-rows",
+          "grid-template-areas",
+          "grid-auto-columns",
+          "grid-auto-rows",
+          "grid-auto-flow",
+          "grid-column-gap",
+          "grid-row-gap",
+          "gap",
+          "justify-content",
+          "align-items",
+          "align-content",
+          "order",
+          "float",
+          "width",
+          "min-width",
+          "max-width",
+          "height",
+          "min-height",
+          "max-height",
+          "padding",
+          "padding-top",
+          "padding-right",
+          "padding-bottom",
+          "padding-left",
+          "margin",
+          "margin-top",
+          "margin-right",
+          "margin-bottom",
+          "margin-left",
+          "border",
+          "border-width",
+          "border-style",
+          "border-color",
+          "border-radius",
+          "background",
+          "background-color",
+          "background-image",
+          "background-repeat",
+          "background-position",
+          "background-size",
+          "color",
+          "font",
+          "font-family",
+          "font-size",
+          "font-weight",
+          "line-height",
+          "text-align",
+          "text-decoration",
+          "text-transform",
+          "white-space",
+          "vertical-align",
+          "visibility",
+          "opacity",
+          "overflow",
+          "transition",
+          "transform"
+        ]
+      }
+    }
+  ],
+  "reportInvalidScopeDisables": true,
+  "reportNeedlessDisables": true,
+  "limitRecommendations": {
+    "utility-first": {
+      "max": 3,
+      "message": "Prefer PicoCSS for styling. Use Tailwind utility classes only as a last resort."
+    },
+    "custom-component-classes": {
+      "pattern": "^pico-",
+      "message": "Use PicoCSS for component styling where possible."
+    }
+  }
+}

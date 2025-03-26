@@ -1,76 +1,105 @@
-from typing import Dict, Any, Optional, Union
 import logging
-from datetime import datetime
+from django.db.models import Q
+from .models import Conversation, ChatMessage, PredefinedResponse, TrainingData
 
 logger = logging.getLogger(__name__)
 
-
-class ChatState:
-    """Chat dialog state singleton."""
-    _instance = None
-    _state: Dict[str, Any] = {
-        "isOpen": False,
-        "messages": [],
-        "lastUpdate": None
-    }
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def get_state(self) -> Dict[str, Any]:
-        """Get current dialog state."""
-        self._state["lastUpdate"] = datetime.now().isoformat()
-        return self._state
-
-    def toggle(self) -> Dict[str, Any]:
-        """Toggle dialog open state."""
-        self._state["isOpen"] = not self._state["isOpen"]
-        return self.get_state()
-
-
-class ChatService:
-    """Handle chat-related business logic."""
-
-    def __init__(self):
-        self.state = ChatState()
-
-    def get_dialog_state(self) -> Dict[str, Any]:
-        """Get current dialog state."""
-        return self.state.get_state()
-
-    def toggle_dialog(self) -> Dict[str, Any]:
-        """Toggle dialog open/closed."""
-        return self.state.toggle()
+class ChatbotService:
+    """Service class for chatbot logic."""
 
     @staticmethod
-    def format_message(message: str, user: str) -> Dict[str, Any]:
-        """Format a chat message for display."""
-        return {
-            "type": "user" if user != "assistant" else "assistant",
-            "content": message,
-            "timestamp": "now",  # TODO: Add proper timestamp
-            "sender": user
-        }
+    def create_conversation(user, title=None):
+        """Create a new conversation for a user."""
+        title = title or "New Conversation"
+        conversation = Conversation.objects.create(
+            user=user,
+            title=title
+        )
+        return conversation
 
     @staticmethod
-    def process_message(
-            message: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Process an incoming chat message."""
+    def add_message(conversation_id, content, is_bot=False, attachments=None):
+        """Add a new message to a conversation."""
         try:
-            # TODO: Add actual message processing logic
-            response: Dict[str, Union[str, Dict[str, Any]]] = {
-                "status": "success",
-                "message": f"Echo: {message}",
-                "context": context or {}
-            }
-            logger.info(f"Processed chat message: {message[:50]}...")
-            return response
+            conversation = Conversation.objects.get(id=conversation_id)
+            message = ChatMessage.objects.create(
+                conversation=conversation,
+                content=content,
+                is_bot=is_bot,
+                attachments=attachments or []
+            )
+
+            # Update conversation last updated timestamp
+            conversation.save()
+
+            return message
+        except Conversation.DoesNotExist:
+            logger.error(f"Conversation with ID {conversation_id} does not exist")
+            return None
+
+    @staticmethod
+    def get_conversation_messages(conversation_id):
+        """Get all messages for a conversation."""
+        try:
+            return ChatMessage.objects.filter(conversation_id=conversation_id).order_by('timestamp')
         except Exception as e:
-            logger.error(f"Error processing message: {str(e)}")
-            return {
-                "status": "error",
-                "message": str(e),
-                "context": context or {}
-            }
+            logger.error(f"Error retrieving messages: {str(e)}")
+            return []
+
+    @staticmethod
+    def process_user_message(conversation_id, message_text):
+        """Process a user message and generate a response."""
+        # First check for predefined responses
+        predefined = ChatbotService._check_predefined_responses(message_text)
+
+        if predefined:
+            response_text = predefined.response_text
+        else:
+            # Otherwise, generate a response based on training data
+            response_text = ChatbotService._generate_response(message_text)
+
+        # Add the bot's response to the conversation
+        ChatbotService.add_message(
+            conversation_id=conversation_id,
+            content=response_text,
+            is_bot=True
+        )
+
+        return response_text
+
+    @staticmethod
+    def _check_predefined_responses(message_text):
+        """Check if message matches any predefined responses."""
+        # Search for exact or partial matches in trigger phrases
+        predefined_responses = PredefinedResponse.objects.filter(
+            Q(trigger_phrase__iexact=message_text) |
+            Q(trigger_phrase__icontains=message_text)
+        ).order_by('-priority')
+
+        return predefined_responses.first()
+
+    @staticmethod
+    def _generate_response(message_text):
+        """Generate a response based on training data."""
+        # Simple keyword matching from training data
+        matches = []
+
+        for training_item in TrainingData.objects.all():
+            # Check if any words in the question match the user's message
+            question_words = set(training_item.question.lower().split())
+            message_words = set(message_text.lower().split())
+
+            # Calculate a simple match score
+            intersection = question_words.intersection(message_words)
+            if intersection:
+                score = len(intersection) / len(question_words)
+                matches.append((score, training_item.answer))
+
+        # Sort by match score
+        matches.sort(reverse=True)
+
+        if matches:
+            return matches[0][1]
+
+        # Default response if no match found
+        return "I'm sorry, I don't have an answer for that question."
