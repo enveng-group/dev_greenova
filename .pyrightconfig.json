@@ -1,7 +1,10 @@
 {
-  "include": [
-    "greenova"
-  ],
+  "defineConstant": {
+    "DEBUG": true
+  },
+  "diagnosticSeverityOverrides": {
+    "reportMissingModuleSource": "none"
+  },
   "exclude": [
     "**/__pycache__",
     "**/.pytest_cache",
@@ -9,6 +12,9 @@
     "**/.venv",
     "**/node_modules",
     "**/.vscode-server"
+  ],
+  "extraPaths": [
+    "${workspaceRoot}/greenova"
   ],
   "ignore": [
     "**/__pycache__",
@@ -18,23 +24,32 @@
     "**/node_modules",
     "**/.vscode-server"
   ],
-  "defineConstant": {
-    "DEBUG": true
-  },
-  "venvPath": ".venv",
-  "pythonVersion": "3.9",
+  "include": [
+    "greenova"
+  ],
   "pythonPlatform": "Linux",
-  "typeCheckingMode": "strict",
-  "useLibraryCodeForTypes": true,
+  "pythonVersion": "3.9",
+  "reportGeneralTypeIssues": "error",
   "reportMissingImports": true,
   "reportMissingTypeStubs": "warning",
-  "reportGeneralTypeIssues": "error",
   "reportPrivateUsage": "warning",
+  "reportUnknownArgumentType": "warning",
   "reportUnknownMemberType": "warning",
   "reportUnknownParameterType": "warning",
   "reportUnknownVariableType": "warning",
-  "reportUnknownArgumentType": "warning",
-  "reportUnusedCoroutine": "warning",
   "reportUntypedFunctionDecorator": "warning",
-  "stubPath": ".venv/lib/python3.9/site-packages/django-stubs"
+  "reportUnusedCoroutine": "warning",
+  "stubPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
+  "typeCheckingMode": "strict",
+  "typeStubTargets": [
+    "django-stubs",
+    "django-stubs-ext",
+    "types-python-dateutil",
+    "types-PyYAML",
+    "types-setuptools",
+    "types-stdlib-list"
+  ],
+  "typeshedPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
+  "useLibraryCodeForTypes": true,
+  "venvPath": ".venv"
 }
