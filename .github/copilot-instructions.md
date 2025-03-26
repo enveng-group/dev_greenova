@@ -14,7 +14,7 @@ for specialized UI components when PicoCSS cannot handle the requirements.
 
 We implement frontend interactivity with django-hyperscript for simple
 interactions and django-htmx for more complex AJAX functionality. Custom
-JavaScript is only used as a last resort.
+TypeScript and AssemblyScript (for WASM) is only used as a last resort.
 
 We use matplotlib for server-side data visualization.
 
