@@ -2,15 +2,17 @@ import logging
 from django import forms
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django_select2.forms import Select2MultipleWidget
 
-from .models import Obligation, ObligationEvidence
+from .models import Obligation, ObligationEvidence, ResponsibilityRole
 from projects.models import Project
 from mechanisms.models import EnvironmentalMechanism
 from .constants import (
     STATUS_CHOICES, STATUS_COMPLETED, STATUS_NOT_STARTED,
     FREQUENCY_CHOICES, FREQUENCY_DAILY, FREQUENCY_WEEKLY,
     FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY,
-    FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL, FREQUENCY_ANNUAL
+    FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL, FREQUENCY_ANNUAL,
+    RESPONSIBILITY_ROLES  # Import RESPONSIBILITY_ROLES
 )
 from .utils import normalize_frequency
 
@@ -243,9 +245,8 @@ class ObligationForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-input'})
     )
 
-    responsibility = forms.CharField(
-        max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-input'})
+    responsibility = forms.ChoiceField(
+        choices=RESPONSIBILITY_ROLES  # Use RESPONSIBILITY_ROLES from constants.py
     )
 
     project_phase = forms.ChoiceField(
@@ -332,9 +333,25 @@ class ObligationForm(forms.ModelForm):
         })
     )
 
+    responsibilities = forms.ModelMultipleChoiceField(
+        queryset=ResponsibilityRole.objects.all(),
+        widget=Select2MultipleWidget(attrs={
+            'class': 'form-input',
+            'aria-describedby': 'responsibilities-help'
+        }),
+        required=False,
+        label="Assign Responsibilities",
+        help_text="Select responsibilities to assign for this obligation"
+    )
+
     def __init__(self, *args, **kwargs):
         self.project = kwargs.pop('project', None)
+        self.user = kwargs.pop('user', None)  # Add user context
         super().__init__(*args, **kwargs)
+
+        # Filter responsibilities based on user context
+        if self.user:
+            self.fields['responsibilities'].queryset = ResponsibilityRole.objects.filter(user=self.user)
 
         # Handle initial project
         if self.project:
@@ -355,13 +372,15 @@ class ObligationForm(forms.ModelForm):
 
             # Set initial values for boolean fields correctly
             for field_name in ['recurring_obligation', 'inspection',
-                              'new_control_action_required', 'gap_analysis']:
+                               'new_control_action_required', 'gap_analysis']:
                 if hasattr(instance, field_name):
                     self.fields[field_name].initial = getattr(instance, field_name)
 
             # Handle custom environmental aspect
             if instance.environmental_aspect == 'Other':
                 self.fields['custom_environmental_aspect'].initial = instance.custom_environmental_aspect
+
+            self.fields['responsibilities'].initial = instance.responsibilities.all()
         else:
             self.fields['obligation_number'].help_text = (
                 'Unique identifier (PCEMP-XXX format). Leave blank to auto-generate.'
@@ -445,6 +464,12 @@ class ObligationForm(forms.ModelForm):
 
         return custom_aspect
 
+    def clean_responsibilities(self):
+        responsibilities = self.cleaned_data.get('responsibilities')
+        if not responsibilities:
+            raise forms.ValidationError("At least one responsibility must be assigned.")
+        return responsibilities
+
     def clean(self):
         """Cross-field validation to enforce business rules."""
         cleaned_data = super().clean()
@@ -500,6 +525,7 @@ class ObligationForm(forms.ModelForm):
 
         if commit:
             instance.save()
+            self.save_m2m()  # Save Many-to-Many relationships
 
         return instance
 

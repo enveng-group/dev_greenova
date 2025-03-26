@@ -3,10 +3,11 @@ from django.http import HttpRequest
 from django.db.models import QuerySet
 from django.forms import ModelForm
 from django.utils import timezone
-from .models import Obligation, ObligationEvidence
+from .models import Obligation, ObligationEvidence, ResponsibilityRole
 from .utils import is_obligation_overdue
 import logging
 from django import forms
+from responsibility.models import Responsibility
 
 logger = logging.getLogger(__name__)
 
@@ -114,22 +115,22 @@ class ObligationAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Basic Information', {
             'fields': ['project', 'primary_environmental_mechanism',
-                      'environmental_aspect', 'obligation', 'obligation_type']
+                       'environmental_aspect', 'obligation', 'obligation_type']
         }),
         ('Dates and Status', {
             'fields': ['action_due_date', 'close_out_date', 'status']
         }),
         ('Recurring Details', {
             'fields': ['recurring_obligation', 'recurring_frequency',
-                      'recurring_status', 'recurring_forcasted_date']
+                       'recurring_status', 'recurring_forcasted_date']
         }),
         ('Inspection Details', {
             'fields': ['inspection', 'inspection_frequency', 'site_or_desktop']
         }),
         ('Additional Information', {
             'fields': ['accountability', 'responsibility', 'project_phase',
-                      'supporting_information', 'general_comments',
-                      'compliance_comments', 'non_conformance_comments']
+                       'supporting_information', 'general_comments',
+                       'compliance_comments', 'non_conformance_comments']
         })
     ]
 
@@ -225,3 +226,12 @@ class ObligationAdmin(admin.ModelAdmin):
         if obj:  # Only for existing obligations
             return [ObligationEvidenceInline]
         return []  # No inlines when creating a new obligation
+
+    list_display = ('id', 'project__name', 'responsibility', 'status', 'action__due_date')
+    search_fields = ('project__name', 'responsibility__name', 'status')
+
+@admin.register(ResponsibilityRole)
+class ResponsibilityRoleAdmin(admin.ModelAdmin):
+    """Admin configuration for responsibility roles."""
+    list_display = ['name', 'description']
+    search_fields = ['name']

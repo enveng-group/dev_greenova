@@ -22,6 +22,7 @@ from django.forms import inlineformset_factory
 from django_htmx.http import trigger_client_event
 from .utils import is_obligation_overdue  # Add explicit import for is_obligation_overdue
 from core.types import HttpRequest  # Use the enhanced HttpRequest with htmx property
+from obligations.models import ResponsibilityRole
 
 # Create a logger for this module
 logger = logging.getLogger(__name__)
@@ -158,6 +159,20 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
         return context
 
 
+def obligation_create(request):
+    if request.method == "POST":
+        form = ObligationForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('obligation_list')
+    else:
+        form = ObligationForm(user=request.user)
+
+    return render(request, 'obligations/form.html', {
+        'form': form,
+        'responsibility_roles': ResponsibilityRole.objects.filter(user=request.user)
+    })
+
 class ObligationCreateView(LoginRequiredMixin, CreateView):
     """View for creating a new obligation."""
     model = Obligation
@@ -173,6 +188,8 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
                 kwargs['project'] = project
             except Project.DoesNotExist:
                 pass
+        kwargs['user'] = self.request.user
+        kwargs['responsibilities'] = ResponsibilityRole.objects.filter(user=self.request.user)
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -180,6 +197,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         project_id = self.request.GET.get('project_id')
         if project_id:
             context['project_id'] = project_id
+        context['responsibility_roles'] = ResponsibilityRole.objects.filter(user=self.request.user)
         return context
 
     def form_valid(self, form):
@@ -235,31 +253,16 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['project'] = self.object.project
+        kwargs['user'] = self.request.user
+        kwargs['responsibilities'] = ResponsibilityRole.objects.filter(user=self.request.user)
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add project_id to context for back navigation
         context['project_id'] = self.object.project_id
+        context['responsibility_roles'] = ResponsibilityRole.objects.filter(user=self.request.user)
         return context
-
-    def form_valid(self, form):
-        """Process the form submission."""
-        response = super().form_valid(form)
-
-        # If this is an HTMX request, return appropriate headers
-        if self.request.htmx:
-            # Using path-deps to refresh dependent components
-            response = HttpResponse("Obligation updated successfully")
-
-            # Explicitly trigger a refresh for path-deps components
-            trigger_client_event(response, "path-deps-refresh", {
-                "path": "/obligations/"
-            })
-
-            return response
-
-        return response
 
     def form_valid(self, form):
         try:

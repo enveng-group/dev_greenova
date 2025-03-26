@@ -100,7 +100,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1")
 
 # Update allowed hosts for production
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").replace('"', '').split(",") if host.strip()]
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 
 # Run validation
 validate_settings()
@@ -135,6 +135,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "django_hyperscript",
     "django_matplotlib",
+    "django_select2",
     "template_partials",
     "tailwind",
     "django_browser_reload",

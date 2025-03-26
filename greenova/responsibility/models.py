@@ -75,3 +75,11 @@ class ResponsibilityAssignment(models.Model):
     def __str__(self):
         role_name = self.role.name if self.role else "Unknown role"
         return f"{self.user.username} - {self.obligation.obligation_number} - {role_name}"
+
+
+class Responsibility(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name

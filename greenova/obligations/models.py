@@ -13,8 +13,16 @@ import logging
 import re
 from .constants import STATUS_CHOICES, STATUS_COMPLETED, STATUS_IN_PROGRESS, STATUS_NOT_STARTED, FREQUENCY_DAILY, FREQUENCY_WEEKLY, FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL, FREQUENCY_ANNUAL
 from .utils import normalize_frequency
+from responsibility.models import Responsibility
 
 logger = logging.getLogger(__name__)
+
+class ResponsibilityRole(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
 
 class Obligation(models.Model):
     """Represents an environmental obligation."""
@@ -93,10 +101,7 @@ class Obligation(models.Model):
             ('Perdaman-during operations', 'Perdaman-during operations')
         ]
     )
-    responsibility: str = models.CharField(
-        max_length=255,
-        choices=get_responsibility_choices(),
-    )
+    responsibility = models.ForeignKey(Responsibility, on_delete=models.CASCADE, related_name='obligations')
     project_phase: Optional[str] = models.CharField(
         max_length=255,
         null=True,
@@ -121,7 +126,7 @@ class Obligation(models.Model):
     compliance_comments: Optional[str] = models.TextField(blank=True, null=True)
     non_conformance_comments: Optional[str] = models.TextField(blank=True, null=True)
     evidence_notes = models.TextField(blank=True, null=True,
-                                  help_text="Notes about the uploaded evidence")
+                                      help_text="Notes about the uploaded evidence")
     recurring_obligation = models.BooleanField(default=False)
     recurring_frequency: Optional[str] = models.CharField(
         max_length=50,
@@ -139,7 +144,7 @@ class Obligation(models.Model):
             ('Decommissioning', 'Decommissioning'),
             ('Extreme Weather', 'Extreme Weather'),
         ]
-        )
+    )
     recurring_status: Optional[str] = models.CharField(
         max_length=50,
         default='not started',
@@ -150,7 +155,7 @@ class Obligation(models.Model):
             ('completed', 'Completed'),
             ('overdue', 'Overdue'),
         ],
-        )
+    )
     recurring_forcasted_date: Optional[models.DateField] = models.DateField(blank=True, null=True)
     inspection = models.BooleanField(default=False)
     inspection_frequency: Optional[str] = models.CharField(
@@ -191,6 +196,12 @@ class Obligation(models.Model):
     notes_for_gap_analysis: Optional[str] = models.TextField(blank=True, null=True)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+    responsibilities = models.ManyToManyField(
+        ResponsibilityRole,
+        related_name='obligations',
+        blank=True,
+        help_text="Select one or more responsibility roles for this obligation"
+    )
 
     class Meta:
         verbose_name = 'Obligation'
@@ -434,5 +445,3 @@ def ensure_obligation_number(sender, instance, **kwargs):
     """
     if not instance.pk and (not instance.obligation_number or instance.obligation_number.strip() == ''):
         instance.obligation_number = Obligation.get_next_obligation_number()
-
-
