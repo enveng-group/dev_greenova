@@ -1,187 +1,77 @@
-# Code Review Feedback for PR #42: SETUP_PY.md
+# Code Review Feedback for PR #41: Obligations Form Template
 
-Hi @Channing88, thank you for creating this documentation for our setup.py
-file. I have some feedback to help improve both the documentation and its
-location in our project structure.
+Hi @mhahmad0,
 
-## 📁 File Location
+Thank you for your interest in contributing to the Greenova project. After
+reviewing PR #41, I need to request changes as there appear to be issues with
+your submission.
 
-I recommend moving `SETUP_PY.md` to `docs/python/setup_py.md` for the following
-reasons:
+## 🚩 Submission Issues
 
-- It follows standard project organization with documentation in a dedicated
-  `docs/` folder
-- Creates a logical structure for Python-specific documentation
-- Allows us to build a comprehensive documentation site in the future
-- Follows the same patterns we're establishing with other documentation
+Your PR contains the following problems:
 
-## 📝 Documentation Structure
+1. **Empty File**: The submission appears to be an empty file with no actual
+   template code.
 
-Here are suggestions to improve the documentation structure:
+2. **Incorrect File Path**: The file path is problematic:
 
-1. **Improve formatting and fix typos**
+   ```
+   pr:/workspaces/greenova/greenova/templates/workspaces/greenova/greenova/obligations/templates/obligations/form.html
+   ```
 
-   - Fix markdown formatting (e.g., unclosed asterisks)
-   - Correct spelling errors ("whrite", "libralies")
-   - Use consistent capitalization in headings
+   This contains duplicated directory structures and doesn't match our project
+   organization.
 
-2. **Enhance the introduction**
+## 🚫 Critical Implementation Issues
 
-   - Explain the purpose of setup.py in Python projects
-   - Clarify its specific role in our Django project
-   - Mention how it relates to our deployment process
+This submission cannot be accepted for several fundamental reasons:
 
-3. **Organize content better**
+1. **Missing Implementation**: There's no actual template code to review or
+   implement.
 
-   - Group related fields (metadata, dependencies, packaging)
-   - Add explanations for each section
-   - Use tables for field definitions
+2. **Path Structure Issues**: Our project expects templates to be in their
+   respective app directories with a clear path structure (e.g.,
+   `greenova/obligations/templates/obligations/form.html`).
 
-4. **Add practical examples**
+3. **No Accessibility Considerations**: Our project requires WCAG 2.1 AA
+   standards for all templates.
 
-   - Show how to use the setup.py in development
-   - Include commands for building, installing, etc.
-   - Demonstrate how it connects to our Makefile
+4. **No Testing**: There's no evidence this template was tested with our
+   existing Django project.
 
-5. **Improve references section**
+## 📋 Our Project Requirements
 
-   - Organize by purpose
-   - Add brief descriptions for each reference
-   - Include official Python packaging documentation
+As outlined in our technical documentation:
 
-## 🛠 setup.py Improvement Suggestions
+- We follow an HTML-first approach with progressive enhancement
+- We prioritize WCAG 2.1 AA standards for accessibility
+- We use test-driven development with Django's testing framework
+- We implement proper model relationships in our database design
 
-Based on our project's technical context:
+## 🛠️ Required Actions
 
-1. **Add development dependencies**
+To proceed with this contribution:
 
-   - Separate install_requires from dev_requires
-   - Include testing and linting packages
-   - Consider using extras_require for optional features
+1. **Correct the file path**: Place your template in the proper location within
+   the project structure
+2. **Implement the form template**: Create a proper Django template for the
+   obligations form
+3. **Follow Django best practices**: Use proper template syntax for form
+   rendering
+4. **Address accessibility**: Ensure form elements follow our accessibility
+   guidelines
+5. **Test your changes**: Verify the template renders correctly with actual
+   data
 
-2. **Improve metadata**
+## 🤝 Moving Forward
 
-   - Add more detailed project description
-   - Update classifiers to be more specific
-   - Consider adding keywords for better discoverability
+I appreciate your interest in contributing to Greenova. To help you succeed
+with your next submission, here are some resources:
 
-3. **Add entry points**
+- Review our project structure to understand the correct file organization
+- Check existing templates in the project as examples of our approach
+- Refer to our documentation on Django template standards and accessibility
+  requirements
 
-   - Create CLI commands for common operations
-   - Define console scripts for utilities
-
-4. **Configure package data properly**
-
-   - Be explicit about included/excluded files
-   - Add MANIFEST.in for non-Python files
-
-5. **Use setup.cfg for more configuration**
-   - Move appropriate settings to setup.cfg
-   - Keep setup.py minimal according to modern practices
-
-## 📚 Example Structure for docs/python/setup_py.md
-
-Here's a suggested structure for your improved documentation:
-
-````markdown
-# Greenova Setup.py Guide
-
-This document explains the `setup.py` file in the Greenova project, which
-defines how our Django application is packaged, distributed, and installed.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Key Components](#key-components)
-- [Dependencies](#dependencies)
-- [Development Usage](#development-usage)
-- [Best Practices](#best-practices)
-- [References](#references)
-
-## Overview
-
-`setup.py` is the configuration file for Python's setuptools packaging system.
-In Greenova, it serves to:
-
-- Define package metadata
-- Specify dependencies
-- Configure installation options
-- Support development workflows
-- Enable proper distribution
-
-## Key Components
-
-| Field              | Purpose              | Our Usage                        |
-| ------------------ | -------------------- | -------------------------------- |
-| `name`             | Package name         | `greenova`                       |
-| `version`          | Current version      | Semantic versioning              |
-| `description`      | Short summary        | Brief app description            |
-| `long_description` | Detailed description | README.md contents               |
-| `packages`         | Modules to include   | Auto-detected with find_packages |
-| `python_requires`  | Python version       | Python 3.9                       |
-
-## Dependencies
-
-Our project relies on these key packages:
-
-### Core Framework
-
-- **Django 4.1.13**: Our web framework
-- **django-allauth 65.4.1**: Handles authentication including multi-factor
-
-### Frontend Integration
-
-- **django-htmx 1.22.0**: For AJAX functionality without custom JavaScript
-- **django-hyperscript 1.0.2**: For simple frontend interactions
-- **django-tailwind 3.6.0**: Used for specialized UI components
-
-### Development Tools
-
-- **django-browser-reload 1.18.0**: Automatic browser refreshing
-- **django-debug-toolbar 5.0.1**: Debugging assistance
-
-### Data Visualization
-
-- **matplotlib 3.9.4**: Server-side chart generation
-
-## Development Usage
-
-### Installing in Development Mode
-
-```bash
-# Install the package in development mode
-pip install -e .
-
-# Install with development dependencies
-pip install -e ".[dev]"
-```
-````
-
-## 📊 References Section Improvements
-
-Your references section needs more structure. Here's a better approach:
-
-1. **Group by category**:
-
-   - Official Python Packaging Documentation
-   - Django Packaging Guides
-   - Community Best Practices
-
-2. **Add context for each link** so readers understand why it's useful
-
-3. **Include official documentation** prominently, not just community articles
-
-## 🔧 Next Steps
-
-1. Move the file to `docs/python/setup_py.md`
-2. Restructure the content following the guidelines above
-3. Update the actual setup.py file with the suggested improvements:
-   - Add development dependencies
-   - Improve metadata
-   - Configure entry points
-   - Move appropriate settings to setup.cfg
-4. Update the documentation to reflect these changes
-5. Consider creating a simple diagram showing how setup.py fits into our
-   project structure
-
-Let me know if you need help with any of these steps!
+I'm happy to provide guidance on template implementation. Please reach out if
+you have questions about our project structure or contribution guidelines.

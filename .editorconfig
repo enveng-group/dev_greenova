@@ -13,6 +13,7 @@ indent_style = space
 [*.py]
 indent_size = 4
 max_line_length = 88
+single_quoted_strings = true
 
 # Django HTML templates
 [*.{html,htm,djhtml}]
@@ -65,7 +66,6 @@ max_line_length = 80
 [*.md]
 trim_trailing_whitespace = false
 max_line_length = off
-max_line_length = 79
 
 # Makefiles require tabs
 [Makefile]
