@@ -172,6 +172,10 @@
     "/usr/local/py-utils/bin/bandit"
   ],
   "chat.detectParticipant.enabled": true,
+  "chat.promptFiles": true,
+  "chat.promptFilesLocations": {
+    ".github/prompts": true
+  },
   "chat.renderRelatedFiles": true,
   "css.format.enable": true,
   "css.hover.references": true,
