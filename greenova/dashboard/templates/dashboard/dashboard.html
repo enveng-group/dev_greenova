@@ -43,29 +43,7 @@
          hx-include="#project-selector">
         <!-- Charts will be loaded here -->
     </div>
-    <!-- Obligations Container -->
-    <div id="obligations-container"
-         hx-get="{% url 'obligations:summary' %}"
-         hx-target="#obligations-container"
-         hx-swap="innerHTML"
-         hx-trigger="load, change"
-         hx-include="#project-selector">
-        <!-- Obligations will be loaded here -->
-    </div>
 </div>
-{% endpartialdef %}
-<!-- Overdue Card Partial-->
-{% partialdef overdue_card %}
-<h3>Overdue Obligations</h3>
-<span class="count"
-      id="overdue-container"
-      hx-get="{% url 'obligations:overdue' %}"
-      hx-swap="innerHTML"
-      hx-trigger="load, change"
-      hx-include="#project-selector">
-    <span data-loading>Loading...</span>
-    <span class="loading-spinner" data-loading></span>
-</span>
 {% endpartialdef %}
 <!-- Now use the defined partials -->
 {% block body %}
@@ -73,7 +51,6 @@
         {% partial dashboard_header %}
         {% partial project_selection %}
         {% partial data_container %}
-        {% partial overdue_card %}
     </article>
     <!-- Add script to initialize project selection and data loading -->
 {% endblock body %}
