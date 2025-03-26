@@ -65,6 +65,7 @@ max_line_length = 80
 [*.md]
 trim_trailing_whitespace = false
 max_line_length = off
+max_line_length = 79
 
 # Makefiles require tabs
 [Makefile]
