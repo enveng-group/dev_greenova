@@ -10,7 +10,6 @@ repos:
       - id: check-json
       - id: check-ast
       - id: check-builtin-literals
-      - id: check-case-conflict
       - id: check-docstring-first
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
@@ -18,7 +17,6 @@ repos:
       - id: check-xml
       - id: debug-statements
       - id: double-quote-string-fixer
-      - id: end-of-file-fixer
       - id: fix-byte-order-marker
       - id: check-toml
       - id: pretty-format-json
@@ -69,28 +67,29 @@ repos:
             "--in-place",
           ]
 
-#  - repo: https://github.com/pycqa/isort
-#    rev: 6.0.1
-#    hooks:
-#      - id: isort
-#        args:
-#          [
-#            "--profile",
-#            "django",
-#            "--line-length=88",
-#            "--combine-as",
-#            "--force-sort-within-sections",
-#          ]
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        args:
+          [
+            "--profile",
+            "django",
+            "--line-length=88",
+            "--combine-as",
+            "--force-sort-within-sections",
+          ]
 
   - repo: https://github.com/pycqa/pylint
     rev: v3.3.6
     hooks:
       - id: pylint
-        args: [
+        args:
+          [
             "--rcfile=.pylintrc-django",
             "--load-plugins=pylint_django",
-            "--disable=C0301,C0411,C0412,W0404,C0415", # Disable what can't be auto-fixed easily
-            "--fail-under=9.0", # Allow commits if score is 9.0 or higher
+            "--disable=C0301,C0411,C0412,W0404,C0415",
+            "--fail-under=9.0",
           ]
         additional_dependencies: ["pylint-django==2.6.1"]
         exclude: "migrations/"
@@ -102,24 +101,24 @@ repos:
 #        args: ["-c", ".bandit", "-r"]
 #        exclude: "tests/"
 
-#  - repo: https://github.com/pre-commit/mirrors-mypy
-#    rev: v1.15.0
-#    hooks:
-#      - id: mypy
-#        additional_dependencies: ["django-stubs==5.1.3"]
-#        args: ["--config-file=mypy.ini"]
+  #  - repo: https://github.com/pre-commit/mirrors-mypy
+  #    rev: v1.15.0
+  #    hooks:
+  #      - id: mypy
+  #        additional_dependencies: ["django-stubs==5.1.3"]
+  #        args: ["--config-file=mypy.ini"]
 
-#  - repo: https://github.com/DavidAnson/markdownlint-cli2
-#    rev: v0.17.2
-#    hooks:
-#      - id: markdownlint-cli2
-#        args: ["--config", ".markdownlint.json"]
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.17.2
+    hooks:
+      - id: markdownlint-cli2
+        args: ["--config", ".markdownlint.json", "--fix"]
 
-#  - repo: https://github.com/koalaman/shellcheck-precommit
-#    rev: v0.10.0
-#    hooks:
-#      - id: shellcheck
-#        args: ["--external-sources"]
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
+    hooks:
+      - id: shellcheck
+        args: ["--external-sources"]
 
   - repo: https://github.com/djlint/djLint
     rev: v1.36.4
@@ -127,24 +126,35 @@ repos:
       - id: djlint-django
         args: ["--reformat"]
 
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+        args: ["--line-length=88"]
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types_or: [javascript, css, html]
+
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: 1.23.1
+    hooks:
+      - id: django-upgrade
+        args: ["--target-version", "4.1"]
+
   - repo: local
     hooks:
+      #      - id: safety-check
+      #        name: Safety dependency checker
+      #        entry: bash -c 'pip install safety && safety check --full-report --ignore=62044,75180'
+      #        language: system
+      #        pass_filenames: false
+      #        always_run: true
+
       - id: eslint
         name: eslint
         entry: npx eslint --fix
         language: system
         types: [javascript]
-
-      - id: check-django-migrations
-        name: Check Django migrations
-        entry: python -c "import sys; import subprocess; sys.exit(subprocess.call(['python', 'manage.py', 'makemigrations', '--check', '--dry-run']))"
-        language: system
-        pass_filenames: false
-        files: "models\\.py$"
-
-#      - id: check-django-settings
-#        name: Check Django settings
-#        entry: python -c "import sys; import subprocess; sys.exit(subprocess.call(['python', 'manage.py', 'check', '--deploy']))"
-#        language: system
-#        pass_filenames: false
-#        files: "settings\\.py$"

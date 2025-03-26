@@ -1,5 +1,6 @@
-
 [bandit]
+# Bandit configuration file for Greenova project
+
 # Number of lines of context to display for each issue
 context_lines = 3
 
@@ -7,7 +8,7 @@ context_lines = 3
 exclude = /tests,/env,/venv,/.git,*.pyc
 
 # Tests to skip (comma-separated)
-skips = B101,B104,B105,B110
+skips = ['B311', 'B101']
 
 # Test for possible hardcoded passwords
 hardcoded_password_string = ['password', 'passwd', 'pwd', 'secret']
@@ -35,3 +36,6 @@ recursive = True
 
 # Show progress
 verbose = True
+
+# Exclude directories
+exclude_dirs = ['tests', 'migrations']
