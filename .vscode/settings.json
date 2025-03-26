@@ -599,6 +599,16 @@
     "./greenova",
     "/home/vscode/dotfiles"
   ],
+  "sqltools.connections": [
+    {
+      "database": "${workspaceFolder:greenova}/greenova/db.sqlite3",
+      "driver": "SQLite",
+      "group": "SQLite",
+      "name": "SQLite",
+      "previewLimit": 50
+    }
+  ],
+  "sqltools.useNodeRuntime": true,
   "tailwindCSS.codeActions": true,
   "tailwindCSS.codeLens": true,
   "tailwindCSS.includeLanguages": {

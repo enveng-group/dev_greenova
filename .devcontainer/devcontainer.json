@@ -30,7 +30,8 @@
         "zxh404.vscode-proto3",
         "Plex.vscode-protolint",
         "bradlc.vscode-tailwindcss",
-        "pycqa.bandit-pycqa"
+        "pycqa.bandit-pycqa",
+        "mtxr.sqltools"
       ],
       "settings": {
         "[django-html]": {
@@ -81,6 +82,7 @@
           "*.py": "python",
           "*.toml": "toml",
           "*.txt": "plaintext",
+          ".bandit": "yaml",
           ".env*": "dotenv",
           ".pylintrc": "ini",
           ".pylintrc-django": "ini",
