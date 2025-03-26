@@ -119,7 +119,7 @@ user:
 
 #Import data from CSV file
 import:
-	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --no-transaction
+	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv
 
 #Update data from CSV file
 update:
