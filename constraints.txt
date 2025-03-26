@@ -16,10 +16,10 @@ cryptography~=41.0.7
 cycler~=0.12.1
 fonttools~=4.56.0
 idna~=3.10
-importlib-metadata~=6.0.0
+importlib-metadata~=8.6.1
 
 # Template and formatting utilities
-jsonschema~=4.0.0
+jsonschema~=4.23.0
 kiwisolver~=1.4.7
 MarkupSafe~=3.0.2
 
