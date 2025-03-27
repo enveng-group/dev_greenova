@@ -4,7 +4,7 @@ set -e
 set -euo pipefail
 echo "=== Running post_start.sh ==="
 echo "Starting post_start process..."
-  
+
 
 
 #Function to clone the project
@@ -116,7 +116,7 @@ setup_venv() {
   #    echo " .venv is owned by root. Deleting to avoid permission issues..."
   #    rm -rf "$VENV_PATH"
   #  fi
-  #fi 
+  #fi
 
   # Create virtual environment if it doesn't exist
   if [ ! -d "$VENV_PATH" ]; then
