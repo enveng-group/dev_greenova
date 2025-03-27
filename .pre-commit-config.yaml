@@ -18,6 +18,7 @@ repos:
       - id: check-xml
       - id: debug-statements
       - id: double-quote-string-fixer
+        exclude: ^greenova/greenova/settings.py
       - id: fix-byte-order-marker
       - id: check-toml
       - id: pretty-format-json

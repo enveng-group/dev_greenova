@@ -42,7 +42,6 @@
 
 /* Chat dialog which represents some message */
 .chat-dialog {
-
   margin: var(--greenova-spacing-small);
   border: 4px solid var(--greenova-beige-primary);
   padding: var(--greenova-padding-small) var(--greenova-padding);

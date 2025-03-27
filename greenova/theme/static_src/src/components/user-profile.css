@@ -52,7 +52,7 @@
   right: 0;
 }
 
-.image-upload input[type="file"] {
+.image-upload input[type='file'] {
   position: absolute;
   width: 1px;
   height: 1px;

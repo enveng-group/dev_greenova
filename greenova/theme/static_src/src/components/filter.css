@@ -47,7 +47,7 @@
 }
 
 /*.search-box*/
-input[type="search"] {
+input[type='search'] {
   flex: 1;
   min-width: 200px;
 
@@ -74,8 +74,8 @@ input[type="search"] {
   margin-bottom: var(--greenova-input-size);
 }
 
-.filter-group>select>option,
-.sort-group>select {
+.filter-group > select > option,
+.sort-group > select {
   font-size: var(--greenova-input-size);
 }
 

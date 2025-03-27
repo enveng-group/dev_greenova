@@ -1,70 +1,61 @@
-{% load static %}
-{% load django_htmx %}
-{% load tailwind_tags %}
-{% load user_tags %}
-{% load core_tags %}
-<!DOCTYPE html>
+{% load static %} {% load django_htmx %} {% load tailwind_tags %} {% load
+user_tags %} {% load core_tags %}
+<!doctype html>
 <html lang="en" data-theme="light dark">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <meta name="color-scheme" content="light dark" />
-        <meta name="keywords"
-              content="environmental compliance, management system, greenova, sustainability" />
-        <meta name="description"
-              content=" {% block meta_description %}Environmental Compliance Management System{% endblock meta_description %} " />
-        <title>
-            {% block title %}
-                {% block page_title %}
-                    Greenova
-                {% endblock page_title %}
-            {% endblock title %}
-        </title>
-        <!-- Critical CSS -->
-        <link rel="preload" href="{% static 'css/styles.css' %}" as="style" />
-        {% tailwind_preload_css %}
-        <!-- CSS files -->
-        <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-        {% tailwind_css %}
-        {% block extra_head %}
-        {% endblock extra_head %}
-    </head>
-    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-          hx-ext="head-support, loading-states, class-tools, path-deps">
-        <!-- Skip to main content link for accessibility -->
-        <a class="skip-link" href="#main-content">Skip to content</a>
-        {% load hyperscript %}
-        <!-- Header with semantic nav -->
-        <header role="banner">
-            {% block header %}
-                {% main_navigation %}
-            {% endblock header %}
-        </header>
-        <!-- Main content -->
-        <main id="main-content" role="main">
-            {% block body %}
-                {% block content %}
-                {% endblock content %}
-            {% endblock body %}
-        </main>
-        <!-- FOOTER: Full-width at bottom of page -->
-        {% block footer %}
-            <footer role="contentinfo">
-                <div class="container">
-                    <p>&copy; {% now "Y" %} Greenova - Environmental Compliance Management System</p>
-                </div>
-            </footer>
-        {% endblock footer %}
-        <!-- JavaScript -->
-        <script src="{% static 'js/vendor/htmx/htmx.min.js' %}"></script>
-        <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}"></script>
-        <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}"></script>
-        <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}"></script>
-        <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}"></script>
-        <script src="{% static 'js/vendor/_hyperscript.min.js' %}"></script>
-        <script src="{% static 'js/app.js' %}"></script>
-        {% block extra_scripts %}
-        {% endblock extra_scripts %}
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="keywords"
+      content="environmental compliance, management system, greenova, sustainability"
+    />
+    <meta
+      name="description"
+      content=" {% block meta_description %}Environmental Compliance Management System{% endblock meta_description %} "
+    />
+    <title>
+      {% block title %} {% block page_title %} Greenova {% endblock page_title
+      %} {% endblock title %}
+    </title>
+    {% tailwind_css %} {% block extra_head %} {% endblock extra_head %}
+  </head>
+  <body
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-ext="head-support, loading-states, class-tools, path-deps"
+  >
+    <!-- Skip to main content link for accessibility -->
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    {% load hyperscript %}
+    <!-- Header with semantic nav -->
+    <header role="banner">
+      {% block header %} {% main_navigation %} {% endblock header %}
+    </header>
+    <!-- Main content -->
+    <main id="main-content" role="main">
+      {% block body %} {% block content %} {% endblock content %} {% endblock
+      body %}
+    </main>
+    <!-- FOOTER: Full-width at bottom of page -->
+    {% block footer %}
+    <footer role="contentinfo">
+      <div class="container">
+        <p>
+          &copy; {% now "Y" %} Greenova - Environmental Compliance Management
+          System
+        </p>
+      </div>
+    </footer>
+    {% endblock footer %}
+    <!-- JavaScript -->
+    <script src="{% static 'js/vendor/htmx/htmx.min.js' %}"></script>
+    <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}"></script>
+    <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}"></script>
+    <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}"></script>
+    <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}"></script>
+    <script src="{% static 'js/vendor/_hyperscript.min.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extra_scripts %} {% endblock extra_scripts %}
+  </body>
 </html>

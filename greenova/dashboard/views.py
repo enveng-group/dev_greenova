@@ -1,26 +1,27 @@
-from typing import Dict, Any, cast, Optional, TypedDict
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import datetime
+import logging
+from typing import Any, Dict, Optional, TypedDict, cast
+
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
-from django.db.models import QuerySet
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
-from django.views.decorators.vary import vary_on_headers
-from django.views.decorators.cache import cache_control
-from django.utils.decorators import method_decorator
+from django.db.models import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView
 from django_htmx.http import (
     HttpResponseClientRedirect,
     HttpResponseClientRefresh,
-    trigger_client_event,
     push_url,
     reswap,
-    retarget
+    retarget,
+    trigger_client_event,
 )
-from datetime import datetime
-from projects.models import Project
 from obligations.models import Obligation
-import logging
+from projects.models import Project
 
 # Constants for system information
 SYSTEM_STATUS = "operational"  # or fetch from settings/environment
@@ -28,6 +29,7 @@ APP_VERSION = "0.0.4"  # or fetch from settings/environment
 LAST_UPDATED = datetime.now().date()  # or fetch from settings/environment
 
 logger = logging.getLogger(__name__)
+
 
 class DashboardContext(TypedDict):
     projects: QuerySet[Project]
@@ -40,23 +42,20 @@ class DashboardContext(TypedDict):
     error: Optional[str]
     user_roles: Dict[str, str]
 
-@method_decorator(cache_control(max_age=60), name='dispatch')
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
+
+@method_decorator(cache_control(max_age=60), name="dispatch")
+@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
-    template_name = 'dashboard/dashboard.html'
-    login_url = 'account_login'
-    redirect_field_name = 'next'
+
+    template_name = "dashboard/dashboard.html"
+    login_url = "account_login"
+    redirect_field_name = "next"
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         """Initialize view setup."""
         super().setup(request, *args, **kwargs)
         self.request = request
-
-    def get_template_names(self):
-        if self.request.htmx:
-            return ['dashboard/partials/dashboard_content.html']
-        return [self.template_name]
 
     def get(self, request, *args, **kwargs):
         """Handle GET requests with enhanced HTMX support."""
@@ -69,12 +68,14 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             push_url(response, current_url)
 
             # Trigger dashboard refresh events
-            trigger_client_event(response, 'dashboardLoaded')
+            trigger_client_event(response, "dashboardLoaded")
 
             # Also trigger project selection if project_id is in the request
-            project_id = request.GET.get('project_id')
+            project_id = request.GET.get("project_id")
             if project_id:
-                trigger_client_event(response, 'projectSelected', {"projectId": project_id})
+                trigger_client_event(
+                    response, "projectSelected", {"projectId": project_id}
+                )
 
             # If the dashboard data is stale, force a refresh
             if self._is_data_stale():
@@ -95,26 +96,28 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
             user = cast(AbstractUser, self.request.user)
 
             # Use prefetch_related for ManyToMany relationships
-            user_projects = Project.objects.filter(
-                memberships__user=user
-            ).prefetch_related('memberships', 'obligations').distinct()
+            user_projects = (
+                Project.objects.filter(memberships__user=user)
+                .prefetch_related("memberships", "obligations")
+                .distinct()
+            )
 
             # Get the selected project ID from query parameters
-            selected_project_id = self.request.GET.get('project_id')
+            selected_project_id = self.request.GET.get("project_id")
 
             dashboard_context: DashboardContext = {
-                'projects': user_projects,
-                'selected_project_id': selected_project_id,  # Add this to context explicitly
-                'system_status': SYSTEM_STATUS,
-                'app_version': APP_VERSION,
-                'last_updated': datetime.combine(LAST_UPDATED, datetime.min.time()),
-                'debug': settings.DEBUG,
-                'error': None,
-                'user': user,
-                'user_roles': {
+                "projects": user_projects,
+                "selected_project_id": selected_project_id,  # Add this to context explicitly
+                "system_status": SYSTEM_STATUS,
+                "app_version": APP_VERSION,
+                "last_updated": datetime.combine(LAST_UPDATED, datetime.min.time()),
+                "debug": settings.DEBUG,
+                "error": None,
+                "user": user,
+                "user_roles": {
                     str(project.pk): project.get_user_role(user)
                     for project in user_projects
-                }
+                },
             }
 
             context.update(dashboard_context)
@@ -128,34 +131,25 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                     # Fix the query - use project directly instead of projects field
                     obligations = Obligation.objects.filter(
                         project=project  # Changed from projects=project
-                    ).select_related('project')
+                    ).select_related("project")
 
                 except Project.DoesNotExist:
                     logger.error(f"Project not found: {selected_project_id}")
-                    context['error'] = "Selected project not found"
+                    context["error"] = "Selected project not found"
                 except Exception as e:
                     logger.error(f"Error processing analytics: {str(e)}")
-                    context['error'] = "Error processing analytics data"
+                    context["error"] = "Error processing analytics data"
 
         except Exception as e:
             logger.error(f"Error loading dashboard: {str(e)}")
-            context['error'] = str(e)
+            context["error"] = str(e)
 
         return context
 
     def get_projects(self) -> QuerySet[Project]:
         """Get projects for the current user."""
         try:
-            return Project.objects.prefetch_related(
-                'obligations',
-                'memberships'
-            ).all()
+            return Project.objects.prefetch_related("obligations", "memberships").all()
         except Exception as e:
             logger.error(f"Error fetching projects: {str(e)}")
             return Project.objects.none()
-
-class DashboardProfileView(TemplateView):
-    """Profile view."""
-    template_name = 'dashboard/profile.html'
-    login_url = 'account_login'
-    redirect_field_name = 'next'

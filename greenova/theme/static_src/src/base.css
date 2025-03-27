@@ -31,9 +31,8 @@ body {
 
 /* We want a specific spacing for our main and header*/
 main,
-#main-content,
-[role="main"] {
-  max-width: calc(100% - 2*var(--greenova-main-spacing));
+[role='main'] {
+  max-width: calc(100% - 2 * var(--greenova-main-spacing));
   margin: 0 var(--greenova-main-spacing);
   padding: var(--greenova-spacing-large) 0;
 }
@@ -195,7 +194,8 @@ code,
 kbd,
 samp,
 pre {
-  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: 1em;
 }
 
@@ -214,11 +214,11 @@ sup {
 }
 
 sub {
-  bottom: -1*var(--greenova-spacing-small);
+  bottom: -1 * var(--greenova-spacing-small);
 }
 
 sup {
-  top: -1*var(--greenova-spacing-small);
+  top: -1 * var(--greenova-spacing-small);
 }
 
 /* Remove navigation */

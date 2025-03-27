@@ -19,7 +19,7 @@
                             name="project_id"
                             class="form-select"
                             hx-trigger="change"
-                            _="on change set projectId to my.value if projectId != '' trigger change on #mechanism-data-container trigger change on #obligations-container trigger change on #overdue-container if history call history.replaceState(null, '', `?project_id=${projectId}`) end end">
+                            _="on change set projectId to my.value if projectId != '' trigger change on #mechanism-data-container if history call history.replaceState(null, '', `?project_id=${projectId}`) end end">
                         <option value="0">Select a project</option>
                         {% for project in projects %}
                             <option value="{{ project.id }}"

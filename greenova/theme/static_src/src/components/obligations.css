@@ -63,7 +63,7 @@ mark.success {
 }
 
 /* Status badges */
-mark[role="status"] {
+mark[role='status'] {
   display: inline-block;
   padding: var(--greenova-padding-small);
   border-radius: var(--greenova-border-radius);
@@ -144,7 +144,7 @@ td:nth-child(22) {
 }
 
 /* Loading states */
-[aria-busy="true"] {
+[aria-busy='true'] {
   position: relative;
   min-height: 200px;
   display: flex;
@@ -214,7 +214,6 @@ td:nth-child(22) {
   align-items: center;
   gap: var(--greenova-spacing);
   padding: var(--greenova-padding);
-  ;
   background: var(--greenova-background-secondary);
   border-radius: var(--greenova-border-radius);
   font-size: var(--greenova-table-size);
