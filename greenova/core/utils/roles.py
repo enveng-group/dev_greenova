@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
+
 
 class ProjectRole(str, Enum):
     """Define valid project roles."""
@@ -84,7 +85,7 @@ def get_role_display(role_value: str) -> str:
 
 def get_role_color(role_value: str) -> str:
     """Get the display color for a role value."""
-    return ROLE_COLORS.get(role_value, "default")
+    return ROLE_COLORS.get(role_value, 'default')
 
 def get_role_choices() -> List[Tuple[str, str]]:
     """
@@ -132,3 +133,20 @@ def get_responsibility_from_role(role: str) -> str:
         str: The corresponding responsibility display name or None if not found
     """
     return ROLE_DISPLAY_NAMES.get(role)
+
+def get_responsibility_display_name(responsibility: str) -> str:
+    """
+    Get the display name for a responsibility value.
+
+    Args:
+        responsibility (str): The responsibility value or display name
+
+    Returns:
+        str: The display name for the responsibility
+    """
+    # If the responsibility is already a display name, return it
+    if responsibility in [display for _, display in get_role_choices()]:
+        return responsibility
+
+    # Otherwise, try to convert it from a role value to a display name
+    return get_responsibility_from_role(responsibility) or responsibility

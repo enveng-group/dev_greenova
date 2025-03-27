@@ -1,6 +1,8 @@
 <section class="table-container">
   {% if users %}
-    <table>
+    <!-- Add a debug comment with usernames to help with testing -->
+    <!-- Users: {% for user in users %}{{ user.username }} {% endfor %} -->
+    <table id="user-list-table">
       <thead>
         <tr>
           <th>Username</th>
@@ -15,46 +17,44 @@
       </thead>
       <tbody>
         {% for user in users %}
-        <tr id="user-row-{{ user.id }}">
-          <td>{{ user.username }}</td>
-          <td>{{ user.get_full_name|default:"-" }}</td>
-          <td>{{ user.email|default:"-" }}</td>
-          <td>{{ user.profile.department|default:"-" }}</td>
-          <td>
-            {% if user.is_active %}
-              <mark role="status" class="success">Active</mark>
-            {% else %}
-              <mark role="status" class="warning">Inactive</mark>
-            {% endif %}
-          </td>
-          <td>
-            {% if user.is_superuser %}
-              <mark role="status" class="info">Admin</mark>
-            {% elif user.is_staff %}
-              <mark role="status" class="info">Staff</mark>
-            {% else %}
-              User
-            {% endif %}
-          </td>
-          <td>{{ user.date_joined|date:"Y-m-d" }}</td>
-          <td class="actions-column">
-            <div class="action-buttons">
-              <a href="{% url 'users:admin_user_edit' user.id %}" class="action-btn edit"
-                 title="Edit {{ user.username }}">
-                Edit
-              </a>
-
-              {% if user != request.user %}
-              <button class="action-btn delete"
-                      hx-get="{% url 'users:admin_user_delete' user.id %}"
-                      hx-target="#modal-container"
-                      title="Delete {{ user.username }}">
-                Delete
-              </button>
+          <tr id="user-row-{{ user.id }}"
+              class="user-row"
+              data-username="{{ user.username }}">
+            <td class="username-cell">{{ user.username }}</td>
+            <td>{{ user.get_full_name|default:"-" }}</td>
+            <td>{{ user.email|default:"-" }}</td>
+            <td>{{ user.profile.department|default:"-" }}</td>
+            <td>
+              {% if user.is_active %}
+                <mark role="status" class="success">Active</mark>
+              {% else %}
+                <mark role="status" class="warning">Inactive</mark>
               {% endif %}
-            </div>
-          </td>
-        </tr>
+            </td>
+            <td>
+              {% if user.is_superuser %}
+                <mark role="status" class="info">Admin</mark>
+              {% elif user.is_staff %}
+                <mark role="status" class="info">Staff</mark>
+              {% else %}
+                User
+              {% endif %}
+            </td>
+            <td>{{ user.date_joined|date:"Y-m-d" }}</td>
+            <td class="actions-column">
+              <div class="action-buttons">
+                <a href="{% url 'users:admin_user_edit' user.id %}"
+                   class="action-btn edit"
+                   title="Edit {{ user.username }}">Edit</a>
+                {% if user != request.user %}
+                  <button class="action-btn delete"
+                          hx-get="{% url 'users:admin_user_delete' user.id %}"
+                          hx-target="#modal-container"
+                          title="Delete {{ user.username }}">Delete</button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
         {% endfor %}
       </tbody>
     </table>
@@ -64,6 +64,5 @@
     </div>
   {% endif %}
 </section>
-
 <!-- Modal container for delete confirmation -->
 <div id="modal-container"></div>
