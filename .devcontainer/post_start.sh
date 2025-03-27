@@ -330,7 +330,6 @@ setup_fish_direnv() {
 
 main() {
   clone
-  apk add --no-cache shellcheck
 
   # install Python
   #echo "Installing up Python environment..."

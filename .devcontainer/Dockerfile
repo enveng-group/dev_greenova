@@ -7,7 +7,7 @@ RUN apk add --no-cache \
     linux-headers libc6-compat \
     icu-libs \
     python3 py3-pip python3-dev \
-    nodejs npm
+    nodejs npm shellcheck
 
 # set the working directory
 WORKDIR /workspaces/greenova
