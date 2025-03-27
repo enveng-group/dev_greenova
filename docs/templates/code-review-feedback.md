@@ -117,5 +117,3 @@ Please feel free to:
 
 Thank you again for your efforts. I look forward to your future contributions
 to the Greenova project.
-
-Best regards, [Your Name]
