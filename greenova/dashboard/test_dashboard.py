@@ -1,6 +1,7 @@
 """
 Pytest tests for dashboard functionality.
 """
+import unittest.mock as mock  # Add this import
 from datetime import date
 
 import pytest
@@ -159,63 +160,88 @@ class TestDashboardProfileView:
 class TestOverdueCount:
     """Test the overdue_count functionality."""
 
-    def test_overdue_count(self, monkeypatch, authenticated_client):
+    def test_overdue_count(self, authenticated_client):
         """Test the overdue_count method returns the correct count."""
-        # Configure the mock using pytest's monkeypatch
-        mock_queryset = pytest.Mock()
-        mock_queryset.count.return_value = 3
+        # Configure the mock using unittest.mock instead of mocker
+        with mock.patch('obligations.models.Obligation.objects.filter') as mock_filter:
+            mock_queryset = mock.MagicMock()
+            mock_queryset.count.return_value = 3
+            mock_filter.return_value = mock_queryset
 
-        monkeypatch.setattr(
-            'obligations.models.Obligation.objects.filter',
-            lambda **kwargs: mock_queryset
-        )
+            # Call the view
+            response = authenticated_client.get(reverse('dashboard:overdue_count'))
 
-        # Call the view
-        response = authenticated_client.get(reverse('dashboard:overdue_count'))
+            # Check that the response contains the count
+            assert response.status_code == 200
+            assert b'3' in response.content
 
-        # Check that the response contains the count
-        assert response.status_code == 200
-        assert b'3' in response.content
+            # Verify the mock was called correctly
+            mock_filter.assert_called_once_with(recurring_status='overdue')
 
-    def test_overdue_count_htmx(self, monkeypatch, authenticated_client):
+    def test_overdue_count_htmx(self, authenticated_client):
         """Test the overdue_count with HTMX request."""
-        # Configure the mock using pytest's monkeypatch
-        mock_queryset = pytest.Mock()
-        mock_queryset.count.return_value = 6
+        # Configure the mock using unittest.mock instead of mocker
+        with mock.patch('obligations.models.Obligation.objects.filter') as mock_filter:
+            mock_queryset = mock.MagicMock()
+            mock_queryset.count.return_value = 6
+            mock_filter.return_value = mock_queryset
 
-        monkeypatch.setattr(
-            'obligations.models.Obligation.objects.filter',
-            lambda **kwargs: mock_queryset
-        )
+            # Make an HTMX request
+            response = authenticated_client.get(
+                reverse('dashboard:overdue_count'),
+                HTTP_HX_REQUEST='true'
+            )
 
-        # Make an HTMX request
-        response = authenticated_client.get(
-            reverse('dashboard:overdue_count'),
-            HTTP_HX_REQUEST='true'
-        )
+            # Check response
+            assert response.status_code == 200
+            assert b'6' in response.content
 
-        # Check response
-        assert response.status_code == 200
-        assert b'6' in response.content
+            # Check that high count triggers event
+            assert 'HX-Trigger' in response.headers
+            assert 'highOverdueCount' in response.headers['HX-Trigger']
 
-        # Check that high count triggers event
-        assert 'HX-Trigger' in response.headers
-        assert 'highOverdueCount' in response.headers['HX-Trigger']
-
-    def test_overdue_count_exception(self, monkeypatch, authenticated_client):
+    def test_overdue_count_exception(self, authenticated_client):
         """Test the overdue_count method handles exceptions."""
-        # Configure the mock to raise an exception using pytest
-        def raise_exception(**kwargs):
-            raise Exception('Database error')
+        # Configure the mock to raise an exception using unittest.mock
+        with mock.patch('obligations.models.Obligation.objects.filter') as mock_filter:
+            mock_filter.side_effect = Exception('Database error')
 
-        monkeypatch.setattr(
-            'obligations.models.Obligation.objects.filter',
-            raise_exception
+            # Call the view
+            response = authenticated_client.get(reverse('dashboard:overdue_count'))
+
+            # Should return 0 when there's an error
+            assert response.status_code == 200
+            assert b'0' in response.content
+
+
+@pytest.mark.selenium
+class TestSeleniumDashboard:
+    """Test dashboard functionality with Selenium."""
+
+    @pytest.mark.django_db
+    def test_login_and_dashboard(self, live_server, selenium, regular_user):
+        """Test login and access to dashboard with Selenium."""
+        # Visit the login page
+        selenium.get(f'{live_server.url}/authentication/login/')
+
+        # Fill in the login form
+        username_input = selenium.find_element('name', 'username')
+        password_input = selenium.find_element('name', 'password')
+
+        username_input.send_keys(regular_user.username)
+        password_input.send_keys('testpass')
+
+        # Submit the form
+        selenium.find_element('xpath', "//button[@type='submit']").click()
+
+        # Wait for dashboard to load
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support import expected_conditions as EC
+        from selenium.webdriver.support.ui import WebDriverWait
+
+        WebDriverWait(selenium, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'h1'))
         )
 
-        # Call the view
-        response = authenticated_client.get(reverse('dashboard:overdue_count'))
-
-        # Should return 0 when there's an error
-        assert response.status_code == 200
-        assert b'0' in response.content
+        # Check we're on the dashboard
+        assert 'Dashboard' in selenium.page_source

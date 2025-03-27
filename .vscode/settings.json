@@ -116,11 +116,13 @@
     "editor.tabSize": 2
   },
   "[python]": {
+    "editor.autoClosingQuotes": "always",
     "editor.codeActionsOnSave": {
       "source.fixAll": "explicit",
       "source.organizeImports": "explicit"
     },
     "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
     "editor.rulers": [
       88,
@@ -146,7 +148,7 @@
     "editor.tabSize": 4
   },
   "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "files.eol": "\n"
   },
@@ -158,7 +160,10 @@
     "--in-place",
     "--select=E,W,F",
     "--ignore=E226,E302,E41",
-    "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules"
+    "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules",
+    "--recursive",
+    "--aggressive",
+    "--single-quotes"
   ],
   "autopep8.importStrategy": "fromEnvironment",
   "autopep8.interpreter": [
@@ -172,6 +177,10 @@
     "/usr/local/py-utils/bin/bandit"
   ],
   "chat.detectParticipant.enabled": true,
+  "chat.promptFiles": true,
+  "chat.promptFilesLocations": {
+    ".github/prompts": true
+  },
   "chat.renderRelatedFiles": true,
   "css.format.enable": true,
   "css.hover.references": true,
@@ -276,10 +285,47 @@
     "**/*.css",
     "**/*.js"
   ],
+  "git.allowNoVerifyCommit": true,
+  "git.alwaysSignOff": true,
+  "git.autoRepositoryDetection": true,
   "git.autoStash": true,
   "git.autofetch": true,
+  "git.blame.editorDecoration.enabled": true,
+  "git.blame.statusBarItem.enabled": true,
+  "git.branchProtection": [
+    "main",
+    "master"
+  ],
+  "git.branchProtectionPrompt": "alwaysPrompt",
+  "git.closeDiffOnOperation": true,
+  "git.confirmNoVerifyCommit": true,
   "git.confirmSync": false,
+  "git.countBadge": "all",
+  "git.decorations.enabled": true,
+  "git.diagnosticsCommitHook.Enabled": false,
+  "git.enableCommitSigning": true,
   "git.enableSmartCommit": true,
+  "git.enableStatusBarSync": true,
+  "git.enabled": true,
+  "git.fetchOnPull": true,
+  "git.inputValidation": true,
+  "git.mergeEditor": true,
+  "git.openDiffOnClick": true,
+  "git.optimisticUpdate": true,
+  "git.postCommitCommand": "sync",
+  "git.promptToSaveFilesBeforeCommit": "always",
+  "git.promptToSaveFilesBeforeStash": "always",
+  "git.pruneOnFetch": true,
+  "git.rebaseWhenSync": true,
+  "git.replaceTagsWhenPull": true,
+  "git.requireGitUserConfig": true,
+  "git.showCommitInput": true,
+  "git.showProgress": true,
+  "git.smartCommitChanges": "all",
+  "git.suggestSmartCommit": true,
+  "git.terminalAuthentication": true,
+  "git.terminalGitEditor": true,
+  "git.useEditorAsCommitInput": true,
   "github.copilot.advanced": {
     "debug.enable": false,
     "inlineSuggestCount": 3,
@@ -365,7 +411,7 @@
   "githubPullRequests.defaultCreateOption": "create",
   "githubPullRequests.defaultDeletionMethod.selectLocalBranch": true,
   "githubPullRequests.defaultDeletionMethod.selectRemote": true,
-  "githubPullRequests.defaultMergeMethod": "squash",
+  "githubPullRequests.defaultMergeMethod": "rebase",
   "githubPullRequests.experimental.chat": true,
   "githubPullRequests.experimental.notificationsView": true,
   "githubPullRequests.experimental.useQuickChat": true,
@@ -434,7 +480,7 @@
   "makefile.makePath": "make",
   "makefile.makefilePath": "${workspaceFolder}/Makefile",
   "markdown.validate.enabled": true,
-  "markdownlint.configFile": "/workspaces/greenova/.markdownlint.json",
+  "markdownlint.configFile": "/workspaces/greenova/.markdownlint-cli2.jsonc",
   "markdownlint.run": "onType",
   "mypy-type-checker.args": [
     "--configuration",
@@ -510,7 +556,8 @@
   ],
   "python.analysis.extraPaths": [
     "${workspaceFolder}/.venv/lib/python3.9/site-packages",
-    "${workspaceFolder}/greenova"
+    "${workspaceFolder}/greenova",
+    "${workspaceFolder}"
   ],
   "python.analysis.fixAll": [
     "source.unusedImports",
@@ -564,16 +611,18 @@
   "python.terminal.focusAfterLaunch": true,
   "python.terminal.shellIntegration.enabled": true,
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "python.testing.promptToConfigure": true,
-  "python.testing.pytestEnabled": false,
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    "./greenova",
-    "-p",
-    "*test*.py"
+  "python.testing.autoTestDiscoverOnSavePattern": "test_*.py",
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestArgs": [
+    "-xvs",
+    "--cov=greenova",
+    "--cov-report=term-missing",
+    "--no-cov-on-fail",
+    "--reuse-db"
   ],
-  "python.testing.unittestEnabled": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestPath": "pytest",
+  "python.testing.unittestEnabled": false,
   "shellcheck.disableVersionCheck": true,
   "shellcheck.enable": true,
   "shellcheck.enableQuickFix": true,

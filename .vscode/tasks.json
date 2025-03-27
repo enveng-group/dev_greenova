@@ -1,8 +1,11 @@
 {
   "tasks": [
     {
-      "args": ["-c", "autopep8 --in-place \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "--in-place",
+        "${file}"
+      ],
+      "command": "autopep8",
       "group": "none",
       "label": "Python: Format with autopep8",
       "presentation": {
@@ -14,8 +17,10 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "isort \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "${file}"
+      ],
+      "command": "isort",
       "group": "none",
       "label": "Python: Sort imports with isort",
       "presentation": {
@@ -27,8 +32,10 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "pylint \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "${file}"
+      ],
+      "command": "pylint",
       "group": "none",
       "label": "Python: Lint with pylint",
       "presentation": {
@@ -36,7 +43,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -50,8 +60,10 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "mypy \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "${file}"
+      ],
+      "command": "mypy",
       "group": "none",
       "label": "Python: Type check with mypy",
       "presentation": {
@@ -59,7 +71,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -73,10 +88,12 @@
     },
     {
       "args": [
-        "-c",
-        "mypy --ignore-missing-imports --disallow-untyped-defs --no-implicit-optional \"${file}\""
+        "--ignore-missing-imports",
+        "--disallow-untyped-defs",
+        "--no-implicit-optional",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "mypy",
       "group": "none",
       "label": "Python: Type check with mypy (standard)",
       "presentation": {
@@ -84,7 +101,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -98,23 +118,22 @@
     },
     {
       "args": [
-        "-c",
-        "mypy --config-file \"${workspaceFolder}/mypy.ini\" \"${file}\""
+        "--config-file",
+        "${workspaceFolder}/mypy.ini",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "mypy",
       "group": "none",
       "label": "Python: Type check with mypy (Django)",
-      "options": {
-        "env": {
-          "PYTHONPATH": "/workspaces/greenova"
-        }
-      },
       "presentation": {
         "panel": "shared",
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -128,10 +147,10 @@
     },
     {
       "args": [
-        "-c",
-        "bandit -r \"${file}\" --skip B101"
+        "-r",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "bandit",
       "group": "none",
       "label": "Python: Security check with bandit",
       "presentation": {
@@ -146,8 +165,7 @@
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint",
-        "Python: Type check with mypy (standard)",
-        "Python: Security check with bandit"
+        "Python: Type check with mypy (standard)"
       ],
       "dependsOrder": "sequence",
       "group": "none",
@@ -160,10 +178,10 @@
     },
     {
       "args": [
-        "-c",
-        "pylint --rcfile=\"${workspaceFolder}/.pylintrc\" \"${file}\""
+        "--rcfile=${workspaceFolder}/.pylintrc",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "pylint",
       "group": "none",
       "label": "Python: Lint with pylint (standard)",
       "presentation": {
@@ -171,7 +189,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -186,10 +207,12 @@
     },
     {
       "args": [
-        "-c",
-        "pylint --rcfile=\"${workspaceFolder}/.pylintrc-django\" --load-plugins=pylint_django --django-settings-module=greenova.settings \"${file}\""
+        "--rcfile=${workspaceFolder}/.pylintrc-django",
+        "--load-plugins=pylint_django",
+        "--django-settings-module=greenova.settings",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "pylint",
       "group": "none",
       "label": "Python: Lint with pylint (Django)",
       "presentation": {
@@ -197,7 +220,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -231,8 +257,7 @@
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint (Django)",
-        "Python: Type check with mypy (Django)",
-        "Python: Security check with bandit"
+        "Python: Type check with mypy (Django)"
       ],
       "dependsOrder": "sequence",
       "group": "none",
@@ -245,10 +270,13 @@
     },
     {
       "args": [
-        "-c",
-        "mypy --no-config --ignore-missing-imports --disallow-untyped-defs --no-implicit-optional \"${file}\""
+        "--no-config",
+        "--ignore-missing-imports",
+        "--disallow-untyped-defs",
+        "--no-implicit-optional",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "mypy",
       "group": "none",
       "label": "Python: Type check with mypy (config files)",
       "presentation": {
@@ -256,7 +284,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -269,8 +300,11 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "djlint \"${file}\" --reformat"],
-      "command": "/bin/sh",
+      "args": [
+        "${file}",
+        "--reformat"
+      ],
+      "command": "djlint",
       "group": "none",
       "label": "HTML: Format with djlint",
       "presentation": {
@@ -282,8 +316,10 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "djlint \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "${file}"
+      ],
+      "command": "djlint",
       "group": "none",
       "label": "HTML: Lint with djlint",
       "presentation": {
@@ -291,7 +327,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "djlint",
         "pattern": {
           "column": 3,
@@ -305,8 +344,12 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "npx prettier --write \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "prettier",
+        "--write",
+        "${file}"
+      ],
+      "command": "npx",
       "group": "none",
       "label": "JavaScript: Format with prettier",
       "presentation": {
@@ -318,20 +361,29 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "npx eslint \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "eslint",
+        "${file}"
+      ],
+      "command": "npx",
       "group": "none",
       "label": "JavaScript: Lint with eslint",
       "presentation": {
         "panel": "shared",
         "reveal": "always"
       },
-      "problemMatcher": ["$eslint-stylish"],
+      "problemMatcher": [
+        "$eslint-stylish"
+      ],
       "type": "shell"
     },
     {
-      "args": ["-c", "npx eslint --fix \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "eslint",
+        "--fix",
+        "${file}"
+      ],
+      "command": "npx",
       "group": "none",
       "label": "JavaScript: Fix eslint issues",
       "presentation": {
@@ -339,7 +391,9 @@
         "panel": "shared",
         "reveal": "silent"
       },
-      "problemMatcher": ["$eslint-stylish"],
+      "problemMatcher": [
+        "$eslint-stylish"
+      ],
       "type": "shell"
     },
     {
@@ -357,8 +411,12 @@
       "problemMatcher": []
     },
     {
-      "args": ["-c", "npx prettier --write \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "prettier",
+        "--write",
+        "${file}"
+      ],
+      "command": "npx",
       "group": "none",
       "label": "CSS: Format with prettier",
       "presentation": {
@@ -371,60 +429,11 @@
     },
     {
       "args": [
-        "-c",
-        "npx stylelint \"${file}\" --config \"${workspaceFolder}/stylelint.config.js\""
+        "prettier",
+        "--write",
+        "${file}"
       ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "CSS: Lint with stylelint",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "owner": "stylelint",
-        "pattern": {
-          "column": 3,
-          "file": 1,
-          "line": 2,
-          "message": 5,
-          "regexp": "^([^:]+):(\\d+):(\\d+):\\s+(.+)\\s+(.+)$",
-          "severity": 4
-        }
-      },
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "npx stylelint \"${file}\" --config \"${workspaceFolder}/stylelint.config.js\" --fix"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "CSS: Fix stylelint issues",
-      "presentation": {
-        "clear": true,
-        "panel": "shared",
-        "reveal": "silent"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "dependsOn": ["CSS: Format with prettier", "CSS: Fix stylelint issues"],
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "CSS: Fix all",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
-      "args": ["-c", "npx prettier --write \"${file}\""],
-      "command": "/bin/sh",
+      "command": "npx",
       "group": "none",
       "label": "JSON: Format with prettier",
       "presentation": {
@@ -437,10 +446,13 @@
     },
     {
       "args": [
-        "-c",
-        "npx prettier --config \"${workspaceFolder}/.prettierrc\" --write \"${file}\""
+        "prettier",
+        "--config",
+        "${workspaceFolder}/.prettierrc",
+        "--write",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "npx",
       "group": "none",
       "label": "YAML: Format with prettier",
       "presentation": {
@@ -452,8 +464,29 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "npx prettier --write \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "prettier",
+        "--write",
+        "${file}"
+      ],
+      "command": "npx",
+      "group": "none",
+      "label": "TOML: Format with prettier",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": [
+        "prettier",
+        "--write",
+        "${file}"
+      ],
+      "command": "npx",
       "group": "none",
       "label": "Markdown: Format with prettier",
       "presentation": {
@@ -466,10 +499,10 @@
     },
     {
       "args": [
-        "-c",
-        "/usr/local/share/nvm/current/bin/markdownlint-cli2 \"${file}\""
+        "markdownlint",
+        "${file}"
       ],
-      "command": "/bin/sh",
+      "command": "npx",
       "group": "none",
       "label": "Markdown: Lint with markdownlint",
       "presentation": {
@@ -477,7 +510,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "markdownlint",
         "pattern": {
           "column": 3,
@@ -504,8 +540,10 @@
       "problemMatcher": []
     },
     {
-      "args": ["-c", "shellcheck \"${file}\""],
-      "command": "/bin/sh",
+      "args": [
+        "${file}"
+      ],
+      "command": "shellcheck",
       "group": "none",
       "label": "Shell: Check with shellcheck",
       "presentation": {
@@ -513,7 +551,10 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "owner": "shellcheck",
         "pattern": {
           "column": 3,
@@ -527,16 +568,14 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "${command:workbench.action.terminal.clear}"],
-      "command": "/bin/sh",
+      "command": "${command:workbench.action.terminal.clear}",
       "group": {
         "isDefault": true,
         "kind": "build"
       },
       "label": "Format current file",
       "linux": {
-        "args": ["-c", "clear"],
-        "command": "/bin/sh"
+        "command": "clear"
       },
       "presentation": {
         "panel": "shared",
@@ -545,16 +584,15 @@
       "problemMatcher": [],
       "type": "shell",
       "windows": {
-        "args": ["/c", "cls"],
-        "command": "cmd.exe"
+        "command": "cls"
       }
     },
     {
       "args": [
         "-c",
-        "if [ -n \"$(echo \"${file}\" | grep '\\\\.py$')\" ]; then autopep8 --in-place \"${file}\" && isort \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\\\.html$')\" ]; then djlint \"${file}\" --reformat; elif [ -n \"$(echo \"${file}\" | grep '\\\\.(js\\\\|css\\\\|json\\\\|md\\\\|yaml\\\\|yml\\\\|toml)$')\" ]; then npx prettier --write \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\\\.sh$')\" ]; then echo \"Shell files can't be formatted automatically, running shellcheck...\"; shellcheck \"${file}\"; fi"
+        "if [[ \"${file}\" == *.py ]]; then autopep8 --in-place \"${file}\" && isort \"${file}\"; elif [[ \"${file}\" == *.html ]]; then djlint \"${file}\" --reformat; elif [[ \"${file}\" == *.js || \"${file}\" == *.css || \"${file}\" == *.json || \"${file}\" == *.md || \"${file}\" == *.yaml || \"${file}\" == *.yml || \"${file}\" == *.toml ]]; then npx prettier --write \"${file}\"; elif [[ \"${file}\" == *.sh ]]; then echo \"Shell files can't be formatted automatically, running shellcheck...\"; shellcheck \"${file}\"; fi"
       ],
-      "command": "/bin/sh",
+      "command": "bash",
       "group": "none",
       "label": "Auto-detect and format file",
       "presentation": {
@@ -567,9 +605,9 @@
     {
       "args": [
         "-c",
-        "if [ -n \"$(echo \"${file}\" | grep '/greenova/.*\\.py$')\" ]; then pylint --rcfile=${workspaceFolder}/.pylintrc-django --load-plugins=tools.pylint.fix_good_names,pylint_django,tools.pylint.gevent_checker --django-settings-module=greenova.settings \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.py$')\" ]; then pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.html$')\" ]; then djlint \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.js$')\" ]; then npx eslint \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.md$')\" ]; then /usr/local/share/nvm/current/bin/markdownlint-cli2 \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.sh$')\" ]; then shellcheck \"${file}\"; fi"
+        "if [[ \"${file}\" == */greenova/*.py ]]; then pylint --rcfile=${workspaceFolder}/.pylintrc-django --load-plugins=pylint_django --django-settings-module=greenova.settings \"${file}\"; elif [[ \"${file}\" == *.py ]]; then pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\"; elif [[ \"${file}\" == *.html ]]; then djlint \"${file}\"; elif [[ \"${file}\" == *.js ]]; then npx eslint \"${file}\"; elif [[ \"${file}\" == *.md ]]; then npx markdownlint \"${file}\"; elif [[ \"${file}\" == *.sh ]]; then shellcheck \"${file}\"; fi"
       ],
-      "command": "/bin/sh",
+      "command": "bash",
       "group": "none",
       "label": "Auto-detect and lint file",
       "presentation": {
@@ -582,146 +620,13 @@
     {
       "args": [
         "-c",
-        "if [ -n \"$(echo \"${file}\" | grep '/greenova/.*\\.py$')\" ]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc-django --load-plugins=pylint_django --django-settings-module=greenova.settings \"${file}\" && mypy --config-file ${workspaceFolder}/mypy.ini \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\(setup\\.py\\|pyproject\\.toml\\|\\.pylintrc\\)')\" ]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\" && mypy --no-config --ignore-missing-imports \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.py$')\" ]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\" && mypy --ignore-missing-imports --disallow-untyped-defs \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.html$')\" ]; then djlint \"${file}\" --reformat; elif [ -n \"$(echo \"${file}\" | grep '\\.js$')\" ]; then npx prettier --write \"${file}\" && npx eslint --fix \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.md$')\" ]; then npx prettier --write \"${file}\" && /usr/local/share/nvm/current/bin/markdownlint-cli2 \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.(css\\|json\\|yaml\\|yml\\|toml)$')\" ]; then npx prettier --write \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.css$')\" ]; then npx stylelint --config \"${workspaceFolder}/stylelint.config.js\" --fix \"${file}\"; elif [ -n \"$(echo \"${file}\" | grep '\\.sh$')\" ]; then shellcheck \"${file}\"; fi"
+        "if [[ \"${file}\" == */greenova/*.py ]]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc-django --load-plugins=pylint_django --django-settings-module=greenova.settings \"${file}\" && mypy --config-file ${workspaceFolder}/mypy.ini \"${file}\"; elif [[ \"${file}\" == */setup.py || \"${file}\" == */pyproject.toml || \"${file}\" == */.pylintrc* ]]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\" && mypy --no-config --ignore-missing-imports \"${file}\"; elif [[ \"${file}\" == *.py ]]; then isort \"${file}\" && autopep8 --in-place \"${file}\" && pylint --rcfile=${workspaceFolder}/.pylintrc \"${file}\" && mypy --ignore-missing-imports --disallow-untyped-defs \"${file}\"; elif [[ \"${file}\" == *.html ]]; then djlint \"${file}\" --reformat; elif [[ \"${file}\" == *.js ]]; then npx prettier --write \"${file}\" && npx eslint --fix \"${file}\"; elif [[ \"${file}\" == *.md ]]; then npx prettier --write \"${file}\" && npx markdownlint \"${file}\"; elif [[ \"${file}\" == *.css || \"${file}\" == *.json || \"${file}\" == *.yaml || \"${file}\" == *.yml || \"${file}\" == *.toml ]]; then npx prettier --write \"${file}\"; elif [[ \"${file}\" == *.sh ]]; then shellcheck \"${file}\"; fi"
       ],
-      "command": "/bin/sh",
+      "command": "bash",
       "group": "none",
       "label": "Auto-detect and fix all issues",
       "presentation": {
         "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "find . -type d -name \"__pycache__\" -exec rm -rf {} \\; 2>/dev/null || true && find . -name \"*.pyc\" -delete"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Clean cache files",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures feedback"
-        "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures feedback"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Create migrations",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py migrate"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Apply migrations",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py collectstatic --clear --noinput"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Collect static files",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py import_obligations dummy_data.csv"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Import obligations",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py sync_mechanisms"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Sync mechanisms",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py createsuperuser"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Create superuser",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "dependsOn": ["Django: Run Tailwind", "Django: Run server"],
-      "dependsOrder": "parallel",
-      "group": "none",
-      "label": "Django: Development environment",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py tailwind start"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Run Tailwind",
-      "presentation": {
-        "panel": "dedicated",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py runserver"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Run server",
-      "presentation": {
-        "panel": "dedicated",
         "reveal": "always"
       },
       "problemMatcher": [],

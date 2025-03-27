@@ -7,10 +7,13 @@ from matplotlib.figure import Figure
 from obligations.models import Obligation
 from projects.models import Project
 from responsibility.figures import get_responsibility_chart
-from responsibility.models import Responsibility
+from responsibility.models import Responsibility, ResponsibilityAssignment
 from responsibility.templatetags.responsibility_tags import (
     format_responsibility_roles, get_responsible_users, user_has_responsibility,
     user_responsibility_roles)
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 # ---- Fixtures ----
 
@@ -58,6 +61,16 @@ def obligation(db, project, responsibility):
         responsibility=responsibility,
         project_phase='Construction',
         action_due_date=timezone.now().date()
+    )
+
+@pytest.fixture
+def responsibility_assignment(db, user, obligation, responsibility_role):
+    """Create a test responsibility assignment."""
+    return ResponsibilityAssignment.objects.create(
+        user=user,
+        obligation=obligation,
+        role=responsibility_role,
+        created_by=user
     )
 
 @pytest.fixture
@@ -111,30 +124,61 @@ class TestResponsibilityModel:
             )
 
 
+@pytest.mark.django_db
+class TestResponsibilityAssignmentModel:
+    """Tests for the ResponsibilityAssignment model."""
+
+    def test_assignment_creation(self, responsibility_assignment, user, obligation, responsibility_role):
+        """Test that assignment can be created."""
+        assert isinstance(responsibility_assignment, ResponsibilityAssignment)
+        assert responsibility_assignment.user == user
+        assert responsibility_assignment.obligation == obligation
+        assert responsibility_assignment.role == responsibility_role
+
+    def test_assignment_str(self, responsibility_assignment, user, obligation, responsibility_role):
+        """Test the string representation."""
+        expected = f'{user.username} - {obligation.obligation_number} - {responsibility_role.name}'
+        assert str(responsibility_assignment) == expected
+
+    def test_unique_constraint(self, responsibility_assignment, user, obligation, responsibility_role):
+        """Test the unique together constraint."""
+        with pytest.raises(Exception):  # Could be IntegrityError or ValidationError
+            ResponsibilityAssignment.objects.create(
+                user=user,
+                obligation=obligation,
+                role=responsibility_role,
+                created_by=user
+            )
+
+
 # ---- View Tests ----
 
 @pytest.mark.django_db
 class TestResponsibilityViews:
     """Tests for responsibility views."""
 
-    def test_responsibility_home_view_authenticated(self, client, user):
+    def test_responsibility_home_view_authenticated(self, client, user, responsibility_assignment):
         """Test the home view when logged in."""
         client.force_login(user)
         response = client.get(reverse('responsibility:home'))
         assert response.status_code == 200
-        assert 'assignments' in response.context
+        assignments = response.context['assignments']
+        assert len(assignments) == 1
+        assert assignments[0] == responsibility_assignment
 
     def test_responsibility_home_view_unauthenticated(self, client):
         """Test the home view when not logged in."""
         response = client.get(reverse('responsibility:home'))
         assert response.status_code == 302  # Redirect to login
 
-    def test_assignment_list_view(self, client, user):
+    def test_assignment_list_view(self, client, user, responsibility_assignment):
         """Test the assignment list view."""
         client.force_login(user)
         response = client.get(reverse('responsibility:assignment_list'))
         assert response.status_code == 200
-        assert 'assignments' in response.context
+        assignments = response.context['assignments']
+        assert len(assignments) == 1
+        assert assignments[0] == responsibility_assignment
 
     def test_role_list_view(self, client, user, responsibility_role, company):
         """Test the role list view."""
@@ -154,18 +198,28 @@ class TestResponsibilityViews:
 class TestResponsibilityTemplateTags:
     """Tests for responsibility template tags."""
 
-    def test_user_has_responsibility(self, user, obligation):
+    def test_user_has_responsibility(self, user, obligation, responsibility_assignment):
         """Test the user_has_responsibility tag."""
-        # Modify to test without the ResponsibilityAssignment model
-        # Just check the function returns a boolean value
-        result = user_has_responsibility(user, obligation)
-        assert isinstance(result, bool)
+        assert user_has_responsibility(user, obligation) is True
 
-    def test_user_responsibility_roles(self, user, obligation):
+    def test_user_has_no_responsibility(self, user, obligation):
+        """Test the user_has_responsibility tag when user has no responsibility."""
+        # Create new user without assignments
+        new_user = User.objects.create_user(username='newuser', password='password')
+        assert user_has_responsibility(new_user, obligation) is False
+
+    def test_user_responsibility_roles(self, user, obligation, responsibility_assignment, responsibility_role):
         """Test the user_responsibility_roles tag."""
-        # Modify to test without the ResponsibilityAssignment model
         roles = user_responsibility_roles(user, obligation)
-        assert isinstance(roles, list)
+        assert len(roles) == 1
+        assert roles[0] == responsibility_role
+
+    def test_user_responsibility_roles_none(self, user, obligation):
+        """Test when there are no role assignments."""
+        # New user with no assignments
+        new_user = User.objects.create_user(username='newuser', password='password')
+        roles = user_responsibility_roles(new_user, obligation)
+        assert len(roles) == 0
 
     def test_format_responsibility_roles(self, responsibility_role):
         """Test the format_responsibility_roles tag."""
@@ -179,11 +233,11 @@ class TestResponsibilityTemplateTags:
         html = format_responsibility_roles([])
         assert html == ''
 
-    def test_get_responsible_users(self, obligation):
+    def test_get_responsible_users(self, responsibility_assignment, obligation):
         """Test the get_responsible_users tag."""
-        # Modify to test without the ResponsibilityAssignment model
         assignments = get_responsible_users(obligation)
-        assert isinstance(assignments, list)
+        assert len(assignments) == 1
+        assert assignments[0] == responsibility_assignment
 
 
 # ---- Figure Tests ----
@@ -217,3 +271,65 @@ class TestResponsibilityFigures:
             filtered_ids=[obligation.pk]
         )
         assert isinstance(fig, Figure)
+
+
+# ---- UI Tests ----
+
+@pytest.mark.django_db
+@pytest.mark.selenium
+class TestResponsibilityUI:
+    """UI tests for responsibility functionality."""
+
+    def test_responsibility_home_page_loads(self, live_server, selenium, user):
+        """Test that responsibility home page loads correctly."""
+        # Log in first
+        selenium.get(f'{live_server.url}/authentication/login/')
+        selenium.find_element(By.NAME, 'login').send_keys(user.username)
+        selenium.find_element(By.NAME, 'password').send_keys('password')
+        selenium.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+
+        # Now visit responsibility home
+        selenium.get(f'{live_server.url}/responsibility/')
+
+        # Verify page content includes appropriate heading
+        WebDriverWait(selenium, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, 'h1'))
+        )
+        assert 'Responsibility' in selenium.page_source
+
+    def test_assignment_list_page(self, live_server, selenium, user, responsibility_assignment):
+        """Test that assignment list page loads correctly."""
+        # Log in first
+        selenium.get(f'{live_server.url}/authentication/login/')
+        selenium.find_element(By.NAME, 'login').send_keys(user.username)
+        selenium.find_element(By.NAME, 'password').send_keys('password')
+        selenium.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+
+        # Visit assignment list
+        selenium.get(f'{live_server.url}/responsibility/assignments/')
+
+        # Check for specific content
+        WebDriverWait(selenium, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, 'main'))
+        )
+        # Verify assignment content appears
+        assert responsibility_assignment.obligation.obligation_number in selenium.page_source
+
+    def test_accessibility_compliance(self, live_server, selenium, user):
+        """Test basic accessibility compliance on responsibility pages."""
+        # Login
+        selenium.get(f'{live_server.url}/authentication/login/')
+        selenium.find_element(By.NAME, 'login').send_keys(user.username)
+        selenium.find_element(By.NAME, 'password').send_keys('password')
+        selenium.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+
+        # Test home page for basic accessibility features
+        selenium.get(f'{live_server.url}/responsibility/')
+
+        # Check for semantic HTML elements
+        assert len(selenium.find_elements(By.TAG_NAME, 'main')) > 0, 'Page should have a main element'
+        assert len(selenium.find_elements(By.TAG_NAME, 'header')) > 0, 'Page should have a header'
+
+        # Check for proper heading structure
+        headings = selenium.find_elements(By.TAG_NAME, 'h1')
+        assert len(headings) > 0, 'Page should have at least one h1 element'

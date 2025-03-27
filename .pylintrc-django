@@ -6,14 +6,14 @@ load-plugins=tools.pylint.fix_good_names,pylint_django,tools.pylint.gevent_check
 ignore=migrations,venv,.venv
 django-settings-module=greenova.greenova.settings
 
-# Add project root to Python path
-init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova')"
+# Add Django to Python path
+init-hook="import sys, os; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath('${workspaceFolder}'))))"
 
 [FORMAT]
 max-line-length=88
 
 [MESSAGES CONTROL]
-disable=no-member,C0111,R0903,C0103
+disable=C0111,R0903,C0103
 
 [SIMILARITIES]
 ignore-comments=yes
@@ -21,4 +21,4 @@ ignore-docstrings=yes
 ignore-imports=yes
 
 [BASIC]
-good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
+good_names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
