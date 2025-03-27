@@ -1,23 +1,21 @@
-from typing import Dict, Any, cast, TypeVar, List, Sequence
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+import logging
+from typing import Any, Dict, List, Sequence, TypeVar, cast
+
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_headers
-from django.utils.decorators import method_decorator
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.core.paginator import Paginator
-from django_htmx.http import (
-    HttpResponseClientRedirect,
-    HttpResponseClientRefresh,
-    trigger_client_event,
-    push_url
-)
-from .models import Project
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView
+from django_htmx.http import (HttpResponseClientRedirect, HttpResponseClientRefresh,
+                              push_url, trigger_client_event)
 from obligations.models import Obligation
-import logging
+
+from .models import Project
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -25,7 +23,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar('T')
 
 @method_decorator(cache_control(max_age=300), name='dispatch')
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
+@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
 class ProjectSelectionView(LoginRequiredMixin, TemplateView):
     """Handle project selection."""
     template_name = 'projects/projects_selector.html'
@@ -53,5 +51,15 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             # Implement your permission logic here
             return False  # Return True if special access is required
         except Project.DoesNotExist:
-            logger.warning(f"Project {project_id} not found during permission check")
+            logger.warning(f'Project {project_id} not found during permission check')
             return False
+
+def project_obligations(request, project_id):
+    """ Retrieve obligations associated with a specific project. """
+    project = get_object_or_404(Project, id=project_id)
+    obligations = Obligation.objects.filter(project=project)
+
+    # Serialize obligations
+    obligations_data = [{'id': o.id, 'obligation_number': o.obligation_number} for o in obligations]
+
+    return obligations_data

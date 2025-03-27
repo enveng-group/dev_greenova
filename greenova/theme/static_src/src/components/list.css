@@ -5,10 +5,6 @@ table tbody {
   font-size: var(--greenova-table-size) !important;
 }
 
-
-
-
-
 /* Table Styles */
 .table-container {
   overflow-x: auto;
@@ -92,9 +88,8 @@ mark.warning {
   color: var(--greenova-warning-text);
 }
 
-
 /* Status badges */
-mark[role="status"] {
+mark[role='status'] {
   display: inline-block;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
@@ -102,7 +97,7 @@ mark[role="status"] {
 }
 
 /* Loading states */
-[aria-busy="true"] {
+[aria-busy='true'] {
   position: relative;
   min-height: 200px;
   display: flex;
@@ -162,7 +157,9 @@ mark[role="status"] {
 /* Edit or View Obligations... */
 .action-btn {
   display: inline-flex;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
   background-color: transparent;
   height: 24px;
   width: 100%;

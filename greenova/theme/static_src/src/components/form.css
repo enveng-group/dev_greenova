@@ -80,7 +80,7 @@ input[type='text']::placeholder {
   cursor: pointer;
 }
 
-.checkbox-group input[type="checkbox"] {
+.checkbox-group input[type='checkbox'] {
   width: auto;
   margin: 0;
 }
@@ -172,13 +172,13 @@ legend {
 }
 
 /* Style for buttons in loading state */
-button[aria-busy="true"] {
+button[aria-busy='true'] {
   position: relative;
   color: transparent;
 }
 
-button[aria-busy="true"]::after {
-  content: "";
+button[aria-busy='true']::after {
+  content: '';
   position: absolute;
   width: 1rem;
   height: 1rem;

@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 register = template.Library()
 
-
 @register.filter
 def display_name(user: User) -> str:
     """Return the best display name for a user."""
