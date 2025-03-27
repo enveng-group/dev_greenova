@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Any
+from typing import List, Tuple
 
 # Main navigation structure
 # Format: (name, url_name, icon_class)
@@ -24,7 +24,7 @@ AUTH_NAVIGATION: List[Tuple[str, str, str]] = [
 ]
 
 # Theme options
-THEME_OPTIONS: List[Tuple[str, str]] = [
+THEME_OPTIONS = [
     ('Auto', 'auto'),
     ('Light', 'light'),
     ('Dark', 'dark'),

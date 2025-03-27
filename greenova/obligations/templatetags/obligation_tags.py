@@ -1,10 +1,11 @@
+from datetime import date, datetime, timedelta
+from typing import Dict, Optional, Union
+
 from django import template
 from django.utils import timezone
-from datetime import datetime, date, timedelta
-from typing import Optional, Dict, Union
-from obligations.utils import is_obligation_overdue
-from django.utils.safestring import mark_safe
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from obligations.utils import get_responsibility_display_name
 
 register = template.Library()
 
@@ -125,17 +126,17 @@ def format_due_date(due_date):
     Format a due date or indicate if it's missing.
     """
     if not due_date:
-        return "-"
+        return '-'
 
     today = timezone.now().date()
 
     # Check if overdue
     if due_date < today:
         return format_html(
-            '<span class="overdue-date">{}</span>', due_date.strftime("%d %b %Y")
+            '<span class="overdue-date">{}</span>', due_date.strftime('%d %b %Y')
         )
 
-    return due_date.strftime("%d %b %Y")
+    return due_date.strftime('%d %b %Y')
 
 @register.simple_tag
 def status_badge(status):
@@ -158,3 +159,19 @@ def status_badge(status):
     badge_class = badge_classes.get(status, badge_classes['unknown'])
 
     return mark_safe(f'<span class="{badge_class}">{status}</span>')
+
+@register.filter
+def display_responsibility(responsibility):
+    """
+    Format the responsibility value for display.
+
+    Args:
+        responsibility: The responsibility value from an obligation
+
+    Returns:
+        str: Formatted string for display
+    """
+    if not responsibility:
+        return '-'
+
+    return get_responsibility_display_name(responsibility)

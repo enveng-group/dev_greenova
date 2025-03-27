@@ -1,13 +1,17 @@
-#!/usr/bin/env python3.9
+#!/usr/bin/env python3
 import atexit
 import os
 import readline
 
+from dotenv_vault import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
 # Enable tab completion
-readline.parse_and_bind("tab: complete")
+readline.parse_and_bind('tab: complete')
 
 # History file
-histfile = os.path.join(os.environ["HOME"], ".python_history")
+histfile = os.path.join(os.environ['HOME'], '.python_history')
 try:
     readline.read_history_file(histfile)
 except FileNotFoundError:

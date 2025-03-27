@@ -1,6 +1,8 @@
 # Django Testing Guide
 
-This guide provides an overview of testing practices for Django applications, focusing on unit tests, integration tests, and browser-based tests using Selenium.
+This guide provides an overview of testing practices for Django applications,
+focusing on unit tests, integration tests, and browser-based tests using
+Selenium.
 
 ## Table of Contents
 
@@ -15,7 +17,10 @@ This guide provides an overview of testing practices for Django applications, fo
 
 ## Introduction to Django Testing
 
-Django's testing framework builds on Python's standard `unittest` module, providing additional tools and assertions specific to web development. Testing ensures your application functions correctly and helps prevent regressions when making changes.
+Django's testing framework builds on Python's standard `unittest` module,
+providing additional tools and assertions specific to web development. Testing
+ensures your application functions correctly and helps prevent regressions when
+making changes.
 
 ### Why Test?
 
@@ -34,7 +39,8 @@ Django's testing framework builds on Python's standard `unittest` module, provid
 
 ### Basic Setup
 
-Django automatically configures a test database when running tests. Tests are placed in a `tests.py` file within each Django app or in a `tests` package.
+Django automatically configures a test database when running tests. Tests are
+placed in a `tests.py` file within each Django app or in a `tests` package.
 
 ```python
 # myapp/tests.py
@@ -68,7 +74,8 @@ python -m pip install selenium webdriver-manager coverage
 
 ## Writing Unit Tests
 
-Django's `TestCase` class extends the `unittest.TestCase` class with additional functionality for web applications.
+Django's `TestCase` class extends the `unittest.TestCase` class with additional
+functionality for web applications.
 
 ### Test Structure
 
@@ -80,11 +87,11 @@ class MyModelTests(TestCase):
     def setUp(self):
         """Set up test data."""
         MyModel.objects.create(name="Test Item", value=10)
-    
+
     def tearDown(self):
         """Clean up after tests (often not needed with TestCase)."""
         pass
-    
+
     def test_model_creation(self):
         """Test model instance creation."""
         item = MyModel.objects.get(name="Test Item")
@@ -103,12 +110,12 @@ class TransactionModelTests(TestCase):
             user_id="user1",
             status="active",
         )
-    
+
     def test_transaction_creation(self):
         """Test transaction creation."""
         self.assertEqual(self.transaction.user_id, "user1")
         self.assertEqual(self.transaction.status, "active")
-    
+
     def test_transaction_str_method(self):
         """Test string representation."""
         self.assertEqual(str(self.transaction), f"Transaction {self.transaction.id}")
@@ -126,7 +133,7 @@ class TransactionFormTests(TestCase):
         data = {'user_id': 'user1', 'status': 'active'}
         form = TransactionForm(data=data)
         self.assertTrue(form.is_valid())
-    
+
     def test_invalid_form(self):
         """Test form with invalid data."""
         data = {'user_id': '', 'status': 'active'}
@@ -137,7 +144,8 @@ class TransactionFormTests(TestCase):
 
 ## Using Django's Test Client
 
-The test client simulates a web browser, allowing you to test views and templates.
+The test client simulates a web browser, allowing you to test views and
+templates.
 
 ### Testing Views
 
@@ -150,9 +158,9 @@ class DashboardViewTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
-            username='testuser',
+            username='test',
             email='test@example.com',
-            password='testpassword'
+            password='test'
         )
         self.url = reverse('dashboard')
 
@@ -160,10 +168,10 @@ class DashboardViewTests(TestCase):
         """Test dashboard access for unauthenticated users."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)  # Redirect to login
-    
+
     def test_dashboard_authenticated(self):
         """Test dashboard access for authenticated users."""
-        self.client.login(username='testuser', password='testpassword')
+        self.client.login(username='test', password='test')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'dashboard/index.html')
@@ -182,7 +190,7 @@ class TransactionAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
         # Create test user and authenticate
-        
+
     def test_list_transactions(self):
         """Test retrieving a list of transactions."""
         url = reverse('transaction-list')
@@ -195,9 +203,9 @@ class TransactionAPITests(TestCase):
 ```python
 def test_transaction_list_context(self):
     """Test that the transaction list view has correct context."""
-    self.client.login(username='testuser', password='testpassword')
+    self.client.login(username='test', password='test')
     response = self.client.get(reverse('transaction-list'))
-    
+
     self.assertEqual(response.status_code, 200)
     self.assertIn('transactions', response.context)
     self.assertIn('active_transactions', response.context)
@@ -226,7 +234,7 @@ class MySeleniumTests(StaticLiveServerTestCase):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        
+
         service = Service(ChromeDriverManager().install())
         cls.selenium = webdriver.Chrome(service=service, options=chrome_options)
         cls.selenium.implicitly_wait(10)
@@ -244,19 +252,19 @@ def test_login_form(self):
     """Test the login form using Selenium."""
     # Navigate to the login page
     self.selenium.get(f"{self.live_server_url}/accounts/login/")
-    
+
     # Find form elements
     username_input = self.selenium.find_element(By.NAME, "username")
     password_input = self.selenium.find_element(By.NAME, "password")
     submit_button = self.selenium.find_element(By.XPATH, "//button[@type='submit']")
-    
+
     # Fill in the form
-    username_input.send_keys("testuser")
-    password_input.send_keys("testpassword")
-    
+    username_input.send_keys("test")
+    password_input.send_keys("test")
+
     # Submit the form
     submit_button.click()
-    
+
     # Check that login was successful
     self.assertIn("Dashboard", self.selenium.page_source)
 ```
@@ -270,23 +278,23 @@ def test_transaction_creation(self):
     self.selenium.get(f"{self.live_server_url}/accounts/login/")
     username_input = self.selenium.find_element(By.NAME, "username")
     password_input = self.selenium.find_element(By.NAME, "password")
-    username_input.send_keys("testuser")
-    password_input.send_keys("testpassword")
+    username_input.send_keys("test")
+    password_input.send_keys("test")
     self.selenium.find_element(By.XPATH, "//button[@type='submit']").click()
-    
+
     # Navigate to transaction creation form
     self.selenium.get(f"{self.live_server_url}/transactions/create/")
-    
+
     # Fill in the form
     user_id_input = self.selenium.find_element(By.ID, "id_user_id")
     status_input = self.selenium.find_element(By.ID, "id_status")
-    
+
     user_id_input.send_keys("user1")
     status_input.send_keys("active")
-    
+
     # Submit the form
     self.selenium.find_element(By.XPATH, "//button[@type='submit']").click()
-    
+
     # Verify success message
     success_message = self.selenium.find_element(By.CLASS_NAME, "success-message")
     self.assertIn("Transaction created successfully", success_message.text)
@@ -297,6 +305,7 @@ def test_transaction_creation(self):
 ### Setting Up VS Code for Testing
 
 1. **Install Required Extensions**:
+
    - Python extension
    - Django extension
    - Test Explorer UI
@@ -312,10 +321,7 @@ def test_transaction_creation(self):
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": [
-        "test",
-        "${relativeFileDirname}"
-      ],
+      "args": ["test", "${relativeFileDirname}"],
       "django": true,
       "justMyCode": true
     }
@@ -330,23 +336,19 @@ def test_transaction_creation(self):
   "python.testing.pytestEnabled": false,
   "python.testing.unittestEnabled": true,
   "python.testing.nosetestsEnabled": false,
-  "python.testing.unittestArgs": [
-    "-v",
-    "-s",
-    "./",
-    "-p",
-    "*test*.py"
-  ]
+  "python.testing.unittestArgs": ["-v", "-s", "./", "-p", "*test*.py"]
 }
 ```
 
 ### Running Tests in VS Code
 
 1. **Via Command Palette**:
+
    - Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS)
    - Type "Python: Run Tests" and select the appropriate option
 
 2. **Via Test Explorer**:
+
    - Open the Test Explorer view
    - Click the Run button next to the test or test suite
 
@@ -364,11 +366,13 @@ def test_transaction_creation(self):
 ### Test Structure
 
 1. **Follow the AAA Pattern**:
+
    - **Arrange**: Set up test data and conditions
    - **Act**: Perform the action to test
    - **Assert**: Check that the results are as expected
 
 2. **Keep Tests Independent**:
+
    - Each test should run independently of others
    - Avoid test interdependencies
 
@@ -379,6 +383,7 @@ def test_transaction_creation(self):
 ### Test Coverage
 
 1. **Aim for Comprehensive Coverage**:
+
    - Models: Test creation, validation, methods
    - Forms: Test validation, error messages
    - Views: Test responses, context, templates
@@ -395,12 +400,15 @@ coverage html  # For detailed HTML report
 ### Testing Tips
 
 1. **Use Factories for Test Data**:
+
    - Consider using `factory_boy` for creating test objects
 
 2. **Mock External Services**:
+
    - Use `unittest.mock` or `pytest-mock` to mock API calls
 
 3. **Use Fixtures for Common Setup**:
+
    - Reuse common test data setup across tests
 
 4. **Test Edge Cases**:
@@ -412,14 +420,17 @@ coverage html  # For detailed HTML report
 ### Common Issues
 
 1. **Database Errors**:
+
    - Issue: Tests may fail due to database conflicts
    - Solution: Ensure `TEST_NAME` is set in database configuration
 
 2. **Selenium WebDriver Issues**:
+
    - Issue: Chrome/Firefox driver not found
    - Solution: Use webdriver-manager to handle driver installation
 
 3. **Form Validation Errors**:
+
    - Issue: Form tests failing unexpectedly
    - Solution: Check for missing required fields or invalid data formats
 
@@ -430,14 +441,18 @@ coverage html  # For detailed HTML report
 ### Debugging Strategies
 
 1. **Print Debugging**:
+
    - Add `print()` statements to troubleshoot
    - Use `self.print_html()` in `DjangoTestCase` to see rendered HTML
 
 2. **Increase Verbosity**:
+
    - Run tests with higher verbosity: `python manage.py test --verbosity=2`
 
 3. **Isolate Failing Tests**:
-   - Run specific tests: `python manage.py test myapp.tests.TestClass.test_method`
+
+   - Run specific tests:
+     `python manage.py test myapp.tests.TestClass.test_method`
 
 4. **Inspect the Test Database**:
    - Use `--keepdb` flag to preserve the test database between runs

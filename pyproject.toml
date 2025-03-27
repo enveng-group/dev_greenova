@@ -1,6 +1,23 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+strict_optional = true
 plugins = ["mypy_django_plugin.main"]
 exclude = '\.md$'
+
+[[tool.mypy.overrides]]
+module = ["*.migrations.*"]
+ignore_errors = true
 
 [tool.django-stubs]
 django_settings_module = "greenova.settings"
@@ -11,6 +28,31 @@ ignore = ["E501", "E302", "E305"]
 in-place = true
 recursive = true
 aggressive = 3
+single_quotes = true
 
 [tool.djlint]
-ignore="H014,H015"
+profile = "django"
+indent = 2
+use_gitignore = true
+format_css = false
+format_js = false
+ignore = "H014,H015"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "greenova.settings"
+python_paths = ["."]
+python_files = ["test_*.py"]
+python_classes = "Test*"
+python_functions = "test_*"
+testpaths = ["greenova"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "selenium: marks tests as selenium UI tests",
+    "integration: marks tests requiring multiple components",
+    "unit: marks isolated unit tests",
+]
+addopts = "--reuse-db"

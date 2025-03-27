@@ -1,50 +1,63 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import ResponsibilityRole, ResponsibilityAssignment
+import logging
 
+from core.utils.roles import get_responsibility_choices, get_responsibility_display_name
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.http import require_GET
+from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView
+from obligations.models import Obligation
 
-@login_required
-def responsibility_home(request):
-    """Home view for responsibility app."""
-    # Get assignments for current user
-    assignments = ResponsibilityAssignment.objects.filter(
-        user=request.user
-    ).select_related('obligation', 'role')
+from .figures import generate_responsibility_chart
 
-    context = {
-        'assignments': assignments,
-    }
+logger = logging.getLogger(__name__)
 
-    return render(request, 'responsibility/responsibility_home.html', context)
+@method_decorator(cache_control(max_age=300), name='dispatch')
+@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
+class ResponsibilityChartView(LoginRequiredMixin, TemplateView):
+    """View for displaying responsibility charts."""
+    template_name = 'responsibility/responsibility_chart.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project_id = self.request.GET.get('project_id')
 
-@login_required
-def assignment_list(request):
-    """List view for responsibility assignments."""
-    # Get assignments for current user
-    assignments = ResponsibilityAssignment.objects.filter(
-        user=request.user
-    ).select_related('obligation', 'role')
+        if not project_id:
+            context['error'] = 'No project selected'
+            return context
 
-    context = {
-        'assignments': assignments,
-    }
+        try:
+            # Get all obligations for this project
+            obligations = Obligation.objects.filter(project_id=project_id)
 
-    return render(request, 'responsibility/assignment_list.html', context)
+            # Count obligations by responsibility
+            responsibility_counts = {}
 
+            for obligation in obligations:
+                # Get proper display name for responsibility
+                resp_display = get_responsibility_display_name(obligation.responsibility)
 
-@login_required
-def role_list(request):
-    """List view for responsibility roles."""
-    # Get roles for companies the user belongs to
-    user_companies = request.user.companies.all()
-    roles = ResponsibilityRole.objects.filter(
-        company__in=user_companies,
-        is_active=True
-    ).select_related('company')
+                if resp_display not in responsibility_counts:
+                    responsibility_counts[resp_display] = 0
+                responsibility_counts[resp_display] += 1
 
-    context = {
-        'roles': roles,
-    }
+            # Generate chart
+            chart_data = generate_responsibility_chart(responsibility_counts)
+            context['responsibility_data'] = responsibility_counts
+            context['chart_data'] = chart_data
+            context['project_id'] = project_id
 
-    return render(request, 'responsibility/role_list.html', context)
+        except Exception as e:
+            logger.error(f'Error generating responsibility chart: {str(e)}')
+            context['error'] = f'Error generating chart: {str(e)}'
+
+        return context
+
+@require_GET
+def get_responsibility_options(request):
+    """API endpoint to get responsibility options."""
+    choices = get_responsibility_choices()
+    options = [{'value': value, 'display': display} for value, display in choices]
+    return JsonResponse({'options': options})

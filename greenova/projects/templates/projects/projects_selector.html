@@ -1,8 +1,8 @@
 {% load project_tags static hyperscript %}
-
-<section aria-labelledby="project-selection-heading" class="project-selection" hx-ext="class-tools path-deps">
+<section aria-labelledby="project-selection-heading"
+         class="project-selection"
+         hx-ext="class-tools path-deps">
   <h2 id="project-selection-heading">Select Project</h2>
-
   {% if projects %}
     {% comment %}
     <!-- Replace QuerySet with JSON-serializable structure -->
@@ -10,31 +10,22 @@
     {% with project_list=projects|map:"to_dict"|to_list %}
       {% hs_dump project_list 'projectsData' show=True %}
     {% endwith %}
-
-    <div class="selector-container" _="on projectSelected(id) set #project-selector.value to id trigger change on #project-selector">
+    <div class="selector-container"
+         _="on projectSelected(id) set #project-selector.value to id trigger change on #project-selector">
       <form id="project-form">
         <div class="form-group">
           <label for="project-selector">Project:</label>
-          <select id="project-selector" name="project_id" class="form-select"
-                  hx-get="/mechanisms/charts/"
-                  hx-target="#mechanism-data-container"
+          <select id="project-selector"
+                  name="project_id"
+                  class="form-select"
                   hx-trigger="change"
-                  hx-swap="innerHTML"
-                  hx-include="this"
-                  _="on change
-                     set projectId to my.value
-                     if projectId != ''
-                       trigger projectChanged(projectId:projectId) on .project-data-container
-                       -- Update URL to maintain state without reloading page
-                       if history
-                         call history.replaceState(null, '', `?project_id=${projectId}`)
-                       end
-                     end"
-                  data-loading-disable
-                  data-loading-aria-busy>
-            <option value="">Select a project</option>
+                  _="on change set projectId to my.value if projectId != '' trigger change on #mechanism-data-container trigger change on #overdue-container -- Update URL to maintain state without reloading page if history call history.replaceState(null, '', `?project_id=${projectId}`) end end">
+            <option value="0">Select a project</option>
             {% for project in projects %}
-              <option value="{{ project.id }}" {% if project.id|stringformat:"s" == selected_project_id|default:request.GET.project_id|default:"" %}selected{% endif %}>{{ project.name }}</option>
+              <option value="{{ project.id }}"
+                      {% if project.id|stringformat:"s" == selected_project_id|default:request.GET.project_id|default:"" %}selected{% endif %}>
+                {{ project.name }}
+              </option>
             {% endfor %}
           </select>
         </div>
@@ -45,21 +36,4 @@
       <p>No projects available. Please contact your administrator to be added to a project.</p>
     </div>
   {% endif %}
-
-  <div id="data-containers" hx-ext="class-tools">
-    <!-- Single container for mechanism data -->
-    <div id="mechanism-data-container"
-         hx-on::after-settle="if(!this.dataset.loadedObligations) {
-                              this.dataset.loadedObligations = 'true';
-                              htmx.ajax('GET', '/obligations/summary/?project_id=' + document.getElementById('project-selector').value,
-                              {target:'#obligations-container', swap:'innerHTML'})
-                              }">
-      <!-- Charts will be loaded here -->
-    </div>
-
-    <!-- Obligations Container -->
-    <div id="obligations-container">
-      <!-- Obligations will be loaded here -->
-    </div>
-  </div>
 </section>
