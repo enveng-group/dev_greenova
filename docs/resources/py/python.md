@@ -17,17 +17,20 @@ Python is a high-level, interpreted programming language known for its readabili
 ### Installing Python
 
 Official installation guides for various platforms are available at:
+
 - [Python Installation Guide](https://docs.python.org/release/3.9.21/installing/index.html)
 
 #### Quick Installation Commands
 
 **Linux (Ubuntu/Debian)**:
+
 ```bash
 sudo apt update
 sudo apt install python3.9 python3.9-venv python3.9-dev
 ```
 
 **macOS (using Homebrew)**:
+
 ```bash
 brew install python@3.9
 ```
@@ -153,22 +156,22 @@ def add(a: int, b: int) -> int:
 class Person:
     # Class attribute
     species = "Homo sapiens"
-    
+
     # Constructor
     def __init__(self, name, age):
         # Instance attributes
         self.name = name
         self.age = age
-        
+
     # Method
     def greet(self):
         return f"Hello, my name is {self.name}"
-    
+
     # Static method
     @staticmethod
     def is_adult(age):
         return age >= 18
-    
+
     # Class method
     @classmethod
     def create_anonymous(cls):
@@ -207,14 +210,14 @@ sum_of_squares = sum(x**2 for x in range(10))
 ```python
 def timing_decorator(func):
     import time
-    
+
     def wrapper(*args, **kwargs):
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
         print(f"{func.__name__} took {end_time - start_time:.2f} seconds")
         return result
-    
+
     return wrapper
 
 @timing_decorator
@@ -279,7 +282,7 @@ def apply_function(func: Callable[[int], int], value: int) -> int:
 # Singleton pattern
 class Singleton:
     _instance = None
-    
+
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
@@ -302,12 +305,12 @@ class AnimalFactory:
 # Reading a file
 with open("file.txt", "r") as file:
     content = file.read()
-    
+
 # Reading line by line
 with open("file.txt", "r") as file:
     for line in file:
         print(line.strip())
-        
+
 # Writing to a file
 with open("file.txt", "w") as file:
     file.write("Hello, World!")
@@ -331,7 +334,7 @@ print(json_string)  # {"name": "John", "age": 30}
 # Read/write JSON files
 with open("data.json", "w") as file:
     json.dump(person, file)
-    
+
 with open("data.json", "r") as file:
     loaded_person = json.load(file)
 ```
@@ -358,6 +361,7 @@ Python comes with a rich standard library that provides modules for various task
 ## Additional Resources
 
 ### Official Documentation
+
 - [Python Official Website](https://www.python.org/)
 - [Python 3.9 Documentation](https://docs.python.org/release/3.9.21/)
 - [What's New in Python 3.9](https://docs.python.org/release/3.9.21/whatsnew/3.9.html)
@@ -371,12 +375,14 @@ Python comes with a rich standard library that provides modules for various task
 - [Python/C API Reference](https://docs.python.org/release/3.9.21/c-api/index.html)
 
 ### Interactive Learning
+
 - [Python Tutor](http://pythontutor.com/) - Visualize code execution
 - [Exercism Python Track](https://exercism.io/tracks/python)
 - [HackerRank Python](https://www.hackerrank.com/domains/python)
 - [LeetCode](https://leetcode.com/)
 
 ### Books
+
 - "Python Crash Course" by Eric Matthes
 - "Fluent Python" by Luciano Ramalho
 - "Effective Python" by Brett Slatkin

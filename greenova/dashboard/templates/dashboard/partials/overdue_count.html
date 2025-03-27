@@ -1,9 +1,2 @@
 {% load partials %}
-
-<div hx-ext="path-deps" path-deps="/obligations/" hx-trigger="path-deps">
-  {% partialdef overdue_count_content %}
-  {{ count }}
-  {% endpartialdef %}
-
-  {% partial overdue_count_content %}
-</div>
+<div hx-ext="path-deps" path-deps="/obligations/" hx-trigger="path-deps">{{ count }}</div>

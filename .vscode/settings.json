@@ -480,7 +480,7 @@
   "makefile.makePath": "make",
   "makefile.makefilePath": "${workspaceFolder}/Makefile",
   "markdown.validate.enabled": true,
-  "markdownlint.configFile": "/workspaces/greenova/.markdownlint.json",
+  "markdownlint.configFile": "/workspaces/greenova/.markdownlint-cli2.jsonc",
   "markdownlint.run": "onType",
   "mypy-type-checker.args": [
     "--configuration",

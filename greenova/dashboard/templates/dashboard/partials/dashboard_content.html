@@ -1,5 +1,4 @@
 {% load dashboard_tags partials hyperscript project_tags %}
-
 <!-- Partial content for HTMX dashboard refreshes -->
 <header hx-ext="class-tools" classes="add slide-in-from-top:0.3s">
   <hgroup>
@@ -9,51 +8,31 @@
     </h2>
   </hgroup>
 </header>
-
-<!-- Add a quick link to user profile in the dashboard -->
-<div class="user-profile-quicklink">
-  <a href="{% url 'users:profile' %}" class="btn-primary" role="button">
-    View Your Profile
-  </a>
-</div>
-
 <!-- Project Selection -->
 {% include "projects/projects_selector.html" %}
-
 {% if projects %}
   {% with project_list=projects|map:"to_dict"|to_list %}
     {% hs_dump project_list 'availableProjects' scope='element' %}
   {% endwith %}
   {% hs_dump user_roles 'userRoles' scope='element' %}
 {% endif %}
-
 <!-- Data Container -->
 <div class="project-data-container"
      hx-ext="class-tools"
      classes="add fade-in:0.5s"
-     _="on projectChanged(projectId)
-        add .loading to me
-        fetch `/obligations/summary/?project_id=${projectId}` as response
-        put response into #obligations-container
-        remove .loading from me">
+     _="on projectChanged(projectId) add .loading to me fetch `/obligations/summary/?project_id=${projectId}` as response put response into #obligations-container remove .loading from me">
   <div data-loading="block" style="text-align: center; padding: 2rem;">
     <span class="loading-spinner"></span>
     <p>Loading project data...</p>
   </div>
   <div id="obligations-container"></div>
 </div>
-
 <!-- Overdue Card -->
 <div class="stat-card overdue"
      hx-ext="class-tools path-deps"
      path-deps="/obligations/"
      hx-trigger="path-deps"
-     _="on highOverdueCount
-        if event.detail.count > 5
-          add .alert-pulse to me
-          wait 2s
-          remove .alert-pulse from me
-        end">
+     _="on highOverdueCount if event.detail.count > 5 add .alert-pulse to me wait 2s remove .alert-pulse from me end">
   <h3>Overdue Obligations</h3>
   <span class="count"
         hx-get="{% url 'dashboard:overdue_count' %}"

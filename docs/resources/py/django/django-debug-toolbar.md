@@ -2,7 +2,10 @@
 
 ## Introduction
 
-Django Debug Toolbar is a configurable set of panels that display various debug information about the current request/response. It's an essential tool for Django developers that helps identify performance bottlenecks, trace SQL queries, inspect templates, and much more—all within your browser.
+Django Debug Toolbar is a configurable set of panels that display various debug
+information about the current request/response. It's an essential tool for Django
+developers that helps identify performance bottlenecks, trace SQL queries,
+inspect templates, and much more—all within your browser.
 
 ![Django Debug Toolbar Example](https://django-debug-toolbar.readthedocs.io/en/latest/_images/django-debug-toolbar.png)
 
@@ -38,7 +41,8 @@ Add the Debug Toolbar middleware as early as possible in the list:
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     # ...other middleware...
-]
+Configure internal IPs (Django Debug Toolbar will only display when DEBUG is True
+and the client IP is in INTERNAL_IPS):
 ```
 
 Configure internal IPs (Django Debug Toolbar will only display when DEBUG is True and the client IP is in INTERNAL_IPS):
@@ -67,46 +71,60 @@ urlpatterns = [
 Django Debug Toolbar provides several panels, each offering different insights:
 
 ### 1. SQL Panel
+
 Shows all SQL queries executed for the current request, their execution time, and allows you to:
+
 - See exactly which queries were executed and their parameters
 - Filter queries by type (SELECT, INSERT, etc.)
 - Sort queries by duration
 - Analyze query patterns for N+1 problems
 
 ### 2. Timer Panel
+
 Provides timing details for:
+
 - Overall request processing
 - View rendering
 - SQL query execution
 
 ### 3. Headers Panel
+
 Displays all HTTP headers for the:
+
 - Current request
 - Response being generated
 
 ### 4. Request Panel
+
 Shows details about the current request including:
+
 - GET/POST parameters
 - Cookies
 - Session data
 
 ### 5. Templates Panel
+
 Provides information about:
+
 - Templates used
 - Context variables
 - Template rendering time
 - Template hierarchy
 
 ### 6. Static Files Panel
+
 Lists all static files used by the current page.
 
 ### 7. Cache Panel
+
 Displays cache operations and statistics.
 
 ### 8. Signals Panel
+
 Shows all Django signals and their receivers triggered during the request.
 
 ### 9. Logging Panel
+
 Captures and displays logging messages generated during the request.
 
 ## Configuration Options
@@ -140,7 +158,7 @@ Customize the toolbar appearance and behavior:
 ```python
 DEBUG_TOOLBAR_CONFIG = {
     # Toolbar options
-    'DISABLE_PANELS': {
+    'INSERT_BEFORE': '&lt;/body&gt;',
         'debug_toolbar.panels.redirects.RedirectsPanel',
         'debug_toolbar.panels.profiling.ProfilingPanel',
     },
@@ -154,11 +172,13 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 ```
 
-## Best Practices
+1. **Disable in Production**: Never enable the Debug Toolbar in production
+   environments
 
 ### Performance Considerations
 
 1. **Disable in Production**: Never enable the Debug Toolbar in production environments
+
    ```python
    DEBUG_TOOLBAR_CONFIG = {
        'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG and request.META.get('REMOTE_ADDR') in INTERNAL_IPS,
@@ -166,13 +186,14 @@ DEBUG_TOOLBAR_CONFIG = {
    ```
 
 2. **Selective Activation**: Enable the toolbar only for specific views or users
+
    ```python
    def custom_show_toolbar(request):
        return (
            request.user.is_superuser and
            request.META.get('REMOTE_ADDR') in INTERNAL_IPS
        )
-   
+
    DEBUG_TOOLBAR_CONFIG = {
        'SHOW_TOOLBAR_CALLBACK': 'path.to.custom_show_toolbar',
    }
@@ -181,11 +202,13 @@ DEBUG_TOOLBAR_CONFIG = {
 ### Debugging Tips
 
 1. **SQL Optimization**:
+
    - Look for repeated similar queries
    - Identify N+1 query patterns
    - Monitor query execution time
 
 2. **Template Analysis**:
+
    - Check for excessive template rendering
    - Look for unoptimized template logic
 
@@ -208,7 +231,7 @@ class CustomDebugPanel(Panel):
     """
     name = 'Custom'
     template = 'custom_debug_panel.html'
-    
+
     def generate_stats(self, request, response):
         self.record_stats({
             'custom_data': your_custom_data_function(),
@@ -223,20 +246,20 @@ Create a template for your custom panel:
 <!-- templates/custom_debug_panel.html -->
 <h4>Custom Debug Information</h4>
 <table>
-    <thead>
-        <tr>
-            <th>Key</th>
-            <th>Value</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for key, value in custom_data.items %}
-        <tr>
-            <td>{{ key }}</td>
-            <td>{{ value }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for key, value in custom_data.items %}
+    <tr>
+      <td>{{ key }}</td>
+      <td>{{ value }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 ```
 
@@ -245,12 +268,14 @@ Create a template for your custom panel:
 ### Common Issues
 
 1. **Toolbar Not Showing**:
+
    - Ensure `DEBUG = True` in settings
    - Verify your IP is in `INTERNAL_IPS`
    - Check that middleware is correctly ordered
    - Make sure jQuery is not conflicting (toolbar requires jQuery)
 
 2. **JavaScript Errors**:
+
    - Check browser console for errors
    - Verify jQuery version compatibility
 
@@ -283,7 +308,13 @@ MIDDLEWARE = [
 
 - [Official Documentation](https://django-debug-toolbar.readthedocs.io/)
 - [GitHub Repository](https://github.com/django-commons/django-debug-toolbar)
-- [PyPI Package](https://pypi.org/project/django-debug-toolbar/)
+  Django Debug Toolbar is an invaluable tool for development that provides deep
+  insights into your application's behavior. By leveraging its various panels, you
+  Following HTML-first and progressive enhancement principles, the Debug Toolbar
+  helps you build more efficient Django applications by providing visibility into
+  the execution path and resource usage without requiring additional JavaScript
+  frameworks.
+  a better understanding of your application's inner workings.
 - [Django Documentation on Performance](https://docs.djangoproject.com/en/stable/topics/performance/)
 
 ## Conclusion
