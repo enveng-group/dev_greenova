@@ -60,14 +60,14 @@ class Project(models.Model):
         try:
             membership = ProjectMembership.objects.get(project=self, user=user)
             logger.debug(
-                f"Found role {membership.role} for user {user} in project {self.name}"
+                f'Found role {membership.role} for user {user} in project {self.name}'
             )
             return membership.role
         except ProjectMembership.DoesNotExist:
-            logger.debug(f"No membership found for user {user} in project {self.name}")
+            logger.debug(f'No membership found for user {user} in project {self.name}')
             return ProjectRole.VIEWER.value
         except Exception as e:
-            logger.error(f"Error getting user role: {str(e)}")
+            logger.error(f'Error getting user role: {str(e)}')
             return ProjectRole.VIEWER.value
 
     def has_member(self, user: AbstractUser) -> bool:
@@ -85,7 +85,7 @@ class Project(models.Model):
                 user=user,
                 role=role
             )
-            logger.info(f"Added user {user} to project {self.name} with role {role}")
+            logger.info(f'Added user {user} to project {self.name} with role {role}')
 
     def remove_member(self, user: AbstractUser) -> None:
         """Remove a user from the project."""
@@ -93,7 +93,7 @@ class Project(models.Model):
             project=self,
             user=user
         ).delete()
-        logger.info(f"Removed user {user} from project {self.name}")
+        logger.info(f'Removed user {user} from project {self.name}')
 
     def get_members_by_role(self, role: str) -> QuerySet[AbstractUser]:
         """Get all users with specified role."""
@@ -101,13 +101,6 @@ class Project(models.Model):
             project_memberships__project=self,
             project_memberships__role=role
         )
-
-    @property
-    def obligations(self):
-        """Get related obligations."""
-        # Move import inside method to avoid circular import
-        from obligations.models import Obligation
-        return Obligation.objects.filter(project=self)
 
 
 class ProjectMembership(models.Model):
@@ -137,7 +130,7 @@ class ProjectMembership(models.Model):
         verbose_name_plural = 'Project Memberships'
 
     def __str__(self) -> str:
-        return f"{self.user.username} - {self.project.name} ({self.role})"
+        return f'{self.user.username} - {self.project.name} ({self.role})'
 
 
 class ProjectObligation(models.Model):
@@ -163,4 +156,4 @@ class ProjectObligation(models.Model):
 
     def __str__(self) -> str:
         """Return string representation of ProjectObligation."""
-        return f"{self.project.name} - {self.obligation.obligation_number}"
+        return f'{self.project.name} - {self.obligation.obligation_number}'

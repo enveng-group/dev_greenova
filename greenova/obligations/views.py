@@ -27,7 +27,7 @@ from core.types import HttpRequest  # Use the enhanced HttpRequest with htmx pro
 logger = logging.getLogger(__name__)
 
 @method_decorator(cache_control(max_age=300), name='dispatch')
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
+@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
 class ObligationSummaryView(LoginRequiredMixin, TemplateView):
     template_name = 'obligations/components/_obligations_summary.html'
 
@@ -132,7 +132,7 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
             # Sort results
             sort_field = filters['sort']
             if filters['order'] == 'desc':
-                sort_field = f"-{sort_field}"
+                sort_field = f'-{sort_field}'
             queryset = queryset.order_by(sort_field)
 
             # Paginate results
@@ -145,20 +145,20 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
                 'page_obj': page_obj,
                 'project': project,
                 # 'project_id': project_id,
+                'mechanism_id': mechanism_id,
                 'filters': filters,
                 'total_count': paginator.count,
             })
             # Get only unique phases
             phases = Obligation.objects.filter(primary_environmental_mechanism=mechanism_id).exclude(project_phase__isnull=True).exclude(project_phase='').values_list('project_phase', flat=True).distinct()
-            phases_cleaned = set(phase.strip() for phase in phases)
+            phases_cleaned = {phase.strip() for phase in phases}
             context['phases'] = list(phases_cleaned)
 
-            context['mechanisms'] = mechanism_id
             context['user_can_edit'] = self.request.user.has_perm('obligations.change_obligation')
 
         except Exception as e:
-            logger.error(f"Error in ObligationSummaryView: {str(e)}")
-            context['error'] = f"Error loading obligations: {str(e)}"
+            logger.error(f'Error in ObligationSummaryView: {str(e)}')
+            context['error'] = f'Error loading obligations: {str(e)}'
         return context
 
 class TotalOverdueObligationsView(LoginRequiredMixin, View):
@@ -204,7 +204,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
             obligation = form.save()
 
             # Add success message
-            messages.success(self.request, f"Obligation {obligation.obligation_number} created successfully.")
+            messages.success(self.request, f'Obligation {obligation.obligation_number} created successfully.')
 
             # Redirect to appropriate page
             if 'project_id' in self.request.GET:
@@ -212,12 +212,12 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
             return redirect('dashboard:home')
 
         except Exception as e:
-            logger.exception(f"Error in ObligationCreateView: {e}")
-            messages.error(self.request, f"Failed to create obligation: {str(e)}")
+            logger.exception(f'Error in ObligationCreateView: {e}')
+            messages.error(self.request, f'Failed to create obligation: {str(e)}')
             return self.form_invalid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below.")
+        messages.error(self.request, 'Please correct the errors below.')
         return super().form_invalid(form)
 
 
@@ -266,11 +266,11 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         # If this is an HTMX request, return appropriate headers
         if self.request.htmx:
             # Using path-deps to refresh dependent components
-            response = HttpResponse("Obligation updated successfully")
+            response = HttpResponse('Obligation updated successfully')
 
             # Explicitly trigger a refresh for path-deps components
-            trigger_client_event(response, "path-deps-refresh", {
-                "path": "/obligations/"
+            trigger_client_event(response, 'path-deps-refresh', {
+                'path': '/obligations/'
             })
 
             return response
@@ -296,7 +296,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
                 obligation.primary_environmental_mechanism.update_obligation_counts()
 
             # Add success message
-            messages.success(self.request, f"Obligation {obligation.obligation_number} updated successfully.")
+            messages.success(self.request, f'Obligation {obligation.obligation_number} updated successfully.')
 
             # Redirect back to the appropriate page
             if 'project_id' in self.request.GET:
@@ -304,12 +304,12 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
             return redirect('dashboard:home')
 
         except Exception as e:
-            logger.exception(f"Error in ObligationUpdateView: {e}")
-            messages.error(self.request, f"Failed to update obligation: {str(e)}")
+            logger.exception(f'Error in ObligationUpdateView: {e}')
+            messages.error(self.request, f'Failed to update obligation: {str(e)}')
             return self.form_invalid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below.")
+        messages.error(self.request, 'Please correct the errors below.')
         return super().form_invalid(form)
 
 
@@ -334,19 +334,19 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
 
             # Return JSON response for AJAX calls
             return JsonResponse({
-                "status": "success",
-                "message": f"Obligation {kwargs.get('obligation_number')} deleted successfully",
-                "redirect_url": f"{reverse('dashboard:home')}?project_id={project_id}"
+                'status': 'success',
+                'message': f"Obligation {kwargs.get('obligation_number')} deleted successfully",
+                'redirect_url': f"{reverse('dashboard:home')}?project_id={project_id}"
             })
 
         except Exception as e:
-            logger.error(f"Error deleting obligation: {str(e)}")
+            logger.error(f'Error deleting obligation: {str(e)}')
             return JsonResponse({
-                "status": "error",
-                "message": f"Error deleting obligation: {str(e)}"
+                'status': 'error',
+                'message': f'Error deleting obligation: {str(e)}'
             }, status=400)
 
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
+@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
 class ToggleCustomAspectView(View):
     def get(self, request):
         aspect = request.GET.get('environmental_aspect')
@@ -363,7 +363,7 @@ def upload_evidence(request, obligation_id):
 
     # Check if obligation already has 5 files
     if ObligationEvidence.objects.filter(obligation=obligation).count() >= 5:
-        messages.error(request, "This obligation already has the maximum of 5 evidence files")
+        messages.error(request, 'This obligation already has the maximum of 5 evidence files')
         return redirect('obligation_detail', obligation_id=obligation_id)
 
     if request.method == 'POST':
@@ -372,7 +372,7 @@ def upload_evidence(request, obligation_id):
             evidence = form.save(commit=False)
             evidence.obligation = obligation
             evidence.save()
-            messages.success(request, "Evidence file uploaded successfully")
+            messages.success(request, 'Evidence file uploaded successfully')
             return redirect('obligation_detail', obligation_id=obligation_id)
     else:
         form = EvidenceUploadForm()
