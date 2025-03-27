@@ -1,11 +1,11 @@
 """
-Unit tests for pre-commit-wrapper.py.
+Unit tests for pre-commit-wrapper.py using pytest.
 """
 import os
 import sys
-import unittest
 from pathlib import Path
-from unittest import mock
+
+import pytest
 
 # Properly handle importing a module with hyphens by importing directly
 sys.path.insert(0, str(Path(__file__).parent))
@@ -23,15 +23,21 @@ except ImportError:
     spec.loader.exec_module(pre_commit_wrapper)
 
 
-class TestPreCommitWrapper(unittest.TestCase):
+class TestPreCommitWrapper:
     """Test cases for pre-commit-wrapper.py"""
 
-    @mock.patch('sysconfig.get_path')
-    @mock.patch('subprocess.check_output')
-    def test_ensure_requirements_success(self, mock_check_output, mock_get_path):
+    @pytest.fixture
+    def mock_env(self, monkeypatch):
+        """Set up environment variables for testing."""
+        monkeypatch.setattr(sys, 'argv', ['pre-commit-wrapper.py', 'pylint'])
+        return monkeypatch
+
+    def test_ensure_requirements_success(self, mocker):
         """Test _ensure_requirements when everything works correctly"""
         # Setup mocks
+        mock_get_path = mocker.patch('sysconfig.get_path')
         mock_get_path.return_value = '/path/to/data'
+        mock_check_output = mocker.patch('subprocess.check_output')
 
         # Execute function
         pre_commit_wrapper._ensure_requirements()
@@ -39,93 +45,95 @@ class TestPreCommitWrapper(unittest.TestCase):
         # Assert the subprocess was called with correct arguments
         mock_check_output.assert_called_once()
         args = mock_check_output.call_args[0][0]
-        self.assertEqual(args[0], sys.executable)
-        self.assertEqual(args[1], '-m')
-        self.assertEqual(args[2], 'pip')
-        self.assertEqual(args[3], 'install')
-        self.assertEqual(args[4], '-r')
-        self.assertTrue(str(pre_commit_wrapper.REQUIREMENTS_FILE) in args[5])
+        assert args[0] == sys.executable
+        assert args[1] == '-m'
+        assert args[2] == 'pip'
+        assert args[3] == 'install'
+        assert args[4] == '-r'
+        assert str(pre_commit_wrapper.REQUIREMENTS_FILE) in args[5]
 
-    @mock.patch('pathlib.Path.exists')
-    @mock.patch('pathlib.Path.is_file')
-    def test_ensure_requirements_missing_file(self, mock_is_file, mock_exists):
+    def test_ensure_requirements_missing_file(self, mocker):
         """Test _ensure_requirements with missing requirements file"""
         # Setup mocks
+        mock_exists = mocker.patch('pathlib.Path.exists')
         mock_exists.return_value = False
+        mock_is_file = mocker.patch('pathlib.Path.is_file')
         mock_is_file.return_value = False
 
         # Execute and assert
-        with self.assertRaises(ValueError) as context:
+        with pytest.raises(ValueError, match='not found or invalid'):
             pre_commit_wrapper._ensure_requirements()
 
-        self.assertIn('not found or invalid', str(context.exception))
-
-    @mock.patch('sysconfig.get_path')
-    def test_ensure_requirements_no_data_path(self, mock_get_path):
+    def test_ensure_requirements_no_data_path(self, mocker):
         """Test _ensure_requirements with no data path available"""
         # Setup mocks
+        mock_get_path = mocker.patch('sysconfig.get_path')
         mock_get_path.return_value = None
 
         # Execute and assert
-        with self.assertRaises(RuntimeError) as context:
+        with pytest.raises(RuntimeError, match='No sysconfig data path available.'):
             pre_commit_wrapper._ensure_requirements()
 
-        self.assertEqual('No sysconfig data path available.', str(context.exception))
-
-    @mock.patch('sysconfig.get_path')
-    @mock.patch('subprocess.check_output')
-    def test_ensure_requirements_subprocess_error(self, mock_check_output, mock_get_path):
+    def test_ensure_requirements_subprocess_error(self, mocker):
         """Test _ensure_requirements when subprocess fails"""
         # Setup mocks
         import subprocess
+        mock_get_path = mocker.patch('sysconfig.get_path')
         mock_get_path.return_value = '/path/to/data'
+        mock_check_output = mocker.patch('subprocess.check_output')
         mock_check_output.side_effect = subprocess.CalledProcessError(1, 'cmd', output='Error output')
 
         # Execute and assert
-        with self.assertRaises(subprocess.CalledProcessError):
+        with pytest.raises(subprocess.CalledProcessError):
             pre_commit_wrapper._ensure_requirements()
 
-    @mock.patch('pre_commit_wrapper._ensure_requirements')
-    @mock.patch('sys.argv', ['pre-commit-wrapper.py', 'pylint'])
-    @mock.patch('pylint.run_pylint')
-    def test_main_pylint(self, mock_run_pylint, mock_ensure_requirements):
+    def test_main_pylint(self, mocker, mock_env):
         """Test main function with 'pylint' tool"""
+        # Setup mocks
+        mock_ensure_reqs = mocker.patch('pre_commit_wrapper._ensure_requirements')
+        mock_run_pylint = mocker.patch('pylint.run_pylint')
+
         # Execute function
         pre_commit_wrapper.main()
 
         # Assert
-        mock_ensure_requirements.assert_called_once()
+        mock_ensure_reqs.assert_called_once()
         mock_run_pylint.assert_called_once()
 
-    @mock.patch('pre_commit_wrapper._ensure_requirements')
-    @mock.patch('sys.argv', ['pre-commit-wrapper.py', 'mypy'])
-    @mock.patch('mypy.__main__.console_entry')
-    def test_main_mypy(self, mock_console_entry, mock_ensure_requirements):
+    def test_main_mypy(self, mocker):
         """Test main function with 'mypy' tool"""
+        # Setup mocks
+        mocker.patch.object(sys, 'argv', ['pre-commit-wrapper.py', 'mypy'])
+        mock_ensure_reqs = mocker.patch('pre_commit_wrapper._ensure_requirements')
+        mock_console_entry = mocker.patch('mypy.__main__.console_entry')
+
         # Execute function
         pre_commit_wrapper.main()
 
         # Assert
-        mock_ensure_requirements.assert_called_once()
+        mock_ensure_reqs.assert_called_once()
         mock_console_entry.assert_called_once()
 
-    @mock.patch('pre_commit_wrapper._ensure_requirements')
-    @mock.patch('sys.argv', ['pre-commit-wrapper.py', 'unsupported'])
-    def test_main_unsupported_tool(self, mock_ensure_requirements):
+    def test_main_unsupported_tool(self, mocker):
         """Test main function with unsupported tool"""
+        # Setup mocks
+        mocker.patch.object(sys, 'argv', ['pre-commit-wrapper.py', 'unsupported'])
+        mock_ensure_reqs = mocker.patch('pre_commit_wrapper._ensure_requirements')
+
         # Execute and assert
-        with self.assertRaises(RuntimeError) as context:
+        with pytest.raises(RuntimeError, match='Unsupported tool'):
             pre_commit_wrapper.main()
 
-        self.assertIn('Unsupported tool', str(context.exception))
-        mock_ensure_requirements.assert_called_once()
+        mock_ensure_reqs.assert_called_once()
 
-    @mock.patch('pathlib.Path.open', mock.mock_open(read_data='django_settings_module = greenova.greenova.settings'))
-    @mock.patch('importlib.import_module')
-    def test_extract_installed_apps_from_settings(self, mock_import_module):
+    def test_extract_installed_apps_from_settings(self, mocker):
         """Test extract_installed_apps_from_settings extracts apps correctly"""
         # Setup mock settings module
-        mock_settings = mock.MagicMock()
+        mock_open = mocker.patch('pathlib.Path.open', mocker.mock_open(
+            read_data='django_settings_module = greenova.greenova.settings'
+        ))
+        mock_import_module = mocker.patch('importlib.import_module')
+        mock_settings = mocker.MagicMock()
         mock_settings.INSTALLED_APPS = [
             'django.contrib.admin',  # Should be skipped
             'core.apps.CoreConfig',  # Full path to app config
@@ -138,60 +146,76 @@ class TestPreCommitWrapper(unittest.TestCase):
         result = pre_commit_wrapper.extract_installed_apps_from_settings()
 
         # Assert correct apps were extracted
-        self.assertEqual(len(result), 2)
+        assert len(result) == 2
 
         # Check core app extracted correctly
         core_app = next((app for app in result if app['name'] == 'core'), None)
-        self.assertIsNotNone(core_app)
-        self.assertEqual(core_app['config_class'], 'CoreConfig')
+        assert core_app is not None
+        assert core_app['config_class'] == 'CoreConfig'
 
         # Check company app extracted correctly
         company_app = next((app for app in result if app['name'] == 'company'), None)
-        self.assertIsNotNone(company_app)
-        self.assertEqual(company_app['config_class'], 'CompanyConfig')
+        assert company_app is not None
+        assert company_app['config_class'] == 'CompanyConfig'
 
-    @mock.patch('pathlib.Path.open', side_effect=FileNotFoundError)
-    def test_extract_installed_apps_fallback(self, mock_open):
+    def test_extract_installed_apps_fallback(self, mocker):
         """Test extract_installed_apps_from_settings falls back to defaults when file not found"""
+        # Setup mock
+        mock_open = mocker.patch('pathlib.Path.open', side_effect=FileNotFoundError)
+
         # Execute function (should use default values due to file error)
         result = pre_commit_wrapper.extract_installed_apps_from_settings()
 
         # Assert default apps are returned
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]['name'], 'core')
-        self.assertEqual(result[1]['name'], 'company')
+        assert len(result) == 2
+        assert result[0]['name'] == 'core'
+        assert result[1]['name'] == 'company'
 
-    @mock.patch('importlib.import_module', side_effect=ImportError)
-    @mock.patch('pathlib.Path.open', mock.mock_open(read_data='django_settings_module = greenova.greenova.settings'))
-    def test_extract_installed_apps_import_error(self, mock_import_module):
+    def test_extract_installed_apps_import_error(self, mocker):
         """Test extract_installed_apps_from_settings handles module import errors"""
+        # Setup mocks
+        mock_open = mocker.patch('pathlib.Path.open', mocker.mock_open(
+            read_data='django_settings_module = greenova.greenova.settings'
+        ))
+        mock_import_module = mocker.patch('importlib.import_module', side_effect=ImportError)
+
         # Execute function (should use default values due to import error)
         result = pre_commit_wrapper.extract_installed_apps_from_settings()
 
         # Assert default apps are returned
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]['name'], 'core')
-        self.assertEqual(result[1]['name'], 'company')
+        assert len(result) == 2
+        assert result[0]['name'] == 'core'
+        assert result[1]['name'] == 'company'
 
-    @mock.patch('pre_commit_wrapper.extract_installed_apps_from_settings', side_effect=Exception('Test exception'))
-    @mock.patch('pre_commit_wrapper._create_minimal_mocks')
-    def test_create_mock_modules_fallback(self, mock_minimal_mocks, mock_extract_apps):
+    def test_create_mock_modules_fallback(self, mocker):
         """Test create_mock_modules falls back to minimal mocks when extraction fails"""
+        # Setup mocks
+        mock_extract = mocker.patch(
+            'pre_commit_wrapper.extract_installed_apps_from_settings',
+            side_effect=Exception('Test exception')
+        )
+        mock_minimal = mocker.patch('pre_commit_wrapper._create_minimal_mocks')
+
         # Execute function
         pre_commit_wrapper.create_mock_modules()
 
         # Assert fallback was called
-        mock_minimal_mocks.assert_called_once()
+        mock_minimal.assert_called_once()
 
-    @mock.patch('pre_commit_wrapper._create_minimal_mocks', side_effect=Exception('Critical error'))
-    @mock.patch('pre_commit_wrapper.extract_installed_apps_from_settings', side_effect=Exception('First error'))
-    def test_create_mock_modules_critical_failure(self, mock_extract_apps, mock_minimal_mocks):
+    def test_create_mock_modules_critical_failure(self, mocker):
         """Test create_mock_modules handles critical failures gracefully"""
+        # Setup mocks
+        mock_extract = mocker.patch(
+            'pre_commit_wrapper.extract_installed_apps_from_settings',
+            side_effect=Exception('First error')
+        )
+        mock_minimal = mocker.patch(
+            'pre_commit_wrapper._create_minimal_mocks',
+            side_effect=Exception('Critical error')
+        )
+
         # Execute function (should not raise exception)
         pre_commit_wrapper.create_mock_modules()
 
         # If we get here, the test passed because no exception was raised
-        self.assertTrue(True)
-
-if __name__ == '__main__':
-    unittest.main()
+        assert True

@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, TypeVar
+from typing import Any, Callable, Dict, TypeVar, cast
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
+
 from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
 
 from .models import Project
@@ -17,12 +18,14 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 T = TypeVar('T')
-
-@method_decorator(cache_control(max_age=300), name='dispatch')
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
+# Type ignore for method_decorator and vary_on_headers due to django-stubs limitations
+@method_decorator(cache_control(max_age=300), name='dispatch')  # type: ignore
+@method_decorator(vary_on_headers('HX-Request'), name='dispatch')  # type: ignore
 class ProjectSelectionView(LoginRequiredMixin, TemplateView):
     """Handle project selection."""
     template_name = 'projects/projects_selector.html'
+    login_url = 'account_login'  # Updated to use allauth's login URL name
+    redirect_field_name = 'next'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests for project selection."""
@@ -62,5 +65,5 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             # Implement your permission logic here
             return False  # Return True if special access is required
         except Project.DoesNotExist:
-            logger.warning(f"Project {project_id} not found during permission check")
+            logger.warning(f'Project {project_id} not found during permission check')
             return False

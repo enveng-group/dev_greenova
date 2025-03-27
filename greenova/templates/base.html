@@ -11,10 +11,7 @@
     <meta name="keywords"
           content="environmental compliance, management system, greenova, sustainability" />
     <meta name="description"
-          content="
-                   {% block meta_description %}
-                     Environmental Compliance Management System
-                   {% endblock meta_description %}" />
+          content=" {% block meta_description %} Environmental Compliance Management System {% endblock meta_description %}" />
     <title>
       {% block title %}
         {% block page_title %}
@@ -59,9 +56,7 @@
                   <li>
                     <a href="{% url 'dashboard:home' %}"
                        role="menuitem"
-                       aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
-                                       page
-                                     {% endif %}"
+                       aria-current="{% if request.resolver_match.namespace == 'dashboard' %} page {% endif %}"
                        _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
                   </li>
                   {% if request.resolver_match.namespace != 'dashboard' %}
@@ -75,42 +70,41 @@
             </li>
             <!-- Auth Actions (right-aligned) -->
             <li role="none">
-              {% if request.user.is_authenticated %}
-                {% load chatbot_tags %}
-                {% chat_widget %}
-                <a href="{% url 'users:profile' %}"
+              {% load chatbot_tags %}
+              {% chat_widget %}
+              <a href="{% url 'users:profile' %}"
+                 role="menuitem"
+                 {% if request.path == '/users/profile/' %}aria-current="page"{% endif %}>Profile</a>
+              {% if request.user.is_staff %}
+                <a href="{% url 'company:list' %}"
                    role="menuitem"
-                   {% if request.path == '/users/profile/' %}aria-current="page"{% endif %}>Profile</a>
-                {% if request.user.is_staff %}
-                  <a href="{% url 'company:list' %}"
-                     role="menuitem"
-                     {% if '/company/' in request.path %}aria-current="page"{% endif %}>Companies</a>
-                  <!-- Logout -->
-                  <form hx-post="{% url 'account_logout' %}"
-                        hx-push-url="true"
-                        hx-target="body"
-                        hx-redirect="/">
-                    {% csrf_token %}
-                    <button type="submit" role="menuitem">Logout</button>
-                  </form>
-                {% endif %}
-              </li>
-            {% else %}
-              <li role="none" style="margin-left: auto">
-                <a href="{% url 'account_signup' %}"
-                   role="menuitem"
-                   aria-label="Register"
-                   _="on load if location.pathname is '{% url 'account_signup' %}' then hide me">Register</a>
-                <a href="{% url 'account_login' %}"
-                   role="menuitem"
-                   aria-label="Login"
-                   _="on load if location.pathname is '{% url 'account_login' %}' then hide me">Login</a>
-                <a href="{% url 'admin:index' %}"
-                   role="menuitem"
-                   aria-label="Admin"
-                   _="on load if location.pathname.startsWith('/admin/') then hide me">Admin</a>
-              </li>
-            {% endif %}
+                   {% if '/company/' in request.path %}aria-current="page"{% endif %}>Companies</a>
+              {% endif %}
+              <!-- Logout -->
+              <form hx-post="{% url 'account_logout' %}"
+                    hx-push-url="true"
+                    hx-target="body"
+                    hx-redirect="/">
+                {% csrf_token %}
+                <button type="submit" role="menuitem">Logout</button>
+              </form>
+            </li>
+          {% else %}
+            <!-- Unauthenticated user navigation -->
+            <li role="none" style="margin-left: auto">
+              <a href="{% url 'account_signup' %}"
+                 role="menuitem"
+                 aria-label="Register"
+                 _="on load if location.pathname is '{% url 'account_signup' %}' then hide me">Register</a>
+              <a href="{% url 'account_login' %}"
+                 role="menuitem"
+                 aria-label="Login"
+                 _="on load if location.pathname is '{% url 'account_login' %}' then hide me">Login</a>
+              <a href="{% url 'admin:index' %}"
+                 role="menuitem"
+                 aria-label="Admin"
+                 _="on load if location.pathname.startsWith('/admin/') then hide me">Admin</a>
+            </li>
           {% endif %}
         </ul>
       </nav>
