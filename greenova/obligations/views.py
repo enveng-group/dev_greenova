@@ -14,12 +14,17 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import (CreateView, DeleteView, DetailView, TemplateView,
-                                  UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    TemplateView,
+    UpdateView,
+)
 
-from mechanisms.models import EnvironmentalMechanism  # Added missing import
-from obligations.models import ResponsibilityRole
+from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project
+from responsibility.models import Responsibility
 
 from .forms import EvidenceUploadForm, ObligationForm
 from .models import Obligation, ObligationEvidence
@@ -184,7 +189,7 @@ def obligation_create(request):
         'obligations/form.html',
         {
             'form': form,
-            'responsibility_roles': ResponsibilityRole.objects.filter(
+            'responsibility_roles': Responsibility.objects.filter(
                 user=request.user
             ),
         },
@@ -208,9 +213,16 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
             except Project.DoesNotExist:
                 pass
         kwargs['user'] = self.request.user
-        kwargs['responsibilities'] = ResponsibilityRole.objects.filter(
-            user=self.request.user
-        )
+
+        # Get all available responsibility roles for the form
+        try:
+            # Use the responsibility app's model
+            responsibility_roles = Responsibility.objects.all()
+            kwargs['responsibilities'] = responsibility_roles
+        except Exception as e:
+            logger.error(f'Error loading responsibility roles: {e}')
+            kwargs['responsibilities'] = None
+
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -218,9 +230,14 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         project_id = self.request.GET.get('project_id')
         if project_id:
             context['project_id'] = project_id
-        context['responsibility_roles'] = ResponsibilityRole.objects.filter(
-            user=self.request.user
-        )
+
+        # Add responsibility roles to context
+        try:
+            context['responsibility_roles'] = Responsibility.objects.all()
+        except Exception as e:
+            logger.error(f'Error loading responsibility roles for context: {e}')
+            context['responsibility_roles'] = []
+
         return context
 
     def form_valid(self, form):
@@ -284,18 +301,30 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['project'] = self.object.project
         kwargs['user'] = self.request.user
-        kwargs['responsibilities'] = ResponsibilityRole.objects.filter(
-            user=self.request.user
-        )
+
+        # Get all available responsibility roles for the form
+        try:
+            # Use the responsibility app's model
+            responsibility_roles = Responsibility.objects.all()
+            kwargs['responsibilities'] = responsibility_roles
+        except Exception as e:
+            logger.error(f'Error loading responsibility roles: {e}')
+            kwargs['responsibilities'] = None
+
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add project_id to context for back navigation
         context['project_id'] = self.object.project_id
-        context['responsibility_roles'] = ResponsibilityRole.objects.filter(
-            user=self.request.user
-        )
+
+        # Add responsibility roles to context
+        try:
+            context['responsibility_roles'] = Responsibility.objects.all()
+        except Exception as e:
+            logger.error(f'Error loading responsibility roles for context: {e}')
+            context['responsibility_roles'] = []
+
         return context
 
     def form_valid(self, form):

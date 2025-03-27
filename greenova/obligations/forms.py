@@ -3,14 +3,15 @@ import logging
 from django import forms
 from django.core.exceptions import ValidationError
 
+from core.utils.roles import get_responsibility_choices
 from django_select2.forms import Select2MultipleWidget
 from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project
+from responsibility.models import Responsibility
 
 from .constants import FREQUENCY_CHOICES  # Import RESPONSIBILITY_ROLES
-from .constants import (RESPONSIBILITY_ROLES, STATUS_CHOICES, STATUS_COMPLETED,
-                        STATUS_NOT_STARTED)
-from .models import Obligation, ObligationEvidence, ResponsibilityRole
+from .constants import STATUS_CHOICES, STATUS_COMPLETED, STATUS_NOT_STARTED
+from .models import Obligation, ObligationEvidence
 from .utils import normalize_frequency
 
 logger = logging.getLogger(__name__)
@@ -259,7 +260,10 @@ class ObligationForm(forms.ModelForm):
     )
 
     responsibility = forms.ChoiceField(
-        choices=RESPONSIBILITY_ROLES  # Use RESPONSIBILITY_ROLES from constants.py
+        choices=get_responsibility_choices(),
+        widget=forms.Select(attrs={'class': 'form-input'}),
+        label='Primary Responsibility',
+        help_text='Select the primary responsibility for this obligation'
     )
 
     project_phase = forms.ChoiceField(
@@ -334,25 +338,33 @@ class ObligationForm(forms.ModelForm):
     )
 
     responsibilities = forms.ModelMultipleChoiceField(
-        queryset=ResponsibilityRole.objects.all(),
+        queryset=Responsibility.objects.all(),
         widget=Select2MultipleWidget(
             attrs={'class': 'form-input', 'aria-describedby': 'responsibilities-help'}
         ),
-        required=False,
+        required=True,  # Make this required to ensure at least one responsibility is assigned
         label='Assign Responsibilities',
-        help_text='Select responsibilities to assign for this obligation',
+        help_text='Select one or more responsibilities for this obligation',
     )
 
     def __init__(self, *args, **kwargs):
         self.project = kwargs.pop('project', None)
         self.user = kwargs.pop('user', None)  # Add user context
+
+        # Get responsibilities from kwargs if provided
+        responsibilities = kwargs.pop('responsibilities', None)
+
         super().__init__(*args, **kwargs)
 
-        # Filter responsibilities based on user context
-        if self.user:
-            self.fields['responsibilities'].queryset = (
-                ResponsibilityRole.objects.filter(user=self.user)
-            )
+        # Initialize the responsibility queryset
+        self.fields['responsibility'].choices = get_responsibility_choices()
+
+        # Use responsibilities from the responsibility app
+        if responsibilities is not None:
+            self.fields['responsibilities'].queryset = responsibilities
+        else:
+            # Default behavior: get all responsibility roles
+            self.fields['responsibilities'].queryset = Responsibility.objects.all()
 
         # Handle initial project
         if self.project:
@@ -475,9 +487,10 @@ class ObligationForm(forms.ModelForm):
         return custom_aspect
 
     def clean_responsibilities(self):
+        """Validate at least one responsibility is selected."""
         responsibilities = self.cleaned_data.get('responsibilities')
-        if not responsibilities:
-            raise forms.ValidationError('At least one responsibility must be assigned.')
+        if not responsibilities or len(responsibilities) == 0:
+            raise forms.ValidationError('Please select at least one responsibility.')
         return responsibilities
 
     def clean(self):
@@ -560,6 +573,31 @@ class ObligationForm(forms.ModelForm):
         exclude = [
             'person_email'
         ]  # This field appears to be unused based on the templates
+        widgets = {
+            'obligation': forms.Textarea(attrs={'rows': 4}),
+            'supporting_information': forms.Textarea(attrs={'rows': 3}),
+            'general_comments': forms.Textarea(attrs={'rows': 3}),
+            'compliance_comments': forms.Textarea(attrs={'rows': 3}),
+            'non_conformance_comments': forms.Textarea(attrs={'rows': 3}),
+            'evidence_notes': forms.Textarea(attrs={'rows': 2}),
+            'notes_for_gap_analysis': forms.Textarea(attrs={'rows': 3}),
+            'action_due_date': forms.DateInput(attrs={'type': 'date'}),
+            'close_out_date': forms.DateInput(attrs={'type': 'date'}),
+            'recurring_forcasted_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+        labels = {
+            'primary_environmental_mechanism': 'Environmental Mechanism',
+            'action_due_date': 'Due Date',
+            'recurring_forcasted_date': 'Next Forecasted Due Date',
+        }
+        help_texts = {
+            'environmental_aspect': 'Select the environmental aspect this obligation relates to',
+            'custom_environmental_aspect': 'If "Other" is selected above, please specify the aspect',
+            'obligation': 'Describe the specific obligation requirement',
+            'recurring_obligation': 'Does this obligation recur on a regular schedule?',
+            'inspection': 'Does this obligation require inspections?',
+            'gap_analysis': 'Is a gap analysis required for this obligation?',
+        }
 
 
 class EvidenceUploadForm(forms.ModelForm):
@@ -632,3 +670,6 @@ class EvidenceUploadForm(forms.ModelForm):
     class Meta:
         model = ObligationEvidence
         fields = ['file', 'description']
+        widgets = {
+            'description': forms.TextInput(attrs={'placeholder': 'Brief description of the file'}),
+        }

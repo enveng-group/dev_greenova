@@ -7,7 +7,9 @@ from django.forms import ModelForm
 from django.http import HttpRequest
 from django.utils import timezone
 
-from .models import Obligation, ObligationEvidence, ResponsibilityRole
+from core.utils.roles import get_responsibility_choices
+
+from .models import Obligation, ObligationEvidence
 from .utils import is_obligation_overdue
 
 logger = logging.getLogger(__name__)
@@ -61,6 +63,13 @@ class ObligationAdminForm(forms.ModelForm):
         ],
         required=False,
         widget=forms.Select(attrs={'class': 'form-select'}),
+    )
+
+    # Updated to use get_responsibility_choices from core/utils/roles.py
+    responsibility = forms.ChoiceField(
+        choices=get_responsibility_choices(),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
 
     class Meta:
@@ -177,7 +186,7 @@ class ObligationAdmin(admin.ModelAdmin):
         'project_phase',
         'recurring_obligation',
     ]
-    search_fields = ['obligation_number', 'obligation', 'project__name']
+    search_fields = ['obligation_number', 'obligation', 'project__name', 'responsibility']
     date_hierarchy = 'action_due_date'
 
     @admin.display(
@@ -259,20 +268,3 @@ class ObligationAdmin(admin.ModelAdmin):
         if obj:  # Only for existing obligations
             return [ObligationEvidenceInline]
         return []  # No inlines when creating a new obligation
-
-    list_display = (
-        'id',
-        'project__name',
-        'responsibility',
-        'status',
-        'action__due_date',
-    )
-    search_fields = ('project__name', 'responsibility__name', 'status')
-
-
-@admin.register(ResponsibilityRole)
-class ResponsibilityRoleAdmin(admin.ModelAdmin):
-    """Admin configuration for responsibility roles."""
-
-    list_display = ['name', 'description']
-    search_fields = ['name']

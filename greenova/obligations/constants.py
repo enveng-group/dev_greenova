@@ -75,15 +75,3 @@ FREQUENCY_DAYS = {
     FREQUENCY_BIANNUAL: 182,  # Approximate
     FREQUENCY_ANNUAL: 365,  # Approximate
 }
-
-RESPONSIBILITY_ROLES = [
-    ('Project Manager', 'Project Manager'),
-    ('Environmental Officer', 'Environmental Officer'),
-    ('Site Supervisor', 'Site Supervisor'),
-    ('Compliance Manager', 'Compliance Manager'),
-    ('Health and Safety Officer', 'Health and Safety Officer'),
-    ('Quality Assurance Officer', 'Quality Assurance Officer'),
-    ('Operations Manager', 'Operations Manager'),
-    ('Maintenance Supervisor', 'Maintenance Supervisor'),
-    ('Other', 'Other')
-]

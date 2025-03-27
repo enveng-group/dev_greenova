@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  User Management
+{% endblock title %}
+{% block content %}
+  <article>
+    <header>
+      <div class="header-actions">
+        <h1>User Management</h1>
+        <a href="{% url 'users:admin_user_create' %}" class="btn-primary">Create New User</a>
+      </div>
+    </header>
+    <div class="users-container" hx-target="this" hx-swap="innerHTML">
+      {% include "users/partials/admin_user_list.html" %}
+    </div>
+  </article>
+{% endblock content %}
