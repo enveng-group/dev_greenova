@@ -1,119 +1,66 @@
-# Code Review Feedback for PR: Technical Documentation Updates
+# Code Review Feedback for PR #41: Responsibility Dropdown Issue
 
-Hi @Channing88,
+Hi @mhahmad0,
 
-Thank you for your continued interest in contributing to the Greenova project.
-I appreciate your attempt to address the feedback from the previous code review
-by submitting updated files.
+Thank you for your work on PR #41 addressing the responsibility dropdown
+functionality in the obligation form. I appreciate your effort to contribute to
+the Greenova project.
 
 ## Summary of Changes
 
-After reviewing your updated PR, I notice that you've primarily renamed the
-files rather than addressing the content issues highlighted in the previous
-review:
+I've reviewed your submission attempting to fix the responsibility dropdown
+list in the obligation CRUD form. While I understand the intent behind your
+changes, I needed to make substantial revisions to resolve the issue properly.
 
-- Renamed files to `MAKEFILE.md` and `SETUP_PY.md`
-- Made minimal changes to the content structure
-- Did not significantly improve the technical content quality
+## Key Issues Identified
 
-## Comparison Between Submissions and Project Standards
+After careful review, I found that:
 
-To help you understand the expected documentation standards for our project,
-I've taken the initiative to rewrite these documents myself. I'm merging these
-improved versions into the project to keep our documentation progress moving
-forward. Let me highlight some differences that will help you with future
-contributions:
+1. **Unnecessary File Creation**: The new `responsibility/constants.py` file
+   wasn't needed, as the responsibility fieldset values were already properly
+   defined in `core/utils/roles.py`.
 
-### Documentation Structure & Organization
+2. **Import Path Resolution**: The core issue was related to how these values
+   were being imported and used in the form, not that they needed to be
+   redefined elsewhere.
 
-**Your submission:**
+3. **Incomplete Fix**: While working on the dropdown list, some related issues
+   remained unaddressed, particularly regarding `responsibility_id` displaying
+   correctly in charts and obligation tables.
 
-- Used inconsistent heading levels
-- Lacked clear section organization
-- Mixed technical aspects with personal reflections without clear separation
+## Resolution
 
-**Project standard:**
+I've implemented a solution that:
 
-- Uses consistent heading hierarchy (H1 > H2 > H3)
-- Organizes content in a logical flow from overview to specific details
-- Separates reference information from implementation guidance
+- Properly uses the existing definitions from `core/utils/roles.py`
+- Resolves the dropdown list functionality in the obligation form
+- Makes minimal changes to the codebase to maintain consistency
 
-### Technical Content Depth
-
-**Your submission:**
-
-- `SETUP_PY.md` listed fields with minimal explanation ("Key Fields" section)
-- `MAKEFILE.md` provided general statements without technical specifications
-- Missing concrete examples of implementation
-
-**Project standard:**
-
-- Provides comprehensive explanations of concepts
-- Includes practical code examples with syntax highlighting
-- Explains the "why" behind technical decisions
-- Uses tables to organize parameter information for better readability
-
-### Formatting & Professional Writing
-
-**Your submission:**
-
-- Contained several spelling and grammar issues ("libralies", "whrite",
-  "peroform")
-- Inconsistent punctuation and capitalization
-- Links provided without context or proper citation
-
-**Project standard:**
-
-- Uses proper technical terminology
-- Follows consistent formatting throughout
-- Includes properly formatted IEEE-style citations
-- Structures content with appropriate Markdown formatting elements
-
-### Concrete Examples
-
-**Your SETUP_PY.md:**
-
-```
-# Key Fields
-
-- **name** : The name of the pakage.
-- **Version** : The current version.
-```
-
-**Project standard:**
-
-```
-| Parameter                | Description                                   | Example                                |
-| ------------------------ | --------------------------------------------- | -------------------------------------- |
-| `name`                   | Package name as it will appear on PyPI        | `"greenova"`                           |
-| `version`                | Package version following semantic versioning | `"0.1.0"`                              |
-```
-
-## Learning Resources
-
-To help you improve future contributions, I recommend:
-
-1. **Review our documentation standards** in
-   `.github/prompts/technical-writing.prompt.md`
-2. **Study the merged documents** at:
-   - `/workspaces/greenova/docs/resources/makefile.md`
-   - `/workspaces/greenova/docs/resources/py/setuptools/setup-py.md`
-3. **Follow the IEEE citation style** for technical references
-4. **Use a grammar checking tool** like Grammarly or LanguageTool to catch
-   basic errors
+Due to time constraints, I've had to complete the implementation myself. There
+are still some issues regarding `responsibility_id` display in charts and the
+obligation table that will need attention in future work.
 
 ## Moving Forward
 
-I appreciate your willingness to contribute and hope this feedback helps you
-understand our project's documentation standards. Technical documentation is
-critical for project sustainability, which is why we maintain high standards.
+I appreciate your willingness to tackle this issue. For future contributions, I
+would recommend:
 
-Please feel free to:
+1. **Explore Existing Code**: Before creating new files or redefining
+   constants, check if the functionality already exists elsewhere in the
+   project.
 
-- Ask questions about specific aspects of the documentation you find
-  challenging
-- Submit smaller, focused PRs that target specific documentation sections
-- Request a documentation mentor if you'd like more guidance
+2. **Test Thoroughly**: Ensure that your changes work across all affected
+   components, not just the immediate issue.
 
-Thank you again for your efforts. I look forward to your future contributions
-to the Greenova project.
+3. **Original Solutions**: While AI tools can be helpful for learning, we need
+   solutions tailored to our specific codebase rather than generated code that
+   might miss important context.
+
+Due to our project timeline constraints, I may need to be more selective about
+PRs that require extensive reworking in the future. However, I value your
+contributions and encourage you to continue participating in the project.
+
+Thank you again for your effort on this PR. I look forward to seeing your
+future contributions to Greenova with these suggestions in mind.
+
+Best regards, [Your Name]
