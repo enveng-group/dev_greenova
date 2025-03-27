@@ -41,7 +41,7 @@ Dockerfile text
 .babelrc text
 .prettierrc text
 .eslintrc text
-.markdownlint.json text
+.markdownlint-cli2.jsonc text
 *.config.js text
 tailwind.config.js text diff=javascript
 
