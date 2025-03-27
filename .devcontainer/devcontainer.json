@@ -131,7 +131,8 @@
         },
         "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk",
         "snyk.trustedFolders": [
-          "${containerWorkspaceFolder}"
+          "/workspaces/greenova/",
+          "/home/vscode/"
         ],
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",
         "terminal.integrated.defaultProfile.linux": "fish",

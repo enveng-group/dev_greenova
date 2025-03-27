@@ -2,7 +2,10 @@
 
 ## Introduction
 
-[Pico CSS](https://picocss.com/) is a minimal CSS framework designed to build elegant, responsive websites with semantic HTML. It prioritizes semantic HTML, focuses on progressive enhancement, and provides beautiful baseline styling with minimal effort.
+[Pico CSS](https://picocss.com/) is a minimal CSS framework designed to build
+elegant, responsive websites with semantic HTML. It prioritizes semantic HTML,
+focuses on progressive enhancement, and provides beautiful baseline styling
+with minimal effort.
 
 ## Key Features
 
@@ -19,7 +22,10 @@
 
 ```html
 <!-- Minimal CSS reset (Eric Meyer) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+/>
 ```
 
 ### NPM Installation
@@ -31,13 +37,16 @@ npm install @picocss/pico
 Then import it in your project:
 
 ```javascript
-import '@picocss/pico'
+import '@picocss/pico';
 ```
-
-## Usage in Greenova Project
 
 ### Classless Mode
 
+Pico's classless mode allows for styling with semantic HTML without requiring
+custom CSS classes. This aligns with our project's HTML-first development
+approach.
+
+Example:
 Pico's classless mode allows for styling with semantic HTML without requiring custom CSS classes. This aligns with our project's HTML-first development approach.
 
 Example:
@@ -46,15 +55,20 @@ Example:
 <main class="container">
   <h1>Hello, Pico CSS!</h1>
   <p>This is a paragraph with automatic styling from Pico.</p>
-  
+
   <!-- Forms -->
   <form>
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="Email" required>
-    
+    <input type="email" id="email" name="email" placeholder="Email" required />
+
     <label for="message">Message</label>
-    <textarea id="message" name="message" placeholder="Message" required></textarea>
-    
+    <textarea
+      id="message"
+      name="message"
+      placeholder="Message"
+      required
+    ></textarea>
+
     <button type="submit">Submit</button>
   </form>
 </main>
@@ -112,22 +126,34 @@ Forms automatically get styled:
 <form>
   <fieldset>
     <label for="firstname">First name</label>
-    <input type="text" id="firstname" name="firstname" placeholder="First name" required>
-    
+    <input
+      type="text"
+      id="firstname"
+      name="firstname"
+      placeholder="First name"
+      required
+    />
+
     <label for="lastname">Last name</label>
-    <input type="text" id="lastname" name="lastname" placeholder="Last name" required>
-    
+    <input
+      type="text"
+      id="lastname"
+      name="lastname"
+      placeholder="Last name"
+      required
+    />
+
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="Email" required>
+    <input type="email" id="email" name="email" placeholder="Email" required />
   </fieldset>
-  
+
   <fieldset>
     <label for="terms">
-      <input type="checkbox" id="terms" name="terms">
+      <input type="checkbox" id="terms" name="terms" />
       I agree to the Terms and Conditions
     </label>
   </fieldset>
-  
+
   <button type="submit">Submit</button>
 </form>
 ```
@@ -153,48 +179,79 @@ Pico uses CSS variables for easy customization:
   /* Primary colors */
   --primary: #1095c1;
   --primary-hover: #08769b;
-  
+
   /* Typography */
   --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-size: 16px;
   --line-height: 1.5;
-  
+
   /* Spacing */
   --spacing: 1rem;
   --border-radius: 0.25rem;
 }
 ```
 
-## Dark Mode
-
-Pico supports dark mode automatically. You can also manually control it:
-
-```html
 <!-- Light theme by default -->
-<html data-theme="light">
+<html lang="en" data-theme="light">
+<head>
+  <title>Page Title</title>
+  <meta name="description" content="Description of the page">
+  <meta name="keywords" content="pico, css, theme, light">
+  <!-- Content -->
+</head>
+<body>
+  <!-- Content -->
+</body>
+</html>
 
 <!-- Dark theme by default -->
-<html data-theme="dark">
+<html lang="en" data-theme="dark">
+<head>
+  <title>Page Title</title>
+  <meta name="description" content="Description of the page">
+  <meta name="keywords" content="pico, css, theme, dark">
+  <!-- Content -->
+</head>
+<body>
+  <!-- Content -->
+</body>
+</html>
 
-<!-- Auto theme by default (based on user's system preference) -->
-<html data-theme="auto">
+<!-- Auto theme by default -->
+<html lang="en" data-theme="auto">
+<head>
+  <title>Page Title</title>
+1. Add the CDN link in your base template:
+  <meta name="keywords" content="pico, css, theme, auto">
+  <!-- Content -->
+{% block styles %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+/>
+{% endblock styles %}
+    <!-- Auto theme by default (based on user's system preference) -->
+    <html data-theme="auto"></html>
+  </html>
+</html>
 ```
 
 Toggle between themes with JavaScript:
 
-```javascript
-// Function to toggle themes
-function toggleTheme() {
+- Use appropriate HTML5 elements (header, main, section, etc.)
+  // Function to toggle themes
+  function toggleTheme() {
   const html = document.documentElement;
   const currentTheme = html.getAttribute('data-theme');
-  
-  if (currentTheme === 'dark') {
-    html.setAttribute('data-theme', 'light');
-  } else {
-    html.setAttribute('data-theme', 'dark');
-  }
+
+if (currentTheme === 'dark') {
+html.setAttribute('data-theme', 'light');
+} else {
+html.setAttribute('data-theme', 'dark');
 }
-```
+}
+
+````
 
 ## Integration with Django
 
@@ -204,24 +261,30 @@ To use Pico CSS with Django templates:
 
 ```html
 {% block styles %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+/>
 {% endblock %}
-```
+````
 
 2. Or install via npm and include in your static files
 
 ## Best Practices for Greenova Project
 
 1. **Follow semantic HTML structure**
+
    - Use appropriate HTML5 elements (`<header>`, `<main>`, `<section>`, etc.)
    - Maintain proper heading hierarchy (h1-h6)
 
 2. **Progressive enhancement**
+
    - Start with well-structured HTML
    - Layer PicoCSS for styling
    - Add JavaScript interactivity only when necessary
 
 3. **Accessibility**
+
    - Use proper ARIA attributes where needed
    - Ensure forms have proper labels
    - Maintain good color contrast

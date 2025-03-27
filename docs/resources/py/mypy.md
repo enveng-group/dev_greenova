@@ -2,7 +2,10 @@
 
 ## Introduction to MyPy
 
-MyPy is a static type checker for Python code that helps catch common programming errors by analyzing type annotations. It allows you to combine the benefits of dynamic typing (flexibility, rapid development) with static typing (earlier error detection, better tooling) by adding optional type hints to your Python code.
+MyPy is a static type checker for Python code that helps catch common programming
+errors by analyzing type annotations. It allows you to combine the benefits of
+dynamic typing (flexibility, rapid development) with static typing (earlier error
+detection, better tooling) by adding optional type hints to your Python code.
 
 ## Benefits of Static Type Checking
 
@@ -11,6 +14,9 @@ MyPy is a static type checker for Python code that helps catch common programmin
 - **Self-documenting Code**: Type annotations serve as live documentation
 - **Safer Refactoring**: Confidently make changes with immediate feedback
 - **Gradual Adoption**: Add type hints incrementally to existing codebases
+  Django applications especially benefit from static type checking due to their
+  complexity. Django-stubs provides type stubs specifically for Django, enhancing
+  MyPy's ability to check Django-specific code patterns.
 
 ## Django Integration with django-stubs
 
@@ -70,7 +76,7 @@ from typing import List, Optional
 class Product(models.Model):
     name: str = models.CharField(max_length=100)
     price: int = models.IntegerField()
-    
+
     def get_discounted_price(self, discount_percentage: float) -> float:
         return float(self.price) * (1 - discount_percentage / 100)
 
@@ -134,7 +140,7 @@ from typing import Dict, Any, Optional
 class ContactForm(forms.Form):
     name = forms.CharField()
     email = forms.EmailField()
-    
+
     def clean(self) -> Dict[str, Any]:
         cleaned_data = super().clean()
         return cleaned_data
