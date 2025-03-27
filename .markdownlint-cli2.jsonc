@@ -1,0 +1,34 @@
+/*
+ * An example .markdownlint-cli2.jsonc file
+ */
+{
+  // Disable some built-in rules
+  "config": {
+    "no-trailing-spaces": false,
+    "no-multiple-blanks": false,
+  },
+
+  // Fix any fixable errors
+  "fix": true,
+
+  // Define a custom front matter pattern
+  "frontMatter": "<head>[^]*<\/head>",
+
+  // Ignore files referenced by .gitignore (only valid at root)
+  "gitignore": true,
+
+  // Disable banner message on stdout (only valid at root)
+  "noBanner": true,
+
+  // Disable inline config comments
+  "noInlineConfig": true,
+
+  // Disable progress on stdout (only valid at root)
+  "noProgress": true,
+
+  // Use a specific formatter (only valid at root)
+  "outputFormatters": [["markdownlint-cli2-formatter-default"]],
+
+  // Show found files on stdout (only valid at root)
+  "showFound": true,
+}

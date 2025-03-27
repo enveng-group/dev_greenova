@@ -1,77 +1,119 @@
-# Code Review Feedback for PR #41: Obligations Form Template
+# Code Review Feedback for PR: Technical Documentation Updates
 
-Hi @mhahmad0,
+Hi @Channing88,
 
-Thank you for your interest in contributing to the Greenova project. After
-reviewing PR #41, I need to request changes as there appear to be issues with
-your submission.
+Thank you for your continued interest in contributing to the Greenova project.
+I appreciate your attempt to address the feedback from the previous code review
+by submitting updated files.
 
-## 🚩 Submission Issues
+## Summary of Changes
 
-Your PR contains the following problems:
+After reviewing your updated PR, I notice that you've primarily renamed the
+files rather than addressing the content issues highlighted in the previous
+review:
 
-1. **Empty File**: The submission appears to be an empty file with no actual
-   template code.
+- Renamed files to `MAKEFILE.md` and `SETUP_PY.md`
+- Made minimal changes to the content structure
+- Did not significantly improve the technical content quality
 
-2. **Incorrect File Path**: The file path is problematic:
+## Comparison Between Submissions and Project Standards
 
-   ```
-   pr:/workspaces/greenova/greenova/templates/workspaces/greenova/greenova/obligations/templates/obligations/form.html
-   ```
+To help you understand the expected documentation standards for our project,
+I've taken the initiative to rewrite these documents myself. I'm merging these
+improved versions into the project to keep our documentation progress moving
+forward. Let me highlight some differences that will help you with future
+contributions:
 
-   This contains duplicated directory structures and doesn't match our project
-   organization.
+### Documentation Structure & Organization
 
-## 🚫 Critical Implementation Issues
+**Your submission:**
 
-This submission cannot be accepted for several fundamental reasons:
+- Used inconsistent heading levels
+- Lacked clear section organization
+- Mixed technical aspects with personal reflections without clear separation
 
-1. **Missing Implementation**: There's no actual template code to review or
-   implement.
+**Project standard:**
 
-2. **Path Structure Issues**: Our project expects templates to be in their
-   respective app directories with a clear path structure (e.g.,
-   `greenova/obligations/templates/obligations/form.html`).
+- Uses consistent heading hierarchy (H1 > H2 > H3)
+- Organizes content in a logical flow from overview to specific details
+- Separates reference information from implementation guidance
 
-3. **No Accessibility Considerations**: Our project requires WCAG 2.1 AA
-   standards for all templates.
+### Technical Content Depth
 
-4. **No Testing**: There's no evidence this template was tested with our
-   existing Django project.
+**Your submission:**
 
-## 📋 Our Project Requirements
+- `SETUP_PY.md` listed fields with minimal explanation ("Key Fields" section)
+- `MAKEFILE.md` provided general statements without technical specifications
+- Missing concrete examples of implementation
 
-As outlined in our technical documentation:
+**Project standard:**
 
-- We follow an HTML-first approach with progressive enhancement
-- We prioritize WCAG 2.1 AA standards for accessibility
-- We use test-driven development with Django's testing framework
-- We implement proper model relationships in our database design
+- Provides comprehensive explanations of concepts
+- Includes practical code examples with syntax highlighting
+- Explains the "why" behind technical decisions
+- Uses tables to organize parameter information for better readability
 
-## 🛠️ Required Actions
+### Formatting & Professional Writing
 
-To proceed with this contribution:
+**Your submission:**
 
-1. **Correct the file path**: Place your template in the proper location within
-   the project structure
-2. **Implement the form template**: Create a proper Django template for the
-   obligations form
-3. **Follow Django best practices**: Use proper template syntax for form
-   rendering
-4. **Address accessibility**: Ensure form elements follow our accessibility
-   guidelines
-5. **Test your changes**: Verify the template renders correctly with actual
-   data
+- Contained several spelling and grammar issues ("libralies", "whrite",
+  "peroform")
+- Inconsistent punctuation and capitalization
+- Links provided without context or proper citation
 
-## 🤝 Moving Forward
+**Project standard:**
 
-I appreciate your interest in contributing to Greenova. To help you succeed
-with your next submission, here are some resources:
+- Uses proper technical terminology
+- Follows consistent formatting throughout
+- Includes properly formatted IEEE-style citations
+- Structures content with appropriate Markdown formatting elements
 
-- Review our project structure to understand the correct file organization
-- Check existing templates in the project as examples of our approach
-- Refer to our documentation on Django template standards and accessibility
-  requirements
+### Concrete Examples
 
-I'm happy to provide guidance on template implementation. Please reach out if
-you have questions about our project structure or contribution guidelines.
+**Your SETUP_PY.md:**
+
+```
+# Key Fields
+
+- **name** : The name of the pakage.
+- **Version** : The current version.
+```
+
+**Project standard:**
+
+```
+| Parameter                | Description                                   | Example                                |
+| ------------------------ | --------------------------------------------- | -------------------------------------- |
+| `name`                   | Package name as it will appear on PyPI        | `"greenova"`                           |
+| `version`                | Package version following semantic versioning | `"0.1.0"`                              |
+```
+
+## Learning Resources
+
+To help you improve future contributions, I recommend:
+
+1. **Review our documentation standards** in
+   `.github/prompts/technical-writing.prompt.md`
+2. **Study the merged documents** at:
+   - `/workspaces/greenova/docs/resources/makefile.md`
+   - `/workspaces/greenova/docs/resources/py/setuptools/setup-py.md`
+3. **Follow the IEEE citation style** for technical references
+4. **Use a grammar checking tool** like Grammarly or LanguageTool to catch
+   basic errors
+
+## Moving Forward
+
+I appreciate your willingness to contribute and hope this feedback helps you
+understand our project's documentation standards. Technical documentation is
+critical for project sustainability, which is why we maintain high standards.
+
+Please feel free to:
+
+- Ask questions about specific aspects of the documentation you find
+  challenging
+- Submit smaller, focused PRs that target specific documentation sections
+- Request a documentation mentor if you'd like more guidance
+
+Thank you again for your efforts. I look forward to your future contributions
+to the Greenova project.

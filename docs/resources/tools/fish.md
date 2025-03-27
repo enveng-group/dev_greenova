@@ -2,13 +2,20 @@
 
 ## Introduction
 
-The Fish shell (Friendly Interactive SHell) is a smart and user-friendly command line shell for Linux, macOS, and other Unix-like operating systems. It's the preferred shell for the Greenova project due to its intuitive features, excellent interactive experience, and developer-friendly capabilities.
+The Fish shell (Friendly Interactive SHell) is a smart and user-friendly
+command line shell for Linux, macOS, and other Unix-like operating systems.
+It's the preferred shell for the Greenova project due to its intuitive
+features, excellent interactive experience, and developer-friendly
+capabilities.
 
 ## Key Features
 
-- **Autosuggestions**: Fish suggests commands as you type based on history and completions
-- **Syntax highlighting**: Commands, arguments, and paths are colored for clarity
-- **Tab completions**: Robust and context-aware tab completion with detailed explanations
+- **Autosuggestions**: Fish suggests commands as you type based on history
+  and completions
+- **Syntax highlighting**: Commands, arguments, and paths are colored for
+  clarity
+- **Tab completions**: Robust and context-aware tab completion with detailed
+  explanations
 - **Web-based configuration**: Easy configuration through a web interface
 - **Scripting language**: Clean, powerful and consistent scripting syntax
 - **No configuration required**: Works great out of the box
@@ -16,27 +23,32 @@ The Fish shell (Friendly Interactive SHell) is a smart and user-friendly command
 ## Installation
 
 ### macOS
+
 ```bash
 brew install fish
 ```
 
 ### Ubuntu/Debian
+
 ```bash
 sudo apt-get update
 sudo apt-get install fish
 ```
 
 ### Fedora
+
 ```bash
 sudo dnf install fish
 ```
 
 ### Arch Linux
+
 ```bash
 sudo pacman -S fish
 ```
 
 ### From Source
+
 ```bash
 git clone https://github.com/fish-shell/fish-shell.git
 cd fish-shell
@@ -84,6 +96,7 @@ Alt+↑ or Alt+↓     # Search history by token
 ### Autosuggestions
 
 As you type, Fish will suggest commands in gray text. To accept a suggestion:
+
 - Press →: Accept the entire suggestion
 - Press Alt+→: Accept one word of the suggestion
 

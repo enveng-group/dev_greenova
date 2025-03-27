@@ -2,7 +2,12 @@
 
 ## Overview
 
-EditorConfig helps maintain consistent coding styles across various editors and IDEs. It consists of a file format for defining coding styles and a collection of text editor plugins that enable editors to read the file format and adhere to defined styles.
+EditorConfig helps maintain consistent coding styles across various editors and IDEs.
+It consists of a file format for defining coding styles and a collection of text
+editor plugins that enable editors to read the file format and adhere to defined
+styles.
+In collaborative projects like Greenova, consistent code formatting is essential
+for:
 
 ## Why EditorConfig Matters
 
@@ -17,7 +22,8 @@ In collaborative projects like Greenova, consistent code formatting is essential
 
 1. A `.editorconfig` file defines coding styles for different file types
 2. When you open a file in an editor with EditorConfig support, it reads the configuration
-3. The editor automatically applies the defined styles
+   Our project uses a comprehensive `.editorconfig` file with specific settings for
+   different file types:
 
 ## Greenova's EditorConfig Configuration
 
@@ -33,6 +39,7 @@ profile = black
 ```
 
 This configuration:
+
 - Uses 4 spaces for indentation
 - Limits line length to 88 characters
 - Follows Black code style conventions
@@ -60,6 +67,8 @@ max_line_length = 80
 ### Other Formats
 
 The configuration includes specific settings for JSON, YAML, Markdown, shell scripts, and more. See the full `.editorconfig` file for details.
+Most popular editors and IDEs support EditorConfig either natively or through
+plugins:
 
 ## Using EditorConfig
 
@@ -90,14 +99,20 @@ After installing the Python package:
 editorconfig /path/to/file
 ```
 
-This displays the EditorConfig properties that apply to the specified file.
+1. **Verify Plugin Installation**: Ensure your editor has the EditorConfig plugin
+   installed and enabled
+2. **Check File Location**: The `.editorconfig` file must be in your project root
+   or a parent directory
 
 ## Troubleshooting
 
 ### EditorConfig Not Working
 
-1. **Verify Plugin Installation**: Ensure your editor has the EditorConfig plugin installed and enabled
-2. **Check File Location**: The `.editorconfig` file must be in your project root or a parent directory
+- **Black**: Our `.editorconfig` is configured with `profile = black` to align
+  with Black's formatting
+- **Prettier**: For frontend files, ensure Prettier is configured to respect
+  `.editorconfig` settings
+
 3. **Validate Syntax**: Use an online validator to check your `.editorconfig` file
 
 ### Conflicts with Other Formatting Tools
@@ -106,13 +121,17 @@ In the Greenova project:
 
 - **Black**: Our `.editorconfig` is configured with `profile = black` to align with Black's formatting
 - **Prettier**: For frontend files, ensure Prettier is configured to respect `.editorconfig` settings
+  For Django projects like Greenova, EditorConfig helps maintain consistent
+  formatting across:
 
 ## Further Reading
 
 - [Official EditorConfig Website](https://editorconfig.org/)
 - [Python EditorConfig Package](https://pypi.org/project/EditorConfig/)
 - [EditorConfig Core Python](https://github.com/editorconfig/editorconfig-core-py)
-- [EditorConfig Properties](https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties)
+  This consistency supports our HTML-first development approach and progressive
+  enhancement layers by ensuring all code follows the same structural conventions
+  regardless of which team member created it.
 
 ## Integration with Django Development
 

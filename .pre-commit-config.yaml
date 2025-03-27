@@ -115,7 +115,7 @@ repos:
     rev: v0.17.2
     hooks:
       - id: markdownlint-cli2
-        args: ['--config', '.markdownlint.json', '--fix']
+        args: ['--config', '.markdownlint-cli2.jsonc', '--fix']
 
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.10.0

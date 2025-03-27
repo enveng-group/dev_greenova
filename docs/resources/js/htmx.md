@@ -2,7 +2,10 @@
 
 ## Introduction
 
-HTMX is a library that allows you to access modern browser features directly from HTML, rather than using JavaScript. It empowers developers to build modern user interfaces with simple, declarative markup. The `django-htmx` package provides integration between Django and HTMX.
+HTMX is a library that allows you to access modern browser features directly
+from HTML, rather than using JavaScript. It empowers developers to build modern
+user interfaces with simple, declarative markup. The `django-htmx` package
+provides integration between Django and HTMX.
 
 ## Benefits of HTMX with Django
 
@@ -49,9 +52,13 @@ Add HTMX to your base template:
 
 ```html
 <head>
-    <!-- ... -->
-    <script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
-    <!-- ... -->
+  <!-- ... -->
+  <script
+    src="https://unpkg.com/htmx.org@1.9.6"
+    integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+    crossorigin="anonymous"
+  ></script>
+  <!-- ... -->
 </head>
 ```
 
@@ -90,10 +97,10 @@ def my_view(request):
 
 ```html
 <button hx-get="/load-more/" hx-target="#content" hx-swap="beforeend">
-    Load More
+  Load More
 </button>
 <div id="content">
-    <!-- Content will be loaded here -->
+  <!-- Content will be loaded here -->
 </div>
 ```
 
@@ -101,25 +108,28 @@ def my_view(request):
 
 ```html
 <form hx-post="/submit/" hx-target="#result">
-    {% csrf_token %}
-    <input type="text" name="name" placeholder="Enter your name">
-    <button type="submit">Submit</button>
+  {% csrf_token %}
+  <input type="text" name="name" placeholder="Enter your name" />
+  <button type="submit">Submit</button>
 </form>
 <div id="result">
-    <!-- Response will appear here -->
+  <!-- Response will appear here -->
 </div>
 ```
 
 ### Live Search
 
 ```html
-<input type="search" name="q" 
-       hx-get="/search/" 
-       hx-trigger="keyup changed delay:500ms" 
-       hx-target="#search-results">
+<input
+  type="search"
+  name="q"
+  hx-get="/search/"
+  hx-trigger="keyup changed delay:500ms"
+  hx-target="#search-results"
+/>
 
 <div id="search-results">
-    <!-- Search results will appear here -->
+  <!-- Search results will appear here -->
 </div>
 ```
 
@@ -129,29 +139,31 @@ def my_view(request):
 
 ```html
 <table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-                <button hx-delete="/users/{{ user.id }}/delete/" 
-                        hx-target="closest tr"
-                        hx-swap="outerHTML"
-                        hx-confirm="Are you sure you want to delete this user?">
-                    Delete
-                </button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <button
+          hx-delete="/users/{{ user.id }}/delete/"
+          hx-target="closest tr"
+          hx-swap="outerHTML"
+          hx-confirm="Are you sure you want to delete this user?"
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 ```
 
@@ -159,50 +171,53 @@ def my_view(request):
 
 ```html
 <tr id="user-row-{{ user.id }}">
-    <td>{{ user.name }}</td>
-    <td>{{ user.email }}</td>
-    <td>
-        <button hx-get="/users/{{ user.id }}/edit/" 
-                hx-target="#user-row-{{ user.id }}"
-                hx-swap="outerHTML">
-            Edit
-        </button>
-    </td>
+  <td>{{ user.name }}</td>
+  <td>{{ user.email }}</td>
+  <td>
+    <button
+      hx-get="/users/{{ user.id }}/edit/"
+      hx-target="#user-row-{{ user.id }}"
+      hx-swap="outerHTML"
+    >
+      Edit
+    </button>
+  </td>
 </tr>
 ```
 
 Then in the edit template:
 
-```html
+````html
 <tr id="user-row-{{ user.id }}">
-    <form hx-put="/users/{{ user.id }}/update/" 
-          hx-target="#user-row-{{ user.id }}"
-          hx-swap="outerHTML">
-        {% csrf_token %}
-        <td><input name="name" value="{{ user.name }}"></td>
-        <td><input name="email" value="{{ user.email }}"></td>
-        <td>
-            <button type="submit">Save</button>
-            <button hx-get="/users/{{ user.id }}/" 
-                    hx-target="#user-row-{{ user.id }}"
-                    hx-swap="outerHTML">
-                Cancel
-            </button>
-        </td>
-    </form>
-</tr>
-```
-
-## CSRF Token Handling
-
-Django-HTMX automatically handles CSRF tokens for HTMX requests, but you should still include the CSRF token in forms:
-
-```html
-<form hx-post="/submit/" hx-target="#result">
+  <form
+    hx-put="/users/{{ user.id }}/update/"
+    hx-target="#user-row-{{ user.id }}"
+    hx-swap="outerHTML"
+  >
+    {% csrf_token %}
+    <td><input name="name" value="{{ user.name }}" /></td>
+    <td><input name="email" value="{{ user.email }}" /></td>
+    <td>
+      <button type="submit">Save</button>
+      <button
+        hx-get="/users/{{ user.id }}/"
+        hx-target="#user-row-{{ user.id }}"
+        hx-swap="outerHTML"
+      >
+        Cancel
+      </button>
+    </td>
+  </form>
+  ## CSRF Token Handling Django-HTMX automatically handles CSRF tokens for HTMX
+  requests, but you should still include the CSRF token in forms: ## CSRF Token
+  Handling Django-HTMX automatically handles CSRF tokens for HTMX requests, but
+  you should still include the CSRF token in forms: ```html
+  <form hx-post="/submit/" hx-target="#result">
     {% csrf_token %}
     <!-- Form fields -->
-</form>
-```
+  </form>
+</tr>
+````
 
 ## Working with Django Messages
 
@@ -225,39 +240,36 @@ In your `message_response.html`:
 ```html
 {% if messages %}
 <div id="messages">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-    </div>
-    {% endfor %}
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
 </div>
 {% endif %}
 
 <!-- Content that was updated -->
 <div id="updated-content">
-    <!-- ... -->
-</div>
-```
+  ## Progressive Enhancement HTMX follows the progressive enhancement approach.
+  Always ensure your application works without JavaScript:
 
-## Progressive Enhancement
-
-HTMX follows the progressive enhancement approach. Always ensure your application works without JavaScript:
-
-```html
-<div>
-    <button hx-get="/load-data/" hx-target="#data">
-        Load Data with HTMX
+  <div>
+    <button hx-get="{% url 'load_data' %}" hx-target="#data">
+      Load Data with HTMX
     </button>
     <noscript>
-        <a href="/load-data/">Load Data (JavaScript disabled)</a>
+      <a href="{% url 'load_data' %}">Load Data (JavaScript disabled)</a>
     </noscript>
     <div id="data"></div>
+  </div>
+  <noscript>
+    <a href="/load-data/">Load Data (JavaScript disabled)</a>
+  </noscript>
+  <div id="data"></div>
 </div>
 ```
 
 ## Advanced Techniques
 
-### Boosting Links and Forms
+<a href="{% url 'about' %}" hx-boost="true">About Us</a>
 
 Boosting allows regular links and forms to use HTMX:
 
@@ -268,25 +280,21 @@ Boosting allows regular links and forms to use HTMX:
 ### Indicators for Loading States
 
 ```html
-<button hx-post="/process/" hx-indicator="#spinner">
-    Submit
-</button>
-<div id="spinner" class="htmx-indicator">
-    Loading...
-</div>
+<button hx-post="/process/" hx-indicator="#spinner">Submit</button>
+<div id="spinner" class="htmx-indicator">Loading...</div>
 ```
 
 Add this CSS:
 
 ```css
 .htmx-indicator {
-    display: none;
+  display: none;
 }
 .htmx-request .htmx-indicator {
-    display: inline;
+  display: inline;
 }
 .htmx-request.htmx-indicator {
-    display: inline;
+  display: inline;
 }
 ```
 
@@ -294,22 +302,27 @@ Add this CSS:
 
 ```html
 <div hx-get="/page/2/" hx-push-url="true">
-    <!-- Content -->
+  <!-- Content -->
 </div>
 ```
 
 ### Triggering Events
 
-```html
-<button hx-get="/info/" 
-        hx-target="#info"
-        hx-trigger="click, keyup[key=='Enter']">
-    Get Info
-</button>
-```
-
+````html
+<button
+  hx-get="/info/"
+  hx-target="#info"
+  hx-trigger="click, keyup[key=='Enter']"
 ## Partial Rendering
 
+When working with HTMX, you often only need to render part of a page since only
+a specific section is being updated. This optimization can improve performance
+and maintainability.
+
+### Using django-template-partials
+
+The `django-template-partials` package extends Django's Template Language with
+reusable sections called "partials" that can be rendered independently.
 When working with HTMX, you often only need to render part of a page since only a specific section is being updated. This optimization can improve performance and maintainability.
 
 ### Using django-template-partials
@@ -320,7 +333,7 @@ The `django-template-partials` package extends Django's Template Language with r
 
 ```bash
 pip install django-template-partials
-```
+````
 
 Add it to `INSTALLED_APPS`:
 
@@ -335,33 +348,29 @@ INSTALLED_APPS = [
 #### 2. Define Partials in Your Templates
 
 ```html
-{% extends "_base.html" %}
+{% extends "_base.html" %} {% load partials %} {% block body %}
+<h1>Countries</h1>
 
-{% load partials %}
+{% partialdef country-table inline %}
+<table id="country-data">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Population</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for country in countries %}
+    <tr>
+      <td>{{ country.name }}</td>
+      <td>{{ country.population }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endpartialdef %}
 
-{% block body %}
-  <h1>Countries</h1>
-
-  {% partialdef country-table inline %}
-    <table id="country-data">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Population</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for country in countries %}
-          <tr>
-            <td>{{ country.name }}</td>
-            <td>{{ country.population }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% endpartialdef %}
-
-  <!-- The table will render here due to 'inline' parameter -->
+<!-- The table will render here due to 'inline' parameter -->
 {% endblock body %}
 ```
 
@@ -374,7 +383,7 @@ from django.shortcuts import render
 
 def country_listing(request):
     template_name = "countries.html"
-    
+
     # For HTMX requests, render only the partial
     if request.htmx:
         template_name += "#country-table"
@@ -382,7 +391,8 @@ def country_listing(request):
     countries = Country.objects.all()
 
     return render(
-        request,
+HTMX requests will render only the partial, while full page requests will render
+the entire template.
         template_name,
         {
             "countries": countries,
@@ -396,7 +406,7 @@ HTMX requests will render only the partial, while full page requests will render
 
 An alternative approach is to swap the base template in your view:
 
-#### 1. In Your View:
+#### 1. In Your View
 
 ```python
 from django.shortcuts import render
@@ -422,54 +432,54 @@ def partial_rendering(request):
     )
 ```
 
-#### 2. In Your Template (page.html):
+#### 2. In Your Template (page.html)
 
 ```html
-{% extends base_template %}
-
-{% block body %}
-  <!-- Content that will be rendered in both full page and HTMX requests -->
-  <div id="items-container">
-    {% for item in items %}
-      <div class="item">{{ item.name }}</div>
-    {% endfor %}
-  </div>
-{% endblock %}
-```
-
-#### 3. Create Base Templates:
-
-Main base template (_base.html):
-```html
+{% extends base_template %} {% block body %}
+<!-- Content that will be rendered in both full page and HTMX requests -->
+<div id="items-container">
+  {% for item in items %}
+  <div class="item">{{ item.name }}</div>
+  {% endfor %}
 <!doctype html>
-<html>
-<head>
-  <title>My Site</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <script src="{% static 'js/htmx.min.js' %}"></script>
-</head>
-<body>
-  <header>
-    <nav>
-      <!-- Navigation items -->
-    </nav>
-  </header>
-  <main id="main">
-    {% block body %}{% endblock %}
-  </main>
-  <footer>
-    <!-- Footer content -->
-  </footer>
-</body>
+<html lang="en">
+  <head>
+    <title>My Site</title>
+    <meta name="description" content="Environmental management application">
+    <meta name="keywords" content="environment, management, compliance">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <!-- Navigation items -->
+      </nav>
+    </header>
+    <main id="main">{% block body %}{% endblock body %}</main>
+    <footer>
+      <!-- Footer content -->
+    </footer>
+  </body>
+</html>
+        <!-- Navigation items -->
+      </nav>
+    </header>
+    <main id="main">{% block body %}{% endblock %}</main>
+    <footer>
+      <!-- Footer content -->
+This technique ensures HTMX requests receive only the necessary HTML, reducing
+payload size and improving performance.
+  </body>
 </html>
 ```
 
-Partial template (_partial.html):
-```html
-<main id="main">
-  {% block body %}{% endblock %}
-</main>
-```
+Partial template (\_partial.html):
+
+<div id="content">
+  <!-- Initial results -->
+  {% include "partials/results.html" %}
+</div>
 
 This technique ensures HTMX requests receive only the necessary HTML, reducing payload size and improving performance.
 
@@ -479,17 +489,25 @@ This technique ensures HTMX requests receive only the necessary HTML, reducing p
 
 ```html
 <div id="content">
-    <!-- Initial results -->
-    {% include 'partials/results.html' %}
+  <!-- Initial results -->
+  {% include 'partials/results.html' %}
 </div>
 
 <div id="pagination">
-    <button hx-get="?page={{ page_obj.next_page_number }}" 
-            hx-target="#content" 
-            hx-swap="innerHTML"
-            {% if not page_obj.has_next %}disabled{% endif %}>
-        Load More
-    </button>
+  <button
+    hx-get="?page={{ page_obj.next_page_number }}"
+    hx-target="#content"
+    hx-swap="innerHTML"
+    {%
+    if
+    not
+    page_obj.has_next
+    %}disabled{%
+    endif
+    %}
+  >
+    Load More
+  </button>
 </div>
 ```
 
@@ -497,14 +515,21 @@ This technique ensures HTMX requests receive only the necessary HTML, reducing p
 
 ```html
 <form hx-post="/register/" hx-target="#form-errors">
-    {% csrf_token %}
-    <input type="text" name="username" hx-post="/check-username/" hx-target="#username-error" hx-trigger="change">
-    <div id="username-error"></div>
-    
-    <!-- More fields -->
-    
-    <div id="form-errors"></div>
-    <button type="submit">Register</button>
+  {% csrf_token %}
+  <input
+    type="text"
+    name="username"
+    hx-post="/check-username/"
+    hx-target="#username-error"
+    hx-trigger="change"
+1. **Use Request.HTMX**: Check `request.htmx` to determine if a request came
+   from HTMX.
+  <div id="username-error"></div>
+
+  <!-- More fields -->
+
+  <div id="form-errors"></div>
+  <button type="submit">Register</button>
 </form>
 ```
 
@@ -541,8 +566,12 @@ This technique ensures HTMX requests receive only the necessary HTML, reducing p
 
 ### Event Handling Problems
 
-- Confirm event triggers are properly defined
-- Check for typos in event names
+## HTMX Extensions
+
+HTMX provides extensions that add additional functionality beyond its core
+features. These extensions can be particularly useful for specific use cases in
+Django applications.
+
 - Verify event modifiers are correctly formatted
 
 ## Additional Resources
@@ -559,16 +588,19 @@ HTMX provides extensions that add additional functionality beyond its core featu
 
 ### How to Use Extensions
 
-Include the extension script after the main HTMX script:
+### Head Support Extension
 
-```html
+The [Head Support Extension](https://htmx.org/extensions/head-support/) allows
+you to update the `<head>` of your document with content from HTMX responses.
+
 <script src="https://unpkg.com/htmx.org@1.9.6"></script>
 <script src="https://unpkg.com/htmx.org/dist/ext/head-support.js"></script>
+
 ```
 
 Then initialize it:
 
-```html
+#### Django Head Support Example
 <body hx-ext="head-support">
   <!-- Your content -->
 </body>
@@ -588,17 +620,18 @@ The [Head Support Extension](https://htmx.org/extensions/head-support/) allows y
 
 ```html
 <!-- In your template -->
-<a hx-get="/product/{{ product.id }}/" 
-   hx-target="body" 
-   hx-push-url="true">
-   {{ product.name }}
+<a hx-get="/product/{{ product.id }}/" hx-target="body" hx-push-url="true">
+  {{ product.name }}
 </a>
 
 <!-- In your response template -->
 <head>
   <title>{{ product.name }} | My Store</title>
-  <meta name="description" content="{{ product.description|truncatewords:20 }}">
-  <link rel="canonical" href="{% url 'product_detail' product.id %}">
+  <meta
+    name="description"
+    content="{{ product.description|truncatewords:20 }}"
+  />
+  <link rel="canonical" href="{% url 'product_detail' product.id %}" />
 </head>
 <body>
   <!-- Product details content -->
@@ -621,22 +654,25 @@ The [Loading States Extension](https://github.com/bigskysoftware/htmx-extensions
 <div hx-ext="loading-states">
   <form hx-post="{% url 'create_item' %}" hx-target="#result">
     {% csrf_token %}
-    <input type="text" name="name" required>
-    
-    <button type="submit"
-            loading-states
-            loading-path="/create_item"
-            ls-initialized-class="ready"
-            ls-loading-class="disabled"
-            ls-complete-class="complete"
-            ls-error-class="error">
+    <input type="text" name="name" required />
+
+    <button
+      type="submit"
+      loading-states
+      loading-path="/create_item"
+### Class Tools Extension
+
+The [Class Tools Extension](https://github.com/bigskysoftware/htmx-extensions/blob/main/src/class-tools/README.md)
+provides additional class manipulation tools for HTML elements.
+      ls-error-class="error"
+    >
       <span ls-initialized-show>Create</span>
       <span ls-loading-show>Creating...</span>
       <span ls-complete-show>Created!</span>
       <span ls-error-show>Failed</span>
     </button>
   </form>
-  
+
   <div id="result"></div>
 </div>
 ```
@@ -650,28 +686,31 @@ The [Class Tools Extension](https://github.com/bigskysoftware/htmx-extensions/bl
 - Add/remove classes after delays
 - Create complex class addition/removal sequences
 - Simplifies UI transitions and animations
+  classes="add saving:mousedown remove saving:htmx:afterOnLoad
+  add saved:htmx:afterOnLoad remove saved:3s"
 
 #### Example with Django
 
 ```html
 <div hx-ext="class-tools">
-  <div id="notification"
-       classes="add fade-in:load remove fade-in:2s add fade-out:2s remove fade-out:hidden:3s">
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-          {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
+  <div
+    id="notification"
+    classes="add fade-in:load remove fade-in:2s add fade-out:2s remove fade-out:hidden:3s"
+### Path Dependencies Extension
+
+The [Path Dependencies Extension](https://github.com/bigskysoftware/htmx-extensions/blob/main/src/path-deps/README.md)
+allows you to define dependencies between HTMX requests based on path patterns.
+    {% endfor %} {% endif %}
   </div>
-  
-  <button hx-post="{% url 'save_data' %}"
-          hx-target="#result"
-          classes="add saving:mousedown remove saving:htmx:afterOnLoad add saved:htmx:afterOnLoad remove saved:3s">
+
+  <button
+    hx-post="{% url 'save_data' %}"
+    hx-target="#result"
+    classes="add saving:mousedown remove saving:htmx:afterOnLoad add saved:htmx:afterOnLoad remove saved:3s"
+  >
     Save Data
   </button>
-  
+
   <div id="result"></div>
 </div>
 ```
@@ -688,30 +727,36 @@ The [Path Dependencies Extension](https://github.com/bigskysoftware/htmx-extensi
 
 #### Example with Django
 
-```html
+````html
 <div hx-ext="path-deps">
   <!-- This component will be refreshed when a new comment is added -->
-  <div id="comment-count" 
-       hx-get="{% url 'comment_count' post.id %}" 
-       path-deps="/posts/{{ post.id }}/comments">
+  <div
+  <div id="comments-list">{% include "partials/comments.html" %}</div>
+    hx-get="{% url 'comment_count' post.id %}"
+    path-deps="/posts/{{ post.id }}/comments"
+  >
     <!-- Comment count content -->
   </div>
-  
-  <!-- Form to add a new comment -->
-  <form hx-post="{% url 'add_comment' post.id %}" 
-        hx-target="#comments-list"
-        hx-swap="beforeend">
-    {% csrf_token %}
-    <textarea name="content"></textarea>
-    <button type="submit">Add Comment</button>
-  </form>
-  
+
+def add_comment(request, post_id):
+    # Process the comment
+    # ...
+
+    # Return just the new comment
+    response = render(request, "partials/comment.html", {"comment": comment})
+
+    # Set the path-deps header to trigger updates
+    response['HX-Trigger-After-Settle'] = f"{% url 'comment_path' post_id %}"
+    return response
+
   <!-- Comments list -->
-  <div id="comments-list">
-    {% include 'partials/comments.html' %}
-  </div>
-</div>
-```
+## Conclusion
+
+HTMX with Django provides a powerful way to create dynamic, interactive web
+applications with minimal JavaScript. By leveraging Django's templating system
+alongside HTMX's declarative approach to AJAX, you can build modern user
+experiences while maintaining the simplicity and robustness of server-rendered
+HTML.
 
 In your Django view:
 
@@ -719,20 +764,15 @@ In your Django view:
 def add_comment(request, post_id):
     # Process the comment
     # ...
-    
+
     # Return just the new comment
     response = render(request, 'partials/comment.html', {'comment': comment})
-    
+
     # Set the path-deps header to trigger updates
     response['HX-Trigger-After-Settle'] = f"{{% url 'comment_path' post_id %}}"
     return response
-```
+````
 
 ## Conclusion
 
 HTMX with Django provides a powerful way to create dynamic, interactive web applications with minimal JavaScript. By leveraging Django's templating system alongside HTMX's declarative approach to AJAX, you can build modern user experiences while maintaining the simplicity and robustness of server-rendered HTML.
-
-
-
-
-

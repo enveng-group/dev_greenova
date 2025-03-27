@@ -22,4 +22,3 @@ pip install --upgrade setuptools
 ### Basic Project Structure
 
 A minimal Python package using setuptools should have the following structure:
-

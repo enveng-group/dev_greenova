@@ -7,4 +7,5 @@ from chatbot.compile_proto import compile_proto
 compile_proto()
 ```
 
-This will compile your proto files into Python modules that you can import and use in your application.
+This will compile your proto files into Python modules that you can import and use
+in your application.
