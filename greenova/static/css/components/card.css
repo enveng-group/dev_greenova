@@ -19,12 +19,15 @@
 }
 
 /* Card colors */
+.overdue, .upcoming {
+  border-left: 4px solid var(--greenova-primary-background);
+}
 .overdue {
-  border-left: 4px solid var(--greenova-warning-background);
+  border-left-color: var(--greenova-warning-background);
 }
 
 .upcoming {
-  border-left: 4px solid var(--greenova-info-background);
+  border-left-color: var(--greenova-info-background);
 }
 
 /* Responsive adjustments */

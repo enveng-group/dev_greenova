@@ -3,41 +3,41 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--greenova-padding);
 }
 
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 -0.5rem;
+  margin: 0 calc(-1 * var(--greenova-spacing-small));
 }
 
 .column {
   flex: 1;
-  padding: 0 0.5rem;
+  padding: 0 var(--greenova-spacing-small);
   min-width: 0;
 }
 
 .conversation-list {
   flex: 0 0 30%;
   border-right: 1px solid var(--border-color);
-  padding-right: 1rem;
+  padding-right: var(--greenova-padding);
 }
 
 .chat-window {
   flex: 0 0 70%;
-  padding-left: 1rem;
+  padding-left: var(--greenova-padding);
 }
 
 .conversations {
   list-style: none;
   padding: 0;
-  margin: 1rem 0;
+  margin: var(--greenova-spacing-large) 0;
 }
 
 .conversations li {
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
+  margin-bottom: var(--greenova-spacing);
+  padding: var(--greenova-padding);
   border-radius: 4px;
   transition: background-color 0.2s;
 }
@@ -67,14 +67,14 @@
   overflow-y: auto;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: var(--greenova-padding);
+  margin-bottom: var(--greenova-spacing-large);
   background-color: var(--background-alt);
 }
 
 .message {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
+  margin-bottom: var(--greenova-spacing-large);
+  padding: calc(var(--greenova-padding) * 1.5);
   border-radius: 8px;
   max-width: 80%;
 }
@@ -97,13 +97,13 @@
 .message-time {
   font-size: 0.7rem;
   text-align: right;
-  margin-top: 0.25rem;
+  margin-top: var(--greenova-spacing-small);
   opacity: 0.7;
 }
 
 .message-input-container {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--greenova-spacing-small);
 }
 
 .message-input-container input {
@@ -111,7 +111,7 @@
 }
 
 .conversation-actions {
-  margin-top: 1rem;
+  margin-top: var(--greenova-spacing-large);
   display: flex;
   justify-content: space-between;
 }
@@ -122,7 +122,7 @@
 
 .new-conversation-btn {
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: var(--greenova-spacing-large);
 }
 
 .no-conversation-selected {
@@ -133,19 +133,19 @@
   background-color: var(--background-alt);
   border-radius: 4px;
   text-align: center;
-  padding: 1rem;
+  padding: var(--greenova-padding);
 }
 
 .confirmation-message {
-  margin: 1rem 0;
-  padding: 1rem;
+  margin: var(--greenova-spacing-large) 0;
+  padding: var(--greenova-padding);
   background-color: var(--form-element-invalid-focus-background-color);
   border-radius: 4px;
 }
 
 .button-group {
   display: flex;
-  gap: 1rem;
+  gap: var(--greenova-spacing);
 }
 
 .destructive {
@@ -166,8 +166,8 @@
   .conversation-list {
     border-right: none;
     border-bottom: 1px solid var(--border-color);
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
+    margin-bottom: var(--greenova-spacing);
+    padding-bottom: var(--greenova-padding);
   }
 
   .chat-window {

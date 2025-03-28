@@ -1,13 +1,13 @@
 /* Filter section layout */
 .filter-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--greenova-spacing-large);
 }
 
 .filter-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: var(--greenova-spacing);
 }
 
 .filter-header h3 {
@@ -18,7 +18,7 @@
 .filter-actions {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: var(--greenova-spacing-small);
 }
 
 /* Filter controls */
@@ -42,7 +42,7 @@
 }
 
 .search-control label {
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--greenova-spacing-small);
   font-size: var(--greenova-input-label);
 }
 
@@ -58,20 +58,20 @@ input[type="search"] {
 /* Fieldsets for filters and sorting */
 .filter-fieldset,
 .sort-fieldset {
-  padding: 0.75rem;
+  padding: var(--greenova-padding);
 }
 
 .filter-fieldset legend,
 .sort-fieldset legend {
   font-size: var(--greenova-input-label);
-  padding: 0 0.5rem;
+  padding: 0 var(--greenova-spacing-small);
 }
 
 .filter-group,
 .sort-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--greenova-input-size);
+  margin-bottom: var(--greenova-spacing);
 }
 
 .filter-group>select>option,
@@ -86,7 +86,7 @@ input[type="search"] {
 
 .filter-group label,
 .sort-group label {
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--greenova-spacing-small);
   font-size: var(--greenova-input-label);
 }
 
@@ -94,7 +94,7 @@ input[type="search"] {
   .filter-fieldset {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: var(--greenova-spacing-large);
   }
 
   .filter-group {
@@ -169,7 +169,7 @@ input[type="search"] {
 
 /* Quick filter buttons */
 .quick-filter-btn {
-  padding: 0.4rem 0.75rem;
+  padding: var(--greenova-padding-small) var(--greenova-padding);
   font-size: var(--greenova-input-label);
   cursor: pointer;
   transition: all 0.2s ease;

@@ -1,62 +1,62 @@
 /* Chart section layout */
-.charts-section {
-  margin: var(--greenova-spacing);
+.charts-section, .table-container, .chart-section {
+  margin: var(--greenova-spacing) 0;
 }
 
-/* Chart scroll container */
-.chart-scroll-container {
+.table-container {
+  border-radius: var(--greenova-border-radius);
+  background: var(--greenova-background-secondary);
+  padding: var(--greenova-spacing);
+}
+
+/* Chart scroll for horizontal scrolling */
+.chart-scroll, .chart-scroll-container {
   display: flex;
+  gap: var(--greenova-spacing);
   overflow-x: auto;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.chart-scroll-container {
   scroll-snap-type: x mandatory;
-  gap: var(--greenova-spacing);
   padding: var(--greenova-padding);
   margin: var(--greenova-spacing);
-  -webkit-overflow-scrolling: touch;
   align-items: start;
   min-height: 400px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  /* Padding to make the layout fit within the app */
   padding-top: var(--greenova-spacing-large);
 }
 
+.chart-scroll::-webkit-scrollbar, 
 .chart-scroll-container::-webkit-scrollbar {
   display: none;
 }
 
 /* Chart card layout */
-.mechanism-chart {
+.mechanism-chart, .chart-card {
   flex: 0 0 var(--greenova-charts-width);
   min-width: var(--greenova-charts-width);
-  flex-grow: 1;
-  scroll-snap-align: start;
-  margin: var(--greenova-spacing);
   padding: var(--greenova-padding);
   background: var(--greenova-background-secondary);
   border-radius: var(--greenova-border-radius);
   box-shadow: var(--greenova-shadow);
+  margin: var(--greenova-spacing-small);
 }
 
-.mechanism-chart header {
-  margin: 0;
-  padding: var(--greenova-padding);
+.mechanism-chart {
+  flex-grow: 1;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
 }
 
-.mechanism-chart figure {
-  margin: 0;
-  padding: 0;
-}
-
-.mechanism-chart figure figcaption {
-  /* Add padding to make it look pretty */
-  padding: var(--greenova-padding);
-}
-
-.mechanism-chart img {
-  width: 100%;
+.mechanism-chart img, 
+.chart-gallery .mechanism-chart img {
+  max-width: 100%;
   height: auto;
+  object-fit: contain;
   display: block;
   margin: 0 auto;
 }
@@ -67,15 +67,44 @@
   text-align: center;
 }
 
-/* Stats layout */
-.chart-stats {
-  margin: var(--greenova-spacing) 0 0;
+.mechanism-chart figure {
+  margin: 0;
   padding: 0;
 }
 
-.stat-row {
+.mechanism-chart header, 
+figure figcaption {
+  padding: var(--greenova-padding);
+}
+
+/* Chart gallery */
+.chart-gallery {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  gap: var(--greenova-spacing);
+  padding: var(--greenova-padding);
+  margin: var(--greenova-spacing) 0;
+  -webkit-overflow-scrolling: touch;
+  align-items: stretch;
+  min-height: 400px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chart-gallery::-webkit-scrollbar {
+  display: none;
+}
+
+/* Stats layout */
+.chart-stats, .stats-container, .stats-row {
+  margin: var(--greenova-spacing-small) 0;
   display: flex;
   justify-content: space-between;
+}
+
+.stat-row {
   margin-bottom: 0.25rem;
   font-size: 0.9rem;
 }
@@ -84,21 +113,7 @@
   font-weight: bold;
 }
 
-.stats-container {
-  display: flex;
-  justify-content: space-between;
-  margin: var(--greenova-spacing-small) 0;
-}
-
-.stats-row {
-  display: flex;
-  justify-content: space-between;
-  margin: var(--greenova-spacing-small) 0;
-  width: 100%;
-}
-
 /* Navigation buttons */
-/*.chart-nav*/
 nav[role='navigation'].chart-nav {
   display: flex;
   justify-content: flex-end;
@@ -115,7 +130,6 @@ nav[role='navigation'].chart-nav button {
   cursor: pointer;
   color: var(--greenova-text-primary-dark);
   background: none;
-
   margin: 0 var(--greenova-spacing-small);
   border: none;
   padding: var(--greenova-spacing-small) var(--greenova-spacing);
@@ -126,61 +140,10 @@ nav[role='navigation'].chart-nav button {
   color: var(--greenova-text-primary-dark);
 }
 
-.table-container {
-  margin: var(--greenova-spacing) 0;
-  border-radius: var(--greenova-border-radius);
-  background: var(--greenova-background-secondary);
-  padding: var(--greenova-spacing);
-}
-
-.overall-chart {
-  margin-top: var(--greenova-spacing);
-}
-
-.data-table {
-  overflow-x: auto;
-}
-
-/* Chart section */
-.chart-section {
-  margin: var(--greenova-spacing) 0;
-}
-
 /* Chart container */
 .chart-container {
   overflow: hidden;
   position: relative;
-}
-
-/* Chart scroll for horizontal scrolling */
-.chart-scroll {
-  display: flex;
-  gap: var(--greenova-spacing);
-  overflow-x: auto;
-  padding-bottom: var(--greenova-padding-small);
-  scroll-behavior: smooth;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.chart-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-/* Chart card within scroll container */
-.chart-card {
-  flex: 0 0 320px;
-  min-width: 320px;
-  padding: var(--greenova-spacing);
-  background: var(--greenova-background-secondary);
-  border-radius: var(--greenova-border-radius);
-  break-inside: avoid;
-  overflow: visible;
-}
-
-/* Overall chart container */
-.overall-chart {
-  margin-top: var(--greenova-spacing);
 }
 
 /* Media queries for responsive charts */
@@ -204,44 +167,4 @@ nav[role='navigation'].chart-nav button {
   .chart-nav {
     display: none !important;
   }
-}
-
-/* Add styles for chart gallery */
-.chart-gallery {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  gap: var(--greenova-spacing);
-  padding: var(--greenova-padding);
-  margin: var(--greenova-spacing) 0;
-  -webkit-overflow-scrolling: touch;
-  align-items: stretch;
-  min-height: 400px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.chart-gallery::-webkit-scrollbar {
-  display: none;
-}
-
-/* Ensure mechanism-chart styles apply properly */
-.chart-gallery .mechanism-chart {
-  flex: 0 0 var(--greenova-charts-width);
-  min-width: var(--greenova-charts-width);
-  scroll-snap-align: start;
-  margin: var(--greenova-spacing-small);
-  padding: var(--greenova-padding);
-  background: var(--greenova-background-secondary);
-  border-radius: var(--greenova-border-radius);
-  box-shadow: var(--greenova-shadow);
-  display: flex;
-  flex-direction: column;
-}
-
-.chart-gallery .mechanism-chart img {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
 }
