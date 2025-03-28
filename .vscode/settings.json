@@ -172,7 +172,13 @@
   "autopep8.path": [
     "${workspaceFolder}/.venv/lib/python3.9/site-packages/autopep8"
   ],
-  "bandit.importStrategy": "useBundled",
+  "bandit.importStrategy": "fromEnvironment",
+  "bandit.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "bandit.path": [
+    "/workspaces/greenova/.venv/bin/bandit"
+  ],
   "chat.detectParticipant.enabled": true,
   "chat.promptFiles": true,
   "chat.promptFilesLocations": {
