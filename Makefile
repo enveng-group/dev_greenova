@@ -63,17 +63,17 @@ proto-compile:
 check:
 	$(CD_CMD) python3 manage.py check
 
-# Updated run command with better process management and gunicorn config
+# Updated run command with better process management
 run:
 	@echo "Starting Tailwind CSS and Django server..."
 	@mkdir -p logs
 	@$(CD_CMD) (python3 manage.py tailwind start > ../logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && \
-	gunicorn greenova.wsgi -c ../gunicorn.conf.py
+	python3 manage.py runserver
 
 # Alternative approach with separate commands
 #start only Django server
 run-django:
-	$(CD_CMD) gunicorn greenova.wsgi -c ../gunicorn.conf.py
+	$(CD_CMD) python3 manage.py runserver
 
 #Start only Tailwind CSS
 run-tailwind:
@@ -103,7 +103,7 @@ tailwind-install:
 
 #Create database migrations
 migrations:
-	$(CD_CMD) python3 manage.py makemigrations
+	$(CD_CMD) python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures
 
 #Apply database migrations
 migrate:
@@ -119,7 +119,7 @@ user:
 
 #Import data from CSV file
 import:
-	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --no-transaction
+	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv
 
 #Update data from CSV file
 update:
@@ -152,12 +152,6 @@ prod:
 # Used to pre-compile tailwind CSS before running the application (we should maybe use this in run later)
 tailwind:
 	$(CD_CMD) python3 manage.py tailwind start
-
-# Add a new command for running just gunicorn with config
-run-gunicorn:
-	@echo "Starting Gunicorn server..."
-	@mkdir -p logs
-	@gunicorn greenova.wsgi -c gunicorn.conf.py
 
 # Combined command for database updates
 db: migrations migrate

@@ -212,7 +212,7 @@ setup_fish_direnv() {
       echo "    # Add Node.js binary path to fish PATH"
       echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
       echo "    # For accessing node and npm globally from default NVM version"
-      echo "    set -gx PATH /usr/local/share/nvm/versions/node/v18.20.7/bin \$PATH"
+      echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
       echo "end"
 
       echo "# Function to use NVM in fish"
@@ -222,12 +222,12 @@ setup_fish_direnv() {
 
       echo "# Ensure npm is accessible as a command"
       echo "if not type -q npm"
-      echo "    alias npm='/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'"
+      echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
       echo "end"
 
       echo "# Ensure node is accessible as a command"
       echo "if not type -q node"
-      echo "    alias node='/usr/local/share/nvm/versions/node/v18.20.7/bin/node'"
+      echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
       echo "end"
     } >>"$FISH_CONFIG"
     echo "Fish shell configured with direnv hook, virtual env support, and Node.js/npm"
@@ -247,7 +247,7 @@ setup_fish_direnv() {
         echo "    # Add Node.js binary path to fish PATH"
         echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
         echo "    # For accessing node and npm globally from default NVM version"
-        echo "    set -gx PATH /usr/local/share/nvm/versions/node/v18.20.7/bin \$PATH"
+        echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
         echo "end"
 
         echo "# Function to use NVM in fish"
@@ -257,12 +257,12 @@ setup_fish_direnv() {
 
         echo "# Ensure npm is accessible as a command"
         echo "if not type -q npm"
-        echo "    alias npm='/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'"
+        echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
         echo "end"
 
         echo "# Ensure node is accessible as a command"
         echo "if not type -q node"
-        echo "    alias node='/usr/local/share/nvm/versions/node/v18.20.7/bin/node'"
+        echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
         echo "end"
       } >>"$FISH_CONFIG"
       echo "Added Node.js and npm configuration to fish shell"
@@ -314,6 +314,12 @@ main() {
   # Configure Fish shell with direnv (after venv is set up)
   echo "Setting up Fish shell with direnv..."
   setup_fish_direnv
+
+  # Ensure Pre-Commit is updated
+  if command -v pre-commit >/dev/null 2>&1; then
+    echo "Updating pre-commit hooks..."
+    pre-commit autoupdate
+  fi
 }
 
 main "$@"

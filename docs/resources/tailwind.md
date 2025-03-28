@@ -2,14 +2,21 @@
 
 ## Introduction
 
-[Tailwind CSS](https://tailwindcss.com/) is a utility-first CSS framework that provides low-level utility classes to build custom designs without leaving your HTML. [Django Tailwind](https://github.com/timonweb/django-tailwind) is a Django app that integrates Tailwind CSS into your Django project.
+[Tailwind CSS](https://tailwindcss.com/) is a utility-first CSS framework that
+provides low-level utility classes to build custom designs without leaving your
+HTML. [Django Tailwind](https://github.com/timonweb/django-tailwind) is a
+Django app that integrates Tailwind CSS into your Django project.
 
-> **Note:** According to our coding guidelines, we should use Django Tailwind only as a last resort after semantic HTML and PicoCSS, prioritizing progressive enhancement.
+> **Note:** According to our coding guidelines, we should use Django Tailwind
+> only as a last resort after semantic HTML and PicoCSS, prioritizing
+> progressive enhancement.
 
 ## Why Consider Tailwind CSS in Django?
 
-- **Rapid UI Development**: Build custom interfaces quickly without writing custom CSS
-- **Consistent Design System**: Enforces design constraints with predefined values
+- **Rapid UI Development**: Build custom interfaces quickly without writing
+  custom CSS
+- **Consistent Design System**: Enforces design constraints with predefined
+  values
 - **Responsive Design**: Built-in responsive modifiers like `md:`, `lg:`, etc.
 - **Dark Mode**: Simple implementation with `dark:` variants
 - **Smaller Production CSS**: Generates only the CSS you use
@@ -80,7 +87,8 @@ python manage.py tailwind install
 python manage.py tailwind start
 ```
 
-This will watch your template files and automatically rebuild your CSS when changes are detected.
+This will watch your template files and automatically rebuild your CSS when
+changes are detected.
 
 ### 2. Include Tailwind CSS in your base template
 
@@ -88,14 +96,14 @@ This will watch your template files and automatically rebuild your CSS when chan
 {% load tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <!-- ... -->
     {% tailwind_css %}
     <!-- ... -->
-</head>
-<body>
+  </head>
+  <body>
     <!-- ... -->
-</body>
+  </body>
 </html>
 ```
 
@@ -109,7 +117,8 @@ This creates an optimized production build.
 
 ## Using Tailwind CSS Classes
 
-Remember to follow our HTML-first approach. Only use Tailwind CSS utilities when absolutely necessary, and always maintain semantic HTML structure.
+Remember to follow our HTML-first approach. Only use Tailwind CSS utilities
+when absolutely necessary, and always maintain semantic HTML structure.
 
 ### Basic Typography
 
@@ -162,14 +171,14 @@ module.exports = {
         'brand-secondary': '#34a853',
       },
       spacing: {
-        '72': '18rem',
-        '84': '21rem',
-        '96': '24rem',
+        72: '18rem',
+        84: '21rem',
+        96: '24rem',
       },
     },
   },
   plugins: [],
-}
+};
 ```
 
 ### 2. Add custom utilities in the base CSS file
@@ -193,7 +202,11 @@ module.exports = {
 When using Tailwind CSS, maintain proper HTML semantics and ARIA attributes:
 
 ```html
-<nav role="navigation" aria-label="Main navigation" class="bg-gray-800 text-white p-4">
+<nav
+  role="navigation"
+  aria-label="Main navigation"
+  class="bg-gray-800 text-white p-4"
+>
   <ul class="flex space-x-4">
     <li><a href="/" class="hover:text-brand-primary">Home</a></li>
     <li><a href="/about" class="hover:text-brand-primary">About</a></li>
@@ -204,6 +217,7 @@ When using Tailwind CSS, maintain proper HTML semantics and ARIA attributes:
 ## Best Practices with Our HTML-First Approach
 
 1. **Start with semantic HTML first**:
+
    ```html
    <article>
      <header>
@@ -238,7 +252,7 @@ When using Tailwind CSS, maintain proper HTML semantics and ARIA attributes:
 Tailwind works well with HTMX for enhanced interactivity:
 
 ```html
-<button 
+<button
   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
   hx-get="/api/data"
   hx-target="#result"
@@ -247,6 +261,98 @@ Tailwind works well with HTMX for enhanced interactivity:
   Load Data
 </button>
 <div id="result" class="mt-4 p-4 border rounded"></div>
+```
+
+## Debugging and Troubleshooting
+
+### Checking for Updates
+
+You can check for outdated Tailwind CSS dependencies using the management
+command:
+
+```bash
+python manage.py tailwind check-updates
+```
+
+Or if you have a Makefile set up:
+
+```bash
+make check-tailwind
+```
+
+This will show you which packages need updating, for example:
+
+```
+Package         Current  Wanted  Latest  Location                     Depended by
+postcss-import   15.1.0  15.1.0  16.1.0  node_modules/postcss-import  static_src
+postcss-nested    6.2.0   6.2.0   7.0.2  node_modules/postcss-nested  static_src
+tailwindcss      3.4.17  3.4.17  4.0.15  node_modules/tailwindcss     static_src
+```
+
+### Updating Dependencies Manually
+
+If you need to update your Tailwind dependencies manually:
+
+1. Navigate to your Tailwind app's static_src directory:
+
+   ```bash
+   cd your_project/theme/static_src
+   ```
+
+2. Update specific packages:
+   ```bash
+   npm install tailwindcss@latest
+   npm install postcss-import@latest
+   npm install postcss-nested@latest
+   ```
+
+### Common Errors and Solutions
+
+#### Error: Cannot find module 'tailwindcss'
+
+This usually means Tailwind CSS isn't installed properly in your project:
+
+```bash
+# Navigate to the static_src directory
+cd your_project/theme/static_src
+
+# Install dependencies
+npm install
+```
+
+#### Error: Node Sass does not yet support your current environment
+
+Update your Node.js version or reinstall the node-sass package:
+
+```bash
+npm rebuild node-sass
+```
+
+#### Tailwind CSS classes not applying
+
+1. Make sure your templates are included in the `content` section of
+   `tailwind.config.js`
+2. Verify you're using `{% tailwind_css %}` in your templates
+3. Run the Tailwind build process: `python manage.py tailwind build`
+
+#### Django can't find Tailwind CSS files
+
+Ensure the `TAILWIND_APP_NAME` is correctly set in your settings and the app is
+added to `INSTALLED_APPS`.
+
+### Setting Up a Makefile for Tailwind Commands
+
+For easier management, you can add these commands to your project's Makefile:
+
+```makefile
+check-tailwind:
+	cd your_project && python manage.py tailwind check-updates
+
+tailwind-build:
+	cd your_project && python manage.py tailwind build
+
+tailwind-start:
+	cd your_project && python manage.py tailwind start
 ```
 
 ## Resources
@@ -260,11 +366,15 @@ Tailwind works well with HTMX for enhanced interactivity:
 
 ## Conclusion
 
-While Django Tailwind offers powerful utility-based styling capabilities, remember our project's progressive enhancement principles:
+While Django Tailwind offers powerful utility-based styling capabilities,
+remember our project's progressive enhancement principles:
 
 1. Start with semantic HTML
 2. Use PicoCSS for basic styling
 3. Add Django-Hyperscript/HTMX for interactivity
-4. Use Tailwind utilities only when necessary to achieve specific design requirements
+4. Use Tailwind utilities only when necessary to achieve specific design
+   requirements
 
-This approach ensures our application remains accessible, semantic, and progressively enhanced while still benefiting from Tailwind's utility classes where needed.
+This approach ensures our application remains accessible, semantic, and
+progressively enhanced while still benefiting from Tailwind's utility classes
+where needed.

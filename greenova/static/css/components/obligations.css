@@ -179,8 +179,8 @@ td:nth-child(22) {
 /* Filter and control styling */
 .controls-container {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--greenova-spacing);
+  margin-bottom: var(--greenova-spacing);
   flex-wrap: wrap;
   align-items: center;
 }

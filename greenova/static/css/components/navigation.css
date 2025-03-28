@@ -2,7 +2,6 @@
 
 /* Header for the document, is large and at the top */
 header {
-
   background: var(--greenova-green-secondary);
 }
 
@@ -29,15 +28,14 @@ body>header {
 
 [role='navigation'],
 [role='navigation'] ul,
-[role='navigation'] ul li {
+[role='navigation'] ul li,
+[role='navigation'] [role="menuitem"] {
   border-radius: var(--greenova-border-radius);
   margin: 0;
   padding: 0;
 }
 
 [role='navigation'] [role="menuitem"] {
-  border-radius: var(--greenova-border-radius);
-  margin: 0;
   padding: var(--greenova-padding);
 }
 

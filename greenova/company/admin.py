@@ -7,7 +7,6 @@ class CompanyMembershipInline(admin.TabularInline):
     extra = 1
     raw_id_fields = ('user',)
 
-
 class CompanyDocumentInline(admin.TabularInline):
     model = CompanyDocument
     extra = 1

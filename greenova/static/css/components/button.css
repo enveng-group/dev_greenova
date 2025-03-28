@@ -5,9 +5,12 @@ button,
 [type='submit'],
 [type='reset'],
 [role='button'],
+nav li [role=button],
+nav li [type=button],
 .btn-primary,
 .btn-secondary,
 .btn-danger,
+.btn-fold,
 .action-btn,
 .quick-filter-btn {
   /* Set default style attributes. */
@@ -42,6 +45,14 @@ button,
 /* Font on */
 button#chat-toggle>span {
   font-weight: normal !important;
+}
+
+/* This is stating that if the header has an element named .btn-fold,
+   we want to make sure all the elements are line iso the button can be on the right. */
+header:has(.btn-fold) {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* If the button is apart of a menu */
