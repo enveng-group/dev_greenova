@@ -115,6 +115,7 @@ def driver():
             try:
                 logger.info('Attempting to connect to Chrome on host...')
                 options = ChromeOptions()
+                options.add_argument('--headless=new')  # Force headless mode
                 options.add_argument('--no-sandbox')
                 options.add_argument('--disable-dev-shm-usage')
                 options.add_argument('--window-size=1920,1080')
@@ -147,12 +148,9 @@ def driver():
         logger.info('Setting up Chrome WebDriver in container...')
         options = ChromeOptions()
 
-        # Don't use headless mode when in a GUI environment
-        if os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY'):
-            logger.info('GUI environment detected - using visible browser')
-        else:
-            logger.info('No display detected - using headless mode')
-            options.add_argument('--headless=new')
+        # Always use headless mode
+        logger.info('Using headless mode for Chrome')
+        options.add_argument('--headless=new')
 
         # Basic Chrome options that work well in containers
         options.add_argument('--no-sandbox')
@@ -174,12 +172,9 @@ def driver():
             logger.info('Attempting to use Firefox WebDriver as fallback...')
             options = FirefoxOptions()
 
-            # Don't use headless mode when in a GUI environment
-            if os.environ.get('DISPLAY') or os.environ.get('WAYLAND_DISPLAY'):
-                logger.info('GUI environment detected - using visible Firefox')
-            else:
-                logger.info('No display detected - using headless Firefox')
-                options.add_argument('--headless')
+            # Always use headless mode
+            logger.info('Using headless mode for Firefox')
+            options.add_argument('--headless')
 
             options.add_argument('--width=1920')
             options.add_argument('--height=1080')

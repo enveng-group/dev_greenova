@@ -2,7 +2,10 @@
 
 ## Introduction to Python
 
-Python is a high-level, interpreted programming language known for its readability, versatility, and extensive standard library. It supports multiple programming paradigms including procedural, object-oriented, and functional programming.
+Python is a high-level, interpreted programming language known for its
+readability, versatility, and extensive standard library. It supports multiple
+programming paradigms including procedural, object-oriented, and functional
+programming.
 
 ### Key Features
 
@@ -35,8 +38,8 @@ sudo apt install python3.9 python3.9-venv python3.9-dev
 brew install python@3.9
 ```
 
-**Windows**:
-Download the installer from [python.org](https://www.python.org/downloads/)
+**Windows**: Download the installer from
+[python.org](https://www.python.org/downloads/)
 
 ### Virtual Environments
 
@@ -273,7 +276,7 @@ def apply_function(func: Callable[[int], int], value: int) -> int:
 1. **Follow PEP 8** - Python's style guide
 2. **Write docstrings** - Document functions, classes, and modules
 3. **Use virtual environments** - Isolate project dependencies
-4. **Write test cases** - Use unittest or pytest frameworks
+4. **Write test cases** - Use pytest for testing
 5. **Handle exceptions properly** - Use try/except blocks appropriately
 
 ### Common Design Patterns
@@ -339,9 +342,87 @@ with open("data.json", "r") as file:
     loaded_person = json.load(file)
 ```
 
+## Testing with pytest
+
+Python offers various testing frameworks, with pytest being the most powerful
+and flexible option for modern Python applications.
+
+### Basic pytest Example
+
+```python
+# test_example.py
+def test_addition():
+    assert 1 + 1 == 2
+
+def test_string_methods():
+    assert "hello".capitalize() == "Hello"
+```
+
+### pytest Fixtures
+
+```python
+import pytest
+
+@pytest.fixture
+def sample_data():
+    return {"name": "Test User", "email": "test@example.com"}
+
+def test_user_name(sample_data):
+    assert sample_data["name"] == "Test User"
+```
+
+### Django Testing with pytest
+
+For Django projects, use pytest with pytest-django:
+
+```python
+import pytest
+from django.urls import reverse
+
+@pytest.mark.django_db
+def test_home_page(client):
+    response = client.get(reverse('home'))
+    assert response.status_code == 200
+    assert 'Welcome' in response.content.decode()
+```
+
+### Web UI Testing with Selenium
+
+For browser-based testing:
+
+```python
+import pytest
+from selenium.webdriver.common.by import By
+
+@pytest.mark.selenium
+def test_login_form(selenium, live_server):
+    # Visit the login page
+    selenium.get(f"{live_server.url}/accounts/login/")
+
+    # Fill in the form
+    username = selenium.find_element(By.NAME, "username")
+    username.send_keys("test")
+
+    # Submit the form
+    submit = selenium.find_element(By.XPATH, "//button[@type='submit']")
+    submit.click()
+
+    # Check results
+    assert "Dashboard" in selenium.page_source
+```
+
+### Testing Packages
+
+- **pytest**: Core testing framework
+- **pytest-django**: Django integration for pytest
+- **pytest-selenium**: Selenium testing integration
+- **pytest-cov**: Code coverage reporting
+- **pytest-dotenv**: Environment variable management for tests
+
 ## Python Standard Library Highlights
 
-Python comes with a rich standard library that provides modules for various tasks:
+Python comes with a rich standard library that provides modules for various
+tasks:
 
 - **os, sys** - Operating system interfaces
 - **pathlib** - Object-oriented filesystem paths
@@ -356,7 +437,6 @@ Python comes with a rich standard library that provides modules for various task
 - **http.server** - Simple HTTP servers
 - **urllib, requests** - URL handling and HTTP requests
 - **json, csv, xml** - Data format handling
-- **unittest** - Unit testing framework
 
 ## Additional Resources
 
@@ -374,6 +454,12 @@ Python comes with a rich standard library that provides modules for various task
 - [Extending Python](https://docs.python.org/release/3.9.21/extending/index.html)
 - [Python/C API Reference](https://docs.python.org/release/3.9.21/c-api/index.html)
 
+### Testing Resources
+
+- [pytest Documentation](https://docs.pytest.org/)
+- [pytest-django Documentation](https://pytest-django.readthedocs.io/)
+- [Selenium with Python](https://selenium-python.readthedocs.io/)
+
 ### Interactive Learning
 
 - [Python Tutor](http://pythontutor.com/) - Visualize code execution
@@ -387,3 +473,4 @@ Python comes with a rich standard library that provides modules for various task
 - "Fluent Python" by Luciano Ramalho
 - "Effective Python" by Brett Slatkin
 - "Python Cookbook" by David Beazley and Brian K. Jones
+- "Python Testing with pytest" by Brian Okken
