@@ -3,10 +3,10 @@
 ## Introduction
 
 The dotenv package is a zero-dependency module that loads environment variables
-from a `.env` file into your application's environment. It provides a simple way
-to configure your applications while keeping sensitive information out of your
-codebase. For Python applications, python-dotenv makes it easy to integrate
-environment variables into various frameworks, including Django.
+from a `.env` file into your application's environment. It provides a simple
+way to configure your applications while keeping sensitive information out of
+your codebase. For Python applications, python-dotenv makes it easy to
+integrate environment variables into various frameworks, including Django.
 
 ## Documentation
 
@@ -145,7 +145,7 @@ For production, you can encrypt your environment variables:
    # .env.production
    DJANGO_DEBUG=False
    DJANGO_SECRET_KEY=your-production-secret-key
-   DJANGO_ALLOWED_HOSTS=app.enssol.com.au
+   DJANGO_ALLOWED_HOSTS=app.greenova.com.au
    ```
 
 3. **Build the vault file**:
@@ -159,9 +159,11 @@ For production, you can encrypt your environment variables:
    - `.env.vault`: Contains encrypted variables
    - `.env.keys`: Contains encryption keys
 
-5. **Set the `DOTENV_KEY` environment variable** on your production server using the appropriate key from `.env.keys`.
+5. **Set the `DOTENV_KEY` environment variable** on your production server
+   using the appropriate key from `.env.keys`.
 
-6. **Commit only the `.env.vault` file** to your repository (it's safe since it's encrypted).
+6. **Commit only the `.env.vault` file** to your repository (it's safe since
+   it's encrypted).
 
 ## Multiple Environments
 
