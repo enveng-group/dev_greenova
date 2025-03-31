@@ -191,6 +191,20 @@
     "editor.defaultFormatter": "ms-vscode.makefile-tools",
     "editor.insertSpaces": false
   },
+  "[dotenv]": {
+    "editor.defaultFormatter": "dotenv.dotenv-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[makefile]": {
+    "editor.defaultFormatter": "ms-vscode.makefile-tools",
+    "editor.insertSpaces": false
+  },
   "autopep8.args": [
     "--max-line-length=88",
     "--experimental",
