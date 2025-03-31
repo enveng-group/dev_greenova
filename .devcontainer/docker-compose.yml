@@ -7,9 +7,18 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+<<<<<<< HEAD
+=======
+    volumes:
+      - greenova:/workspace/greenova
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     environment:
       PYTHONUNBUFFERED: 1
     command: ["/bin/bash"]
 
 volumes:
+<<<<<<< HEAD
   greenova:
+=======
+  greenova:
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

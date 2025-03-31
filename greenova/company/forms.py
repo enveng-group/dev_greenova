@@ -1,9 +1,14 @@
 from django import forms
+<<<<<<< HEAD
 from django.contrib.auth import get_user_model
 
 from .models import Company, CompanyDocument, CompanyMembership
 
 User = get_user_model()
+=======
+from django.contrib.auth.models import User
+from .models import Company, CompanyMembership, CompanyDocument
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 
 class CompanyForm(forms.ModelForm):

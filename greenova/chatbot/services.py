@@ -1,10 +1,15 @@
 import logging
+<<<<<<< HEAD
 
 from django.db.models import Q
 
 from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
 from .proto_utils import (create_chat_response, deserialize_chat_message,
                           parse_chat_response, serialize_chat_message)
+=======
+from django.db.models import Q
+from .models import Conversation, ChatMessage, PredefinedResponse, TrainingData
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 logger = logging.getLogger(__name__)
 
@@ -38,17 +43,27 @@ class ChatbotService:
 
             return message
         except Conversation.DoesNotExist:
+<<<<<<< HEAD
             logger.error("Conversation with ID %s does not exist", conversation_id)
+=======
+            logger.error(f"Conversation with ID {conversation_id} does not exist")
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
             return None
 
     @staticmethod
     def get_conversation_messages(conversation_id):
         """Get all messages for a conversation."""
         try:
+<<<<<<< HEAD
             query = ChatMessage.objects.filter(conversation_id=conversation_id)
             return query.order_by('timestamp')
         except (ChatMessage.DoesNotExist, Conversation.DoesNotExist) as e:
             logger.error("Error retrieving messages: %s", str(e))
+=======
+            return ChatMessage.objects.filter(conversation_id=conversation_id).order_by('timestamp')
+        except Exception as e:
+            logger.error(f"Error retrieving messages: {str(e)}")
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
             return []
 
     @staticmethod
@@ -108,6 +123,7 @@ class ChatbotService:
 
         # Default response if no match found
         return "I'm sorry, I don't have an answer for that question."
+<<<<<<< HEAD
 
     @staticmethod
     def serialize_message(message_id, content):
@@ -135,3 +151,5 @@ class ChatbotService:
             Deserialized message as dict or None on error
         """
         return parse_chat_response(data)
+=======
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

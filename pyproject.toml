@@ -1,13 +1,24 @@
+<<<<<<< HEAD
 [build-system]
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
+=======
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+exclude = '\.md$'
+
+[tool.django-stubs]
+django_settings_module = "greenova.settings"
+
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 [tool.autopep8]
 max_line_length = 88
 ignore = ["E501", "E302", "E305"]
 in-place = true
 recursive = true
 aggressive = 3
+<<<<<<< HEAD
 single_quotes = true
 
 [tool.djlint]
@@ -23,3 +34,8 @@ extension = "django-html,html,jinja"
 preserve_blank_lines = true
 preserve_leading_space = true
 require_pragma = false
+=======
+
+[tool.djlint]
+ignore="H014,H015"
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

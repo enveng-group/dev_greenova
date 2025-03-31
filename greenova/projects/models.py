@@ -21,6 +21,17 @@ class Project(models.Model):
         through='ProjectMembership',
         related_name='projects'
     )
+    # Add company relationship
+    company = models.ForeignKey(
+        'company.Company',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='projects'
+    )
+    is_active = models.BooleanField(default=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
