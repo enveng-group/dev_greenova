@@ -72,6 +72,35 @@ principles]
 
 [Suggested labels for this issue: e.g., bug, enhancement, documentation, etc.]
 
+### Available Labels
+
+- **bug**: Something isn't working
+- **documentation**: Improvements or additions to documentation
+- **duplicate**: This issue or pull request already exists
+- **enhancement**: New feature or request
+- **good first issue**: Good for newcomers
+- **help wanted**: Extra attention is needed
+- **invalid**: This doesn't seem right
+- **question**: Further information is requested
+- **wontfix**: This will not be worked on
+- **Javascript**: Issues related to JavaScript code, functionality, and scripts
+  used within the project
+- **Django**: Issues related to the Django framework, including configurations,
+  templates, and Django-specific code
+- **ESLint**: Issues related to the ESLint configuration, rules, and linting
+  errors in the project
+- **Makefile**: Issue related to the Makefile
+- **Docker**: Issues relating to Docker or Devcontainer
+- **CSS**: Issues relating to CSS, styles, and design
+- **ui**: Relative to the user interface
+- **refactoring**: Code-refactoring
+- **ux**: User-Experience
+- **pytest**: Issues related to pytest
+- **selenium**: Issues related to Selenium
+- **testing**: General testing issues
+- **authentication**: Issues related to authentication
+- **django-allauth**: Issues related to django-allauth
+
 ---
 
 **Reminder**: Please ensure all code contributions follow our development
