@@ -2,6 +2,7 @@
 from django.apps import AppConfig
 from django.contrib import admin
 
+
 class CoreConfig(AppConfig):
     """Configuration for the Core app."""
     default_auto_field = 'django.db.models.BigAutoField'
