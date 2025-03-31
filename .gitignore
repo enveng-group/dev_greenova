@@ -35,7 +35,22 @@ htmlcov/
 **/staticfiles/**
 **/media/**
 local_settings.py
+
+# Django specific
 **/migrations/**
+!**/migrations/__init__.py
+db.sqlite3-journal
+collected_static/
+.env.dev
+.env.prod
+fixtures/
+
+# Type checking
+.mypy_cache/
+.pytype/
+.pyre/
+.dmypy.json
+dmypy.json
 
 # Virtual Environment
 .venv/
@@ -48,6 +63,8 @@ ENV/
 db.sqlite3
 *.db
 *.sqlite
+*.sqlite-journal
+postgres-data/
 
 # Logs
 *.log
@@ -78,22 +95,70 @@ yarn.lock
 # Environment
 .env
 
-# Project specific
-*.sqlite3
-*.csv
-
 # Environment variables
 .env
 .env.*
 !.env.example
+!.env.vault
 !.env.vault.example
 .env.keys
 !.envrc
 
+# Docker
+.docker/
+docker-compose.override.yml
+docker-volume/
+
+# Test coverage
+coverage/
+.coverage.*
+coverage.xml
+*.cover
+cov.xml
+.hypothesis/
+nosetests.xml
+
+# Proto3 generated code
+*_pb2.py
+*_pb2_grpc.py
+*_pb.js
+*_pb.d.ts
+
+# Tailwind
+.tailwind-cache/
+tailwind-output.css
+
+# JS/TS build artifacts
+.parcel-cache/
+.cache/
+dist/
+.vercel/
+*.tsbuildinfo
+
+# Project specific
+*.bak
+*.tmp
+*.swp
+*.dump
+*.sqlite3
+*.csv
+*.pickle
+uploads/
+downloads/
+backups/
+
+# Documentation
+docs/_build/
+docs/api/
+site/
+
+# Visual Studio Code workspace settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
 .env*
 .flaskenv*
 !.env.project
-!.env.vault
-.venvmake/
-*.bak
-None

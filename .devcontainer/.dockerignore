@@ -1,85 +1,73 @@
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-*.swp
-*.swo
-*~
-
-# ignore Git 
+# Version control
 .git/
 .github/
 .gitattributes
-.gitmessage
 .gitignore
+.gitmessage
 
-# ignore python cache and Virtual Environment
+# Python virtual environments and cache
 __pycache__/
-bin/
-lib/
-lib64/
+*.py[cod]
+.venv/
+venv/
+env/
+ENV/
+*.so
 .Python
 .coverage
 .pytest_cache/
 .tox/
 htmlcov/
-*.py[cod]
-*.so
-*.egg
-*.egg-info/
-dist/
+
+# Build artifacts
 build/
-eggs/
-develop-eggs/
-.installed.cfg
-**/staticfiles/**
-**/media/**
-local_settings.py
+dist/
+*.egg-info/
+*.egg
 
-.venv/
-venv/
-env/
-ENV/
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
 
-# database
+# Database files (for dev environment)
 *.sqlite3
 db.sqlite3
 *.db
-*.sqlite
 
-# nodejs dependencies
-node_modules/
-.eslintrc.cjs
-.npmrc
-
-# environment variables
+# Environment and secrets
 .env
 .env.*
 !.env.example
-!.env.vault.example
-.env.keys
-
-.env*
-.flaskenv*
-!.env.project
 !.env.vault
 
-
-# IDE
+# Development/IDE files
 .idea/
-*.sublime-workspace
-*.sublime-project
-
-# logs
-logs/
-*.log
-tmp/
-*.tmp
-*.temp
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
 
 # Project specific
+/logs/
+/media/*
+/staticfiles/*
+local_settings.py
+*.log
 *.csv
+*.bak
+*.tmp
+
+# Docker specific files (to avoid recursion)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Unnecessary configuration files
+.editorconfig
+.eslintrc
+.pre-commit-config.yaml
+.pylintrc

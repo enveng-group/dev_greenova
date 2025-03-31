@@ -1,8 +1,4 @@
 {
-  "name": "greenova",
-  "version": "0.0.2",
-  "private": true,
-  "type": "module",
   "dependencies": {
     "@picocss/pico": "2.0.6",
     "htmx-ext-class-tools": "2.0.2",
@@ -12,21 +8,24 @@
     "htmx.org": "1.9.12",
     "hyperscript.org": "0.9.14"
   },
-  "engines": {
-    "node": "18.20.7"
-  },
-  "packageManager": "npm@10.8.2",
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.0",
     "@eslint/js": "9.22.0",
     "eslint": "9.21.0",
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-prettier": "5.2.3",
-    "globals": "16.0.0",
-    "prettier": "3.5.3"
-  }
+    "globals": "16.0.0"
+  },
+  "engines": {
+    "node": "18.20.7"
+  },
+  "name": "greenova",
+  "packageManager": "npm@10.8.2",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "type": "module",
+  "version": "0.0.2"
 }

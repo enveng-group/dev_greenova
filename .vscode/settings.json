@@ -1,482 +1,4 @@
 {
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.suggest.insertMode": "replace",
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true
-  },
-  "[git-commit]": {
-    "editor.defaultFormatter": "vscode.git",
-    "editor.rulers": [72, 50],
-    "editor.wordWrap": "on",
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.fontFamily": "monospace"
-  },
-  "[django-html]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "monosans.djlint",
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.suggest.insertMode": "replace"
-  },
-  "[proto3]": {
-    "editor.defaultFormatter": "zxh404.vscode-proto3",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    }
-  },
-  "[dockerfile]": {
-    "editor.quickSuggestions": {
-      "strings": true
-    }
-  },
-  "[shellcheckrc]": {
-    "editor.defaultFormatter": "timonwong.shellcheck",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true
-  },
-  "[json]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true
-  },
-  "[editorconfig]": {
-    "editor.defaultFormatter": "EditorConfig.EditorConfig",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true
-  },
-  "[markdown]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.wordWrap": "on",
-    "editor.quickSuggestions": {
-      "comments": "off",
-      "strings": "off",
-      "other": "off"
-    }
-  },
-  "[pip-requirements]": {
-    "editor.defaultFormatter": "ms-python.autopep8",
-    "editor.insertFinalNewline": true,
-    "editor.tabSize": 4,
-    "editor.insertSpaces": true,
-    "files.trimTrailingWhitespace": true
-  },
-  "[plaintext]": {
-    "editor.wordWrap": "on",
-    "editor.quickSuggestions": {
-      "comments": false,
-      "strings": false,
-      "other": false
-    },
-    "editor.tabSize": 4,
-    "files.insertFinalNewline": true
-  },
-  "[python]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "ms-python.autopep8",
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit",
-      "source.fixAll": "explicit"
-    },
-    "editor.rulers": [88, 100],
-    "editor.wordBasedSuggestions": "off"
-  },
-  "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format",
-    "editor.formatOnSave": true,
-    "files.eol": "\n"
-  },
-  "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 4,
-    "editor.insertSpaces": true
-  },
-  "[dotenv]": {
-    "editor.defaultFormatter": "dotenv.dotenv-vscode",
-    "editor.formatOnSave": true,
-    "files.eol": "\n"
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml",
-    "editor.formatOnSave": true,
-    "files.eol": "\n"
-  },
-  "[makefile]": {
-    "editor.defaultFormatter": "ms-vscode.makefile-tools",
-    "editor.insertSpaces": false
-  },
-  "autopep8.args": [
-    "--max-line-length=88",
-    "--experimental",
-    "--aggressive",
-    "--aggressive",
-    "--in-place",
-    "--select=E,W,F",
-    "--ignore=E226,E302,E41",
-    "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules"
-  ],
-  "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": true,
-  "editor.formatOnSave": true,
-  "editor.formatOnType": true,
-  "editor.linkedEditing": true,
-  "editor.renderWhitespace": "boundary",
-  "editor.rulers": [79, 88, 100],
-  "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 500,
-  "files.watcherInclude": ["**/*.py", "**/*.html", "**/*.css", "**/*.js"],
-  "extensions.ignoreRecommendations": true,
-  "python.analysis.diagnosticMode": "workspace",
-  "python.analysis.indexing": true,
-  "javascript.suggest.enabled": false,
-  "typescript.suggest.enabled": false,
-  "git.autofetch": true,
-  "git.confirmSync": false,
-  "git.enableSmartCommit": true,
-  "github.copilot.advanced": {
-    "listCount": 10,
-    "inlineSuggestCount": 3,
-    "debug.enable": false
-  },
-  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-  "github.copilot.editor.enableAutoCompletions": true,
-  "github.copilot.enable": {
-    "*": true,
-    "plaintext": true,
-    "markdown": true,
-    "scminput": false
-  },
-  "github.copilot.nextEditSuggestions.enabled": true,
-  "html.format.templating": true,
-  "task.reconnection": true,
-  "workbench.colorTheme": "Default Dark Modern",
-  "workbench.editor.enablePreview": false,
-  "debug.inlineValues": "auto",
-  "debug.console.fontSize": 14,
-  "debug.toolBarLocation": "docked",
-  "debugpy.debugJustMyCode": false,
-  "editor.stickyScroll.enabled": true,
-  "eslint.validate": ["javascript"],
-  "eslint.format.enable": true,
-  "eslint.lintTask.enable": true,
-  "python.analysis.aiCodeActions": {
-    "enabled": true
-  },
-  "python.analysis.generateWithTypeAnnotation": true,
-  "python.analysis.useLibraryCodeForTypes": true,
-  "python.analysis.autoIndent": true,
-  "python.analysis.autoSearchPaths": true,
-  "python.analysis.supportDocstringTemplate": true,
-  "python.envFile": "${workspaceFolder}/.env",
-  "python.globalModuleInstallation": false,
-  "python.languageServer": "Pylance",
-  "eslint.useFlatConfig": false,
-  "python.terminal.activateEnvInCurrentTerminal": true,
-  "python.terminal.activateEnvironment": true,
-  "python.terminal.shellIntegration.enabled": true,
-  "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "python.testing.promptToConfigure": true,
-  "html.autoClosingTags": true,
-  "html.format.indentInnerHtml": true,
-  "html.format.indentHandlebars": true,
-  "html.hover.references": true,
-  "html.suggest.html5": true,
-  "css.hover.references": true,
-  "css.lint.duplicateProperties": "error",
-  "css.lint.emptyRules": "error",
-  "css.lint.float": "error",
-  "css.lint.idSelector": "error",
-  "css.lint.boxModel": "error",
-  "css.lint.hexColorLength": "error",
-  "css.validate": true,
-  "javascript.autoClosingTags": true,
-  "javascript.suggest.autoImports": true,
-  "javascript.suggest.completeJSDocs": true,
-  "javascript.validate.enable": true,
-  "eslint.enable": true,
-  "eslint.lintTask.options": "/workspaces/greenova/.eslintrc.js",
-  "eslint.probe": ["javascript"],
-  "json.validate.enable": true,
-  "django.snippets.use": true,
-  "eslint.run": "onSave",
-  "files.associations": {
-    "*.html": "django-html",
-    "*.js": "javascript",
-    "*.py": "python",
-    "*.css": "css",
-    "*.json": "json",
-    "*.md": "markdown",
-    "*.txt": "plaintext",
-    "requirements*.txt": "pip-requirements",
-    "*.toml": "toml",
-    "pyproject.toml": "toml",
-    "poetry.toml": "toml",
-    "pdm.toml": "toml"
-  },
-  "html.format.wrapLineLength": 88,
-  "html.format.wrapAttributes": "preserve-aligned",
-  "javascript.format.semicolons": "insert",
-  "javascript.preferences.quoteStyle": "single",
-  "javascript.updateImportsOnFileMove.enabled": "always",
-  "python.analysis.autoImportCompletions": true,
-  "python.analysis.extraPaths": [
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages",
-    "${workspaceFolder}/greenova"
-  ],
-  "python.analysis.typeCheckingMode": "strict",
-  "python.analysis.inlayHints.functionReturnTypes": false,
-  "python.analysis.inlayHints.variableTypes": false,
-  "python.testing.unittestEnabled": true,
-  "python.testing.unittestArgs": ["-v", "-s", "./greenova", "-p", "*test*.py"],
-  "python.testing.pytestEnabled": false,
-  "github.gitProtocol": "ssh",
-  "python.analysis.autoFormatStrings": true,
-  "html.format.enable": true,
-  "css.format.enable": true,
-  "javascript.format.enable": true,
-  "json.format.enable": true,
-  "markdown.validate.enabled": true,
-  "python.analysis.completeFunctionParens": true,
-  "python.analysis.enablePytestSupport": false,
-  "python.analysis.languageServerMode": "full",
-  "python.analysis.logLevel": "Error",
-  "python.analysis.diagnosticSeverityOverrides": {
-    "reportMissingModuleSource": "none",
-    "reportMissingTypeStubs": "warning",
-    "reportUnknownMemberType": "warning",
-    "reportUnknownArgumentType": "warning",
-    "reportUnknownVariableType": "warning",
-    "reportUnknownLambdaType": "warning",
-    "reportUnusedCoroutine": "warning",
-    "reportUntypedFunctionDecorator": "warning",
-    "reportUnknownParameterType": "warning",
-    "reportPrivateUsage": "warning",
-    "reportGeneralTypeIssues": "error"
-  },
-  "python.analysis.importFormat": "absolute",
-  "python.analysis.packageIndexDepths": [
-    {
-      "name": "django",
-      "depth": 2
-    }
-  ],
-  "python.analysis.stubPath": "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
-  "python.analysis.exclude": [
-    "**/__pycache__",
-    "**/.pytest_cache",
-    "**/.mypy_cache",
-    "**/.venv",
-    "**/node_modules",
-    "**/.vscode-server"
-  ],
-  "mypy-type-checker.interpreter": ["${workspaceFolder}/.venv/bin/python"],
-  "mypy-type-checker.path": [
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages"
-  ],
-  "mypy-type-checker.reportingScope": "file",
-  "github.copilot.editor.enableCodeActions": true,
-  "githubPullRequests.allowFetch": true,
-  "githubPullRequests.assignCreated": "author",
-  "githubPullRequests.commentExpandState": "expandUnresolved",
-  "github.copilot.chat.codesearch.enabled": true,
-  "github.copilot.chat.copilotDebugCommand.enabled": true,
-  "githubPullRequests.defaultDeletionMethod.selectLocalBranch": true,
-  "githubPullRequests.defaultDeletionMethod.selectRemote": true,
-  "githubPullRequests.defaultMergeMethod": "squash",
-  "githubPullRequests.experimental.chat": true,
-  "githubPullRequests.experimental.notificationsView": true,
-  "githubPullRequests.experimental.useQuickChat": true,
-  "githubPullRequests.notifications": "pullRequests",
-  "githubPullRequests.pullBranch": "always",
-  "git.autoStash": true,
-  "githubPullRequests.pullPullRequestBranchBeforeCheckout": "pullAndUpdateBase",
-  "githubPullRequests.pullRequestDescription": "Copilot",
-  "githubPullRequests.queries": [
-    {
-      "label": "Waiting For My Review",
-      "query": "repo:${owner}/${repository} is:open review-requested:${user}"
-    },
-    {
-      "label": "Assigned To Me",
-      "query": "repo:${owner}/${repository} is:open assignee:${user}"
-    },
-    {
-      "label": "Created By Me",
-      "query": "repo:${owner}/${repository} is:open author:${user}"
-    }
-  ],
-  "github.copilot.renameSuggestions.triggerAutomatically": true,
-  "github.copilot.chat.agent.runTasks": true,
-  "github.gitAuthentication": true,
-  "github.copilot.chat.editor.temporalContext.enabled": true,
-  "github.copilot.chat.edits.temporalContext.enabled": true,
-  "github.copilot.chat.followUps": "always",
-  "github.copilot.chat.fixTestFailure.enabled": true,
-  "github.copilot.chat.generateTests.codeLens": true,
-  "github.copilot.chat.reviewSelection.enabled": true,
-  "github.copilot.chat.scopeSelection": true,
-  "github.copilot.chat.setupTests.enabled": true,
-  "github.copilot.chat.startDebugging.enabled": true,
-  "github.copilot.chat.terminalChatLocation": "terminal",
-  "githubIssues.userCompletions.enabled": true,
-  "githubIssues.issueCompletions.enabled": true,
-  "editor.suggest.showIssues": true,
-  "terminal.integrated.shellIntegration.enabled": true,
-  "dotenv.enableAutocloaking": true,
-  "dotenv.enableSecretpeeking": true,
-  "chat.detectParticipant.enabled": true,
-  "chat.renderRelatedFiles": true,
-  "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
-  "djlint.configuration": "/workspaces/greenova/pyproject.toml",
-  "djlint.closeVoidTags": true,
-  "djlint.enableLinting": true,
-  "djlint.formatAttributeTemplateTags": true,
-  "djlint.formatCss": false,
-  "djlint.formatJs": false,
-  "djlint.formatLanguages": ["django-html", "html"],
-  "djlint.profile": "django",
-  "djlint.pythonPath": "${workspaceFolder}/.venv/bin/python3.9",
-  "djlint.showInstallError": true,
-  "djlint.useGitignore": true,
-  "djlint.useNewLinterOutputParser": true,
-  "djlint.useVenv": true,
-  "isort.check": true,
-  "isort.importStrategy": "fromEnvironment",
-  "isort.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "isort.path": ["${workspaceFolder}/.venv/lib/python3.9/site-packages/isort"],
-  "jupyter.interactiveWindow.textEditor.executeSelection": true,
-  "jupyter.jupyterLaunchTimeout": 60000,
-  "jupyter.themeMatplotlibPlots": true,
-  "pylint.enabled": true,
-  "pylint.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "python.defaultInterpreterPath": "python3.9",
-  "pylint.path": [
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/pylint"
-  ],
-  "shellcheck.disableVersionCheck": true,
-  "shellcheck.enable": true,
-  "shellcheck.enableQuickFix": true,
-  "shellcheck.executablePath": "shellcheck",
-  "shellcheck.run": "onType",
-  "makefile.makefilePath": "${workspaceFolder}/Makefile",
-  "makefile.makePath": "make",
-  "problems.defaultViewMode": "table",
-  "problems.decorations.enabled": true,
-  "problems.showCurrentInStatus": true,
-  "problems.sortOrder": "severity",
-  "problems.visibility": true,
-  "autopep8.importStrategy": "fromEnvironment",
-  "autopep8.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "autopep8.path": [
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/autopep8"
-  ],
-  "eslint.codeAction.showDocumentation": {
-    "enable": true
-  },
-  "eslint.codeActionsOnSave.mode": "all",
-  "eslint.debug": true,
-  "eslint.ignoreUntitled": true,
-  "eslint.nodeEnv": "development",
-  "eslint.nodePath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
-  "eslint.runtime": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
-  "eslint.useESLintClass": true,
-  "eslint.workingDirectories": ["./greenova"],
-  "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
-  "github.copilot.chat.languageContext.typescript.enabled": true,
-  "github.copilot.chat.completionContext.typescript.mode": "on",
-  "github.copilot.chat.newWorkspaceCreation.enabled": true,
-  "github.copilot.chat.useProjectTemplates": true,
-  "github.copilot.chat.search.semanticTextResults": true,
-  "python.analysis.fixAll": [
-    "source.unusedImports",
-    "source.convertImportFormat"
-  ],
-  "python.analysis.ignore": [
-    "**/__pycache__",
-    "**/.pytest_cache",
-    "**/.mypy_cache",
-    "**/.venv",
-    "**/node_modules",
-    "**/.vscode-server",
-    "**/.github",
-    "**/.git",
-    "**/.devcontainer",
-    "**/docs"
-  ],
-  "python.analysis.persistAllIndices": true,
-  "python.analysis.regenerateStdLibIndices": true,
-  "python.analysis.supportRestructuredText": true,
-  "python.analysis.typeshedPaths": [
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs-ext"
-  ],
-  "python.createEnvironment.contentButton": "show",
-  "python.createEnvironment.trigger": "prompt",
-  "python.REPL.enableREPLSmartSend": true,
-  "python.REPL.sendToNativeREPL": true,
-  "python.terminal.executeInFileDir": true,
-  "python.terminal.focusAfterLaunch": true,
-  "debugpy.showPythonInlineValues": true,
-  "debug.showVariableTypes": true,
-  "debug.autoExpandLazyVariables": "auto",
-  "debug.allowBreakpointsEverywhere": true,
-  "shellformat.effectLanguages": [
-    "shellscript",
-    "dockerfile",
-    "dotenv",
-    "hosts",
-    "ignore",
-    "gitignore",
-    "properties"
-  ],
-  "shellformat.path": "/usr/local/bin/shfmt",
-  "shellformat.useEditorConfig": true,
-  "editorconfig.generateAuto": true,
-  "editorconfig.showMenuEntry": true,
-  "prettier.useEditorConfig": true,
-  "django.i18n": true,
-  "evenBetterToml.taplo.bundled": true,
-  "githubPullRequests.createDefaultBaseBranch": "auto",
-  "githubPullRequests.defaultCommentType": "review",
-  "githubPullRequests.defaultCreateOption": "create",
-  "githubPullRequests.postCreate": "checkoutDefaultBranch",
-  "githubPullRequests.pushBranch": "always",
-  "githubPullRequests.quickDiff": true,
-  "githubPullRequests.showPullRequestNumberInTree": true,
-  "githubPullRequests.upstreamRemote": "add",
-  "dotenv.cloakColor": "#000000",
-  "dotenv.cloakIcon": "█",
-  "mypy-type-checker.args": [
-    "--configuration",
-    "/workspaces/greenova/mypy.ini"
-  ],
-  "mypy-type-checker.importStrategy": "fromEnvironment",
-  "mypy-type-checker.preferDaemon": true,
-  "jupyter.askForKernelRestart": true,
-  "jupyter.exportWithOutputEnabled": true,
-  "pylint.importStrategy": "fromEnvironment",
-  "snyk.features.codeQuality": true,
-  "snyk.features.codeSecurity": true,
-  "snyk.features.openSourceSecurity": true,
-  "snyk.features.infrastructureAsCode": true,
-  "snyk.scanningMode": "auto",
-  "snyk.trustedFolders": ["./greenova", "/home/vscode/dotfiles"],
   "MS-CST-E.vscode-devskim.ignores.ignoreFiles": [
     "**/__pycache__",
     "**/.pytest_cache",
@@ -500,21 +22,658 @@
   "MS-CST-E.vscode-devskim.triggers.scanOnChange": true,
   "MS-CST-E.vscode-devskim.triggers.scanOnOpen": true,
   "MS-CST-E.vscode-devskim.triggers.scanOnSave": true,
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 2
+  },
+  "[django-html]": {
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 2
+  },
+  "[dockerfile]": {
+    "editor.quickSuggestions": {
+      "strings": true
+    }
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "dotenv.dotenv-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[editorconfig]": {
+    "editor.defaultFormatter": "EditorConfig.EditorConfig",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[git-commit]": {
+    "editor.defaultFormatter": "vscode.git",
+    "editor.fontFamily": "monospace",
+    "editor.insertSpaces": true,
+    "editor.rulers": [
+      72,
+      50
+    ],
+    "editor.tabSize": 2,
+    "editor.wordWrap": "on"
+  },
+  "[javascript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[makefile]": {
+    "editor.defaultFormatter": "ms-vscode.makefile-tools",
+    "editor.insertSpaces": false
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "other": "off",
+      "strings": "off"
+    },
+    "editor.wordWrap": "on"
+  },
+  "[pip-requirements]": {
+    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.insertFinalNewline": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "files.trimTrailingWhitespace": true
+  },
+  "[plaintext]": {
+    "editor.quickSuggestions": {
+      "comments": false,
+      "other": false,
+      "strings": false
+    },
+    "editor.tabSize": 4,
+    "editor.wordWrap": "on",
+    "files.insertFinalNewline": true
+  },
+  "[proto3]": {
+    "editor.defaultFormatter": "zxh404.vscode-proto3",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[python]": {
+    "editor.autoClosingQuotes": "always",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+      88,
+      100
+    ],
+    "editor.wordBasedSuggestions": "off"
+  },
+  "[shellcheckrc]": {
+    "editor.defaultFormatter": "timonwong.shellcheck",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "autopep8.args": [
+    "--max-line-length=88",
+    "--experimental",
+    "--aggressive",
+    "--aggressive",
+    "--in-place",
+    "--select=E,W,F",
+    "--ignore=E226,E302,E41",
+    "--exclude=.git,__pycache__,.pytest_cache,.venv,node_modules",
+    "--recursive",
+    "--aggressive",
+    "--single-quotes"
+  ],
+  "autopep8.importStrategy": "fromEnvironment",
+  "autopep8.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "autopep8.path": [
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/autopep8"
+  ],
+  "bandit.importStrategy": "fromEnvironment",
+  "bandit.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "bandit.path": [
+    "/workspaces/greenova/.venv/bin/bandit"
+  ],
+  "chat.detectParticipant.enabled": true,
+  "chat.promptFiles": true,
+  "chat.promptFilesLocations": {
+    ".github/prompts": true
+  },
+  "chat.renderRelatedFiles": true,
+  "css.format.enable": true,
+  "css.hover.references": true,
+  "css.lint.boxModel": "error",
+  "css.lint.duplicateProperties": "error",
+  "css.lint.emptyRules": "error",
+  "css.lint.float": "error",
+  "css.lint.hexColorLength": "error",
+  "css.lint.idSelector": "error",
+  "css.validate": true,
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.autoExpandLazyVariables": "auto",
+  "debug.console.fontSize": 14,
+  "debug.inlineValues": "auto",
+  "debug.showVariableTypes": true,
+  "debug.toolBarLocation": "docked",
+  "debugpy.debugJustMyCode": false,
+  "debugpy.showPythonInlineValues": true,
+  "django.i18n": true,
+  "django.snippets.use": true,
+  "djlint.closeVoidTags": true,
+  "djlint.configuration": "/workspaces/greenova/pyproject.toml",
+  "djlint.enableLinting": true,
+  "djlint.formatAttributeTemplateTags": true,
+  "djlint.formatCss": false,
+  "djlint.formatJs": false,
+  "djlint.formatLanguages": [
+    "django-html",
+    "html"
+  ],
+  "djlint.profile": "django",
+  "djlint.pythonPath": "${workspaceFolder}/.venv/bin/python3.9",
+  "djlint.showInstallError": true,
+  "djlint.useGitignore": true,
+  "djlint.useNewLinterOutputParser": true,
+  "djlint.useVenv": true,
+  "dotenv.cloakColor": "#000000",
+  "dotenv.cloakIcon": "\u2588",
+  "dotenv.enableAutocloaking": true,
+  "dotenv.enableSecretpeeking": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.guides.bracketPairs": true,
+  "editor.linkedEditing": true,
+  "editor.renderWhitespace": "boundary",
+  "editor.rulers": [
+    79,
+    88,
+    100
+  ],
+  "editor.stickyScroll.enabled": true,
+  "editor.suggest.showIssues": true,
+  "editorconfig.generateAuto": true,
+  "editorconfig.showMenuEntry": true,
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.debug": true,
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  "eslint.ignoreUntitled": true,
+  "eslint.lintTask.enable": true,
+  "eslint.lintTask.options": "${workspaceFolder}/.eslintrc.js",
+  "eslint.nodeEnv": "development",
+  "eslint.nodePath": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
+  "eslint.probe": [
+    "javascript"
+  ],
+  "eslint.run": "onSave",
+  "eslint.runtime": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
+  "eslint.useESLintClass": true,
+  "eslint.useFlatConfig": false,
+  "eslint.validate": [
+    "javascript"
+  ],
+  "eslint.workingDirectories": [
+    "./greenova"
+  ],
+  "evenBetterToml.taplo.bundled": true,
+  "extensions.ignoreRecommendations": true,
+  "files.associations": {
+    "*.css": "css",
+    "*.html": "django-html",
+    "*.js": "javascript",
+    "*.json": "json",
+    "*.md": "markdown",
+    "*.py": "python",
+    "*.toml": "toml",
+    "*.txt": "plaintext",
+    "pdm.toml": "toml",
+    "poetry.toml": "toml",
+    "pyproject.toml": "toml",
+    "requirements*.txt": "pip-requirements"
+  },
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 500,
+  "files.watcherInclude": [
+    "**/*.py",
+    "**/*.html",
+    "**/*.css",
+    "**/*.js"
+  ],
+  "git.allowNoVerifyCommit": true,
+  "git.alwaysSignOff": true,
+  "git.autoRepositoryDetection": true,
+  "git.autoStash": true,
+  "git.autofetch": true,
+  "git.blame.editorDecoration.enabled": true,
+  "git.blame.statusBarItem.enabled": true,
+  "git.branchProtection": [
+    "main",
+    "master"
+  ],
+  "git.branchProtectionPrompt": "alwaysPrompt",
+  "git.closeDiffOnOperation": true,
+  "git.confirmNoVerifyCommit": true,
+  "git.confirmSync": false,
+  "git.countBadge": "all",
+  "git.decorations.enabled": true,
+  "git.diagnosticsCommitHook.Enabled": false,
+  "git.enableCommitSigning": true,
+  "git.enableSmartCommit": true,
+  "git.enableStatusBarSync": true,
+  "git.enabled": true,
+  "git.fetchOnPull": true,
+  "git.inputValidation": true,
+  "git.mergeEditor": true,
+  "git.openDiffOnClick": true,
+  "git.optimisticUpdate": true,
+  "git.postCommitCommand": "sync",
+  "git.promptToSaveFilesBeforeCommit": "always",
+  "git.promptToSaveFilesBeforeStash": "always",
+  "git.pruneOnFetch": true,
+  "git.rebaseWhenSync": true,
+  "git.replaceTagsWhenPull": true,
+  "git.requireGitUserConfig": true,
+  "git.showCommitInput": true,
+  "git.showProgress": true,
+  "git.smartCommitChanges": "all",
+  "git.suggestSmartCommit": true,
+  "git.terminalAuthentication": true,
+  "git.terminalGitEditor": true,
+  "git.useEditorAsCommitInput": true,
+  "github.copilot.advanced": {
+    "debug.enable": false,
+    "inlineSuggestCount": 3,
+    "listCount": 10
+  },
+  "github.copilot.chat.agent.runTasks": true,
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": ".copilot-codeGeneration-instructions.md"
+    }
+  ],
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".copilot-commit-message-instructions.md"
+    },
+    {
+      "text": "Use conventional commit message format."
+    }
+  ],
+  "github.copilot.chat.completionContext.typescript.mode": "on",
+  "github.copilot.chat.copilotDebugCommand.enabled": true,
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
+  "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "github.copilot.chat.fixTestFailure.enabled": true,
+  "github.copilot.chat.followUps": "always",
+  "github.copilot.chat.generateTests.codeLens": true,
+  "github.copilot.chat.languageContext.typescript.enabled": true,
+  "github.copilot.chat.newWorkspaceCreation.enabled": true,
+  "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+    {
+      "file": ".copilot-pull-request-description-instructions.md"
+    },
+    {
+      "text": "Use conventional commit message format."
+    }
+  ],
+  "github.copilot.chat.reviewSelection.enabled": true,
+  "github.copilot.chat.reviewSelection.instructions": [
+    {
+      "file": ".copilot-review-instructions.md"
+    },
+    {
+      "text": "Resolve all TODO tasks."
+    }
+  ],
+  "github.copilot.chat.scopeSelection": true,
+  "github.copilot.chat.search.semanticTextResults": true,
+  "github.copilot.chat.setupTests.enabled": true,
+  "github.copilot.chat.startDebugging.enabled": true,
+  "github.copilot.chat.terminalChatLocation": "terminal",
+  "github.copilot.chat.testGeneration.instructions": [
+    {
+      "file": ".copilot-test-instructions.md"
+    },
+    {
+      "text": "Always try uniting related tests in a suite."
+    }
+  ],
+  "github.copilot.chat.useProjectTemplates": true,
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.editor.enableCodeActions": true,
+  "github.copilot.enable": {
+    "*": true,
+    "markdown": true,
+    "plaintext": true,
+    "scminput": false
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.renameSuggestions.triggerAutomatically": true,
+  "github.gitAuthentication": true,
+  "github.gitProtocol": "ssh",
+  "githubIssues.issueCompletions.enabled": true,
+  "githubIssues.userCompletions.enabled": true,
+  "githubPullRequests.allowFetch": true,
+  "githubPullRequests.assignCreated": "author",
+  "githubPullRequests.commentExpandState": "expandUnresolved",
+  "githubPullRequests.createDefaultBaseBranch": "auto",
+  "githubPullRequests.defaultCommentType": "review",
+  "githubPullRequests.defaultCreateOption": "create",
+  "githubPullRequests.defaultDeletionMethod.selectLocalBranch": true,
+  "githubPullRequests.defaultDeletionMethod.selectRemote": true,
+  "githubPullRequests.defaultMergeMethod": "rebase",
+  "githubPullRequests.experimental.chat": true,
+  "githubPullRequests.experimental.notificationsView": true,
+  "githubPullRequests.experimental.useQuickChat": true,
+  "githubPullRequests.notifications": "pullRequests",
+  "githubPullRequests.postCreate": "checkoutDefaultBranch",
+  "githubPullRequests.pullBranch": "always",
+  "githubPullRequests.pullPullRequestBranchBeforeCheckout": "pullAndUpdateBase",
+  "githubPullRequests.pullRequestDescription": "Copilot",
+  "githubPullRequests.pushBranch": "always",
+  "githubPullRequests.queries": [
+    {
+      "label": "Waiting For My Review",
+      "query": "repo:${owner}/${repository} is:open review-requested:${user}"
+    },
+    {
+      "label": "Assigned To Me",
+      "query": "repo:${owner}/${repository} is:open assignee:${user}"
+    },
+    {
+      "label": "Created By Me",
+      "query": "repo:${owner}/${repository} is:open author:${user}"
+    }
+  ],
+  "githubPullRequests.quickDiff": true,
+  "githubPullRequests.showPullRequestNumberInTree": true,
+  "githubPullRequests.upstreamRemote": "add",
+  "html.autoClosingTags": true,
+  "html.format.enable": true,
+  "html.format.indentHandlebars": true,
+  "html.format.indentInnerHtml": true,
+  "html.format.templating": true,
+  "html.format.wrapAttributes": "preserve-aligned",
+  "html.format.wrapLineLength": 88,
+  "html.hover.references": true,
+  "html.suggest.html5": true,
+  "isort.check": true,
+  "isort.importStrategy": "fromEnvironment",
+  "isort.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "isort.path": [
+    "/usr/local/py-utils/bin/isort"
+  ],
+  "javascript.autoClosingTags": true,
+  "javascript.format.enable": true,
+  "javascript.format.semicolons": "insert",
+  "javascript.preferences.quoteStyle": "single",
+  "javascript.suggest.autoImports": true,
+  "javascript.suggest.completeJSDocs": true,
+  "javascript.suggest.enabled": false,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "javascript.validate.enable": true,
+  "json.format.enable": true,
+  "json.validate.enable": true,
+  "jupyter.askForKernelRestart": true,
+  "jupyter.exportWithOutputEnabled": true,
+  "jupyter.interactiveWindow.textEditor.executeSelection": true,
+  "jupyter.jupyterLaunchTimeout": 60000,
+  "jupyter.themeMatplotlibPlots": true,
   "makefile.configurations": [
     {
       "name": "default",
       "path": "${workspaceFolder}/Makefile"
     }
   ],
-  "yaml.completion": true,
-  "yaml.validate": true,
-  "yaml.format.enable": true,
+  "makefile.makePath": "make",
+  "makefile.makefilePath": "${workspaceFolder}/Makefile",
+  "markdown.validate.enabled": true,
+  "markdownlint.configFile": "/workspaces/greenova/.markdownlint-cli2.jsonc",
+  "markdownlint.run": "onType",
+  "mypy-type-checker.args": [
+    "--configuration",
+    "${workspaceFolder}/mypy.ini"
+  ],
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "mypy-type-checker.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "mypy-type-checker.path": [
+    "/usr/local/py-utils/bin/mypy"
+  ],
+  "mypy-type-checker.preferDaemon": true,
+  "mypy-type-checker.reportingScope": "file",
+  "prettier.configPath": "/workspaces/greenova/.prettierrc",
+  "prettier.enable": true,
+  "prettier.endOfLine": "lf",
+  "prettier.jsxSingleQuote": true,
+  "prettier.useEditorConfig": true,
+  "problems.decorations.enabled": true,
+  "problems.defaultViewMode": "table",
+  "problems.showCurrentInStatus": true,
+  "problems.sortOrder": "severity",
+  "problems.visibility": true,
   "protoc": {
-    "path": "/usr/local/bin/protoc",
     "lint": {
       "enabled": true,
       "path": "/usr/local/bin/protolint"
-    }
+    },
+    "path": "/usr/local/bin/protoc"
   },
-  "protolint.path": "/usr/local/bin/protolint"
+  "protolint.path": "/usr/local/bin/protolint",
+  "pylint.enabled": true,
+  "pylint.importStrategy": "fromEnvironment",
+  "pylint.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "pylint.path": [
+    "/usr/local/py-utils/bin/pylint"
+  ],
+  "python.REPL.enableREPLSmartSend": true,
+  "python.REPL.sendToNativeREPL": true,
+  "python.analysis.aiCodeActions": {
+    "enabled": true
+  },
+  "python.analysis.autoFormatStrings": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.autoIndent": true,
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportGeneralTypeIssues": "error",
+    "reportMissingModuleSource": "none",
+    "reportMissingTypeStubs": "warning",
+    "reportPrivateUsage": "warning",
+    "reportUnknownArgumentType": "warning",
+    "reportUnknownLambdaType": "warning",
+    "reportUnknownMemberType": "warning",
+    "reportUnknownParameterType": "warning",
+    "reportUnknownVariableType": "warning",
+    "reportUntypedFunctionDecorator": "warning",
+    "reportUnusedCoroutine": "warning"
+  },
+  "python.analysis.enablePytestSupport": false,
+  "python.analysis.exclude": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.venv",
+    "**/node_modules",
+    "**/.vscode-server"
+  ],
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages",
+    "${workspaceFolder}/greenova",
+    "${workspaceFolder}"
+  ],
+  "python.analysis.fixAll": [
+    "source.unusedImports",
+    "source.convertImportFormat"
+  ],
+  "python.analysis.generateWithTypeAnnotation": true,
+  "python.analysis.ignore": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.venv",
+    "**/node_modules",
+    "**/.vscode-server",
+    "**/.github",
+    "**/.git",
+    "**/.devcontainer",
+    "**/docs"
+  ],
+  "python.analysis.importFormat": "absolute",
+  "python.analysis.indexing": true,
+  "python.analysis.inlayHints.functionReturnTypes": false,
+  "python.analysis.inlayHints.variableTypes": false,
+  "python.analysis.languageServerMode": "full",
+  "python.analysis.logLevel": "Error",
+  "python.analysis.packageIndexDepths": [
+    {
+      "depth": 2,
+      "name": "django"
+    }
+  ],
+  "python.analysis.persistAllIndices": true,
+  "python.analysis.regenerateStdLibIndices": true,
+  "python.analysis.stubPath": "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
+  "python.analysis.supportDocstringTemplate": true,
+  "python.analysis.supportRestructuredText": true,
+  "python.analysis.typeCheckingMode": "strict",
+  "python.analysis.typeshedPaths": [
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs-ext"
+  ],
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.createEnvironment.contentButton": "show",
+  "python.createEnvironment.trigger": "prompt",
+  "python.defaultInterpreterPath": "python3.9",
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.globalModuleInstallation": false,
+  "python.languageServer": "Pylance",
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.executeInFileDir": true,
+  "python.terminal.focusAfterLaunch": true,
+  "python.terminal.shellIntegration.enabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.testing.autoTestDiscoverOnSavePattern": "test_*.py",
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestArgs": [
+    "-xvs",
+    "--cov=greenova",
+    "--cov-report=term-missing",
+    "--no-cov-on-fail",
+    "--reuse-db"
+  ],
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestPath": "pytest",
+  "python.testing.unittestEnabled": false,
+  "shellcheck.disableVersionCheck": true,
+  "shellcheck.enable": true,
+  "shellcheck.enableQuickFix": true,
+  "shellcheck.executablePath": "shellcheck",
+  "shellcheck.run": "onType",
+  "shellformat.effectLanguages": [
+    "shellscript",
+    "dockerfile",
+    "dotenv",
+    "hosts",
+    "ignore",
+    "gitignore",
+    "properties"
+  ],
+  "shellformat.path": "/usr/local/bin/shfmt",
+  "shellformat.useEditorConfig": true,
+  "snyk.features.codeQuality": true,
+  "snyk.features.codeSecurity": true,
+  "snyk.features.infrastructureAsCode": true,
+  "snyk.features.openSourceSecurity": true,
+  "snyk.scanningMode": "auto",
+  "snyk.trustedFolders": [
+    "./greenova",
+    "/home/vscode/dotfiles"
+  ],
+  "sqltools.connections": [
+    {
+      "database": "${workspaceFolder:greenova}/greenova/db.sqlite3",
+      "driver": "SQLite",
+      "group": "SQLite",
+      "name": "SQLite",
+      "previewLimit": 50
+    }
+  ],
+  "sqltools.useNodeRuntime": true,
+  "tailwindCSS.codeActions": true,
+  "tailwindCSS.codeLens": true,
+  "tailwindCSS.includeLanguages": {
+    "django-html": "html"
+  },
+  "tailwindCSS.suggestions": true,
+  "tailwindCSS.validate": true,
+  "task.reconnection": true,
+  "terminal.integrated.shellIntegration.enabled": true,
+  "typescript.suggest.enabled": false,
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.editor.enablePreview": false,
+  "yaml.completion": true,
+  "yaml.format.enable": true,
+  "yaml.validate": true
 }

@@ -1,37 +1,5 @@
 {
-  "name": "Greenova Development",
-  "image": "mcr.microsoft.com/devcontainers/python:3.9",
-  "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "installDirectlyFromGitHubRelease": true,
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/git:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {},
-    "ghcr.io/devcontainers-extra/features/direnv:1": {
-      "version": "latest"
-    },
-    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/protoc:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/shfmt:1": {
-      "version": "latest"
-    }
-  },
-  "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
-    "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
-  ],
-  "workspaceMount": "source=greenova,target=${containerWorkspaceFolder},type=volume",
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "remoteUser": "vscode",
   "containerUser": "vscode",
-  "updateRemoteUserUID": true,
   "customizations": {
     "vscode": {
       "extensions": [
@@ -60,117 +28,182 @@
         "ms-python.mypy-type-checker",
         "DavidAnson.vscode-markdownlint",
         "zxh404.vscode-proto3",
-        "Plex.vscode-protolint"
+        "Plex.vscode-protolint",
+        "bradlc.vscode-tailwindcss",
+        "pycqa.bandit-pycqa",
+        "mtxr.sqltools",
+        "ms-vscode.vscode-copilot-data-analysis"
       ],
       "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.semanticHighlighting.enabled": false,
-        "editor.occurrencesHighlight": "off",
+        "[django-html]": {
+          "editor.defaultFormatter": "monosans.djlint",
+          "editor.formatOnSave": true
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+          "editor.formatOnSave": true
+        },
         "[python]": {
-          "editor.formatOnSave": true,
           "editor.defaultFormatter": "ms-python.autopep8",
-          "python.analysis.nodeExecutable": "/usr/local/share/nvm/versions/node/v18.20.7/bin/node",
-          "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
-          "python.envFile": "${containerWorkspaceFolder}/.env",
+          "editor.formatOnSave": true,
           "python.analysis.extraPaths": [
             "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
           ],
-          "python.terminal.activateEnvInCurrentTerminal": true,
-          "python.terminal.activateEnvironment": true,
-          "python.terminal.shellIntegration.enabled": true,
-          "python.languageServer": "Pylance",
           "python.analysis.languageServerMode": "Jedi",
+          "python.analysis.nodeExecutable": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
           "python.analysis.typeCheckingMode": "strict",
           "python.autoComplete.extraPaths": [
             "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
           ],
+          "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+          "python.envFile": "${containerWorkspaceFolder}/.env",
+          "python.languageServer": "Pylance",
           "python.linting.enabled": true,
-          "python.linting.pylintEnabled": true
+          "python.linting.pylintEnabled": true,
+          "python.terminal.activateEnvInCurrentTerminal": true,
+          "python.terminal.activateEnvironment": true,
+          "python.terminal.shellIntegration.enabled": true
         },
-        "[javascript]": {
-          "editor.formatOnSave": true,
-          "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-        },
-        "[django-html]": {
-          "editor.formatOnSave": true,
-          "editor.defaultFormatter": "monosans.djlint"
-        },
-        "eslint.format.enable": true,
-        "eslint.lintTask.enable": true,
         "dev.containers.gpuAvailability": "none",
+        "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
         "dotfiles.repository": "https://github.com/enssol/dotfiles.git",
         "dotfiles.targetPath": "/home/vscode/dotfiles",
-        "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
-        "terminal.integrated.cwd": "${containerWorkspaceFolder}",
-        "terminal.integrated.defaultProfile.linux": "fish",
-        "terminal.integrated.shellIntegration.enabled": true,
-        "terminal.integrated.env.linux": {
-          "PYTHONPATH": "${containerWorkspaceFolder}",
-          "VENV_PATH": "${containerWorkspaceFolder}/.venv",
-          "PYTHONSTARTUP": "${containerWorkspaceFolder}/.devcontainer/pythonstartup.py",
-          "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
-          "PYTHONUNBUFFERED": "1"
-        },
-        "files.watcherExclude": {
-          "**/.git/objects/**": true,
-          "**/.git/subtree-cache/**": true,
-          "**/node_modules/**": true,
-          "**/.venv/**": true,
-          "**/__pycache__/**": true,
-          "**/.env": true,
-          "**/.git": true,
-          "**/.svn": true,
-          "**/.hg": true,
-          "**/CVS": true,
-          "**/.DS_Store": true,
-          "**/*.pyc": true,
-          "**/__pycache__": true,
-          "**/.pytest_cache": true,
-          "**/node_modules": true,
-          "**/.venv": true,
-          "**~/.vscode-server/**": true,
-          "**~/.vscode/**": true,
-          ".venv": true
-        },
-        "files.exclude": {
-          "**/.git": true,
-          "**/.svn": true,
-          "**/.hg": true,
-          "**/CVS": true,
-          "**/.DS_Store": true,
-          "**/*.pyc": true,
-          "**/__pycache__": true,
-          "**/.pytest_cache": true,
-          "**/node_modules": true,
-          "**/.venv": true,
-          "**~/.vscode-server/**": true,
-          "**~/.vscode/**": true,
-          ".venv": true
-        },
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.occurrencesHighlight": "off",
+        "editor.semanticHighlighting.enabled": false,
+        "eslint.format.enable": true,
+        "eslint.lintTask.enable": true,
         "files.associations": {
+          "*.css": "css",
           "*.html": "django-html",
           "*.js": "javascript",
-          "*.py": "python",
-          "*.css": "css",
           "*.json": "json",
           "*.md": "markdown",
-          "*.txt": "plaintext",
-          "requirements*.txt": "pip-requirements",
-          "constraints*.txt": "pip-requirements",
+          "*.py": "python",
           "*.toml": "toml",
-          "pyproject.toml": "toml",
-          "poetry.toml": "toml",
-          "pdm.toml": "toml",
+          "*.txt": "plaintext",
+          ".bandit": "yaml",
           ".env*": "dotenv",
+          ".pylintrc": "ini",
           ".pylintrc-django": "ini",
-          ".pylintrc": "ini"
+          "constraints*.txt": "pip-requirements",
+          "pdm.toml": "toml",
+          "poetry.toml": "toml",
+          "pyproject.toml": "toml",
+          "requirements*.txt": "pip-requirements",
+          "tailwindcss.lint": "json"
         },
-        "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk"
+        "files.exclude": {
+          "**/*.pyc": true,
+          "**/.DS_Store": true,
+          "**/.git": true,
+          "**/.hg": true,
+          "**/.pytest_cache": true,
+          "**/.svn": true,
+          "**/.venv": true,
+          "**/CVS": true,
+          "**/__pycache__": true,
+          "**/node_modules": true,
+          "**~/.vscode-server/**": true,
+          "**~/.vscode/**": true,
+          ".venv": true
+        },
+        "files.watcherExclude": {
+          "**/*.pyc": true,
+          "**/.DS_Store": true,
+          "**/.env": true,
+          "**/.git": true,
+          "**/.git/objects/**": true,
+          "**/.git/subtree-cache/**": true,
+          "**/.hg": true,
+          "**/.pytest_cache": true,
+          "**/.svn": true,
+          "**/.venv": true,
+          "**/.venv/**": true,
+          "**/CVS": true,
+          "**/__pycache__": true,
+          "**/__pycache__/**": true,
+          "**/node_modules": true,
+          "**/node_modules/**": true,
+          "**~/.vscode-server/**": true,
+          "**~/.vscode/**": true,
+          ".venv": true
+        },
+        "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk",
+        "snyk.trustedFolders": [
+          "/workspaces/greenova/",
+          "/home/vscode/"
+        ],
+        "terminal.integrated.cwd": "${containerWorkspaceFolder}",
+        "terminal.integrated.defaultProfile.linux": "fish",
+        "terminal.integrated.env.linux": {
+          "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+          "PYTHONPATH": "${containerWorkspaceFolder}",
+          "PYTHONSTARTUP": "${containerWorkspaceFolder}/.devcontainer/pythonstartup.py",
+          "PYTHONUNBUFFERED": "1",
+          "VENV_PATH": "${containerWorkspaceFolder}/.venv"
+        },
+        "terminal.integrated.shellIntegration.enabled": true
       }
     }
   },
-  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/direnv:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {},
+    "ghcr.io/devcontainers-extra/features/isort:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/markdownlint-cli2:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/mypy:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/pre-commit:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/prettier:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/protoc:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/pylint:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/shfmt:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    },
+    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
+      "version": "latest"
+    },
+    "ghcr.io/r3dpoint/devcontainer-features/tailwindcss-standalone-cli:1": {
+      "version": "latest"
+    }
+  },
+  "forwardPorts": [
+    8000
+  ],
+  "image": "mcr.microsoft.com/devcontainers/python:3.9",
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
+    "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
+  ],
+  "name": "Greenova Development",
   "postCreateCommand": "sudo chown vscode:vscode /home && sudo chown vscode:vscode /usr/local && sudo chown vscode:vscode /workspaces",
-  "forwardPorts": [8000]
+  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceMount": "source=greenova,target=${containerWorkspaceFolder},type=volume"
 }

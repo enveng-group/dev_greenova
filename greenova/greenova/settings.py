@@ -9,15 +9,16 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
-import sys
-import os
-from pathlib import Path
-from typing import Dict, List, TypedDict, Union
-from django.contrib import admin
 import mimetypes
+import os
+import sys
+from pathlib import Path
+from shutil import which
+from typing import Dict, List, TypedDict, Union
+
 import sentry_sdk
 from dotenv_vault import load_dotenv
+
 load_dotenv()
 
 
@@ -68,25 +69,25 @@ def validate_settings() -> None:
     Raises ValueError for missing required settings.
     """
     # Check SECRET_KEY is set
-    if not os.environ.get("DJANGO_SECRET_KEY"):
-        raise ValueError("DJANGO_SECRET_KEY environment variable is required")
+    if not os.environ.get('DJANGO_SECRET_KEY'):
+        raise ValueError('DJANGO_SECRET_KEY environment variable is required')
 
     # Convert DEBUG to boolean and validate
-    debug_setting = os.environ.get("DJANGO_DEBUG", "False")
+    debug_setting = os.environ.get('DJANGO_DEBUG', 'False')
     if isinstance(debug_setting, str):
-        if debug_setting.lower() not in ("true", "false", "1", "0"):
-            raise ValueError("DJANGO_DEBUG must be True, False, 1, or 0")
+        if debug_setting.lower() not in ('true', 'false', '1', '0'):
+            raise ValueError('DJANGO_DEBUG must be True, False, 1, or 0')
 
     # Parse and validate ALLOWED_HOSTS
-    allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
+    allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
     if not allowed_hosts and DEBUG is False:
-        raise ValueError("DJANGO_ALLOWED_HOSTS must be set in production (DEBUG=False)")
+        raise ValueError('DJANGO_ALLOWED_HOSTS must be set in production (DEBUG=False)')
 
     # Check for insecure default SECRET_KEY
-    if "django-insecure" in os.environ.get("DJANGO_SECRET_KEY", ""):
+    if 'django-insecure' in os.environ.get('DJANGO_SECRET_KEY', ''):
         import warnings
         warnings.warn(
-            "Using an insecure SECRET_KEY! Please set a secure SECRET_KEY in production.",
+            'Using an insecure SECRET_KEY! Please set a secure SECRET_KEY in production.',
             UserWarning
         )
 
@@ -94,13 +95,13 @@ def validate_settings() -> None:
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1")
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('true', '1')
 
 # Update allowed hosts for production
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").replace('"', '').split(",") if host.strip()]
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').replace('"', '').split(',') if host.strip()]
 
 # Run validation
 validate_settings()
@@ -108,53 +109,54 @@ validate_settings()
 # Tailwind CSS configuration
 TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS = [
-    "127.0.0.1",
+    '127.0.0.1',
 ]
 
 # Application definition
 
 INSTALLED_APPS = [
     # Core Django apps (must be first)
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.humanize",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
     # Third-party authentication (keep together)
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.github",
-    "allauth.usersessions",
-    "allauth.mfa",
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    'allauth.usersessions',
+    'allauth.mfa',
 
     # Other third-party libraries
-    "django_htmx",
-    "django_hyperscript",
-    "django_matplotlib",
-    "template_partials",
-    "tailwind",
-    "django_browser_reload",
-    "debug_toolbar",
-    "gunicorn",
-    "pb_model",
+    'corsheaders',
+    'django_htmx',
+    'django_hyperscript',
+    'django_matplotlib',
+    'template_partials',
+    'tailwind',
+    'django_browser_reload',
+    'debug_toolbar',
+    'pb_model',
 
     # Your local apps (ordered by dependency)
-    "core.apps.CoreConfig",  # Core logic, should be initialized early
-    "company",  # Base models (used in other apps, so placed first)
-    "projects",  # Likely depends on `company`
-    "users",  # User management, might depend on `company`
-    "mechanisms",  # Business logic modules
-    "responsibility",  # Likely domain-specific
-    "obligations",  # Related to `responsibility`
-    "procedures",  # Depends on `obligations`
-    "dashboard",  # UI and analytics
-    "landing",  # Landing page or homepage
-    "theme",  # UI Styling
-    "chatbot",  # Standalone feature, placed last
+    'authentication',
+    'core.apps.CoreConfig',  # Core logic, should be initialized early
+    'company',  # Base models (used in other apps, so placed first)
+    'projects',  # Likely depends on `company`
+    'users',  # User management, might depend on `company`
+    'mechanisms',  # Business logic modules
+    'responsibility',  # Likely domain-specific
+    'obligations',  # Related to `responsibility`
+    'procedures',  # Depends on `obligations`
+    'dashboard',  # UI and analytics
+    'landing',  # Landing page or homepage
+    'theme',  # UI Styling
+    'chatbot',  # Standalone feature, placed last
 ]
 
 
@@ -173,7 +175,8 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 }
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
@@ -194,9 +197,9 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = "dashboard:home"  # OR LOGIN_REDIRECT_URL = "dashboard:profile"
+LOGIN_REDIRECT_URL = 'dashboard:home'  # OR LOGIN_REDIRECT_URL = "dashboard:profile"
 # LOGOUT_REDIRECT_URL = "landing:home"
-LOGIN_URL = "authentication:login"
+LOGIN_URL = 'authentication:login'
 # LOGIN_REDIRECT_URL = "admin:index"
 # LOGOUT_REDIRECT_URL = "admin:login"
 # LOGIN_URL = "admin:login"
@@ -209,32 +212,32 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'VERIFIED_EMAIL': True,
         'APP': {
-            'client_id': os.environ.get("GITHUB_CLIENT_ID"),
-            'secret': os.environ.get("GITHUB_CLIENT_SECRET"),
+            'client_id': os.environ.get('GITHUB_CLIENT_ID'),
+            'secret': os.environ.get('GITHUB_CLIENT_SECRET'),
         },
     }
 }
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-ROOT_URLCONF = "greenova.urls"
+ROOT_URLCONF = 'greenova.urls'
 
 # Update TEMPLATES configuration to remove the conflict
 TEMPLATES: List[TemplateConfig] = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "authentication",  # route to custom django-allauth template!
-            BASE_DIR / "templates",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            BASE_DIR / 'authentication',  # route to custom django-allauth template!
+            BASE_DIR / 'templates',
         ],
-        "APP_DIRS": True,  # Keep this for app template discovery
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+        'APP_DIRS': True,  # Keep this for app template discovery
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
-            "debug": DEBUG,
+            'debug': DEBUG,
         },
     },
 ]
@@ -243,30 +246,30 @@ TEMPLATES: List[TemplateConfig] = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES: Dict[str, DatabaseConfig] = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-     "OPTIONS": {
-         "min_length": 9,
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+     'OPTIONS': {
+         'min_length': 9,
      },
      },
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },]
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "en-au"
+LANGUAGE_CODE = 'en-au'
 
-TIME_ZONE = "Australia/Perth"
+TIME_ZONE = 'Australia/Perth'
 
 USE_I18N = True
 
@@ -275,37 +278,40 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / 'static',
 ]
 
 # Add these settings for static files
 # List of finder classes that know how to find static files in various locations
 STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 # Ensure static files are handled simply
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Basic storage without manifest
 
 # Application version
-APP_VERSION = "0.0.4"
+APP_VERSION = '0.0.4'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Disable security features for development
-SECURE_BROWSER_XSS_FILTER = False
-SECURE_CONTENT_TYPE_NOSNIFF = False
-X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow frames for development tools
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+# SECURE_BROWSER_XSS_FILTER = False
+# SECURE_CONTENT_TYPE_NOSNIFF = False
+# X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow frames for development tools
+# CSRF_COOKIE_SECURE = False
+# SESSION_COOKIE_SECURE = False
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
+
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Simplify cache to basic memory cache
 CACHES = {
@@ -315,47 +321,47 @@ CACHES = {
 }
 
 # Create logs directory if it doesn't exist
-LOGS_DIR = os.path.join(BASE_DIR, "logs")
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
 
 # Update the LOGGING configuration
 LOGGING: LoggingConfig = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
-            "style": "{",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
         },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",  # Changed from class_name to class
-            "level": "INFO",
-            "formatter": "simple",
-        },
-        "file": {
-            "class": "logging.FileHandler",  # Changed from class_name to class
-            "level": "INFO",
-            "filename": str(BASE_DIR / "logs" / "django.log"),
-            "formatter": "verbose",
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
         },
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": True,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',  # Changed from class_name to class
+            'level': 'INFO',
+            'formatter': 'simple',
         },
-        "projects": {
-            "handlers": ["file"],
-            "level": "DEBUG",
-            "propagate": True,
+        'file': {
+            'class': 'logging.FileHandler',  # Changed from class_name to class
+            'level': 'INFO',
+            'filename': str(BASE_DIR / 'logs' / 'django.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'projects': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }  # type: ignore
@@ -369,33 +375,33 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400  # 25MB in bytes
 
 # Modify runserver command to force HTTP
 
-if "runserver" in sys.argv:
+if 'runserver' in sys.argv:
     import os
 
-    os.environ["PYTHONHTTPSVERIFY"] = "0"
-    os.environ.get("DJANGO_SETTINGS_MODULE")
+    os.environ['PYTHONHTTPSVERIFY'] = '0'
+    os.environ.get('DJANGO_SETTINGS_MODULE')
 
 # Configure NPM path for Django Tailwind
-NPM_BIN_PATH = '/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'
+NPM_BIN_PATH = which('npm')
 
 # Mimetypes configuration
-mimetypes.add_type("text/css", ".css", True)
-mimetypes.add_type("text/javascript", ".js", True)
-mimetypes.add_type("application/javascript", ".js", True)
-mimetypes.add_type("application/json", ".json", True)
-mimetypes.add_type("image/svg+xml", ".svg", True)
-mimetypes.add_type("image/png", ".png", True)
-mimetypes.add_type("image/jpeg", ".jpg", True)
-mimetypes.add_type("image/jpeg", ".jpeg", True)
-mimetypes.add_type("image/gif", ".gif", True)
-mimetypes.add_type("image/webp", ".webp", True)
-mimetypes.add_type("image/x-icon", ".ico", True)
-mimetypes.add_type("image/bmp", ".bmp", True)
-mimetypes.add_type("image/tiff", ".tiff", True)
-mimetypes.add_type("image/tiff", ".tif", True)
-mimetypes.add_type("image/vnd.microsoft.icon", ".ico", True)
-mimetypes.add_type("text/html", ".html", True)
-mimetypes.add_type("text/plain", ".txt", True)
+mimetypes.add_type('text/css', '.css', True)
+mimetypes.add_type('text/javascript', '.js', True)
+mimetypes.add_type('application/javascript', '.js', True)
+mimetypes.add_type('application/json', '.json', True)
+mimetypes.add_type('image/svg+xml', '.svg', True)
+mimetypes.add_type('image/png', '.png', True)
+mimetypes.add_type('image/jpeg', '.jpg', True)
+mimetypes.add_type('image/jpeg', '.jpeg', True)
+mimetypes.add_type('image/gif', '.gif', True)
+mimetypes.add_type('image/webp', '.webp', True)
+mimetypes.add_type('image/x-icon', '.ico', True)
+mimetypes.add_type('image/bmp', '.bmp', True)
+mimetypes.add_type('image/tiff', '.tiff', True)
+mimetypes.add_type('image/tiff', '.tif', True)
+mimetypes.add_type('image/vnd.microsoft.icon', '.ico', True)
+mimetypes.add_type('text/html', '.html', True)
+mimetypes.add_type('text/plain', '.txt', True)
 
 # User sessions configuration
 # USERSESSIONS_TRACK_ACTIVITY = True
@@ -404,7 +410,7 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Sentry.io configuration
 sentry_sdk.init(
-    dsn="https://c6f88e890b90e554dcf731d6c4358341@o4508301862371328.ingest.us.sentry.io/4509008399761408",
+    dsn='https://c6f88e890b90e554dcf731d6c4358341@o4508301862371328.ingest.us.sentry.io/4509008399761408',
     # Add data like request headers and IP for users,
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
