@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Chatbot specific styles */
 .container {
   max-width: 1200px;
@@ -286,3 +287,78 @@
   background-color: var(--secondary-background);
   margin-right: auto;
 }
+=======
+/* Is the parent of all chat widget items. */
+#chat-widget {
+  /* Aligh in center space */
+  position: fixed;
+  bottom: var(--greenova-spacing);
+  right: var(--greenova-spacing);
+}
+
+/* Chat window */
+#chat-container {
+  min-height: 300px;
+  height: 80%;
+
+  /* Set heights automatically */
+  display: flex;
+  flex-flow: column;
+}
+
+/* Chat toggle button styles */
+#chat-toggle {
+  max-height: 48px;
+}
+
+/* Chat history */
+#chat-messages {
+  /* Make background a lighter less contrasting colour */
+  margin: var(--greenova-spacing) 0;
+  border: 4px solid var(--greenova-green-primary);
+  border-radius: var(--greenova-border-radius);
+  padding: var(--greenova-padding);
+
+  /* Make messages in a column */
+  display: flex;
+  flex-direction: column;
+
+  /* Set a scroll bar to show up... */
+  overflow-y: scroll;
+  height: 100%;
+
+  background: var(--greenova-green-primary);
+}
+
+/* Chat dialog which represents some message */
+.chat-dialog {
+
+  margin: var(--greenova-spacing-small);
+  border: 4px solid var(--greenova-beige-primary);
+  padding: var(--greenova-padding-small) var(--greenova-padding);
+
+  max-width: 50%;
+
+  background: var(--greenova-beige-primary);
+}
+
+.chat-dialog.chatbot-dialog {
+  /* Message left message */
+  align-self: flex-start;
+
+  background: var(--greenova-chat-bot-background);
+  border-radius: var(--greenova-chat-bot-border-radius);
+  border-color: var(--greenova-chat-bot-background);
+  color: var(--greenova-chat-bot-color);
+}
+
+.chat-dialog.user-dialog {
+  /* Message right message*/
+  align-self: flex-end;
+
+  background: var(--greenova-chat-user-background);
+  border-radius: var(--greenova-chat-user-border-radius);
+  border-color: var(--greenova-chat-user-background);
+  color: var(--greenova-chat-user-color);
+}
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

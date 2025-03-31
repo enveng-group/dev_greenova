@@ -7,9 +7,13 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
 """
 
+from django.core.wsgi import get_wsgi_application
 import os
+<<<<<<< HEAD
 
 from django.core.wsgi import get_wsgi_application
+=======
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 from dotenv_vault import load_dotenv
 
 # Load environment variables from .env file or .env.vault if DOTENV_KEY is set

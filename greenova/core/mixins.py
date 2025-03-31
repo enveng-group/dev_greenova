@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from typing import Any, Dict, List, Optional, Tuple, TypeVar
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,6 +9,12 @@ ContextView = TypeVar('ContextView', bound=ContextMixin)
 
 
 class BreadcrumbMixin(ContextMixin):
+=======
+from django.contrib.auth.mixins import LoginRequiredMixin
+from typing import Dict, Any, List, Tuple, Optional
+
+class BreadcrumbMixin:
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     """
     Add breadcrumb data to template context.
 
@@ -30,8 +37,12 @@ class BreadcrumbMixin(ContextMixin):
         context['breadcrumbs'] = self.get_breadcrumbs()
         return context
 
+<<<<<<< HEAD
 
 class PageTitleMixin(ContextMixin):
+=======
+class PageTitleMixin:
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     """
     Add page title to template context.
 
@@ -50,8 +61,12 @@ class PageTitleMixin(ContextMixin):
         context['page_title'] = self.get_page_title()
         return context
 
+<<<<<<< HEAD
 
 class SectionMixin(ContextMixin):
+=======
+class SectionMixin:
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     """
     Add current section to template context for highlighting navigation.
 
@@ -70,7 +85,10 @@ class SectionMixin(ContextMixin):
         context['active_section'] = self.get_active_section()
         return context
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 class ViewMixin(BreadcrumbMixin, PageTitleMixin, SectionMixin):
     """
     Combined mixin for standard view context data.
@@ -81,7 +99,11 @@ class ViewMixin(BreadcrumbMixin, PageTitleMixin, SectionMixin):
             active_section = "dashboard"
             breadcrumbs = [('Home', 'home'), ('Dashboard', None)]
     """
+<<<<<<< HEAD
 
+=======
+    pass
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 class AuthViewMixin(LoginRequiredMixin, ViewMixin):
     """
@@ -93,3 +115,7 @@ class AuthViewMixin(LoginRequiredMixin, ViewMixin):
             active_section = "dashboard"
             breadcrumbs = [('Home', 'home'), ('Dashboard', None)]
     """
+<<<<<<< HEAD
+=======
+    pass
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

@@ -6,7 +6,11 @@ header {
 }
 
 /* If it is a child of the body, if it is a header which is not the top. */
+<<<<<<< HEAD
 body > header {
+=======
+body>header {
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   /* This width attribute makes it 100% of the page taking away any spacing that would be occupied by the body */
   max-width: calc(100% - 2 * var(--greenova-head-spacing));
   margin: 0 var(--greenova-head-spacing);
@@ -14,12 +18,23 @@ body > header {
 }
 
 [role='navigation'],
+<<<<<<< HEAD
 [role='navigation'] [role='menuitem'] {
   background: var(--greenova-green-secondary);
   color: var(--greenova-text-primary-dark) !important;
 }
 
 [role='menuitem'][aria-current] {
+=======
+[role='navigation'] [role="menuitem"] {
+  background: var(--greenova-green-secondary)
+    /*var(--greenova-beige-primary)*/
+  ;
+  color: var(--greenova-text-primary-dark) !important;
+}
+
+[role="menuitem"][aria-current] {
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   background: var(--greenova-beige-secondary);
 }
 
@@ -72,6 +87,10 @@ ul.theme-container {
   /* Make the elements justify center */
   justify-content: center;
   height: 100%;
+<<<<<<< HEAD
+=======
+
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   /* Make the theme container vertical and space it away from the side of the navigation bar*/
   margin-left: var(--greenova-spacing-large) !important;
   flex-flow: column !important;
@@ -82,10 +101,18 @@ ul.theme-container > li {
   margin: var(--greenova-spacing-small) 0;
   padding: 0;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 /* Chatbot and user login */
 div.auth-status-container {
   /* We want these elements to be spaced vertically and in columns */
   display: flex;
   flex-direction: row;
   gap: var(--greenova-spacing-small);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

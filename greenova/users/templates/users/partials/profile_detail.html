@@ -1,29 +1,46 @@
 {% load static %}
 {% load user_tags %}
 {% load company_tags %}
+<<<<<<< HEAD
+=======
+
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 <section aria-labelledby="profile-heading">
   <div class="profile-info">
     <div class="profile-header">
       <div class="profile-image-container">
         {% if profile.profile_image %}
+<<<<<<< HEAD
           <img src="{{ profile.profile_image.url }}"
                alt="Profile picture"
                class="profile-image" />
+=======
+          <img src="{{ profile.profile_image.url }}" alt="Profile picture" class="profile-image">
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
         {% else %}
           <div class="profile-initial">{{ profile.user.username|first|upper }}</div>
         {% endif %}
       </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       <div class="profile-details">
         <h2 id="profile-heading">{{ profile.user.get_full_name|default:profile.user.username }}</h2>
         <p class="profile-position">{{ profile.position|default:"" }}</p>
         <p class="profile-department">{{ profile.department|default:"" }}</p>
       </div>
     </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     <div class="profile-content">
       <div class="profile-section">
         <h3>Contact Information</h3>
         <dl>
           <dt>Email:</dt>
+<<<<<<< HEAD
           <dd>
             {{ profile.user.email }}
           </dd>
@@ -37,6 +54,22 @@
         <h3>About Me</h3>
         <div class="profile-bio">{{ profile.bio|default:"No bio information provided."|linebreaks }}</div>
       </div>
+=======
+          <dd>{{ profile.user.email }}</dd>
+
+          <dt>Phone:</dt>
+          <dd>{{ profile.phone_number|default:"Not provided" }}</dd>
+        </dl>
+      </div>
+
+      <div class="profile-section">
+        <h3>About Me</h3>
+        <div class="profile-bio">
+          {{ profile.bio|default:"No bio information provided."|linebreaks }}
+        </div>
+      </div>
+
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       <!-- New section for company affiliations -->
       <div class="profile-section company-affiliations">
         <h3>Company Affiliations</h3>
@@ -52,6 +85,7 @@
               </thead>
               <tbody>
                 {% for membership in memberships %}
+<<<<<<< HEAD
                   <tr>
                     <td>
                       <a href="{% url 'company:detail' membership.company.id %}">{{ membership.company.name }}</a>
@@ -61,6 +95,13 @@
                       {% if membership.is_primary %}<mark role="status" class="success">Yes</mark>{% endif %}
                     </td>
                   </tr>
+=======
+                <tr>
+                  <td><a href="{% url 'company:detail' membership.company.id %}">{{ membership.company.name }}</a></td>
+                  <td>{{ membership.role|company_role_badge }}</td>
+                  <td>{% if membership.is_primary %}<mark role="status" class="success">Yes</mark>{% endif %}</td>
+                </tr>
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
                 {% endfor %}
               </tbody>
             </table>
@@ -71,6 +112,7 @@
       </div>
     </div>
   </div>
+<<<<<<< HEAD
   <div class="profile-actions">
     <a href="{% url 'users:profile_edit' %}"
        class="btn-primary"
@@ -82,5 +124,15 @@
        hx-get="{% url 'users:change_password' %}"
        hx-target=".profile-container"
        hx-swap="innerHTML">Change Password</a>
+=======
+
+  <div class="profile-actions">
+    <a href="{% url 'users:profile_edit' %}" class="btn-primary" hx-get="{% url 'users:profile_edit' %}" hx-target=".profile-container" hx-swap="innerHTML">
+      Edit Profile
+    </a>
+    <a href="{% url 'users:change_password' %}" class="btn-secondary" hx-get="{% url 'users:change_password' %}" hx-target=".profile-container" hx-swap="innerHTML">
+      Change Password
+    </a>
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   </div>
 </section>

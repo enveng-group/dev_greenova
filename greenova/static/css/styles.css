@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Non-critical styles that can be loaded after initial rendering */
 
 /* Import PicoCSS framework */
@@ -17,3 +18,33 @@
 /* Module-specific styles last */
 @import url('components/user-profile.css');
 @import url('components/company.css');
+=======
+/* Import base styles */
+@import url('base.css');
+
+/* Import PicoCSS */
+@import url('vendor/pico-classless.min.css');
+
+/* Import design/colour variables */
+@import url('defines/design.css');
+@import url('defines/colours.css');
+
+/* Import theme-specific colors */
+@import url('themes/light.css');
+@import url('themes/dark.css');
+
+/* Import component-specific styles */
+@import url('components/navigation.css');
+@import url('components/breadcrumbs.css');
+@import url('components/button.css');
+@import url('components/card.css');
+@import url('components/charts.css');
+@import url('components/chat.css');
+@import url('components/form.css');
+@import url('components/list.css');
+@import url('components/filter.css');
+@import url('components/pagination.css');
+@import url('components/obligations.css');
+@import url('components/user-profile.css');
+@import url('components/company.css');
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

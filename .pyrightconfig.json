@@ -38,6 +38,7 @@
   "reportUnknownParameterType": "warning",
   "reportUnknownVariableType": "warning",
   "reportUntypedFunctionDecorator": "warning",
+<<<<<<< HEAD
   "reportUnusedCoroutine": "warning",
   "stubPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
   "typeCheckingMode": "strict",
@@ -52,4 +53,7 @@
   "typeshedPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
   "useLibraryCodeForTypes": true,
   "venvPath": ".venv"
+=======
+  "stubPath": ".venv/lib/python3.9/site-packages/django-stubs"
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
