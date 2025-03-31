@@ -63,6 +63,12 @@
     "editor.tabSize": 2,
     "editor.wordWrap": "on"
   },
+  "[proto3]": {
+    "editor.defaultFormatter": "zxh404.vscode-proto3",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
   "[javascript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
@@ -71,6 +77,17 @@
     "editor.formatOnSave": true,
     "editor.insertSpaces": true,
     "editor.tabSize": 2
+  },
+  "[dockerfile]": {
+    "editor.quickSuggestions": {
+      "strings": true
+    }
+  },
+  "[shellcheckrc]": {
+    "editor.defaultFormatter": "timonwong.shellcheck",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -151,6 +168,20 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "files.eol": "\n"
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "dotenv.dotenv-vscode",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true,
+    "files.eol": "\n"
+  },
+  "[makefile]": {
+    "editor.defaultFormatter": "ms-vscode.makefile-tools",
+    "editor.insertSpaces": false
   },
   "autopep8.args": [
     "--max-line-length=88",

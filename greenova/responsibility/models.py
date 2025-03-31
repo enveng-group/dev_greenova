@@ -1,6 +1,8 @@
 from core.utils.roles import get_responsibility_choices
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User
+from company.models import Company, CompanyMembership
 
 
 class Responsibility(models.Model):
