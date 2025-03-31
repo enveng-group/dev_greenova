@@ -73,7 +73,7 @@ run:
 # Alternative approach with separate commands
 #start only Django server
 run-django:
-	$(CD_CMD) gunicorn greenova.wsgi -c ../gunicorn.conf.py
+	$(CD_CMD) python3 manage.py runserver
 
 #Start only Tailwind CSS
 run-tailwind:
@@ -152,12 +152,6 @@ prod:
 # Used to pre-compile tailwind CSS before running the application (we should maybe use this in run later)
 tailwind:
 	$(CD_CMD) python3 manage.py tailwind start
-
-# Add a new command for running just gunicorn with config
-run-gunicorn:
-	@echo "Starting Gunicorn server..."
-	@mkdir -p logs
-	@gunicorn greenova.wsgi -c gunicorn.conf.py
 
 # Combined command for database updates
 db: migrations migrate
