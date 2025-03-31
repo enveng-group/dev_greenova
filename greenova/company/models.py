@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import logging
 
 from django.contrib.auth.models import User
@@ -5,6 +6,14 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
+=======
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+from django.db.models import QuerySet
+from django.core.exceptions import ValidationError
+import logging
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +74,7 @@ class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+<<<<<<< HEAD
     @staticmethod
     def get_default_company():
         """
@@ -73,6 +83,8 @@ class Company(models.Model):
         """
         return 1
 
+=======
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     class Meta:
         verbose_name = 'Company'
         verbose_name_plural = 'Companies'
@@ -87,6 +99,7 @@ class Company(models.Model):
 
     def get_active_projects_count(self) -> int:
         """Get count of active projects associated with this company."""
+<<<<<<< HEAD
         from django.db import connection
 
         # Check if is_active field exists in projects_project table
@@ -109,6 +122,9 @@ class Company(models.Model):
         except Exception as e:
             logger.error(f'Error counting active projects: {str(e)}')
             return 0
+=======
+        return self.projects.filter(is_active=True).count()
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
     def get_members_by_role(self, role: str) -> QuerySet:
         """Get all users with the specified role in this company."""
@@ -125,12 +141,20 @@ class Company(models.Model):
                 user=user,
                 role=role
             )
+<<<<<<< HEAD
             logger.info(f'Added user {user.username} to company {self.name} with role {role}')
+=======
+            logger.info(f"Added user {user.username} to company {self.name} with role {role}")
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
     def remove_member(self, user: User) -> None:
         """Remove a user from the company."""
         CompanyMembership.objects.filter(company=self, user=user).delete()
+<<<<<<< HEAD
         logger.info(f'Removed user {user.username} from company {self.name}')
+=======
+        logger.info(f"Removed user {user.username} from company {self.name}")
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 
 class CompanyMembership(models.Model):
@@ -175,7 +199,11 @@ class CompanyMembership(models.Model):
         verbose_name_plural = 'Company Memberships'
 
     def __str__(self) -> str:
+<<<<<<< HEAD
         return f'{self.user.username} - {self.company.name} ({self.role})'
+=======
+        return f"{self.user.username} - {self.company.name} ({self.role})"
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
     def save(self, *args, **kwargs):
         """Override save to ensure only one company is primary."""
@@ -224,4 +252,8 @@ class CompanyDocument(models.Model):
         verbose_name_plural = 'Company Documents'
 
     def __str__(self) -> str:
+<<<<<<< HEAD
         return f'{self.name} ({self.company.name})'
+=======
+        return f"{self.name} ({self.company.name})"
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "tasks": [
     {
       "args": [
@@ -166,10 +167,101 @@
       "type": "shell"
     },
     {
+=======
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Python: Format with autopep8",
+      "type": "shell",
+      "command": "autopep8",
+      "args": ["--in-place", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Python: Sort imports with isort",
+      "type": "shell",
+      "command": "isort",
+      "args": ["${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Python: Lint with pylint",
+      "type": "shell",
+      "command": "pylint",
+      "args": ["${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      },
+      "group": "none"
+    },
+    {
+      "label": "Python: Type check with mypy",
+      "type": "shell",
+      "command": "mypy",
+      "args": ["${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "python",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "severity": 3,
+          "message": 4
+        }
+      },
+      "group": "none"
+    },
+    {
+      "label": "Python: Security check with bandit",
+      "type": "shell",
+      "command": "bandit",
+      "args": ["-r", "${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Python: Fix all",
+      "dependsOrder": "sequence",
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       "dependsOn": [
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint",
+<<<<<<< HEAD
         "Python: Type check with mypy (standard)",
         "Python: Security check with bandit"
       ],
@@ -398,10 +490,101 @@
       "type": "shell"
     },
     {
+=======
+        "Python: Type check with mypy"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+
+    {
+      "label": "HTML: Format with djlint",
+      "type": "shell",
+      "command": "djlint",
+      "args": ["${file}", "--reformat"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "HTML: Lint with djlint",
+      "type": "shell",
+      "command": "djlint",
+      "args": ["${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "djlint",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(\\w+)\\s+(.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      },
+      "group": "none"
+    },
+
+    {
+      "label": "JavaScript: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "JavaScript: Lint with eslint",
+      "type": "shell",
+      "command": "npx",
+      "args": ["eslint", "${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "none"
+    },
+    {
+      "label": "JavaScript: Fix eslint issues",
+      "type": "shell",
+      "command": "npx",
+      "args": ["eslint", "--fix", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "none"
+    },
+    {
+      "label": "JavaScript: Fix all",
+      "dependsOrder": "sequence",
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       "dependsOn": [
         "JavaScript: Format with prettier",
         "JavaScript: Fix eslint issues"
       ],
+<<<<<<< HEAD
       "dependsOrder": "sequence",
       "group": "none",
       "label": "JavaScript: Fix all",
@@ -563,10 +746,115 @@
       "type": "shell"
     },
     {
+=======
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+
+    {
+      "label": "CSS: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+
+    {
+      "label": "JSON: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+
+    {
+      "label": "YAML: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+
+    {
+      "label": "TOML: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+
+    {
+      "label": "Markdown: Format with prettier",
+      "type": "shell",
+      "command": "npx",
+      "args": ["prettier", "--write", "${file}"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Markdown: Lint with markdownlint",
+      "type": "shell",
+      "command": "npx",
+      "args": ["markdownlint", "${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "markdownlint",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+)(?::(\\d+))? (.+)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "message": 4
+        }
+      },
+      "group": "none"
+    },
+    {
+      "label": "Markdown: Fix all",
+      "dependsOrder": "sequence",
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       "dependsOn": [
         "Markdown: Format with prettier",
         "Markdown: Lint with markdownlint"
       ],
+<<<<<<< HEAD
       "dependsOrder": "sequence",
       "group": "none",
       "label": "Markdown: Fix all",
@@ -834,4 +1122,129 @@
     }
   ],
   "version": "2.0.0"
+=======
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+
+    {
+      "label": "Shell: Check with shellcheck",
+      "type": "shell",
+      "command": "shellcheck",
+      "args": ["${file}"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": {
+        "owner": "shellcheck",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(note|warning|error|style):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      },
+      "group": "none"
+    },
+
+    {
+      "label": "Format current file",
+      "type": "shell",
+      "command": "${command:workbench.action.terminal.clear}",
+      "dependsOn": "Format current file (detected)",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Format current file (detected)",
+      "type": "shell",
+      "command": "echo",
+      "args": ["Formatting ${file}..."],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    },
+    {
+      "label": "Lint current file",
+      "type": "shell",
+      "command": "${command:workbench.action.terminal.clear}",
+      "dependsOn": "Lint current file (detected)",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Lint current file (detected)",
+      "type": "shell",
+      "command": "echo",
+      "args": ["Linting ${file}..."],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    },
+    {
+      "label": "Fix all for current file",
+      "type": "shell",
+      "command": "${command:workbench.action.terminal.clear}",
+      "dependsOn": "Fix all for current file (detected)",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "Fix all for current file (detected)",
+      "type": "shell",
+      "command": "echo",
+      "args": ["Fixing all issues in ${file}..."],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [],
+      "group": "none",
+      "options": {
+        "statusbar": {
+          "hide": true
+        }
+      }
+    }
+  ]
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }

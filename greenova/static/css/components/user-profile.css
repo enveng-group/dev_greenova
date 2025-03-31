@@ -27,6 +27,7 @@
 
 /* Profile image */
 .profile-image {
+<<<<<<< HEAD
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -41,6 +42,13 @@
   border: 3px solid var(--greenova-green-primary);
   overflow: hidden;
   box-sizing: border-box;
+=======
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--greenova-green-primary);
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
 
 /* Placeholder for missing profile image */
@@ -61,7 +69,11 @@
   right: 0;
 }
 
+<<<<<<< HEAD
 .image-upload input[type='file'] {
+=======
+.image-upload input[type="file"] {
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   position: absolute;
   width: 1px;
   height: 1px;

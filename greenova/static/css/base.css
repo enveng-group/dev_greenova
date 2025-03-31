@@ -47,6 +47,12 @@ main,
 .page-content {
   margin: var(--greenova-spacing-large) 0;
 }
+<<<<<<< HEAD
+=======
+
+/* Typography */
+/* Headings, paragraphs, etc. */
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 /* Typography */
 h1,

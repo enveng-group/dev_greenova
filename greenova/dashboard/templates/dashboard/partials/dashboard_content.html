@@ -13,6 +13,13 @@
   </hgroup>
 </header>
 
+<!-- Add a quick link to user profile in the dashboard -->
+<div class="user-profile-quicklink">
+  <a href="{% url 'users:profile' %}" class="btn-primary" role="button">
+    View Your Profile
+  </a>
+</div>
+
 <!-- Project Selection -->
 {% include "projects/projects_selector.html" %}
 

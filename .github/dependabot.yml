@@ -7,19 +7,34 @@
 version: 2
 updates:
   # Enable version updates for devcontainers
+<<<<<<< HEAD
   - package-ecosystem: 'devcontainer'
     directory: '/'
+=======
+  - package-ecosystem: "devcontainer"
+    directory: "/"
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     schedule:
       interval: weekly
 
   # Enable version updates for npm
+<<<<<<< HEAD
   - package-ecosystem: 'npm'
     directory: '/'
+=======
+  - package-ecosystem: "npm"
+    directory: "/"
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     schedule:
       interval: quarterly
 
   # Enable version updates for python
+<<<<<<< HEAD
   - package-ecosystem: 'python'
     directory: '/'
+=======
+  - package-ecosystem: "python"
+    directory: "/"
+>>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     schedule:
       interval: quarterly
