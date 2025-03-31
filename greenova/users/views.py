@@ -38,7 +38,7 @@ def profile_edit(request: HttpRequest) -> HttpResponse:
     profile: Profile = request.user.profile
 
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=profile)
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile updated successfully.')
