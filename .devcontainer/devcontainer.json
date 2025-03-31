@@ -31,7 +31,8 @@
         "Plex.vscode-protolint",
         "bradlc.vscode-tailwindcss",
         "pycqa.bandit-pycqa",
-        "mtxr.sqltools"
+        "mtxr.sqltools",
+        "ms-vscode.vscode-copilot-data-analysis"
       ],
       "settings": {
         "[django-html]": {
@@ -131,7 +132,8 @@
         },
         "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk",
         "snyk.trustedFolders": [
-          "${containerWorkspaceFolder}"
+          "/workspaces/greenova/",
+          "/home/vscode/"
         ],
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",
         "terminal.integrated.defaultProfile.linux": "fish",
@@ -147,9 +149,6 @@
     }
   },
   "features": {
-    "ghcr.io/devcontainers-extra/features/bandit:2": {
-      "version": "latest"
-    },
     "ghcr.io/devcontainers-extra/features/direnv:1": {
       "version": "latest"
     },

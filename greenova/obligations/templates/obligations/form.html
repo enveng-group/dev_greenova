@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block content %}
+  <form method="post"
+        action="{% url 'obligation_update' obligation.obligation_number %}">
+    {% csrf_token %}
+    <fieldset>
+      <legend>Update Obligation</legend>
+      <!-- ...existing code... -->
+      <div class="form-group">
+        <label for="responsibility">Responsibility:</label>
+        <select id="responsibility" name="responsibility" class="form-input">
+          {% for value, display_name in form.fields.responsibility.choices %}
+            <option value="{{ value }}"
+                    {% if value == form.instance.responsibility %}selected{% endif %}>{{ display_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- ...existing code... -->
+    </fieldset>
+    <button type="submit">Update</button>
+  </form>
+{% endblock %}

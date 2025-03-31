@@ -1,6 +1,9 @@
 [MASTER]
 # Base configuration for all Python files
-load-plugins=
+persistent=yes
+suggestion-mode=yes
+unsafe-load-any-extension=no
+load-plugins=tools.pylint.fix_good_names,tools.pylint.gevent_checker
 ignore=migrations,venv,.venv
 
 [FORMAT]
@@ -13,3 +16,6 @@ disable=C0111,R0903,C0103
 ignore-comments=yes
 ignore-docstrings=yes
 ignore-imports=yes
+
+[BASIC]
+good_names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
