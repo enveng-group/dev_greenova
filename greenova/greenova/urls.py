@@ -37,7 +37,7 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('admin/', admin.site.urls),
 
     # Authentication URLs
-    path('authentication/', include('allauth.urls')),
+    path('accounts/', include('allauth.urls')),
     path('dashboard/', include('dashboard.urls', namespace="dashboard")),
     path('chatbot/', include('chatbot.urls', namespace="chatbot")),
     path('users/', include('users.urls', namespace="users")),
