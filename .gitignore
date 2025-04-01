@@ -162,3 +162,5 @@ site/
 .env*
 .flaskenv*
 !.env.project
+greenova/greenova/urls.py.bak*
+greenova/testapp/
