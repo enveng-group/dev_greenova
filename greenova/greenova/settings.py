@@ -199,7 +199,7 @@ AUTHENTICATION_BACKENDS = [
 
 MFA_SUPPORTED_TYPES = ['totp', 'recovery_codes']
 LOGIN_REDIRECT_URL = 'dashboard:home'
-LOGOUT_REDIRECT_URL = "landing:home"
+LOGOUT_REDIRECT_URL = 'landing:home'
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
