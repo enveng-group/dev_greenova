@@ -1,19 +1,11 @@
-/* Font Face */
-@font-face {
-  font-family: 'Ubuntu';
-  src: url('/static/fonts/Ubuntu-Regular.ttf');
-}
-
 /* Root Variables */
 :root {
-
   --greenova-main-spacing: 5rem;
   --greenova-head-spacing: 5rem;
   --greenova-charts-width: 320px;
 
-  --greenova-font-family: "Arial";
+  --greenova-font-family: 'Arial';
   /*"Ubuntu"*/
-  ;
   --greenova-font-weight: normal;
   --greenova-line-height: 1.125;
   --greenova-letter-spacing: 0.0625rem;
@@ -49,6 +41,8 @@
 
   /* Chat Radius Box */
   --greenova-chat-border-radius: 1rem;
-  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
-  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
+  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
+  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
 }

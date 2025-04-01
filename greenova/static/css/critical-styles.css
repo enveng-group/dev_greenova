@@ -1,0 +1,22 @@
+/* Critical CSS for initial rendering */
+
+/* Base and reset styles */
+@import url('base.css');
+
+/* Design/colour variables - needed for everything else */
+@import url('defines/design.css');
+@import url('defines/pico-compat.css') @import url('defines/colours.css');
+
+/* Theme-specific colors - applied after variables but before components */
+@import url('themes/light.css');
+@import url('themes/dark.css');
+
+/* Core structural components required for initial page layout */
+@import url('components/navigation.css');
+@import url('components/breadcrumbs.css');
+
+/* Button styles - needed for interactive elements that appear above the fold */
+@import url('components/button.css');
+
+/* Card styles - often needed for main content structure */
+@import url('components/card.css');

@@ -253,39 +253,6 @@
       "problemMatcher": []
     },
     {
-      "label": "Python: Fix all (Django)",
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (standard)",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Python: Fix all (Django)",
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (standard)",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Python: Fix all (Django)",
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all (standard)",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
       "dependsOn": [
         "Python: Sort imports with isort",
         "Python: Format with autopep8",

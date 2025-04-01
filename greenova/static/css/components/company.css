@@ -86,7 +86,7 @@
   padding: var(--greenova-spacing-large);
   border-radius: var(--greenova-border-radius);
   max-width: 500px;
-  width: 100%;
+
   position: relative;
 }
 

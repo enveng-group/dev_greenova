@@ -1,13 +1,15 @@
 /* Button styles */
-
 /* Buttons */
 button,
 [type='submit'],
 [type='reset'],
 [role='button'],
+nav li [role='button'],
+nav li [type='button'],
 .btn-primary,
 .btn-secondary,
 .btn-danger,
+.btn-fold,
 .action-btn,
 .quick-filter-btn {
   /* Set default style attributes. */
@@ -17,20 +19,16 @@ button,
   max-height: 41px;
   border-radius: var(--greenova-border-radius);
   padding: var(--greenova-padding);
-
   /* If there is any text styling get rid of it */
   text-decoration: none;
   color: var(--greenova-dark-tertiary);
-
   /* Show that the button is overable */
   cursor: pointer;
   transition: background-color 0.2s;
-
   /* Prevent the buttons from being too large and overflowing */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
   /* Change colour on hovering. */
   &:hover {
     background-color: var(--greenova-green-tertiary);
@@ -38,63 +36,57 @@ button,
     color: var(--greenova-text-dark);
   }
 }
-
 /* Font on */
-button#chat-toggle>span {
+button.chat-toggle > span {
   font-weight: normal !important;
+}
+
+/* This is stating that if the header has an element named .btn-fold,
+   we want to make sure all the elements are line iso the button can be on the right. */
+header:has(.btn-fold) {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* If the button is apart of a menu */
 [role='menuitem'] {
   margin: 0px var(--greenova-spacing);
 }
-
-
 .btn-primary {
   background-color: var(--greenova-green-primary);
 }
-
 .btn-secondary {
   background-color: var(--greenova-green-secondary);
 }
-
 .btn-danger {
   background-color: var(--greenova-warning-background);
 }
-
 /* Add obligation button in navbar */
-.add-obligation-btn {}
-
-.add-obligation-btn:hover {}
-
 .add-obligation-btn svg {
   width: 16px;
   height: 16px;
   fill: var(--greenova-text-primary-dark);
 }
-
 /* Form action buttons */
 .form-actions {
   display: flex;
   gap: var(--greenova-spacing-small);
   margin-top: var(--greenova-spacing);
   padding-top: var(--greenova-padding);
-
 }
-
-
 /* Pico CSS Override */
-nav li [role=button],
-nav li [type=button],
+nav li [role='button'],
+nav li [type='button'],
 nav li button,
-nav li input:not([type=checkbox], [type=radio], [type=range], [type=file]),
+nav
+  li
+  input:not([type='checkbox'], [type='radio'], [type='range'], [type='file']),
 nav li select {
   /* Keeps add obligation inline with other buttons */
   margin: 0;
 }
-
 a[role='button'] {
   /* Used to make it look more like a proper button */
   padding-top: 0.55rem !important;
-
 }
