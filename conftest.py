@@ -1,217 +1,212 @@
+from __future__ import annotations
+
 import logging
 import os
 import subprocess
+import sys
+from typing import Generator, Optional, TextIO, cast
 
 import pytest
+from _pytest.config import Config
+from _pytest.fixtures import FixtureRequest
+from _pytest.nodes import Item
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.test import Client
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.safari.options import Options as SafariOptions
+from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
 
+# Get the User model in a type-safe way
 User = get_user_model()
-logger = logging.getLogger(__name__)
+UserModel = cast(type[AbstractUser], User)
 
-def pytest_configure(config):
+# Setup console logger for debugging WebDriver initialization
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(cast(TextIO, sys.stdout))
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
+def pytest_configure(config: Config) -> None:
     """Register custom pytest markers."""
     config.addinivalue_line(
         'markers', 'selenium: mark tests that require Selenium for browser automation testing'
     )
 
-
 @pytest.fixture
-def admin_user():
+def admin_user() -> AbstractUser:
     """Create and return a superuser."""
-    return User.objects.create_superuser(
+    return UserModel.objects.create_superuser(
         username='admin',
         email='admin@example.com',
         password='adminpass'
     )
 
-
 @pytest.fixture
-def regular_user():
+def regular_user() -> AbstractUser:
     """Create and return a regular user."""
-    return User.objects.create_user(
+    return UserModel.objects.create_user(
         username='test',
         email='test@example.com',
         password='testpass'
     )
 
-
 @pytest.fixture
-def authenticated_client(regular_user):
+def authenticated_client(regular_user: AbstractUser) -> Client:
     """Return a client that's already logged in as a regular user."""
     client = Client()
     client.login(username='test', password='testpass')
     return client
 
-
 @pytest.fixture
-def admin_client(admin_user):
+def admin_client(admin_user: AbstractUser) -> Client:
     """Return a client that's already logged in as an admin user."""
     client = Client()
     client.login(username='admin', password='adminpass')
     return client
 
-
-def is_in_devcontainer():
-    """Check if we're running inside a devcontainer."""
-    return os.environ.get('REMOTE_CONTAINERS') == 'true' or os.path.exists('/.dockerenv')
-
-def get_host_ip():
+def verify_chrome_in_container() -> bool:
     """
-    Get the IP address of the host machine from inside the container.
-    This is typically the gateway IP for the container.
+    Run diagnostics to verify Chrome is properly installed and can run.
     """
+    chrome_path = '/usr/local/bin/chrome'
+    if not os.path.exists(chrome_path):
+        logger.error(f'Chrome binary not found at {chrome_path}')
+        return False
+
+    # Check if Chrome is executable
+    if not os.access(chrome_path, os.X_OK):
+        try:
+            os.chmod(chrome_path, 0o755)
+            logger.info('Fixed Chrome executable permissions')
+        except Exception as e:
+            logger.error(f'Could not set executable permissions: {e}')
+            return False
+
+    # Check if Chrome can run with --version flag
     try:
-        # For Docker on macOS/Windows, the host is usually accessible at host.docker.internal
-        if os.path.exists('/etc/hosts'):
-            with open('/etc/hosts') as f:
-                for line in f:
-                    if 'host.docker.internal' in line:
-                        return 'host.docker.internal'
-
-        # Alternative method: get the default route gateway
-        cmd = "ip route | grep default | awk '{print $3}'"
-        host_ip = subprocess.check_output(cmd, shell=True).decode().strip()
-        return host_ip
-    except Exception as e:
-        logger.warning(f'Could not determine host IP: {e}')
-        return None
+        result = subprocess.run(
+            [chrome_path, '--version'],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        logger.info(f'Chrome version: {result.stdout.strip()}')
+        return True
+    except subprocess.SubprocessError as e:
+        logger.error(f'Chrome cannot run: {e}')
+        return False
 
 @pytest.fixture(scope='session')
-def driver():
+def driver() -> Generator[WebDriver | None]:
     """
-    Provide a WebDriver instance for Selenium tests.
-    Attempts to connect to browsers on the host system when running in a devcontainer.
-    Falls back to container browsers if available.
-
-    Returns:
-        WebDriver: A configured browser instance for Selenium tests
+    Provide a WebDriver instance for Selenium tests using the pre-installed Chrome.
     """
-    browser_driver = None
+    chrome_path = '/usr/local/bin/chrome'
+    chromedriver_path = '/usr/local/bin/chromedriver'
 
-    # Check if we should skip browser tests
-    if os.environ.get('CI_SKIP_BROWSER_TESTS', '').lower() in ('true', '1', 'yes'):
-        pytest.skip('Browser tests disabled via CI_SKIP_BROWSER_TESTS')
+    # Run diagnostics to verify Chrome setup
+    if not verify_chrome_in_container():
+        logger.error('Chrome verification failed - skipping browser tests')
+        pytest.skip('Chrome verification failed')
+        # This yield None is needed to make the fixture generator work
+        yield None
+        return
 
-    # Check if we're in a devcontainer
-    in_devcontainer = is_in_devcontainer()
-    logger.info(f'Running in devcontainer: {in_devcontainer}')
+    # Verify binary paths
+    logger.info(f'Chrome path exists: {os.path.exists(chrome_path)}')
+    logger.info(f'ChromeDriver path exists: {os.path.exists(chromedriver_path)}')
 
-    # Try to connect to host browsers if in devcontainer
-    if in_devcontainer:
-        host_ip = get_host_ip()
-        logger.info(f'Host IP determined as: {host_ip}')
+    # Make ChromeDriver executable if needed
+    if os.path.exists(chromedriver_path) and not os.access(chromedriver_path, os.X_OK):
+        logger.info('Making ChromeDriver executable')
+        os.chmod(chromedriver_path, 0o755)
 
-        if host_ip:
-            # Try Chrome on host via ChromeDriver
-            try:
-                logger.info('Attempting to connect to Chrome on host...')
-                options = ChromeOptions()
-                options.add_argument('--headless=new')  # Force headless mode
-                options.add_argument('--no-sandbox')
-                options.add_argument('--disable-dev-shm-usage')
-                options.add_argument('--window-size=1920,1080')
-
-                # For Mac, Chrome is often available with ChromeDriver
-                browser_driver = webdriver.Remote(
-                    command_executor=f'http://{host_ip}:9515',
-                    options=options
-                )
-                logger.info('Successfully connected to Chrome on host!')
-                return browser_driver
-            except Exception as e:
-                logger.warning(f'Could not connect to Chrome on host: {e}')
-
-            # Try Safari on Mac
-            try:
-                logger.info('Attempting to connect to Safari on host...')
-                options = SafariOptions()
-                browser_driver = webdriver.Remote(
-                    command_executor=f'http://{host_ip}:4444',
-                    options=options
-                )
-                logger.info('Successfully connected to Safari on host!')
-                return browser_driver
-            except Exception as e:
-                logger.warning(f'Could not connect to Safari on host: {e}')
-
-    # If we couldn't connect to host browsers, try local browsers in container
     try:
-        logger.info('Setting up Chrome WebDriver in container...')
+        logger.info('Initializing Chrome WebDriver...')
         options = ChromeOptions()
-
-        # Always use headless mode
-        logger.info('Using headless mode for Chrome')
         options.add_argument('--headless=new')
-
-        # Basic Chrome options that work well in containers
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--window-size=1920,1080')
+        options.add_argument('--disable-gpu')
+        options.binary_location = chrome_path
 
-        # Reduce logging noise
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        # Explicitly run Chrome with debugging flags to capture more info
+        options.add_argument('--enable-logging')
+        options.add_argument('--log-level=0')  # Most verbose
 
-        # Install and initialize Chrome driver
-        service = ChromeService(ChromeDriverManager().install())
-        browser_driver = webdriver.Chrome(service=service, options=options)
+        service = ChromeService(executable_path=chromedriver_path)
+        driver = webdriver.Chrome(service=service, options=options)
+
+        # Set window size explicitly
+        driver.set_window_size(1920, 1080)
+
+        # Set implicit wait
+        driver.implicitly_wait(10)
+
+        # Store driver in pytest namespace for test setup check
+        pytest.browser_driver = driver
+
         logger.info('Chrome WebDriver initialized successfully')
+        yield driver
+
+        # Clean up browser
+        driver.quit()
+        logger.info('Chrome WebDriver closed')
+
     except Exception as e:
-        logger.warning(f'Could not initialize Chrome WebDriver: {str(e)}')
+        logger.error(f'Failed to initialize Chrome WebDriver: {str(e)}')
 
-        # Try Firefox as fallback
+        # Fall back to webdriver_manager as a last resort
         try:
-            logger.info('Attempting to use Firefox WebDriver as fallback...')
-            options = FirefoxOptions()
+            logger.info('Attempting to use webdriver_manager as fallback...')
+            options = ChromeOptions()
+            options.add_argument('--headless=new')
+            options.add_argument('--no-sandbox')
+            options.add_argument('--disable-dev-shm-usage')
+            options.add_argument('--disable-gpu')
 
-            # Always use headless mode
-            logger.info('Using headless mode for Firefox')
-            options.add_argument('--headless')
+            service = ChromeService(ChromeDriverManager().install())
+            driver = webdriver.Chrome(service=service, options=options)
 
-            options.add_argument('--width=1920')
-            options.add_argument('--height=1080')
+            # Set window size explicitly
+            driver.set_window_size(1920, 1080)
 
-            service = FirefoxService(GeckoDriverManager().install())
-            browser_driver = webdriver.Firefox(service=service, options=options)
-            logger.info('Firefox WebDriver initialized successfully')
-        except Exception as firefox_error:
-            logger.error(f'Firefox WebDriver also failed: {str(firefox_error)}')
-            pytest.skip('Could not initialize any WebDriver. Skipping Selenium tests.')
+            # Set implicit wait
+            driver.implicitly_wait(10)
 
-    # If driver was created successfully, use it for tests
-    if browser_driver:
-        # Set implicit wait to avoid immediate failures on slow elements
-        browser_driver.implicitly_wait(10)
+            # Store driver in pytest namespace
+            pytest.browser_driver = driver
 
-        # Make it available in pytest config for checks in pytest_runtest_setup
-        pytest.browser_driver = browser_driver
+            logger.info('WebDriver initialized with webdriver_manager')
+            yield driver
 
-        yield browser_driver
+            driver.quit()
+            logger.info('WebDriver closed')
 
-        # Quit driver after tests
-        try:
-            browser_driver.quit()
         except Exception as e:
-            logger.warning(f'Error quitting WebDriver: {str(e)}')
-    else:
-        pytest.skip('WebDriver initialization failed. Skipping Selenium tests.')
-
+            logger.error(f'WebDriver manager also failed: {str(e)}')
+            # Indicate that browser tests should be skipped
+            yield None
 
 @pytest.fixture
-def selenium(driver):
-    """Fixture for Selenium WebDriver."""
-    return driver
+def selenium(request: FixtureRequest, driver: WebDriver | None) -> WebDriver:
+    """
+    Fixture for Selenium WebDriver.
 
+    This fixture checks if the driver was successfully created and skips
+    tests if not.
+    """
+    if driver is None:
+        pytest.skip('WebDriver could not be initialized')
+    return cast(WebDriver, driver)
 
-def pytest_runtest_setup(item):
+def pytest_runtest_setup(item: Item) -> None:
     """Skip selenium tests if the driver fixture isn't available."""
     if 'selenium' in item.keywords and not hasattr(pytest, 'browser_driver'):
         pytest.skip('Selenium tests skipped - webdriver not available')
