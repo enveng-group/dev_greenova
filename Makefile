@@ -26,7 +26,7 @@ venv:
 install:
 	@echo "Installing dependencies..."
 	$(PYTHON) -m pip install --upgrade pip
-	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINTS)
+	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINTS) --no-deps
 	@echo "Dependencies installed."
 
 #Freeze installed dependencies to requirements.txt
@@ -131,7 +131,7 @@ sync:
 
 #Update recurring inspection dates
 update-recurring-dates:
-	$(CD_CMD) python3 manage.py update-recurring-inspection-dates
+	$(CD_CMD) python3 manage.py update_recurring_inspection_dates
 
 #Normalize existing frequencies
 normalize-frequencies:
@@ -172,6 +172,9 @@ check-templates:
 # Combined command for formatting and linting
 format-lint: format-templates lint-templates
 
+#combine migrate migration sync import user commands
+Django-build: migrations migrate sync import user
+	@echo "Django environment is ready. Superuser creation starting now..."
 
 # Remove virtual environment and temporary files
 clean:
@@ -228,3 +231,4 @@ help:
 	@echo "  make setup			 - Install the package with setup.py"
 	@echo "  make pythonstartup	 - Run python start up script"
 	@echo "  make setuptools	 - Install setuptools"
+	@echo "  Django-build		 -Run all migration and setup commands (migrations, migrate, sync, import, user)"
