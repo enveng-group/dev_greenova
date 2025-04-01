@@ -31,7 +31,8 @@
         "Plex.vscode-protolint",
         "bradlc.vscode-tailwindcss",
         "pycqa.bandit-pycqa",
-        "mtxr.sqltools"
+        "mtxr.sqltools",
+        "ms-vscode.vscode-copilot-data-analysis"
       ],
       "settings": {
         "[django-html]": {
@@ -130,10 +131,7 @@
           ".venv": true
         },
         "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk",
-        "snyk.trustedFolders": [
-          "/workspaces/greenova/",
-          "/home/vscode/"
-        ],
+        "snyk.trustedFolders": ["/workspaces/greenova/", "/home/vscode/"],
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",
         "terminal.integrated.defaultProfile.linux": "fish",
         "terminal.integrated.env.linux": {
@@ -148,9 +146,6 @@
     }
   },
   "features": {
-    "ghcr.io/devcontainers-extra/features/bandit:2": {
-      "version": "latest"
-    },
     "ghcr.io/devcontainers-extra/features/direnv:1": {
       "version": "latest"
     },
@@ -193,9 +188,7 @@
       "version": "latest"
     }
   },
-  "forwardPorts": [
-    8000
-  ],
+  "forwardPorts": [8000],
   "image": "mcr.microsoft.com/devcontainers/python:3.9",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",

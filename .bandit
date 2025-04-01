@@ -11,11 +11,11 @@ bandit:
 
   # Tests to skip (comma-separated)
 
-  skips: ["B311", "B101"]
+  skips: ['B311', 'B101']
 
   # Test for possible hardcoded passwords
 
-  hardcoded_password_string: ["password", "passwd", "pwd", "secret"]
+  hardcoded_password_string: ['password', 'passwd', 'pwd', 'secret']
 
   # Severity level threshold (LOW, MEDIUM, HIGH)
 
@@ -51,4 +51,4 @@ bandit:
 
   # Exclude directories
 
-  exclude_dirs: ["tests", "migrations", "docs"]
+  exclude_dirs: ['tests', 'migrations', 'docs']

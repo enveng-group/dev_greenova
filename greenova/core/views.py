@@ -2,13 +2,12 @@
 import logging
 from typing import Any, Dict
 
-from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
-from django_htmx.http import HttpResponseClientRedirect, push_url, trigger_client_event
+from django_htmx.http import push_url
 
 logger = logging.getLogger(__name__)
 

@@ -1,0 +1,14 @@
+[Unit]
+Description=Greenova Django Application
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/greenova
+Environment=PATH=/home/ubuntu/greenova/.venv/bin
+ExecStart=/home/ubuntu/greenova/.venv/bin/python /home/ubuntu/greenova/greenova/manage.py runserver 0.0.0.0:80
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
