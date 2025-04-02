@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -e
-
+set -euo pipefail
+echo "=== Running post_start.sh ==="
 echo "Starting post_start process..."
   
 
@@ -10,7 +11,7 @@ echo "Starting post_start process..."
 clone(){
   VENV_PATH="/workspaces/greenova/.venv"
   VOLUME_PATH="/workspaces/greenova"
-  REPO_URL="https://github.com/enveng-group/dev_greenova.git"
+  REPO_URL="https://github.com/alexcao123456/dev_greenova.git"
 
   # if the volume is empty, clone from github
   if [ ! -d "$VOLUME_PATH/.git" ]; then
@@ -107,6 +108,15 @@ setup_venv() {
     rm -rf "/workspaces/greenova/.direnv"
   fi
 
+  #if the current venv is owned by root, remove it
+  #if [ -d "$VENV_PATH" ]; then
+  #  owner=$(stat -c "%U" "$VENV_PATH")
+  #  if [ "$owner" = "root" ]; then
+  #    echo " .venv is owned by root. Deleting to avoid permission issues..."
+  #    rm -rf "$VENV_PATH"
+  #  fi
+  #fi 
+
   # Create virtual environment if it doesn't exist
   if [ ! -d "$VENV_PATH" ]; then
     echo "Creating Python virtual environment..."
@@ -114,11 +124,26 @@ setup_venv() {
   fi
 
   # Activate virtual environment
-  #echo "Activating virtual environment..."
-  #source "$VENV_PATH/bin/activate"
+  echo "Activating virtual environment..."
+  source "$VENV_PATH/bin/activate"
+
+  # Check if pip is actually usable
+  if ! python -m pip --version >/dev/null 2>&1; then
+    echo " pip not found or broken, attempting to bootstrap with ensurepip..."
+    python -m ensurepip --upgrade
+  fi
+
+  # Now upgrade pip properly
+  if python -m pip --version >/dev/null 2>&1; then
+    echo " Upgrading pip..."
+    python -m pip install --upgrade pip setuptools wheel
+  else
+    echo " pip still broken after ensurepip. Aborting setup."
+    exit 1
+  fi
 
   # Upgrade pip
-  python -m pip install --upgrade pip
+  # python -m pip install --upgrade pip
 
   # Install requirements if present
   if [ -f "/workspaces/greenova/requirements.txt" ]; then
@@ -329,7 +354,7 @@ setup_fish_direnv() {
 }
 
 main() {
-  clone
+  #clone
 
   # install Python
   #echo "Installing up Python environment..."

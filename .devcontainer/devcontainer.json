@@ -177,6 +177,7 @@
       }
     }
   },
+  //  "initializeCommand": "echo 'Deleting .venv as root...' && rm -rf /workspaces/greenova/.venv || true && chown -R vscode:vscode /workspaces/greenova",
   "postCreateCommand": "bash /usr/local/scripts/post_start.sh",
   "postStartCommand": "bash /usr/local/scripts/run.sh",
   "forwardPorts": [
