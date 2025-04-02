@@ -49,6 +49,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         self.request = request
 
     def get_template_names(self):
+        """Return the template name based on request type."""
         if self.request.htmx:
             return ['dashboard/partials/dashboard_content.html']
         return [self.template_name]
@@ -68,19 +69,11 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
 
             # Also trigger project selection if project_id is in the request
             project_id = request.GET.get('project_id')
-            if project_id:
-                trigger_client_event(response, 'projectSelected', {'projectId': project_id})
-
-            # If the dashboard data is stale, force a refresh
-            if self._is_data_stale():
-                return HttpResponseClientRefresh()
+            if project_id and project_id != '0':
+                logger.debug(f'Triggering projectSelected event with ID: {project_id}')
+                trigger_client_event(response, 'projectSelected', {'id': project_id})
 
         return response
-
-    def _is_data_stale(self) -> bool:
-        """Check if dashboard data is stale and needs refresh."""
-        # Implement your staleness check logic here
-        return False
 
     def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """Get the context data for template rendering."""
@@ -89,51 +82,33 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         try:
             user = cast(AbstractUser, self.request.user)
 
-            # Use prefetch_related for ManyToMany relationships
-            user_projects = Project.objects.filter(
-                memberships__user=user
-            ).prefetch_related('memberships', 'obligations').distinct()
+            # Get projects for the current user with prefetch_related
+            projects = self.get_projects().prefetch_related('memberships')
 
-            # Get the selected project ID from query parameters
+            # Build user_roles dictionary
+            user_roles = {}
+            for project in projects:
+                user_roles[str(project.pk)] = project.get_user_role(user)
+
+            # Get selected project_id from query params
             selected_project_id = self.request.GET.get('project_id')
 
-            dashboard_context: DashboardContext = {
-                'projects': user_projects,
-                'selected_project_id': selected_project_id,  # Add this to context explicitly
+            context.update({
+                'projects': projects,
+                'selected_project_id': selected_project_id,
                 'system_status': SYSTEM_STATUS,
                 'app_version': APP_VERSION,
-                'last_updated': datetime.combine(LAST_UPDATED, datetime.min.time()),
+                'last_updated': LAST_UPDATED,
+                'user': user,
                 'debug': settings.DEBUG,
                 'error': None,
-                'user': user,
-                'user_roles': {
-                    str(project.pk): project.get_user_role(user)
-                    for project in user_projects
-                }
-            }
+                'user_roles': user_roles,
+            })
 
-            context.update(dashboard_context)
-            logger.info(f'Found {user_projects.count()} projects for user {user}')
-
-            # Add analytics data for selected project
-            if selected_project_id:
-                try:
-                    project = user_projects.get(pk=selected_project_id)
-
-                    # Fix the query - use project directly instead of projects field
-                    obligations = Obligation.objects.filter(
-                        project=project  # Changed from projects=project
-                    ).select_related('project')
-
-                except Project.DoesNotExist:
-                    logger.error(f'Project not found: {selected_project_id}')
-                    context['error'] = 'Selected project not found'
-                except Exception as e:
-                    logger.error(f'Error processing analytics: {str(e)}')
-                    context['error'] = 'Error processing analytics data'
+            logger.debug(f'Dashboard context: selected_project_id={selected_project_id}')
 
         except Exception as e:
-            logger.error(f'Error loading dashboard: {str(e)}')
+            logger.exception(f'Error in dashboard context: {e}')
             context['error'] = str(e)
 
         return context
@@ -141,16 +116,8 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
     def get_projects(self) -> QuerySet[Project]:
         """Get projects for the current user."""
         try:
-            return Project.objects.prefetch_related(
-                'obligations',
-                'memberships'
-            ).all()
+            user = cast(AbstractUser, self.request.user)
+            return Project.objects.filter(members=user).order_by('-created_at')
         except Exception as e:
-            logger.error(f'Error fetching projects: {str(e)}')
+            logger.exception(f'Error fetching projects: {e}')
             return Project.objects.none()
-
-class DashboardProfileView(TemplateView):
-    """Profile view."""
-    template_name = 'dashboard/profile.html'
-    login_url = 'account_login'
-    redirect_field_name = 'next'

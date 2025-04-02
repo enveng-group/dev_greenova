@@ -74,6 +74,7 @@ Generate a comprehensive review with these sections:
 - Test coverage and quality
 - Security implications
 - Maintainability and scalability
+- Python line length adherence to 88 character limit
 
 ### Documentation Review Focus
 

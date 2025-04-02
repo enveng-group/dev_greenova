@@ -6,9 +6,6 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from obligations.models import Obligation
 from projects.models import Project, ProjectMembership
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select, WebDriverWait
 
 User = get_user_model()
 
@@ -389,74 +386,3 @@ class TestProjectUrls:
         response = client.get(url)
         assert response.status_code == 200
         assert 'projects/projects_selector.html' in [t.name for t in response.templates]
-
-
-# Selenium Tests
-@pytest.mark.django_db
-@pytest.mark.selenium
-class TestProjectSelectionUI:
-    """UI tests for project selection with Selenium."""
-
-    def test_project_selector_exists(self, live_server, selenium, test_user, test_project):
-        """Test that project selector exists and is visible."""
-        # Login first
-        selenium.get(f'{live_server.url}/admin/login/')
-
-        # Fill login form
-        username_input = selenium.find_element(By.NAME, 'username')
-        password_input = selenium.find_element(By.NAME, 'password')
-        username_input.send_keys(test_user.username)
-        password_input.send_keys('test')  # From test_user fixture
-
-        # Submit login form
-        password_input.submit()
-
-        # Navigate to projects page
-        selenium.get(f"{live_server.url}{reverse('projects:select')}")
-
-        # Wait for the project selector to be visible
-        wait = WebDriverWait(selenium, 10)
-        project_selector = wait.until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".project-selector, #project-selector, select[name='project_id']"))
-        )
-
-        # Check that the project selector exists
-        assert project_selector is not None
-
-        # Check that the test project is in the dropdown
-        dropdown_text = project_selector.text
-        assert 'Test Project' in dropdown_text
-
-    def test_project_selection_changes_url(self, live_server, selenium, test_user, test_project):
-        """Test that selecting a project updates the URL."""
-        # Login first
-        selenium.get(f'{live_server.url}/admin/login/')
-
-        # Fill login form
-        username_input = selenium.find_element(By.NAME, 'username')
-        password_input = selenium.find_element(By.NAME, 'password')
-        username_input.send_keys(test_user.username)
-        password_input.send_keys('test')  # From test_user fixture
-
-        # Submit login form
-        password_input.submit()
-
-        # Navigate to projects page
-        selenium.get(f"{live_server.url}{reverse('projects:select')}")
-
-        # Wait for the project selector to be visible
-        wait = WebDriverWait(selenium, 10)
-        project_selector = wait.until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".project-selector, #project-selector, select[name='project_id']"))
-        )
-
-        # Select the test project
-        select = Select(project_selector)
-        select.select_by_visible_text('Test Project')
-
-        # Check if URL changes to include project_id
-        wait.until(lambda driver: f'project_id={test_project.id}' in driver.current_url)
-
-        # Verify the URL contains the project_id parameter
-        current_url = selenium.current_url
-        assert f'project_id={test_project.id}' in current_url

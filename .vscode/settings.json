@@ -42,7 +42,7 @@
     }
   },
   "[dotenv]": {
-    "editor.defaultFormatter": "dotenv.dotenv-vscode",
+    "editor.defaultFormatter": "foxundermoon.shell-format",
     "editor.formatOnSave": true,
     "files.eol": "\n"
   },
@@ -177,7 +177,7 @@
     "${workspaceFolder}/.venv/bin/python3.9"
   ],
   "autopep8.path": [
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/autopep8"
+    "/workspaces/greenova/.venv/bin/autopep8"
   ],
   "bandit.importStrategy": "fromEnvironment",
   "bandit.interpreter": [
@@ -222,14 +222,13 @@
     "html"
   ],
   "djlint.profile": "django",
-  "djlint.pythonPath": "${workspaceFolder}/.venv/bin/python3.9",
   "djlint.showInstallError": true,
   "djlint.useGitignore": true,
   "djlint.useNewLinterOutputParser": true,
   "djlint.useVenv": true,
   "dotenv.cloakColor": "#000000",
   "dotenv.cloakIcon": "\u2588",
-  "dotenv.enableAutocloaking": true,
+  "dotenv.enableAutocloaking": false,
   "dotenv.enableSecretpeeking": true,
   "editor.bracketPairColorization.enabled": true,
   "editor.formatOnSave": true,
@@ -465,7 +464,7 @@
     "${workspaceFolder}/.venv/bin/python3.9"
   ],
   "isort.path": [
-    "/usr/local/py-utils/bin/isort"
+    "/workspaces/greenova/.venv/bin/isort"
   ],
   "javascript.autoClosingTags": true,
   "javascript.format.enable": true,
@@ -503,7 +502,7 @@
     "${workspaceFolder}/.venv/bin/python3.9"
   ],
   "mypy-type-checker.path": [
-    "/usr/local/py-utils/bin/mypy"
+    "/workspaces/greenova/.venv/bin/mypy"
   ],
   "mypy-type-checker.preferDaemon": true,
   "mypy-type-checker.reportingScope": "file",
@@ -531,7 +530,7 @@
     "${workspaceFolder}/.venv/bin/python3.9"
   ],
   "pylint.path": [
-    "/usr/local/py-utils/bin/pylint"
+    "/workspaces/greenova/.venv/bin/pylint"
   ],
   "python.REPL.enableREPLSmartSend": true,
   "python.REPL.sendToNativeREPL": true,
@@ -557,18 +556,23 @@
     "reportUntypedFunctionDecorator": "warning",
     "reportUnusedCoroutine": "warning"
   },
-  "python.analysis.enablePytestSupport": false,
+  "python.analysis.enablePytestSupport": true,
   "python.analysis.exclude": [
     "**/__pycache__",
     "**/.pytest_cache",
     "**/.mypy_cache",
     "**/.venv",
     "**/node_modules",
-    "**/.vscode-server"
+    "**/.vscode-server",
+    "**/.github",
+    "**/.git",
+    "**/.devcontainer",
+    "**/docs"
   ],
   "python.analysis.extraPaths": [
     "${workspaceFolder}/.venv/lib/python3.9/site-packages",
     "${workspaceFolder}/greenova",
+    "${workspaceFolder}/greenova/greenova",
     "${workspaceFolder}"
   ],
   "python.analysis.fixAll": [
@@ -614,23 +618,31 @@
     "${workspaceFolder}/.venv/lib/python3.9/site-packages/dateutil-stubs",
     "${workspaceFolder}/.venv/lib/python3.9/site-packages/stdlib_list-stubs",
     "${workspaceFolder}/.venv/lib/python3.9/site-packages/distutils-stubs",
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/yaml-stubs"
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/yaml-stubs",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/matplotlib-stubs",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/requests-stubs",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/pytest-stub",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/types-Pillow"
   ],
   "python.analysis.useLibraryCodeForTypes": true,
   "python.createEnvironment.contentButton": "show",
   "python.createEnvironment.trigger": "prompt",
   "python.defaultInterpreterPath": "python3.9",
   "python.envFile": "${workspaceFolder}/.env",
+  "python.experiments.optInto": [
+    "pythonTestAdapter"
+  ],
   "python.globalModuleInstallation": false,
-  "python.languageServer": "Pylance",
+  "python.languageServer": "Jedi",
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.terminal.activateEnvironment": true,
   "python.terminal.executeInFileDir": true,
   "python.terminal.focusAfterLaunch": true,
   "python.terminal.shellIntegration.enabled": true,
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "python.testing.autoTestDiscoverOnSavePattern": "test_*.py",
-  "python.testing.nosetestsEnabled": false,
+  "python.testing.autoTestDiscoverOnSavePattern": "**/test_*.py",
+  "python.testing.cwd": "${workspaceFolder}/greenova",
+  "python.testing.promptToConfigure": true,
   "python.testing.pytestArgs": [
     "-xvs",
     "--cov=greenova",

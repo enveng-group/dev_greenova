@@ -3,7 +3,6 @@ Custom pylint plugin to ensure good_names attribute is available for pylint-djan
 This prevents the AttributeError in pylint_django/plugin.py.
 """
 from pylint.checkers import BaseChecker
-from pylint.interfaces import IAstroidChecker
 
 
 def register(linter):
@@ -15,15 +14,12 @@ def register(linter):
 class GoodNamesInitializer(BaseChecker):
     """Pylint checker that ensures the good_names attribute exists."""
 
-    __implements__ = IAstroidChecker
-
     name = 'good-names-initializer'
     priority = -1  # Run early
 
     # Required by pylint's BaseChecker
     msgs = {}
     options = ()
-    reports = ()
 
     def __init__(self, linter):
         """Initialize the checker with the given linter."""

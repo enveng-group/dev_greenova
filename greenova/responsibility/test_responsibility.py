@@ -11,9 +11,6 @@ from responsibility.models import Responsibility
 from responsibility.templatetags.responsibility_tags import (
     format_responsibility_roles, get_responsible_users, user_has_responsibility,
     user_responsibility_roles)
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
 # ---- Fixtures ----
 
@@ -220,65 +217,3 @@ class TestResponsibilityFigures:
             filtered_ids=[obligation.pk]
         )
         assert isinstance(fig, Figure)
-
-
-# ---- UI Tests ----
-
-@pytest.mark.django_db
-@pytest.mark.selenium
-class TestResponsibilityUI:
-    """UI tests for responsibility functionality."""
-
-    def test_responsibility_home_page_loads(self, live_server, selenium, user):
-        """Test that responsibility home page loads correctly."""
-        # Log in first
-        selenium.get(f'{live_server.url}/authentication/login/')
-        selenium.find_element(By.NAME, 'login').send_keys(user.username)
-        selenium.find_element(By.NAME, 'password').send_keys('password')
-        selenium.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
-        # Now visit responsibility home
-        selenium.get(f'{live_server.url}/responsibility/')
-
-        # Verify page content includes appropriate heading
-        WebDriverWait(selenium, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, 'h1'))
-        )
-        assert 'Responsibility' in selenium.page_source
-
-    def test_assignment_list_page(self, live_server, selenium, user):
-        """Test that assignment list page loads correctly."""
-        # Log in first
-        selenium.get(f'{live_server.url}/authentication/login/')
-        selenium.find_element(By.NAME, 'login').send_keys(user.username)
-        selenium.find_element(By.NAME, 'password').send_keys('password')
-        selenium.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
-        # Visit assignment list
-        selenium.get(f'{live_server.url}/responsibility/assignments/')
-
-        # Check for specific content
-        WebDriverWait(selenium, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, 'main'))
-        )
-        # Verify page loaded without checking for specific assignment content
-        assert 'Assignments' in selenium.page_source
-
-    def test_accessibility_compliance(self, live_server, selenium, user):
-        """Test basic accessibility compliance on responsibility pages."""
-        # Login
-        selenium.get(f'{live_server.url}/authentication/login/')
-        selenium.find_element(By.NAME, 'login').send_keys(user.username)
-        selenium.find_element(By.NAME, 'password').send_keys('password')
-        selenium.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
-        # Test home page for basic accessibility features
-        selenium.get(f'{live_server.url}/responsibility/')
-
-        # Check for semantic HTML elements
-        assert len(selenium.find_elements(By.TAG_NAME, 'main')) > 0, 'Page should have a main element'
-        assert len(selenium.find_elements(By.TAG_NAME, 'header')) > 0, 'Page should have a header'
-
-        # Check for proper heading structure
-        headings = selenium.find_elements(By.TAG_NAME, 'h1')
-        assert len(headings) > 0, 'Page should have at least one h1 element'

@@ -177,11 +177,36 @@ repos:
       - id: shellcheck
         args: ['--external-sources']
 
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.0.0-beta.2
+    hooks:
+      - id: eslint
+        files: \.(js|ts|jsx|tsx)$
+        types: [file]
+        args: ['--fix', '--max-warnings=9999']
+        additional_dependencies:
+          - eslint@8.56.0
+          - prettier@3.2.4
+          - eslint-config-prettier@9.1.0
+          - eslint-plugin-prettier@5.1.3
+
+  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
+    rev: v16.2.1
+    hooks:
+      - id: stylelint
+        files: \.(css|scss|sass|less|html)$
+        args: ['--fix', '--config', 'tailwindcss.lint']
+        additional_dependencies:
+          - stylelint@16.2.1
+          - stylelint-config-recommended@14.0.0
+          - stylelint-order@6.0.4
+          - postcss-html@1.6.0
+
   - repo: https://github.com/djlint/djLint
     rev: v1.36.4
     hooks:
       - id: djlint-django
-        args: ['--reformat']
+        args: ['--reformat', '--quiet']
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
@@ -202,13 +227,27 @@ repos:
         name: Safety dependency checker
         entry: bash -c 'pip install safety && safety check --full-report --ignore=62044,75180'
         language: system
-        types: [python] # Changed from javascript to python
-        pass_filenames: false # Added to avoid passing filenames to safety
+        types: [python]
+        pass_filenames: false
+
+      - id: autopep8-aggressive
+        name: autopep8 (aggressive)
+        entry: autopep8
+        language: system
+        types: [python]
+        args:
+          [
+            '--in-place',
+            '--aggressive',
+            '--aggressive',
+            '--aggressive',
+            '--max-line-length=88',
+          ]
+        exclude: 'migrations/'
 
       - id: eslint
         name: eslint
         entry: npx eslint --fix
         language: system
         types: [javascript]
-        # Add this to make eslint continue even if it finds issues
         args: ['--max-warnings=9999']

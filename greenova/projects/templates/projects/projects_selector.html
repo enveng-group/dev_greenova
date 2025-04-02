@@ -8,7 +8,7 @@
     <!-- Replace QuerySet with JSON-serializable structure -->
     {% endcomment %}
     {% with project_list=projects|map:"to_dict"|to_list %}
-      {% hs_dump project_list 'projectsData' show=True %}
+      {% hs_dump project_list 'projectsData' %}
     {% endwith %}
     <div class="selector-container"
          _="on projectSelected(id) set #project-selector.value to id trigger change on #project-selector">
@@ -19,11 +19,11 @@
                   name="project_id"
                   class="form-select"
                   hx-trigger="change"
-                  _="on change set projectId to my.value if projectId != '' -- Update related containers if they exist if document.querySelector('#mechanism-data-container') trigger change on #mechanism-data-container end if document.querySelector('#overdue-container') trigger change on #overdue-container end -- Update URL to maintain state without reloading page if history call history.replaceState(null, '', `?project_id=${projectId}`) end end">
+                  _="on change set projectId to my.value if projectId != '' -- Update URL to maintain state without reloading page call history.replaceState(null, '', `?project_id=${projectId}`) -- Trigger both events for better compatibility trigger projectSelected(id:projectId) on body end">
             <option value="0">Select a project</option>
             {% for project in projects %}
               <option value="{{ project.id }}"
-                      {% if project.id|stringformat:"s" == selected_project_id|default:request.GET.project_id|default:"" %}selected{% endif %}>
+                      {% if project.id|stringformat:"s" == selected_project_id|default:request.GET.project_id|default:"" %} selected {% endif %}>
                 {{ project.name }}
               </option>
             {% endfor %}

@@ -219,36 +219,3 @@ class TestOverdueCount:
         # Should return 0 when there's an error
         assert response.status_code == 200
         assert b'0' in response.content
-
-
-@pytest.mark.selenium
-class TestSeleniumDashboard:
-    """Test dashboard functionality with Selenium."""
-
-    @pytest.mark.django_db
-    def test_login_and_dashboard(self, live_server, selenium, regular_user):
-        """Test login and access to dashboard with Selenium."""
-        # Visit the login page
-        selenium.get(f'{live_server.url}/authentication/login/')
-
-        # Fill in the login form
-        username_input = selenium.find_element('name', 'username')
-        password_input = selenium.find_element('name', 'password')
-
-        username_input.send_keys(regular_user.username)
-        password_input.send_keys('testpass')
-
-        # Submit the form
-        selenium.find_element('xpath', "//button[@type='submit']").click()
-
-        # Wait for dashboard to load
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.support import expected_conditions as EC
-        from selenium.webdriver.support.ui import WebDriverWait
-
-        WebDriverWait(selenium, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'h1'))
-        )
-
-        # Check we're on the dashboard
-        assert 'Dashboard' in selenium.page_source

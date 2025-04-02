@@ -4,8 +4,10 @@ import logging
 import os
 import subprocess
 import sys
+from pathlib import Path
 from typing import Generator, Optional, TextIO, cast
 
+import django
 import pytest
 from _pytest.config import Config
 from _pytest.fixtures import FixtureRequest
@@ -18,6 +20,20 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
+
+# Add the project root directory to Python path
+root_dir = Path(__file__).parent
+sys.path.insert(0, str(root_dir))
+
+# Add the Django app directory to Python path
+project_dir = os.path.join(root_dir, 'greenova')
+sys.path.insert(0, str(project_dir))
+
+# Configure Django settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'greenova.settings')
+
+# Import Django after setting the environment variable
+django.setup()
 
 # Get the User model in a type-safe way
 User = get_user_model()

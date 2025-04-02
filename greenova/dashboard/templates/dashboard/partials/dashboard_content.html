@@ -17,15 +17,18 @@
   {% hs_dump user_roles 'userRoles' scope='element' %}
 {% endif %}
 <!-- Data Container -->
-<div class="project-data-container"
-     hx-ext="class-tools"
-     classes="add fade-in:0.5s"
-     _="on projectChanged(projectId) add .loading to me fetch `/obligations/summary/?project_id=${projectId}` as response put response into #obligations-container remove .loading from me">
-  <div data-loading="block" style="text-align: center; padding: 2rem;">
-    <span class="loading-spinner"></span>
-    <p>Loading project data...</p>
+<div id="data-containers" hx-ext="class-tools">
+  <div id="mechanism-data-container"
+       hx-get="{% url 'mechanisms:mechanism_charts' %}"
+       hx-target="#mechanism-data-container"
+       hx-swap="innerHTML"
+       hx-trigger="load, change, projectSelected from:body"
+       hx-include="#project-selector">
+    <div class="loading-indicator">
+      <span class="loading-spinner"></span>
+      <p>Loading charts...</p>
+    </div>
   </div>
-  <div id="obligations-container"></div>
 </div>
 <!-- Overdue Card -->
 <div class="stat-card overdue"

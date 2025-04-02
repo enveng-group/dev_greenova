@@ -2,12 +2,12 @@
 persistent=yes
 suggestion-mode=yes
 unsafe-load-any-extension=no
-load-plugins=tools.pylint.fix_good_names,pylint_django,tools.pylint.gevent_checker
+load-plugins=tools.pylint.fix_good_names,pylint_django
 ignore=migrations,venv,.venv
 django-settings-module=greenova.greenova.settings
 
-# Add Django to Python path
-init-hook="import sys, os; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath('${workspaceFolder}'))))"
+# Add project root to Python path
+init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova')"
 
 [FORMAT]
 max-line-length=88

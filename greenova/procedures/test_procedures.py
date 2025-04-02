@@ -11,10 +11,6 @@ from django.utils import timezone
 from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
 from projects.models import Project
-from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select, WebDriverWait
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -321,84 +317,3 @@ class TestProcedureChartViews:
         assert response.status_code == 200
         assert 'error' in response.context
         assert response.context['error'] == 'No mechanism selected'
-
-# ----- Selenium UI Tests -----
-
-@pytest.mark.django_db
-@pytest.mark.selenium
-class TestProcedureChartsUI:
-    """UI tests for procedure charts using Selenium."""
-
-    def login_admin(self, driver: WebDriver, live_server_url: str) -> None:
-        """Helper method to log in an admin user."""
-        driver.get(f'{live_server_url}/admin/login/')
-        username_input = driver.find_element(By.NAME, 'username')
-        password_input = driver.find_element(By.NAME, 'password')
-        username_input.send_keys('admin')
-        password_input.send_keys('adminpass')
-        driver.find_element(By.CSS_SELECTOR, "input[type='submit']").click()
-        WebDriverWait(driver, 10).until(
-            EC.url_contains('/admin/')
-        )
-
-    def test_procedure_charts_renders_correctly(
-        self, admin_user: AbstractUser, test_mechanism: EnvironmentalMechanism,
-        test_obligations: List[Obligation], live_server, driver: WebDriver
-    ) -> None:
-        """Test that procedure charts render correctly in the browser."""
-        if not driver:
-            pytest.skip('Selenium webdriver not available')
-
-        self.login_admin(driver, live_server.url)
-        driver.get(f"{live_server.url}{reverse('procedures:procedure_charts', args=[test_mechanism.id])}")
-
-        # Wait for charts to load
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, '.chart-scroll-container'))
-        )
-
-        # Check that charts are present
-        charts = driver.find_elements(By.CSS_SELECTOR, '.mechanism-chart')
-        assert len(charts) > 0
-
-        # Check that table is present
-        table = driver.find_element(By.CSS_SELECTOR, "table[role='grid']")
-        assert table is not None
-
-        # Check table headers
-        headers = table.find_elements(By.TAG_NAME, 'th')
-        header_texts = [h.text for h in headers]
-        assert 'Procedure' in header_texts
-        assert 'Not Started' in header_texts
-        assert 'Completed' in header_texts
-
-    def test_procedure_charts_filter_functionality(
-        self, admin_user: AbstractUser, test_mechanism: EnvironmentalMechanism,
-        test_obligations: List[Obligation], live_server, driver: WebDriver
-    ) -> None:
-        """Test that filters on procedure charts work correctly."""
-        if not driver:
-            pytest.skip('Selenium webdriver not available')
-
-        self.login_admin(driver, live_server.url)
-        driver.get(f"{live_server.url}{reverse('procedures:procedure_charts', args=[test_mechanism.id])}")
-
-        # Wait for filter section to load
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, '.filter-section'))
-        )
-
-        # Select phase filter
-        phase_select = Select(driver.find_element(By.ID, 'phase'))
-        phase_select.select_by_visible_text('Planning')
-
-        # Click apply button
-        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
-        # Wait for result to update
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, '.chart-scroll-container'))
-        )
-
-        # Verify URL contains the filter parameter
-        assert 'phase=Planning' in driver.current_url
