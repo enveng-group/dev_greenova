@@ -4,7 +4,7 @@ FROM python:3.9.21-alpine
 # install system dependencies for pyenv, nvm and compiling python and node
 RUN apk add --no-cache python3 py3-pip python3-dev \
     bash curl fish make shellcheck\
-    gcc musl-dev linux-headers
+    gcc musl-dev linux-headers git direnv
 
 # install node
 RUN curl -fsSL https://unofficial-builds.nodejs.org/download/release/v18.20.7/node-v18.20.7-linux-x64-musl.tar.gz \
