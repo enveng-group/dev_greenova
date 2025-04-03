@@ -5,7 +5,8 @@
 
 /* Design/colour variables - needed for everything else */
 @import url('defines/design.css');
-@import url('defines/pico-compat.css') @import url('defines/colours.css');
+@import url('defines/pico-compat.css');
+@import url('defines/colours.css');
 
 /* Theme-specific colors - applied after variables but before components */
 @import url('themes/light.css');

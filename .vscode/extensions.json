@@ -32,6 +32,7 @@
     "pycqa.bandit-pycqa",
     "mtxr.sqltools",
     "bmalehorn.vscode-fish",
-    "willumz.generic-pseudocode"
+    "willumz.generic-pseudocode",
+    "stylelint.vscode-stylelint"
   ]
 }
