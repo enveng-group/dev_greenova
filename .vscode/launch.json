@@ -72,7 +72,7 @@
     {
       "args": [
         "import_obligations",
-        "clean_output_with_nulls.csv"
+        "dummy_data.csv"
       ],
       "cwd": "${workspaceFolder}/greenova",
       "django": true,

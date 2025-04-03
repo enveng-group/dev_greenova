@@ -402,12 +402,6 @@
   "github.copilot.chat.useProjectTemplates": true,
   "github.copilot.editor.enableAutoCompletions": true,
   "github.copilot.editor.enableCodeActions": true,
-  "github.copilot.enable": {
-    "*": true,
-    "markdown": true,
-    "plaintext": true,
-    "scminput": false
-  },
   "github.copilot.nextEditSuggestions.enabled": true,
   "github.copilot.renameSuggestions.triggerAutomatically": true,
   "github.gitAuthentication": true,

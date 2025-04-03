@@ -3,7 +3,6 @@
 persistent=yes
 suggestion-mode=yes
 unsafe-load-any-extension=no
-load-plugins=tools.pylint.fix_good_names,tools.pylint.gevent_checker
 ignore=migrations,venv,.venv
 
 [FORMAT]
