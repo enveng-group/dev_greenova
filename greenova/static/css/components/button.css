@@ -5,10 +5,13 @@ button,
 [type='submit'],
 [type='reset'],
 [role='button'],
+nav li [role=button],
+nav li [type=button],
 .btn-primary,
 .btn-secondary,
 .btn-danger,
 .action-btn,
+.btn-fold,
 .quick-filter-btn {
   /* Set default style attributes. */
   font-size: var(--greenova-button-size);
@@ -38,6 +41,14 @@ button,
     color: var(--greenova-text-dark);
   }
 }
+
+/* This is stating that if the header has an element named .btn-fold,
+   we want to make sure all the elements are line iso the button can be on the right. */
+   header:has(.btn-fold) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
 /* Font on */
 button#chat-toggle>span {
