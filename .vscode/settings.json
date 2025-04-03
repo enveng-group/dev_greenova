@@ -222,7 +222,7 @@
     "html"
   ],
   "djlint.profile": "django",
-  "djlint.showInstallError": true,
+  "djlint.showInstallError": false,
   "djlint.useGitignore": true,
   "djlint.useNewLinterOutputParser": true,
   "djlint.useVenv": true,

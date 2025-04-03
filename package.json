@@ -6,7 +6,8 @@
     "htmx-ext-loading-states": "2.0.1",
     "htmx-ext-path-deps": "2.0.1",
     "htmx.org": "1.9.12",
-    "hyperscript.org": "0.9.14"
+    "hyperscript.org": "0.9.14",
+    "tailwindcss": "4.1.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.0",

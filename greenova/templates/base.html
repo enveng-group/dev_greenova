@@ -10,9 +10,8 @@
   - Hyperscript for client-side interactivity
   - WCAG 2.1 AA compliance
 -->
-{% load static %}
 {% load django_htmx %}
-{% load tailwind_tags %}
+{% load static tailwind_tags %}
 {% load user_tags %}
 {% load core_tags %}
 <!DOCTYPE html>
@@ -36,12 +35,6 @@
     <!-- Favicon -->
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
     <!-- Critical CSS -->
-    <link rel="preload"
-          href="{% static 'css/critical-styles.css' %}"
-          as="style" />
-    <!-- CSS files -->
-    <link rel="stylesheet" href="{% static 'css/critical-styles.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     {% tailwind_css %}
     {% block extra_head %}
     {% endblock extra_head %}

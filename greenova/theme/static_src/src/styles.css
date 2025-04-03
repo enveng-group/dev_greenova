@@ -6,12 +6,49 @@
  * Tailwind is only used for specialized UI components when PicoCSS cannot
  * handle the requirements.
  */
-
 /* Only include Tailwind base for reset normalization that doesn't conflict with PicoCSS */
 @tailwind base;
 
 /* Only include components absolutely necessary - PicoCSS handles most UI components */
 @tailwind components;
+
+@layer components {
+  /* Base styles */
+  @import './base.css';
+
+  /* Design variables */
+  @import './defines/design.css';
+  @import './defines/pico-compat.css';
+  @import './defines/colours.css';
+
+  /* Theme-specific colors */
+  @import './themes/light.css';
+  @import './themes/dark.css';
+
+  /* Core structural components */
+  @import './components/navigation.css';
+  @import './components/breadcrumbs.css';
+  @import './components/button.css';
+  @import './components/card.css';
+
+  /* Import PicoCSS */
+  @import './vendor/pico-classless.min.css';
+
+  /* Form and interactive elements */
+  @import './components/form.css';
+  @import './components/filter.css';
+  @import './components/pagination.css';
+
+  /* Content-specific components */
+  @import './components/list.css';
+  @import './components/charts.css';
+  @import './components/chat.css';
+  @import './components/obligations.css';
+
+  /* Module-specific styles */
+  @import './components/user-profile.css';
+  @import './components/company.css';
+}
 
 /* Utilities are the main benefit of Tailwind in our architecture */
 @tailwind utilities;

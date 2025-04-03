@@ -37,7 +37,6 @@ body {
 
 /* Layout */
 main,
-#main-content,
 [role='main'] {
   max-width: calc(100% - 2 * var(--greenova-main-spacing));
   margin: 0 var(--greenova-main-spacing);
