@@ -178,7 +178,7 @@ repos:
         args: ['--external-sources']
 
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.0.0-beta.2
+    rev: v9.23.0
     hooks:
       - id: eslint
         files: \.(js|ts|jsx|tsx)$
@@ -191,15 +191,16 @@ repos:
           - eslint-plugin-prettier@5.1.3
 
   - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-    rev: v16.2.1
+    rev: v16.17.0
     hooks:
       - id: stylelint
         files: \.(css|scss|sass|less|html)$
-        args: ['--fix', '--config', 'tailwindcss.lint']
+        args: ['--fix', '--config', 'stylelint.config.js']
         additional_dependencies:
-          - stylelint@16.2.1
-          - stylelint-config-recommended@14.0.0
-          - stylelint-order@6.0.4
+          - stylelint@16.17.0
+          - stylelint-config-recommended@15.0.0
+          - stylelint-config-standard@37.0.0
+          - stylelint-config-tailwindcss@1.0.0
           - postcss-html@1.6.0
 
   - repo: https://github.com/djlint/djLint

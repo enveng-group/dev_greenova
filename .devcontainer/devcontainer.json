@@ -34,7 +34,8 @@
         "mtxr.sqltools",
         "ms-vscode.vscode-copilot-data-analysis",
         "bmalehorn.vscode-fish",
-        "willumz.generic-pseudocode"
+        "willumz.generic-pseudocode",
+        "stylelint.vscode-stylelint"
       ],
       "settings": {
         "[django-html]": {

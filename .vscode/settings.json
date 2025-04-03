@@ -200,7 +200,7 @@
   "css.lint.float": "error",
   "css.lint.hexColorLength": "error",
   "css.lint.idSelector": "error",
-  "css.validate": true,
+  "css.validate": false,
   "debug.allowBreakpointsEverywhere": true,
   "debug.autoExpandLazyVariables": "auto",
   "debug.console.fontSize": 14,
@@ -476,6 +476,7 @@
   "jupyter.interactiveWindow.textEditor.executeSelection": true,
   "jupyter.jupyterLaunchTimeout": 60000,
   "jupyter.themeMatplotlibPlots": true,
+  "less.validate": false,
   "makefile.configurations": [
     {
       "name": "default",
@@ -647,6 +648,7 @@
   "python.testing.pytestEnabled": true,
   "python.testing.pytestPath": "pytest",
   "python.testing.unittestEnabled": false,
+  "scss.validate": false,
   "shellcheck.disableVersionCheck": true,
   "shellcheck.enable": true,
   "shellcheck.enableQuickFix": true,
@@ -682,6 +684,15 @@
     }
   ],
   "sqltools.useNodeRuntime": true,
+  "stylelint.configFile": "/workspaces/greenova/stylelint.config.js",
+  "stylelint.enable": true,
+  "stylelint.packageManager": "npm",
+  "stylelint.snippet": [
+    "css"
+  ],
+  "stylelint.validate": [
+    "css"
+  ],
   "tailwindCSS.codeActions": true,
   "tailwindCSS.codeLens": true,
   "tailwindCSS.includeLanguages": {
