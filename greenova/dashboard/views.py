@@ -103,6 +103,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                 'debug': settings.DEBUG,
                 'error': None,
                 'user_roles': user_roles,
+                'show_feedback_link': True,  # Add this to enable the feedback link
             })
 
             logger.debug(f'Dashboard context: selected_project_id={selected_project_id}')

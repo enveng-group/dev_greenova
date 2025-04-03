@@ -2,7 +2,7 @@
 persistent=yes
 suggestion-mode=yes
 unsafe-load-any-extension=no
-load-plugins=tools.pylint.fix_good_names,pylint_django
+load-plugins=tools.pylint.fix_good_names,pylint_django,tools.pylint.gevent_checker
 ignore=migrations,venv,.venv
 django-settings-module=greenova.greenova.settings
 
@@ -21,4 +21,4 @@ ignore-docstrings=yes
 ignore-imports=yes
 
 [BASIC]
-good_names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
+good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta

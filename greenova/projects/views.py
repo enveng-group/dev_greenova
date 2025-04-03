@@ -14,6 +14,7 @@ from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
 from obligations.models import Obligation
 
 from .models import Project
+from django.http import JsonResponse
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -65,8 +66,22 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             logger.warning(f'Project {project_id} not found during permission check')
             return False
 
+<<<<<<< Updated upstream
 def project_obligations(request: HttpRequest, project_id: str) -> JsonResponse:
     """Retrieve obligations associated with a specific project."""
+=======
+def project_obligations(request, project_id):
+    def project_obligations(request: HttpRequest, project_id: str) -> JsonResponse:
+        """ Retrieve obligations associated with a specific project. """
+        project = get_object_or_404(Project, id=project_id)
+        obligations = Obligation.objects.filter(project=project)
+
+        # Serialize obligations
+        obligations_data = [{'id': o.id, 'obligation_number': o.obligation_number} for o in obligations]
+
+        return JsonResponse({'obligations': obligations_data})
+    """ Retrieve obligations associated with a specific project. """
+>>>>>>> Stashed changes
     project = get_object_or_404(Project, id=project_id)
     obligations = Obligation.objects.filter(project=project)
 

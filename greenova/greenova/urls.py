@@ -51,6 +51,8 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('company/', include('company.urls', namespace="company")),
     # Add responsibility URLs - create a new file for this
     path('responsibility/', include('responsibility.urls')),
+    # Add feedback URLs
+    path('feedback/', include('feedback.urls', namespace="feedback")),
     # Sentry error page to verify Sentry is working
     path('sentry-debug/', trigger_error),
 ] + debug_toolbar_urls()
@@ -58,3 +60,4 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]

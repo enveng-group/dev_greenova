@@ -83,6 +83,23 @@ x Configure eslint +DevOps @linting
 - [ ] Document HTML-first design principles
 - [ ] Create architecture diagrams for Docker setup
 
+### Migrate templates from DTL to Jinja2
+
+- [ ] Authentication
+- [ ] Chatbot
+- [ ] Company
+- [ ] Core
+- [ ] Dashboard
+- [x] Feedback
+- [ ] Landing
+- [ ] Mechanisms
+- [ ] Obligations
+- [ ] Procedures
+- [ ] Projects
+- [ ] Responsibility
+- [ ] Templates
+- [ ] Users
+
 ## References
 
 - [djlint](https://djlint.com/)

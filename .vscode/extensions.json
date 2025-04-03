@@ -33,6 +33,7 @@
     "mtxr.sqltools",
     "bmalehorn.vscode-fish",
     "willumz.generic-pseudocode",
-    "stylelint.vscode-stylelint"
+    "stylelint.vscode-stylelint",
+    "wholroyd.jinja"
   ]
 }

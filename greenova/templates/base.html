@@ -11,6 +11,7 @@
   - WCAG 2.1 AA compliance
 -->
 {% load static %}
+{% load hyperscript %}
 {% load django_htmx %}
 {% load tailwind_tags %}
 {% load user_tags %}
@@ -53,8 +54,7 @@
     <!-- Skip to main content link for accessibility -->
     <a class="skip-link" href="#main-content">Skip to content</a>
     <!-- {% include "core/components/error_boundary.html" %} -->
-    {% load hyperscript %}
-    <!-- Header with semantic nav -->
+        <!-- Header with semantic nav -->
     <header role="banner">
       {% block header %}
         <nav>

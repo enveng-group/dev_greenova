@@ -137,14 +137,16 @@ INSTALLED_APPS = [
     'django_htmx',
     'django_hyperscript',
     'django_matplotlib',
+    'django_pdb',
     'template_partials',
     'tailwind',
     'django_browser_reload',
     'debug_toolbar',
     'pb_model',
+    'silk',
 
     # Your local apps (ordered by dependency)
-    'authentication.apps.AuthenticationConfig',  # Custom authentication app
+    'authentication',
     'core.apps.CoreConfig',  # Core logic, should be initialized early
     'company',  # Base models (used in other apps, so placed first)
     'projects',  # Likely depends on `company`
@@ -157,6 +159,7 @@ INSTALLED_APPS = [
     'landing',  # Landing page or homepage
     'theme',  # UI Styling
     'chatbot',  # Standalone feature, placed last
+    'feedback',  # Add the feedback app here
 ]
 
 
@@ -175,16 +178,19 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 }
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.security.SecurityMiddleware',  # Should be first for security headers
+    'corsheaders.middleware.CorsMiddleware',  # CORS headers should be early
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # Should follow auth middleware
     'django.contrib.messages.middleware.MessageMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # Debug tools better after core middleware
     'django_browser_reload.middleware.BrowserReloadMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    'django_pdb.middleware.PdbMiddleware',
+    'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     # 'allauth.usersessions.middleware.UserSessionMiddleware',
 ]
 
@@ -238,6 +244,23 @@ TEMPLATES: List[TemplateConfig] = [
                 'django.contrib.messages.context_processors.messages',
             ],
             'debug': DEBUG,
+        },
+    },
+    # Add Jinja2 template engine
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates/jinja2'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'core.jinja2.environment',
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
         },
     },
 ]
@@ -321,7 +344,7 @@ CACHES = {
 }
 
 # Create logs directory if it doesn't exist
-LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+LOGS_DIR = os.path.join(str(BASE_DIR).replace(' ', '_').replace(':', '_'), 'logs')
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
 
@@ -341,30 +364,34 @@ LOGGING: LoggingConfig = {
     },
     'handlers': {
         'console': {
-            'class': 'logging.StreamHandler',  # Changed from class_name to class
-            'level': 'INFO',
+            'class': 'logging.StreamHandler',  # Fixed: class_name -> class
+            'level': 'WARNING',
             'formatter': 'simple',
         },
         'file': {
-            'class': 'logging.FileHandler',  # Changed from class_name to class
+            'class': 'logging.FileHandler',  # Fixed: class_name -> class
             'level': 'INFO',
-            'filename': str(BASE_DIR / 'logs' / 'django.log'),
+            'filename': os.path.join(LOGS_DIR, 'django.log'),
             'formatter': 'verbose',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
+            'handlers': ['file'] if not DEBUG else ['console', 'file'],
+            'level': 'WARNING',
             'propagate': True,
         },
         'projects': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
     },
-}  # type: ignore
+    'root': {  # Added root logger to catch all other logs
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+} # type: ignore
 
 # Media settings
 MEDIA_URL = '/media/'
@@ -415,3 +442,25 @@ sentry_sdk.init(
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
 )
+
+# Silk configuration
+
+# Create profiles directory for Silk profiler results if it doesn't exist
+PROFILES_DIR = os.path.join(BASE_DIR, 'greenova', 'profiles')
+if not os.path.exists(PROFILES_DIR):
+    os.makedirs(PROFILES_DIR)
+
+# Silk configuration
+SILKY_PYTHON_PROFILER = True
+SILKY_PYTHON_PROFILER_BINARY = False
+SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
+SILKY_AUTHENTICATION = True
+SILKY_AUTHORISATION = True
+SILKY_META = True
+
+# Garbage collection settings for small server environment
+SILKY_MAX_RECORDED_REQUESTS = 500  # Store maximum of 500 requests
+SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50  # Run GC check on 50% of requests
+SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Limit request body size to 1KB
+SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # Limit response body size to 1KB
+SILKY_INTERCEPT_PERCENT = 25  # Only profile 25% of requests

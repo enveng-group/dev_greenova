@@ -128,3 +128,11 @@ indent_size = 4
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
+
+# Jinja2 files
+[*.jinja]
+indent_size = 2
+max_line_length = 88
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true

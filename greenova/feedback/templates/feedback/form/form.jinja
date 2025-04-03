@@ -1,0 +1,37 @@
+<form method="post"
+      action="{{ url('feedback:submit_bug_report') }}"
+      hx-post="{{ url('feedback:submit_bug_report') }}"
+      hx-swap="outerHTML"
+      hx-target="closest form"
+      _="on submit toggle .htmx-request on me">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  {% if messages %}
+    <div class="messages">
+      <ul>
+        {% for message in messages %}<li>{{ message|safe }}</li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  <h3>1. Summary</h3>
+  <div class="form-section">
+    <div class="form-row">
+      <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+      {{ form.title }}
+      {% if form.title.errors %}<div class="error-message">{{ form.title.errors }}</div>{% endif %}
+      <div class="help-text">{{ form.title.help_text }}</div>
+    </div>
+    <!-- Remaining form fields similar to index.jinja -->
+    <!-- ... -->
+  </div>
+  <!-- Continue with all the form sections -->
+  <!-- ... -->
+  <div class="form-actions">
+    <button type="submit"
+            _="on click add .loading to me then remove .loading from me when htmx:afterRequest"
+            data-loading-class="submitting"
+            data-loading-disable>
+      <span>Submit Bug Report</span>
+      <span class="loading-indicator" aria-hidden="true"></span>
+    </button>
+  </div>
+</form>

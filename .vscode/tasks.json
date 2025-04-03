@@ -1,10 +1,7 @@
 {
   "tasks": [
     {
-      "args": [
-        "-c",
-        "autopep8 --in-place \"${file}\""
-      ],
+      "args": ["-c", "autopep8 --in-place \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Format with autopep8",
@@ -17,10 +14,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "isort \"${file}\""
-      ],
+      "args": ["-c", "isort \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Sort imports with isort",
@@ -33,10 +27,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "pylint \"${file}\""
-      ],
+      "args": ["-c", "pylint \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Lint with pylint",
@@ -45,10 +36,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -62,10 +50,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "mypy \"${file}\""
-      ],
+      "args": ["-c", "mypy \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Type check with mypy",
@@ -74,10 +59,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -102,10 +84,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -135,10 +114,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -151,10 +127,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "bandit -r \"${file}\""
-      ],
+      "args": ["-c", "bandit -r \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Security check with bandit",
@@ -194,10 +167,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -223,10 +193,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -285,10 +252,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -301,10 +265,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "djlint \"${file}\" --reformat"
-      ],
+      "args": ["-c", "djlint \"${file}\" --reformat"],
       "command": "/bin/sh",
       "group": "none",
       "label": "HTML: Format with djlint",
@@ -317,10 +278,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "djlint \"${file}\""
-      ],
+      "args": ["-c", "djlint \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "HTML: Lint with djlint",
@@ -329,10 +287,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "djlint",
         "pattern": {
           "column": 3,
@@ -346,10 +301,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JavaScript: Format with prettier",
@@ -362,10 +314,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx eslint \"${file}\""
-      ],
+      "args": ["-c", "npx eslint \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JavaScript: Lint with eslint",
@@ -373,16 +322,11 @@
         "panel": "shared",
         "reveal": "always"
       },
-      "problemMatcher": [
-        "$eslint-stylish"
-      ],
+      "problemMatcher": ["$eslint-stylish"],
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx eslint --fix \"${file}\""
-      ],
+      "args": ["-c", "npx eslint --fix \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JavaScript: Fix eslint issues",
@@ -391,9 +335,7 @@
         "panel": "shared",
         "reveal": "silent"
       },
-      "problemMatcher": [
-        "$eslint-stylish"
-      ],
+      "problemMatcher": ["$eslint-stylish"],
       "type": "shell"
     },
     {
@@ -411,10 +353,7 @@
       "problemMatcher": []
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "CSS: Format with prettier",
@@ -439,10 +378,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "stylelint",
         "pattern": {
           "column": 3,
@@ -472,10 +408,7 @@
       "type": "shell"
     },
     {
-      "dependsOn": [
-        "CSS: Format with prettier",
-        "CSS: Fix stylelint issues"
-      ],
+      "dependsOn": ["CSS: Format with prettier", "CSS: Fix stylelint issues"],
       "dependsOrder": "sequence",
       "group": "none",
       "label": "CSS: Fix all",
@@ -486,10 +419,7 @@
       "problemMatcher": []
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JSON: Format with prettier",
@@ -518,10 +448,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "TOML: Format with prettier",
@@ -534,10 +461,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Markdown: Format with prettier",
@@ -562,10 +486,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "markdownlint",
         "pattern": {
           "column": 3,
@@ -592,10 +513,7 @@
       "problemMatcher": []
     },
     {
-      "args": [
-        "-c",
-        "shellcheck \"${file}\""
-      ],
+      "args": ["-c", "shellcheck \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Shell: Check with shellcheck",
@@ -604,10 +522,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "shellcheck",
         "pattern": {
           "column": 3,
@@ -621,10 +536,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "${command:workbench.action.terminal.clear}"
-      ],
+      "args": ["-c", "${command:workbench.action.terminal.clear}"],
       "command": "/bin/sh",
       "group": {
         "isDefault": true,
@@ -632,10 +544,7 @@
       },
       "label": "Format current file",
       "linux": {
-        "args": [
-          "-c",
-          "clear"
-        ],
+        "args": ["-c", "clear"],
         "command": "/bin/sh"
       },
       "presentation": {
@@ -645,10 +554,7 @@
       "problemMatcher": [],
       "type": "shell",
       "windows": {
-        "args": [
-          "/c",
-          "cls"
-        ],
+        "args": ["/c", "cls"],
         "command": "cmd.exe"
       }
     },
@@ -715,7 +621,7 @@
     {
       "args": [
         "-c",
-        "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures"
+        "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures feedback"
       ],
       "command": "/bin/sh",
       "group": "none",
@@ -728,10 +634,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py migrate"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py migrate"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Apply migrations",
@@ -773,10 +676,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py sync_mechanisms"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py sync_mechanisms"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Sync mechanisms",
@@ -788,10 +688,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py createsuperuser"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py createsuperuser"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Create superuser",
@@ -803,10 +700,7 @@
       "type": "shell"
     },
     {
-      "dependsOn": [
-        "Django: Run Tailwind",
-        "Django: Run server"
-      ],
+      "dependsOn": ["Django: Run Tailwind", "Django: Run server"],
       "dependsOrder": "parallel",
       "group": "none",
       "label": "Django: Development environment",
@@ -818,10 +712,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py tailwind start"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py tailwind start"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Run Tailwind",
@@ -833,10 +724,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py runserver"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py runserver"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Run server",

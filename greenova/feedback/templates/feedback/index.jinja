@@ -1,0 +1,61 @@
+{% extends "feedback/layouts/base.jinja" %}
+{% block title %}
+  Greenova Bug Tracker
+{% endblock title %}
+{% block content %}
+  <section>
+    <h2>Currently Open Bug Reports</h2>
+    {% if bug_reports %}
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Severity</th>
+            <th>Reported</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in bug_reports %}
+            <tr>
+              <td>{{ report.title }}</td>
+              <td>{{ report.get_status_display() }}</td>
+              <td>{{ report.get_severity_display() }}</td>
+              <td>{{ report.created_at.strftime("%Y-%m-%d") }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>There are no open bug reports at this time.</p>
+    {% endif %}
+  </section>
+  <section>
+    <h2>Submit a New Bug Report</h2>
+    <div class="notice-box warning">
+      <strong>OFFICIAL BUG REPORTING CHANNEL</strong>
+      <p>
+        This form is the ONLY official method to submit bug reports or requests for improvement. Any issues reported through other channels will be ignored.
+      </p>
+      <p>All fields marked with an asterisk (*) are mandatory. Reports with insufficient information will be rejected.</p>
+    </div>
+    <form method="post"
+          action="{{ url('feedback:submit_bug_report') }}"
+          hx-post="{{ url('feedback:submit_bug_report') }}"
+          hx-swap="outerHTML"
+          hx-target="closest form"
+          _="on submit toggle .htmx-request on me">
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token() }}">
+      <!-- Form sections continue as before... -->
+      <div class="form-actions">
+        <button type="submit"
+                _="on click add .loading to me then remove .loading from me when htmx:afterRequest"
+                data-loading-class="submitting"
+                data-loading-disable>
+          <span>Submit Bug Report</span>
+          <span class="loading-indicator" aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+  </section>
+{% endblock content %}

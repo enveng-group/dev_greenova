@@ -14,7 +14,7 @@ aggressive = 3
 single_quotes = true
 
 [tool.djlint]
-profile = "django"
+profile = "jinja"
 indent = 2
 use_gitignore = true
 format_css = false
