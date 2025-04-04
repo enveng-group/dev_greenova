@@ -17,8 +17,17 @@ def fix_hyperscript_dump():
     # Get the virtual environment path
     venv_path = os.environ.get('VIRTUAL_ENV', '/workspaces/greenova/.venv')
 
-    # Build the path to the problematic file
-    file_path = Path(venv_path) / 'lib' / 'python3.9' / 'site-packages' / 'hyperscript_dump.py'
+    # Sanitize and validate the virtual environment path
+    allowed_base_path = Path('/workspaces/greenova/.venv').resolve()
+    try:
+        venv_path = Path(venv_path).resolve(strict=True)
+        if not venv_path.is_dir() or not str(venv_path).startswith(str(allowed_base_path)):
+            raise ValueError(f'Unsafe or invalid virtual environment path: {venv_path}')
+    except (ValueError, FileNotFoundError) as e:
+        logger.error(str(e))
+        return False
+
+    file_path = venv_path / 'lib' / 'python3.9' / 'site-packages' / 'hyperscript_dump.py'
 
     if not file_path.exists():
         logger.info(f'File not found: {file_path}')
@@ -27,6 +36,14 @@ def fix_hyperscript_dump():
     logger.info(f'Found hyperscript_dump.py at {file_path}')
 
     # Read the file
+    # Ensure the file path is within the expected directory
+    try:
+        with open(file_path, encoding='utf-8') as f:
+            pass  # Placeholder for actual file handling logic
+    except FileNotFoundError:
+        logger.error(f'Invalid or unsafe file path: {file_path}')
+        return False
+
     with open(file_path) as f:
         content = f.read()
 
@@ -52,9 +69,9 @@ def fix_hyperscript_dump():
                     r'import json\nfrom typing import Union',
                     content
                 )
-
-        # Replace the type annotation
-        content = re.sub(pattern, replacement, content)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            # Replace the type annotation
+            content = re.sub(pattern, replacement, content)
 
         # Write the fixed content back
         with open(file_path, 'w') as f:

@@ -1,25 +1,22 @@
-{% load dashboard_tags partials hyperscript project_tags %}
-<!-- Partial content for HTMX dashboard refreshes -->
+{# Partial content for HTMX dashboard refreshes #}
 <header hx-ext="class-tools" classes="add slide-in-from-top:0.3s">
   <hgroup>
-    <h1>Hi {{ request.user|display_name }}</h1>
+    <h1>Hi {{ request.user.get_full_name() or request.user.username }}</h1>
     <h2>
       Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
     </h2>
   </hgroup>
 </header>
-<!-- Project Selection -->
-{% include "projects/projects_selector.html" %}
+{# Project Selection #}
+{% include "projects/projects_selector.jinja" %}
 {% if projects %}
-  {% with project_list=projects|map:"to_dict"|to_list %}
-    {% hs_dump project_list 'availableProjects' scope='element' %}
-  {% endwith %}
-  {% hs_dump user_roles 'userRoles' scope='element' %}
+  {{ hyperscript(projects|map(attribute='to_dict') |list, 'availableProjects', scope='element') }}
+  {{ hyperscript(user_roles, 'userRoles', scope='element') }}
 {% endif %}
-<!-- Data Container -->
+{# Data Container #}
 <div id="data-containers" hx-ext="class-tools">
   <div id="mechanism-data-container"
-       hx-get="{% url 'mechanisms:mechanism_charts' %}"
+       hx-get="{{ url('mechanisms:mechanism_charts') }}"
        hx-target="#mechanism-data-container"
        hx-swap="innerHTML"
        hx-trigger="load, change, projectSelected from:body"
@@ -30,7 +27,7 @@
     </div>
   </div>
 </div>
-<!-- Overdue Card -->
+{# Overdue Card #}
 <div class="stat-card overdue"
      hx-ext="class-tools path-deps"
      path-deps="/obligations/"
@@ -38,16 +35,16 @@
      _="on highOverdueCount if event.detail.count > 5 add .alert-pulse to me wait 2s remove .alert-pulse from me end">
   <h3>Overdue Obligations</h3>
   <span class="count"
-        hx-get="{% url 'dashboard:overdue_count' %}"
+        hx-get="{{ url('dashboard:overdue_count') }}"
         hx-trigger="load every:60s, path-deps"
         hx-swap="innerHTML">
     <span data-loading>Loading...</span>
     <span class="loading-spinner" data-loading></span>
   </span>
 </div>
-<!-- Add feedback link -->
+{# Add feedback link #}
 <div class="feedback-link">
   <p>
-    <a href="{% url 'feedback:index' %}">Click here to submit feedback</a>
+    <a href="{{ url('feedback:index') }}">Click here to submit feedback</a>
   </p>
 </div>

@@ -34,6 +34,10 @@
     "bmalehorn.vscode-fish",
     "willumz.generic-pseudocode",
     "stylelint.vscode-stylelint",
-    "wholroyd.jinja"
+    "wholroyd.jinja",
+    "rarnoldmobile.todo-txt",
+    "mermaidchart.vscode-mermaid-chart",
+    "github.vscode-github-actions",
+    "psioniq.psi-header"
   ]
 }

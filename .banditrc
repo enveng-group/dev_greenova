@@ -1,0 +1,9 @@
+[bandit]
+exclude: /tests/,/env/,/venv/,/.git/
+skips: B101
+exclude_dirs: tests,migrations,docs
+
+[tool.bandit]
+exclude_dirs = ["tests", "migrations", "docs"]
+tests = ["B101"]
+skips = ["B101"]

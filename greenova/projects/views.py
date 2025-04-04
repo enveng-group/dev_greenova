@@ -66,10 +66,10 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             logger.warning(f'Project {project_id} not found during permission check')
             return False
 
-<<<<<<< Updated upstream
+<< << << < Updated upstream
 def project_obligations(request: HttpRequest, project_id: str) -> JsonResponse:
     """Retrieve obligations associated with a specific project."""
-=======
+== == == =
 def project_obligations(request, project_id):
     def project_obligations(request: HttpRequest, project_id: str) -> JsonResponse:
         """ Retrieve obligations associated with a specific project. """
@@ -81,14 +81,14 @@ def project_obligations(request, project_id):
 
         return JsonResponse({'obligations': obligations_data})
     """ Retrieve obligations associated with a specific project. """
->>>>>>> Stashed changes
-    project = get_object_or_404(Project, id=project_id)
-    obligations = Obligation.objects.filter(project=project)
+>>>>>> > Stashed changes
+project = get_object_or_404(Project, id=project_id)
+obligations = Obligation.objects.filter(project=project)
 
-    # Serialize obligations
-    obligations_data = [{'id': o.obligation_number, 'obligation_number': o.obligation_number} for o in obligations]
+# Serialize obligations
+obligations_data = [{'id': o.obligation_number, 'obligation_number': o.obligation_number} for o in obligations]
 
-    return JsonResponse({'obligations': obligations_data})
+return JsonResponse({'obligations': obligations_data})
 def get_user_role(project: Project, user: AbstractUser) -> str:
     """
     Get user's role in project.

@@ -66,6 +66,13 @@
     "editor.tabSize": 2,
     "editor.wordWrap": "on"
   },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 2
+  },
   "[javascript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
@@ -73,6 +80,13 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true,
     "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[jinja]": {
+    "editor.defaultFormatter": "monosans.djlint",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.suggest.insertMode": "replace",
     "editor.tabSize": 2
   },
   "[jinja]": {
@@ -174,8 +188,20 @@
     "--single-quotes"
   ],
   "autopep8.importStrategy": "fromEnvironment",
-  "autopep8.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "autopep8.path": ["/workspaces/greenova/.venv/bin/autopep8"],
+  "autopep8.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "autopep8.path": [
+    "/workspaces/greenova/.venv/bin/autopep8"
+  ],
+  "bandit.args": [
+    "--exclude",
+    ".git,__pycache__,.pytest_cache,.venv,node_modules,/tests,/env,*.pyc,**/test_*.py,**/*_test.py",
+    "--recursive",
+    "--ignore",
+    "B101"
+  ],
+  "bandit.enabled": true,
   "bandit.importStrategy": "fromEnvironment",
   "bandit.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
   "bandit.path": ["/workspaces/greenova/.venv/bin/bandit"],
@@ -210,7 +236,11 @@
   "djlint.formatAttributeTemplateTags": true,
   "djlint.formatCss": false,
   "djlint.formatJs": false,
-  "djlint.formatLanguages": ["django-html", "html", "jinja"],
+  "djlint.formatLanguages": [
+    "django-html",
+    "html",
+    "jinja"
+  ],
   "djlint.profile": "jinja",
   "djlint.showInstallError": true,
   "djlint.useGitignore": true,
@@ -309,6 +339,7 @@
   "git.terminalAuthentication": true,
   "git.terminalGitEditor": true,
   "git.useEditorAsCommitInput": true,
+  "github-actions.remote-name": "origin",
   "github.copilot.advanced": {
     "debug.enable": false,
     "inlineSuggestCount": 3,
@@ -456,7 +487,13 @@
   "markdown.validate.enabled": true,
   "markdownlint.configFile": "/workspaces/greenova/.markdownlint-cli2.jsonc",
   "markdownlint.run": "onType",
-  "mypy-type-checker.args": ["--configuration", "${workspaceFolder}/mypy.ini"],
+  "mermaid.vscode.dark": "dark",
+  "mermaidChart.aiModelFamily": "gpt-4o",
+  "mermaidChart.aiVendor": "copilot",
+  "mypy-type-checker.args": [
+    "--configuration",
+    "${workspaceFolder}/mypy.ini"
+  ],
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "mypy-type-checker.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
   "mypy-type-checker.path": ["/workspaces/greenova/.venv/bin/mypy"],
@@ -480,6 +517,164 @@
     "path": "/usr/local/bin/protoc"
   },
   "protolint.path": "/usr/local/bin/protolint",
+  "psi-header.changes-tracking": {
+    "enabled": true,
+    "exclude": [
+      ".env"
+    ],
+    "ignore": [
+      "**/__pycache__",
+      "**/.pytest_cache",
+      "**/.mypy_cache",
+      "**/.venv",
+      "**/node_modules",
+      "**/.vscode-server",
+      "**/.git"
+    ],
+    "include": [],
+    "isActive": true,
+    "modAuthor": "Modified By:",
+    "modDate": "Last Modified:",
+    "modDateFormat": "YYYY-MM-DD HH:mm:ss"
+  },
+  "psi-header.config": {
+    "author": "Adrian Gallo",
+    "authorEmail": "agallo@enveng-group.com.au",
+    "blankLinesAfter": 1,
+    "company": "Greenova",
+    "copyrightHolder": "Enveng Group Pty Ltd",
+    "forceToTop": true,
+    "license": "GNU Affero General Public License v3.0"
+  },
+  "psi-header.lang-config": [
+    {
+      "begin": "\"\"\"",
+      "end": "\"\"\"",
+      "language": "python",
+      "prefix": ""
+    },
+    {
+      "begin": "/**",
+      "end": " */",
+      "language": "javascript",
+      "prefix": " * "
+    },
+    {
+      "begin": "/**",
+      "end": " */",
+      "language": "css",
+      "prefix": " * "
+    },
+    {
+      "begin": "<!--",
+      "end": "-->",
+      "language": "django-html",
+      "prefix": " "
+    },
+    {
+      "begin": "{#",
+      "end": "#}",
+      "language": "jinja",
+      "prefix": " "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "dockerfile",
+      "prefix": "# "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "git-commit",
+      "prefix": "# "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "plaintext",
+      "prefix": "# "
+    },
+    {
+      "begin": "<!--",
+      "end": "-->",
+      "language": "markdown",
+      "prefix": " "
+    },
+    {
+      "begin": "<!--",
+      "end": "-->",
+      "language": "html",
+      "prefix": " "
+    },
+    {
+      "begin": "/**",
+      "end": " */",
+      "language": "json",
+      "prefix": " * "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "yaml",
+      "prefix": "# "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "toml",
+      "prefix": "# "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "shellscript",
+      "prefix": "# "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "gitignore",
+      "prefix": "# "
+    },
+    {
+      "begin": "#",
+      "end": "\n",
+      "language": "properties",
+      "prefix": "# "
+    },
+    {
+      "begin": "//",
+      "end": "\n",
+      "language": "proto3",
+      "prefix": "// "
+    }
+  ],
+  "psi-header.templates": [
+    {
+      "language": "*",
+      "template": [
+        "${filename}",
+        "",
+        "Part of the Greenova environmental management application",
+        "",
+        "Copyright (C) ${year} ${copyrightHolder}",
+        "",
+        "This program is free software: you can redistribute it and/or modify",
+        "it under the terms of the GNU Affero General Public License as",
+        "published by the Free Software Foundation, either version 3 of the",
+        "License, or (at your option) any later version.",
+        "",
+        "This program is distributed in the hope that it will be useful,",
+        "but WITHOUT ANY WARRANTY; without even the implied warranty of",
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+        "GNU Affero General Public License for more details.",
+        "",
+        "You should have received a copy of the GNU Affero General Public License",
+        "along with this program.  If not, see <https://www.gnu.org/licenses/>."
+      ]
+    }
+  ],
   "pylint.enabled": true,
   "pylint.importStrategy": "fromEnvironment",
   "pylint.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
@@ -625,7 +820,10 @@
   "snyk.features.infrastructureAsCode": true,
   "snyk.features.openSourceSecurity": true,
   "snyk.scanningMode": "auto",
-  "snyk.trustedFolders": ["./greenova", "/home/vscode/dotfiles"],
+  "snyk.trustedFolders": [
+    "/workspaces/greenova",
+    "/home/vscode/dotfiles"
+  ],
   "sqltools.connections": [
     {
       "database": "${workspaceFolder:greenova}/greenova/db.sqlite3",
@@ -644,7 +842,8 @@
   "tailwindCSS.codeActions": true,
   "tailwindCSS.codeLens": true,
   "tailwindCSS.includeLanguages": {
-    "django-html": "html"
+    "django-html": "html",
+    "jinja": "html"
   },
   "tailwindCSS.suggestions": true,
   "tailwindCSS.validate": true,

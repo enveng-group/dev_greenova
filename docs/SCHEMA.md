@@ -1,3 +1,9 @@
+# Schema for the OR(2) Worksheet
+
+Here is a schema for the table in the worksheet labeled OR(2):
+accountability_id INTEGER PRIMARY KEY,
+accountability_name TEXT
+);
 Here is a schema for the table in the worksheet labeled OR(2):
 
 1. **Columns**:
@@ -7,7 +13,8 @@ Here is a schema for the table in the worksheet labeled OR(2):
    - **Procedure**: Describes the procedure.
    - **Environmental_Aspect**: Indicates the environmental aspect.
    - **Obligation_Number**: Represents the obligation number.
-   - **Obligation**: Describes the obligation.
+   - **Status**: Indicates the current status
+     (e.g., Overdue, Completed, In Progress, Not Started).
    - **Accountability**: Indicates who is accountable.
    - **Responsibility**: Indicates who is responsible.
    - **ProjectPhase**: Specifies the project phase.
@@ -16,7 +23,8 @@ Here is a schema for the table in the worksheet labeled OR(2):
    - **Status**: Indicates the current status (e.g., Overdue, Completed, In Progress, Not Started).
    - **Supporting_Information**: Provides supporting information.
    - **General_Comments**: General comments about the obligation.
-   - **Compliance_Comments**: Comments related to compliance.
+   - **Recurring_Forcasted_Date**: Specifies the forecasted date for the
+     recurring obligation.
    - **NonConformance_Comments**: Comments related to non-conformance.
    - **Evidence**: Provides evidence.
    - **PersonEmail**: Email of the person responsible.
@@ -27,7 +35,8 @@ Here is a schema for the table in the worksheet labeled OR(2):
    - **Inspection**: Indicates if the obligation is tracked using inspections.
    - **Inspection_Frequency**: Specifies the frequency of inspections.
    - **Site_or_Desktop**: Indicates if the inspection is site-based or desktop-based.
-   - **New_Control_Action_Required**: Indicates if a new control or action is required.
+   - **Identify Primary Keys**: Ensure that each row in your table has a unique
+     identifier. The `Obligation_Number` serves as the primary key.
    - **Obligation_Type**: Specifies the type of obligation.
    - **Gap_Analysis**: Provides notes for gap analysis.
    - **Notes_for_Gap_Analysis**: Additional notes for gap analysis.

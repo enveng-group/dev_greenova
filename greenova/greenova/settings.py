@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import mimetypes
 import os
 import sys
+import warnings
 from pathlib import Path
 from shutil import which
-from typing import Dict, List, TypedDict, Union
+from typing import Any, Dict, List, TypedDict, Union
 
 import sentry_sdk
 from dotenv_vault import load_dotenv
@@ -26,20 +27,21 @@ class DatabaseConfig(TypedDict):
     ENGINE: str
     NAME: Union[str, Path]
 
-class TemplateOptions(TypedDict):
+class TemplateOptions(TypedDict, total=False):
     context_processors: List[str]
     debug: bool  # This was the missing required field
+    environment: str  # Add environment as an optional field with total=False
 
 class TemplateConfig(TypedDict):
     BACKEND: str
-    DIRS: List[Path]
+    DIRS: List[Union[Path, str]]  # Updated to accept both Path and str
     APP_DIRS: bool
     OPTIONS: TemplateOptions
 
-# Update the LoggingHandlerConfig TypedDict
+# Update the LoggingHandlerConfig TypedDict to better match Django's expectations
 class LoggingHandlerConfig(TypedDict, total=False):
     level: str
-    class_name: str  # Keep as class_name to avoid Python keyword conflict
+    class_: str  # Use class_ in typings to avoid Python keyword conflict
     filename: str
     formatter: str
 
@@ -49,6 +51,7 @@ class LoggingConfig(TypedDict):
     formatters: Dict[str, Dict[str, str]]
     handlers: Dict[str, LoggingHandlerConfig]
     loggers: Dict[str, Dict[str, Union[str, List[str], bool]]]
+    root: Dict[str, Any]  # Add root logger type
 
 # Add TypedDict for matplotlib figure defaults
 class MatplotlibFigDefaults(TypedDict):
@@ -82,12 +85,11 @@ def validate_settings() -> None:
     allowed_hosts = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
     if not allowed_hosts and DEBUG is False:
         raise ValueError('DJANGO_ALLOWED_HOSTS must be set in production (DEBUG=False)')
-
     # Check for insecure default SECRET_KEY
     if 'django-insecure' in os.environ.get('DJANGO_SECRET_KEY', ''):
-        import warnings
         warnings.warn(
-            'Using an insecure SECRET_KEY! Please set a secure SECRET_KEY in production.',
+            'Using an insecure SECRET_KEY! Please set a secure SECRET_KEY '
+            'in production.',
             UserWarning
         )
 
@@ -101,7 +103,11 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() in ('true', '1')
 
 # Update allowed hosts for production
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').replace('"', '').split(',') if host.strip()]
+ALLOWED_HOSTS = [host.strip()
+                 for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+                 .replace('"', '')
+                 .split(',') if host.strip()
+                 ]
 
 # Run validation
 validate_settings()
@@ -138,14 +144,17 @@ INSTALLED_APPS = [
     'django_hyperscript',
     'django_matplotlib',
     'django_pdb',
+    'django_pdb',
     'template_partials',
     'tailwind',
     'django_browser_reload',
     'debug_toolbar',
     'pb_model',
     'silk',
+    'silk',
 
     # Your local apps (ordered by dependency)
+    'authentication',
     'authentication',
     'core.apps.CoreConfig',  # Core logic, should be initialized early
     'company',  # Base models (used in other apps, so placed first)
@@ -159,6 +168,7 @@ INSTALLED_APPS = [
     'landing',  # Landing page or homepage
     'theme',  # UI Styling
     'chatbot',  # Standalone feature, placed last
+    'feedback',  # Add the feedback app here
     'feedback',  # Add the feedback app here
 ]
 
@@ -178,17 +188,20 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 }
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',  # Should be first for security headers
+    'django.middleware.security.SecurityMiddleware',  # First for security headers
     'corsheaders.middleware.CorsMiddleware',  # CORS headers should be early
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',  # Keep CSRF for form handling
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'allauth.account.middleware.AccountMiddleware',  # Should follow auth middleware
+    'allauth.account.middleware.AccountMiddleware',  # Should follow auth middleware
     'django.contrib.messages.middleware.MessageMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',  # Debug tools better after core middleware
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # Debug after core middleware
     'django_browser_reload.middleware.BrowserReloadMiddleware',
+    'django_pdb.middleware.PdbMiddleware',
+    'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     'django_pdb.middleware.PdbMiddleware',
     'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     # 'allauth.usersessions.middleware.UserSessionMiddleware',
@@ -250,7 +263,7 @@ TEMPLATES: List[TemplateConfig] = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates/jinja2'),
+            Path(os.path.join(BASE_DIR, 'templates/jinja2')),  # Convert to Path
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -261,6 +274,7 @@ TEMPLATES: List[TemplateConfig] = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'debug': DEBUG,  # Added the required 'debug' key
         },
     },
 ]
@@ -278,7 +292,8 @@ DATABASES: Dict[str, DatabaseConfig] = {
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
+    {'NAME':
+     'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
      'OPTIONS': {
          'min_length': 9,
@@ -315,10 +330,10 @@ STATICFILES_FINDERS = [
 ]
 
 # Ensure static files are handled simply
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Basic storage without manifest
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Application version
-APP_VERSION = '0.0.4'
+APP_VERSION = '0.0.5'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -339,17 +354,19 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Simplify cache to basic memory cache
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # No caching in development
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # No caching
     }
 }
 
 # Create logs directory if it doesn't exist
 LOGS_DIR = os.path.join(str(BASE_DIR).replace(' ', '_').replace(':', '_'), 'logs')
+LOGS_DIR = os.path.join(str(BASE_DIR).replace(' ', '_').replace(':', '_'), 'logs')
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
 
-# Update the LOGGING configuration
-LOGGING: LoggingConfig = {
+# Update the LOGGING configuration with compliant Django format
+# We need to cast the dict to satisfy mypy while still using "class" key for Django
+LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
@@ -364,13 +381,14 @@ LOGGING: LoggingConfig = {
     },
     'handlers': {
         'console': {
-            'class': 'logging.StreamHandler',  # Fixed: class_name -> class
+            'class': 'logging.StreamHandler',  # Django expects "class", not "class_"
             'level': 'WARNING',
             'formatter': 'simple',
         },
         'file': {
-            'class': 'logging.FileHandler',  # Fixed: class_name -> class
+            'class': 'logging.FileHandler',  # Django expects "class", not "class_"
             'level': 'INFO',
+            'filename': os.path.join(LOGS_DIR, 'django.log'),
             'filename': os.path.join(LOGS_DIR, 'django.log'),
             'formatter': 'verbose',
         },
@@ -379,10 +397,13 @@ LOGGING: LoggingConfig = {
         'django': {
             'handlers': ['file'] if not DEBUG else ['console', 'file'],
             'level': 'WARNING',
+            'handlers': ['file'] if not DEBUG else ['console', 'file'],
+            'level': 'WARNING',
             'propagate': True,
         },
         'projects': {
             'handlers': ['file'],
+            'level': 'INFO',
             'level': 'INFO',
             'propagate': True,
         },
@@ -391,7 +412,7 @@ LOGGING: LoggingConfig = {
         'handlers': ['console', 'file'],
         'level': 'INFO',
     },
-} # type: ignore
+}  # type: ignore  # Tell mypy to ignore this typing issue
 
 # Media settings
 MEDIA_URL = '/media/'
@@ -403,7 +424,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400  # 25MB in bytes
 # Modify runserver command to force HTTP
 
 if 'runserver' in sys.argv:
-    import os
 
     os.environ['PYTHONHTTPSVERIFY'] = '0'
     os.environ.get('DJANGO_SETTINGS_MODULE')
@@ -437,11 +457,36 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Sentry.io configuration
 sentry_sdk.init(
-    dsn='https://c6f88e890b90e554dcf731d6c4358341@o4508301862371328.ingest.us.sentry.io/4509008399761408',
+    dsn=(
+        'https://c6f88e890b90e554dcf731d6c4358341@'
+        'o4508301862371328.ingest.us.sentry.io/4509008399761408'
+    ),
     # Add data like request headers and IP for users,
-    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    # info at https://docs.sentry.io/platforms/python/data-management/data-collected/
     send_default_pii=True,
 )
+
+# Silk configuration
+
+# Create profiles directory for Silk profiler results if it doesn't exist
+PROFILES_DIR = os.path.join(BASE_DIR, 'greenova', 'profiles')
+if not os.path.exists(PROFILES_DIR):
+    os.makedirs(PROFILES_DIR)
+
+# Silk configuration
+SILKY_PYTHON_PROFILER = True
+SILKY_PYTHON_PROFILER_BINARY = False
+SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
+SILKY_AUTHENTICATION = True
+SILKY_AUTHORISATION = True
+SILKY_META = True
+
+# Garbage collection settings for small server environment
+SILKY_MAX_RECORDED_REQUESTS = 500  # Store maximum of 500 requests
+SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50  # Run GC check on 50% of requests
+SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Limit request body size to 1KB
+SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # Limit response body size to 1KB
+SILKY_INTERCEPT_PERCENT = 25  # Only profile 25% of requests
 
 # Silk configuration
 

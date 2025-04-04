@@ -7,7 +7,7 @@ bandit:
 
   # Files or directories to skip (comma-separated)
 
-  exclude: /tests,/env,/venv,/.git,*.pyc
+  exclude: /tests,/env,/venv,/.git,*.pyc,**/test_*.py,**/*_test.py
 
   # Tests to skip (comma-separated)
 

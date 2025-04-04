@@ -41,18 +41,26 @@ class BugReportAdmin(admin.ModelAdmin):
 
     actions = ['mark_as_rejected', 'mark_as_in_progress', 'mark_as_resolved', 'mark_as_closed']
 
+    @admin.action(
+        description='Mark selected reports as rejected'
+    )
     def mark_as_rejected(self, request, queryset):
         queryset.update(status='rejected')
-    mark_as_rejected.short_description = "Mark selected reports as rejected"
 
+    @admin.action(
+        description='Mark selected reports as in progress'
+    )
     def mark_as_in_progress(self, request, queryset):
         queryset.update(status='in_progress')
-    mark_as_in_progress.short_description = "Mark selected reports as in progress"
 
+    @admin.action(
+        description='Mark selected reports as resolved'
+    )
     def mark_as_resolved(self, request, queryset):
         queryset.update(status='resolved')
-    mark_as_resolved.short_description = "Mark selected reports as resolved"
 
+    @admin.action(
+        description='Mark selected reports as closed'
+    )
     def mark_as_closed(self, request, queryset):
         queryset.update(status='closed')
-    mark_as_closed.short_description = "Mark selected reports as closed"

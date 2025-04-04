@@ -2,80 +2,123 @@
 
 This template provides standardized commands for creating GitHub issues from
 bug reports using the GitHub CLI.
+# GitHub Issue Creation Template for Greenova
 
+This template provides standardized commands for creating GitHub issues from
+bug reports using the GitHub CLI.
+
+## Basic Issue Creation Command
 ## Basic Issue Creation Command
 
 ````fish
 # Basic structure of the gh issue create command
+````fish
+# Basic structure of the gh issue create command
 set repo "https://github.com/enveng-group/dev_greenova"
-set title "bug: Brief description of the issue"
+set title "bug: Obligation form has mandatory recurring field and"\
+" inability to customize obligation numbers"
 set body "
 ## Description
 
-[Copy summary from bug report]
+Users are experiencing two issues with the Obligation registration form:
+(1) the \"recurring obligation\" checkbox is required even for non-recurring
+obligations, and (2) users cannot customize obligation numbers to use specific
+formats like \"W6875 Condition 1.6a\" instead of the auto-generated
+\"PCEMP-237\" format.
 
 ## Current Behavior
 
-[Copy actual result and any error messages from bug report]
+1. The \"recurring obligation\" checkbox is mandatory, forcing users to
+   incorrectly mark non-recurring obligations as recurring
+2. Obligation numbers are auto-generated in the \"PCEMP-XXX\" format and cannot
+   be customized
 
 ## Expected Behavior
 
-[Copy expected result from bug report]
+1. The \"recurring obligation\" checkbox should be optional, allowing users to
+   submit the form without checking it
+2. Users should be able to customize obligation numbers to match specific
+   formats like \"W6875 Condition 1.6a\"
 
 ## Steps to Reproduce
 
-[Copy numbered steps from bug report]
+1. Log into the Greenova application
+2. Navigate to the Obligation registration form
+3. Attempt to create a new obligation
+4. Try to leave the \"recurring obligation\" checkbox unchecked
+5. Notice that the form cannot be submitted without checking this box
+6. Also observe that the obligation number field cannot be edited to use custom
+   formats like \"W6875 Condition 1.6a\"
 
 ## Environment Details
 
-- **Application Version**: [From bug report]
-- **Operating System**: [From bug report]
-- **Browser**: [From bug report, if applicable]
-- **Device**: [From bug report]
+- **Application Version**: Latest production deployment of Greenova
+  environmental management system
+- **Operating System**: Various (issue is application-specific, not OS-dependent)
+- **Browser**: Various (issue is server-side, not browser-specific)
+- **Device**: Desktop/Laptop
 
 ## Technical Context
 
 - **Django Version**: 4.1.13
 - **Python Version**: 3.9.21
-- **Affected Module/App**: [Identify affected component]
+- **Affected Module/App**: obligations
 - **Frontend Technologies**: PicoCSS, django-hyperscript, django-htmx
+- **Database**: SQLite3 (development)
+- **Affected Files**:
+  - `/workspaces/greenova/greenova/obligations/forms.py` (ObligationForm)
+  - `/workspaces/greenova/greenova/obligations/models.py` (Obligation model)
 
 ## Error Details
 
-#```html
-
-[Insert relevant error message or traceback summary]
-
-#```
-
-For complete traceback, see original bug report.
+```
+No explicit error messages, but form validation prevents submission when the
+recurring obligation checkbox is unchecked.
+```
 
 ## Impact Assessment
 
-- **Severity**: [Critical/High/Medium/Low, from bug report]
-- **Frequency**: [How often issue occurs, from bug report]
-- **User Impact**: [Description from bug report]
+- **Severity**: Medium
+- **Frequency**: 100% (Affects every creation of an obligation)
+- **User Impact**: Data integrity issues as non-recurring obligations are
+incorrectly marked as recurring. Difficulty in navigating and identifying
+specific obligations due to inability to use custom obligation numbers.
+Reduced usability of the environmental obligations register for projects where
+specific numbering formats are required by regulatory documents.
 
 ## Proposed Implementation
 
-[Outline potential fix approach based on bug analysis]
+1. In `ObligationForm` class (`obligations/forms.py`), modify the
+`recurring_obligation` field definition to set `required=False`
+2. Update the `Obligation` model and form to allow custom obligation numbers:
+   - Modify validation in models.py to accept alternative formats beyond PCEMP-XXX
+   - Update the form to make the obligation_number field editable for new obligations
+   - Add a configuration option to toggle between auto-generated and custom
+   obligation numbering
 
 ## Acceptance Criteria
 
-- [ ] Issue is resolved with no regressions
-- [ ] Documentation is updated if necessary
-- [ ] Tests are added/updated to cover the fix
-- [ ] [Additional criteria specific to this issue]
+- [ ] Users can save obligations without checking the recurring obligation checkbox
+- [ ] Users can enter custom obligation numbers in formats like
+\"W6875 Condition 1.6a\"
+- [ ] Existing functionality for auto-generating obligation numbers is
+preserved when needed
+- [ ] Form validation still ensures obligation numbers are unique
+- [ ] Tests are updated to verify these fixes
+- [ ] Documentation is updated to reflect the changes in behavior
 
 ## Additional Context
 
-[Any workarounds, related issues, or other relevant information from bug report]
+- This issue affects users working with the primary environmental
+mechanism 'W6875/2023/1' who need to reference specific conditions like
+\"Condition 1.2\", \"Condition 1.2a\", etc.
+- User is currently adding obligations under this mechanism with incorrect
+numbering (PCEMP-237 instead of the desired W6875 Condition 1.6a)
+- Users have provided feedback that they cannot currently navigate and maintain
+ the environmental obligation register effectively without these changes
 "
 
 # Execute the command to create the issue
-gh issue create --repo $repo --title $title --body $body
-````
-
 ## Adding Labels
 
 After creating the issue, add appropriate labels based on the issue
@@ -86,13 +129,13 @@ characteristics:
 set issue_number [ISSUE_NUMBER]
 
 # Add appropriate labels
-gh issue edit $issue_number --add-label "bug,help wanted"
+gh issue edit $issue_number --add-label "bug,ui,forms,help wanted"
 
 # Add component-specific labels as needed
-gh issue edit $issue_number --add-label "django,database"
+gh issue edit $issue_number --add-label "django"
 
 # Add priority label based on severity
-gh issue edit $issue_number --add-label "priority-high"
+gh issue edit $issue_number --add-label "priority-medium"
 ```
 
 ## Creating New Labels (if needed)
@@ -117,82 +160,106 @@ gh label create "label-name" --description "Description of the label" --color "#
 ## Example Complete Issue Creation
 
 ```fish
-set repo "https://github.com/enveng-group/dev_greenova"
-set title "bug: Dashboard fails to load environmental metrics when filtering by project"
+## Example Complete Issue Creation
+set title "bug: Obligation form has mandatory recurring field and"\
+" inability to customize obligation numbers"
 set body "
 ## Description
 
-When applying the project filter on the dashboard, environmental metrics don't update and the page shows a loading spinner indefinitely.
+Users are experiencing two issues with the Obligation registration form:
+(1) the \"recurring obligation\" checkbox is required even for non-recurring
+obligations, and (2) users cannot customize obligation numbers to use specific
+formats like \"W6875 Condition 1.6a\" instead of the auto-generated
+\"PCEMP-237\" format.
 
 ## Current Behavior
 
-The loading spinner appears and never stops, metrics don't update after selecting a project filter and clicking 'Apply Filter'.
+1. The \"recurring obligation\" checkbox is mandatory, forcing users to
+incorrectly mark non-recurring obligations as recurring
+2. Obligation numbers are auto-generated in the \"PCEMP-XXX\" format and
+cannot be customized
 
 ## Expected Behavior
 
-The dashboard should refresh and show metrics specific to the selected project.
+1. The \"recurring obligation\" checkbox should be optional, allowing users to
+submit the form without checking it
+2. Users should be able to customize obligation numbers to match specific
+formats like \"W6875 Condition 1.6a\"
 
 ## Steps to Reproduce
 
-1. Log in to Greenova using a standard user account
-2. Navigate to \"Dashboard\" from the main menu
-3. Click the \"Filter\" button in the top right corner
-4. Select \"Project A\" from the dropdown list
-5. Click \"Apply Filter\"
+1. Log into the Greenova application
+2. Navigate to the Obligation registration form
+3. Attempt to create a new obligation
+4. Try to leave the \"recurring obligation\" checkbox unchecked
+5. Notice that the form cannot be submitted without checking this box
+6. Also observe that the obligation number field cannot be edited to use custom
+ formats like \"W6875 Condition 1.6a\"
 
 ## Environment Details
 
-- **Application Version**: 1.5.2
-- **Operating System**: Windows 11
-- **Browser**: Chrome 120.0.6099.217
-- **Device**: Dell XPS 15 laptop
+- **Application Version**: Latest production deployment of Greenova
+environmental management system
+- **Operating System**: Various (issue is application-specific, not OS-dependent)
+- **Browser**: Various (issue is server-side, not browser-specific)
+- **Device**: Desktop/Laptop
 
 ## Technical Context
 
 - **Django Version**: 4.1.13
 - **Python Version**: 3.9.21
-- **Affected Module/App**: dashboard
+- **Affected Module/App**: obligations
 - **Frontend Technologies**: PicoCSS, django-hyperscript, django-htmx
-
-## Error Details
-
-Console error:
-```
-
-GET https://greenova.example.com/api/dashboard/metrics?project_id=42 500
-(Internal Server Error)
-
-```
-
-Network tab shows the request fails with a 500 error.
+- **Database**: SQLite3 (development)
+- **Affected Files**:
+  - `/workspaces/greenova/greenova/obligations/forms.py` (ObligationForm)
+  - `/workspaces/greenova/greenova/obligations/models.py` (Obligation model)
 
 ## Impact Assessment
 
-- **Severity**: High
-- **Frequency**: Always (100% of attempts)
-- **User Impact**: Users cannot view project-specific metrics, affecting compliance monitoring and reporting capabilities
+- **Severity**: Medium
+- **Frequency**: 100% (Affects every creation of an obligation)
+- **User Impact**:
+  - Data integrity issues as non-recurring obligations are incorrectly marked
+  as recurring
+  - Difficulty in navigating and identifying specific obligations
+  - Reduced usability of the environmental obligations register where specific
+  numbering formats are required by regulatory documents
 
 ## Proposed Implementation
 
-- Investigate the API endpoint handler for dashboard metrics
-- Check for proper error handling when filtering by project
-- Verify database queries are correctly formed with project filters
-- Add appropriate error messaging if project data is unavailable
+1. In `ObligationForm` class (`obligations/forms.py`), modify the
+`recurring_obligation` field definition to set `required=False`
+2. Update the `Obligation` model and form to allow custom obligation numbers:
+   - Modify validation in models.py to accept alternative formats beyond PCEMP-XXX
+   - Update the form to make the obligation_number field editable for new obligations
+   - Add a configuration option to toggle between auto-generated and custom
+   obligation numbering
 
 ## Acceptance Criteria
 
-- [ ] Dashboard loads and displays metrics correctly when filtering by project
-- [ ] Error handling is improved to provide meaningful feedback on failures
-- [ ] Tests are added to verify filtering functionality
-- [ ] Performance is maintained with large datasets
+- [ ] Users can save obligations without checking the recurring obligation checkbox
+- [ ] Users can enter custom obligation numbers in formats
+like \"W6875 Condition 1.6a\"
+- [ ] Existing functionality for auto-generating obligation numbers is
+preserved when needed
+- [ ] Form validation still ensures obligation numbers are unique
+- [ ] Tests are updated to verify these fixes
+- [ ] Documentation is updated to reflect the changes in behavior
 
 ## Additional Context
 
-Refreshing the page and trying again doesn't resolve the issue. The problem started after the recent dashboard filter feature was added in version 1.5.0.
+This issue affects users working with the primary environmental mechanism
+'W6875/2023/1' who need to reference specific conditions like
+\"Condition 1.2\", \"Condition 1.2a\", etc. User is currently adding
+obligations under this mechanism with incorrect numbering (PCEMP-237
+instead of the desired W6875 Condition 1.6a).
 "
 
 gh issue create --repo $repo --title $title --body $body
 
 # After creating, add appropriate labels
-gh issue edit [ISSUE_NUMBER] --add-label "bug,dashboard,api,help wanted,priority-high"
+gh issue edit [ISSUE_NUMBER] --add-label "bug,ui,forms,django,priority-medium,
+help wanted"
 ```
+````

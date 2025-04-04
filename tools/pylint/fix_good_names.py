@@ -26,9 +26,7 @@ class GoodNamesInitializer(BaseChecker):
         super().__init__(linter)
 
         # Ensure good_names exists in the config
-        if not hasattr(linter.config, 'good_names'):
-            linter.config.good_names = ('_',)
-        elif linter.config.good_names is None:
+        if not hasattr(linter.config, 'good_names') or linter.config.good_names is None:
             linter.config.good_names = ('_',)
 
     def open(self):

@@ -1,7 +1,8 @@
 from logging import getLogger
-from typing import Generic, Optional, Sequence, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest
 
 from .models import Project, ProjectMembership
@@ -13,8 +14,21 @@ T = TypeVar('T')
 class BaseModelAdmin(admin.ModelAdmin, Generic[T]):
     """Base admin class with type safety."""
 
-    def get_object(self, request: HttpRequest, object_id: str, from_field: None = None) -> Optional[T]:
-        return super().get_object(request, object_id, from_field)
+    def dispatch(
+        self, request: HttpRequest, object_id: str, from_field: None = None
+    ) -> Optional[T]:
+        obj = super().get_object(request, object_id, from_field)
+        if obj:
+            if not self.has_view_or_change_permission(request, obj):
+                logger.warning(
+                    'Permission denied for user %s on object %s',
+                    request.user,
+                    object_id
+                )
+                raise PermissionDenied(
+                    'You do not have permission to access this object.'
+                )
+        return obj
 
 class ProjectMembershipInline(admin.TabularInline):
     """Inline admin for project memberships."""
@@ -82,6 +96,7 @@ class ProjectMembershipAdmin(BaseModelAdmin[ProjectMembership]):
         """Log changes when saving model."""
         action = 'updated' if change else 'created'
         logger.info(
-            f'ProjectMembership {obj.id} {action} by {request.user.get_username()}'
+            'ProjectMembership %s %s by %s',
+            obj.id, action, request.user.get_username()
         )
         super().save_model(request, obj, form, change)

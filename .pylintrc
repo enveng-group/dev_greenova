@@ -9,8 +9,7 @@ ignore=migrations,venv,.venv
 max-line-length=88
 
 [MESSAGES CONTROL]
-disable=no-member
-disable=C0111,R0903,C0103
+disable=no-member,C0111,R0903,C0103
 
 [SIMILARITIES]
 ignore-comments=yes
@@ -18,4 +17,5 @@ ignore-docstrings=yes
 ignore-imports=yes
 
 [BASIC]
+good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
 good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta

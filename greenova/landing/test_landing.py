@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from django.urls import reverse
 
@@ -24,7 +26,13 @@ class TestHomeView:
     def test_home_view_authenticated(self, client, django_user_model):
         """Test landing page behavior for authenticated users."""
         # Create and log in a test user
-        user = django_user_model.objects.create_user(username='test', password='testpass')
+        test_username = os.environ.get('TEST_USERNAME', 'test')
+        test_password = os.environ.get('TEST_PASSWORD', 'testpass')
+
+        user = django_user_model.objects.create_user(
+            username=test_username,
+            password=test_password
+        )
         client.force_login(user)
 
         url = reverse('landing:home')
@@ -33,7 +41,7 @@ class TestHomeView:
         assert response.status_code == 200
         assert response.context['show_dashboard_link'] is True
 
-    def test_htmx_behavior(self, client, mocker):
+    def test_htmx_behavior(self, client):
         """Test HTMX-specific behavior of the view."""
         url = reverse('landing:home')
 
@@ -43,7 +51,7 @@ class TestHomeView:
             'HX-Boosted': 'true',
         }
 
-        response = client.get(url, **{'HTTP_HX-Request': 'true'})
+        response = client.get(url, **headers)
 
         # Check that response has HTMX-specific headers
         assert 'HX-Push-Url' in response.headers
@@ -52,18 +60,25 @@ class TestHomeView:
         assert 'landingLoaded' in response.headers['HX-Trigger']
 
     def test_htmx_authenticated_redirect(self, client, django_user_model):
-        """Test that authenticated users are redirected when using HTMX boosted requests."""
+        """Test that authenticated users are redirected using HTMX boosted requests."""
         # Create and log in a test user
-        user = django_user_model.objects.create_user(username='test', password='testpass')
+        test_username = os.environ.get('TEST_USERNAME', 'test')
+        test_password = os.environ.get('TEST_PASSWORD', 'testpass')
+
+        user = django_user_model.objects.create_user(
+            username=test_username,
+            password=test_password
+        )
         client.force_login(user)
 
         url = reverse('landing:home')
 
         # Use HTMX boosted header
-        response = client.get(url, **{'HTTP_HX-Request': 'true', 'HTTP_HX-Boosted': 'true'})
+        response = client.get(url, **{'HTTP_HX-Request':
+                                      'true', 'HTTP_HX-Boosted': 'true'})
 
         # Check that we get an HTMX redirect response
-        assert response.status_code == 200  # HTMX redirects use 200 status with special header
+        assert response.status_code == 200  # HTMX redirects 200 status with header
         assert 'HX-Redirect' in response.headers
         assert response.headers['HX-Redirect'] == '/dashboard/'
 

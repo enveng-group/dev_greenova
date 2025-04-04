@@ -4,6 +4,8 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from conftest import TEST_PASSWORD, TEST_USERNAME
+
 from .forms import ConversationForm, TrainingDataForm
 from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
 from .services import ChatbotService
@@ -17,7 +19,7 @@ class TestChatbotModels:
 
     def test_conversation_model(self):
         """Test Conversation model creation and string representation."""
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         conversation = Conversation.objects.create(
             title='Test Conversation',
             user=user
@@ -30,11 +32,11 @@ class TestChatbotModels:
         assert conversation.updated_at is not None
 
         # Test string representation
-        assert str(conversation) == 'Test Conversation - test'
+        assert str(conversation) == f'Test Conversation - {TEST_USERNAME}'
 
     def test_chat_message_model(self):
         """Test ChatMessage model creation and string representation."""
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         conversation = Conversation.objects.create(title='Test Conversation', user=user)
 
         # Create both user and bot messages
@@ -78,7 +80,10 @@ class TestChatbotModels:
         """Test TrainingData model creation."""
         training = TrainingData.objects.create(
             question='What is environmental compliance?',
-            answer='Environmental compliance refers to conforming to environmental laws, regulations, standards and other requirements.',
+            answer=(
+                'Environmental compliance refers to conforming to environmental laws, '
+                'regulations, standards and other requirements.'
+            ),
             category='General'
         )
 
@@ -148,7 +153,7 @@ class TestChatbotViews:
     def test_chatbot_home_view_authenticated(self, client):
         """Test chatbot home view when user is authenticated."""
         # Create user and log in
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         client.force_login(user)
 
         url = reverse('chatbot:chatbot_home')
@@ -161,7 +166,7 @@ class TestChatbotViews:
     def test_create_conversation_view(self, client):
         """Test creating a new conversation."""
         # Create user and log in
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         client.force_login(user)
 
         url = reverse('chatbot:create_conversation')
@@ -191,7 +196,7 @@ class TestChatbotViews:
     def test_conversation_detail_view(self, client):
         """Test conversation detail view."""
         # Create user and log in
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         client.force_login(user)
 
         # Create conversation
@@ -223,7 +228,7 @@ class TestChatbotViews:
     def test_send_message_view(self, client):
         """Test sending a message in a conversation."""
         # Create user and log in
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         client.force_login(user)
 
         # Create conversation
@@ -259,7 +264,7 @@ class TestChatbotViews:
     def test_delete_conversation_view(self, client):
         """Test deleting a conversation."""
         # Create user and log in
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         client.force_login(user)
 
         # Create conversation
@@ -291,16 +296,18 @@ class TestChatbotServices:
 
     def test_create_conversation_service(self):
         """Test creating a conversation using the service."""
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
 
-        conversation = ChatbotService.create_conversation(user, 'Service Test Conversation')
+        conversation = ChatbotService.create_conversation(
+            user, 'Service Test Conversation'
+        )
 
         assert conversation.title == 'Service Test Conversation'
         assert conversation.user == user
 
     def test_add_message_service(self):
         """Test adding a message using the service."""
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         conversation = Conversation.objects.create(title='Test Conversation', user=user)
 
         message = ChatbotService.add_message(
@@ -315,7 +322,7 @@ class TestChatbotServices:
 
     def test_process_user_message_service(self):
         """Test processing a user message using the service."""
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         conversation = Conversation.objects.create(title='Test Conversation', user=user)
 
         # Create a predefined response
@@ -340,16 +347,35 @@ class TestChatbotServices:
         # Create training data
         TrainingData.objects.create(
             question='What is environmental compliance?',
-            answer='Environmental compliance refers to conforming to environmental laws and regulations.',
+            answer=(
+                'Environmental compliance refers to conforming to environmental laws '
+                'and regulations.'
+            ),
             category='General'
         )
 
+        # Create a conversation to use the public process_user_message method
+        test_user = User.objects.create_user(
+            username=TEST_USERNAME,
+            password=TEST_PASSWORD
+        )
+        conversation = Conversation.objects.create(
+            title='Test Conversation',
+            user=test_user
+        )
+
         # Should match the training data
-        response = ChatbotService._generate_response('Tell me about environmental compliance')
+        response = ChatbotService.process_user_message(
+            conversation.id,
+            'Tell me about environmental compliance'
+        )
         assert 'environmental laws' in response
 
         # Fallback response for unmatched queries
-        response = ChatbotService._generate_response('Something completely unrelated')
+        response = ChatbotService.process_user_message(
+            conversation.id,
+            'Something completely unrelated'
+        )
         assert "I'm sorry" in response
 
 # Integration Tests
@@ -360,7 +386,7 @@ class TestChatbotIntegration:
     def test_conversation_flow(self, client):
         """Test the full conversation flow."""
         # Create user and log in
-        user = User.objects.create_user(username='test', password='testpass')
+        user = User.objects.create_user(username=TEST_USERNAME, password=TEST_PASSWORD)
         client.force_login(user)
 
         # 1. Create a new conversation
@@ -377,14 +403,16 @@ class TestChatbotIntegration:
 
         # 2. Send a message in the conversation
         send_url = reverse('chatbot:send_message', args=[conversation.id])
+        msg = 'How does Greenova help with environmental compliance?'
         response = client.post(
             send_url,
-            json.dumps({'message': 'How does Greenova help with environmental compliance?'}),
+            json.dumps({'message': msg}),
             content_type='application/json'
         )
 
         assert response.status_code == 200
-        data = json.loads(response.content)
+        # Verify response has valid JSON
+        json.loads(response.content)
 
         # 3. Check conversation detail view shows messages
         detail_url = reverse('chatbot:conversation_detail', args=[conversation.id])
@@ -394,7 +422,8 @@ class TestChatbotIntegration:
 
         # Should have both user message and bot response
         messages = ChatMessage.objects.filter(conversation=conversation)
-        assert messages.count() == 2  # Initial greeting + user message (view adds bot response)
+        # Initial greeting + user message (view adds bot response)
+        assert messages.count() == 2
 
         # 4. Delete the conversation
         delete_url = reverse('chatbot:delete_conversation', args=[conversation.id])

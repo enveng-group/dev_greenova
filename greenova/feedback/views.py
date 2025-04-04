@@ -36,7 +36,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, 'feedback/index.jinja', context)
 
 @login_required
-@require_http_methods(["POST"])
+@require_http_methods(['POST'])
 def submit_bug_report(request: HttpRequest) -> HttpResponse:
     """
     Handle submission of a new bug report.

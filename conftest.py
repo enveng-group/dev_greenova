@@ -11,6 +11,18 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.test import Client
+from dotenv_vault import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Get test credentials from environment variables
+TEST_USERNAME = os.environ.get('TEST_USERNAME', 'test')
+TEST_PASSWORD = os.environ.get('TEST_PASSWORD', 'test')
+TEST_EMAIL = os.environ.get('TEST_EMAIL', 'test@example.com')
+ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'adminpass')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
 
 # Add the project root directory to Python path
 root_dir = Path(__file__).parent
@@ -43,30 +55,32 @@ logger.setLevel(logging.DEBUG)
 def admin_user() -> AbstractUser:
     """Create and return a superuser."""
     return UserModel.objects.create_superuser(
-        username='admin',
-        email='admin@example.com',
-        password='adminpass'
+        username=ADMIN_USERNAME,
+        email=ADMIN_EMAIL,
+        password=ADMIN_PASSWORD
     )
 
 @pytest.fixture
 def regular_user() -> AbstractUser:
     """Create and return a regular user."""
     return UserModel.objects.create_user(
-        username='test',
-        email='test@example.com',
-        password='test'
+        username=TEST_USERNAME,
+        email=TEST_EMAIL,
+        password=TEST_PASSWORD
     )
 
 @pytest.fixture
+# pylint: disable=redefined-outer-name
 def authenticated_client(regular_user: AbstractUser) -> Client:
     """Return a client that's already logged in as a regular user."""
     client = Client()
-    client.login(username='test', password='test')
+    client.login(username=regular_user.username, password=TEST_PASSWORD)
     return client
 
 @pytest.fixture
+# pylint: disable=redefined-outer-name
 def admin_client(admin_user: AbstractUser) -> Client:
     """Return a client that's already logged in as an admin user."""
     client = Client()
-    client.login(username='admin', password='adminpass')
+    client.login(username=admin_user.username, password=ADMIN_PASSWORD)
     return client

@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -16,9 +18,10 @@ class TestAuthentication:
 
     def test_login_with_valid_credentials(self, client, regular_user):
         """Test logging in with valid credentials."""
+        test_password = os.environ.get('TEST_PASSWORD', 'test')
         response = client.post(
             reverse('account_login'),
-            {'login': regular_user.username, 'password': 'testpass'},
+            {'login': regular_user.username, 'password': test_password},
             follow=True
         )
         assert response.status_code == 200
@@ -27,7 +30,7 @@ class TestAuthentication:
         # User should be authenticated
         assert response.context['user'].is_authenticated
 
-    def test_logout(self, authenticated_client, regular_user):
+    def test_logout(self, authenticated_client):
         """Test that logout works correctly."""
         response = authenticated_client.get(reverse('account_logout'))
         assert response.status_code == 200  # Should show logout confirmation page

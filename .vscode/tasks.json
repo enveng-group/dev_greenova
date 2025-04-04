@@ -127,7 +127,10 @@
       "type": "shell"
     },
     {
-      "args": ["-c", "bandit -r \"${file}\""],
+      "args": [
+        "-c",
+        "bandit -r \"${file}\" --skip B101"
+      ],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Security check with bandit",
@@ -143,7 +146,8 @@
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint",
-        "Python: Type check with mypy (standard)"
+        "Python: Type check with mypy (standard)",
+        "Python: Security check with bandit"
       ],
       "dependsOrder": "sequence",
       "group": "none",
@@ -451,19 +455,6 @@
       "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
-      "label": "TOML: Format with prettier",
-      "presentation": {
-        "clear": true,
-        "panel": "shared",
-        "reveal": "silent"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "npx prettier --write \"${file}\""],
-      "command": "/bin/sh",
-      "group": "none",
       "label": "Markdown: Format with prettier",
       "presentation": {
         "clear": true,
@@ -621,6 +612,7 @@
     {
       "args": [
         "-c",
+        "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures feedback"
         "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures feedback"
       ],
       "command": "/bin/sh",

@@ -6,7 +6,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='greenova',
-    version='0.0.4',
+    version='0.0.5',
     description='A Django web application',
     long_description=long_description,
     author='enveng-group',

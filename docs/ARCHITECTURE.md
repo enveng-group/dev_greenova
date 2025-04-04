@@ -83,8 +83,8 @@ enssol-app-prod-001
 - **DNS Provider**: Route 53
 - **Subdomains**:
   - app.greenova.com.au (Production)
-  - staging.enssol.com.au (Staging)
-  - dev.enssol.com.au (Development)
+  - staging.greenova.com.au (Staging)
+  - dev.greenova.com.au (Development)
 
 ## Infrastructure as Code
 
@@ -92,28 +92,79 @@ enssol-app-prod-001
 
 ```bash
 aws ec2 create-security-group --group-name "enssol-web-prod-sg" \
-  --description "Enssol Web Application Security Group - Production Manages network access for Django environmental obligations system. Controls traffic to EC2 instances serving the app.enssol-env.com.au domain." \
+  --description "Enssol Web Application Security Group - Production Manages \
+network access for Django environmental obligations system. Controls traffic \
+to EC2 instances serving the app.enssol-env.com.au domain." \
   --vpc-id "vpc-038e672b8234f1858"
 
 aws ec2 authorize-security-group-ingress --group-id "sg-preview-1" \
-  --ip-permissions '{"IpProtocol":"-1","FromPort":-1,"ToPort":-1,"IpRanges":[{"CidrIp":"0.0.0.0/0","Description":"Allow all IP addresses to access the instance"}]}'
+  --ip-permissions '{
+    "IpProtocol": "-1",
+    "FromPort": -1,
+    "ToPort": -1,
+    "IpRanges": [{
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all IP addresses to access the instance"
+    }]
+  }'
 
 aws ec2 run-instances --image-id "ami-0b87a8055f0211d32" \
   --instance-type "t2.nano" \
   --instance-initiated-shutdown-behavior "stop" \
   --key-name "enssol-prod-ap-southeast-2-key" \
-  --block-device-mappings '{"DeviceName":"/dev/sda1","Ebs":{"Encrypted":false,"DeleteOnTermination":true,"SnapshotId":"snap-06e32d71bf3127195","VolumeSize":8,"VolumeType":"standard"}}' \
-  --network-interfaces '{"SubnetId":"subnet-01344c7dbe4c656f8","DeleteOnTermination":true,"Description":"Primary network interface for Enssol environmental obligations application - Production environment","AssociatePublicIpAddress":false,"DeviceIndex":0,"Groups":["sg-preview-1"]}' \
+  --block-device-mappings '{
+    "DeviceName": "/dev/sda1",
+    "Ebs": {
+      "Encrypted": false,
+      "DeleteOnTermination": true,
+      "SnapshotId": "snap-06e32d71bf3127195",
+      "VolumeSize": 8,
+      "VolumeType": "standard"
+    }
+  }' \
+    --network-interfaces '{
+      "SubnetId":"subnet-01344c7dbe4c656f8",
+      "DeleteOnTermination":true,
+      "Description":"Primary network interface for Enssol environmental \
+  obligations application - Production environment",
+      "AssociatePublicIpAddress":false,
+      "DeviceIndex":0,
+      "Groups":["sg-preview-1"]
+    }' \
   --hibernation-options '{"Configured":false}' \
   --monitoring '{"Enabled":false}' \
   --credit-specification '{"CpuCredits":"standard"}' \
-  --capacity-reservation-specification '{"CapacityReservationPreference":"none"}' \
+  --capacity-reservation-specification \
+  '{"CapacityReservationPreference":"none"}' \
   --network-performance-options '{"BandwidthWeighting":"default"}' \
-  --tag-specifications '{"ResourceType":"instance","Tags":[{"Key":"Name","Value":"enssol-app-prod-001"},{"Key":"Environment","Value":"Production"},{"Key":"Application","Value":"EnssolApp"},{"Key":"Project","Value":"EnvObligations"},{"Key":"Owner","Value":"AGallo_Admin"},{"Key":"CostCentre","Value":"ENV-PROD-001"},{"Key":"BackupPolicy","Value":"Daily"},{"Key":"SecurityGroup","Value":"WebApplication"},{"Key":"AutoShutdown","Value":"No"},{"Key":"Domain","Value":"app.greenova.com.au"}]}' \
-  --iam-instance-profile '{"Arn":"arn:aws:iam::381492266447:instance-profile/EC2"}' \
-  --metadata-options '{"HttpEndpoint":"enabled","HttpTokens":"required","InstanceMetadataTags":"enabled"}' \
+  --tag-specifications '{
+    "ResourceType":"instance",
+    "Tags":[
+      {"Key":"Name","Value":"enssol-app-prod-001"},
+      {"Key":"Environment","Value":"Production"},
+      {"Key":"Application","Value":"EnssolApp"},
+      {"Key":"Project","Value":"EnvObligations"},
+      {"Key":"Owner","Value":"AGallo_Admin"},
+      {"Key":"CostCentre","Value":"ENV-PROD-001"},
+      {"Key":"BackupPolicy","Value":"Daily"},
+      {"Key":"SecurityGroup","Value":"WebApplication"},
+      {"Key":"AutoShutdown","Value":"No"},
+      {"Key":"Domain","Value":"app.greenova.com.au"}
+    ]}' \
+  --iam-instance-profile '{
+    "Arn":"arn:aws:iam::381492266447:instance-profile/EC2"
+  }' \
+  --metadata-options '{
+    "HttpEndpoint":"enabled",
+    "HttpTokens":"required",
+    "InstanceMetadataTags":"enabled"
+  }' \
   --placement '{"Tenancy":"default"}' \
-  --private-dns-name-options '{"HostnameType":"resource-name","EnableResourceNameDnsARecord":true,"EnableResourceNameDnsAAAARecord":false}' \
+  --private-dns-name-options '{
+    "HostnameType":"resource-name",
+    "EnableResourceNameDnsARecord":true,
+    "EnableResourceNameDnsAAAARecord":false
+  }' \
   --maintenance-options '{"AutoRecovery":"default"}' \
   --count "1"
 ```
@@ -190,7 +241,7 @@ aws ec2 run-instances --image-id "ami-0b87a8055f0211d32" \
 
 ## Database Schema
 
-[Include core database schema documentation]
+<!-- TODO: Add core database schema documentation here -->
 
 ## Future Enhancements
 

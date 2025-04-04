@@ -12,6 +12,7 @@
 -->
 {% load static %}
 {% load hyperscript %}
+{% load hyperscript %}
 {% load django_htmx %}
 {% load tailwind_tags %}
 {% load user_tags %}
@@ -30,7 +31,7 @@
     <title>
       {% block title %}
         {% block page_title %}
-          Greenova
+          greenova
         {% endblock page_title %}
       {% endblock title %}
     </title>
@@ -53,8 +54,9 @@
         aria-live="polite">
     <!-- Skip to main content link for accessibility -->
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <!-- {% include "core/components/error_boundary.html" %} -->
-        <!-- Header with semantic nav -->
+    <!-- {% include "core/components/error_boundary.html" %}
+ -->
+    <!-- Header with semantic nav -->
     <header role="banner">
       {% block header %}
         <nav>
@@ -149,26 +151,26 @@
       <footer role="contentinfo">
         <div class="container">
           <p>
-            &copy; {% now "Y" %} Greenova Environmental Management. <small>Version {% site_version %}</small>
-          </p>
-        </div>
-      </footer>
-    {% endblock footer %}
-    <!-- Loading indicator for HTMX requests -->
-    <div id="htmx-indicator" class="htmx-indicator" aria-hidden="true">
-      <div class="spinner"></div>
-    </div>
-    <!-- JavaScript at the end for better performance -->
-    <script src="{% static 'js/vendor/htmx/htmx.min.js' %}"></script>
-    <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}"></script>
-    <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}"></script>
-    <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}"></script>
-    <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}"></script>
-    <script src="{% static 'js/vendor/_hyperscript.min.js' %}"></script>
-    <script src="{% static 'js/app.js' %}" defer></script>
-    {% block extra_js %}
-    {% endblock extra_js %}
-    <!-- Include at the end of your body section before the closing body tag -->
-    {% include "chatbot/chat_widget.html" %}
-  </body>
+            &copy; {% now "Y" %} greenova environmental management. <small>version {% site_version %}</small>
+        </p>
+      </div>
+    </footer>
+  {% endblock footer %}
+  <!-- Loading indicator for HTMX requests -->
+  <div id="htmx-indicator" class="htmx-indicator" aria-hidden="true">
+    <div class="spinner"></div>
+  </div>
+  <!-- JavaScript at the end for better performance -->
+  <script src="{% static 'js/vendor/htmx/htmx.min.js' %}"></script>
+  <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}"></script>
+  <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}"></script>
+  <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}"></script>
+  <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}"></script>
+  <script src="{% static 'js/vendor/_hyperscript.min.js' %}"></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
+  {% block extra_js %}
+  {% endblock extra_js %}
+  <!-- Include at the end of your body section before the closing body tag -->
+  {% include "chatbot/chat_widget.html" %}
+</body>
 </html>

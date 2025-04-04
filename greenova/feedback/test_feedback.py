@@ -12,26 +12,26 @@ class TestBugReportModel:
     def test_create_bug_report(self, regular_user):
         """Test creating a bug report."""
         bug_report = BugReport.objects.create(
-            title="Test Bug",
-            description="This is a test bug report.",
+            title='Test Bug',
+            description='This is a test bug report.',
             created_by=regular_user,
-            severity="medium",
-            status="open"
+            severity='medium',
+            status='open'
         )
         # Use proper pytest assertions
-        assert bug_report.title == "Test Bug"
+        assert bug_report.title == 'Test Bug'
         assert bug_report.created_by == regular_user
-        assert bug_report.severity == "medium"
-        assert bug_report.status == "open"
+        assert bug_report.severity == 'medium'
+        assert bug_report.status == 'open'
 
     def test_bug_report_str(self, regular_user):
         """Test the string representation of a bug report."""
         bug_report = BugReport.objects.create(
-            title="Test Bug",
-            description="This is a test bug report.",
+            title='Test Bug',
+            description='This is a test bug report.',
             created_by=regular_user
         )
-        assert str(bug_report) == "Test Bug"
+        assert str(bug_report) == 'Test Bug'
 
 
 @pytest.mark.django_db
@@ -69,7 +69,7 @@ class TestBugReportForm:
             'workarounds': 'Refresh the page',
             'additional_comments': 'This happens after system updates'
         })
-        assert form.is_valid(), f"Form errors: {form.errors}"
+        assert form.is_valid(), f'Form errors: {form.errors}'
 
     def test_invalid_form(self):
         """Test form with invalid data."""
@@ -116,7 +116,7 @@ class TestFeedbackViews:
         # Check that success message is displayed
         messages = list(response.context['messages'])
         assert len(messages) > 0
-        assert "submitted successfully" in str(messages[0])
+        assert 'submitted successfully' in str(messages[0])
 
     def test_submit_invalid_bug_report(self, client, admin_user):
         """Test submitting an invalid bug report."""
@@ -137,7 +137,7 @@ class TestFeedbackViews:
         # Check that error message is displayed
         messages = list(response.context['messages'])
         assert len(messages) > 0
-        assert "problem with your submission" in str(messages[0])
+        assert 'problem with your submission' in str(messages[0])
 
     def test_login_required(self, client):
         """Test that views require login."""

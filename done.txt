@@ -1,0 +1,7 @@
+(A) 2024-05-21 Charts and obligations list back online +Frontend
+(A) 2024-05-22 Add obligation conditionally to projects with CRUD testing +Backend
+(A) 2024-05-23 Implement detailed view +Frontend
+(A) 2024-05-24 Create login page with customer/admin endpoint choice +Frontend @auth
+(A) 2024-05-27 Implement user profile functionality +Frontend @auth
+(A) 2024-05-28 Develop company features +Frontend
+(C) Implement stylelint for CSS linting +DevOps @linting

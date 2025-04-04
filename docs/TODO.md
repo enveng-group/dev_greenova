@@ -3,61 +3,48 @@
 This document tracks tasks and action items for the Greenova environmental
 management application.
 
-## Todo.txt Format Task List
+## Completed Tasks
 
-```txt
-(A) 2024-05-21 Charts and obligations list back online +Frontend
-(A) 2024-05-22 Add obligation conditionally to projects with CRUD testing +Backend
-(A) 2024-05-23 Implement detailed view +Frontend
-(A) 2024-05-24 Create login page with customer/admin endpoint choice +Frontend @auth
-(A) 2024-05-27 Implement user profile functionality +Frontend @auth
-(A) 2024-05-28 Develop company features +Frontend
-(A) 2024-05-29 Add reset password functionality +Frontend @auth
-(A) 2024-05-30 Create registration flow +Frontend @auth
-(B) Organize CSS files for better readability and maintainability +Frontend @css
-(B) Optimize CSS for performance +Frontend @css
-(B) Enhance responsiveness and cross-browser compatibility +Frontend @css
-(B) Implement PostCSS or Sass for enhanced functionality +Frontend @css
-(B) Set up TypeScript development environment +Frontend @js
-(B) Set up AssemblyScript development environment +Frontend @js
-(B) Identify performance-critical sections in app.js +Frontend @js
-(B) Write TypeScript code for DOM manipulation and event handling +Frontend @js
-(B) Write AssemblyScript code for performance-critical parts +Frontend @js
-(B) Compile AssemblyScript to WebAssembly +Frontend @js
-(B) Integrate WebAssembly modules with TypeScript +Frontend @js
-(B) Update build and deployment process +DevOps @js
-(C) Implement stylelint for CSS linting +DevOps @linting
-(C) Setup Django testing framework +Backend @testing
-(C) Configure hadolint for Dockerfile linting +DevOps @linting
-(C) Create Docker architecture diagram +Documentation @docker
-(C) Create Docker workflow diagram +Documentation @docker
-(C) Create Docker environment diagram +Documentation @docker
-x Setup djlint +DevOps @linting
-x Configure prettier +DevOps @linting
-x Install autopep8 +DevOps @linting
-x Setup pylance +DevOps @linting
-x Configure eslint +DevOps @linting
-```
+The following tasks have been completed and moved to `done.txt`:
+
+- Charts and obligations list back online
+- Add obligation conditionally to projects with CRUD testing
+- Implement detailed view
+- Create login page with customer/admin endpoint choice
+- Implement user profile functionality
+- Develop company features
+- Implement stylelint for CSS linting
 
 ## Technology Integration Tasks
 
 ### Frontend Tools & Libraries
 
-- [ ] Implement SASS/PostCSS for advanced styling
-- [ ] Set up TypeScript with proper configuration
-- [ ] Configure AssemblyScript for WASM components
+- [ ] Organize CSS files for better readability and maintainability
+- [ ] Optimize CSS for performance
+- [ ] Enhance responsiveness and cross-browser compatibility
+- [ ] Implement PostCSS or Sass for advanced styling
+- [ ] Set up TypeScript development environment
+- [ ] Set up AssemblyScript development environment
+- [ ] Identify performance-critical sections in app.js
+- [ ] Write TypeScript code for DOM manipulation and event handling
+- [ ] Write AssemblyScript code for performance-critical parts
+- [ ] Compile AssemblyScript to WebAssembly
+- [ ] Integrate WebAssembly modules with TypeScript
 - [ ] Improve mechanism charts interactivity
 - [ ] Implement detailed chart view
 
 ### Authentication & User Management
 
+- [ ] Add reset password functionality
+- [ ] Create registration flow
 - [ ] `django-allauth[MFA]`
 - [ ] `django-allauth[user-sessions]`
-- [ ] Reset password functionality
-- [ ] Registration flow
 
 ### DevOps & Infrastructure
 
+- [ ] Integrate commitlint into devtool stack
+- [ ] Integrate Dive for optimizing Docker/OCI image size
+- [ ] Introduce cloudflared for tunnel
 - [ ] certbot let's encrypt SSL setup
 - [ ] Configure MySQL or PostgreSQL in devcontainer
 - [ ] Set up Caddy with devcontainer feature
@@ -83,7 +70,7 @@ x Configure eslint +DevOps @linting
 - [ ] Document HTML-first design principles
 - [ ] Create architecture diagrams for Docker setup
 
-### Migrate templates from DTL to Jinja2
+### Migrate Templates from DTL to Jinja2
 
 - [ ] Authentication
 - [ ] Chatbot
