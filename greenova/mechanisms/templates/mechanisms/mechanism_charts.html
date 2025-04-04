@@ -3,9 +3,9 @@
         <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
         <!-- Chart Navigation -->
         <nav class="chart-nav" aria-label="Mechanism charts navigation">
-            <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
+            <button type="button" onclick="scrollCharts('chartGallery', 'left')" aria-label="Scroll left">←</button>
             <button type="button"
-                    onclick="scrollCharts('right')"
+                    onclick="scrollCharts('chartGallery', 'right')"
                     aria-label="Scroll right">→</button>
         </nav>
         <!-- Chart Gallery -->
@@ -50,14 +50,3 @@
         <p>Please select a project to view mechanism charts.</p>
     </div>
 {% endif %}
-<script>
-  function scrollCharts(direction) {
-    const container = document.getElementById('chartGallery');
-    const scrollAmount = 350;
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  }
-</script>

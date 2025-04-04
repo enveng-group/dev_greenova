@@ -39,6 +39,11 @@
   box-shadow: var(--greenova-shadow);
 }
 
+.mechanism-chart:hover, .mechanism-chart:active {
+  transform: scale(1.10);
+  transition: transform 0.2s;
+}
+
 .mechanism-chart header {
   margin: 0;
   padding: var(--greenova-padding);
