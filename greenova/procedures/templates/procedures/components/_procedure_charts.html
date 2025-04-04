@@ -34,8 +34,8 @@
 
       <!-- Chart Navigation -->
       <nav role="navigation" aria-label="Procedure charts navigation" class="chart-nav">
-        <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
-        <button type="button" onclick="scrollCharts('right')" aria-label="Scroll right">→</button>
+        <button type="button" onclick="scrollCharts('chartScroll', 'left')" aria-label="Scroll left">←</button>
+        <button type="button" onclick="scrollCharts('chartScroll', 'right')" aria-label="Scroll right">→</button>
       </nav>
 
       <!-- Charts Container -->
@@ -115,17 +115,3 @@
     </div>
   {% endif %}
 </article>
-
-<script>
-  // Add the chart scrolling function
-  function scrollCharts(direction) {
-    const container = document.getElementById('chartScroll');
-    const scrollAmount = 350; // Adjust as needed
-
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  }
-</script>

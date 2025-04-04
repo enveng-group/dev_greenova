@@ -18,10 +18,10 @@ document.addEventListener('htmx:afterSettle', function() {
     chartScroll.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        scrollCharts('left');
+        scrollCharts('chartScroll', 'left');
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
-        scrollCharts('right');
+        scrollCharts('chartScroll', 'right');
       }
     });
   }

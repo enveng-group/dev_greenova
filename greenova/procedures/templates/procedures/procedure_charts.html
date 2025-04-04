@@ -107,9 +107,9 @@
         <nav role="navigation"
              aria-label="Procedure charts navigation"
              class="chart-nav">
-          <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
+          <button type="button" onclick="scrollCharts('chartScroll', 'left')" aria-label="Scroll left">←</button>
           <button type="button"
-                  onclick="scrollCharts('right')"
+                  onclick="scrollCharts('chartScroll', 'right')"
                   aria-label="Scroll right">→</button>
         </nav>
         <div id="chartScroll" class="chart-scroll-container">
@@ -198,6 +198,7 @@
       </article>
     {% endif %}
   </article>
+<<<<<<< HEAD
   <script>
   // Add the chart scrolling function
   function scrollCharts(direction) {
@@ -222,4 +223,6 @@
     }
   }
   </script>
+=======
+>>>>>>> ed79deb (Signed-off-by: Cameron Sims <cameronissacsims@gmail.com>)
 {% endblock body %}
