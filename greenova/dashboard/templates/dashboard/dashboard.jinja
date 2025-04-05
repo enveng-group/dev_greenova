@@ -9,6 +9,8 @@
         </ol>
       </nav>
       <h1>Hi {{ request.user.get_full_name() or request.user.username }}</h1>
+      <h2>Welcome, {{ user|display_name }}!</h2>
+      <p>Last login: {{ user.last_login|format_date("%d %B %Y at %H:%M") }}</p>
       <h2>
         Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
       </h2>
