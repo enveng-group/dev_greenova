@@ -4,7 +4,7 @@ import os
 from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union
 
 from django.core.management.base import BaseCommand, CommandParser
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.dateparse import parse_date
@@ -79,7 +79,7 @@ class Command(BaseCommand):
             help='Project name to use if not specified in the CSV',
         )
         parser.add_argument(
-            '--update',
+            '--force-update',
             action='store_true',
             help='Update existing obligations instead of skipping',
         )
@@ -92,16 +92,6 @@ class Command(BaseCommand):
             '--continue-on-error',
             action='store_true',
             help='Continue processing rows even if some fail',
-        )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
-        )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
         )
         parser.add_argument(
             '--no-transaction',

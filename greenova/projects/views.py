@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
 from django.core.paginator import Paginator
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
@@ -55,6 +55,15 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             return False
 
 def project_obligations(request, project_id):
+    def project_obligations(request: HttpRequest, project_id: str) -> JsonResponse:
+        """ Retrieve obligations associated with a specific project. """
+        project = get_object_or_404(Project, id=project_id)
+        obligations = Obligation.objects.filter(project=project)
+
+        # Serialize obligations
+        obligations_data = [{'id': o.id, 'obligation_number': o.obligation_number} for o in obligations]
+
+        return JsonResponse({'obligations': obligations_data})
     """ Retrieve obligations associated with a specific project. """
     project = get_object_or_404(Project, id=project_id)
     obligations = Obligation.objects.filter(project=project)
