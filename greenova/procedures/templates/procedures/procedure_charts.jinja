@@ -1,11 +1,8 @@
 {% extends "base.html" %}
-
-{% load static %}
-
+{# No need for {% load static %} in Jinja2 #}
 {% block title %}
   Procedure Analysis for {{ mechanism.name }}
 {% endblock title %}
-
 {% block body %}
   <article>
     <header>
@@ -13,7 +10,7 @@
         <nav aria-label="Breadcrumb" class="breadcrumbs">
           <ol>
             <li>
-              <a href="{% url 'dashboard:home' %}?project_id={{ mechanism.project.id }}">Dashboard</a>
+              <a href="{{ url("dashboard:home") }}?project_id={{ mechanism.project.id }}">Dashboard</a>
             </li>
             <li>
               <a href="javascript:history.back()">Mechanisms</a>
@@ -34,7 +31,7 @@
       <section aria-labelledby="filter-heading" class="filter-section">
         <h2 id="filter-heading">Filter Options</h2>
         <form method="get"
-              action="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
+              action="{{ url('procedures:procedure_charts', mechanism_id=mechanism.id) }}"
               class="filter-container"
               hx-boost="true">
           <input type="hidden"
@@ -46,9 +43,7 @@
             <select name="phase" id="phase">
               <option value="">All Phases</option>
               {% for phase in available_phases %}
-                <option value="{{ phase }}" {% if filter_phase == phase %}selected{% endif %}>
-                  {{ phase }}
-                </option>
+                <option value="{{ phase }}" {% if filter_phase == phase %}selected{% endif %}>{{ phase }}</option>
               {% endfor %}
             </select>
           </div>
@@ -90,7 +85,7 @@
           </div>
           <div class="filter-actions">
             <button type="submit" class="btn-primary">Apply Filters</button>
-            <a href="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
+            <a href="{{ url('procedures:procedure_charts', mechanism_id=mechanism.id) }}"
                role="button"
                class="btn-secondary">Reset</a>
           </div>
@@ -112,11 +107,11 @@
         <nav role="navigation"
              aria-label="Procedure charts navigation"
              class="chart-nav">
-          <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">
-            ←
-          </button>
           <button type="button"
-                  onclick="scrollCharts('right')"
+                  onclick="scrollCharts('chartScroll', 'left')"
+                  aria-label="Scroll left">←</button>
+          <button type="button"
+                  onclick="scrollCharts('chartScroll', 'right')"
                   aria-label="Scroll right">→</button>
         </nav>
         <div id="chartScroll" class="chart-scroll-container">
@@ -180,7 +175,10 @@
             <tbody>
               {% for item in table_data %}
                 <tr>
-                  <td>{{ item.name }}</td>
+                  <td>
+                    <h2>{{ item.name|format_procedure_name }}</h2>
+                    <span class="status">{{ item.status|format_procedure_status }}</span>
+                  </td>
                   <td>{{ item.not_started }}</td>
                   <td>{{ item.in_progress }}</td>
                   <td>{{ item.completed }}</td>
@@ -194,7 +192,7 @@
         <div id="data-containers" hx-ext="class-tools">
           <!-- Obligations Container -->
           <div id="obligations-container"
-               hx-get="{% url 'obligations:summary' %}"
+               hx-get="{{ url('obligations:summary') }}"
                hx-target="#obligations-container"
                hx-swap="innerHTML"
                hx-trigger="load"

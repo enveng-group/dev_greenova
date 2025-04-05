@@ -2,16 +2,18 @@
   <header>
     <nav aria-label="Breadcrumb" class="breadcrumbs">
       <ol>
-        <li><a href="{% url 'dashboard:home' %}?project_id={{ mechanism.project.id }}">Dashboard</a></li>
-        <li><a href="javascript:history.back()">Mechanisms</a></li>
+        <li>
+          <a href="{{ url("dashboard:home") }}?project_id={{ mechanism.project.id }}">Dashboard</a>
+        </li>
+        <li>
+          <a href="{{ url('mechanisms:list') }}" _="on click preventDefault() then history.back()">Mechanisms</a>
+        </li>
         <li>{{ mechanism.name }}</li>
       </ol>
     </nav>
-
     <h1>Procedure Analysis</h1>
     <h2>{{ mechanism.name }}</h2>
   </header>
-
   {% if error %}
     <div class="notice error" role="alert">
       <p>{{ error }}</p>
@@ -20,7 +22,6 @@
     <!-- New Responsibility Distribution Section -->
     <section aria-labelledby="responsibility-heading" class="charts-section">
       <h2 id="responsibility-heading">Responsibility Distribution</h2>
-
       <article class="overall-chart">
         <figure>
           <figcaption>Obligations by Responsibility</figcaption>
@@ -28,18 +29,25 @@
         </figure>
       </article>
     </section>
-
     <section aria-labelledby="charts-heading" class="charts-section">
       <h2 id="charts-heading">Procedures by Status</h2>
-
       <!-- Chart Navigation -->
-      <nav role="navigation" aria-label="Procedure charts navigation" class="chart-nav">
-        <button type="button" onclick="scrollCharts('chartScroll', 'left')" aria-label="Scroll left">←</button>
-        <button type="button" onclick="scrollCharts('chartScroll', 'right')" aria-label="Scroll right">→</button>
+      <nav role="navigation"
+           aria-label="Procedure charts navigation"
+           class="chart-nav">
+        <button type="button"
+                onclick="scrollCharts('chartScroll', 'left')"
+                aria-label="Scroll left">←</button>
+        <button type="button"
+                onclick="scrollCharts('chartScroll', 'right')"
+                aria-label="Scroll right">→</button>
       </nav>
-
       <!-- Charts Container -->
-      <div class="chart-scroll-container" id="chartScroll" role="region" aria-label="Chart gallery" tabindex="0">
+      <div class="chart-scroll-container"
+           id="chartScroll"
+           role="region"
+           aria-label="Chart gallery"
+           tabindex="0">
         {% for proc in procedure_charts %}
           <article class="mechanism-chart">
             <header>
@@ -50,23 +58,33 @@
                 <dl class="chart-stats">
                   <div class="stat-row">
                     <dt>Total:</dt>
-                    <dd>{{ proc.stats.total }}</dd>
+                    <dd>
+                      {{ proc.stats.total }}
+                    </dd>
                   </div>
                   <div class="stat-row">
                     <dt>Not Started:</dt>
-                    <dd>{{ proc.stats.not_started }}</dd>
+                    <dd>
+                      {{ proc.stats.not_started }}
+                    </dd>
                   </div>
                   <div class="stat-row">
                     <dt>In Progress:</dt>
-                    <dd>{{ proc.stats.in_progress }}</dd>
+                    <dd>
+                      {{ proc.stats.in_progress }}
+                    </dd>
                   </div>
                   <div class="stat-row">
                     <dt>Completed:</dt>
-                    <dd>{{ proc.stats.completed }}</dd>
+                    <dd>
+                      {{ proc.stats.completed }}
+                    </dd>
                   </div>
                   <div class="stat-row">
                     <dt>Overdue:</dt>
-                    <dd>{{ proc.stats.overdue }}</dd>
+                    <dd>
+                      {{ proc.stats.overdue }}
+                    </dd>
                   </div>
                 </dl>
               </figcaption>
@@ -75,7 +93,6 @@
           </article>
         {% endfor %}
       </div>
-
       <!-- Data Table -->
       <article class="data-table">
         <header>
@@ -95,14 +112,14 @@
             </thead>
             <tbody>
               {% for item in table_data %}
-              <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.not_started }}</td>
-                <td>{{ item.in_progress }}</td>
-                <td>{{ item.completed }}</td>
-                <td>{{ item.overdue }}</td>
-                <td>{{ item.total }}</td>
-              </tr>
+                <tr>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.not_started }}</td>
+                  <td>{{ item.in_progress }}</td>
+                  <td>{{ item.completed }}</td>
+                  <td>{{ item.overdue }}</td>
+                  <td>{{ item.total }}</td>
+                </tr>
               {% endfor %}
             </tbody>
           </table>
