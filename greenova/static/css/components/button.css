@@ -1,3 +1,7 @@
+/**
+ * Copyright 2025 Enveng Group.
+ * SPDX-License-Identifier: 	AGPL-3.0-or-later
+ */
 /* Button styles */
 /* Buttons */
 button,
@@ -11,6 +15,7 @@ nav li [type='button'],
 .btn-danger,
 .btn-fold,
 .action-btn,
+.btn-fold,
 .quick-filter-btn {
   /* Set default style attributes. */
   font-size: var(--greenova-button-size);
@@ -36,6 +41,7 @@ nav li [type='button'],
     color: var(--greenova-text-dark);
   }
 }
+
 /* Font on */
 button.chat-toggle > span {
   font-weight: normal !important;

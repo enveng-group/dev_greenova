@@ -1,3 +1,7 @@
+/**
+ * Copyright 2025 Enveng Group.
+ * SPDX-License-Identifier: 	AGPL-3.0-or-later
+ */
 /* Chart section layout */
 .charts-section {
   margin: var(--greenova-spacing) 0;
@@ -54,6 +58,26 @@
   flex-direction: column;
 }
 
+.mechanism-chart:hover,
+.mechanism-chart:active {
+  transform: scale(1.1);
+  transition: transform 0.2s;
+}
+
+.mechanism-chart header {
+  margin: 0;
+  padding: var(--greenova-padding);
+}
+
+.mechanism-chart figure {
+  margin: 0;
+  padding: 0;
+}
+
+.mechanism-chart figure figcaption {
+  padding: var(--greenova-padding);
+}
+
 .mechanism-chart img {
   width: 100%;
   max-width: 100%;
@@ -62,15 +86,11 @@
   display: block;
   margin: 0 auto;
 }
+
 .mechanism-chart h3 {
   margin: 0 0 var(--greenova-spacing);
   font-size: 1rem;
   text-align: center;
-}
-
-.mechanism-chart figure {
-  margin: 0;
-  padding: 0;
 }
 
 .stat-row {

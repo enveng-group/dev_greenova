@@ -1,3 +1,5 @@
+// Copyright 2025 Enveng Group.
+// SPDX-License-Identifier: 	AGPL-3.0-or-later
 <!--
   Base HTML template for Greenova Environmental Management System
 
@@ -27,7 +29,10 @@
     <meta name="keywords"
           content="environmental compliance, management system, greenova, sustainability" />
     <meta name="description"
-          content=" {% block meta_description %} Environmental Compliance Management System {% endblock meta_description %}" />
+          content="
+                   {% block meta_description %}
+                     Environmental Compliance Management System
+                   {% endblock meta_description %}" />
     <title>
       {% block title %}
         {% block page_title %}
@@ -80,7 +85,9 @@
                     <li>
                       <a href="{% url 'dashboard:home' %}"
                          role="menuitem"
-                         aria-current="{% if request.resolver_match.namespace == 'dashboard' %} page {% endif %}"
+                         aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
+                                         page
+                                       {% endif %}"
                          _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
                     </li>
                     {% if request.resolver_match.namespace != 'dashboard' %}
@@ -152,25 +159,50 @@
         <div class="container">
           <p>
             &copy; {% now "Y" %} greenova environmental management. <small>version {% site_version %}</small>
-        </p>
-      </div>
-    </footer>
-  {% endblock footer %}
-  <!-- Loading indicator for HTMX requests -->
-  <div id="htmx-indicator" class="htmx-indicator" aria-hidden="true">
-    <div class="spinner"></div>
-  </div>
-  <!-- JavaScript at the end for better performance -->
-  <script src="{% static 'js/vendor/htmx/htmx.min.js' %}"></script>
-  <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}"></script>
-  <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}"></script>
-  <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}"></script>
-  <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}"></script>
-  <script src="{% static 'js/vendor/_hyperscript.min.js' %}"></script>
-  <script src="{% static 'js/app.js' %}" defer></script>
-  {% block extra_js %}
-  {% endblock extra_js %}
-  <!-- Include at the end of your body section before the closing body tag -->
-  {% include "chatbot/chat_widget.html" %}
-</body>
+          </p>
+        </div>
+      </footer>
+    {% endblock footer %}
+    <!-- Loading indicator for HTMX requests -->
+    <div id="htmx-indicator" class="htmx-indicator" aria-hidden="true">
+      <div class="spinner"></div>
+    </div>
+    <!-- JavaScript at the end for better performance -->
+    <script src="{% static 'js/vendor/htmx/htmx.min.js' %}" defer></script>
+    {% django_htmx_script %}
+    <!-- Extensions -->
+    <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}" defer></script>
+    <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}" defer></script>
+    <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}" defer></script>
+    <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}" defer></script>
+    <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
+    <script src="{% static 'js/app.js' %}" defer></script>
+    <!-- Initialize extensions -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        htmx.config.useTemplateFragments = true;
+        // Don't try to define extensions, they're already registered via the hx-ext attribute
+
+        {% if debug %}
+          if (typeof window.htmx !== "undefined") {
+              htmx.on("htmx:afterSettle", function(detail) {
+                  if (
+                      typeof window.djdt !== "undefined"
+                      && detail.target instanceof HTMLBodyElement
+                  ) {
+                      djdt.show_toolbar();
+                  }
+              });
+          }
+        {% endif %}
+      });
+    </script>
+    <!-- Custom Scripts -->
+    <script src="{% static 'js/components/foldable.js' %}" defer></script>
+    <script src="{% static 'js/components/scrollable.js' %}" defer></script>
+    {% block extra_js %}
+    {% endblock extra_js %}
+    <!-- Include at the end of your body section before the closing body tag -->
+    {% include "chatbot/chat_widget.html" %}
+  </body>
 </html>

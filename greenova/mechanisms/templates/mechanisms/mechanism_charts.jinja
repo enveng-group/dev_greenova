@@ -1,3 +1,6 @@
+{# filepath: /workspaces/greenova/mechanism_charts.jinja #}
+{# Copyright 2025 Enveng Group. #}
+{# SPDX-License-Identifier: AGPL-3.0-or-later #}
 {% if mechanism_charts %}
   <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
@@ -20,7 +23,7 @@
           </header>
           {% if mech.id %}
             <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}"
-               style="text-decoration: none">
+               class="chart-link">
             {% endif %}
             <figure>
               <figcaption>{{ mech.name }} Status Distribution</figcaption>

@@ -34,6 +34,25 @@
         </div>
       {% endif %}
       {% block content %}
+        <!-- Using filters -->
+        <span class="badge {{ report.severity|severity_color }}">{{ report.get_severity_display() }}</span>
+        <span class="status-indicator {{ report.status|status_color }}">{{ report.get_status_display() }}</span>
+        <!-- Using globals -->
+        <div class="bug-tracker-summary">
+          <h3>Open Bug Reports: {{ get_open_bug_count() }}</h3>
+        </div>
+        <!-- Using the mini tracker -->
+        {% set bug_tracker = show_bug_tracker_mini() %}
+        <div class="mini-tracker">
+          <h4>Latest Issues ({{ bug_tracker.count }})</h4>
+          <ul>
+            {% for bug in bug_tracker.bug_reports %}
+              <li>
+                {{ bug.title }} <span class="badge {{ bug.severity|severity_color }}">{{ bug.get_severity_display() }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
       {% endblock content %}
     </main>
     <script src="{{ static('js/vendor/htmx.min.js') }}" defer></script>

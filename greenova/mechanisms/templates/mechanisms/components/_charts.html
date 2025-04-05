@@ -5,10 +5,10 @@
         <!-- Chart Navigation -->
         <nav class="chart-nav">
             <button type="button"
-                    onclick="scrollCharts('left')"
+                    onclick="scrollCharts('chartGallery', 'left')"
                     aria-label="Scroll left through charts">←</button>
             <button type="button"
-                    onclick="scrollCharts('right')"
+                    onclick="scrollCharts('chartGallery', 'right')"
                     aria-label="Scroll right through charts">→</button>
         </nav>
         <!-- Chart Gallery -->
@@ -69,15 +69,4 @@
             </section>
         {% endif %}
     </section>
-    <script>
-    function scrollCharts(direction) {
-      const container = document.getElementById('chartGallery');
-      const scrollAmount = 350;
-      if (direction === 'left') {
-        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-      } else {
-        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      }
-    }
-    </script>
 {% endblock content %}
