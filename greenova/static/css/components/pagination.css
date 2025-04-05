@@ -1,6 +1,6 @@
 /* Pagination styling */
 .pagination {
-  margin-top: 1rem;
+  margin-top: var(--greenova-spacing);
   display: flex;
   justify-content: center;
 }
@@ -8,22 +8,21 @@
 .pagination-list {
   display: flex;
   list-style: none;
-  gap: 1rem;
+  gap: var(--greenova-spacing);
   align-items: center;
   padding: 0;
 }
-
 .pagination-info {
   color: var(--greenova-tertiary-dark);
 }
 
 .pagination a {
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: var(--greenova-padding-small) var(--greenova-padding);
   border: 1px solid var(--greenova-background-primary);
-  border-radius: 4px;
+  border-radius: var(--greenova-border-radius);
 }
 
 .pagination a:hover {
-  background-color: var(--greemova-background-secondary);
+  background-color: var(--greenova-background-secondary);
 }

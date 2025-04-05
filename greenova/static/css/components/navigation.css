@@ -2,84 +2,69 @@
 
 /* Header for the document, is large and at the top */
 header {
-
   background: var(--greenova-green-secondary);
 }
 
 /* If it is a child of the body, if it is a header which is not the top. */
-body>header {
+body > header {
   /* This width attribute makes it 100% of the page taking away any spacing that would be occupied by the body */
   max-width: calc(100% - 2 * var(--greenova-head-spacing));
   margin: 0 var(--greenova-head-spacing);
   padding: var(--greenova-padding);
 }
-
-
 [role='navigation'],
-[role='navigation'] [role="menuitem"] {
-  background: var(--greenova-green-secondary)
-    /*var(--greenova-beige-primary)*/
-  ;
+[role='navigation'] [role='menuitem'] {
+  background: var(--greenova-green-secondary) /*var(--greenova-beige-primary)*/;
   color: var(--greenova-text-primary-dark) !important;
 }
-
-[role="menuitem"][aria-current] {
+[role='menuitem'][aria-current] {
   background: var(--greenova-beige-secondary);
 }
 
 [role='navigation'],
 [role='navigation'] ul,
-[role='navigation'] ul li {
+[role='navigation'] ul li,
+[role='navigation'] [role='menuitem'] {
   border-radius: var(--greenova-border-radius);
   margin: 0;
   padding: 0;
 }
 
-[role='navigation'] [role="menuitem"] {
-  border-radius: var(--greenova-border-radius);
-  margin: 0;
+[role='navigation'] [role='menuitem'] {
   padding: var(--greenova-padding);
 }
 
-nav ul[role="menubar"] {
+nav ul[role='menubar'] {
   width: 100%;
 }
-
-nav ul[role="menubar"] li[role="none"] {
+nav ul[role='menubar'] li[role='none'] {
   /* Place to the right, make all on one file */
   display: flex;
   justify-content: flex-end;
   gap: var(--greenova-spacing);
-
   margin-right: var(--greenova-spacing-large);
   padding-right: var(--greenova-spacing-large);
   margin-left: auto;
 }
-
-nav ul[role="menubar"] li[role="none"].menubar-breadcrumbs {
+nav ul[role='menubar'] li[role='none'].menubar-breadcrumbs {
   display: flex;
   justify-content: flex-start;
   margin-left: var(--greenova-spacing-large);
   margin-right: 0;
 }
-
 ul.theme-container {
   /* Make the elements justify center */
   justify-content: center;
   height: 100%;
-
   /* Make the theme container vertical and space it away from the side of the navigation bar*/
   margin-left: var(--greenova-spacing-large) !important;
   flex-flow: column !important;
   padding: 0;
-
 }
-
-ul.theme-container>li {
+ul.theme-container > li {
   margin: var(--greenova-spacing-small) 0;
   padding: 0;
 }
-
 /* Chatbot and user login */
 div.auth-status-container {
   /* We want these elements to be spaced vertically and in columns */

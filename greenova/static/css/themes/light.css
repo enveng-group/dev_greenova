@@ -3,9 +3,8 @@
  *              Light-mode  Coloring              *
  *                                                *
  **************************************************/
-:root:not([data-theme=dark]),
-:root[data-theme=light] {
-
+:root:not([data-theme='dark']),
+:root[data-theme='light'] {
   /**************************************************
     *                                                *
     *                 Primary colours                *
@@ -13,38 +12,35 @@
     **************************************************/
 
   /* Green Primary - Use Cases: Body backgrounds, icon backgrounds, buttons */
-  --greenova-green-primary: #909E77;
+  --greenova-green-primary: #6a784e; /* Darkened for better contrast */
 
   /* Green Secondary - Use Cases: Header backgrounds */
-  --greenova-green-secondary: #B5C495;
+  --greenova-green-secondary: #a5b485; /* Adjusted for better visibility */
 
   /* Green Tertiary - Use Cases: Focus Areas on header or background backgrounds */
-  --greenova-green-tertiary: #697454;
+  --greenova-green-tertiary: #505a3d; /* Improved contrast ratio */
 
   /* Beige Primary - Use Cases: Secondary accent, navigation bars, icons in focus */
-  --greenova-beige-primary: #E5DED0;
+  --greenova-beige-primary: #d8ccba; /* Adjusted for better contrast */
 
   /* Beige Secondary - Use Cases: Beige alternate, when Beige Primary in use */
-  --greenova-beige-secondary: #CCBDAC;
+  --greenova-beige-secondary: #b8a694; /* Increased contrast */
 
   /* Background Primary - Use Cases: Frame Colour, main background*/
-  --greenova-background-primary: #E8EBE4;
+  --greenova-background-primary: #f5f7f2; /* Lightened for better contrast with dark text */
 
   /* Background Secondary - Use Cases: Container background colour*/
-  --greenova-background-secondary: #E2E7DD;
-
+  --greenova-background-secondary: #e8ede3; /* Slightly adjusted for better contrast */
 
   /* Text Primary Dark - Use Cases: Immutable Text, for Titles. Icons */
   --greenova-text-primary-dark: #000000;
 
   /* Text Secondary Dark - Use Cases: Immutable Text, Headings and body*/
-  --greenova-text-secondary-dark: #303030;
-  /* Body text */
+  --greenova-text-secondary-dark: #222222; /* Darkened for better contrast */
 
   /* Text Tertiary Dark - Use Cases: Mutable Text, for text box hints */
-  --greenova-tertiary-dark: #B3B3B3;
+  --greenova-text-tertiary-dark: #767676; /* Fixed variable name and improved contrast for WCAG AA */
 
   /* Text Primary Light - Use Cases: All text on coloured backgrounds*/
-  --greenova-primary-light: #FFFFFF;
-
+  --greenova-text-primary-light: #ffffff; /* Fixed variable name */
 }

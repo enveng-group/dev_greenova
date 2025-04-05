@@ -1,61 +1,63 @@
-<aside id="chat-widget" aria-label="Chat Assistant">
-  <!-- Chat toggle button -->
-  <button id="chat-toggle"
-          aria-controls="chat-dialog"
-          aria-expanded="false"
-          _="on click call #chat-dialog.showModal() then put 'true' into me's @aria-expanded">
-    <svg width="24"
-         height="24"
-         viewBox="0 0 24 24"
-         fill="none"
-         stroke="currentColor">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
-    <span>Chat</span>
-  </button>
-  <!-- Chat dialog -->
-  <dialog id="chat-dialog"
-          aria-labelledby="chat-title"
-          _="on click if event.target is me then put 'false' into #chat-toggle's @aria-expanded">
-    <article id="chat-container">
-      <header>
-        <a href="#close"
-           role="button"
-           class="close-button"
-           aria-label="Close dialog"
-           onclick="document.getElementById('chat-dialog').close(); return true;">✕</a>
-        <h2 id="chat-title">Chat with Greenova Assistant</h2>
-      </header>
-      <!-- Messages container -->
-      <div id="chat-messages" role="log" aria-live="polite">
-        <div class="chat-dialog chatbot-dialog">Hi! How can I help you with environmental management today?</div>
-      </div>
-      <!-- Chat input -->
-      <footer>
-        <form id="chat-form"
-              hx-post="{% url 'chatbot:create_conversation' %}"
-              hx-target="#chat-messages"
-              hx-swap="beforeend">
-          {% csrf_token %}
-          <div class="input-group">
-            <input type="text"
-                   id="chat-input"
-                   name="message"
-                   placeholder="Type your message..."
-                   aria-label="Chat message"
-                   required />
-            <button type="submit" aria-label="Send message">
-              <svg width="20"
-                   height="20"
-                   viewBox="0 0 24 24"
-                   fill="none"
-                   stroke="currentColor">
-                <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </button>
-          </div>
-        </form>
-      </footer>
-    </article>
-  </dialog>
-</aside>
+{% if user.is_authenticated %}
+  <aside id="chat-widget" aria-label="Chat Assistant">
+    <!-- Chat toggle button -->
+    <button id="chat-toggle"
+            aria-controls="chat-dialog"
+            aria-expanded="false"
+            _="on click call #chat-dialog.showModal() then put 'true' into me's @aria-expanded">
+      <svg width="24"
+           height="24"
+           viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span>Chat</span>
+    </button>
+    <!-- Chat dialog -->
+    <dialog id="chat-dialog"
+            aria-labelledby="chat-title"
+            _="on click if event.target is me then put 'false' into #chat-toggle's @aria-expanded">
+      <article id="chat-container">
+        <header>
+          <a href="#close"
+             role="button"
+             class="close-button"
+             aria-label="Close dialog"
+             onclick="document.getElementById('chat-dialog').close(); return true;">✕</a>
+          <h2 id="chat-title">Chat with Greenova Assistant</h2>
+        </header>
+        <!-- Messages container -->
+        <div id="chat-messages" role="log" aria-live="polite">
+          <div class="chat-dialog chatbot-dialog">Hi! How can I help you with environmental management today?</div>
+        </div>
+        <!-- Chat input -->
+        <footer>
+          <form id="chat-form"
+                hx-post="{% url 'chatbot:create_conversation' %}"
+                hx-target="#chat-messages"
+                hx-swap="beforeend">
+            {% csrf_token %}
+            <div class="input-group">
+              <input type="text"
+                     id="chat-input"
+                     name="message"
+                     placeholder="Type your message..."
+                     aria-label="Chat message"
+                     required />
+              <button type="submit" aria-label="Send message">
+                <svg width="20"
+                     height="20"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor">
+                  <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </footer>
+      </article>
+    </dialog>
+  </aside>
+{% endif %}

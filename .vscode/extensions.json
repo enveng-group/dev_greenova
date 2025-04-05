@@ -30,6 +30,14 @@
     "bradlc.vscode-tailwindcss",
     "esbenp.prettier-vscode",
     "pycqa.bandit-pycqa",
-    "mtxr.sqltools"
+    "mtxr.sqltools",
+    "bmalehorn.vscode-fish",
+    "willumz.generic-pseudocode",
+    "stylelint.vscode-stylelint",
+    "wholroyd.jinja",
+    "rarnoldmobile.todo-txt",
+    "mermaidchart.vscode-mermaid-chart",
+    "github.vscode-github-actions",
+    "ymotongpoo.licenser"
   ]
 }

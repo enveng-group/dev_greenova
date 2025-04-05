@@ -1,73 +1,275 @@
-/* Is the parent of all chat widget items. */
-#chat-widget {
-  /* Aligh in center space */
-  position: fixed;
-  bottom: var(--greenova-spacing);
-  right: var(--greenova-spacing);
-}
-
-/* Chat window */
-#chat-container {
-  min-height: 300px;
-  height: 80%;
-
-  /* Set heights automatically */
-  display: flex;
-  flex-flow: column;
-}
-
-/* Chat toggle button styles */
-#chat-toggle {
-  max-height: 48px;
-}
-
-/* Chat history */
-#chat-messages {
-  /* Make background a lighter less contrasting colour */
-  margin: var(--greenova-spacing) 0;
-  border: 4px solid var(--greenova-green-primary);
-  border-radius: var(--greenova-border-radius);
+/* Chatbot specific styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: var(--greenova-padding);
+}
 
-  /* Make messages in a column */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 calc(-1 * var(--greenova-spacing-small));
+}
+
+.column {
+  flex: 1;
+  padding: 0 var(--greenova-spacing-small);
+  min-width: 0;
+}
+
+.conversation-list {
+  flex: 0 0 30%;
+  border-right: 1px solid var(--border-color);
+  padding-right: var(--greenova-padding);
+}
+
+.chat-window {
+  flex: 0 0 70%;
+  padding-left: var(--greenova-padding);
+}
+
+.conversations {
+  list-style: none;
+  padding: 0;
+  margin: var(--greenova-spacing-large) 0;
+}
+
+.conversations li {
+  margin-bottom: var(--greenova-spacing);
+  padding: var(--greenova-padding);
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.conversations li:hover {
+  background-color: var(--background-alt);
+}
+.conversations li.active {
+  background-color: var(--primary-focus);
+}
+.conversations li a {
+  display: block;
+  text-decoration: none;
+  color: var(--color);
+}
+.conversations li a small {
+  display: block;
+  color: var(--muted-color);
+  font-size: 0.8rem;
+}
+.messages-container {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: var(--greenova-padding);
+  margin-bottom: var(--greenova-spacing-large);
+  background-color: var(--background-alt);
+  box-sizing: border-box;
+}
+
+.message {
+  margin-bottom: var(--greenova-spacing-large);
+  padding: calc(var(--greenova-padding) * 1.5);
+  border-radius: 8px;
+  max-width: 80%;
+}
+.message.user {
+  background-color: var(--primary);
+  color: white;
+  margin-left: auto;
+}
+.message.bot {
+  background-color: var(--secondary-background);
+  margin-right: auto;
+}
+.message-content {
+  word-break: break-word;
+}
+.message-time {
+  font-size: 0.7rem;
+  text-align: right;
+  margin-top: var(--greenova-spacing-small);
+  opacity: 0.7;
+}
+
+.message-input-container {
+  display: flex;
+  gap: var(--greenova-spacing-small);
+}
+
+.message-input-container input {
+  flex: 1;
+}
+
+.conversation-actions {
+  margin-top: var(--greenova-spacing-large);
+  display: flex;
+  justify-content: space-between;
+}
+.delete-link {
+  color: var(--form-element-invalid-active-border-color);
+}
+
+.new-conversation-btn {
+  width: 100%;
+  margin-bottom: var(--greenova-spacing-large);
+}
+
+.no-conversation-selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-alt);
+  border-radius: 4px;
+  text-align: center;
+  padding: var(--greenova-padding);
+}
+
+.confirmation-message {
+  margin: var(--greenova-spacing-large) 0;
+  padding: var(--greenova-padding);
+  background-color: var(--form-element-invalid-focus-background-color);
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: var(--greenova-spacing);
+}
+
+.destructive {
+  background-color: var(--form-element-invalid-active-border-color);
+  border-color: var(--form-element-invalid-active-border-color);
+}
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+  .conversation-list,
+  .chat-window {
+    flex: 0 0 100%;
+  }
+  .conversation-list {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: var(--greenova-spacing);
+    padding-bottom: var(--greenova-padding);
+  }
+
+  .chat-window {
+    padding-left: 0;
+  }
+}
+
+/* Fixed Chat Widget Button Styles */
+#chat-widget {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 10000; /* Extremely high z-index to ensure it's above everything */
+  display: block;
+  pointer-events: auto;
+  width: auto; /* Ensure width is based on content */
+  height: auto; /* Ensure height is based on content */
+}
+
+#chat-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 2rem;
+  background-color: var(--greenova-green-primary);
+  color: var(--greenova-text-primary-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  border: none;
+  cursor: pointer;
+  margin: 0; /* Reset any margin that might affect positioning */
+  min-height: unset; /* Override min-height from button.css */
+  max-height: unset; /* Override max-height from button.css */
+}
+
+#chat-toggle:hover,
+#chat-toggle:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+#chat-toggle svg {
+  stroke: currentColor;
+}
+
+/* Ensure the dialog appears properly positioned */
+.chat-dialog-modal {
+  max-width: 400px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.chat-container {
   display: flex;
   flex-direction: column;
-
-  /* Set a scroll bar to show up... */
-  overflow-y: scroll;
-  height: 100%;
-
-  background: var(--greenova-green-primary);
+  height: 500px;
+  max-height: 80vh;
+  padding: 0;
+  margin: 0;
+  border: none;
 }
 
-/* Chat dialog which represents some message */
+.chat-container-header {
+  padding: var(--greenova-padding);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-container-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--greenova-padding);
+}
+
+.chat-container-footer {
+  padding: var(--greenova-padding);
+  border-top: 1px solid var(--border-color);
+}
+
+.input-group {
+  display: flex;
+  gap: var(--greenova-spacing-small);
+}
+
+.input-group input {
+  flex: 1;
+}
+
 .chat-dialog {
-
-  margin: var(--greenova-spacing-small);
-  border: 4px solid var(--greenova-beige-primary);
-  padding: var(--greenova-padding-small) var(--greenova-padding);
-
-  max-width: 50%;
-
-  background: var(--greenova-beige-primary);
+  margin-bottom: var(--greenova-spacing);
+  padding: var(--greenova-padding);
+  border-radius: 8px;
+  max-width: 80%;
 }
 
-.chat-dialog.chatbot-dialog {
-  /* Message left message */
-  align-self: flex-start;
-
-  background: var(--greenova-chat-bot-background);
-  border-radius: var(--greenova-chat-bot-border-radius);
-  border-color: var(--greenova-chat-bot-background);
-  color: var(--greenova-chat-bot-color);
+.user-dialog {
+  background-color: var(--primary);
+  color: white;
+  margin-left: auto;
 }
 
-.chat-dialog.user-dialog {
-  /* Message right message*/
-  align-self: flex-end;
-
-  background: var(--greenova-chat-user-background);
-  border-radius: var(--greenova-chat-user-border-radius);
-  border-color: var(--greenova-chat-user-background);
-  color: var(--greenova-chat-user-color);
+.chatbot-dialog {
+  background-color: var(--secondary-background);
+  margin-right: auto;
 }

@@ -3,16 +3,22 @@ input[type='text']::placeholder {
   color: var(--greenova-tertiary-dark);
 }
 
+/* Keep select elements be a consistant size */
+select,
+select.project-selector,
+select[aria-busy='true'][disabled][data-loading-disable-data-loading-aria-busy] {
+  height: fit-content;
+}
+
 /* Form layout and styling */
 .obligation-form {
   max-width: 100%;
   margin: 0 auto;
 }
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: var(--greenova-spacing-large);
 }
 
 @media (min-width: 768px) {
@@ -20,12 +26,11 @@ input[type='text']::placeholder {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 }
-
 /* Form groups and rows */
 .form-row {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: var(--greenova-spacing);
 }
 
 @media (min-width: 640px) {
@@ -35,13 +40,13 @@ input[type='text']::placeholder {
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: var(greenova-spacing);
 }
 
 /* Label styling */
 .form-group label {
   display: block;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--greenova-spacing-small);
   font-weight: 500;
 }
 
@@ -50,14 +55,11 @@ input[type='text']::placeholder {
 .form-group input,
 .form-group select,
 .form-group textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--greenova-beige-secondary);
-  border-radius: 4px;
+  padding: var(--greenova-padding);
+  border-radius: var(--greenova-border-radius);
   background-color: var(--greenova-beige-secondary);
   color: var(--greenova-text-primary-dark);
 }
-
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -65,13 +67,11 @@ input[type='text']::placeholder {
   outline: none;
   box-shadow: var(--greenova-shadow);
 }
-
 /* Checkbox group styling */
 .checkbox-group {
   display: flex;
   align-items: center;
 }
-
 .checkbox-group label {
   display: flex;
   align-items: center;
@@ -79,12 +79,10 @@ input[type='text']::placeholder {
   margin-bottom: 0;
   cursor: pointer;
 }
-
-.checkbox-group input[type="checkbox"] {
+.checkbox-group input[type='checkbox'] {
   width: auto;
   margin: 0;
 }
-
 /* Help text and error styling */
 .form-group small {
   display: block;
@@ -92,51 +90,42 @@ input[type='text']::placeholder {
   font-size: 0.8rem;
   color: var(--greenova-tertiary-dark);
 }
-
 .form-group small.error {
   background: var(--greenova-warning-background);
   color: var(--greenova-warning-text);
 }
-
 /* Fieldset styling */
 fieldset {
   padding: 1rem;
   margin-bottom: 1rem;
 }
-
 legend {
   font-weight: 600;
   padding: 0 0.5rem;
 }
-
 /* Alert styling */
 .alert {
   padding: 1rem;
   border-radius: 4px;
   margin-bottom: 1rem;
 }
-
 .alert.success {
   background-color: var(--greenova-success-background);
   border: 1px solid var(--greenova-success-background);
   color: var(--greenova-success-text);
 }
-
 .alert.error {
   background-color: var(--greenova-warning-background);
   border: 1px solid var(--greenova-warning-background);
   color: var(--greenova-warning-text);
 }
-
 .alert h4 {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
-
 .alert ul {
   margin-bottom: 0;
 }
-
 /* Visually hidden elements */
 .visually-hidden {
   position: absolute;
@@ -148,40 +137,31 @@ legend {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
-
 /* Loading states */
 [data-loading] {
   display: none;
 }
-
 /* Loading spinner animation */
 .loading-spinner {
   display: inline-block;
-  width: 1rem;
-  height: 1rem;
   border: 2px solid rgba(0, 0, 0, 0.1);
   border-left-color: var(--greenova-green-primary);
   border-radius: 50%;
   animation: spinner 1s linear infinite;
 }
-
 @keyframes spinner {
   to {
     transform: rotate(360deg);
   }
 }
-
 /* Style for buttons in loading state */
-button[aria-busy="true"] {
+button[aria-busy='true'] {
   position: relative;
   color: transparent;
 }
-
-button[aria-busy="true"]::after {
-  content: "";
+button[aria-busy='true']::after {
+  content: '';
   position: absolute;
-  width: 1rem;
-  height: 1rem;
   top: calc(50% - 0.5rem);
   left: calc(50% - 0.5rem);
   border: 2px solid rgba(255, 255, 255, 0.25);

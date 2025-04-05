@@ -1,0 +1,9 @@
+We encountered a problem processing your bug report submission. Please check the following details and try again:
+
+{% if form.errors %}
+  {% for field, errors in form.errors.items %}
+    {{ field }}: {% for error in errors %}{{ error }} {% endfor %}
+  {% endfor %}
+{% else %}
+  There was an unexpected error. Please try again later or contact support.
+{% endif %}

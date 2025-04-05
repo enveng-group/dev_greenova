@@ -1,0 +1,48 @@
+/*
+ * GREENOVA PICO CSS INTEGRATION
+ * Custom styles to integrate PicoCSS with Greenova design system
+ */
+
+/* Apply Greenova variables to Pico variables */
+:root {
+  /* Typography */
+  --pico-font-family: var(--greenova-font-family);
+  --pico-font-size: var(--greenova-text-size);
+  --pico-font-weight: var(--greenova-font-weight);
+  --pico-line-height: var(--greenova-line-height);
+  --pico-border-radius: var(--greenova-border-radius);
+
+  /* Colors */
+  --pico-primary: var(--greenova-green-primary);
+  --pico-primary-hover: var(--greenova-green-tertiary);
+  --pico-primary-focus: rgba(106, 120, 78, 0.25);
+  --pico-primary-inverse: var(--greenova-text-primary-dark);
+
+  /* Form elements */
+  --pico-form-element-spacing-vertical: var(--greenova-spacing);
+  --pico-form-element-spacing-horizontal: var(--greenova-padding);
+
+  /* Accessibility */
+  --pico-outline-width: 2px;
+  --pico-outline-style: solid;
+  --pico-outline-offset: 2px;
+}
+
+/* Custom scrollbar for better accessibility */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--greenova-background-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--greenova-green-secondary);
+  border-radius: var(--greenova-border-radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--greenova-green-primary);
+}

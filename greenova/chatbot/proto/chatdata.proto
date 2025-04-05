@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package tutorial;
+
+message ChatBotResponse {
+  string prompt = 1;
+  string response = 2;
+  int32 id = 3;
+}
+
+message ChatBotPrompts {
+  repeated ChatBotResponse responses = 1;
+}

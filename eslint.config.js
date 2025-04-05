@@ -1,7 +1,7 @@
 import globals from 'globals';
+import js from '@eslint/js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,11 +33,9 @@ export default [
         ...globals.browser,
         ...globals.node,
       },
-
       ecmaVersion: 2024,
       sourceType: 'module',
     },
-
     rules: {
       indent: ['error', 2],
       'linebreak-style': ['error', 'unix'],

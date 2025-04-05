@@ -1,0 +1,14 @@
+{% if messages %}
+  <div class="messages" role="alert" aria-live="polite">
+    {% for message in messages %}
+      <div class="message {{ message.tags }}"
+           _="on load wait 5s then add .fade-out then wait 500ms then remove me">
+        <div class="message-content">{{ message }}</div>
+        <button type="button"
+                class="close-message"
+                aria-label="Close message"
+                _="on click remove closest .message">&times;</button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

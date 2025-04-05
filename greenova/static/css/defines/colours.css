@@ -4,8 +4,8 @@
  *                                                *
  **************************************************/
 :root,
-:root[data-theme=light],
-:root[data-theme=dark] {
+:root[data-theme='light'],
+:root[data-theme='dark'] {
   /**************************************************
     *                                                *
     *              Pico Defaults colours             *
@@ -25,11 +25,15 @@
   --pico-background-color: var(--greenova-background-primary) !important;
 
   /* Container Backgrounds */
-  --pico-card-background-color: var(--greenova-background-secondary) !important;
+  --pico-card-background-color: var(
+    --greenova-background-secondary
+  ) !important;
 
   /* Container Headers/Borders */
   --pico-card-border-color: var(--greenova-green-secondary) !important;
-  --pico-card-sectioning-background-color: var(--greenova-green-secondary) !important;
+  --pico-card-sectioning-background-color: var(
+    --greenova-green-secondary
+  ) !important;
 
   /* Titles */
   --pico-h1-color: var(--greenova-text-primary-dark) !important;
@@ -49,7 +53,7 @@
     **************************************************/
 
   /* Notification Primary High - Use Cases: Highest priority notification marker */
-  --greenova-notif-primary-high: #FF1F1F;
+  --greenova-notif-primary-high: #ff1f1f;
 
   --greenova-warning-background: var(--greenova-notif-primary-high);
   --greenova-warning-text: #000000;
@@ -58,28 +62,27 @@
   --greenova-error-text: #000000;
 
   /* Notification Secondary High - Use Cases: outline of notification marker */
-  --greenova-notif-secondary-high: #FFB6B6;
+  --greenova-notif-secondary-high: #ffb6b6;
 
   /*Notification Primary Mid - Use Cases: Middle priority notification marker */
-  --greenova-notif-primary-mid: #FAE100;
+  --greenova-notif-primary-mid: #fae100;
 
   --greenova-info-background: var(--greenova-notif-primary-mid);
   --greenova-info-text: #000000;
 
   /* Notification Secondary Mid - Use Cases: outline of notification marker */
-  --greenova-notif-secondary-mid: #FFEF9C;
+  --greenova-notif-secondary-mid: #ffef9c;
 
   /* Notification Primary Low - Use Cases: Lowest priority notification marker */
-  --greenova-notif-primary-low: #2FC709;
+  --greenova-notif-primary-low: #2fc709;
 
   --greenova-success-background: var(--greenova-notif-primary-low);
   --greenova-success-text: #000000;
   /* Notification Secondary Low - Use Cases: outline of notification marker */
-  --greenova-notif-secondary-low: #B1E5A4;
+  --greenova-notif-secondary-low: #b1e5a4;
 
   --pico-mark-background-color: var(--greenova-notif-secondary-low);
   --pico-mark-color: #000000;
-
 
   /**************************************************
     *                                                *
@@ -92,16 +95,6 @@
   --greenova-chat-bot-background: #9999ff;
   --greenova-chat-bot-color: #000000;
 
-
-  /**************************************************
-    **************************************************/
-  --greenova-chat-user-background: #dedeff;
-  --greenova-chat-user-color: #000000;
-
-  --greenova-chat-bot-background: #9999ff;
-  --greenova-chat-bot-color: #000000;
-
-
   /**************************************************
     *                                                *
     *                  Data colours                  *
@@ -109,6 +102,5 @@
     **************************************************/
 
   /* Data Null - Use Cases: Colour for when data points are out of focus of the chart. */
-  --greenova-data-null: #9C9F93;
-
+  --greenova-data-null: #9c9f93;
 }

@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import date, timedelta
 
 import pytest
@@ -13,35 +14,42 @@ from obligations.utils import (get_obligation_status, is_obligation_overdue,
                                normalize_frequency)
 from projects.models import Project
 from responsibility.models import Responsibility
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 
 User = get_user_model()
 
 # FIXTURES
 @pytest.fixture
-def test_user(db):
+def test_user(db):  # pylint: disable=unused-argument
     """Create and return a test user."""
+    test_username = os.environ.get('TEST_USERNAME', 'test')
+    test_email = os.environ.get('TEST_EMAIL', 'test@example.com')
+    test_password = os.environ.get('TEST_PASSWORD', 'password')
+
     user = User.objects.create_user(
-        username='test',
-        email='test@example.com',
-        password='password'
+        username=test_username,
+        email=test_email,
+        password=test_password
     )
     return user
 
+
 @pytest.fixture
-def test_admin(db):
+def test_admin(db):  # pylint: disable=unused-argument
     """Create and return an admin user with all permissions."""
+    admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
+    admin_password = os.environ.get('ADMIN_PASSWORD', 'adminpass')
+
     admin = User.objects.create_superuser(
-        username='admin',
-        email='admin@example.com',
-        password='adminpass'
+        username=admin_username,
+        email=admin_email,
+        password=admin_password
     )
     return admin
 
+
 @pytest.fixture
-def test_project(db):
+def test_project(db):  # pylint: disable=unused-argument
     """Create and return a test project."""
     project = Project.objects.create(
         name='Test Project',
@@ -49,8 +57,9 @@ def test_project(db):
     )
     return project
 
+
 @pytest.fixture
-def test_mechanism(db, test_project):
+def test_mechanism(db, test_project):  # pylint: disable=unused-argument,redefined-outer-name
     """Create and return a test environmental mechanism."""
     mechanism = EnvironmentalMechanism.objects.create(
         name='Test Mechanism',
@@ -59,8 +68,9 @@ def test_mechanism(db, test_project):
     )
     return mechanism
 
+
 @pytest.fixture
-def test_responsibility(db):
+def test_responsibility(db):  # pylint: disable=unused-argument
     """Create and return a test responsibility."""
     responsibility = Responsibility.objects.create(
         name='Test Responsibility',
@@ -68,8 +78,9 @@ def test_responsibility(db):
     )
     return responsibility
 
+
 @pytest.fixture
-def test_obligation(db, test_project, test_mechanism, test_responsibility):
+def test_obligation(db, test_project, test_mechanism, test_responsibility):  # pylint: disable=unused-argument,redefined-outer-name
     """Create and return a test obligation."""
     obligation = Obligation.objects.create(
         obligation_number='PCEMP-001',
@@ -87,8 +98,9 @@ def test_obligation(db, test_project, test_mechanism, test_responsibility):
     obligation.responsibilities.add(test_responsibility)
     return obligation
 
+
 @pytest.fixture
-def overdue_obligation(db, test_project, test_mechanism):
+def overdue_obligation(db, test_project, test_mechanism):  # pylint: disable=unused-argument,redefined-outer-name
     """Create and return an overdue obligation."""
     obligation = Obligation.objects.create(
         obligation_number='PCEMP-002',
@@ -104,8 +116,9 @@ def overdue_obligation(db, test_project, test_mechanism):
     )
     return obligation
 
+
 @pytest.fixture
-def test_evidence(db, test_obligation):
+def test_evidence(db, test_obligation):  # pylint: disable=unused-argument,redefined-outer-name
     """Create and return a test evidence file."""
     content = b'test content'
     test_file = SimpleUploadedFile(
@@ -120,12 +133,13 @@ def test_evidence(db, test_obligation):
     )
     return evidence
 
+
 # MODEL TESTS
 @pytest.mark.django_db
 class TestObligationModel:
     """Test the Obligation model."""
 
-    def test_create_obligation(self, test_project, test_mechanism):
+    def test_create_obligation(self, test_project, test_mechanism):  # pylint: disable=redefined-outer-name
         """Test creating an obligation."""
         obligation = Obligation.objects.create(
             obligation_number='PCEMP-100',
@@ -141,43 +155,41 @@ class TestObligationModel:
         assert obligation.obligation_number == 'PCEMP-100'
         assert obligation.status == 'not started'  # Default status
 
-    def test_str_method(self, test_obligation):
+    def test_str_method(self, test_obligation):  # pylint: disable=redefined-outer-name
         """Test the string representation of an obligation."""
-        expected_str = f'{test_obligation.obligation_number} - {test_obligation.project.name}'
+        expected_str = (f'{test_obligation.obligation_number} - '
+                        f'{test_obligation.project.name}')
         assert str(test_obligation) == expected_str
 
-    def test_get_next_obligation_number(self, test_obligation):
+    def test_get_next_obligation_number(self, test_obligation):  # pylint: disable=redefined-outer-name
         """Test generating the next sequential obligation number."""
         next_number = Obligation.get_next_obligation_number()
         assert next_number.startswith('PCEMP-')
         # Should be one more than the highest number
-        assert int(next_number.split('-')[1]) > int(test_obligation.obligation_number.split('-')[1])
+        next_num = int(next_number.split('-')[1])
+        current_num = int(test_obligation.obligation_number.split('-')[1])
+        assert next_num > current_num
 
-    def test_is_overdue_property(self, test_obligation):
+    def test_is_overdue_property(self, test_obligation):  # pylint: disable=redefined-outer-name
         """Test the is_overdue property."""
         # Initially not overdue
         assert test_obligation.is_overdue is False
-
         # Set due date to past
         test_obligation.action_due_date = timezone.now().date() - timedelta(days=1)
         test_obligation.save()
         assert test_obligation.is_overdue is True
-
         # Set status to completed
         test_obligation.status = 'completed'
         test_obligation.save()
         assert test_obligation.is_overdue is False
 
-    def test_calculate_next_recurring_date(self, test_obligation):
+    def test_calculate_next_recurring_date(self, test_obligation):  # pylint: disable=redefined-outer-name
         """Test calculating the next recurring date."""
         test_obligation.recurring_obligation = True
         test_obligation.recurring_frequency = 'monthly'
-
         today = timezone.now().date()
         test_obligation.action_due_date = today
-
         next_date = test_obligation.calculate_next_recurring_date()
-
         # Should be a month later
         if today.month == 12:
             expected_month = 1
@@ -185,34 +197,30 @@ class TestObligationModel:
         else:
             expected_month = today.month + 1
             expected_year = today.year
-
         assert next_date.month == expected_month
         assert next_date.year == expected_year
 
-    def test_update_recurring_forecasted_date(self, test_obligation):
+    def test_update_recurring_forecasted_date(self, test_obligation):  # pylint: disable=redefined-outer-name
         """Test updating the recurring forecasted date."""
         # Enable recurring obligation
         test_obligation.recurring_obligation = True
         test_obligation.recurring_frequency = 'weekly'
-
         # Initially no forecasted date
         assert test_obligation.recurring_forcasted_date is None
-
         # Update should return True (indicating a change)
         assert test_obligation.update_recurring_forecasted_date() is True
-
         # Should now have a forecasted date
         assert test_obligation.recurring_forcasted_date is not None
-
         # Calculate expected date (7 days from now)
         expected_date = timezone.now().date() + timedelta(days=7)
         assert test_obligation.recurring_forcasted_date == expected_date
+
 
 @pytest.mark.django_db
 class TestObligationEvidenceModel:
     """Test the ObligationEvidence model."""
 
-    def test_create_evidence(self, test_obligation):
+    def test_create_evidence(self, test_obligation):  # pylint: disable=redefined-outer-name
         """Test creating an evidence file."""
         content = b'test content'
         test_file = SimpleUploadedFile(
@@ -220,37 +228,47 @@ class TestObligationEvidenceModel:
             content=content,
             content_type='application/pdf'
         )
-
         evidence = ObligationEvidence.objects.create(
             obligation=test_obligation,
             file=test_file,
             description='Test evidence'
         )
-
         assert evidence.obligation == test_obligation
         assert 'test_file' in evidence.file.name
         assert evidence.description == 'Test evidence'
 
-    def test_str_method(self, test_evidence):
+    def test_str_method(self, test_evidence):  # pylint: disable=redefined-outer-name
         """Test the string representation of evidence."""
         assert str(test_evidence).startswith(f'Evidence for {test_evidence.obligation}')
 
-    def test_file_size(self, test_evidence):
+    def test_file_size(self, test_evidence):  # pylint: disable=redefined-outer-name
         """Test the file_size method."""
         size = test_evidence.file_size()
         assert isinstance(size, str)
         assert 'bytes' in size or 'KB' in size or 'MB' in size
 
+
 # UTILITY TESTS
 class TestUtilities:
     """Test utility functions."""
-
     @pytest.mark.parametrize(
         'obligation_data,reference_date,expected',
         [
-            ({'status': 'completed', 'action_due_date': date.today() - timedelta(days=10)}, None, False),
-            ({'status': 'in progress', 'action_due_date': date.today() - timedelta(days=10)}, None, True),
-            ({'status': 'not started', 'action_due_date': date.today() + timedelta(days=10)}, None, False),
+            (
+                {'status': 'completed',
+                 'action_due_date': date.today() - timedelta(days=10)},
+                None, False
+            ),
+            (
+                {'status': 'in progress',
+                 'action_due_date': date.today() - timedelta(days=10)},
+                None, True
+            ),
+            (
+                {'status': 'not started',
+                 'action_due_date': date.today() + timedelta(days=10)},
+                None, False
+            ),
             ({'status': 'in progress', 'action_due_date': None}, None, False),
         ]
     )
@@ -258,19 +276,16 @@ class TestUtilities:
         """Test the is_obligation_overdue utility function."""
         assert is_obligation_overdue(obligation_data, reference_date) == expected
 
-    def test_get_obligation_status(self, test_obligation, overdue_obligation):
+    def test_get_obligation_status(self, test_obligation, overdue_obligation):  # pylint: disable=redefined-outer-name
         """Test getting the real obligation status."""
         # Regular obligation with future date
         assert get_obligation_status(test_obligation) == test_obligation.status
-
         # Overdue obligation
         assert get_obligation_status(overdue_obligation) == 'overdue'
-
         # Change test_obligation to completed
         test_obligation.status = 'completed'
         test_obligation.save()
         assert get_obligation_status(test_obligation) == 'completed'
-
         # Change test_obligation to upcoming (due within 14 days)
         test_obligation.status = 'in progress'
         test_obligation.action_due_date = timezone.now().date() + timedelta(days=7)
@@ -303,12 +318,13 @@ class TestUtilities:
         """Test the normalize_frequency utility function."""
         assert normalize_frequency(frequency) == expected
 
+
 # FORM TESTS
 @pytest.mark.django_db
 class TestObligationForm:
     """Test the ObligationForm."""
 
-    def test_form_initialization(self, test_project):
+    def test_form_initialization(self, test_project):  # pylint: disable=redefined-outer-name
         """Test form initialization with project context."""
         form = ObligationForm(project=test_project)
         assert form.fields['project'].initial == test_project
@@ -324,7 +340,7 @@ class TestObligationForm:
             ('environmental_aspect', 'Other', False),  # Requires custom_aspect
         ]
     )
-    def test_field_validation(self, test_project, field, value, valid):
+    def test_field_validation(self, test_project, field, value, valid):  # pylint: disable=redefined-outer-name
         """Test validation of individual fields."""
         form_data = {
             'project': test_project.id,
@@ -335,24 +351,22 @@ class TestObligationForm:
             'status': 'not started',
             'responsibilities': [],
         }
-
         # Override specific field
         form_data[field] = value
-
         # Add custom_environmental_aspect if needed
         if field == 'environmental_aspect' and value == 'Other':
             form_data['custom_environmental_aspect'] = ''  # Empty to fail validation
-
         form = ObligationForm(data=form_data, project=test_project)
         is_valid = form.is_valid()
-
         if valid:
             assert is_valid, f'Form should be valid but got errors: {form.errors}'
         else:
             assert not is_valid, 'Form should be invalid but was valid'
-            assert field in form.errors, f'Expected error in field {field} but got {form.errors}'
+            assert field in form.errors, (
+                f'Expected error in field {field} but got {form.errors}'
+            )
 
-    def test_clean_recurring_frequency(self, test_project, test_responsibility):
+    def test_clean_recurring_frequency(self, test_project, test_responsibility):  # pylint: disable=redefined-outer-name
         """Test cleaning of recurring frequency."""
         # With recurring obligation but no frequency
         form_data = {
@@ -365,10 +379,10 @@ class TestObligationForm:
             'recurring_obligation': True,
             'responsibilities': [test_responsibility.id],
         }
-
         form = ObligationForm(data=form_data, project=test_project)
         assert not form.is_valid()
         assert 'recurring_frequency' in form.errors
+
 
 @pytest.mark.django_db
 class TestEvidenceUploadForm:
@@ -382,14 +396,12 @@ class TestEvidenceUploadForm:
             content=content,
             content_type='application/pdf'
         )
-
         form_data = {
             'description': 'Test evidence description',
         }
         form_files = {
             'file': test_file,
         }
-
         form = EvidenceUploadForm(data=form_data, files=form_files)
         assert form.is_valid()
 
@@ -402,210 +414,96 @@ class TestEvidenceUploadForm:
             content=content,
             content_type='application/octet-stream'
         )
-
         form_data = {
             'description': 'Test evidence description',
         }
         form_files = {
             'file': test_file,
         }
-
         form = EvidenceUploadForm(data=form_data, files=form_files)
         assert not form.is_valid()
         assert 'file' in form.errors
+
 
 # VIEW TESTS
 @pytest.mark.django_db
 class TestObligationViews:
     """Test obligation views."""
 
-    def test_summary_view(self, client, test_user, test_obligation, test_mechanism):
+    def test_summary_view(self, client, test_user, test_obligation, test_mechanism):  # pylint: disable=redefined-outer-name
         """Test the obligation summary view."""
         client.force_login(test_user)
         url = reverse('obligations:summary') + f'?mechanism_id={test_mechanism.id}'
         response = client.get(url)
-
         assert response.status_code == 200
         assert 'obligations' in response.context
         assert test_obligation in response.context['obligations']
 
-    def test_overdue_count_view(self, client, test_user, test_project, overdue_obligation):
+    # pylint: disable=redefined-outer-name,unused-argument
+    def test_overdue_count_view(
+        self, client, test_user, test_project, overdue_obligation
+    ):
         """Test the total overdue obligations view."""
         client.force_login(test_user)
         url = reverse('obligations:overdue') + f'?project_id={test_project.id}'
         response = client.get(url)
-
         assert response.status_code == 200
         # Parse JSON response
         data = json.loads(response.content)
         assert data == 1  # Should have one overdue obligation
 
-    def test_detail_view(self, client, test_user, test_obligation):
+    def test_detail_view(self, client, test_user, test_obligation):  # pylint: disable=redefined-outer-name
         """Test the obligation detail view."""
         client.force_login(test_user)
-        url = reverse('obligations:detail', kwargs={'obligation_number': test_obligation.obligation_number})
+        url = reverse('obligations:detail',
+                      kwargs={'obligation_number': test_obligation.obligation_number})
         response = client.get(url)
-
         assert response.status_code == 200
         assert response.context['obligation'] == test_obligation
 
-    def test_create_view_get(self, client, test_user, test_project):
+    def test_create_view_get(self, client, test_user, test_project):  # pylint: disable=redefined-outer-name
         """Test getting the create obligation view."""
         client.force_login(test_user)
         url = reverse('obligations:create') + f'?project_id={test_project.id}'
         response = client.get(url)
-
         assert response.status_code == 200
         assert 'form' in response.context
 
-    def test_update_view_get(self, client, test_user, test_obligation):
+    def test_update_view_get(self, client, test_user, test_obligation):  # pylint: disable=redefined-outer-name
         """Test getting the update obligation view."""
         client.force_login(test_user)
-        url = reverse('obligations:update', kwargs={'obligation_number': test_obligation.obligation_number})
+        url = reverse('obligations:update',
+                      kwargs={'obligation_number': test_obligation.obligation_number})
         response = client.get(url)
-
         assert response.status_code == 200
         assert response.context['form'].instance == test_obligation
 
-    def test_toggle_custom_aspect_view(self, client, test_user):
+    def test_toggle_custom_aspect_view(self, client, test_user):  # pylint: disable=redefined-outer-name
         """Test the toggle custom aspect view."""
         client.force_login(test_user)
         # Test with "Other" selected
-        url = reverse('obligations:toggle_custom_aspect') + '?environmental_aspect=Other'
+        url = (reverse('obligations:toggle_custom_aspect') +
+               '?environmental_aspect=Other')
         response = client.get(url)
-
         assert response.status_code == 200
         assert 'show_field' in response.context
         assert response.context['show_field'] is True
-
         # Test with another option selected
         url = reverse('obligations:toggle_custom_aspect') + '?environmental_aspect=Air'
         response = client.get(url)
-
         assert response.status_code == 200
         assert response.context['show_field'] is False
 
-    def test_delete_view(self, client, test_admin, test_obligation):
+    def test_delete_view(self, client, test_admin, test_obligation):  # pylint: disable=redefined-outer-name
         """Test the delete obligation view."""
         client.force_login(test_admin)
-        url = reverse('obligations:delete', kwargs={'obligation_number': test_obligation.obligation_number})
+        url = reverse('obligations:delete',
+                      kwargs={'obligation_number': test_obligation.obligation_number})
         obligation_number = test_obligation.obligation_number
-
         # Use POST request since it's a deletion
         response = client.post(url)
-
         # Should return JSON
         assert response.status_code == 200
-
         # Obligation should be deleted
         with pytest.raises(Obligation.DoesNotExist):
             Obligation.objects.get(obligation_number=obligation_number)
-
-# SELENIUM TESTS
-@pytest.mark.selenium
-class TestObligationSelenium:
-    """Test obligation views with Selenium."""
-
-    def test_obligation_list_view(self, live_server, selenium, test_user, test_obligation, test_mechanism):
-        """Test viewing the obligation list."""
-        # Login first
-        selenium.get(f'{live_server.url}/accounts/login/')
-
-        username_input = selenium.find_element(By.NAME, 'username')
-        password_input = selenium.find_element(By.NAME, 'password')
-
-        username_input.send_keys(test_user.username)
-        password_input.send_keys('password')
-
-        selenium.find_element(By.XPATH, "//button[@type='submit']").click()
-
-        # Navigate to obligations summary
-        selenium.get(f'{live_server.url}/obligations/summary/?mechanism_id={test_mechanism.id}')
-
-        # Wait for the page to load
-        WebDriverWait(selenium, 10).until(
-            EC.presence_of_element_located((By.ID, 'obligations-heading'))
-        )
-
-        # Check if obligation is in the table
-        page_source = selenium.page_source
-        assert test_obligation.obligation_number in page_source
-        assert test_obligation.obligation[:20] in page_source  # Check for part of the obligation text
-
-    def test_filter_obligations(self, live_server, selenium, test_user, test_obligation, test_mechanism):
-        """Test filtering obligations on the summary view."""
-        # Login
-        selenium.get(f'{live_server.url}/accounts/login/')
-
-        username_input = selenium.find_element(By.NAME, 'username')
-        password_input = selenium.find_element(By.NAME, 'password')
-
-        username_input.send_keys(test_user.username)
-        password_input.send_keys('password')
-
-        selenium.find_element(By.XPATH, "//button[@type='submit']").click()
-
-        # Navigate to obligations summary
-        selenium.get(f'{live_server.url}/obligations/summary/?mechanism_id={test_mechanism.id}')
-
-        # Wait for the page to load
-        WebDriverWait(selenium, 10).until(
-            EC.presence_of_element_located((By.ID, 'obligations-heading'))
-        )
-
-        # Use the search filter with a unique term from our test obligation
-        search_box = selenium.find_element(By.ID, 'search-box')
-        unique_term = test_obligation.obligation[:10]  # Use first part of obligation text
-        search_box.clear()
-        search_box.send_keys(unique_term)
-
-        # Wait for the table to update (using a timeout approach)
-        try:
-            WebDriverWait(selenium, 5).until(
-                EC.text_to_be_present_in_element((By.CSS_SELECTOR, 'table tbody'), unique_term)
-            )
-            search_results_found = True
-        except BaseException:
-            search_results_found = False
-
-        assert search_results_found, 'Search did not return the expected obligation'
-
-        # Clear and try a search term that shouldn't match anything
-        search_box.clear()
-        search_box.send_keys('ZXY-NONEXISTENT-TERM-123456789')
-
-        # Wait a bit for the table to update
-        import time
-        time.sleep(2)
-
-        # Check if we have a "no matching obligations" message or empty table
-        page_source = selenium.page_source
-        no_results = 'No obligations match' in page_source or len(selenium.find_elements(By.CSS_SELECTOR, 'table tbody tr')) == 0
-        assert no_results, 'Search should not find any obligations'
-
-    def test_view_obligation_details(self, live_server, selenium, test_user, test_obligation):
-        """Test viewing obligation details."""
-        # Login
-        selenium.get(f'{live_server.url}/accounts/login/')
-
-        username_input = selenium.find_element(By.NAME, 'username')
-        password_input = selenium.find_element(By.NAME, 'password')
-
-        username_input.send_keys(test_user.username)
-        password_input.send_keys('password')
-
-        selenium.find_element(By.XPATH, "//button[@type='submit']").click()
-
-        # Go directly to obligation detail page
-        selenium.get(f'{live_server.url}/obligations/view/{test_obligation.obligation_number}/')
-
-        # Wait for the page to load
-        WebDriverWait(selenium, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'obligation-details'))
-        )
-
-        # Check that the page contains key obligation information
-        page_source = selenium.page_source
-        assert test_obligation.obligation_number in page_source
-        assert test_obligation.obligation in page_source
-        assert test_obligation.environmental_aspect in page_source

@@ -170,194 +170,93 @@ EOL
   "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript.py"
 }
 
-# Setup Fish shell with direnv
-setup_fish_direnv() {
-  FISH_CONFIG="${HOME}/.config/fish/config.fish"
-
-  # Ensure fish config directory exists
-  mkdir -p "$(dirname "$FISH_CONFIG")"
-
-  # Check if direnv hook already exists in config
-  if ! grep -q "direnv hook fish" "$FISH_CONFIG" 2>/dev/null; then
-    echo "Configuring direnv hook for Fish shell..."
-    {
-      echo ""
-      echo "# Set up direnv"
-      echo "if type -q direnv"
-      echo "    direnv hook fish | source"
-      echo "end"
-
-      echo "# Python virtual environment indicator for Fish"
-      echo "function show_virtual_env --description 'Show virtual env name'"
-      echo "    if set -q VIRTUAL_ENV"
-      echo "        echo -n '('(basename \$VIRTUAL_ENV)') '"
-      echo "    end"
-      echo "end"
-
-      echo "# Setup Fish prompt to show virtual env"
-      echo "if not set -q __fish_prompt_orig"
-      echo "    functions -c fish_prompt __fish_prompt_orig"
-      echo "    functions -e fish_prompt"
-      echo "end"
-
-      echo "function fish_prompt"
-      echo "    show_virtual_env"
-      echo "    __fish_prompt_orig"
-      echo "end"
-
-      echo "# Activate Python virtual environment on startup"
-      echo "if test -d /workspaces/greenova/.venv"
-      echo "    if not set -q VIRTUAL_ENV"
-      echo "        cd /workspaces/greenova"
-      echo "    end"
-      echo "end"
-
-      echo "# NVM and Node.js setup for fish"
-      echo "set -gx NVM_DIR /usr/local/share/nvm"
-      echo "if test -d \$NVM_DIR"
-      echo "    # Add Node.js binary path to fish PATH"
-      echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
-      echo "    # For accessing node and npm globally from default NVM version"
-      echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
-      echo "end"
-
-      echo "# Function to use NVM in fish"
-      echo "function nvm"
-      echo "    bass source /usr/local/share/nvm/nvm.sh --no-use ';' nvm \$argv"
-      echo "end"
-
-      echo "# Ensure npm is accessible as a command"
-      echo "if not type -q npm"
-      echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
-      echo "end"
-
-      echo "# Ensure node is accessible as a command"
-      echo "if not type -q node"
-      echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
-      echo "end"
-    } >>"$FISH_CONFIG"
-    echo "Fish shell configured with direnv hook, virtual env support, and Node.js/npm"
-
-    # If bass (Bash script adapter for fish) is not installed, install it
-    fish -c 'if not type -q bass; and type -q fisher; fisher install edc/bass; end' || true
-  else
-    echo "Fish shell already configured with direnv hook"
-    # Still ensure NVM paths are added if not already present
-    if ! grep -q "NVM_DIR" "$FISH_CONFIG" 2>/dev/null; then
-      echo "Adding NVM configuration to fish shell..."
-      {
-        echo ""
-        echo "# NVM and Node.js setup for fish"
-        echo "set -gx NVM_DIR /usr/local/share/nvm"
-        echo "if test -d \$NVM_DIR"
-        echo "    # Add Node.js binary path to fish PATH"
-        echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
-        echo "    # For accessing node and npm globally from default NVM version"
-        echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
-        echo "end"
-
-        echo "# Function to use NVM in fish"
-        echo "function nvm"
-        echo "    bass source /usr/local/share/nvm/nvm.sh --no-use ';' nvm \$argv"
-        echo "end"
-
-        echo "# Ensure npm is accessible as a command"
-        echo "if not type -q npm"
-        echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
-        echo "end"
-
-        echo "# Ensure node is accessible as a command"
-        echo "if not type -q node"
-        echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
-        echo "end"
-      } >>"$FISH_CONFIG"
-      echo "Added Node.js and npm configuration to fish shell"
-    fi
-  fi
-
-  # Ensure .envrc has proper permissions
-  if [ -f "/workspaces/greenova/.envrc" ]; then
-    chmod +x "/workspaces/greenova/.envrc"
-    echo "Set execute permissions on .envrc file"
-
-    # Force direnv to reload with the new .envrc
-    cd /workspaces/greenova
-    direnv allow
-  fi
-}
-
-# Fix django-hyperscript syntax error
-fix_django_hyperscript() {
-  echo "Checking for django-hyperscript syntax error..."
+# Fix hyperscript_dump.py type annotation issues
+fix_hyperscript_dump() {
+  echo "Checking for hyperscript_dump.py type annotation issues..."
 
   # Create directory for scripts if it doesn't exist
   mkdir -p "/workspaces/greenova/scripts"
 
   # Create the fix script if it doesn't exist
-  if [ ! -f "/workspaces/greenova/scripts/fix_hyperscript.py" ]; then
-    cat >"/workspaces/greenova/scripts/fix_hyperscript.py" <<'EOL'
+  if [ ! -f "/workspaces/greenova/scripts/fix_hyperscript_dump.py" ]; then
+    cat >"/workspaces/greenova/scripts/fix_hyperscript_dump.py" <<'EOL'
 #!/usr/bin/env python3
 """
-Fix for django-hyperscript syntax error in templatetags/hyperscript.py.
+Fix for hyperscript_dump.py type annotation syntax for Python 3.9 compatibility.
 """
 import os
 import sys
 import logging
+import re
 from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
-def fix_hyperscript():
-    """Fix syntax error in django_hyperscript package."""
+def fix_hyperscript_dump():
+    """Fix type annotation syntax in hyperscript_dump.py for Python 3.9."""
     # Get the virtual environment path
     venv_path = os.environ.get('VIRTUAL_ENV', '/workspaces/greenova/.venv')
 
     # Build the path to the problematic file
-    file_path = Path(venv_path) / "lib" / "python3.9" / "site-packages" / "django_hyperscript" / "templatetags" / "hyperscript.py"
+    file_path = Path(venv_path) / "lib" / "python3.9" / "site-packages" / "hyperscript_dump.py"
 
     if not file_path.exists():
         logger.info(f"File not found: {file_path}")
         return True
 
-    logger.info(f"Found hyperscript.py at {file_path}")
+    logger.info(f"Found hyperscript_dump.py at {file_path}")
 
     # Read the file
     with open(file_path, 'r') as f:
-        content = f.readlines()
+        content = f.read()
 
-    # Look for the specific pattern with the error
-    fixed = False
-    for i, line in enumerate(content):
-        if "accepted_kwargs.items(" in line and line.strip().endswith("accepted_kwargs.items("):
-            if i+1 < len(content) and ")])}." in content[i+1]:
-                # Join the broken lines
-                content[i] = line.rstrip() + "])}.\n"
-                content.pop(i+1)
-                fixed = True
-                break
+    # Check if the file already imports Union
+    imports_union = re.search(r'from\s+typing\s+import\s+.*Union.*', content) is not None
 
-    if fixed:
+    # Replace the pipe syntax with Union
+    pattern = r'event:\s*str\s*\|\s*None\s*='
+    replacement = 'event: Union[str, None] ='
+
+    if re.search(pattern, content):
+        # Add Union import if needed
+        if not imports_union:
+            if 'from typing import' in content:
+                content = re.sub(
+                    r'from\s+typing\s+import\s+(.*)',
+                    r'from typing import \1, Union',
+                    content
+                )
+            else:
+                content = re.sub(
+                    r'import json',
+                    r'import json\nfrom typing import Union',
+                    content
+                )
+
+        # Replace the type annotation
+        content = re.sub(pattern, replacement, content)
+
         # Write the fixed content back
         with open(file_path, 'w') as f:
-            f.writelines(content)
-        logger.info("Successfully fixed the syntax error in django_hyperscript")
+            f.write(content)
+        logger.info("Successfully fixed the type annotation in hyperscript_dump.py")
+        return True
     else:
-        logger.info("No syntax error pattern found or it's already fixed")
-
-    return True
+        logger.info("No type annotation issue found or it's already fixed")
+        return True
 
 if __name__ == "__main__":
-    success = fix_hyperscript()
+    success = fix_hyperscript_dump()
     sys.exit(0 if success else 1)
 EOL
-    chmod +x "/workspaces/greenova/scripts/fix_hyperscript.py"
+    chmod +x "/workspaces/greenova/scripts/fix_hyperscript_dump.py"
   fi
 
   # Run the fix script with the virtual environment's Python
-  echo "Running django-hyperscript fix script..."
-  "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript.py"
+  echo "Running hyperscript_dump fix script..."
+  "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript_dump.py"
 }
 
 # Setup Fish shell with direnv
@@ -484,6 +383,10 @@ main() {
   # Fix django-hyperscript syntax error
   echo "Fixing django-hyperscript..."
   fix_django_hyperscript
+
+  # Fix hyperscript_dump type annotation
+  echo "Fixing hyperscript_dump..."
+  fix_hyperscript_dump
 
   # Setup NVM and Node.js
   echo "Setting up NVM and Node.js..."

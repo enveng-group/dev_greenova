@@ -32,6 +32,9 @@ We prioritize WCAG 2.1 AA standards for accessibility in all interfaces.
 We use test-driven development with Django's testing framework. All models,
 forms, and views should have corresponding unit tests.
 
+We follow PEP 8 style guidelines with a strict maximum line length of 88
+characters for all Python files.
+
 We organize code in a modular Django architecture with specialized apps for
 different functional areas.
 

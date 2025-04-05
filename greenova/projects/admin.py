@@ -1,7 +1,10 @@
-from django.contrib import admin
 from logging import getLogger
-from typing import Optional, Sequence, TypeVar, Generic
+from typing import Generic, Optional, TypeVar
+
+from django.contrib import admin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest
+
 from .models import Project, ProjectMembership
 
 logger = getLogger(__name__)
@@ -11,8 +14,21 @@ T = TypeVar('T')
 class BaseModelAdmin(admin.ModelAdmin, Generic[T]):
     """Base admin class with type safety."""
 
-    def dispatch(self, request: HttpRequest, object_id: str, from_field: Optional[str] = None) -> Optional[T]:
-        return super().get_object(request, object_id, from_field)
+    def dispatch(
+        self, request: HttpRequest, object_id: str, from_field: None = None
+    ) -> Optional[T]:
+        obj = super().get_object(request, object_id, from_field)
+        if obj:
+            if not self.has_view_or_change_permission(request, obj):
+                logger.warning(
+                    'Permission denied for user %s on object %s',
+                    request.user,
+                    object_id
+                )
+                raise PermissionDenied(
+                    'You do not have permission to access this object.'
+                )
+        return obj
 
 class ProjectMembershipInline(admin.TabularInline):
     """Inline admin for project memberships."""
@@ -44,34 +60,43 @@ class ProjectMembershipAdmin(BaseModelAdmin[ProjectMembership]):
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
 
+    @admin.display(
+        description='Project',
+        ordering='project__name',
+    )
     def get_project(self, obj: ProjectMembership) -> str:
         """Get project name."""
         return str(obj.project.name)
-    get_project.short_description = 'Project'
-    get_project.admin_order_field = 'project__name'
 
+    @admin.display(
+        description='User',
+        ordering='user__username',
+    )
     def get_user(self, obj: ProjectMembership) -> str:
         """Get username."""
         return str(obj.user.username)
-    get_user.short_description = 'User'
-    get_user.admin_order_field = 'user__username'
 
+    @admin.display(
+        description='Role',
+        ordering='role',
+    )
     def get_role(self, obj: ProjectMembership) -> str:
         """Get role."""
         return str(obj.role)
-    get_role.short_description = 'Role'
-    get_role.admin_order_field = 'role'
 
+    @admin.display(
+        description='Created',
+        ordering='created_at',
+    )
     def get_created(self, obj: ProjectMembership) -> str:
         """Get creation date."""
         return obj.created_at.strftime('%Y-%m-%d %H:%M')
-    get_created.short_description = 'Created'
-    get_created.admin_order_field = 'created_at'
 
     def save_model(self, request, obj, form, change):
         """Log changes when saving model."""
         action = 'updated' if change else 'created'
         logger.info(
-            f'ProjectMembership {obj.id} {action} by {request.user.get_username()}'
+            'ProjectMembership %s %s by %s',
+            obj.id, action, request.user.get_username()
         )
         super().save_model(request, obj, form, change)

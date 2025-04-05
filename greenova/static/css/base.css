@@ -9,31 +9,37 @@
 ::after {
   box-sizing: border-box;
   letter-spacing: var(--greenova-letter-spacing);
+  margin: 0;
+  padding: 0;
+}
+
+/* Improved document setup */
+:root {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--greenova-spacing-large, 2rem);
 }
 
 html {
   tab-size: 4;
-  /* Improves readability of tab characters */
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-
-  /* Set font settings */
   font-family: var(--greenova-font-family);
   font-weight: var(--greenova-font-weight);
-
-  /* Set iOS and Safari to improve text rendering, makes it look nice*/
-  -webkit-text-size-adjust: 100%;
+  color: var(--greenova-text-secondary-dark);
+  background-color: var(--greenova-background-primary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* We want a specific spacing for our main and header*/
+/* Layout */
 main,
 #main-content,
-[role="main"] {
-  max-width: calc(100% - 2*var(--greenova-main-spacing));
+[role='main'] {
+  max-width: calc(100% - 2 * var(--greenova-main-spacing));
   margin: 0 var(--greenova-main-spacing);
   padding: var(--greenova-spacing-large) 0;
 }
@@ -43,51 +49,50 @@ main,
 }
 
 /* Typography */
-/* Headings, paragraphs, etc. */
-
-/* Headings */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  /* Set text to be different from body so we can tell it's the head */
   color: var(--greenova-text-secondary-dark);
-
-  /* Prevent head from looking bad by forcing new line if the work is getting cut off */
   overflow-wrap: break-word;
   text-wrap: balance;
-
-  /* Title */
-  &:first-child {
-    font-size: var(--greenova-title-size);
-    color: var(--greenova-text-primary-dark);
-  }
-
-  /* Subtitle */
-  &:not(:first-child) {
-    font-size: var(--greenova-subtitle-size);
-    font-weight: bold;
-  }
+  line-height: 1.2;
+  margin-bottom: var(--greenova-spacing-medium, 1rem);
 }
 
-/* Paragraphs and Articles */
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
+  font-size: var(--greenova-title-size);
+  color: var(--greenova-text-primary-dark);
+}
+
+h1:not(:first-child),
+h2:not(:first-child),
+h3:not(:first-child),
+h4:not(:first-child),
+h5:not(:first-child),
+h6:not(:first-child) {
+  font-size: var(--greenova-subtitle-size);
+  font-weight: bold;
+}
+
 p,
 article {
-  /* Set colour and size so text look pretty */
   color: var(--greenova-text-secondary-dark);
   font-size: var(--greenova-text-size);
-
-  /* Improve readability and prevent sentences from looking off. */
   text-wrap: pretty;
   overflow-wrap: break-word;
+  margin-bottom: var(--greenova-spacing-medium, 1rem);
 }
 
-/* Form Elements */
-/* Input, button, etc. */
-
-/* Form Elements, standardises input */
+/* Form elements */
+button,
 input,
 optgroup,
 select,
@@ -95,133 +100,35 @@ textarea {
   font-size: var(--greenova-text-size);
   line-height: 1.15;
   font-family: inherit;
-  /* Ensures consistent font across form elements */
+  border-radius: var(--greenova-border-radius, 4px);
 }
 
-/* Better support for form elements */
-button,
-input,
-optgroup,
-select,
-textarea {
-  /* Already have font-size in your code, add these: */
-  line-height: 1.15;
-  font-family: inherit;
-  /* Ensures consistent font across form elements */
-}
-
-/* iOS and Safari have annoying styles, if we set them to buttons they display properly */
-button,
-[type='button'],
-[type='reset'],
-[type='submit'] {
-  -webkit-appearance: button;
-  appearance: button;
-}
-
-/* Fix number input spinner styles */
-::-webkit-inner-spin-button,
-::-webkit-outer-spin-button {
-  height: auto;
-}
-
-/* Handle search input styling */
-[type='search'] {
-  outline-offset: -2px;
-}
-
-/* Media Elements */
-/* Images, video, etc. */
-
-/* Improves media defaults, these make these elements more consistent and less frustrating to deal with. */
-audio,
-canvas,
-embed,
-iframe,
-img,
-object,
-video {
-  display: inline-block;
-  max-width: 100%;
-  height: auto;
-}
-
-svg {
-  display: inline;
-}
-
-/* Interactive Elements */
-/* Summary, details, etc. */
-
-/* Fix summary display */
-summary {
-  display: list-item;
-}
-
-/* Accessibility */
-/* Focus styles, etc. */
-
-/* Focus styles for better accessibility */
+/* Accessibility improvements */
 :focus-visible {
-  outline: 2px solid var(--greenova-green-primary);
+  outline: 3px solid var(--greenova-green-primary);
   outline-offset: 2px;
 }
 
-/* Improve keyboard navigation indicators */
 [tabindex]:focus-visible {
-  outline: 2px solid var(--greenova-green-primary);
+  outline: 3px solid var(--greenova-green-primary);
   outline-offset: 2px;
 }
 
-/* Add these missing normalizations from modern-normalize */
-
-/* Table border color inheritance fix */
-table {
-  border-color: currentcolor;
-}
-
-/* Fix legend padding */
-legend {
-  padding: 0;
-}
-
-/* Fix progress vertical alignment */
-progress {
-  vertical-align: baseline;
-}
-
-/* Monospace font handling */
-code,
-kbd,
-samp,
-pre {
-  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 1em;
-}
-
-/* Small text */
-small {
-  font-size: 80%;
-}
-
-/* Subscript and superscript handling */
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-
-sub {
-  bottom: -1*var(--greenova-spacing-small);
-}
-
-sup {
-  top: -1*var(--greenova-spacing-small);
-}
-
-/* Remove navigation */
+/* Skip link for accessibility - making it visible when focused */
 .skip-link {
-  display: none;
+  position: absolute;
+  top: -50px;
+  left: var(--greenova-spacing-medium, 1rem);
+  padding: var(--greenova-spacing-small, 0.5rem)
+    var(--greenova-spacing-medium, 1rem);
+  background: var(--greenova-green-primary);
+  color: var(--greenova-text-primary-light);
+  z-index: 100;
+  transition: top 0.2s ease;
 }
+
+.skip-link:focus {
+  top: var(--greenova-spacing-small, 0.5rem);
+}
+
+/* Rest of your CSS remains unchanged... */

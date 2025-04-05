@@ -1,0 +1,66 @@
+{% extends base_template|default("base.jinja") %}
+{# Define the partial content first #}
+{% macro dashboard_header() %}
+  <header hx-ext="class-tools" classes="add slide-in-from-top:0.3s">
+    <hgroup>
+      <nav aria-label="Breadcrumb" class="breadcrumbs">
+        <ol>
+          <li></li>
+        </ol>
+      </nav>
+      <h1>Hi {{ request.user.get_full_name() or request.user.username }}</h1>
+      <h2>
+        Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
+      </h2>
+    </hgroup>
+  </header>
+{% endmacro %}
+{# Project Selection #}
+{% macro project_selection() %}
+  {% include "projects/projects_selector.jinja" %}
+{% endmacro %}
+{% if projects %}
+  {{ hyperscript(projects|map(attribute='to_dict') |list, 'availableProjects', scope='element') }}
+  {{ hyperscript(user_roles, 'userRoles', scope='element') }}
+{% endif %}
+{# Data Container Partial #}
+{% macro data_container() %}
+  <div id="data-containers" hx-ext="class-tools">
+    <div id="mechanism-data-container"
+         hx-get="{{ url('mechanisms:mechanism_charts') }}"
+         hx-target="#mechanism-data-container"
+         hx-swap="innerHTML"
+         hx-trigger="load, change, projectSelected from:body"
+         hx-include="#project-selector">
+      <div class="loading-indicator">
+        <span class="loading-spinner"></span>
+        <p>Loading charts...</p>
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+{# Now use the defined macros #}
+{% block body %}
+  <article hx-ext="class-tools path-deps" classes="add fade-in">
+    {{ dashboard_header() }}
+    {{ project_selection() }}
+    {{ data_container() }}
+  </article>
+  {# Add script to initialize project selection and data loading #}
+{% endblock body %}
+{% block footer %}
+  <footer role="contentinfo" hx-ext="class-tools" classes="add fade-in:1s">
+    <p>
+      System Status:
+      <mark>{{ system_status }}</mark> |
+      Version: {{ app_version }} |
+      Last Updated: {{ last_updated.strftime("%d %b %Y") }}
+    </p>
+    <p>
+      Need help? Contact
+      <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+      | <a href="{{ url('feedback:index') }}">Click here to submit feedback</a>
+    </p>
+  </footer>
+  {{ super() }}
+{% endblock footer %}

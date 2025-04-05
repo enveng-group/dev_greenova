@@ -27,11 +27,20 @@
 
 /* Profile image */
 .profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Profile image container with border */
+.profile-image-container {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  object-fit: cover;
   border: 3px solid var(--greenova-green-primary);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Placeholder for missing profile image */
@@ -52,7 +61,7 @@
   right: 0;
 }
 
-.image-upload input[type="file"] {
+.image-upload input[type='file'] {
   position: absolute;
   width: 1px;
   height: 1px;

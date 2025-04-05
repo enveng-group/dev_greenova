@@ -5,13 +5,11 @@
   gap: var(--greenova-spacing);
   margin-bottom: var(--greenova-spacing);
 }
-
 .summary-cards article {
   padding: var(--greenova-spacing);
   border-radius: var(--greenova-border-radius);
   background: var(--greenova-beige-primary);
 }
-
 .summary-cards .count {
   font-size: 2em;
   font-weight: bold;
@@ -19,12 +17,16 @@
 }
 
 /* Card colors */
+.overdue,
+.upcoming {
+  border-left: 4px solid var(--greenova-primary-background);
+}
 .overdue {
-  border-left: 4px solid var(--greenova-warning-background);
+  border-left-color: var(--greenova-warning-background);
 }
 
 .upcoming {
-  border-left: 4px solid var(--greenova-info-background);
+  border-left-color: var(--greenova-info-background);
 }
 
 /* Responsive adjustments */

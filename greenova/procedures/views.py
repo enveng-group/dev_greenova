@@ -1,29 +1,28 @@
-import logging
-import matplotlib
-import io
 import base64
-from typing import Dict, Any, List, Optional
+import io
+import logging
 from datetime import timedelta
+from typing import Any, Dict
 
-from django.views.generic import TemplateView
+import matplotlib
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_headers
-from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.db.models import Count, Q
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView
 from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
-from .figures import get_all_procedure_charts
 from responsibility.figures import get_responsibility_chart
+
+from .figures import get_all_procedure_charts
 
 matplotlib.use('Agg')  # Use Agg backend for non-interactive plotting
 logger = logging.getLogger(__name__)
 
 @method_decorator(cache_control(max_age=300), name='dispatch')
-@method_decorator(vary_on_headers("HX-Request"), name='dispatch')
+@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
 class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     """View for displaying procedure charts filtered by environmental mechanism."""
     template_name = 'procedures/procedure_charts.html'
@@ -40,7 +39,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
         mechanism_id = self.kwargs.get('mechanism_id') or self.request.GET.get('mechanism_id')
 
         if not mechanism_id:
-            context['error'] = "No mechanism selected"
+            context['error'] = 'No mechanism selected'
             return context
 
         try:
@@ -120,7 +119,8 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             buf = io.BytesIO()
             responsibility_fig.savefig(buf, format='png', bbox_inches='tight')
             buf.seek(0)
-            responsibility_chart_img = f"<img src='data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}' alt='Responsibility Distribution Chart'>"
+            # Fixed image tag with double quotes and width/height attributes
+            responsibility_chart_img = f"<img src=\"data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}\" alt=\"Responsibility Distribution Chart\" width=\"600\" height=\"300\">"
 
             # Add responsibility chart to context
             context['responsibility_chart'] = responsibility_chart_img
@@ -139,7 +139,8 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
                 buf = io.BytesIO()
                 fig.savefig(buf, format='png', bbox_inches='tight')
                 buf.seek(0)
-                chart_img = f"<img src='data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}' alt='{procedure_name} Chart'>"
+                # Fixed image tag with double quotes and width/height attributes
+                chart_img = f"<img src=\"data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}\" alt=\"{procedure_name} Chart\" width=\"300\" height=\"250\">"
 
                 # Get obligation counts for this procedure
                 if any([phase_filter, responsibility_filter, status_filter, look_ahead, overdue_only]):
@@ -180,7 +181,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             ]
 
         except Exception as e:
-            logger.error(f"Error generating procedure charts: {str(e)}")
-            context['error'] = f"Error generating charts: {str(e)}"
+            logger.error(f'Error generating procedure charts: {str(e)}')
+            context['error'] = f'Error generating charts: {str(e)}'
 
         return context

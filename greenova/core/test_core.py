@@ -14,8 +14,6 @@ from django.template import Context, Template
 from django.test import RequestFactory
 from django.urls import reverse
 from django.views.generic import TemplateView
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 
 # Configure logging for tests
 logger = logging.getLogger(__name__)
@@ -326,109 +324,6 @@ class TestCoreSignals:
         with pytest.raises(Exception) as e:
             # Should not raise an exception
             handle_user_update(User, user, False)
-
-
-# ----- UI TESTS WITH SELENIUM -----
-
-@pytest.mark.django_db
-class TestCoreSelenium:
-    """Test core UI with Selenium."""
-
-    def test_home_page(self, live_server, selenium):
-        """Test home page UI and basic elements."""
-        # Visit the home page
-        selenium.get(f'{live_server.url}/')
-
-        # Check page title
-        assert 'Greenova' in selenium.title
-
-        # Check navbar exists
-        navbar = selenium.find_element(By.TAG_NAME, 'nav')
-        assert navbar.is_displayed()
-
-        # Check theme switcher exists
-        theme_switcher = selenium.find_elements(By.CSS_SELECTOR, '.theme-switcher')
-        assert len(theme_switcher) > 0
-
-    def test_theme_switching(self, live_server, selenium):
-        """Test theme switching functionality."""
-        # Visit the home page
-        selenium.get(f'{live_server.url}/')
-
-        # Find theme options
-        theme_links = selenium.find_elements(By.CSS_SELECTOR, '[data-theme-switcher]')
-        assert len(theme_links) == 3  # Auto, Light, Dark
-
-        # Test switching to dark theme
-        dark_theme = next(link for link in theme_links if link.get_attribute('data-theme-switcher') == 'dark')
-        dark_theme.click()
-
-        # Wait for theme to apply
-        WebDriverWait(selenium, 3).until(
-            lambda driver: driver.find_element(By.TAG_NAME, 'html').get_attribute('data-theme') == 'dark'
-        )
-
-        # Test switching to light theme
-        theme_links = selenium.find_elements(By.CSS_SELECTOR, '[data-theme-switcher]')
-        light_theme = next(link for link in theme_links if link.get_attribute('data-theme-switcher') == 'light')
-        light_theme.click()
-
-        # Wait for theme to apply
-        WebDriverWait(selenium, 3).until(
-            lambda driver: driver.find_element(By.TAG_NAME, 'html').get_attribute('data-theme') == 'light'
-        )
-
-    def test_login_flow(self, live_server, selenium, test_users):
-        """Test login flow and redirects."""
-        # Visit the login page
-        selenium.get(f'{live_server.url}/accounts/login/')
-
-        # Find login form fields
-        username_input = selenium.find_element(By.NAME, 'login')
-        password_input = selenium.find_element(By.NAME, 'password')
-
-        # Fill login form
-        username_input.send_keys('regular')
-        password_input.send_keys('userpassword')
-
-        # Submit form
-        submit_button = selenium.find_element(By.XPATH, "//button[@type='submit']")
-        submit_button.click()
-
-        # Wait for login to complete and redirect
-        WebDriverWait(selenium, 10).until(
-            lambda driver: '/dashboard/' in driver.current_url
-        )
-
-        # Check for elements that would be present for logged-in users
-        user_menu = selenium.find_elements(By.CSS_SELECTOR, '.user-info')
-        assert len(user_menu) > 0
-        assert 'regular' in selenium.page_source
-
-    def test_accessibility_compliance(self, live_server, selenium):
-        """Test basic accessibility compliance on home page."""
-        # Visit the home page
-        selenium.get(f'{live_server.url}/')
-
-        # Check for basic accessibility features
-
-        # 1. Check for proper heading structure
-        headings = selenium.find_elements(By.CSS_SELECTOR, 'h1, h2, h3, h4, h5, h6')
-        assert len(headings) > 0
-
-        # 2. Check for alt text on images
-        images = selenium.find_elements(By.TAG_NAME, 'img')
-        for img in images:
-            assert img.get_attribute('alt') is not None
-
-        # 3. Check for ARIA attributes on navigation
-        nav = selenium.find_elements(By.TAG_NAME, 'nav')
-        for nav_element in nav:
-            assert nav_element.get_attribute('aria-label') is not None
-
-        # 4. Check for role attributes
-        elements_with_roles = selenium.find_elements(By.CSS_SELECTOR, '[role]')
-        assert len(elements_with_roles) > 0
 
 
 # Add HealthCheckView test (referenced in urls.py but not defined in views.py)

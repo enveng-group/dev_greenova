@@ -2,19 +2,23 @@
 
 ## Title
 
-`release(v0.0.4): comprehensive platform enhancements and new features`
+`release(v0.0.5): comprehensive platform enhancements and new features`
 
 ## Description
 
 ### Purpose
 
-Pre-release v0.0.4 integrating multiple feature branches and improvements across the Greenova platform. This release enhances development infrastructure, user experience, testing capabilities, and adds new functional modules for company management and user profiles.
+Pre-release v0.0.5 integrating multiple feature branches and improvements
+across the Greenova platform. This release enhances development infrastructure,
+user experience, testing capabilities, and adds new functional modules for
+company management and user profiles.
 
 ### Changes
 
 #### Development Infrastructure
 
-- Update dev tooling with enhanced pre-commit hooks and custom pylint extensions
+- Update dev tooling with enhanced pre-commit hooks and custom pylint
+  extensions
 - Configure mypy with django-stubs for better type checking
 - Standardize editor configuration and VSCode settings
 - Improve devcontainer configuration with Snyk CLI and Git features
@@ -53,7 +57,8 @@ Pre-release v0.0.4 integrating multiple feature branches and improvements across
 #### Testing and Quality
 
 - Integrate pytest framework with comprehensive test coverage across all apps
-- Add new test files for authentication, chatbot, company, core, and other modules
+- Add new test files for authentication, chatbot, company, core, and other
+  modules
 - Refactor code structure to improve testability
 - Implement ESLint for JavaScript
 - Add djlint for Django HTML templates
@@ -62,7 +67,8 @@ Pre-release v0.0.4 integrating multiple feature branches and improvements across
 #### Documentation
 
 - Restructure docs/resources with logical subdirectories
-- Add commit message templates, code review templates, and GitHub issue templates
+- Add commit message templates, code review templates, and GitHub issue
+  templates
 - Update environment configuration documentation and technical guides
 - Add GitHub CLI usage instructions
 - Include changelog references
@@ -79,7 +85,7 @@ Pre-release v0.0.4 integrating multiple feature branches and improvements across
 ### Related Issues
 
 - Closes #33, #41
-- [Add any other relevant issues here]
+- None
 
 ### Testing Performed
 

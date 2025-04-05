@@ -1,50 +1,32 @@
 # Greenova
 
-A Django-based web application focused on HTML-first development and
-progressive enhancement strategies.
+[![Python 3.9.21](https://img.shields.io/badge/python-3.9.21-blue.svg)](https://www.python.org/downloads/release/python-3921/)
+[![Django 4.1.13](https://img.shields.io/badge/django-4.1.13-green.svg)](https://www.djangoproject.com/)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://www.djlint.com)
+## 📋 Overview
 
-## 📋 Table of Contents
+Greenova is a Django web application designed for environmental management,
+focusing on tracking environmental obligations and compliance requirements.
+Built with accessibility and simplicity in mind, it helps organizations manage
+their environmental responsibilities efficiently.
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Development Guidelines](#development-guidelines)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+## 🚀 Features
 
-## 🌟 Overview
+- Environmental obligation tracking
+- Compliance requirement management
+- Project-based organization
+- Mechanism and procedure documentation
+- User responsibility assignment
+- Accessible, HTML-first interface
 
-Greenova is a Django web application that prioritizes semantic HTML structure,
-progressive enhancement, and accessibility. The project follows data-oriented
-programming principles and provides a modular framework for building robust web
-applications.
-
-## ✨ Features
-
-- HTML-first development approach
-- Progressive enhancement layers
-- Semantic HTML structure with ARIA support
-- Advanced dashboard functionality
-- User profile management
-- Dynamic charting with Matplotlib
-- HTMX and Hyperscript for interactivity
-- Comprehensive authentication system
-- Modular, scalable architecture
-
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
 ### Backend
 
 - Python 3.9.21
-- Django 4.2.20
-- SQLite3
+- Django 4.1.13
+- SQLite3 (development)
 - Matplotlib 3.10.0
 - Django-HTMX 1.22.0
 - Django-Hyperscript 1.0.2
@@ -83,8 +65,78 @@ The application follows a modular design with clear separation of concerns:
 
 - Python 3.9.21
 - Node.js 18.20.7
-- npm 10.8.2
+- NPM 10.8.2
 
-### Setup Steps
+### Setup
 
-1. Clone the repository
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/enssol/greenova.git
+   cd greenova
+   ```
+
+2. Create and activate a virtual environment:
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. Install Python dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Install Node.js dependencies:
+
+   ```bash
+   npm install
+   ```
+
+5. Apply migrations:
+
+   ```bash
+   python manage.py migrate
+   ```
+
+6. Create a superuser:
+
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. Run the development server:
+
+   ```bash
+   python manage.py runserver
+   ```
+
+## 🔧 Usage
+
+Access the application at [http://localhost:8000](http://localhost:8000) after
+starting the development server.
+
+### Key workflows
+
+1. Log in using the credentials created during setup
+2. Create projects and define environmental mechanisms
+3. Add obligations related to your projects
+4. Assign responsibilities to users
+5. Monitor compliance status
+
+## 🤝 Contributing
+
+We welcome contributions to Greenova! Please check our contributing guidelines
+in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## 📄 License
+
+This project is licensed under the GNU Affero General Public License v3.0 - see
+the [LICENSE](LICENSE) file for details.
+
+## 📊 Project Status
+
+Greenova is under active development. Check our [roadmap](docs/ROADMAP.md) for
+upcoming features and improvements.

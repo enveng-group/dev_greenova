@@ -15,7 +15,7 @@
     "postcss-nested": "^7.0.2",
     "postcss-simple-vars": "^7.0.1",
     "rimraf": "^5.0.1",
-    "tailwindcss": "^4.0.15"
+    "tailwindcss": "^4.1.1"
   },
   "keywords": [],
   "license": "MIT",

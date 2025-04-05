@@ -1,0 +1,5 @@
+⚠️ REQUIRED FIELD MISSING
+
+This field is mandatory for bug report submission. Without complete information, our team cannot properly investigate and resolve your issue, and your report may be rejected.
+
+Please provide as much detail as possible to help us understand and address your problem effectively.

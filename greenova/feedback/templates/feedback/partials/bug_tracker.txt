@@ -1,0 +1,26 @@
+BUG REPORT DETAILS:
+Title: {{ bug_report.title }}
+Submitted by: {{ bug_report.created_by.username }}
+Date: {{ bug_report.created_at|date:"Y-m-d H:i" }}
+Status: {{ bug_report.get_status_display }}
+Severity: {{ bug_report.get_severity_display }}
+
+DESCRIPTION:
+{{ bug_report.description }}
+
+STEPS TO REPRODUCE:
+{{ bug_report.steps_to_reproduce }}
+
+EXPECTED BEHAVIOR:
+{{ bug_report.expected_behavior }}
+
+ACTUAL BEHAVIOR:
+{{ bug_report.actual_behavior }}
+
+ENVIRONMENT:
+{{ bug_report.environment }}
+
+{% if bug_report.github_issue_url %}GITHUB ISSUE: {{ bug_report.github_issue_url }}{% endif %}
+
+{% if bug_report.admin_comment %}ADMIN COMMENT:
+{{ bug_report.admin_comment }}{% endif %}

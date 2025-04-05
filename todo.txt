@@ -1,0 +1,22 @@
+(A) 2024-05-29 Add reset password functionality +Frontend @auth
+(A) 2024-05-30 Create registration flow +Frontend @auth
+(B) Organize CSS files for better readability and maintainability +Frontend @css
+(B) Optimize CSS for performance +Frontend @css
+(B) Enhance responsiveness and cross-browser compatibility +Frontend @css
+(B) Implement PostCSS or Sass for enhanced functionality +Frontend @css
+(B) Set up TypeScript development environment +Frontend @js
+(B) Set up AssemblyScript development environment +Frontend @js
+(B) Identify performance-critical sections in app.js +Frontend @js
+(B) Write TypeScript code for DOM manipulation and event handling +Frontend @js
+(B) Write AssemblyScript code for performance-critical parts +Frontend @js
+(B) Compile AssemblyScript to WebAssembly +Frontend @js
+(B) Integrate WebAssembly modules with TypeScript +Frontend @js
+(B) Update build and deployment process +DevOps @js
+(C) Setup Django testing framework +Backend @testing
+(C) Configure hadolint for Dockerfile linting +DevOps @linting
+(C) Create Docker architecture diagram +Documentation @docker
+(C) Create Docker workflow diagram +Documentation @docker
+(C) Create Docker environment diagram +Documentation @docker
+(C) Integrate commitlint into devtool stack +DevOps @linting
+(C) Integrate Dive for optimizing Docker/OCI image size +DevOps @docker
+(C) Introduce cloudflared for tunnel +DevOps @networking
