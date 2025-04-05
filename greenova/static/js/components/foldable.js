@@ -5,7 +5,7 @@ function foldElement(elem, display = "block") {
     return false;
   }
 
-  // Make sure the thing we're changing is an element, not the variabkle.
+  // Make sure the thing we're changing is an element, not the variable.
   let elemDisplay = elem.style.display;
   elem.style.display = (elemDisplay != 'none') ? 'none' : display;
   return true;
