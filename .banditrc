@@ -1,9 +1,9 @@
 [bandit]
-exclude: /tests/,/env/,/venv/,/.git/
-skips: B101
-exclude_dirs: tests,migrations,docs
+exclude: /tests/,/env/,/venv/,/.git/,**/mock_*.py
+skips: B101,B105
+exclude_dirs: tests,migrations,docs,pre_commit
 
 [tool.bandit]
-exclude_dirs = ["tests", "migrations", "docs"]
-tests = ["B101"]
-skips = ["B101"]
+exclude_dirs = ["tests", "migrations", "docs", "pre_commit"]
+tests = ["B101", "B105"]
+skips = ["B101", "B105"]

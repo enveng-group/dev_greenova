@@ -2,9 +2,6 @@
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.django-stubs]
-django_settings_module = "greenova.settings"
-
 [tool.autopep8]
 max_line_length = 88
 ignore = ["E501", "E302", "E305"]

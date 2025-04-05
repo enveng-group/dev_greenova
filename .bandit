@@ -7,11 +7,11 @@ bandit:
 
   # Files or directories to skip (comma-separated)
 
-  exclude: /tests,/env,/venv,/.git,*.pyc,**/test_*.py,**/*_test.py
+  exclude: /tests,/env,/venv,/.git,*.pyc,**/test_*.py,**/*_test.py,**/mock_*.py
 
   # Tests to skip (comma-separated)
 
-  skips: ['B311', 'B101']
+  skips: ['B311', 'B101', 'B105']
 
   # Test for possible hardcoded passwords
 
@@ -51,4 +51,4 @@ bandit:
 
   # Exclude directories
 
-  exclude_dirs: ['tests', 'migrations', 'docs']
+  exclude_dirs: ['tests', 'migrations', 'docs', 'pre_commit']

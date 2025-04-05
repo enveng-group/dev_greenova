@@ -1,3 +1,8 @@
+"""
+Pytest configuration file for Greenova project.
+Defines fixtures and setup for testing Django applications.
+"""
+# pylint: disable=import-error
 from __future__ import annotations
 
 import logging

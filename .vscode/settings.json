@@ -6,10 +6,7 @@
     "**/.venv",
     "**/node_modules",
     "**/.vscode-server",
-    "**/.github",
-    "**/.git",
-    "**/.devcontainer",
-    "**/docs"
+    "**/.git"
   ],
   "MS-CST-E.vscode-devskim.rules.enableBestPracticeSeverityRules": true,
   "MS-CST-E.vscode-devskim.rules.enableCriticalSeverityRules": true,
@@ -62,7 +59,10 @@
     "editor.defaultFormatter": "vscode.git",
     "editor.fontFamily": "monospace",
     "editor.insertSpaces": true,
-    "editor.rulers": [72, 50],
+    "editor.rulers": [
+      72,
+      50
+    ],
     "editor.tabSize": 2,
     "editor.wordWrap": "on"
   },
@@ -80,13 +80,6 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true,
     "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  },
-  "[jinja]": {
-    "editor.defaultFormatter": "monosans.djlint",
-    "editor.formatOnSave": true,
-    "editor.insertSpaces": true,
-    "editor.suggest.insertMode": "replace",
     "editor.tabSize": 2
   },
   "[jinja]": {
@@ -154,7 +147,10 @@
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
-    "editor.rulers": [88, 100],
+    "editor.rulers": [
+      88,
+      100
+    ],
     "editor.wordBasedSuggestions": "off"
   },
   "[shellcheckrc]": {
@@ -203,8 +199,12 @@
   ],
   "bandit.enabled": true,
   "bandit.importStrategy": "fromEnvironment",
-  "bandit.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "bandit.path": ["/workspaces/greenova/.venv/bin/bandit"],
+  "bandit.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "bandit.path": [
+    "/workspaces/greenova/.venv/bin/bandit"
+  ],
   "chat.detectParticipant.enabled": true,
   "chat.promptFiles": true,
   "chat.promptFilesLocations": {
@@ -256,7 +256,11 @@
   "editor.guides.bracketPairs": true,
   "editor.linkedEditing": true,
   "editor.renderWhitespace": "boundary",
-  "editor.rulers": [79, 88, 100],
+  "editor.rulers": [
+    79,
+    88,
+    100
+  ],
   "editor.stickyScroll.enabled": true,
   "editor.suggest.showIssues": true,
   "editorconfig.generateAuto": true,
@@ -273,13 +277,19 @@
   "eslint.lintTask.options": "${workspaceFolder}/.eslintrc.js",
   "eslint.nodeEnv": "development",
   "eslint.nodePath": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
-  "eslint.probe": ["javascript"],
+  "eslint.probe": [
+    "javascript"
+  ],
   "eslint.run": "onSave",
   "eslint.runtime": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
   "eslint.useESLintClass": true,
   "eslint.useFlatConfig": false,
-  "eslint.validate": ["javascript"],
-  "eslint.workingDirectories": ["./greenova"],
+  "eslint.validate": [
+    "javascript"
+  ],
+  "eslint.workingDirectories": [
+    "./greenova"
+  ],
   "evenBetterToml.taplo.bundled": true,
   "extensions.ignoreRecommendations": true,
   "files.associations": {
@@ -298,7 +308,12 @@
   },
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 500,
-  "files.watcherInclude": ["**/*.py", "**/*.html", "**/*.css", "**/*.js"],
+  "files.watcherInclude": [
+    "**/*.py",
+    "**/*.html",
+    "**/*.css",
+    "**/*.js"
+  ],
   "fish.path.fish": "fish",
   "fish.path.fish_indent": "fish_indent",
   "git.allowNoVerifyCommit": true,
@@ -308,7 +323,10 @@
   "git.autofetch": true,
   "git.blame.editorDecoration.enabled": true,
   "git.blame.statusBarItem.enabled": true,
-  "git.branchProtection": ["main", "master"],
+  "git.branchProtection": [
+    "main",
+    "master"
+  ],
   "git.branchProtectionPrompt": "alwaysPrompt",
   "git.closeDiffOnOperation": true,
   "git.confirmNoVerifyCommit": true,
@@ -457,8 +475,12 @@
   "html.suggest.html5": true,
   "isort.check": true,
   "isort.importStrategy": "fromEnvironment",
-  "isort.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "isort.path": ["/workspaces/greenova/.venv/bin/isort"],
+  "isort.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "isort.path": [
+    "/workspaces/greenova/.venv/bin/isort"
+  ],
   "javascript.autoClosingTags": true,
   "javascript.format.enable": true,
   "javascript.format.semicolons": "insert",
@@ -476,6 +498,11 @@
   "jupyter.jupyterLaunchTimeout": 60000,
   "jupyter.themeMatplotlibPlots": true,
   "less.validate": false,
+  "licenser.author": "Enveng Group",
+  "licenser.license": "AGPLv3",
+  "licenser.projectName": "Greenova",
+  "licenser.useSPDXLicenseFormat": true,
+  "licenser.useSingleLineStyle": true,
   "makefile.configurations": [
     {
       "name": "default",
@@ -495,8 +522,12 @@
     "${workspaceFolder}/mypy.ini"
   ],
   "mypy-type-checker.importStrategy": "fromEnvironment",
-  "mypy-type-checker.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "mypy-type-checker.path": ["/workspaces/greenova/.venv/bin/mypy"],
+  "mypy-type-checker.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "mypy-type-checker.path": [
+    "/workspaces/greenova/.venv/bin/mypy"
+  ],
   "mypy-type-checker.preferDaemon": true,
   "mypy-type-checker.reportingScope": "file",
   "prettier.configPath": "/workspaces/greenova/.prettierrc",
@@ -517,168 +548,14 @@
     "path": "/usr/local/bin/protoc"
   },
   "protolint.path": "/usr/local/bin/protolint",
-  "psi-header.changes-tracking": {
-    "enabled": true,
-    "exclude": [
-      ".env"
-    ],
-    "ignore": [
-      "**/__pycache__",
-      "**/.pytest_cache",
-      "**/.mypy_cache",
-      "**/.venv",
-      "**/node_modules",
-      "**/.vscode-server",
-      "**/.git"
-    ],
-    "include": [],
-    "isActive": true,
-    "modAuthor": "Modified By:",
-    "modDate": "Last Modified:",
-    "modDateFormat": "YYYY-MM-DD HH:mm:ss"
-  },
-  "psi-header.config": {
-    "author": "Adrian Gallo",
-    "authorEmail": "agallo@enveng-group.com.au",
-    "blankLinesAfter": 1,
-    "company": "Greenova",
-    "copyrightHolder": "Enveng Group Pty Ltd",
-    "forceToTop": true,
-    "license": "GNU Affero General Public License v3.0"
-  },
-  "psi-header.lang-config": [
-    {
-      "begin": "\"\"\"",
-      "end": "\"\"\"",
-      "language": "python",
-      "prefix": ""
-    },
-    {
-      "begin": "/**",
-      "end": " */",
-      "language": "javascript",
-      "prefix": " * "
-    },
-    {
-      "begin": "/**",
-      "end": " */",
-      "language": "css",
-      "prefix": " * "
-    },
-    {
-      "begin": "<!--",
-      "end": "-->",
-      "language": "django-html",
-      "prefix": " "
-    },
-    {
-      "begin": "{#",
-      "end": "#}",
-      "language": "jinja",
-      "prefix": " "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "dockerfile",
-      "prefix": "# "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "git-commit",
-      "prefix": "# "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "plaintext",
-      "prefix": "# "
-    },
-    {
-      "begin": "<!--",
-      "end": "-->",
-      "language": "markdown",
-      "prefix": " "
-    },
-    {
-      "begin": "<!--",
-      "end": "-->",
-      "language": "html",
-      "prefix": " "
-    },
-    {
-      "begin": "/**",
-      "end": " */",
-      "language": "json",
-      "prefix": " * "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "yaml",
-      "prefix": "# "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "toml",
-      "prefix": "# "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "shellscript",
-      "prefix": "# "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "gitignore",
-      "prefix": "# "
-    },
-    {
-      "begin": "#",
-      "end": "\n",
-      "language": "properties",
-      "prefix": "# "
-    },
-    {
-      "begin": "//",
-      "end": "\n",
-      "language": "proto3",
-      "prefix": "// "
-    }
-  ],
-  "psi-header.templates": [
-    {
-      "language": "*",
-      "template": [
-        "${filename}",
-        "",
-        "Part of the Greenova environmental management application",
-        "",
-        "Copyright (C) ${year} ${copyrightHolder}",
-        "",
-        "This program is free software: you can redistribute it and/or modify",
-        "it under the terms of the GNU Affero General Public License as",
-        "published by the Free Software Foundation, either version 3 of the",
-        "License, or (at your option) any later version.",
-        "",
-        "This program is distributed in the hope that it will be useful,",
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of",
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-        "GNU Affero General Public License for more details.",
-        "",
-        "You should have received a copy of the GNU Affero General Public License",
-        "along with this program.  If not, see <https://www.gnu.org/licenses/>."
-      ]
-    }
-  ],
   "pylint.enabled": true,
   "pylint.importStrategy": "fromEnvironment",
-  "pylint.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
-  "pylint.path": ["/workspaces/greenova/.venv/bin/pylint"],
+  "pylint.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3.9"
+  ],
+  "pylint.path": [
+    "/workspaces/greenova/.venv/bin/pylint"
+  ],
   "python.REPL.enableREPLSmartSend": true,
   "python.REPL.sendToNativeREPL": true,
   "python.analysis.aiCodeActions": {
@@ -734,10 +611,7 @@
     "**/.venv",
     "**/node_modules",
     "**/.vscode-server",
-    "**/.github",
-    "**/.git",
-    "**/.devcontainer",
-    "**/docs"
+    "**/.git"
   ],
   "python.analysis.importFormat": "absolute",
   "python.analysis.indexing": true,
@@ -776,7 +650,9 @@
   "python.createEnvironment.trigger": "prompt",
   "python.defaultInterpreterPath": "python3.9",
   "python.envFile": "${workspaceFolder}/.env",
-  "python.experiments.optInto": ["pythonTestAdapter"],
+  "python.experiments.optInto": [
+    "pythonTestAdapter"
+  ],
   "python.globalModuleInstallation": false,
   "python.languageServer": "Jedi",
   "python.terminal.activateEnvInCurrentTerminal": true,
@@ -837,8 +713,12 @@
   "stylelint.configFile": "/workspaces/greenova/stylelint.config.js",
   "stylelint.enable": true,
   "stylelint.packageManager": "npm",
-  "stylelint.snippet": ["css"],
-  "stylelint.validate": ["css"],
+  "stylelint.snippet": [
+    "css"
+  ],
+  "stylelint.validate": [
+    "css"
+  ],
   "tailwindCSS.codeActions": true,
   "tailwindCSS.codeLens": true,
   "tailwindCSS.includeLanguages": {

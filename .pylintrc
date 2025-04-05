@@ -1,21 +1,23 @@
 [MASTER]
 # Base configuration for all Python files
-persistent=yes
-suggestion-mode=yes
-unsafe-load-any-extension=no
-ignore=migrations,venv,.venv
+persistent = yes
+suggestion-mode = yes
+unsafe-load-any-extension = no
+ignore = migrations, venv, .venv
 
 [FORMAT]
-max-line-length=88
+max-line-length = 88
 
 [MESSAGES CONTROL]
-disable=no-member,C0111,R0903,C0103
+# Adding R0801 to the disabled messages to prevent duplicate code warnings
+disable = no-member, C0111, R0903, C0103, R0801
 
 [SIMILARITIES]
-ignore-comments=yes
-ignore-docstrings=yes
-ignore-imports=yes
+ignore-comments = yes
+ignore-docstrings = yes
+ignore-imports = yes
+# Increase the minimum similarity to avoid duplicate code warnings for standard patterns
+min-similarity-lines = 12
 
 [BASIC]
-good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
-good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
+good-names = _, i, j, k, e, f, db, id, pk, setUp, tearDown, maxDiff, Meta

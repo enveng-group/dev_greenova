@@ -144,17 +144,14 @@ INSTALLED_APPS = [
     'django_hyperscript',
     'django_matplotlib',
     'django_pdb',
-    'django_pdb',
     'template_partials',
     'tailwind',
     'django_browser_reload',
     'debug_toolbar',
     'pb_model',
     'silk',
-    'silk',
 
     # Your local apps (ordered by dependency)
-    'authentication',
     'authentication',
     'core.apps.CoreConfig',  # Core logic, should be initialized early
     'company',  # Base models (used in other apps, so placed first)
@@ -168,7 +165,6 @@ INSTALLED_APPS = [
     'landing',  # Landing page or homepage
     'theme',  # UI Styling
     'chatbot',  # Standalone feature, placed last
-    'feedback',  # Add the feedback app here
     'feedback',  # Add the feedback app here
 ]
 
@@ -200,8 +196,6 @@ MIDDLEWARE = [
     'django_htmx.middleware.HtmxMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',  # Debug after core middleware
     'django_browser_reload.middleware.BrowserReloadMiddleware',
-    'django_pdb.middleware.PdbMiddleware',
-    'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     'django_pdb.middleware.PdbMiddleware',
     'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     # 'allauth.usersessions.middleware.UserSessionMiddleware',
@@ -389,7 +383,6 @@ LOGGING = {
             'class': 'logging.FileHandler',  # Django expects "class", not "class_"
             'level': 'INFO',
             'filename': os.path.join(LOGS_DIR, 'django.log'),
-            'filename': os.path.join(LOGS_DIR, 'django.log'),
             'formatter': 'verbose',
         },
     },
@@ -397,13 +390,10 @@ LOGGING = {
         'django': {
             'handlers': ['file'] if not DEBUG else ['console', 'file'],
             'level': 'WARNING',
-            'handlers': ['file'] if not DEBUG else ['console', 'file'],
-            'level': 'WARNING',
             'propagate': True,
         },
         'projects': {
             'handlers': ['file'],
-            'level': 'INFO',
             'level': 'INFO',
             'propagate': True,
         },
@@ -465,28 +455,6 @@ sentry_sdk.init(
     # info at https://docs.sentry.io/platforms/python/data-management/data-collected/
     send_default_pii=True,
 )
-
-# Silk configuration
-
-# Create profiles directory for Silk profiler results if it doesn't exist
-PROFILES_DIR = os.path.join(BASE_DIR, 'greenova', 'profiles')
-if not os.path.exists(PROFILES_DIR):
-    os.makedirs(PROFILES_DIR)
-
-# Silk configuration
-SILKY_PYTHON_PROFILER = True
-SILKY_PYTHON_PROFILER_BINARY = False
-SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
-SILKY_AUTHENTICATION = True
-SILKY_AUTHORISATION = True
-SILKY_META = True
-
-# Garbage collection settings for small server environment
-SILKY_MAX_RECORDED_REQUESTS = 500  # Store maximum of 500 requests
-SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50  # Run GC check on 50% of requests
-SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Limit request body size to 1KB
-SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # Limit response body size to 1KB
-SILKY_INTERCEPT_PERCENT = 25  # Only profile 25% of requests
 
 # Silk configuration
 
