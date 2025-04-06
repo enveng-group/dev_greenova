@@ -205,12 +205,21 @@
   "bandit.path": [
     "/workspaces/greenova/.venv/bin/bandit"
   ],
+  "chat.agent.enabled": true,
+  "chat.commandCenter.enabled": true,
   "chat.detectParticipant.enabled": true,
+  "chat.edits2.enabled": true,
+  "chat.extensionTools.enabled": true,
+  "chat.focusWindowOnConfirmation": true,
+  "chat.mcp.discovery.enabled": true,
+  "chat.mcp.enabled": true,
   "chat.promptFiles": true,
   "chat.promptFilesLocations": {
     ".github/prompts": true
   },
   "chat.renderRelatedFiles": true,
+  "chat.tools.autoApprove": true,
+  "chat.useFileStorage": true,
   "css.format.enable": true,
   "css.hover.references": true,
   "css.lint.boxModel": "error",
@@ -220,6 +229,21 @@
   "css.lint.hexColorLength": "error",
   "css.lint.idSelector": "error",
   "css.validate": false,
+  "dbcode.ai.inlineCompletion": true,
+  "dbcode.connection.role.development": {
+    "alter": "allow",
+    "create": "allow",
+    "delete": "allow",
+    "drop": "allow",
+    "execute": "allow",
+    "insert": "allow",
+    "other": "allow",
+    "select": "allow",
+    "truncate": "allow",
+    "update": "allow"
+  },
+  "dbcode.format.dateLocalTimezone": true,
+  "dbcode.format.dateStyle": "ISO 9075",
   "debug.allowBreakpointsEverywhere": true,
   "debug.autoExpandLazyVariables": "auto",
   "debug.console.fontSize": 14,
@@ -241,6 +265,11 @@
     "html",
     "jinja"
   ],
+  "djlint.include": [
+    "**/*.html",
+    "**/*.jinja"
+  ],
+  "djlint.maxLineLength": 88,
   "djlint.profile": "jinja",
   "djlint.showInstallError": true,
   "djlint.useGitignore": true,
@@ -358,12 +387,14 @@
   "git.terminalGitEditor": true,
   "git.useEditorAsCommitInput": true,
   "github-actions.remote-name": "origin",
+  "github.branchProtection": true,
   "github.copilot.advanced": {
     "debug.enable": false,
     "inlineSuggestCount": 3,
     "listCount": 10
   },
   "github.copilot.chat.agent.runTasks": true,
+  "github.copilot.chat.agent.thinkingTool": true,
   "github.copilot.chat.codeGeneration.instructions": [
     {
       "file": ".copilot-codeGeneration-instructions.md"
@@ -382,12 +413,15 @@
   "github.copilot.chat.completionContext.typescript.mode": "on",
   "github.copilot.chat.copilotDebugCommand.enabled": true,
   "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.newNotebook.enabled": true,
   "github.copilot.chat.edits.suggestRelatedFilesForTests": true,
   "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
   "github.copilot.chat.edits.temporalContext.enabled": true,
   "github.copilot.chat.fixTestFailure.enabled": true,
   "github.copilot.chat.followUps": "always",
   "github.copilot.chat.generateTests.codeLens": true,
+  "github.copilot.chat.languageContext.fix.typescript.enabled": true,
+  "github.copilot.chat.languageContext.inline.typescript.enabled": true,
   "github.copilot.chat.languageContext.typescript.enabled": true,
   "github.copilot.chat.newWorkspaceCreation.enabled": true,
   "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
@@ -427,8 +461,12 @@
   "github.copilot.renameSuggestions.triggerAutomatically": true,
   "github.gitAuthentication": true,
   "github.gitProtocol": "ssh",
+  "githubIssues.alwaysPromptForNewIssueRepo": true,
+  "githubIssues.issueCompletionFormatScm": "${issueTitle} ${issueNumberLabel}",
   "githubIssues.issueCompletions.enabled": true,
+  "githubIssues.useBranchForIssues": "prompt",
   "githubIssues.userCompletions.enabled": true,
+  "githubIssues.workingIssueFormatScm": "${issueTitle} \nFixes ${issueNumberLabel}",
   "githubPullRequests.allowFetch": true,
   "githubPullRequests.assignCreated": "author",
   "githubPullRequests.commentExpandState": "expandUnresolved",
@@ -473,6 +511,8 @@
   "html.format.wrapLineLength": 88,
   "html.hover.references": true,
   "html.suggest.html5": true,
+  "inlineChat.lineEmptyHint": true,
+  "inlineChat.lineNaturalLanguageHint": true,
   "isort.check": true,
   "isort.importStrategy": "fromEnvironment",
   "isort.interpreter": [
@@ -514,6 +554,7 @@
   "markdown.validate.enabled": true,
   "markdownlint.configFile": "/workspaces/greenova/.markdownlint-cli2.jsonc",
   "markdownlint.run": "onType",
+  "mermaid.searchForExtensions": true,
   "mermaid.vscode.dark": "dark",
   "mermaidChart.aiModelFamily": "gpt-4o",
   "mermaidChart.aiVendor": "copilot",
@@ -556,6 +597,8 @@
   "pylint.path": [
     "/workspaces/greenova/.venv/bin/pylint"
   ],
+  "python-envs.defaultEnvManager": "ms-python.python:venv",
+  "python-envs.defaultPackageManager": "ms-python.python:pip",
   "python.REPL.enableREPLSmartSend": true,
   "python.REPL.sendToNativeREPL": true,
   "python.analysis.aiCodeActions": {
@@ -700,16 +743,6 @@
     "/workspaces/greenova",
     "/home/vscode/dotfiles"
   ],
-  "sqltools.connections": [
-    {
-      "database": "${workspaceFolder:greenova}/greenova/db.sqlite3",
-      "driver": "SQLite",
-      "group": "SQLite",
-      "name": "SQLite",
-      "previewLimit": 50
-    }
-  ],
-  "sqltools.useNodeRuntime": true,
   "stylelint.configFile": "/workspaces/greenova/stylelint.config.js",
   "stylelint.enable": true,
   "stylelint.packageManager": "npm",
@@ -730,6 +763,8 @@
   "task.reconnection": true,
   "terminal.integrated.shellIntegration.enabled": true,
   "typescript.suggest.enabled": false,
+  "websearch.preferredEngine": "tavily",
+  "websearch.useSearchResultsDirectly": false,
   "workbench.colorTheme": "Default Dark Modern",
   "workbench.editor.enablePreview": false,
   "yaml.completion": true,

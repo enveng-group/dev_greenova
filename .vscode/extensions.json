@@ -30,7 +30,6 @@
     "bradlc.vscode-tailwindcss",
     "esbenp.prettier-vscode",
     "pycqa.bandit-pycqa",
-    "mtxr.sqltools",
     "bmalehorn.vscode-fish",
     "willumz.generic-pseudocode",
     "stylelint.vscode-stylelint",
@@ -38,6 +37,11 @@
     "rarnoldmobile.todo-txt",
     "mermaidchart.vscode-mermaid-chart",
     "github.vscode-github-actions",
-    "ymotongpoo.licenser"
+    "ymotongpoo.licenser",
+    "marp-team.marp-vscode",
+    "ms-python.vscode-python-envs",
+    "dbcode.dbcode",
+    "ms-vscode.copilot-mermaid-diagram",
+    "ms-vscode.vscode-websearchforcopilot"
   ]
 }
