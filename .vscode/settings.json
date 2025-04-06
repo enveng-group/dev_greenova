@@ -553,6 +553,14 @@
   "jupyter.themeMatplotlibPlots": true,
   "less.validate": false,
   "licenser.author": "Enveng Group",
+  "licenser.excludeFileExtensions": [
+    ".html",
+    ".json",
+    ".toml",
+    ".yaml",
+    ".yml",
+    ".enc"
+  ],
   "licenser.license": "AGPLv3",
   "licenser.projectName": "Greenova",
   "licenser.useSPDXLicenseFormat": true,
@@ -611,8 +619,6 @@
   "pylint.path": [
     "/workspaces/greenova/.venv/bin/pylint"
   ],
-  "python-envs.defaultEnvManager": "ms-python.python:venv",
-  "python-envs.defaultPackageManager": "ms-python.python:pip",
   "python.REPL.enableREPLSmartSend": true,
   "python.REPL.sendToNativeREPL": true,
   "python.analysis.aiCodeActions": {
@@ -684,7 +690,6 @@
   ],
   "python.analysis.persistAllIndices": true,
   "python.analysis.regenerateStdLibIndices": true,
-  "python.analysis.stubPath": "${workspaceFolder}/.venv/lib/python3.9/site-packages/django-stubs",
   "python.analysis.supportDocstringTemplate": true,
   "python.analysis.supportRestructuredText": true,
   "python.analysis.typeCheckingMode": "strict",
@@ -700,7 +705,8 @@
     "${workspaceFolder}/.venv/lib/python3.9/site-packages/matplotlib-stubs",
     "${workspaceFolder}/.venv/lib/python3.9/site-packages/requests-stubs",
     "${workspaceFolder}/.venv/lib/python3.9/site-packages/pytest-stub",
-    "${workspaceFolder}/.venv/lib/python3.9/site-packages/types-Pillow"
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/types-Pillow",
+    "${workspaceFolder}/.venv/lib/python3.9/site-packages/microsoft-python-type-stubs"
   ],
   "python.analysis.useLibraryCodeForTypes": true,
   "python.createEnvironment.contentButton": "show",
