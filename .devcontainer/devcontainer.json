@@ -31,7 +31,6 @@
         "Plex.vscode-protolint",
         "bradlc.vscode-tailwindcss",
         "pycqa.bandit-pycqa",
-        "mtxr.sqltools",
         "ms-vscode.vscode-copilot-data-analysis",
         "bmalehorn.vscode-fish",
         "willumz.generic-pseudocode",
@@ -40,7 +39,12 @@
         "rarnoldmobile.todo-txt",
         "MermaidChart.vscode-mermaid-chart",
         "GitHub.vscode-github-actions",
-        "ymotongpoo.licenser"
+        "ymotongpoo.licenser",
+        "marp-team.marp-vscode",
+        "ms-python.vscode-python-envs@prerelease",
+        "DBCode.dbcode",
+        "ms-vscode.copilot-mermaid-diagram",
+        "ms-vscode.vscode-websearchforcopilot"
       ],
       "settings": {
         "[django-html]": {
