@@ -3,17 +3,19 @@
 import os
 import sys
 
+import django
+from django.core.management import execute_from_command_line
 from dotenv_vault import load_dotenv
 
-load_dotenv()  # Ensure environment variables are loaded
+# Provide a default path or check if file exists first
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path=dotenv_path if os.path.exists(dotenv_path) else None)
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'greenova.settings')
     try:
-        import django
         django.setup()  # Ensure Django is initialized
-        from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
