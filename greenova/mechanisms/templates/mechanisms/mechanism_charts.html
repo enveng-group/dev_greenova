@@ -1,9 +1,15 @@
+{% load static %}
+{% load mechanism_tags %}
+
 {% if mechanism_charts %}
+
   <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
     <!-- Chart Navigation -->
     <nav class="chart-nav" aria-label="Mechanism charts navigation">
-      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
+      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">
+        ←
+      </button>
       <button type="button"
               onclick="scrollCharts('right')"
               aria-label="Scroll right">→</button>
@@ -14,6 +20,7 @@
          role="region"
          aria-label="Chart gallery">
       {% for mech in mechanism_charts %}
+
         <article class="mechanism-chart">
           <header>
             <h3>{{ mech.name }}</h3>
@@ -22,6 +29,7 @@
             <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}"
                style="text-decoration: none">
             {% endif %}
+
             <figure>
               <figcaption>{{ mech.name }} Status Distribution</figcaption>
               <img src="data:image/png;base64,{{ mech.image_data }}"
@@ -31,10 +39,13 @@
                    height="400" />
             </figure>
             {% if mech.id %}</a>{% endif %}
+
         </article>
       {% endfor %}
+
     </div>
     {% if table_data %}
+
       <!-- Detailed Data Table -->
       <article class="data-table">
         <header>
@@ -57,6 +68,7 @@
             </thead>
             <tbody>
               {% for item in table_data %}
+
                 <tr>
                   <td>{{ item.name }}</td>
                   <td>{{ item.not_started }}</td>
@@ -70,19 +82,25 @@
                          class="btn-secondary"
                          aria-label="View details for {{ item.name }}">View</a>
                     {% endif %}
+
                   </td>
                 </tr>
               {% endfor %}
+
             </tbody>
           </table>
         </div>
+      </article>
+    {% endif %}
 
-    </section>
+  </section>
 {% elif error %}
+
   <div role="alert" class="notice error">
     <p>{{ error }}</p>
   </div>
 {% else %}
+
   <div role="status" class="notice">
     <p>Please select a project to view mechanism charts.</p>
   </div>
@@ -93,7 +111,9 @@
     const scrollAmount = 350;
     if (direction === 'left') {
       container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
+    }
+
+ else {
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   }

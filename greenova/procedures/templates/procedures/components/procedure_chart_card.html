@@ -1,0 +1,47 @@
+{% load procedure_tags %}
+
+<article class="chart-card">
+  <figure>
+    <figcaption>
+      <h3>{{ procedure.name }}</h3>
+      <dl class="chart-stats">
+        <div class="stat-row">
+          <dt>Total:</dt>
+          <dd>
+            {{ procedure.stats.total }}
+
+          </dd>
+        </div>
+        <div class="stat-row">
+          <dt>Not Started:</dt>
+          <dd>
+            {{ procedure.stats.not_started }}
+
+          </dd>
+        </div>
+        <div class="stat-row">
+          <dt>In Progress:</dt>
+          <dd>
+            {{ procedure.stats.in_progress }}
+
+          </dd>
+        </div>
+        <div class="stat-row">
+          <dt>Completed:</dt>
+          <dd>
+            {{ procedure.stats.completed }}
+
+          </dd>
+        </div>
+        <div class="stat-row">
+          <dt>Overdue:</dt>
+          <dd>
+            {{ procedure.stats.overdue }}
+
+          </dd>
+        </div>
+      </dl>
+    </figcaption>
+    {{ procedure.chart|safe }}
+  </figure>
+</article>

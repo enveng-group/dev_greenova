@@ -805,11 +805,11 @@
     {
       "args": [
         "-c",
-        "cd greenova && python3 manage.py tailwind start"
+        "cd greenova/theme/static_src/src && npm install && cd ../../.. && python3 manage.py tailwind check-updates && python3 manage.py tailwind update && python3 manage.py tailwind install && python3 manage.py tailwind build"
       ],
       "command": "/bin/sh",
       "group": "none",
-      "label": "Django: Run Tailwind",
+      "label": "Django: Build and install Tailwind",
       "presentation": {
         "panel": "dedicated",
         "reveal": "always"
@@ -827,6 +827,21 @@
       "label": "Django: Run server",
       "presentation": {
         "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "cd greenova && python3 manage.py check"
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Django: Check",
+      "presentation": {
+        "panel": "shared",
         "reveal": "always"
       },
       "problemMatcher": [],

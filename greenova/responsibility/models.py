@@ -1,12 +1,8 @@
+from typing import Optional
+
 from core.utils.roles import get_responsibility_choices
-from django.contrib.auth.models import User
 from django.db import models
-from django.contrib.auth.models import User
-from django.db import models
-from django.contrib.auth.models import User
-from django.db import models
-from django.contrib.auth.models import User
-from django.db import models
+from django.db.models import CharField, TextField
 
 
 class Responsibility(models.Model):
@@ -15,12 +11,12 @@ class Responsibility(models.Model):
     These values match the responsibility choices in obligations.models.Obligation.
     """
 
-    name = models.CharField(
+    name: CharField = models.CharField(
         max_length=255,
         unique=True,
         choices=get_responsibility_choices(),
     )
-    description = models.TextField(blank=True)
+    description: Optional[TextField] = models.TextField(blank=True)
 
     class Meta:
         verbose_name = 'Responsibility'
@@ -28,4 +24,4 @@ class Responsibility(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return self.name
+        return str(self.name)

@@ -1,12 +1,24 @@
-import pandas as pd
-import numpy as np
-import re
 import logging
 import os
-from typing import Any, Dict, List
+import re
+
 from django.core.management.base import BaseCommand
 
+# Set up logger at module level
 logger = logging.getLogger(__name__)
+
+# Check for pandas and numpy before importing
+try:
+    import numpy as np
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    logger.error(
+        "pandas and/or numpy modules not found. Please install them with: "
+        "pip install pandas numpy"
+    )
+
 
 class Command(BaseCommand):
     """
@@ -37,42 +49,92 @@ class Command(BaseCommand):
             input_file: Path to the dirty CSV file
             output_file: Path where the cleaned CSV will be saved
         """
-        input_file = options['input_file']
-        output_file = options['output_file']
+        if not PANDAS_AVAILABLE:
+            self.stderr.write(
+                self.style.ERROR(
+                    "This command requires pandas and numpy. "
+                    "Please install them with: pip install pandas numpy"
+                )
+            )
+            return
 
-        if not os.path.exists(input_file):
-            self.stderr.write(self.style.ERROR(f"Input file not found: {input_file}"))
+        file_path = options['input_file']
+        out_path = options['output_file']
+
+        if not os.path.exists(file_path):
+            self.stderr.write(
+                self.style.ERROR(f"Input file not found: {file_path}")
+            )
             return
 
         try:
-            self.clean_csv(input_file, output_file)
-            self.stdout.write(self.style.SUCCESS(f"Successfully cleaned CSV data and saved to {output_file}"))
-        except Exception as e:
-            self.stderr.write(self.style.ERROR(f"Error cleaning CSV: {str(e)}"))
+            self.clean_csv(file_path, out_path)
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Successfully cleaned CSV data and saved to {out_path}"
+                )
+            )
+        except (pd.errors.EmptyDataError, pd.errors.ParserError) as e:
+            self.stderr.write(
+                self.style.ERROR(f"Error parsing CSV file: {str(e)}")
+            )
+        except OSError as e:
+            self.stderr.write(
+                self.style.ERROR(f"File I/O error: {str(e)}")
+            )
+        except ValueError as e:
+            self.stderr.write(
+                self.style.ERROR(f"Value error: {str(e)}")
+            )
+        except Exception as e:  # pylint: disable=broad-except
+            # This is intentionally broad as a last resort for unexpected errors
+            self.stderr.write(
+                self.style.ERROR(f"Unexpected error cleaning CSV: {str(e)}")
+            )
 
-    def clean_csv(self, input_file: str, output_file: str) -> None:
+    def clean_csv(self, filepath: str, outpath: str) -> None:
         """
         Clean and format CSV data to match Django models schema.
 
         Args:
-            input_file: Path to the dirty CSV file
-            output_file: Path where the cleaned CSV will be saved
+            filepath: Path to the dirty CSV file
+            outpath: Path where the cleaned CSV will be saved
         """
-        logger.info(f"Reading CSV file from {input_file}")
+        logger.info("Reading CSV file from %s", filepath)
 
         # Read the dirty CSV file, handling potential encoding issues
         try:
-            df = pd.read_csv(input_file, encoding='utf-8')
+            df = pd.read_csv(filepath, encoding='utf-8')
         except UnicodeDecodeError:
             # Try with another common encoding if utf-8 fails
-            df = pd.read_csv(input_file, encoding='ISO-8859-1')
+            df = pd.read_csv(filepath, encoding='ISO-8859-1')
 
         # Skip header row if it contains instructions instead of data
-        if df.shape[0] > 0 and ('project name' in str(df.iloc[0].values).lower() or
-                              'this is now the project name' in str(df.iloc[0].values).lower()):
-            self.stdout.write(f"Skipping instruction row")
+        if (df.shape[0] > 0 and
+                ('project name' in str(df.iloc[0].values).lower() or
+                 'this is now the project name' in str(df.iloc[0].values).lower())):
+            self.stdout.write("Skipping instruction row")
             df = df.iloc[1:].reset_index(drop=True)
 
+        df = self._map_columns(df)
+        df = self._clean_text_fields(df)
+        df = self._process_boolean_fields(df)
+        df = self._clean_date_fields(df)
+        df = self._normalize_status_values(df)
+        df = self._clean_project_phases(df)
+        df = self._clean_environmental_aspects(df)
+        df = self._clean_site_desktop_values(df)
+        df = self._clean_email_addresses(df)
+        df = self._format_obligation_numbers(df)
+        df = self._apply_defaults_and_nulls(df)
+
+        # Export the cleaned data to a new CSV file with proper date formatting
+        df.to_csv(outpath, index=False, date_format='%Y-%m-%d')
+        logger.info("Cleaned data exported to %s", outpath)
+        self.stdout.write(f"CSV exported {len(df)} rows and {len(df.columns)} columns")
+
+    def _map_columns(self, df):
+        """Map original column names to our expected format."""
         # Define the column mapping based on clean_output_with_nulls.csv
         column_mapping = {
             'Project_Name': 'project__name',
@@ -109,14 +171,27 @@ class Command(BaseCommand):
         self.stdout.write(f"Available columns in CSV: {df.columns.tolist()}")
 
         # Check if all expected columns exist
-        for original_col in column_mapping.keys():
+        for original_col in column_mapping:
             if original_col not in df.columns:
-                self.stdout.write(self.style.WARNING(f"Column not found in CSV: '{original_col}'"))
+                self.stdout.write(
+                    self.style.WARNING(f"Column not found in CSV: '{original_col}'")
+                )
 
         # Rename the columns
         df.rename(columns=column_mapping, inplace=True)
 
-        # Convert columns with potential line breaks to clean strings
+        # Explicitly check for missing required columns and add them
+        required_columns = set(column_mapping.values())
+        missing_columns = required_columns - set(df.columns)
+
+        for col in missing_columns:
+            df[col] = None
+            logger.warning("Added missing column: %s", col)
+
+        return df
+
+    def _clean_text_fields(self, df):
+        """Clean text fields by removing line breaks and special characters."""
         text_columns = [
             'supporting__information', 'general__comments', 'compliance__comments',
             'non_conformance__comments', 'obligation', 'procedure', 'evidence',
@@ -127,11 +202,20 @@ class Command(BaseCommand):
             if col in df.columns:
                 # Replace line breaks with dash and clean special characters
                 df[col] = df[col].astype(str).apply(
-                    lambda x: re.sub(r'[\r\n•\u2022\u2013\u2019]', '-', x) if pd.notna(x) and x != 'nan' else ''
+                    lambda x: re.sub(r'[\r\n•\u2022\u2013\u2019]', '-', x)
+                    if pd.notna(x) and x != 'nan' else ''
                 )
+        return df
 
-        # Clean boolean fields - ensure these are properly processed
-        bool_columns = ['recurring__obligation', 'inspection', 'new__control__action_required']
+    def _process_boolean_fields(self, df):
+        """Process fields with boolean values."""
+        bool_columns = [
+            'recurring__obligation', 'inspection', 'new__control__action_required'
+        ]
+
+        # Define conv. values outside loop to avoid cell variable defined loop error
+        true_values = ['yes', 'y', 'true', '1', 'yes ', 'y ', 'true ']
+        false_values = ['no', 'n', 'false', '0', 'no ', 'n ', 'false ', '']
 
         for col in bool_columns:
             if col in df.columns:
@@ -141,26 +225,40 @@ class Command(BaseCommand):
                 # Print unique values for debugging
                 unique_vals = df[col].unique()
                 self.stdout.write(f"Unique values in {col}: {unique_vals}")
+
                 # Convert various boolean indicators to Python boolean values
                 df[col] = df[col].apply(
-                    lambda x: True if x in ('yes', 'y', 'true', '1', 'yes ', 'y ', 'true ') else
-                              False if x in ('no', 'n', 'false', '0', 'no ', 'n ', 'false ', 'nan', '') else
-                              None
+                    lambda x: True if x in true_values else
+                    False if x in false_values else None
                 )
-                # Count values after conversion
-                true_count = (df[col] == True).sum()
-                false_count = (df[col] == False).sum()
-                null_count = df[col].isna().sum()
-                self.stdout.write(f"After conversion: True={true_count}, False={false_count}, Null={null_count}")
 
-        # Convert and clean date columns
-        date_columns = ['action__due_date', 'close__out__date', 'recurring__forcasted__date']
+                # Count values after conversion
+                true_count = (df[col] is True).sum()
+                false_count = (df[col] is False).sum()
+                null_count = df[col].isna().sum()
+
+                self.stdout.write(
+                    f"After conversion: True={true_count}, False={false_count}, "
+                    f"Null={null_count}"
+                )
+        return df
+
+    def _clean_date_fields(self, df):
+        """Convert date fields to standard format."""
+        date_columns = [
+            'action__due_date',
+            'close__out__date',
+            'recurring__forcasted__date'
+        ]
 
         for col in date_columns:
             if col in df.columns:
-                df[col] = pd.to_datetime(df[col], errors='coerce').dt.strftime('%Y-%m-%d')
+                df[col] = (pd.to_datetime(df[col], errors='coerce')
+                           .dt.strftime('%Y-%m-%d'))
+        return df
 
-        # Normalize status values to match model choices
+    def _normalize_status_values(self, df):
+        """Normalize status values to match model choices."""
         if 'status' in df.columns:
             # Convert to lowercase and handle slight variations
             df['status'] = df['status'].astype(str).str.lower().str.strip()
@@ -180,29 +278,64 @@ class Command(BaseCommand):
                 '': 'not started'
             }
 
-            df['status'] = df['status'].apply(lambda x: status_mapping.get(x, 'not started'))
+            df['status'] = df['status'].apply(
+                lambda x: status_mapping.get(x, 'not started')
+            )
+        return df
 
-        # Ensure project_phase has valid values
-        valid_phases = ['Pre-Construction', 'Construction', 'Operation', 'Decommissioning', 'Post-Closure', 'Other']
+    def _clean_project_phases(self, df):
+        """Clean and standardize project phase values."""
         if 'project_phase' in df.columns:
+            # Define valid phases for validation
+            valid_phases = {
+                'Pre-Construction',
+                'Construction',
+                'Operation',
+                'Throughout the project'
+            }
+
             # Map variations to standardized values
             df['project_phase'] = df['project_phase'].astype(str).apply(
-                lambda x: 'Construction' if 'construction' in x.lower() or 'design and construction' in x.lower()
-                else 'Pre-Construction' if any(term in x.lower() for term in ['pre', 'design'])
-                else 'Operation' if 'operation' in x.lower()
-                else 'Throughout the project' if 'throughout' in x.lower()
-                else x if pd.notna(x) and x != 'nan' and x != 'NULL' and x != '' else None
+                lambda x: 'Construction'
+                if 'construction' in x.lower() or 'design and construction' in x.lower()
+                else 'Pre-Construction'
+                if any(term in x.lower() for term in ['pre', 'design'])
+                else 'Operation'
+                if 'operation' in x.lower()
+                else 'Throughout the project'
+                if 'throughout' in x.lower()
+                else x if (pd.notna(x) and
+                           x != 'nan' and
+                           x != 'NULL' and
+                           x != '' and
+                           x in valid_phases)
+                else None
             )
+        return df
 
-        # Ensure environmental_aspect has valid values
-        valid_aspects = ['Air', 'Water', 'Waste', 'Energy', 'Biodiversity', 'Noise', 'Chemicals', 'Soil', 'Other', 'Administration', 'Cultural Heritage Management', 'Terrestrial Fauna Management']
+    def _clean_environmental_aspects(self, df):
+        """Clean and standardize environmental aspect values."""
         if 'environmental__aspect' in df.columns:
-            # Convert to proper format
-            df['environmental__aspect'] = df['environmental__aspect'].astype(str).apply(
-                lambda x: x.title() if pd.notna(x) and x != 'nan' and x != 'NULL' and x != '' else 'Other'
-            )
+            # Define valid aspects for validation
+            valid_aspects = {
+                'Soil', 'Water', 'Air', 'Noise', 'Hazardous Materials',
+                'Waste', 'Flora', 'Fauna', 'Heritage', 'Community', 'Other'
+            }
 
-        # Ensure site_or_desktop has valid values (Site or Desktop)
+            # Convert to proper format and validate against valid aspects
+            df['environmental__aspect'] = df['environmental__aspect'].astype(str).apply(
+                lambda x: x.title()
+                if (pd.notna(x) and
+                    x != 'nan' and
+                    x != 'NULL' and
+                    x != '' and
+                    x.title() in valid_aspects)
+                else 'Other'
+            )
+        return df
+
+    def _clean_site_desktop_values(self, df):
+        """Clean and standardize site or desktop values."""
         if 'site_or__desktop' in df.columns:
             df['site_or__desktop'] = df['site_or__desktop'].astype(str).apply(
                 lambda x: 'Site' if 'site' in x.lower()
@@ -210,56 +343,47 @@ class Command(BaseCommand):
                 else None if pd.isna(x) or x == 'nan' or x == 'NULL' or x == ''
                 else x
             )
+        return df
 
-        # Clean up email addresses
+    def _clean_email_addresses(self, df):
+        """Clean email addresses."""
         if 'person_email' in df.columns:
             df['person_email'] = df['person_email'].astype(str).apply(
-                lambda x: x.strip() if pd.notna(x) and x != 'nan' and '@' in x else None
+                lambda x: x.strip()
+                if pd.notna(x) and x != 'nan' and '@' in x
+                else None
             )
+        return df
 
-        # Ensure obligation numbers are in the correct format (PCEMP-XXX)
+    def _format_obligation_numbers(self, df):
+        """Format obligation numbers consistently."""
         if 'obligation__number' in df.columns:
             df['obligation__number'] = df['obligation__number'].apply(
-                lambda x: f"PCEMP-{x.split('-')[1]}" if isinstance(x, str) and '-' in x else
-                          f"PCEMP-{x}" if isinstance(x, str) and x.isdigit() else x
+                lambda x: f"PCEMP-{x.split('-')[1]}"
+                if isinstance(x, str) and '-' in x
+                else f"PCEMP-{x}"
+                if isinstance(x, str) and x.isdigit()
+                else x
             )
+        return df
 
+    def _apply_defaults_and_nulls(self, df):
+        """Apply default values and handle nulls."""
         # Fill missing values with appropriate defaults
-        df['status'].fillna('not started', inplace=True)
+        if 'status' in df.columns:
+            df['status'].fillna('not started', inplace=True)
 
         # Replace remaining NaN values with None/NULL
         df = df.replace({np.nan: None})
-
-        # Explicitly check for missing required columns and add them
-        required_columns = set([v for v in column_mapping.values()])
-        missing_columns = required_columns - set(df.columns)
-
-        for col in missing_columns:
-            df[col] = None
-            logger.warning(f"Added missing column: {col}")
-
-        # Print the first few rows for verification
-        self.stdout.write("First 2 rows of processed data:")
-        for index, row in df.head(2).iterrows():
-            self.stdout.write(f"Row {index}:")
-            for col in required_columns:
-                if col in row:
-                    self.stdout.write(f"  {col}: {row[col]}")
-
-        # Export the cleaned data to a new CSV file with proper date formatting
-        df.to_csv(output_file, index=False, date_format='%Y-%m-%d')
-        logger.info(f"Cleaned data exported to {output_file}")
-        self.stdout.write(f"CSV exported with {len(df)} rows and {len(df.columns)} columns")
+        return df
 
 
-# This will only run if the script is executed directly, not when imported as a Django command
+# This will only run if script is executed directly, not when as a Django command
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
-    input_file = 'dirty.csv'
-    output_file = 'clean_output_with_nulls.csv'
-    command = Command()
-    command.clean_csv(input_file, output_file)
+    cmd = Command()
+    cmd.clean_csv('dirty.csv', 'clean_output_with_nulls.csv')

@@ -59,10 +59,7 @@
     "editor.defaultFormatter": "vscode.git",
     "editor.fontFamily": "monospace",
     "editor.insertSpaces": true,
-    "editor.rulers": [
-      72,
-      50
-    ],
+    "editor.rulers": [72, 50],
     "editor.tabSize": 2,
     "editor.wordWrap": "on"
   },
@@ -147,10 +144,7 @@
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
-    "editor.rulers": [
-      88,
-      100
-    ],
+    "editor.rulers": [88, 100],
     "editor.wordBasedSuggestions": "off"
   },
   "[shellcheckrc]": {
@@ -184,12 +178,8 @@
     "--single-quotes"
   ],
   "autopep8.importStrategy": "fromEnvironment",
-  "autopep8.interpreter": [
-    "${workspaceFolder}/.venv/bin/python3.9"
-  ],
-  "autopep8.path": [
-    "/workspaces/greenova/.venv/bin/autopep8"
-  ],
+  "autopep8.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "autopep8.path": ["/workspaces/greenova/.venv/bin/autopep8"],
   "bandit.args": [
     "--exclude",
     ".git,__pycache__,.pytest_cache,.venv,node_modules,/tests,/env,*.pyc,**/test_*.py,**/*_test.py",
@@ -199,12 +189,8 @@
   ],
   "bandit.enabled": true,
   "bandit.importStrategy": "fromEnvironment",
-  "bandit.interpreter": [
-    "${workspaceFolder}/.venv/bin/python3.9"
-  ],
-  "bandit.path": [
-    "/workspaces/greenova/.venv/bin/bandit"
-  ],
+  "bandit.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "bandit.path": ["/workspaces/greenova/.venv/bin/bandit"],
   "chat.agent.enabled": true,
   "chat.commandCenter.enabled": true,
   "chat.detectParticipant.enabled": true,
@@ -274,17 +260,10 @@
   "djlint.formatAttributeTemplateTags": true,
   "djlint.formatCss": false,
   "djlint.formatJs": false,
-  "djlint.formatLanguages": [
-    "django-html",
-    "html",
-    "jinja"
-  ],
-  "djlint.include": [
-    "**/*.html",
-    "**/*.jinja"
-  ],
+  "djlint.formatLanguages": ["django-html", "html", "jinja"],
+  "djlint.include": ["**/*.html", "**/*.jinja"],
   "djlint.maxLineLength": 88,
-  "djlint.profile": "jinja",
+  "djlint.profile": "django",
   "djlint.showInstallError": true,
   "djlint.useGitignore": true,
   "djlint.useNewLinterOutputParser": true,
@@ -299,11 +278,7 @@
   "editor.guides.bracketPairs": true,
   "editor.linkedEditing": true,
   "editor.renderWhitespace": "boundary",
-  "editor.rulers": [
-    79,
-    88,
-    100
-  ],
+  "editor.rulers": [79, 88, 100],
   "editor.stickyScroll.enabled": true,
   "editor.suggest.showIssues": true,
   "editorconfig.generateAuto": true,
@@ -320,19 +295,13 @@
   "eslint.lintTask.options": "${workspaceFolder}/.eslintrc.js",
   "eslint.nodeEnv": "development",
   "eslint.nodePath": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
-  "eslint.probe": [
-    "javascript"
-  ],
+  "eslint.probe": ["javascript"],
   "eslint.run": "onSave",
   "eslint.runtime": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
   "eslint.useESLintClass": true,
   "eslint.useFlatConfig": false,
-  "eslint.validate": [
-    "javascript"
-  ],
-  "eslint.workingDirectories": [
-    "./greenova"
-  ],
+  "eslint.validate": ["javascript"],
+  "eslint.workingDirectories": ["./greenova"],
   "evenBetterToml.taplo.bundled": true,
   "extensions.ignoreRecommendations": true,
   "files.associations": {
@@ -351,12 +320,7 @@
   },
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 500,
-  "files.watcherInclude": [
-    "**/*.py",
-    "**/*.html",
-    "**/*.css",
-    "**/*.js"
-  ],
+  "files.watcherInclude": ["**/*.py", "**/*.html", "**/*.css", "**/*.js"],
   "fish.path.fish": "fish",
   "fish.path.fish_indent": "fish_indent",
   "git.allowNoVerifyCommit": true,
@@ -366,10 +330,7 @@
   "git.autofetch": true,
   "git.blame.editorDecoration.enabled": true,
   "git.blame.statusBarItem.enabled": true,
-  "git.branchProtection": [
-    "main",
-    "master"
-  ],
+  "git.branchProtection": ["main", "master"],
   "git.branchProtectionPrompt": "alwaysPrompt",
   "git.closeDiffOnOperation": true,
   "git.confirmNoVerifyCommit": true,
@@ -529,12 +490,8 @@
   "inlineChat.lineNaturalLanguageHint": true,
   "isort.check": true,
   "isort.importStrategy": "fromEnvironment",
-  "isort.interpreter": [
-    "${workspaceFolder}/.venv/bin/python3.9"
-  ],
-  "isort.path": [
-    "/workspaces/greenova/.venv/bin/isort"
-  ],
+  "isort.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "isort.path": ["/workspaces/greenova/.venv/bin/isort"],
   "javascript.autoClosingTags": true,
   "javascript.format.enable": true,
   "javascript.format.semicolons": "insert",
@@ -580,17 +537,10 @@
   "mermaid.vscode.dark": "dark",
   "mermaidChart.aiModelFamily": "gpt-4o",
   "mermaidChart.aiVendor": "copilot",
-  "mypy-type-checker.args": [
-    "--configuration",
-    "${workspaceFolder}/mypy.ini"
-  ],
+  "mypy-type-checker.args": ["--configuration", "${workspaceFolder}/mypy.ini"],
   "mypy-type-checker.importStrategy": "fromEnvironment",
-  "mypy-type-checker.interpreter": [
-    "${workspaceFolder}/.venv/bin/python3.9"
-  ],
-  "mypy-type-checker.path": [
-    "/workspaces/greenova/.venv/bin/mypy"
-  ],
+  "mypy-type-checker.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "mypy-type-checker.path": ["/workspaces/greenova/.venv/bin/mypy"],
   "mypy-type-checker.preferDaemon": true,
   "mypy-type-checker.reportingScope": "file",
   "prettier.configPath": "/workspaces/greenova/.prettierrc",
@@ -613,12 +563,8 @@
   "protolint.path": "/usr/local/bin/protolint",
   "pylint.enabled": true,
   "pylint.importStrategy": "fromEnvironment",
-  "pylint.interpreter": [
-    "${workspaceFolder}/.venv/bin/python3.9"
-  ],
-  "pylint.path": [
-    "/workspaces/greenova/.venv/bin/pylint"
-  ],
+  "pylint.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],
+  "pylint.path": ["/workspaces/greenova/.venv/bin/pylint"],
   "python.REPL.enableREPLSmartSend": true,
   "python.REPL.sendToNativeREPL": true,
   "python.analysis.aiCodeActions": {
@@ -713,9 +659,7 @@
   "python.createEnvironment.trigger": "prompt",
   "python.defaultInterpreterPath": "python3.9",
   "python.envFile": "${workspaceFolder}/.env",
-  "python.experiments.optInto": [
-    "pythonTestAdapter"
-  ],
+  "python.experiments.optInto": ["pythonTestAdapter"],
   "python.globalModuleInstallation": false,
   "python.languageServer": "Jedi",
   "python.terminal.activateEnvInCurrentTerminal": true,
@@ -758,20 +702,13 @@
   "snyk.features.codeSecurity": true,
   "snyk.features.infrastructureAsCode": true,
   "snyk.features.openSourceSecurity": true,
-  "snyk.scanningMode": "auto",
-  "snyk.trustedFolders": [
-    "/workspaces/greenova",
-    "/home/vscode/dotfiles"
-  ],
+  "snyk.scanningMode": "manual",
+  "snyk.trustedFolders": ["/workspaces/greenova", "/home/vscode/dotfiles"],
   "stylelint.configFile": "/workspaces/greenova/stylelint.config.js",
   "stylelint.enable": true,
   "stylelint.packageManager": "npm",
-  "stylelint.snippet": [
-    "css"
-  ],
-  "stylelint.validate": [
-    "css"
-  ],
+  "stylelint.snippet": ["css"],
+  "stylelint.validate": ["css"],
   "tailwindCSS.codeActions": true,
   "tailwindCSS.codeLens": true,
   "tailwindCSS.includeLanguages": {

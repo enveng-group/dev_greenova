@@ -1,39 +1,40 @@
 {% load project_tags static hyperscript %}
+
 <section aria-labelledby="project-selection-heading"
          class="project-selection"
          hx-ext="class-tools path-deps">
   <h2 id="project-selection-heading">Select Project</h2>
   {% if projects %}
-    {% comment %}
-    <!-- Replace QuerySet with JSON-serializable structure -->
-    {% endcomment %}
-    {% with project_list=projects|map:"to_dict"|to_list %}
+    {% with project_list=projects|map:"to_dict"|to_list %withproject_list=projects|mapwithproject_list=projects|mapwithproject_list=projects|map}
       {% hs_dump project_list 'projectsData' %}
     {% endwith %}
-    <div class="selector-container"
-         _="on projectSelected(id) set #project-selector.value to id trigger change on #project-selector">
-      <form id="project-form">
+    <div class="selector-container">
+      <form id="project-form"
+            hx-trigger="change from:#project-selector"
+            hx-swap="none">
         <div class="form-group">
           <label for="project-selector">Project:</label>
           <select id="project-selector"
                   name="project_id"
                   class="form-select"
-                  hx-trigger="change"
-                  _="on change set projectId to my.value if projectId != '' -- Update URL to maintain state without reloading page call history.replaceState(null, '', `?project_id=${projectId}`) -- Trigger both events for better compatibility trigger projectSelected(id:projectId) on body end">
-            <option value="0">Select a project</option>
+                  _="on change set projectId to my.value if projectId != '' call history.replaceState(null, '', `?project_id=${projectId}`) trigger projectSelected(id:projectId) on body end">
+            <option value="">Select a project</option>
             {% for project in projects %}
-              <option value="{{ project.id }}"
-                      {% if project.id|stringformat:"s" == selected_project_id|default:request.GET.project_id|default:"" %} selected {% endif %}>
-                {{ project.name }}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-      </form>
-    </div>
-  {% else %}
-    <div class="notice warning" role="alert">
-      <p>No projects available. Please contact your administrator to be added to a project.</p>
-    </div>
-  {% endif %}
+              <option value="{{ project.id }}" {% if project.id|stringformat:"s" ==;ifproject.id|stringformatifproject.id|stringformat selected_project_id|default:request.get.project_id|default:"" %selected_project_id|default} selected
+              {% endif %}
+              >{{ project.name }}</option>
+          {% endfor %}
+
+        </select>
+      </div>
+    </form>
+  </div>
+{% else %}
+
+  <div class="notice warning" role="alert">
+    <p>
+      No projects available. Please contact your administrator to be added to a project.
+    </p>
+  </div>
+{% endif %}
 </section>

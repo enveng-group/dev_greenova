@@ -1,11 +1,19 @@
-"""
-Jinja2 extensions for the dashboard app.
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-This module provides filters and functions that can be used in Jinja2 templates.
+"""
+Django template tags and filters for the dashboard app.
+
+This module provides template tags and filters that can be used in Django templates.
 """
 from typing import Any
 
+from django import template
 
+register = template.Library()
+
+
+@register.filter(name='display_name')
 def display_name(user: Any) -> str:
     """Return the best display name for a user.
 
@@ -22,6 +30,7 @@ def display_name(user: Any) -> str:
     return user.username if hasattr(user, 'username') else str(user)
 
 
+@register.filter(name='format_date')
 def format_date(date_value: Any, format_string: str = '%d %b %Y') -> str:
     """Format a date with a specified format string.
 
@@ -38,15 +47,3 @@ def format_date(date_value: Any, format_string: str = '%d %b %Y') -> str:
         return date_value.strftime(format_string)
     except (AttributeError, ValueError):
         return str(date_value)
-
-
-# Dictionary of all filters to be registered
-dashboard_filters = {
-    'display_name': display_name,
-    'format_date': format_date,
-}
-
-# Dictionary of all global functions to be registered
-dashboard_globals: dict[str, Any] = {
-    # Add any global functions here
-}

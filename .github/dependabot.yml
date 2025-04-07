@@ -7,19 +7,19 @@
 version: 2
 updates:
   # Enable version updates for devcontainers
-  - package-ecosystem: "devcontainer"
-    directory: "/"
+  - package-ecosystem: 'devcontainer'
+    directory: '/'
     schedule:
       interval: weekly
 
   # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
       interval: quarterly
 
   # Enable version updates for python
-  - package-ecosystem: "python"
-    directory: "/"
+  - package-ecosystem: 'python'
+    directory: '/'
     schedule:
       interval: quarterly

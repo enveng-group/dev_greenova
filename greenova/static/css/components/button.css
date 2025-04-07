@@ -4,8 +4,8 @@ button,
 [type='submit'],
 [type='reset'],
 [role='button'],
-nav li [role=button],
-nav li [type=button],
+nav li [role='button'],
+nav li [type='button'],
 .btn-primary,
 .btn-secondary,
 .btn-danger,
@@ -52,14 +52,17 @@ header:has(.btn-fold) {
 
 /* If the button is apart of a menu */
 [role='menuitem'] {
-  margin: 0px var(--greenova-spacing);
+  margin: 0 var(--greenova-spacing);
 }
+
 .btn-primary {
   background-color: var(--greenova-green-primary);
 }
+
 .btn-secondary {
   background-color: var(--greenova-green-secondary);
 }
+
 .btn-danger {
   background-color: var(--greenova-warning-background);
 }
@@ -87,6 +90,7 @@ nav li select {
   /* Keeps add obligation inline with other buttons */
   margin: 0;
 }
+
 a[role='button'] {
   /* Used to make it look more like a proper button */
   padding-top: 0.55rem !important;

@@ -3,7 +3,6 @@
   --greenova-main-spacing: 5rem;
   --greenova-head-spacing: 5rem;
   --greenova-charts-width: 320px;
-
   --greenova-font-family: 'Arial';
   /*"Ubuntu"*/
   --greenova-font-weight: normal;
@@ -14,20 +13,15 @@
   --pico-font-family: var(--greenova-font-family);
   --pico-font-weight: var(--greenova-font-weight);
   --pico-line-height: var(--greenova-line-height);
-
   --greenova-border-radius: 0.5rem;
   --greenova-border-radius-small: 0.25rem;
-
   --greenova-spacing-large: 0.75rem;
   --greenova-spacing: 0.46875rem;
   --greenova-spacing-small: 0.3125rem;
-
   --greenova-padding-large: 1.25rem;
   --greenova-padding: 0.625rem;
   --greenova-padding-small: 0.3125rem;
-
-  --greenova-shadow: 0 0.125rem 0.125rem rgba(0, 0, 0, 0.1);
-
+  --greenova-shadow: 0 0.125rem 0.125rem rgb(0 0 0 / 10%);
   --greenova-title-size: 1.2rem;
   --greenova-subtitle-size: 0.9rem;
   --greenova-text-size: 0.8rem;
@@ -37,7 +31,7 @@
   --greenova-button-size: 0.8rem;
 
   /* For visual clearity */
-  --greenova-table-border: 0.05rem solid #000000;
+  --greenova-table-border: 0.05rem solid #000;
 
   /* Chat Radius Box */
   --greenova-chat-border-radius: 1rem;

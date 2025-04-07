@@ -15,7 +15,7 @@
   /* Colors */
   --pico-primary: var(--greenova-green-primary);
   --pico-primary-hover: var(--greenova-green-tertiary);
-  --pico-primary-focus: rgba(106, 120, 78, 0.25);
+  --pico-primary-focus: rgb(106 120 78 / 25%);
   --pico-primary-inverse: var(--greenova-text-primary-dark);
 
   /* Form elements */

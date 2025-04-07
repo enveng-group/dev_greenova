@@ -46,8 +46,9 @@
   box-shadow: var(--greenova-shadow);
 }
 
-.mechanism-chart:hover, .mechanism-chart:active {
-  transform: scale(1.10);
+.mechanism-chart:hover,
+.mechanism-chart:active {
+  transform: scale(1.1);
   transition: transform 0.2s;
 }
 
@@ -136,6 +137,7 @@ nav[role='navigation'].chart-nav {
   background: var(--greenova-beige-primary);
   padding: var(--greenova-spacing) 0;
 }
+
 nav[role='navigation'].chart-nav button {
   cursor: pointer;
   color: var(--greenova-text-primary-dark);
@@ -144,6 +146,7 @@ nav[role='navigation'].chart-nav button {
   border: none;
   padding: var(--greenova-spacing-small) var(--greenova-spacing);
 }
+
 .chart-nav button:hover {
   background: var(--greenova-background-color);
   color: var(--greenova-text-primary-dark);
@@ -161,15 +164,18 @@ nav[role='navigation'].chart-nav button {
     min-width: 280px;
     flex: 0 0 280px;
   }
+
   .chart-scroll {
     padding-bottom: var(--greenova-padding-small);
   }
 }
+
 @media print {
   .chart-scroll {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
+
   .chart-nav {
     display: none !important;
   }

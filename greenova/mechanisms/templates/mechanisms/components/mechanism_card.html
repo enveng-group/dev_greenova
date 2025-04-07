@@ -1,0 +1,38 @@
+{% load mechanism_tags %}
+
+<article class="mechanism-card">
+  <header>
+    <h3>{{ mechanism.name }}</h3>
+    {% if mechanism.reference_number %}
+      <span class="reference">{{ mechanism.reference_number }}</span>
+    {% endif %}
+  </header>
+  <div class="mechanism-stats">
+    <div class="stat-row">
+      <span class="stat-label">Not Started:</span>
+      <span class="stat-value {% if mechanism.not_started_count == 0 %}stat-zero{% endif %}">{{ mechanism.not_started_count }}</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">In Progress:</span>
+      <span class="stat-value {% if mechanism.in_progress_count == 0 %}stat-zero{% endif %}">{{ mechanism.in_progress_count }}</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Completed:</span>
+      <span class="stat-value {% if mechanism.completed_count == 0 %}stat-zero{% endif %}">{{ mechanism.completed_count }}</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Overdue:</span>
+      <span class="stat-value {% if mechanism.overdue_count == 0 %} stat-zero {% else %} stat-alert {% endif %}">{{ mechanism.overdue_count }}
+
+      </span>
+    </div>
+    <div class="stat-row total">
+      <span class="stat-label">Total:</span>
+      <span class="stat-value">{{ mechanism|total_obligations }}</span>
+    </div>
+  </div>
+  <footer>
+    <a href="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
+       class="btn-secondary">View Details</a>
+  </footer>
+</article>

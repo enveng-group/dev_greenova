@@ -6,13 +6,12 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView
 from django_htmx.http import push_url, trigger_client_event
-from obligations.models import Obligation
 from projects.models import Project
 
 # Constants for system information
@@ -39,7 +38,7 @@ class DashboardContext(TypedDict):
 @method_decorator(vary_on_headers('HX-Request'), name='dispatch')
 class DashboardHomeView(LoginRequiredMixin, TemplateView):
     """Main dashboard view."""
-    template_name = 'dashboard/dashboard.jinja'
+    template_name = 'dashboard/dashboard.html'
     login_url = 'account_login'
     redirect_field_name = 'next'
     request = None
@@ -52,7 +51,7 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
     def get_template_names(self):
         """Return the template name based on request type."""
         if self.request.htmx:
-            return ['dashboard/partials/dashboard_content.jinja']
+            return ['dashboard/partials/dashboard_content.html']
         return [self.template_name]
 
     def get(self, request, *args, **kwargs):
@@ -126,43 +125,3 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
         except (AttributeError, ValueError) as e:
             logger.exception('Error fetching projects: %s', e)
             return Project.objects.none()
-
-
-class OverdueCountView(LoginRequiredMixin, View):
-    """View for returning count of overdue obligations for HTMX requests."""
-
-    def get(self, request: HttpRequest) -> HttpResponse:
-        """Handle GET requests for overdue count."""
-        try:
-            # Get selected project_id from query params
-            project_id = request.GET.get('project_id')
-
-            # Base query for overdue obligations
-            query_filter = {
-                'due_date__lt': datetime.now().date(),
-                'status__in': ['open', 'in_progress', 'pending']
-            }
-
-            # Add project filter if a project is selected
-            if project_id and project_id != '0':
-                query_filter['project_id'] = project_id
-
-            # Count overdue obligations
-            overdue_count = Obligation.objects.filter(**query_filter).count()
-
-            # Create response
-            response = HttpResponse(str(overdue_count))
-
-            # Trigger event for high overdue count
-            if overdue_count > 5:
-                trigger_client_event(
-                    response,
-                    'highOverdueCount',
-                    {'count': overdue_count}
-                )
-
-            return response
-
-        except (AttributeError, ValueError) as e:
-            logger.exception('Error getting overdue count: %s', e)
-            return HttpResponse('0')  # Return 0 in case of error
