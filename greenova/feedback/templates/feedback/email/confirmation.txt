@@ -1,0 +1,24 @@
+Subject: Greenova Bug Report Received - {title}
+
+Dear {user_name},
+
+Thank you for submitting a bug report to the Greenova Environmental Management System.
+
+We have received your report titled "{title}" and it has been assigned the tracking ID #{id}.
+
+Report Details:
+---------------
+ID: {id}
+Title: {title}
+Submitted: {created_at}
+Status: Open
+Severity: {severity}
+
+Our team will review your report and take appropriate action. You will be notified of any status changes.
+
+You can monitor the status of your report by logging into your Greenova account and visiting the feedback section.
+
+Thank you for helping us improve Greenova.
+
+Best regards,
+The Greenova Team

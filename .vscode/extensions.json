@@ -41,6 +41,7 @@
     "marp-team.marp-vscode",
     "dbcode.dbcode",
     "ms-vscode.copilot-mermaid-diagram",
-    "ms-vscode.vscode-websearchforcopilot"
+    "ms-vscode.vscode-websearchforcopilot",
+    "ms-python.vscode-python-envs"
   ]
 }
