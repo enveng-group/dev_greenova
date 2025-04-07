@@ -1,0 +1,19 @@
+{% load feedback_tags %}
+
+<div class="success-message">
+  <h3>
+Bug Report Submitted
+  </h3>
+  <p>
+Thank you for submitting your bug report. Your feedback is valuable and helps us improve Greenova.
+  </p>
+  <p>
+Your report has been logged with the title "{{ bug_report.title }}" and will be reviewed by our team.
+  </p>
+  <p>
+You can track the status of your report on the feedback page. If we need additional information, we'll contact you directly.
+  </p>
+  <div class="actions">
+    <a href="{% url 'feedback:index' %}" class="button">Return to Bug Reports</a>
+  </div>
+</div>

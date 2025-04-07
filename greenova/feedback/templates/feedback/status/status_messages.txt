@@ -1,0 +1,9 @@
+open: This bug report is currently open and awaiting review by our development team.
+
+in_progress: Our development team is actively investigating this bug report.
+
+resolved: This bug has been resolved and a fix has been implemented. The fix will be included in the next release.
+
+closed: This bug report has been addressed and closed after verification.
+
+rejected: This bug report has been reviewed and rejected. See admin comments for details.

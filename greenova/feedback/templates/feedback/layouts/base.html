@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+{% load feedback_tags %}
+
+{% block title %}
+  Greenova Bug Tracker
+{% endblock title %}
+
+{% block body_class %}
+feedback-section
+{% endblock body_class %}
+
+{% block content %}
+  <header>
+    <h1>
+Greenova Feedback System
+    </h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="{% url 'dashboard:home' %}">Back to Dashboard</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% if messages %}
+      <div class="messages">
+        <ul>
+          {% for message in messages %}
+            <li>
+{{ message|safe }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% block feedback_content %}
+      <!-- Content will be inserted in templates that extend this base -->
+    {% endblock feedback_content %}
+  </main>
+
+  <footer>
+    <p>
+Greenova Environmental Management System - Feedback Module
+    </p>
+  </footer>
+{% endblock content %}

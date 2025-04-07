@@ -556,11 +556,11 @@
   "protoc": {
     "lint": {
       "enabled": true,
-      "path": "/usr/local/bin/protolint"
+      "path": "./node_modules/.bin/protolint"
     },
     "path": "/usr/local/bin/protoc"
   },
-  "protolint.path": "/usr/local/bin/protolint",
+  "protolint.path": "./node_modules/.bin/protolint",
   "pylint.enabled": true,
   "pylint.importStrategy": "fromEnvironment",
   "pylint.interpreter": ["${workspaceFolder}/.venv/bin/python3.9"],

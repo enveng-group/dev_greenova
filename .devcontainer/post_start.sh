@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -413,6 +413,9 @@ main() {
   # Configure Fish shell with direnv (after venv is set up)
   echo "Setting up Fish shell with direnv..."
   setup_fish_direnv
+
+  # Ensure PYTHONPATH is set
+  export PYTHONPATH=/workspaces/greenova:$PYTHONPATH
 
   # Ensure Pre-Commit is updated
   if command -v pre-commit >/dev/null 2>&1; then

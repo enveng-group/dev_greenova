@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package feedback;
+
+// BugReportProto defines the structure for serializing bug reports
+message BugReportProto {
+  // Core identifiers
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+
+  // Environment information
+  string application_version = 4;
+  string operating_system = 5;
+  string browser = 6;
+  string device_type = 7;
+
+  // Problem details
+  string steps_to_reproduce = 8;
+  string expected_behavior = 9;
+  string actual_behavior = 10;
+
+  // Technical details
+  string error_messages = 11;
+  string trace_report = 12;
+
+  // Frequency and impact
+  enum Frequency {
+    FREQUENCY_UNKNOWN_UNSPECIFIED = 0;
+    FREQUENCY_ALWAYS = 1;
+    FREQUENCY_FREQUENTLY = 2;
+    FREQUENCY_OCCASIONALLY = 3;
+    FREQUENCY_RARELY = 4;
+  }
+  Frequency frequency = 13;
+
+  enum Severity {
+    SEVERITY_UNDEFINED_UNSPECIFIED = 0;
+    SEVERITY_LOW = 1;
+    SEVERITY_MEDIUM = 2;
+    SEVERITY_HIGH = 3;
+    SEVERITY_CRITICAL = 4;
+  }
+  Severity impact_severity = 14;
+  Severity admin_severity = 15;
+  string user_impact = 16;
+
+  // Additional information
+  string workarounds = 17;
+  string additional_comments = 18;
+
+  // Meta information
+  int32 user_id = 19;
+  string username = 20;
+  int64 created_at = 21; // Unix timestamp
+  int64 updated_at = 22; // Unix timestamp
+
+  // Admin fields
+  string github_issue_url = 23;
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_OPEN = 1;
+    STATUS_IN_PROGRESS = 2;
+    STATUS_RESOLVED = 3;
+    STATUS_CLOSED = 4;
+    STATUS_REJECTED = 5;
+  }
+  Status status = 24;
+  string admin_comment = 25;
+}
+
+// Collection of bug reports
+message BugReportCollection {
+  repeated BugReportProto reports = 1;
+}

@@ -7,7 +7,7 @@ ignore=migrations,venv,.venv
 django-settings-module=greenova.greenova.settings
 
 # Add project root to Python path
-init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova')"
+init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova'); sys.path.insert(0, '/workspaces/greenova/greenova')"
 
 [FORMAT]
 max-line-length=88
