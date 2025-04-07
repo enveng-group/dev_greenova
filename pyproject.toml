@@ -11,15 +11,15 @@ aggressive = 3
 single_quotes = true
 
 [tool.djlint]
-profile = "jinja"
+profile = "django"
 indent = 2
 max_line_length = 88
 use_gitignore = true
 format_css = false
 format_js = false
-ignore = "H014,H015"
-include = "**/*.html,**/*.jinja,**/*.jinja2,**/*.djhtml"
-extension = "jinja,django-jinja,html,django-html"
-blank_line_after_tag = "load,extends,include"
-blank_line_before_tag = "block"
+ignore = "H014,H015,T002"
+include = "**/*.html,**/*.jinja,**/*.djhtml"
+extension = "django-html,html,jinja"
 preserve_blank_lines = true
+preserve_leading_space = true
+require_pragma = false

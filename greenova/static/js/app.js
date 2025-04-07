@@ -6,12 +6,12 @@ function scrollCharts(direction) {
   const scrollAmount = 320;
   container.scrollBy({
     left: direction === 'left' ? -scrollAmount : scrollAmount,
-    behavior: 'smooth'
+    behavior: 'smooth',
   });
 }
 
 // Initialize chart navigation
-document.addEventListener('htmx:afterSettle', function() {
+document.addEventListener('htmx:afterSettle', function () {
   const chartScroll = document.getElementById('chartScroll');
   if (chartScroll) {
     // Add keyboard navigation
@@ -28,15 +28,19 @@ document.addEventListener('htmx:afterSettle', function() {
 });
 
 // Add loading indicator
-document.addEventListener('htmx:beforeRequest', function(evt) {
+document.addEventListener('htmx:beforeRequest', function (evt) {
   if (evt.detail.target.id === 'chart-container') {
-    evt.detail.target.innerHTML = '<div class="notice" role="status" aria-busy="true">Loading charts...</div>';
+    evt.detail.target.innerHTML =
+      '<div class="notice" role="status" aria-busy="true">Loading charts...</div>';
   }
 });
 
 // Add this to your existing app.js
 document.addEventListener('htmx:afterRequest', (evt) => {
-  if (evt.detail.elt.matches('form[hx-post*="logout"]') && evt.detail.successful) {
+  if (
+    evt.detail.elt.matches('form[hx-post*="logout"]') &&
+    evt.detail.successful
+  ) {
     window.location.href = '/';
   }
 });
@@ -50,12 +54,12 @@ document.addEventListener('htmx:afterRequest', (evt) => {
 
 const themeSwitcher = {
   // Config
-  _scheme: "auto",
-  menuTarget: "details.dropdown",
-  buttonsTarget: "a[data-theme-switcher]",
-  buttonAttribute: "data-theme-switcher",
-  rootAttribute: "data-theme",
-  localStorageKey: "picoPreferredColorScheme",
+  _scheme: 'auto',
+  menuTarget: 'details.dropdown',
+  buttonsTarget: 'a[data-theme-switcher]',
+  buttonAttribute: 'data-theme-switcher',
+  rootAttribute: 'data-theme',
+  localStorageKey: 'picoPreferredColorScheme',
 
   // Init
   init() {
@@ -70,7 +74,9 @@ const themeSwitcher = {
 
   // Preferred color scheme
   get preferredColorScheme() {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   },
 
   // Init switchers
@@ -78,13 +84,13 @@ const themeSwitcher = {
     const buttons = document.querySelectorAll(this.buttonsTarget);
     buttons.forEach((button) => {
       button.addEventListener(
-        "click",
+        'click',
         (event) => {
           event.preventDefault();
           // Set scheme
           this.scheme = button.getAttribute(this.buttonAttribute);
           // Close dropdown
-          document.querySelector(this.menuTarget)?.removeAttribute("open");
+          document.querySelector(this.menuTarget)?.removeAttribute('open');
         },
         false
       );
@@ -93,9 +99,9 @@ const themeSwitcher = {
 
   // Set scheme
   set scheme(scheme) {
-    if (scheme == "auto") {
+    if (scheme == 'auto') {
       this._scheme = this.preferredColorScheme;
-    } else if (scheme == "dark" || scheme == "light") {
+    } else if (scheme == 'dark' || scheme == 'light') {
       this._scheme = scheme;
     }
     this.applyScheme();
@@ -109,7 +115,9 @@ const themeSwitcher = {
 
   // Apply scheme
   applyScheme() {
-    document.querySelector("html")?.setAttribute(this.rootAttribute, this.scheme);
+    document
+      .querySelector('html')
+      ?.setAttribute(this.rootAttribute, this.scheme);
   },
 
   // Store scheme to local storage
@@ -122,7 +130,7 @@ const themeSwitcher = {
 themeSwitcher.init();
 
 // Project selection handler
-document.addEventListener('change', function(e) {
+document.addEventListener('change', function (e) {
   if (e.target.matches('#project-select')) {
     // Trigger updates for both containers
     htmx.trigger('#chart-container', 'refreshCharts');
@@ -131,15 +139,16 @@ document.addEventListener('change', function(e) {
 });
 
 // Loading states
-document.addEventListener('htmx:beforeRequest', function(evt) {
+document.addEventListener('htmx:beforeRequest', function (evt) {
   const target = evt.detail.target;
   if (target.matches('#obligations-container, #chart-container')) {
-    target.innerHTML = '<div class="notice" role="status" aria-busy="true">Loading...</div>';
+    target.innerHTML =
+      '<div class="notice" role="status" aria-busy="true">Loading...</div>';
   }
 });
 
 // Error handling
-document.addEventListener('htmx:responseError', function(evt) {
+document.addEventListener('htmx:responseError', function (evt) {
   const target = evt.detail.target;
   target.innerHTML = `
     <div class="notice error" role="alert">
@@ -149,7 +158,7 @@ document.addEventListener('htmx:responseError', function(evt) {
 });
 
 // Handle table scrolling
-document.addEventListener('htmx:afterSettle', function() {
+document.addEventListener('htmx:afterSettle', function () {
   const tableContainer = document.querySelector('.horizontal-scroll');
   const scrollThumb = document.querySelector('.scroll-thumb');
 
@@ -162,7 +171,8 @@ document.addEventListener('htmx:afterSettle', function() {
 
       // Calculate thumb width and position
       const thumbWidth = (viewportWidth / scrollWidth) * 100;
-      const thumbPosition = (scrollLeft / (scrollWidth - viewportWidth)) * (100 - thumbWidth);
+      const thumbPosition =
+        (scrollLeft / (scrollWidth - viewportWidth)) * (100 - thumbWidth);
 
       // Update thumb style
       scrollThumb.style.width = `${thumbWidth}%`;
@@ -181,7 +191,8 @@ document.addEventListener('htmx:afterSettle', function() {
       scrollIndicator.addEventListener('click', (e) => {
         const rect = scrollIndicator.getBoundingClientRect();
         const ratio = (e.clientX - rect.left) / rect.width;
-        const maxScroll = tableContainer.scrollWidth - tableContainer.clientWidth;
+        const maxScroll =
+          tableContainer.scrollWidth - tableContainer.clientWidth;
         tableContainer.scrollLeft = maxScroll * ratio;
       });
     }
@@ -189,7 +200,7 @@ document.addEventListener('htmx:afterSettle', function() {
 });
 
 // Filter form submission handler
-document.addEventListener('submit', function(e) {
+document.addEventListener('submit', function (e) {
   if (e.target.matches('#obligations-filter-form')) {
     // The form will be handled by HTMX, this is just for additional functionality
     e.preventDefault();
@@ -197,9 +208,9 @@ document.addEventListener('submit', function(e) {
     // Update any UI elements related to filtering
     const filterCount = document.getElementById('filter-count');
     if (filterCount) {
-      const activeFilters = Array.from(e.target.querySelectorAll('select, input[type="text"]'))
-        .filter(el => el.value && el.value !== '')
-        .length;
+      const activeFilters = Array.from(
+        e.target.querySelectorAll('select, input[type="text"]')
+      ).filter((el) => el.value && el.value !== '').length;
       filterCount.textContent = activeFilters;
       filterCount.hidden = activeFilters === 0;
     }
@@ -207,7 +218,7 @@ document.addEventListener('submit', function(e) {
 });
 
 // Print handler
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
   if (e.target.matches('#print-obligations')) {
     e.preventDefault();
     window.print();
@@ -215,7 +226,7 @@ document.addEventListener('click', function(e) {
 });
 
 // Export handler
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
   if (e.target.matches('#export-obligations')) {
     const table = document.querySelector('table');
     if (!table) return;
@@ -224,19 +235,21 @@ document.addEventListener('click', function(e) {
     const exportToCSV = (filename) => {
       // Extract headers
       const rows = Array.from(table.querySelectorAll('tr'));
-      const headers = Array.from(rows[0].querySelectorAll('th'))
-        .map(cell => `"${cell.textContent.trim().replace(/"/g, '""')}"`);
+      const headers = Array.from(rows[0].querySelectorAll('th')).map(
+        (cell) => `"${cell.textContent.trim().replace(/"/g, '""')}"`
+      );
 
       // Extract data rows
-      const data = rows.slice(1).map(row => {
-        return Array.from(row.querySelectorAll('td'))
-          .map(cell => `"${cell.textContent.trim().replace(/"/g, '""')}"`);
+      const data = rows.slice(1).map((row) => {
+        return Array.from(row.querySelectorAll('td')).map(
+          (cell) => `"${cell.textContent.trim().replace(/"/g, '""')}"`
+        );
       });
 
       // Combine headers and data
       const csvContent = [
         headers.join(','),
-        ...data.map(row => row.join(','))
+        ...data.map((row) => row.join(',')),
       ].join('\n');
 
       // Create download link
@@ -261,7 +274,7 @@ document.addEventListener('click', function(e) {
 function removeFilter(type, value) {
   const select = document.querySelector(`select[name="${type}"]`);
   if (select) {
-    Array.from(select.options).forEach(option => {
+    Array.from(select.options).forEach((option) => {
       if (option.value === value) {
         option.selected = false;
       }
@@ -271,7 +284,7 @@ function removeFilter(type, value) {
 }
 
 // Update the Add Obligation button to include the current project_id
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   function updateAddObligationButton() {
     const projectSelect = document.getElementById('project-select');
     const addObligationBtn = document.querySelector('.add-obligation-btn');
@@ -281,7 +294,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (projectId) {
         const currentHref = addObligationBtn.getAttribute('href');
         const baseUrl = currentHref.split('?')[0];
-        addObligationBtn.setAttribute('href', `${baseUrl}?project_id=${projectId}`);
+        addObligationBtn.setAttribute(
+          'href',
+          `${baseUrl}?project_id=${projectId}`
+        );
       }
     }
   }
@@ -290,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
   updateAddObligationButton();
 
   // Update when project selection changes
-  document.addEventListener('change', function(e) {
+  document.addEventListener('change', function (e) {
     if (e.target.matches('#project-select')) {
       updateAddObligationButton();
     }
@@ -298,13 +314,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Handle obligation link clicks to show loading state
-document.addEventListener('click', function(e) {
-  if (e.target.matches('.obligation-link') || e.target.closest('.obligation-link')) {
+document.addEventListener('click', function (e) {
+  if (
+    e.target.matches('.obligation-link') ||
+    e.target.closest('.obligation-link')
+  ) {
     // Show loading indicator
     document.body.classList.add('loading');
 
     // Store the current project ID in session storage so we can return to it
-    const projectId = document.querySelector('input[name="project_id"]')?.value;
+    const projectId = document.querySelector(
+      'input[name="project_id"]'
+    )?.value;
     if (projectId) {
       sessionStorage.setItem('lastProjectId', projectId);
     }
@@ -312,7 +333,7 @@ document.addEventListener('click', function(e) {
 });
 
 // Restore project selection when returning from obligation edit
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const projectSelect = document.getElementById('project-select');
   const lastProjectId = sessionStorage.getItem('lastProjectId');
 
@@ -323,8 +344,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-document.addEventListener('htmx:afterSettle', function(evt) {
-  if (evt.detail.triggerSpec && evt.detail.triggerSpec.includes('obligation:statusChanged')) {
+document.addEventListener('htmx:afterSettle', function (evt) {
+  if (
+    evt.detail.triggerSpec &&
+    evt.detail.triggerSpec.includes('obligation:statusChanged')
+  ) {
     htmx.trigger('#chart-container', 'refreshCharts');
     // Refresh mechanism charts or other affected components
   }
@@ -334,7 +358,7 @@ document.addEventListener('htmx:afterSettle', function(evt) {
  * Main application JavaScript functionality
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   /**
    * Theme switching functionality
    * Uses the head-support extension to dynamically update theme
@@ -345,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Apply the saved theme on page load
   setTheme(currentTheme);
 
-  themeSwitchers.forEach(switcher => {
+  themeSwitchers.forEach((switcher) => {
     const theme = switcher.getAttribute('data-theme-switcher');
 
     // Highlight active theme
@@ -353,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
       switcher.setAttribute('aria-current', 'true');
     }
 
-    switcher.addEventListener('click', function(event) {
+    switcher.addEventListener('click', function (event) {
       event.preventDefault();
 
       // Update localStorage
@@ -363,13 +387,15 @@ document.addEventListener('DOMContentLoaded', function() {
       setTheme(theme);
 
       // Update active state on links
-      themeSwitchers.forEach(s => {
+      themeSwitchers.forEach((s) => {
         s.removeAttribute('aria-current');
       });
       switcher.setAttribute('aria-current', 'true');
 
       // Trigger a custom event for other components to react
-      document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme } }));
+      document.dispatchEvent(
+        new CustomEvent('themeChanged', { detail: { theme } })
+      );
     });
   });
 
@@ -390,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
    */
   const tableContainers = document.querySelectorAll('.table-container');
 
-  tableContainers.forEach(container => {
+  tableContainers.forEach((container) => {
     const scrollIndicator = document.createElement('div');
     scrollIndicator.className = 'scroll-indicator';
 
@@ -400,9 +426,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     container.appendChild(scrollIndicator);
 
-    container.addEventListener('scroll', function() {
-      const scrollPercentage = container.scrollLeft / (container.scrollWidth - container.clientWidth);
-      const thumbPosition = scrollPercentage * (scrollIndicator.clientWidth - scrollThumb.clientWidth);
+    container.addEventListener('scroll', function () {
+      const scrollPercentage =
+        container.scrollLeft / (container.scrollWidth - container.clientWidth);
+      const thumbPosition =
+        scrollPercentage *
+        (scrollIndicator.clientWidth - scrollThumb.clientWidth);
       scrollThumb.style.transform = `translateX(${thumbPosition}px)`;
     });
   });
@@ -411,11 +440,12 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Handle HTMX events
  */
-document.addEventListener('htmx:afterSwap', function(event) {
+document.addEventListener('htmx:afterSwap', function (event) {
   // Reinitialize components that may have been added via HTMX
-  const tableContainers = event.detail.target.querySelectorAll('.table-container');
+  const tableContainers =
+    event.detail.target.querySelectorAll('.table-container');
 
-  tableContainers.forEach(container => {
+  tableContainers.forEach((container) => {
     if (!container.querySelector('.scroll-indicator')) {
       const scrollIndicator = document.createElement('div');
       scrollIndicator.className = 'scroll-indicator';
@@ -426,9 +456,13 @@ document.addEventListener('htmx:afterSwap', function(event) {
 
       container.appendChild(scrollIndicator);
 
-      container.addEventListener('scroll', function() {
-        const scrollPercentage = container.scrollLeft / (container.scrollWidth - container.clientWidth);
-        const thumbPosition = scrollPercentage * (scrollIndicator.clientWidth - scrollThumb.clientWidth);
+      container.addEventListener('scroll', function () {
+        const scrollPercentage =
+          container.scrollLeft /
+          (container.scrollWidth - container.clientWidth);
+        const thumbPosition =
+          scrollPercentage *
+          (scrollIndicator.clientWidth - scrollThumb.clientWidth);
         scrollThumb.style.transform = `translateX(${thumbPosition}px)`;
       });
     }
@@ -478,7 +512,7 @@ function createHeadFragment(title, styles = []) {
     head += `<title>${title}</title>`;
   }
 
-  styles.forEach(style => {
+  styles.forEach((style) => {
     head += `<link rel="stylesheet" href="${style}" hx-head="re-eval">`;
   });
 
@@ -501,16 +535,19 @@ function initializeApp() {
  * Set up horizontal scroll handling for data tables
  */
 function setupTableScroll() {
-  document.querySelectorAll('.table-container').forEach(container => {
+  document.querySelectorAll('.table-container').forEach((container) => {
     const scrollArea = container.querySelector('.horizontal-scroll');
     const thumb = container.querySelector('.scroll-thumb');
 
     if (scrollArea && thumb) {
       scrollArea.addEventListener('scroll', () => {
-        const scrollPercentage = (scrollArea.scrollLeft /
-          (scrollArea.scrollWidth - scrollArea.clientWidth)) * 100;
+        const scrollPercentage =
+          (scrollArea.scrollLeft /
+            (scrollArea.scrollWidth - scrollArea.clientWidth)) *
+          100;
 
-        thumb.style.width = scrollArea.clientWidth / scrollArea.scrollWidth * 100 + '%';
+        thumb.style.width =
+          (scrollArea.clientWidth / scrollArea.scrollWidth) * 100 + '%';
         thumb.style.marginLeft = scrollPercentage + '%';
       });
     }
@@ -522,23 +559,23 @@ function setupTableScroll() {
  */
 function setupHtmxListeners() {
   // Handle loading indicator state
-  document.body.addEventListener('htmx:beforeRequest', function(evt) {
+  document.body.addEventListener('htmx:beforeRequest', function (evt) {
     const target = evt.detail.target;
     target.classList.add('htmx-request-in-flight');
   });
 
-  document.body.addEventListener('htmx:afterRequest', function(evt) {
+  document.body.addEventListener('htmx:afterRequest', function (evt) {
     const target = evt.detail.target;
     target.classList.remove('htmx-request-in-flight');
   });
 
   // Handle errors
-  document.body.addEventListener('htmx:responseError', function(evt) {
+  document.body.addEventListener('htmx:responseError', function (evt) {
     console.error('HTMX request failed:', evt.detail.error);
   });
 
   // Handle chart scrolling
-  document.addEventListener('chartsLoaded', function() {
+  document.addEventListener('chartsLoaded', function () {
     setupChartNavigation();
   });
 }
@@ -553,20 +590,24 @@ function setupChartNavigation() {
   // Show/hide navigation buttons based on scroll position
   container.addEventListener('scroll', () => {
     const atStart = container.scrollLeft <= 10;
-    const atEnd = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 10);
+    const atEnd =
+      container.scrollLeft >=
+      container.scrollWidth - container.clientWidth - 10;
 
     // Could update button visibility here if needed
   });
 }
 
 // Initialize app after DOM content is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Initialize the application
   initializeApp();
 
   // Setup flash messages with auto-dismiss
-  const flashMessages = document.querySelectorAll('.message[data-auto-dismiss]');
-  flashMessages.forEach(message => {
+  const flashMessages = document.querySelectorAll(
+    '.message[data-auto-dismiss]'
+  );
+  flashMessages.forEach((message) => {
     setTimeout(() => {
       if (message.getAttribute) {
         message.setAttribute('classes', 'add fade-out:0s, remove message:1s');
@@ -576,7 +617,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Setup global event listeners for htmx events
-document.body.addEventListener('htmx:afterSwap', function(event) {
+document.body.addEventListener('htmx:afterSwap', function (event) {
   // Add entrance animations to newly swapped content
   if (event.detail.target.hasAttribute('data-animate-entrance')) {
     event.detail.target.setAttribute('classes', 'add fade-in');
@@ -584,7 +625,7 @@ document.body.addEventListener('htmx:afterSwap', function(event) {
 });
 
 // Overdue count handler
-document.body.addEventListener('highOverdueCount', function(event) {
+document.body.addEventListener('highOverdueCount', function (event) {
   const overdueElement = document.querySelector('.stat-card.overdue');
   if (overdueElement && event.detail.count > 5) {
     overdueElement.setAttribute('classes', 'add pulse-animation');
@@ -594,11 +635,11 @@ document.body.addEventListener('highOverdueCount', function(event) {
 /**
  * Path-Deps extension integration - only execute if extension exists
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Check if PathDeps extension exists before using it
   if (typeof window.PathDeps !== 'undefined') {
     // Listen for obligation changes to refresh related components
-    document.body.addEventListener('htmx:afterRequest', function(evt) {
+    document.body.addEventListener('htmx:afterRequest', function (evt) {
       // Only handle successful POST/PUT/DELETE requests (mutations)
       if (!evt.detail.successful || evt.detail.xhr.method === 'GET') return;
 
@@ -623,19 +664,19 @@ function refreshDependentComponents(path) {
 }
 
 // Check if htmx is loaded before trying to use it
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof htmx !== 'undefined') {
-        console.log('HTMX loaded successfully');
-    } else {
-        console.error('HTMX not loaded');
-    }
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof htmx !== 'undefined') {
+    console.log('HTMX loaded successfully');
+  } else {
+    console.error('HTMX not loaded');
+  }
 });
 
 /**
  * Handle return navigation from obligation forms to dashboard
  * This ensures when returning back to project, all data is loaded properly
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Check if we're on the dashboard page
   const projectSelector = document.getElementById('project-selector');
   if (projectSelector) {
@@ -648,13 +689,13 @@ document.addEventListener('DOMContentLoaded', function() {
       const projectId = sessionStorage.getItem('lastProjectId');
 
       if (projectId) {
-        console.log("Restoring project selection:", projectId);
+        console.log('Restoring project selection:', projectId);
 
         // Set the project selector value
         projectSelector.value = projectId;
 
         // Trigger change event to load data
-        setTimeout(function() {
+        setTimeout(function () {
           // Use setTimeout to ensure DOM is fully loaded
           const event = new Event('change');
           projectSelector.dispatchEvent(event);
@@ -663,14 +704,14 @@ document.addEventListener('DOMContentLoaded', function() {
           if (document.getElementById('mechanism-data-container')) {
             htmx.ajax('GET', '/mechanisms/charts/?project_id=' + projectId, {
               target: '#mechanism-data-container',
-              swap: 'innerHTML'
+              swap: 'innerHTML',
             });
           }
 
           if (document.getElementById('obligations-container')) {
             htmx.ajax('GET', '/obligations/summary/?project_id=' + projectId, {
               target: '#obligations-container',
-              swap: 'innerHTML'
+              swap: 'innerHTML',
             });
           }
         }, 100);
@@ -682,7 +723,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Fix toolbar.js error by adding a safety check
 if (typeof ensureHandleVisibility === 'function') {
   const originalFunction = ensureHandleVisibility;
-  window.ensureHandleVisibility = function() {
+  window.ensureHandleVisibility = function () {
     try {
       // Add safety check before calling original function
       const element = document.getElementById('djDebug');
@@ -696,7 +737,7 @@ if (typeof ensureHandleVisibility === 'function') {
 }
 
 // Enhance the back button handling to maintain project state
-window.addEventListener('popstate', function(event) {
+window.addEventListener('popstate', function (event) {
   // When using browser back/forward buttons, maintain project state
   const urlParams = new URLSearchParams(window.location.search);
   const projectId = urlParams.get('project_id');

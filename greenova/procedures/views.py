@@ -16,7 +16,7 @@ from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
 from responsibility.figures import get_responsibility_chart
 
-from .figures import get_all_procedure_charts
+from .figures import get_procedure_charts as get_all_procedure_charts
 
 matplotlib.use('Agg')  # Use Agg backend for non-interactive plotting
 logger = logging.getLogger(__name__)
@@ -25,14 +25,14 @@ logger = logging.getLogger(__name__)
 @method_decorator(vary_on_headers('HX-Request'), name='dispatch')
 class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     """View for displaying procedure charts filtered by environmental mechanism."""
-    template_name = 'procedures/procedure_charts.jinja'  # Changed extension
+    template_name = 'procedures/procedure_charts.html'  # Changed to HTML
 
     def get_template_names(self):
         """Return appropriate template based on request type."""
         if self.request.htmx:
             return [
-                'procedures/components/_procedure_charts.jinja'
-            ]  # Changed extension
+                'procedures/components/_procedure_charts.html'
+            ]  # Changed to HTML
         return [self.template_name]
 
     def _get_mechanism_and_obligations(self, mechanism_id):

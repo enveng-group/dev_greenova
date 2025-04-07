@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load user_tags %}
+{% load core_tags %}
+{% load dashboard_tags %}
+
+{% block title %}
+
+  dashboard | greenova
+{% endblock title %}
+
+{% block content %}
+
+  <article class="dashboard-container"
+           data-hx-ext="class-tools path-deps"
+           data-classes="add fade-in">
+    {% include "dashboard/partials/dashboard_content.html" %}
+
+  </article>
+{% endblock content %}
+
+{% block footer %}
+
+  <footer role="contentinfo"
+          data-hx-ext="class-tools"
+          data-classes="add fade-in:1s">
+    <p>
+      System Status:
+      <mark>{{ system_status }}</mark> |
+      Version: {{ app_version }} |
+      Last Updated: {{ last_updated|format_date }}
+    </p>
+    <p>
+      Need help? Contact
+      <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+      | <a href="{% url 'feedback:index' %}">Click here to submit feedback</a>
+    </p>
+  </footer>
+  {{ block.super }}
+{% endblock footer %}

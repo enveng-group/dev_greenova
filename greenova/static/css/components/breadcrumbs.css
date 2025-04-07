@@ -8,20 +8,23 @@ nav.breadcrumb-container {
 }
 
 /* The list of elements (breadcrumbs menu and chatbot) */
-nav.breadcrumb-container>ul {
+nav.breadcrumb-container > ul {
   display: flex;
   width: 100%;
   margin-left: var(--greenova-spacing-small);
 }
 
 /* Breadcrumbs */
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs {
+nav.breadcrumb-container > ul > li.menubar-breadcrumbs {
   display: flex;
   flex-flow: row;
 }
 
 /* Container for individual breadcrumbs */
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] {
+nav.breadcrumb-container
+  > ul
+  > li.menubar-breadcrumbs
+  > nav[role='navigation'] {
   /* Align left*/
   margin: 0;
   padding: 0;
@@ -31,12 +34,20 @@ nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] {
 }
 
 /* Force styling to be in a straight row*/
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation]>ol {
+nav.breadcrumb-container
+  > ul
+  > li.menubar-breadcrumbs
+  > nav[role='navigation']
+  > ol {
   display: flex;
 }
 
 /* Styling for individual breadcrumb */
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] [role=menuitem] {
+nav.breadcrumb-container
+  > ul
+  > li.menubar-breadcrumbs
+  > nav[role='navigation']
+  [role='menuitem'] {
   background: var(--greenova-beige-primary);
   color: var(--greenova-text-primary-dark);
 

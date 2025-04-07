@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+
 {% block title %}
-  Welcome to Greenova
+
+  welcome to greenova
 {% endblock title %}
+
 {% block content %}
   <article>
     <header>
@@ -15,7 +18,7 @@
     </header>
     <section>
       <!-- Landing page content -->
-      <nav {% if not user_authenticated %} style="display: block" {% else %} style="display: none" {% endif %}>
+      <nav class="{% if not user_authenticated %}visible{% else %}hidden{% endif %}">
         <a href="{% url 'account_signup' %}" class="primary">Get Started</a>
         <a href="#features" role="button" class="outline">Learn More</a>
       </nav>
@@ -37,15 +40,21 @@
         </article>
         <article>
           <h3>Comprehensive Reporting</h3>
-          <p>Generate detailed reports that provide insights into compliance status and areas for improvement.</p>
+          <p>
+            Generate detailed reports that provide insights into compliance status and areas for improvement.
+          </p>
         </article>
         <article>
           <h3>User-Friendly Interface</h3>
-          <p>Navigate through our intuitive interface designed for ease of use and accessibility.</p>
+          <p>
+            Navigate through our intuitive interface designed for ease of use and accessibility.
+          </p>
         </article>
         <article>
           <h3>Collaboration Tools</h3>
-          <p>Facilitate seamless communication and collaboration among team members and stakeholders.</p>
+          <p>
+            Facilitate seamless communication and collaboration among team members and stakeholders.
+          </p>
         </article>
       </div>
     </section>
@@ -60,11 +69,15 @@
         </article>
         <article>
           <h3>Innovation</h3>
-          <p>We leverage the latest technology to provide cutting-edge solutions that simplify compliance management.</p>
+          <p>
+            We leverage the latest technology to provide cutting-edge solutions that simplify compliance management.
+          </p>
         </article>
         <article>
           <h3>Commitment</h3>
-          <p>We are dedicated to helping you achieve your environmental goals and ensuring the success of your projects.</p>
+          <p>
+            We are dedicated to helping you achieve your environmental goals and ensuring the success of your projects.
+          </p>
         </article>
       </div>
     </section>
@@ -77,7 +90,9 @@
     </section>
     <section aria-labelledby="cta-heading">
       <h2 id="cta-heading">Ready to get started?</h2>
-      <p>Join Greenova today and take control of your environmental compliance management.</p>
+      <p>
+        Join Greenova today and take control of your environmental compliance management.
+      </p>
       <nav aria-label="Sign up">
         <a href="{% url 'account_signup' %}" class="primary">Sign Up Now</a>
       </nav>

@@ -1,8 +1,12 @@
 {% extends "base.html" %}
-{# No need for {% load static %} in Jinja2 #}
+
+{% load static %}
+{% load procedure_tags %}
+
 {% block title %}
-  Procedure Analysis for {{ mechanism.name }}
+  procedure analysis for {{ mechanism.name }}
 {% endblock title %}
+
 {% block body %}
   <article>
     <header>
@@ -10,7 +14,7 @@
         <nav aria-label="Breadcrumb" class="breadcrumbs">
           <ol>
             <li>
-              <a href="{{ url("dashboard:home") }}?project_id={{ mechanism.project.id }}">Dashboard</a>
+              <a href="{% url 'dashboard:home' %}?project_id={{ mechanism.project.id }}">Dashboard</a>
             </li>
             <li>
               <a href="#" hx-get="javascript:history.back()">Mechanisms</a>
@@ -23,6 +27,7 @@
       </hgroup>
     </header>
     {% if error %}
+
       <div class="notice error" role="alert">
         <p>{{ error }}</p>
       </div>
@@ -31,7 +36,7 @@
       <section aria-labelledby="filter-heading" class="filter-section">
         <h2 id="filter-heading">Filter Options</h2>
         <form method="get"
-              action="{{ url('procedures:procedure_charts', mechanism_id=mechanism.id) }}"
+              action="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
               class="filter-container"
               hx-boost="true">
           <input type="hidden"
@@ -43,8 +48,12 @@
             <select name="phase" id="phase">
               <option value="">All Phases</option>
               {% for phase in available_phases %}
-                <option value="{{ phase }}" {% if filter_phase == phase %}selected{% endif %}>{{ phase }}</option>
+                <option value="{{ phase }}" {% if filter_phase == phase %}selected{% endif %}>
+                  {{ phase }}
+
+                </option>
               {% endfor %}
+
             </select>
           </div>
           <div class="filter-group">
@@ -53,8 +62,12 @@
               <option value="">All Responsibilities</option>
               {% for resp in available_responsibilities %}
                 <option value="{{ resp }}"
-                        {% if filter_responsibility == resp %}selected{% endif %}>{{ resp }}</option>
+                        {% if filter_responsibility == resp %}selected{% endif %}>
+                  {{ resp }}
+
+                </option>
               {% endfor %}
+
             </select>
           </div>
           <div class="filter-group">
@@ -63,8 +76,12 @@
               <option value="">All Statuses</option>
               {% for status_value, status_label in status_options %}
                 <option value="{{ status_value }}"
-                        {% if filter_status == status_value %}selected{% endif %}>{{ status_label }}</option>
+                        {% if filter_status == status_value %}selected{% endif %}>
+                  {{ status_label }}
+
+                </option>
               {% endfor %}
+
             </select>
           </div>
           <div class="filter-buttons">
@@ -85,7 +102,7 @@
           </div>
           <div class="filter-actions">
             <button type="submit" class="btn-primary">Apply Filters</button>
-            <a href="{{ url('procedures:procedure_charts', mechanism_id=mechanism.id) }}"
+            <a href="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
                role="button"
                class="btn-secondary">Reset</a>
           </div>
@@ -98,6 +115,7 @@
           <figure>
             <figcaption>Obligations by Responsibility</figcaption>
             {{ responsibility_chart|safe }}
+
           </figure>
         </article>
       </section>
@@ -116,41 +134,9 @@
         </nav>
         <div id="chartScroll" class="chart-scroll-container">
           {% for proc in procedure_charts %}
-            <article class="chart-card">
-              <figure>
-                <figcaption>
-                  <h3>{{ proc.name }}</h3>
-                  <dl class="stats-list">
-                    <div class="stat-row">
-                      <dt>Not Started:</dt>
-                      <dd>
-                        {{ proc.stats.not_started }}
-                      </dd>
-                    </div>
-                    <div class="stat-row">
-                      <dt>In Progress:</dt>
-                      <dd>
-                        {{ proc.stats.in_progress }}
-                      </dd>
-                    </div>
-                    <div class="stat-row">
-                      <dt>Completed:</dt>
-                      <dd>
-                        {{ proc.stats.completed }}
-                      </dd>
-                    </div>
-                    <div class="stat-row">
-                      <dt>Overdue:</dt>
-                      <dd>
-                        {{ proc.stats.overdue }}
-                      </dd>
-                    </div>
-                  </dl>
-                </figcaption>
-                {{ proc.chart|safe }}
-              </figure>
-            </article>
+            {% procedure_chart_card proc %}
           {% endfor %}
+
         </div>
       </section>
       <!-- Data Table -->
@@ -174,6 +160,7 @@
             </thead>
             <tbody>
               {% for item in table_data %}
+
                 <tr>
                   <td>
                     <h2>{{ item.name|format_procedure_name }}</h2>
@@ -189,10 +176,10 @@
             </tbody>
           </table>
         </div>
-        <div id="data-containers" hx-ext="class-tools">
+        <div id="data-containers" data-hx-ext="class-tools">
           <!-- Obligations Container -->
           <div id="obligations-container"
-               hx-get="{{ url('obligations:summary') }}"
+               hx-get="{% url 'obligations:summary' %}"
                hx-target="#obligations-container"
                hx-swap="innerHTML"
                hx-trigger="load"
@@ -211,7 +198,9 @@
 
     if (direction === 'left') {
       container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
+    }
+
+ else {
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   }
@@ -221,10 +210,13 @@
     if (el.style.display === 'none') {
       el.style.display = display;
       el.previousElementSibling.querySelector('.btn-fold').textContent = '-';
-    } else {
+    }
+
+ else {
       el.style.display = 'none';
       el.previousElementSibling.querySelector('.btn-fold').textContent = '+';
     }
   }
+
   </script>
 {% endblock body %}

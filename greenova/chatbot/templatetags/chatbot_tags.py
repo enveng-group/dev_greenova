@@ -1,5 +1,6 @@
+from typing import Any, Dict
+
 from django import template
-from typing import Dict, Any
 
 register = template.Library()
 

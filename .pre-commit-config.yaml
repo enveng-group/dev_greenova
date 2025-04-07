@@ -5,24 +5,10 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      - id: check-case-conflict
       - id: trailing-whitespace
+        exclude: '.*\.(html|djhtml|jinja)$'
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: check-json
-      - id: check-ast
-      - id: check-builtin-literals
-      - id: check-docstring-first
-      - id: check-executables-have-shebangs
-      - id: check-shebang-scripts-are-executable
-      - id: check-symlinks
-      - id: check-xml
-      - id: debug-statements
-      - id: double-quote-string-fixer
-      - id: fix-byte-order-marker
-      - id: check-toml
-      - id: pretty-format-json
-        args: ['--autofix']
       - id: check-added-large-files
         args: ['--maxkb=500']
       - id: mixed-line-ending
@@ -92,7 +78,7 @@ repos:
     rev: 1.8.3
     hooks:
       - id: bandit
-        args: ['-c', '.bandit', '-r']
+        args: ['-c', '.bandit', '-r', '--config', '.bandit']
         exclude: 'tests/'
 
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -117,11 +103,11 @@ repos:
       - id: markdownlint-cli2
         args: ['--config', '.markdownlint-cli2.jsonc', '--fix']
 
-  #  - repo: https://github.com/koalaman/shellcheck-precommit
-  #    rev: v0.10.0
-  #    hooks:
-  #      - id: shellcheck
-  #        args: ['--external-sources']
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
+    hooks:
+      - id: shellcheck
+        args: ['--external-sources']
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.24.0
@@ -140,7 +126,7 @@ repos:
     rev: v16.17.0
     hooks:
       - id: stylelint
-        files: \.(css|scss|sass|less|html)$
+        files: \.(css|scss|sass|less)$ # Remove html from stylelint
         args: ['--fix', '--config', 'stylelint.config.js']
         additional_dependencies:
           - stylelint@16.17.0
@@ -153,13 +139,26 @@ repos:
     rev: v1.36.4
     hooks:
       - id: djlint-django
-        args: ['--reformat', '--quiet']
+        files: \.(html|djhtml|jinja)$
+        args:
+          - --reformat
+          - --quiet
+          - --indent=2
+          - --preserve-blank-lines
+          - --preserve-leading-space
+          - --format-css=false
+          - --format-js=false
+          - --profile=django
+          - --max-line-length=88
+          - --use-gitignore
+          - --ignore=H014,H015,T002
 
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
         types_or: [javascript, css, yaml, markdown]
+        exclude: '.*\.html$' # Exclude HTML files from prettier
         args: ['--config', '${REPO_ROOT_DIR}/.prettierrc']
 
   - repo: https://github.com/adamchainz/django-upgrade

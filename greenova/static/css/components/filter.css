@@ -14,6 +14,7 @@
   margin: 0;
   font-size: 1rem;
 }
+
 .filter-actions {
   display: flex;
   align-items: flex-start;
@@ -27,12 +28,14 @@
   margin: var(--greenova-spacing) 0;
   grid-template-columns: 1fr;
 }
+
 @media (min-width: 768px) {
   .controls-container {
     /* Grid is way cleaner if every aspect has its own row  */
     grid-template-columns: 1fr;
   }
 }
+
 .search-control {
   display: flex;
   flex-direction: column;
@@ -73,6 +76,7 @@ input[type='search'] {
 .sort-group > select {
   font-size: var(--greenova-input-size);
 }
+
 .filter-group:last-child,
 .sort-group:last-child {
   margin-bottom: 0;
@@ -94,6 +98,7 @@ input[type='search'] {
   .filter-group {
     margin-bottom: 0;
   }
+
   .sort-fieldset {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -106,10 +111,12 @@ input[type='search'] {
   gap: var(--greenova-spacing-small);
   flex-wrap: wrap;
 }
+
 .filter-controls select,
 .sort-controls select {
   min-width: 150px;
 }
+
 .filter-container {
   display: flex;
   margin-bottom: var(--greenova-spacing);
@@ -126,9 +133,11 @@ input[type='search'] {
   gap: var(--greenova-spacing-small);
   align-items: center;
 }
+
 .active-filters small {
   color: var(--greenova-tertiary-dark);
 }
+
 .filter-tag {
   display: inline-flex;
   align-items: center;
@@ -138,6 +147,7 @@ input[type='search'] {
   border-radius: var(--greenova-border-radius);
   font-size: var(--greenova-input-label);
 }
+
 .filter-tag button {
   border: none;
   background: none;
@@ -148,6 +158,7 @@ input[type='search'] {
   line-height: 1;
   color: var(--greenova-tertiary-dark);
 }
+
 .filter-tag button:hover {
   color: var(--greenova-text-secondary-dark);
 }
@@ -159,6 +170,7 @@ input[type='search'] {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 @media print {
   .filter-container {
     display: none !important;

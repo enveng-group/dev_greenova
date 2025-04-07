@@ -2,15 +2,17 @@
 
 This template provides standardized commands for creating GitHub issues from
 bug reports using the GitHub CLI.
+
 # GitHub Issue Creation Template for Greenova
 
 This template provides standardized commands for creating GitHub issues from
 bug reports using the GitHub CLI.
 
 ## Basic Issue Creation Command
+
 ## Basic Issue Creation Command
 
-````fish
+`````fish
 # Basic structure of the gh issue create command
 ````fish
 # Basic structure of the gh issue create command
@@ -262,4 +264,4 @@ gh issue create --repo $repo --title $title --body $body
 gh issue edit [ISSUE_NUMBER] --add-label "bug,ui,forms,django,priority-medium,
 help wanted"
 ```
-````
+`````

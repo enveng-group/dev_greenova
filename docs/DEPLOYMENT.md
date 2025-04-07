@@ -9,6 +9,7 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 ```
 
 **Benefits of this approach:**
+
 - End-to-end encryption (HTTPS everywhere)
 - DDoS protection via Cloudflare
 - Performance optimization through Cloudflare's edge network
@@ -27,23 +28,27 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 ## Installation Steps
 
 1. Create virtual environment:
+
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
 
 2. Install required packages:
+
    ```bash
    pip install django==4.2.20 gunicorn==23.0.0 psycopg2-binary==2.9.9
    ```
 
 3. Clone your Django project:
+
    ```bash
    git clone https://github.com/yourusername/greenova.git
    cd greenova
    ```
 
 4. Install project dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
@@ -94,16 +99,19 @@ Address any warnings or errors reported by this command.
 ## Setting Up Gunicorn
 
 1. Test Gunicorn locally:
+
    ```bash
    gunicorn --bind 0.0.0.0:8000 yourproject.wsgi
    ```
 
 2. Create a systemd service file for Gunicorn:
+
    ```bash
    sudo nano /etc/systemd/system/gunicorn.service
    ```
 
 3. Add the following configuration:
+
    ```ini
    [Unit]
    Description=gunicorn daemon for greenova
@@ -127,11 +135,13 @@ Address any warnings or errors reported by this command.
    ```
 
 4. Create a socket file:
+
    ```bash
    sudo nano /etc/systemd/system/gunicorn.socket
    ```
 
 5. Add the following configuration:
+
    ```ini
    [Unit]
    Description=gunicorn socket
@@ -147,12 +157,14 @@ Address any warnings or errors reported by this command.
    ```
 
 6. Create log directories:
+
    ```bash
    sudo mkdir -p /var/log/gunicorn
    sudo chown www-data:www-data /var/log/gunicorn
    ```
 
 7. Enable and start the Gunicorn socket:
+
    ```bash
    sudo systemctl enable gunicorn.socket
    sudo systemctl start gunicorn.socket
@@ -161,17 +173,20 @@ Address any warnings or errors reported by this command.
 ## Setting Up Nginx
 
 1. Install Nginx:
+
    ```bash
    sudo apt-get update
    sudo apt-get install nginx
    ```
 
 2. Create a new Nginx site configuration:
+
    ```bash
    sudo nano /etc/nginx/sites-available/greenova
    ```
 
 3. Add the following configuration:
+
    ```nginx
    server {
        listen 80;
@@ -202,6 +217,7 @@ Address any warnings or errors reported by this command.
    ```
 
 4. Enable the site and restart Nginx:
+
    ```bash
    sudo ln -s /etc/nginx/sites-available/greenova /etc/nginx/sites-enabled/
    sudo systemctl restart nginx
@@ -210,11 +226,13 @@ Address any warnings or errors reported by this command.
 ## Setting Up SSL with Let's Encrypt
 
 1. Install Certbot:
+
    ```bash
    sudo apt-get install certbot python3-certbot-nginx
    ```
 
 2. Obtain an SSL certificate:
+
    ```bash
    sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
    ```
@@ -226,18 +244,22 @@ Address any warnings or errors reported by this command.
 ## Cloudflare Configuration
 
 1. Add your domain to Cloudflare:
+
    - Create a Cloudflare account if you don't have one
    - Add your domain and follow the instructions to update nameservers
 
 2. Configure SSL/TLS settings:
+
    - Go to SSL/TLS tab in Cloudflare dashboard
    - Set SSL mode to "Full (strict)" since you have a valid certificate on your origin server
 
 3. Configure SSL/TLS settings:
+
    - Enable "Always Use HTTPS" under SSL/TLS > Edge Certificates
    - Enable HSTS under SSL/TLS > Edge Certificates > HSTS
 
 4. Set up Page Rules (optional):
+
    - Create rules for caching static content
    - Force HTTPS for all URLs
 
@@ -256,12 +278,14 @@ python manage.py collectstatic
 ## Finalizing Deployment
 
 1. Set proper file permissions:
+
    ```bash
    sudo chown -R www-data:www-data /path/to/greenova
    sudo chmod -R 755 /path/to/greenova
    ```
 
 2. Restart all services:
+
    ```bash
    sudo systemctl restart gunicorn
    sudo systemctl restart nginx
@@ -300,11 +324,13 @@ Add the following configuration:
 ### Backup Strategy
 
 1. Database backups:
+
    ```bash
    sqlite3 /path/to/db.sqlite3 .dump > backup_$(date +%Y%m%d).sql
    ```
 
 2. Media files backup:
+
    ```bash
    tar -czf media_backup_$(date +%Y%m%d).tar.gz /path/to/media/
    ```
@@ -314,32 +340,38 @@ Add the following configuration:
 ### Updating Your Application
 
 1. Pull the latest code:
+
    ```bash
    cd /path/to/greenova
    git pull origin main
    ```
 
 2. Activate the virtual environment:
+
    ```bash
    source /path/to/venv/bin/activate
    ```
 
 3. Install any new dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. Apply migrations:
+
    ```bash
    python manage.py migrate
    ```
 
 5. Collect static files:
+
    ```bash
    python manage.py collectstatic --noinput
    ```
 
 6. Restart services:
+
    ```bash
    sudo systemctl restart gunicorn
    ```
@@ -347,16 +379,19 @@ Add the following configuration:
 ## Troubleshooting
 
 ### Check Gunicorn Status
+
 ```bash
 sudo systemctl status gunicorn
 ```
 
 ### Check Nginx Status
+
 ```bash
 sudo systemctl status nginx
 ```
 
 ### Check Logs
+
 ```bash
 sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/gunicorn/error.log
@@ -365,11 +400,13 @@ sudo tail -f /var/log/gunicorn/error.log
 ### Common Issues
 
 1. **502 Bad Gateway**
+
    - Check if Gunicorn is running
    - Verify socket permissions
    - Check firewall settings
 
 2. **Static files not loading**
+
    - Verify STATIC_ROOT path
    - Check Nginx configuration
    - Run collectstatic again

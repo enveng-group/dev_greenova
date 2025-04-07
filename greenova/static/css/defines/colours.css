@@ -54,35 +54,30 @@
 
   /* Notification Primary High - Use Cases: Highest priority notification marker */
   --greenova-notif-primary-high: #ff1f1f;
-
   --greenova-warning-background: var(--greenova-notif-primary-high);
-  --greenova-warning-text: #000000;
-
+  --greenova-warning-text: #000;
   --greenova-error-background: var(--greenova-notif-primary-high);
-  --greenova-error-text: #000000;
+  --greenova-error-text: #000;
 
   /* Notification Secondary High - Use Cases: outline of notification marker */
   --greenova-notif-secondary-high: #ffb6b6;
 
   /*Notification Primary Mid - Use Cases: Middle priority notification marker */
   --greenova-notif-primary-mid: #fae100;
-
   --greenova-info-background: var(--greenova-notif-primary-mid);
-  --greenova-info-text: #000000;
+  --greenova-info-text: #000;
 
   /* Notification Secondary Mid - Use Cases: outline of notification marker */
   --greenova-notif-secondary-mid: #ffef9c;
 
   /* Notification Primary Low - Use Cases: Lowest priority notification marker */
   --greenova-notif-primary-low: #2fc709;
-
   --greenova-success-background: var(--greenova-notif-primary-low);
-  --greenova-success-text: #000000;
+  --greenova-success-text: #000;
   /* Notification Secondary Low - Use Cases: outline of notification marker */
   --greenova-notif-secondary-low: #b1e5a4;
-
   --pico-mark-background-color: var(--greenova-notif-secondary-low);
-  --pico-mark-color: #000000;
+  --pico-mark-color: #000;
 
   /**************************************************
     *                                                *
@@ -90,10 +85,9 @@
     *                                                *
     **************************************************/
   --greenova-chat-user-background: #dedeff;
-  --greenova-chat-user-color: #000000;
-
-  --greenova-chat-bot-background: #9999ff;
-  --greenova-chat-bot-color: #000000;
+  --greenova-chat-user-color: #000;
+  --greenova-chat-bot-background: #99f;
+  --greenova-chat-bot-color: #000;
 
   /**************************************************
     *                                                *

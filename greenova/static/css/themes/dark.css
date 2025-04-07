@@ -33,7 +33,7 @@
   --greenova-background-secondary: #3d4d36;
 
   /* Text Primary Dark - Use Cases: Immutable Text, for Titles. Icons */
-  --greenova-text-primary-dark: #ffffff;
+  --greenova-text-primary-dark: #fff;
 
   /* Text Secondary Dark - Use Cases: Immutable Text, Headings and body*/
   --greenova-text-secondary-dark: #e8e8e8;
@@ -42,5 +42,5 @@
   --greenova-text-tertiary-dark: #a0a0a0;
 
   /* Text Primary Light - Use Cases: All text on coloured backgrounds*/
-  --greenova-text-primary-light: #000000;
+  --greenova-text-primary-light: #000;
 }

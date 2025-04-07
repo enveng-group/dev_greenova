@@ -15,6 +15,7 @@ select[aria-busy='true'][disabled][data-loading-disable-data-loading-aria-busy] 
   max-width: 100%;
   margin: 0 auto;
 }
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -60,6 +61,7 @@ select[aria-busy='true'][disabled][data-loading-disable-data-loading-aria-busy] 
   background-color: var(--greenova-beige-secondary);
   color: var(--greenova-text-primary-dark);
 }
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -72,6 +74,7 @@ select[aria-busy='true'][disabled][data-loading-disable-data-loading-aria-busy] 
   display: flex;
   align-items: center;
 }
+
 .checkbox-group label {
   display: flex;
   align-items: center;
@@ -79,6 +82,7 @@ select[aria-busy='true'][disabled][data-loading-disable-data-loading-aria-busy] 
   margin-bottom: 0;
   cursor: pointer;
 }
+
 .checkbox-group input[type='checkbox'] {
   width: auto;
   margin: 0;
@@ -90,6 +94,7 @@ select[aria-busy='true'][disabled][data-loading-disable-data-loading-aria-busy] 
   font-size: 0.8rem;
   color: var(--greenova-tertiary-dark);
 }
+
 .form-group small.error {
   background: var(--greenova-warning-background);
   color: var(--greenova-warning-text);
@@ -99,6 +104,7 @@ fieldset {
   padding: 1rem;
   margin-bottom: 1rem;
 }
+
 legend {
   font-weight: 600;
   padding: 0 0.5rem;
@@ -109,20 +115,24 @@ legend {
   border-radius: 4px;
   margin-bottom: 1rem;
 }
+
 .alert.success {
   background-color: var(--greenova-success-background);
   border: 1px solid var(--greenova-success-background);
   color: var(--greenova-success-text);
 }
+
 .alert.error {
   background-color: var(--greenova-warning-background);
   border: 1px solid var(--greenova-warning-background);
   color: var(--greenova-warning-text);
 }
+
 .alert h4 {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
+
 .alert ul {
   margin-bottom: 0;
 }
@@ -144,11 +154,12 @@ legend {
 /* Loading spinner animation */
 .loading-spinner {
   display: inline-block;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  border: 2px solid rgb(0 0 0 / 10%);
   border-left-color: var(--greenova-green-primary);
   border-radius: 50%;
   animation: spinner 1s linear infinite;
 }
+
 @keyframes spinner {
   to {
     transform: rotate(360deg);
@@ -159,12 +170,13 @@ button[aria-busy='true'] {
   position: relative;
   color: transparent;
 }
+
 button[aria-busy='true']::after {
   content: '';
   position: absolute;
   top: calc(50% - 0.5rem);
   left: calc(50% - 0.5rem);
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  border: 2px solid rgb(255 255 255 / 25%);
   border-top-color: white;
   border-radius: 50%;
   animation: spinner 1s linear infinite;

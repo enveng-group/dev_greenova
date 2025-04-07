@@ -33,14 +33,14 @@
   --greenova-background-secondary: #e8ede3; /* Slightly adjusted for better contrast */
 
   /* Text Primary Dark - Use Cases: Immutable Text, for Titles. Icons */
-  --greenova-text-primary-dark: #000000;
+  --greenova-text-primary-dark: #000;
 
   /* Text Secondary Dark - Use Cases: Immutable Text, Headings and body*/
-  --greenova-text-secondary-dark: #222222; /* Darkened for better contrast */
+  --greenova-text-secondary-dark: #222; /* Darkened for better contrast */
 
   /* Text Tertiary Dark - Use Cases: Mutable Text, for text box hints */
   --greenova-text-tertiary-dark: #767676; /* Fixed variable name and improved contrast for WCAG AA */
 
   /* Text Primary Light - Use Cases: All text on coloured backgrounds*/
-  --greenova-text-primary-light: #ffffff; /* Fixed variable name */
+  --greenova-text-primary-light: #fff; /* Fixed variable name */
 }

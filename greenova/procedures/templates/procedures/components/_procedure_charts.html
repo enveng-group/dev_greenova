@@ -1,12 +1,16 @@
+{% load static %}
+{% load procedure_tags %}
+
 <article>
   <header>
     <nav aria-label="Breadcrumb" class="breadcrumbs">
       <ol>
         <li>
-          <a href="{{ url("dashboard:home") }}?project_id={{ mechanism.project.id }}">Dashboard</a>
+          <a href="{% url 'dashboard:home' %}?project_id={{ mechanism.project.id }}">Dashboard</a>
         </li>
         <li>
-          <a href="{{ url('mechanisms:list') }}" _="on click preventDefault() then history.back()">Mechanisms</a>
+          <a href="{% url 'mechanisms:list' %}"
+             _="on click preventDefault() then history.back()">Mechanisms</a>
         </li>
         <li>{{ mechanism.name }}</li>
       </ol>
@@ -15,10 +19,12 @@
     <h2>{{ mechanism.name }}</h2>
   </header>
   {% if error %}
+
     <div class="notice error" role="alert">
       <p>{{ error }}</p>
     </div>
   {% elif procedure_charts %}
+
     <!-- New Responsibility Distribution Section -->
     <section aria-labelledby="responsibility-heading" class="charts-section">
       <h2 id="responsibility-heading">Responsibility Distribution</h2>
@@ -26,6 +32,7 @@
         <figure>
           <figcaption>Obligations by Responsibility</figcaption>
           {{ responsibility_chart|safe }}
+
         </figure>
       </article>
     </section>
@@ -49,49 +56,9 @@
            aria-label="Chart gallery"
            tabindex="0">
         {% for proc in procedure_charts %}
-          <article class="mechanism-chart">
-            <header>
-              <h3>{{ proc.name }}</h3>
-            </header>
-            <figure>
-              <figcaption>
-                <dl class="chart-stats">
-                  <div class="stat-row">
-                    <dt>Total:</dt>
-                    <dd>
-                      {{ proc.stats.total }}
-                    </dd>
-                  </div>
-                  <div class="stat-row">
-                    <dt>Not Started:</dt>
-                    <dd>
-                      {{ proc.stats.not_started }}
-                    </dd>
-                  </div>
-                  <div class="stat-row">
-                    <dt>In Progress:</dt>
-                    <dd>
-                      {{ proc.stats.in_progress }}
-                    </dd>
-                  </div>
-                  <div class="stat-row">
-                    <dt>Completed:</dt>
-                    <dd>
-                      {{ proc.stats.completed }}
-                    </dd>
-                  </div>
-                  <div class="stat-row">
-                    <dt>Overdue:</dt>
-                    <dd>
-                      {{ proc.stats.overdue }}
-                    </dd>
-                  </div>
-                </dl>
-              </figcaption>
-              {{ proc.chart|safe }}
-            </figure>
-          </article>
+          {% procedure_chart_card proc %}
         {% endfor %}
+
       </div>
       <!-- Data Table -->
       <article class="data-table">
@@ -112,8 +79,9 @@
             </thead>
             <tbody>
               {% for item in table_data %}
+
                 <tr>
-                  <td>{{ item.name }}</td>
+                  <td>{{ item.name|format_procedure_name }}</td>
                   <td>{{ item.not_started }}</td>
                   <td>{{ item.in_progress }}</td>
                   <td>{{ item.completed }}</td>
@@ -121,12 +89,14 @@
                   <td>{{ item.total }}</td>
                 </tr>
               {% endfor %}
+
             </tbody>
           </table>
         </div>
       </article>
     </section>
   {% else %}
+
     <div class="notice" role="status">
       <p>No procedure data available for this mechanism.</p>
     </div>

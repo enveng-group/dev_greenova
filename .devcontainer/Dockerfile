@@ -14,7 +14,7 @@ WORKDIR /workspaces/greenova
 COPY requirements.txt package.json ./
 
 # install Node.js dependencies
-RUN npm install 
+RUN npm install
 
 # install Python dependencies
 RUN pip install -r requirements.txt -c constraints.txt --no-deps

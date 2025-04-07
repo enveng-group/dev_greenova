@@ -58,6 +58,7 @@
   /* Accessibility focus indicators that match Greenova's design system */
   .focus-greenova {
     @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+
     --tw-ring-color: var(--greenova-green-primary);
     --tw-ring-offset-width: 2px;
   }
@@ -104,6 +105,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -114,6 +116,7 @@
     transform: translateY(10px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;

@@ -1,18 +1,26 @@
-from typing import Any, Dict
-from django.views.generic import TemplateView
+import logging
+from typing import Any, Dict, TypedDict, cast
+
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse
+from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.utils.decorators import method_decorator
-from django_htmx.http import (
-    trigger_client_event,
-    push_url,
-    HttpResponseClientRedirect
-)
-import logging
-from django.conf import settings
+from django.views.generic import TemplateView
+from django_htmx.http import HttpResponseClientRedirect, push_url, trigger_client_event
 
 logger = logging.getLogger(__name__)
+
+# Type definition for django-htmx request attribute
+class HtmxDetails(TypedDict, total=False):
+    """Type hints for django-htmx request.htmx attributes."""
+    boosted: bool
+    current_url: str
+    history_restore_request: bool
+    prompt: str
+    target: str
+    trigger: str
+    trigger_name: str
 
 @method_decorator(cache_control(max_age=300), name='dispatch')
 @method_decorator(vary_on_headers("HX-Request"), name='dispatch')
@@ -23,12 +31,15 @@ class HomeView(TemplateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests."""
         logger.debug(
-            f"Landing page access - User authenticated: {request.user.is_authenticated}")
+            "Landing page - User authenticated: %s", request.user.is_authenticated)
 
         response = super().get(request, *args, **kwargs)
 
         # If htmx request, handle proper URL management
-        if request.htmx:
+        if hasattr(request, 'htmx'):
+            # Cast request.htmx to our type definition for mypy
+            htmx = cast(HtmxDetails, request.htmx)
+
             # Push the URL to the browser history to ensure proper navigation
             push_url(response, request.path)
 
@@ -37,7 +48,7 @@ class HomeView(TemplateView):
 
             # If user is authenticated and accessing the landing page directly,
             # we might want to redirect them to the dashboard
-            if request.user.is_authenticated and request.htmx.boosted:
+            if request.user.is_authenticated and htmx.get('boosted', False):
                 return HttpResponseClientRedirect('/dashboard/')
 
         return response

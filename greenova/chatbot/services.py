@@ -1,6 +1,8 @@
 import logging
+
 from django.db.models import Q
-from .models import Conversation, ChatMessage, PredefinedResponse, TrainingData
+
+from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
 
 logger = logging.getLogger(__name__)
 
@@ -34,16 +36,17 @@ class ChatbotService:
 
             return message
         except Conversation.DoesNotExist:
-            logger.error(f"Conversation with ID {conversation_id} does not exist")
+            logger.error("Conversation with ID %s does not exist", conversation_id)
             return None
 
     @staticmethod
     def get_conversation_messages(conversation_id):
         """Get all messages for a conversation."""
         try:
-            return ChatMessage.objects.filter(conversation_id=conversation_id).order_by('timestamp')
-        except Exception as e:
-            logger.error(f"Error retrieving messages: {str(e)}")
+            query = ChatMessage.objects.filter(conversation_id=conversation_id)
+            return query.order_by('timestamp')
+        except (ChatMessage.DoesNotExist, Conversation.DoesNotExist) as e:
+            logger.error("Error retrieving messages: %s", str(e))
             return []
 
     @staticmethod

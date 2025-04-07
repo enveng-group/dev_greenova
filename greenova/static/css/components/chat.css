@@ -40,22 +40,27 @@
   border-radius: 4px;
   transition: background-color 0.2s;
 }
+
 .conversations li:hover {
   background-color: var(--background-alt);
 }
+
 .conversations li.active {
   background-color: var(--primary-focus);
 }
+
 .conversations li a {
   display: block;
   text-decoration: none;
   color: var(--color);
 }
+
 .conversations li a small {
   display: block;
   color: var(--muted-color);
   font-size: 0.8rem;
 }
+
 .messages-container {
   height: 400px;
   overflow-y: auto;
@@ -73,18 +78,22 @@
   border-radius: 8px;
   max-width: 80%;
 }
+
 .message.user {
   background-color: var(--primary);
   color: white;
   margin-left: auto;
 }
+
 .message.bot {
   background-color: var(--secondary-background);
   margin-right: auto;
 }
+
 .message-content {
   word-break: break-word;
 }
+
 .message-time {
   font-size: 0.7rem;
   text-align: right;
@@ -106,6 +115,7 @@
   display: flex;
   justify-content: space-between;
 }
+
 .delete-link {
   color: var(--form-element-invalid-active-border-color);
 }
@@ -141,14 +151,17 @@
   background-color: var(--form-element-invalid-active-border-color);
   border-color: var(--form-element-invalid-active-border-color);
 }
+
 @media (max-width: 768px) {
   .row {
     flex-direction: column;
   }
+
   .conversation-list,
   .chat-window {
     flex: 0 0 100%;
   }
+
   .conversation-list {
     border-right: none;
     border-bottom: 1px solid var(--border-color);
@@ -182,7 +195,7 @@
   border-radius: 2rem;
   background-color: var(--greenova-green-primary);
   color: var(--greenova-text-primary-light);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
   transition:
     transform 0.2s,
     box-shadow 0.2s;
@@ -196,7 +209,7 @@
 #chat-toggle:hover,
 #chat-toggle:focus {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgb(0 0 0 / 20%);
 }
 
 #chat-toggle svg {
@@ -210,7 +223,7 @@
   border-radius: 8px;
   padding: 0;
   border: 1px solid var(--border-color);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 15%);
 }
 
 .chat-container {

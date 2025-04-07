@@ -76,12 +76,12 @@ The following tasks have been completed and moved to `done.txt`:
 - [ ] Chatbot
 - [ ] Company
 - [ ] Core
-- [x] Dashboard
+- [] Dashboard
 - [x] Feedback
 - [ ] Landing
 - [ ] Mechanisms
 - [ ] Obligations
-- [x] Procedures
+- [] Procedures
 - [ ] Projects
 - [ ] Responsibility
 - [ ] Templates
