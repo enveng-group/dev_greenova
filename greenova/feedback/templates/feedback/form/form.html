@@ -2,54 +2,49 @@
 
 <form method="post"
       action="{% url 'feedback:submit_bug_report' %}"
-      id="bug-report-form"
-      hx-post="{% url 'feedback:submit_bug_report' %}"
-      hx-swap="outerHTML"
-      hx-target="closest form">
+      id="bug-report-form">
 {% csrf_token %}
 
   {% if messages %}
-    <div class="messages">
-      <ul>
-        {% for message in messages %}
-          <li>
+    <ul>
+      {% for message in messages %}
+        <li>
 {{ message|safe }}
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+        </li>
+      {% endfor %}
+    </ul>
   {% endif %}
 
   <h3>
 1. Summary
   </h3>
-  <div class="form-section">
-    <div class="form-row">
+  <div>
+    <div>
       <label for="{{ form.title.id_for_label }}">
 {{ form.title.label }}
       </label>
-      {{ form.title }}
+        {{ form.title }}
       {% if form.title.errors %}
-        <div class="error-message">
+        <div>
 {{ form.title.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.title.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.description.id_for_label }}">
 {{ form.description.label }}
       </label>
-      {{ form.description }}
+        {{ form.description }}
       {% if form.description.errors %}
-        <div class="error-message">
+        <div>
 {{ form.description.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.description.help_text }}
       </div>
     </div>
@@ -58,63 +53,63 @@
   <h3>
 2. Environment
   </h3>
-  <div class="form-section">
-    <div class="form-row">
+  <div>
+    <div>
       <label for="{{ form.application_version.id_for_label }}">
 {{ form.application_version.label }}
       </label>
-      {{ form.application_version }}
+        {{ form.application_version }}
       {% if form.application_version.errors %}
-        <div class="error-message">
+        <div>
 {{ form.application_version.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.application_version.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.operating_system.id_for_label }}">
 {{ form.operating_system.label }}
       </label>
-      {{ form.operating_system }}
+        {{ form.operating_system }}
       {% if form.operating_system.errors %}
-        <div class="error-message">
+        <div>
 {{ form.operating_system.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.operating_system.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.browser.id_for_label }}">
 {{ form.browser.label }}
       </label>
-      {{ form.browser }}
+        {{ form.browser }}
       {% if form.browser.errors %}
-        <div class="error-message">
+        <div>
 {{ form.browser.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.browser.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.device_type.id_for_label }}">
 {{ form.device_type.label }}
       </label>
-      {{ form.device_type }}
+        {{ form.device_type }}
       {% if form.device_type.errors %}
-        <div class="error-message">
+        <div>
 {{ form.device_type.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.device_type.help_text }}
       </div>
     </div>
@@ -123,48 +118,48 @@
   <h3>
 3. Steps to Reproduce
   </h3>
-  <div class="form-section">
-    <div class="form-row">
+  <div>
+    <div>
       <label for="{{ form.steps_to_reproduce.id_for_label }}">
 {{ form.steps_to_reproduce.label }}
       </label>
-      {{ form.steps_to_reproduce }}
+        {{ form.steps_to_reproduce }}
       {% if form.steps_to_reproduce.errors %}
-        <div class="error-message">
+        <div>
 {{ form.steps_to_reproduce.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.steps_to_reproduce.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.expected_behavior.id_for_label }}">
 {{ form.expected_behavior.label }}
       </label>
-      {{ form.expected_behavior }}
+        {{ form.expected_behavior }}
       {% if form.expected_behavior.errors %}
-        <div class="error-message">
+        <div>
 {{ form.expected_behavior.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.expected_behavior.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.actual_behavior.id_for_label }}">
 {{ form.actual_behavior.label }}
       </label>
-      {{ form.actual_behavior }}
+        {{ form.actual_behavior }}
       {% if form.actual_behavior.errors %}
-        <div class="error-message">
+        <div>
 {{ form.actual_behavior.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.actual_behavior.help_text }}
       </div>
     </div>
@@ -173,33 +168,33 @@
   <h3>
 4. Technical Details
   </h3>
-  <div class="form-section">
-    <div class="form-row">
+  <div>
+    <div>
       <label for="{{ form.error_messages.id_for_label }}">
 {{ form.error_messages.label }}
       </label>
-      {{ form.error_messages }}
+        {{ form.error_messages }}
       {% if form.error_messages.errors %}
-        <div class="error-message">
+        <div>
 {{ form.error_messages.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.error_messages.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.trace_report.id_for_label }}">
 {{ form.trace_report.label }}
       </label>
-      {{ form.trace_report }}
+        {{ form.trace_report }}
       {% if form.trace_report.errors %}
-        <div class="error-message">
+        <div>
 {{ form.trace_report.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.trace_report.help_text }}
       </div>
     </div>
@@ -208,48 +203,48 @@
   <h3>
 5. Frequency and Impact
   </h3>
-  <div class="form-section">
-    <div class="form-row">
+  <div>
+    <div>
       <label for="{{ form.frequency.id_for_label }}">
 {{ form.frequency.label }}
       </label>
-      {{ form.frequency }}
+        {{ form.frequency }}
       {% if form.frequency.errors %}
-        <div class="error-message">
+        <div>
 {{ form.frequency.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.frequency.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.impact_severity.id_for_label }}">
 {{ form.impact_severity.label }}
       </label>
-      {{ form.impact_severity }}
+        {{ form.impact_severity }}
       {% if form.impact_severity.errors %}
-        <div class="error-message">
+        <div>
 {{ form.impact_severity.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.impact_severity.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.user_impact.id_for_label }}">
 {{ form.user_impact.label }}
       </label>
-      {{ form.user_impact }}
+        {{ form.user_impact }}
       {% if form.user_impact.errors %}
-        <div class="error-message">
+        <div>
 {{ form.user_impact.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.user_impact.help_text }}
       </div>
     </div>
@@ -258,44 +253,41 @@
   <h3>
 6. Additional Information
   </h3>
-  <div class="form-section">
-    <div class="form-row">
+  <div>
+    <div>
       <label for="{{ form.workarounds.id_for_label }}">
 {{ form.workarounds.label }}
       </label>
-      {{ form.workarounds }}
+        {{ form.workarounds }}
       {% if form.workarounds.errors %}
-        <div class="error-message">
+        <div>
 {{ form.workarounds.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.workarounds.help_text }}
       </div>
     </div>
 
-    <div class="form-row">
+    <div>
       <label for="{{ form.additional_comments.id_for_label }}">
 {{ form.additional_comments.label }}
       </label>
-      {{ form.additional_comments }}
+        {{ form.additional_comments }}
       {% if form.additional_comments.errors %}
-        <div class="error-message">
+        <div>
 {{ form.additional_comments.errors }}
         </div>
       {% endif %}
-      <div class="help-text">
+      <div>
 {{ form.additional_comments.help_text }}
       </div>
     </div>
   </div>
 
-  <div class="form-actions">
-    <button type="submit"
-            _="on click add .submitting to me end"
-            hx-indicator=".loading-indicator">
-      <span>Submit Bug Report</span>
-      <span class="loading-indicator" aria-hidden="true"></span>
+  <div>
+    <button type="submit">
+Submit Bug Report
     </button>
   </div>
 </form>

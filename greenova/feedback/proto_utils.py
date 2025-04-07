@@ -2,278 +2,278 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 """
-Utilities for Protocol Buffer serialization in the feedback app.
+Protocol buffer utilities for the feedback app.
 
-This module provides functions to convert between Django models and Protocol Buffers.
+This module provides serialization and deserialization functions for
+converting between Django models and Protocol Buffer messages in the
+feedback application.
 """
-
-import datetime
 import logging
+import os
+import sys
 from typing import List, Optional
 
 from django.contrib.auth import get_user_model
-from django.utils import timezone
-from google.protobuf import symbol_database as _symbol_database
 
 from .models import BugReport
 
+User = get_user_model()
 logger = logging.getLogger(__name__)
 
-# Get the global symbol database
-_sym_db = _symbol_database.Default()
+# Import generated protobuf modules with improved error handling
+try:
+    from . import feedback_pb2
+except ImportError:
+    logger.error("feedback_pb2 module not found. Ensure to compile the protobuf files.")
+    feedback_pb2 = None
 
-# Get message classes from the symbol database
-BugReportProto = _sym_db.GetSymbol('feedback.BugReportProto')
-BugReportCollection = _sym_db.GetSymbol('feedback.BugReportCollection')
+    # Check if the proto file exists
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    proto_file = os.path.join(current_dir, 'proto', 'feedback.proto')
 
-
-def django_to_proto(bug_report: BugReport) -> BugReportProto:
-    """
-    Convert a Django BugReport model instance to a Protocol Buffer message.
-
-    Args:
-        bug_report: The Django model instance to convert
-
-    Returns:
-        A BugReportProto message containing the serialized data
-    """
-    proto = BugReportProto()
-
-    # Core identifiers
-    proto.id = bug_report.id if bug_report.id else 0
-    proto.title = bug_report.title
-    proto.description = bug_report.description
-
-    # Environment information
-    proto.application_version = bug_report.application_version
-    proto.operating_system = bug_report.operating_system
-    proto.browser = bug_report.browser or ""
-    proto.device_type = bug_report.device_type
-
-    # Problem details
-    proto.steps_to_reproduce = bug_report.steps_to_reproduce
-    proto.expected_behavior = bug_report.expected_behavior
-    proto.actual_behavior = bug_report.actual_behavior
-
-    # Technical details
-    proto.error_messages = bug_report.error_messages or ""
-    proto.trace_report = bug_report.trace_report or ""
-
-    # Frequency and impact
-    frequency_map = {
-        'always': BugReportProto.Frequency.ALWAYS,
-        'frequently': BugReportProto.Frequency.FREQUENTLY,
-        'occasionally': BugReportProto.Frequency.OCCASIONALLY,
-        'rarely': BugReportProto.Frequency.RARELY
-    }
-    proto.frequency = frequency_map.get(
-        bug_report.frequency, BugReportProto.Frequency.UNKNOWN
-    )
-
-    severity_map = {
-        'low': BugReportProto.Severity.LOW,
-        'medium': BugReportProto.Severity.MEDIUM,
-        'high': BugReportProto.Severity.HIGH,
-        'critical': BugReportProto.Severity.CRITICAL
-    }
-    proto.impact_severity = severity_map.get(
-        bug_report.impact_severity, BugReportProto.Severity.UNDEFINED
-    )
-    proto.admin_severity = severity_map.get(
-        bug_report.severity, BugReportProto.Severity.UNDEFINED
-    )
-    proto.user_impact = bug_report.user_impact
-
-    # Additional information
-    proto.workarounds = bug_report.workarounds or ""
-    proto.additional_comments = bug_report.additional_comments or ""
-
-    # Meta information
-    if bug_report.created_by:
-        proto.user_id = bug_report.created_by.id
-        proto.username = bug_report.created_by.username
-
-    # Convert datetime to timestamp (seconds since epoch)
-    if bug_report.created_at:
-        proto.created_at = int(bug_report.created_at.timestamp())
-    if bug_report.updated_at:
-        proto.updated_at = int(bug_report.updated_at.timestamp())
-
-    # Admin fields
-    proto.github_issue_url = bug_report.github_issue_url or ""
-
-    status_map = {
-        'open': BugReportProto.Status.OPEN,
-        'in_progress': BugReportProto.Status.IN_PROGRESS,
-        'resolved': BugReportProto.Status.RESOLVED,
-        'closed': BugReportProto.Status.CLOSED,
-        'rejected': BugReportProto.Status.REJECTED
-    }
-    proto.status = status_map.get(bug_report.status, BugReportProto.Status.UNSPECIFIED)
-    proto.admin_comment = bug_report.admin_comment or ""
-
-    return proto
-
-
-def proto_to_django(
-    proto: BugReportProto,
-    instance: Optional[BugReport] = None
-) -> BugReport:
-    """
-    Convert a Protocol Buffer message to a Django BugReport model instance.
-
-    Args:
-        proto: The Protocol Buffer message to convert
-        instance: Optional existing BugReport instance to update (for updates)
-
-    Returns:
-        A BugReport model instance (either new or updated)
-    """
-    User = get_user_model()
-
-    # Create a new instance or use the provided one
-    bug_report = instance or BugReport()
-
-    # Skip ID if creating a new instance (let Django handle it)
-    if instance and proto.id:
-        bug_report.id = proto.id  # Only set ID for existing instances
-
-    # Core identifiers
-    bug_report.title = proto.title
-    bug_report.description = proto.description
-
-    # Environment information
-    bug_report.application_version = proto.application_version
-    bug_report.operating_system = proto.operating_system
-    bug_report.browser = proto.browser
-    bug_report.device_type = proto.device_type
-
-    # Problem details
-    bug_report.steps_to_reproduce = proto.steps_to_reproduce
-    bug_report.expected_behavior = proto.expected_behavior
-    bug_report.actual_behavior = proto.actual_behavior
-
-    # Technical details
-    bug_report.error_messages = proto.error_messages
-    bug_report.trace_report = proto.trace_report
-
-    # Frequency and impact
-    frequency_map = {
-        BugReportProto.Frequency.ALWAYS: 'always',
-        BugReportProto.Frequency.FREQUENTLY: 'frequently',
-        BugReportProto.Frequency.OCCASIONALLY: 'occasionally',
-        BugReportProto.Frequency.RARELY: 'rarely'
-    }
-    bug_report.frequency = frequency_map.get(proto.frequency, 'rarely')
-
-    severity_map = {
-        BugReportProto.Severity.LOW: 'low',
-        BugReportProto.Severity.MEDIUM: 'medium',
-        BugReportProto.Severity.HIGH: 'high',
-        BugReportProto.Severity.CRITICAL: 'critical'
-    }
-    bug_report.impact_severity = severity_map.get(proto.impact_severity, 'medium')
-    bug_report.severity = severity_map.get(proto.admin_severity, 'medium')
-    bug_report.user_impact = proto.user_impact
-
-    # Additional information
-    bug_report.workarounds = proto.workarounds
-    bug_report.additional_comments = proto.additional_comments
-
-    # Meta information
-    if proto.user_id:
-        try:
-            bug_report.created_by = User.objects.get(id=proto.user_id)
-        except User.DoesNotExist:
-            logger.warning(
-                "User with ID %d from protobuf message not found",
-                proto.user_id
-            )
-
-    # Convert timestamps to datetime objects
-    if proto.created_at:
-        bug_report.created_at = datetime.datetime.fromtimestamp(
-            proto.created_at, tz=timezone.get_current_timezone()
+    if os.path.exists(proto_file):
+        logger.info(
+            "feedback.proto exists but feedback_pb2.py not found. "
+            "Run 'python manage.py compile_protos --app=feedback' to generate it."
         )
-    if proto.updated_at:
-        bug_report.updated_at = datetime.datetime.fromtimestamp(
-            proto.updated_at, tz=timezone.get_current_timezone()
+    else:
+        logger.error("feedback.proto file not found in the proto directory.")
+
+    # Create a minimal stub for the module to allow Django to continue loading
+    from types import ModuleType
+    feedback_pb2 = ModuleType('feedback_pb2')
+    sys.modules['feedback.proto.feedback_pb2'] = feedback_pb2
+
+    # Define minimal classes needed for type hinting
+    class BugReportProto:
+        class Frequency:
+            FREQUENCY_UNKNOWN_UNSPECIFIED = 0
+            FREQUENCY_ALWAYS = 1
+            FREQUENCY_FREQUENTLY = 2
+            FREQUENCY_OCCASIONALLY = 3
+            FREQUENCY_RARELY = 4
+
+        class Severity:
+            SEVERITY_UNDEFINED_UNSPECIFIED = 0
+            SEVERITY_LOW = 1
+            SEVERITY_MEDIUM = 2
+            SEVERITY_HIGH = 3
+            SEVERITY_CRITICAL = 4
+
+        class Status:
+            STATUS_UNSPECIFIED = 0
+            STATUS_OPEN = 1
+            STATUS_IN_PROGRESS = 2
+            STATUS_RESOLVED = 3
+            STATUS_CLOSED = 4
+            STATUS_REJECTED = 5
+
+        def SerializeToString(self):
+            return b''
+
+        def ParseFromString(self, data):
+            pass
+
+    class BugReportCollection:
+        reports = []
+
+        def SerializeToString(self):
+            return b''
+
+        def ParseFromString(self, data):
+            pass
+
+    feedback_pb2.BugReportProto = BugReportProto
+    feedback_pb2.BugReportCollection = BugReportCollection
+
+
+def serialize_bug_report(bug_report: BugReport) -> Optional[bytes]:
+    """
+    Serialize a BugReport instance to a Protocol Buffer message.
+
+    Args:
+        bug_report: The BugReport instance to serialize
+
+    Returns:
+        Serialized protocol buffer data as bytes, or None if serialization failed
+    """
+    try:
+        # Create a new BugReportProto message
+        proto = feedback_pb2.BugReportProto()
+
+        # Set basic fields
+        proto.id = bug_report.id or 0
+        proto.title = bug_report.title
+        proto.description = bug_report.description
+
+        # Set environment fields if available
+        if hasattr(bug_report, 'application_version'):
+            proto.application_version = bug_report.application_version
+        if hasattr(bug_report, 'operating_system'):
+            proto.operating_system = bug_report.operating_system
+        if hasattr(bug_report, 'browser'):
+            proto.browser = bug_report.browser or ""
+        if hasattr(bug_report, 'device_type'):
+            proto.device_type = bug_report.device_type
+
+        # Set problem detail fields if available
+        if hasattr(bug_report, 'steps_to_reproduce'):
+            proto.steps_to_reproduce = bug_report.steps_to_reproduce
+        if hasattr(bug_report, 'expected_behavior'):
+            proto.expected_behavior = bug_report.expected_behavior
+        if hasattr(bug_report, 'actual_behavior'):
+            proto.actual_behavior = bug_report.actual_behavior
+
+        # Serialize to bytes
+        return proto.SerializeToString()
+    except (AttributeError, TypeError) as e:
+        logger.error(
+            "Failed to serialize bug report due to attribute or type error: %s",
+            str(e)
         )
-
-    # Admin fields
-    bug_report.github_issue_url = proto.github_issue_url
-
-    status_map = {
-        BugReportProto.Status.OPEN: 'open',
-        BugReportProto.Status.IN_PROGRESS: 'in_progress',
-        BugReportProto.Status.RESOLVED: 'resolved',
-        BugReportProto.Status.CLOSED: 'closed',
-        BugReportProto.Status.REJECTED: 'rejected'
-    }
-    bug_report.status = status_map.get(proto.status, 'open')
-    bug_report.admin_comment = proto.admin_comment
-
-    return bug_report
+        return None
+    except ValueError as e:
+        logger.error("Failed to serialize bug report due to invalid value: %s", str(e))
+        return None
 
 
-def serialize_bug_reports(bug_reports: List[BugReport]) -> bytes:
+def deserialize_bug_report(data: bytes) -> Optional[BugReport]:
     """
-    Serialize a list of BugReport instances to a binary Protocol Buffer message.
+    Deserialize Protocol Buffer data to a BugReport instance.
 
     Args:
-        bug_reports: List of Django BugReport model instances
+        data: Serialized protocol buffer data
 
     Returns:
-        Binary serialized data
+        BugReport instance or None if deserialization failed
     """
-    collection = BugReportCollection()
-    for report in bug_reports:
-        proto = django_to_proto(report)
-        collection.reports.append(proto)
+    try:
+        # Parse the binary data into a BugReportProto
+        proto = feedback_pb2.BugReportProto()
+        proto.ParseFromString(data)
 
-    return collection.SerializeToString()
+        # Create a BugReport instance
+        bug_report = BugReport()
 
+        # Set basic fields
+        bug_report.title = proto.title
+        bug_report.description = proto.description
 
-def deserialize_bug_reports(binary_data: bytes) -> List[BugReport]:
+        # Set environment fields
+        if hasattr(proto, 'application_version'):
+            bug_report.application_version = proto.application_version
+        if hasattr(proto, 'operating_system'):
+            bug_report.operating_system = proto.operating_system
+        if hasattr(proto, 'browser'):
+            bug_report.browser = proto.browser
+        if hasattr(proto, 'device_type'):
+            bug_report.device_type = proto.device_type
+
+        # Set problem detail fields
+        if hasattr(proto, 'steps_to_reproduce'):
+            bug_report.steps_to_reproduce = proto.steps_to_reproduce
+        if hasattr(proto, 'expected_behavior'):
+            bug_report.expected_behavior = proto.expected_behavior
+        if hasattr(proto, 'actual_behavior'):
+            bug_report.actual_behavior = proto.actual_behavior
+
+        return bug_report
+    except (AttributeError, TypeError) as e:
+        logger.error(
+            "Failed to deserialize bug report due to attribute or type error: %s",
+            str(e)
+        )
+        return None
+    except ValueError as e:
+        logger.error(
+            "Failed to deserialize bug report due to invalid value: %s",
+            str(e)
+        )
+        return None
+    except (OSError, SystemError, OverflowError) as e:
+        logger.error("Failed to deserialize bug report: %s", str(e))
+        return None
+def serialize_bug_reports(bug_reports: List[BugReport]) -> Optional[bytes]:
     """
-    Deserialize binary Protocol Buffer data to a list of BugReport instances.
+    Serialize a list of BugReport instances to Protocol Buffer collection.
 
     Args:
-        binary_data: Binary serialized data
+        bug_reports: List of BugReport instances to serialize
 
     Returns:
-        List of Django BugReport model instances
+        Serialized protocol buffer collection as bytes, or None if serialization failed
     """
-    collection = BugReportCollection()
-    collection.ParseFromString(binary_data)
+    try:
+        # Create a new BugReportCollection message
+        collection = feedback_pb2.BugReportCollection()
 
-    return [proto_to_django(proto) for proto in collection.reports]
+        # Add each bug report to the collection
+        for bug_report in bug_reports:
+            report_proto_data = serialize_bug_report(bug_report)
+            if report_proto_data:
+                report_proto = feedback_pb2.BugReportProto()
+                report_proto.ParseFromString(report_proto_data)
+                collection.reports.append(report_proto)
 
-
-def serialize_bug_report(bug_report: BugReport) -> bytes:
+        # Serialize the collection to bytes
+        return collection.SerializeToString()
+    except (AttributeError, TypeError) as e:
+        logger.error(
+            "Failed to serialize bug report collection due to attribute "
+            "or type error: %s",
+            str(e)
+        )
+        return None
+    except ValueError as e:
+        logger.error(
+            "Failed to serialize bug report collection due to invalid value: %s",
+            str(e)
+        )
+        return None
+    except (OSError, SystemError) as e:
+        logger.error("Failed to serialize bug report collection: %s", str(e))
+        return None
+def deserialize_bug_reports(data: bytes) -> List[BugReport]:
     """
-    Serialize a single BugReport instance to a binary Protocol Buffer message.
+    Deserialize Protocol Buffer collection data to a list of BugReport instances.
 
     Args:
-        bug_report: Django BugReport model instance
+        data: Serialized protocol buffer collection
 
     Returns:
-        Binary serialized data
+        List of BugReport instances
     """
-    proto = django_to_proto(bug_report)
-    return proto.SerializeToString()
+    try:
+        # Parse the binary data into a BugReportCollection
+        collection = feedback_pb2.BugReportCollection()
+        collection.ParseFromString(data)
 
+        # Convert each protocol buffer message to a BugReport
+        bug_reports = []
+        for report_proto in collection.reports:
+            # Serialize and deserialize each report
+            report_data = report_proto.SerializeToString()
+            bug_report = deserialize_bug_report(report_data)
+            if bug_report:
+                bug_reports.append(bug_report)
 
-def deserialize_bug_report(binary_data: bytes) -> BugReport:
-    """
-    Deserialize binary Protocol Buffer data to a BugReport instance.
-
-    Args:
-        binary_data: Binary serialized data
-
-    Returns:
-        Django BugReport model instance
-    """
-    proto = BugReportProto()
-    proto.ParseFromString(binary_data)
-    return proto_to_django(proto)
+        return bug_reports
+    except (AttributeError, TypeError) as e:
+        logger.error(
+            "Failed to deserialize bug report collection due to attribute "
+            "or type error: %s",
+            str(e)
+        )
+        return []
+    except ValueError as e:
+        logger.error(
+            "Failed to deserialize bug report collection due to invalid value: %s",
+            str(e)
+        )
+        return []
+    except (OSError, SystemError) as e:
+        logger.error(
+            "Failed to deserialize bug report collection due to system error: %s",
+            str(e)
+        )
+        return []

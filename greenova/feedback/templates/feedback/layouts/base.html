@@ -1,50 +1,45 @@
-{% extends "base.html" %}
-{% load static %}
-{% load feedback_tags %}
-
-{% block title %}
-  Greenova Bug Tracker
-{% endblock title %}
-
-{% block body_class %}
-feedback-section
-{% endblock body_class %}
-
-{% block content %}
-  <header>
-    <h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Greenova Bug Tracker</title>
+  </head>
+  <body>
+    <header>
+      <h1>
 Greenova Feedback System
-    </h1>
-    <nav>
-      <ul>
-        <li>
-          <a href="{% url 'dashboard:home' %}">Back to Dashboard</a>
-        </li>
-      </ul>
-    </nav>
-  </header>
-
-  <main class="container">
-    {% if messages %}
-      <div class="messages">
+      </h1>
+      <nav>
         <ul>
-          {% for message in messages %}
-            <li>
-{{ message|safe }}
-            </li>
-          {% endfor %}
+          <li>
+            <a href="/dashboard/">Back to Dashboard</a>
+          </li>
         </ul>
-      </div>
-    {% endif %}
+      </nav>
+    </header>
 
-    {% block feedback_content %}
-      <!-- Content will be inserted in templates that extend this base -->
-    {% endblock feedback_content %}
-  </main>
+    <main>
+      {% if messages %}
+        <div>
+          <ul>
+            {% for message in messages %}
+              <li>
+{{ message|safe }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
 
-  <footer>
-    <p>
+      {% block feedback_content %}
+      {% endblock %}
+    </main>
+
+    <footer>
+      <p>
 Greenova Environmental Management System - Feedback Module
-    </p>
-  </footer>
-{% endblock content %}
+      </p>
+    </footer>
+  </body>
+</html>

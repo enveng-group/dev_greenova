@@ -1,0 +1,38 @@
+{% extends "feedback/layouts/base.html" %}
+{% load feedback_tags %}
+
+{% block feedback_content %}
+  <h2>
+Import Bug Report
+  </h2>
+
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li>
+{{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+    <div>
+      <label for="file">
+Select Protocol Buffer File:
+      </label>
+      <input type="file"
+             id="file"
+             name="file"
+             accept=".pb,application/x-protobuf"
+             required />
+    </div>
+    <div>
+      <button type="submit">
+Import Report
+      </button>
+      <a href="{% url 'feedback:index' %}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

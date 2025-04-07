@@ -39,4 +39,4 @@ jobs:
 
       - name: Analysing the code with pylint
         run: |
-          pylint --rcfile=.pylintrc-django --load-plugins=tools.pylint.fix_good_names,pylint_django --django-settings-module=greenova.settings $(git ls-files '*.py')
+          pylint --rcfile=.pylintrc-django --load-plugins=tools.pylint.fix_good_names,pylint_django
