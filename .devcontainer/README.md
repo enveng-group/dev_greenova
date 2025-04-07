@@ -22,11 +22,11 @@
 
 3. **Start the DevContainer**
 
-   > 🔄 **Important:**
-   > If any changes are made to the `.devcontainer` folder (such as updates to `devcontainer.json` or `Dockerfile`), you must run
-   > **"Rebuild and Reopen in Container"** to apply them.
+   > 🔄 **Important:**  
+   If any changes are made to the `.devcontainer` folder (such as updates to `devcontainer.json` or `Dockerfile`), you must run  
+   **"Rebuild and Reopen in Container"** to apply them.
 
-   - Click the bottom-left blue icon in VS Code → Select `Reopen in Container`
+   - Click the bottom-left blue icon in VS Code → Select `Reopen in Container`  
    - Or press `Ctrl + Shift + P` (or `Cmd + Shift + P` on macOS) and search for `Reopen in Container`
 
 4. **Start coding**
