@@ -1,0 +1,20 @@
+{% extends "feedback/layouts/base.html" %}
+{% load feedback_tags %}
+
+{% block feedback_content %}
+  <h2>
+Submit Bug Report
+  </h2>
+  <div>
+    <p>
+      <strong>OFFICIAL BUG REPORTING CHANNEL</strong>
+    </p>
+    <p>
+This form is the only official method to submit bug reports.
+    </p>
+    <p>
+Fields marked with * are required.
+    </p>
+  </div>
+{% include "feedback/form/form.html" with form=form %}
+{% endblock %}

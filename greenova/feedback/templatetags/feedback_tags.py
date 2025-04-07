@@ -76,16 +76,8 @@ def get_status_description(status: str) -> str:
     Returns:
         A description of the status from the plaintext template
     """
-    status_messages = render_to_string('feedback/status/status_messages.txt')
-    if not status_messages:
-        return ""
-
-    lines = status_messages.split('\n')
-    for line in lines:
-        if line.startswith(status + ':'):
-            return line.split(':', 1)[1].strip()
-
-    return ""
+    from feedback.views import get_status_description as get_desc
+    return get_desc(status)
 
 
 @register.inclusion_tag('feedback/components/bug_tracker_mini.html')

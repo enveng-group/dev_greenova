@@ -199,7 +199,6 @@ MIDDLEWARE = [
     'django_pdb.middleware.PdbMiddleware',
     'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     # 'allauth.usersessions.middleware.UserSessionMiddleware',
-    'chatbot.middleware.ProtobufErrorMiddleware',
 ]
 
 # Authentication settings

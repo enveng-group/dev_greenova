@@ -3,6 +3,7 @@ import logging
 from django.db.models import Q
 
 from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
+from .proto_utils import create_chat_response, parse_chat_response
 
 logger = logging.getLogger(__name__)
 
@@ -106,3 +107,30 @@ class ChatbotService:
 
         # Default response if no match found
         return "I'm sorry, I don't have an answer for that question."
+
+    @staticmethod
+    def serialize_message(message_id, content):
+        """
+        Serialize a message to protocol buffer format.
+
+        Args:
+            message_id: ID of the message
+            content: Message content
+
+        Returns:
+            Serialized message as bytes or None on error
+        """
+        return create_chat_response(message_id, content)
+
+    @staticmethod
+    def deserialize_message(data):
+        """
+        Deserialize a message from protocol buffer format.
+
+        Args:
+            data: Serialized protocol buffer data
+
+        Returns:
+            Deserialized message as dict or None on error
+        """
+        return parse_chat_response(data)
