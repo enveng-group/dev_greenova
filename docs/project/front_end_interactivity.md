@@ -159,11 +159,7 @@ jared
 
 Wednesday and Thursday 10am to 2pm
 
-<<<<<<< HEAD
 give or take last week of May 23rd
-=======
-give or take last week of May 23rd 
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 <@358385377645428737> here is more context with modularising javascript and transitioning to Typescript:
 
@@ -171,10 +167,7 @@ JavaScript/TypeScript Directory Structure Recommendations for Django
 Based on reviewing your JavaScript files, here's a recommended structure to make your scripts more modular and easier to maintain, along with guidance for transitioning to TypeScript.
 
 Recommended Directory Structure
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```plaintext
 /static/js/
 ├── main.js                    # Main entry point that imports and initializes all modules
@@ -226,10 +219,7 @@ Recommended Directory Structure
     ├── htmx.d.ts              # Type definitions for HTMX
     └── hyperscript.d.ts       # Type definitions for Hyperscript
 ```
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 Key Benefits of This Structure
 Improved Separation of Concerns:
 
@@ -252,28 +242,19 @@ Multiple developers can work on different components without conflicts
 Clear ownership of code modules
 Consistent structure across the project
 TypeScript Migration Guidance
-<<<<<<< HEAD
 
 1. Initial Setup
    Add TypeScript to your Django project:
 
-=======
-1. Initial Setup
-Add TypeScript to your Django project:
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```bash
 # Install TypeScript and types for libraries
 npm install --save-dev typescript @types/node
 # For your libraries (if available)
 npm install --save-dev @types/htmx
 ```
-<<<<<<< HEAD
 
 Create a tsconfig.json at project root:
 
-=======
-Create a tsconfig.json at project root:
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```json
 {
   "compilerOptions": {
@@ -298,14 +279,9 @@ Create a tsconfig.json at project root:
   "exclude": ["node_modules"]
 }
 ```
-<<<<<<< HEAD
 
 2. Phased Migration Strategy
    Setup TypeScript Source Directory:
-=======
-2. Phased Migration Strategy
-Setup TypeScript Source Directory:
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 Create a /typescript directory at project root with the same structure as /static/js/
 Configure Django to serve compiled JavaScript from /static/js/dist/
@@ -323,26 +299,16 @@ Configure Build Process:
 
 Add npm scripts for TypeScript compilation
 Set up watch mode for development
-<<<<<<< HEAD
 Add integration with Django's static file collection 3. Django Integration
 Update your Django templates to include the compiled JavaScript:
 
-=======
-Add integration with Django's static file collection
-3. Django Integration
-Update your Django templates to include the compiled JavaScript:
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```html
 {% load static %}
 <script src="{% static 'js/dist/main.js' %}"></script>
 ```
-<<<<<<< HEAD
 
 Set up a build script in package.json:
 
-=======
-Set up a build script in package.json:
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```json
 {
   "scripts": {
@@ -353,7 +319,6 @@ Set up a build script in package.json:
   }
 }
 ```
-<<<<<<< HEAD
 
 4. Webpack Integration (Optional)
    For a more robust build system, consider adding Webpack:
@@ -364,14 +329,6 @@ npm install --save-dev webpack webpack-cli ts-loader
 
 Create a webpack.config.js:
 
-=======
-4. Webpack Integration (Optional)
-For a more robust build system, consider adding Webpack:
-```sh
-npm install --save-dev webpack webpack-cli ts-loader 
-```
-Create a webpack.config.js:
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```js
 const path = require('path');
 
@@ -392,13 +349,8 @@ module.exports = {
       '@core': path.resolve(__dirname, 'typescript/core/'),
       '@components': path.resolve(__dirname, 'typescript/components/'),
       '@features': path.resolve(__dirname, 'typescript/features/'),
-<<<<<<< HEAD
       '@lib': path.resolve(__dirname, 'typescript/lib/'),
     },
-=======
-      '@lib': path.resolve(__dirname, 'typescript/lib/')
-    }
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   },
   output: {
     filename: 'bundle.js',
@@ -406,7 +358,6 @@ module.exports = {
   },
 };
 ```
-<<<<<<< HEAD
 
 5. Tips for TypeScript Migration
    Start with strict mode disabled and gradually enable it as codebase matures
@@ -416,14 +367,3 @@ module.exports = {
    Create utility types for common patterns in your application
    Document public APIs with JSDoc comments for better IDE support
    This structure and migration plan will help organize your JavaScript code better while providing a clear path to TypeScript adoption, improving maintainability and type safety in your Django project.
-=======
-5. Tips for TypeScript Migration
-Start with strict mode disabled and gradually enable it as codebase matures
-Create proper interfaces for your Django API responses
-Use enums for constants that are currently defined as strings
-Add event typing for all event handlers
-Create utility types for common patterns in your application
-Document public APIs with JSDoc comments for better IDE support
-This structure and migration plan will help organize your JavaScript code better while providing a clear path to TypeScript adoption, improving maintainability and type safety in your Django project.
-
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

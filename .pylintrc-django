@@ -1,5 +1,4 @@
 [MASTER]
-<<<<<<< HEAD
 persistent=yes
 suggestion-mode=yes
 unsafe-load-any-extension=no
@@ -9,32 +8,17 @@ django-settings-module=greenova.greenova.settings
 
 # Add project root to Python path
 init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova'); sys.path.insert(0, '/workspaces/greenova/greenova')"
-=======
-load-plugins=pylint_django
-ignore=migrations,venv,.venv
-django-settings-module=greenova.settings
-
-# Add Django to Python path
-init-hook="import sys, os; sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath('${workspaceFolder}'))))"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 [FORMAT]
 max-line-length=88
 
 [MESSAGES CONTROL]
-<<<<<<< HEAD
 disable=no-member,C0111,R0903,C0103
-=======
-disable=C0111,R0903,C0103
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 [SIMILARITIES]
 ignore-comments=yes
 ignore-docstrings=yes
 ignore-imports=yes
-<<<<<<< HEAD
 
 [BASIC]
 good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

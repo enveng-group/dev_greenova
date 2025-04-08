@@ -12,10 +12,7 @@ indent_style = space
 [*.py]
 indent_size = 4
 max_line_length = 88
-<<<<<<< HEAD
 single_quoted_strings = true
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 # Django HTML templates
 [*.{html,htm,djhtml}]

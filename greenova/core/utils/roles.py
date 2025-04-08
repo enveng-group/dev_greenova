@@ -85,11 +85,7 @@ def get_role_display(role_value: str) -> str:
 
 def get_role_color(role_value: str) -> str:
     """Get the display color for a role value."""
-<<<<<<< HEAD
     return ROLE_COLORS.get(role_value, 'default')
-=======
-    return ROLE_COLORS.get(role_value, "default")
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 def get_role_choices() -> List[Tuple[str, str]]:
     """

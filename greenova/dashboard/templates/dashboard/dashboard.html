@@ -15,7 +15,7 @@
   <article class="dashboard-container"
            data-hx-ext="class-tools path-deps"
            data-classes="add fade-in">
-    {% include "dashboard/partials/dashboard_content.html" %}
+{% include "dashboard/partials/dashboard_content.html" %}
 
   </article>
 {% endblock content %}
@@ -34,8 +34,8 @@
     <p>
       Need help? Contact
       <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
-      | <a href="{% url 'feedback:index' %}">Click here to submit feedback</a>
-    </p>
-  </footer>
+              | <a href="{% url 'feedback:index' %}">Click here to submit feedback</a>
+  </p>
+</footer>
   {{ block.super }}
 {% endblock footer %}

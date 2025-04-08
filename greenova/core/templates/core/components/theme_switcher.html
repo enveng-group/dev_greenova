@@ -4,15 +4,7 @@
       <li>
         <a href="#"
            data-theme-switcher="{{ theme_value }}"
-<<<<<<< HEAD
            _="on click set $theme to '{{ theme_value }}' then if '{{ theme_value }}' != 'auto' set document.documentElement.dataset.theme to '{{ theme_value }}' else if window.matchMedia('(prefers-color-scheme: dark)').matches set document.documentElement.dataset.theme to 'dark' else set document.documentElement.dataset.theme to 'light' end then localStorage.setItem('theme', $theme) then call event.preventDefault()">
-=======
-           _="on click
-              set $theme to '{{ theme_value }}'
-              set document.documentElement.dataset.theme to '{{ theme_value }}' != 'auto' ? '{{ theme_value }}' : prefersDark ? 'dark' : 'light'
-              localStorage.setItem('theme', $theme)
-              call event.preventDefault()">
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
           {{ theme_name }}
         </a>
       </li>

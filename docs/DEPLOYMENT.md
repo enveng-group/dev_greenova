@@ -9,10 +9,7 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 ```
 
 **Benefits of this approach:**
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 - End-to-end encryption (HTTPS everywhere)
 - DDoS protection via Cloudflare
 - Performance optimization through Cloudflare's edge network
@@ -31,39 +28,27 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 ## Installation Steps
 
 1. Create virtual environment:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
 
 2. Install required packages:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    pip install django==4.2.20 gunicorn==23.0.0 psycopg2-binary==2.9.9
    ```
 
 3. Clone your Django project:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    git clone https://github.com/yourusername/greenova.git
    cd greenova
    ```
 
 4. Install project dependencies:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    pip install -r requirements.txt
    ```
@@ -114,28 +99,19 @@ Address any warnings or errors reported by this command.
 ## Setting Up Gunicorn
 
 1. Test Gunicorn locally:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    gunicorn --bind 0.0.0.0:8000 yourproject.wsgi
    ```
 
 2. Create a systemd service file for Gunicorn:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo nano /etc/systemd/system/gunicorn.service
    ```
 
 3. Add the following configuration:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```ini
    [Unit]
    Description=gunicorn daemon for greenova
@@ -159,19 +135,13 @@ Address any warnings or errors reported by this command.
    ```
 
 4. Create a socket file:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo nano /etc/systemd/system/gunicorn.socket
    ```
 
 5. Add the following configuration:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```ini
    [Unit]
    Description=gunicorn socket
@@ -187,20 +157,14 @@ Address any warnings or errors reported by this command.
    ```
 
 6. Create log directories:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo mkdir -p /var/log/gunicorn
    sudo chown www-data:www-data /var/log/gunicorn
    ```
 
 7. Enable and start the Gunicorn socket:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo systemctl enable gunicorn.socket
    sudo systemctl start gunicorn.socket
@@ -209,29 +173,20 @@ Address any warnings or errors reported by this command.
 ## Setting Up Nginx
 
 1. Install Nginx:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo apt-get update
    sudo apt-get install nginx
    ```
 
 2. Create a new Nginx site configuration:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo nano /etc/nginx/sites-available/greenova
    ```
 
 3. Add the following configuration:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```nginx
    server {
        listen 80;
@@ -262,10 +217,7 @@ Address any warnings or errors reported by this command.
    ```
 
 4. Enable the site and restart Nginx:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo ln -s /etc/nginx/sites-available/greenova /etc/nginx/sites-enabled/
    sudo systemctl restart nginx
@@ -274,19 +226,13 @@ Address any warnings or errors reported by this command.
 ## Setting Up SSL with Let's Encrypt
 
 1. Install Certbot:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo apt-get install certbot python3-certbot-nginx
    ```
 
 2. Obtain an SSL certificate:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
    ```
@@ -298,34 +244,22 @@ Address any warnings or errors reported by this command.
 ## Cloudflare Configuration
 
 1. Add your domain to Cloudflare:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    - Create a Cloudflare account if you don't have one
    - Add your domain and follow the instructions to update nameservers
 
 2. Configure SSL/TLS settings:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    - Go to SSL/TLS tab in Cloudflare dashboard
    - Set SSL mode to "Full (strict)" since you have a valid certificate on your origin server
 
 3. Configure SSL/TLS settings:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    - Enable "Always Use HTTPS" under SSL/TLS > Edge Certificates
    - Enable HSTS under SSL/TLS > Edge Certificates > HSTS
 
 4. Set up Page Rules (optional):
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    - Create rules for caching static content
    - Force HTTPS for all URLs
 
@@ -344,20 +278,14 @@ python manage.py collectstatic
 ## Finalizing Deployment
 
 1. Set proper file permissions:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo chown -R www-data:www-data /path/to/greenova
    sudo chmod -R 755 /path/to/greenova
    ```
 
 2. Restart all services:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo systemctl restart gunicorn
    sudo systemctl restart nginx
@@ -396,19 +324,13 @@ Add the following configuration:
 ### Backup Strategy
 
 1. Database backups:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sqlite3 /path/to/db.sqlite3 .dump > backup_$(date +%Y%m%d).sql
    ```
 
 2. Media files backup:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    tar -czf media_backup_$(date +%Y%m%d).tar.gz /path/to/media/
    ```
@@ -418,56 +340,38 @@ Add the following configuration:
 ### Updating Your Application
 
 1. Pull the latest code:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    cd /path/to/greenova
    git pull origin main
    ```
 
 2. Activate the virtual environment:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    source /path/to/venv/bin/activate
    ```
 
 3. Install any new dependencies:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    pip install -r requirements.txt
    ```
 
 4. Apply migrations:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    python manage.py migrate
    ```
 
 5. Collect static files:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    python manage.py collectstatic --noinput
    ```
 
 6. Restart services:
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    ```bash
    sudo systemctl restart gunicorn
    ```
@@ -475,28 +379,19 @@ Add the following configuration:
 ## Troubleshooting
 
 ### Check Gunicorn Status
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```bash
 sudo systemctl status gunicorn
 ```
 
 ### Check Nginx Status
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```bash
 sudo systemctl status nginx
 ```
 
 ### Check Logs
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 ```bash
 sudo tail -f /var/log/nginx/error.log
 sudo tail -f /var/log/gunicorn/error.log
@@ -505,19 +400,13 @@ sudo tail -f /var/log/gunicorn/error.log
 ### Common Issues
 
 1. **502 Bad Gateway**
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    - Check if Gunicorn is running
    - Verify socket permissions
    - Check firewall settings
 
 2. **Static files not loading**
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
    - Verify STATIC_ROOT path
    - Check Nginx configuration
    - Run collectstatic again

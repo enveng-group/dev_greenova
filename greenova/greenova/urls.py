@@ -28,7 +28,6 @@ def home_router(
     return redirect('dashboard:home')
 
 # This is a view that will trigger an error
-<<<<<<< HEAD
 def trigger_error(request: HttpRequest) -> None:
     """Trigger an error for Sentry testing."""
     logger.debug('Triggering error for Sentry testing - User: %s', request.user)
@@ -39,13 +38,6 @@ def trigger_error(request: HttpRequest) -> None:
 
 urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('__reload__/', include('django_browser_reload.urls')),
-=======
-def trigger_error(request):
-    division_by_zero = 1 / 0
-
-urlpatterns: List[Union[URLPattern, URLResolver]] = [
-    path("__reload__/", include("django_browser_reload.urls")),
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     # Landing page should be first to take precedence
     path('', home_router, name='home'),
     path('landing/', include('landing.urls')),
@@ -53,7 +45,6 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
 
     # Authentication URLs
     path('authentication/', include('allauth.urls')),
-<<<<<<< HEAD
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),
     path('chatbot/', include('chatbot.urls', namespace='chatbot')),
     path('users/', include('users.urls', namespace='users')),
@@ -69,21 +60,6 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('responsibility/', include('responsibility.urls')),
     # Add feedback URLs
     path('feedback/', include('feedback.urls', namespace='feedback')),
-=======
-    path('dashboard/', include('dashboard.urls', namespace="dashboard")),
-    path('chatbot/', include('chatbot.urls', namespace="chatbot")),
-    path('users/', include('users.urls', namespace="users")),
-    path('projects/', include('projects.urls')),
-    path('obligations/', include('obligations.urls')),
-    # Use a different namespace for the /chat/ URL pattern
-    path('chat/', include('chatbot.urls', namespace="chat")),
-    path('mechanisms/', include('mechanisms.urls')),
-    path('procedures/', include('procedures.urls')),
-    # Add company URLs
-    path('company/', include('company.urls', namespace="company")),
-    # Add responsibility URLs - create a new file for this
-    path('responsibility/', include('responsibility.urls')),
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     # Sentry error page to verify Sentry is working
     path('sentry-debug/', trigger_error),
 ] + debug_toolbar_urls()

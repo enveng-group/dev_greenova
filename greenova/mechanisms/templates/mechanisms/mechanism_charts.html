@@ -2,7 +2,6 @@
 {% load mechanism_tags %}
 
 {% if mechanism_charts %}
-<<<<<<< HEAD
 
   <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
@@ -105,89 +104,6 @@
   <div role="status" class="notice">
     <p>Please select a project to view mechanism charts.</p>
   </div>
-=======
-    <section class="charts-section" aria-labelledby="charts-heading">
-        <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
-        <!-- Chart Navigation -->
-        <nav class="chart-nav" aria-label="Mechanism charts navigation">
-            <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
-            <button type="button"
-                    onclick="scrollCharts('right')"
-                    aria-label="Scroll right">→</button>
-        </nav>
-        <!-- Chart Gallery -->
-        <div id="chartGallery"
-             class="chart-gallery"
-             role="region"
-             aria-label="Chart gallery">
-            {% for mech in mechanism_charts %}
-                <article class="mechanism-chart">
-                    <header>
-                        <h3>{{ mech.name }}</h3>
-                    </header>
-                    <figure>
-                        <figcaption>{{ mech.name }} Status Distribution</figcaption>
-                        <img src="data:image/png;base64,{{ mech.image_data }}"
-                             alt="Chart for {{ mech.name }}"
-                             class="chart-image"
-                             width="400"
-                             height="400" />
-                    </figure>
-                </article>
-            {% endfor %}
-        </div>
-        {% if table_data %}
-            <!-- Detailed Data Table -->
-            <article class="data-table">
-                <header>
-                    <h3>Detailed Statistics</h3>
-                </header>
-                <div class="table-container">
-                    <table role="grid">
-                        <thead>
-                            <tr>
-                                <th>Mechanism</th>
-                                <th>Not Started</th>
-                                <th>In Progress</th>
-                                <th>Completed</th>
-                                <th>Overdue</th>
-                                <th>Total</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in table_data %}
-                                <tr>
-                                    <td>{{ item.name }}</td>
-                                    <td>{{ item.not_started }}</td>
-                                    <td>{{ item.in_progress }}</td>
-                                    <td>{{ item.completed }}</td>
-                                    <td>{{ item.overdue }}</td>
-                                    <td>{{ item.total }}</td>
-                                    <td>
-                                        {% if item.id %}
-                                            <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
-                                               class="btn-secondary"
-                                               aria-label="View details for {{ item.name }}">View</a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </article>
-        {% endif %}
-    </section>
-{% elif error %}
-    <div role="alert" class="notice error">
-        <p>{{ error }}</p>
-    </div>
-{% else %}
-    <div role="status" class="notice">
-        <p>Please select a project to view mechanism charts.</p>
-    </div>
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 {% endif %}
 <script>
   function scrollCharts(direction) {

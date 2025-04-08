@@ -1,6 +1,5 @@
 [MASTER]
 # Base configuration for all Python files
-<<<<<<< HEAD
 persistent = yes
 suggestion-mode = yes
 unsafe-load-any-extension = no
@@ -22,18 +21,3 @@ min-similarity-lines = 12
 
 [BASIC]
 good-names = _, i, j, k, e, f, db, id, pk, setUp, tearDown, maxDiff, Meta
-=======
-load-plugins=
-ignore=migrations,venv,.venv
-
-[FORMAT]
-max-line-length=88
-
-[MESSAGES CONTROL]
-disable=C0111,R0903,C0103
-
-[SIMILARITIES]
-ignore-comments=yes
-ignore-docstrings=yes
-ignore-imports=yes
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

@@ -77,32 +77,7 @@
   /* Notification Secondary Low - Use Cases: outline of notification marker */
   --greenova-notif-secondary-low: #b1e5a4;
   --pico-mark-background-color: var(--greenova-notif-secondary-low);
-<<<<<<< HEAD
   --pico-mark-color: #000;
-=======
-  --pico-mark-color: #000000;
-
-
-  /**************************************************
-    *                                                *
-    *                  Chat colours                  *
-    *                                                *
-    **************************************************/
-  --greenova-chat-user-background: #dedeff;
-  --greenova-chat-user-color: #000000;
-
-  --greenova-chat-bot-background: #9999ff;
-  --greenova-chat-bot-color: #000000;
-
-
-  /**************************************************
-    **************************************************/
-  --greenova-chat-user-background: #dedeff;
-  --greenova-chat-user-color: #000000;
-
-  --greenova-chat-bot-background: #9999ff;
-  --greenova-chat-bot-color: #000000;
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
   /**************************************************
     *                                                *
@@ -121,11 +96,5 @@
     **************************************************/
 
   /* Data Null - Use Cases: Colour for when data points are out of focus of the chart. */
-<<<<<<< HEAD
   --greenova-data-null: #9c9f93;
 }
-=======
-  --greenova-data-null: #9C9F93;
-
-}
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

@@ -5,17 +5,10 @@
         <!-- Chart Navigation -->
         <nav class="chart-nav">
             <button type="button"
-<<<<<<< HEAD
                     onclick="scrollCharts('chartGallery', 'left')"
                     aria-label="Scroll left through charts">←</button>
             <button type="button"
                     onclick="scrollCharts('chartGallery', 'right')"
-=======
-                    onclick="scrollCharts('left')"
-                    aria-label="Scroll left through charts">←</button>
-            <button type="button"
-                    onclick="scrollCharts('right')"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
                     aria-label="Scroll right through charts">→</button>
         </nav>
         <!-- Chart Gallery -->
@@ -76,18 +69,4 @@
             </section>
         {% endif %}
     </section>
-<<<<<<< HEAD
-=======
-    <script>
-    function scrollCharts(direction) {
-      const container = document.getElementById('chartGallery');
-      const scrollAmount = 350;
-      if (direction === 'left') {
-        container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-      } else {
-        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      }
-    }
-    </script>
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 {% endblock content %}

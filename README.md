@@ -1,18 +1,10 @@
 # Greenova
 
-<<<<<<< HEAD
 [![Python 3.9.21](https://img.shields.io/badge/python-3.9.21-blue.svg)](https://www.python.org/downloads/release/python-3921/)
 [![Django 4.1.13](https://img.shields.io/badge/django-4.1.13-green.svg)](https://www.djangoproject.com/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 ## 📋 Overview
-=======
-A Django-based web application focused on HTML-first development and
-progressive enhancement strategies.
-
-[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://www.djlint.com)
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 Greenova is a Django web application designed for environmental management,
 focusing on tracking environmental obligations and compliance requirements.
@@ -28,28 +20,7 @@ their environmental responsibilities efficiently.
 - User responsibility assignment
 - Accessible, HTML-first interface
 
-<<<<<<< HEAD
 ## 🛠️ Technology Stack
-=======
-Greenova is a Django web application that prioritizes semantic HTML structure,
-progressive enhancement, and accessibility. The project follows data-oriented
-programming principles and provides a modular framework for building robust web
-applications.
-
-## ✨ Features
-
-- HTML-first development approach
-- Progressive enhancement layers
-- Semantic HTML structure with ARIA support
-- Advanced dashboard functionality
-- User profile management
-- Dynamic charting with Matplotlib
-- HTMX and Hyperscript for interactivity
-- Comprehensive authentication system
-- Modular, scalable architecture
-
-## 🛠️ Tech Stack
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 ### Backend
 
