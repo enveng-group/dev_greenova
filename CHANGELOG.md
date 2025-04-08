@@ -41,29 +41,69 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Feedback Module Enhancements**
-  - Added user feedback system with improved project infrastructure.
-  - Enhanced chatbot functionality and feedback handling.
-- **Development Tooling Updates**
-  - Updated development tooling and configurations for better linting and CI/CD
-    pipeline.
-  - Added support for updated eslint version 9.24.0.
+- **Development Infrastructure**
+
+  - Updated development tooling with enhanced pre-commit hooks and custom
+    pylint extensions.
+  - Configured mypy with django-stubs for better type checking.
+  - Standardized editor configuration and VSCode settings.
+  - Improved devcontainer configuration with Snyk CLI and Git features.
+  - Integrated Sentry for error tracking.
+  - Added direnv support for environment variable management.
+  - Configured Prettier for consistent code formatting.
+  - Migrated to dotenv-vault for environment management.
+
+- **UI/UX Improvements**
+
+  - Enhanced landing page with mission statement and key features sections.
+  - Implemented theme switching functionality with WCAG 2.1 AA compliance.
+  - Refined dashboard interface, navigation, and component organization.
+  - Added responsive layouts and improved semantic HTML structure.
+  - Optimized chart generation with centralized logic in `figures.py`.
+  - Reorganized CSS directory structure for better organization.
+  - Enhanced breadcrumb component with better styling and accessibility.
+
+- **New Features**
+  - **Company Management Module**
+    - Company models, views, and templates.
+    - Document management capabilities.
+    - Member role management.
+    - Navigation integration.
+    - CSS styling for company components.
+  - **User Profile Functionality**
+    - Complete user profile management.
+    - Password change capability.
+    - Admin interfaces for user management.
+  - **Chatbot Development**
+    - Implemented chatbot conversation management.
+    - Added chatbot message styles and variables.
+    - Chatbot serialization and protocol buffer support.
 
 ### Changed
 
-- **Refactoring**
-  - Refactored and enhanced Greenova project structure and functionality.
-  - Cleaned up configuration files and updated requirements.
-  - Improved error handling and optimized CSS structure.
-  - Updated mechanisms and projects view implementations.
+- Refactored code structure to improve testability.
+- Enhanced front-end interactivity documentation.
+- Updated environment configuration documentation and technical guides.
+- Restructured `docs/resources` with logical subdirectories.
+- Added commit message templates, code review templates, and GitHub issue
+  templates.
+- Updated packages for compatibility with Python 3.9.21 and Django 4.1.13.
+- Downgraded matplotlib version for compatibility.
+- Revised environment variable configurations in `.env.vault`.
+- Included pre-commit dependency in `requirements.txt`.
 
 ### Fixed
 
-- Resolved database operational errors and improved project configuration.
+- Comprehensive test suite execution with pytest.
+- Manual testing of new company management features.
+- User profile functionality verification.
+- Chatbot interaction testing.
+- Theme switching and accessibility compliance validation.
+- Cross-browser compatibility testing.
 
 ### Security
 
-- None
+- Integrated Sentry for error tracking.
 
 ## [v0.0.4] - Pre-release
 
