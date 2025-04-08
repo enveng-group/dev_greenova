@@ -28,11 +28,40 @@ All notable changes to this project will be documented in this file.
 
 - None
 
-[Unreleased]: https://github.com/username/greenova/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/username/greenova/compare/v0.0.5...HEAD
+[v0.0.5]: https://github.com/username/greenova/compare/v0.0.4...v0.0.5
 [v0.0.4]: https://github.com/username/greenova/compare/v0.0.3...v0.0.4
 [v0.0.3]: https://github.com/username/greenova/compare/v0.0.2...v0.0.3
 [v0.0.2]: https://github.com/username/greenova/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/username/greenova/releases/tag/v0.0.1
+
+- None
+
+## [v0.0.5] - Pre-release
+
+### Added
+
+- **Feedback Module Enhancements**
+  - Added user feedback system with improved project infrastructure.
+  - Enhanced chatbot functionality and feedback handling.
+- **Development Tooling Updates**
+  - Updated development tooling and configurations for better linting and CI/CD
+    pipeline.
+  - Added support for updated eslint version 9.24.0.
+
+### Changed
+
+- **Refactoring**
+  - Refactored and enhanced Greenova project structure and functionality.
+  - Cleaned up configuration files and updated requirements.
+  - Improved error handling and optimized CSS structure.
+  - Updated mechanisms and projects view implementations.
+
+### Fixed
+
+- Resolved database operational errors and improved project configuration.
+
+### Security
 
 - None
 

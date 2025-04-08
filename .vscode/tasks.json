@@ -742,6 +742,18 @@
       "type": "shell"
     },
     {
+      "args": ["-c", "cd greenova && python3 manage.py compile_protos"],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Django: Compile Proto",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
       "args": ["-c", "npx protolint lint --fix ."],
       "command": "/bin/sh",
       "group": "none",
