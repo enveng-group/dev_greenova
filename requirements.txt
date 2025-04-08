@@ -44,7 +44,7 @@ django-htmx==1.23.0
 django-hyperscript==1.5.2
 django-jinja==2.11.0
 django-matplotlib==0.1
-django-pb-model==0.3.3
+django-pb-model==0.3.2
 django-pdb==0.6.2
 django-select2==8.2.3
 django-silk==5.3.2
@@ -68,7 +68,7 @@ grpcio-tools==1.59.0
 h11==0.14.0
 httpcore==1.0.7
 httpx==0.28.1
-hyperscript-dump==1.0.4
+hyperscript-dump==1.0.3
 identify==2.6.9
 idna==3.10
 importlib_metadata==8.6.1
@@ -149,7 +149,6 @@ Pygments==2.19.1
 PyJWT==2.10.1
 pylint==3.3.6
 pylint-django==2.6.1
-pylint-django-settings==1.0.0
 pylint-plugin-utils==0.8.2
 pyparsing==3.2.3
 PySocks==1.7.1
