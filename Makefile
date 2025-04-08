@@ -26,7 +26,7 @@ venv:
 install:
 	@echo "Installing dependencies..."
 	$(PYTHON) -m pip install --upgrade pip
-	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINTS)
+	$(PIP) install -r $(REQUIREMENTS) -c $(CONSTRAINTS) --no-deps
 	@echo "Dependencies installed."
 
 #Freeze installed dependencies to requirements.txt
@@ -131,7 +131,7 @@ sync:
 
 #Update recurring inspection dates
 update-recurring-dates:
-	$(CD_CMD) python3 manage.py update-recurring-inspection-dates
+	$(CD_CMD) python3 manage.py update_recurring_inspection_dates
 
 #Normalize existing frequencies
 normalize-frequencies:
