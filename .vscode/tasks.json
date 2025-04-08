@@ -112,14 +112,6 @@
           "PYTHONPATH": "/workspaces/greenova"
         }
       },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "Python: Lint with pylint",
-      "type": "shell",
-      "command": "pylint",
-      "args": ["${file}"],
       "presentation": {
         "panel": "shared",
         "reveal": "always"
@@ -128,6 +120,376 @@
         "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
+          "file": 1,
+          "line": 2,
+          "message": 4,
+          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
+          "severity": 3
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "bandit -r \"${file}\" --skip B101"],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Python: Security check with bandit",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "dependsOn": [
+        "Python: Sort imports with isort",
+        "Python: Format with autopep8",
+        "Python: Lint with pylint",
+        "Python: Type check with mypy (standard)",
+        "Python: Security check with bandit"
+      ],
+      "dependsOrder": "sequence",
+      "group": "none",
+      "label": "Python: Fix all",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "args": [
+        "-c",
+        "pylint --rcfile=\"${workspaceFolder}/.pylintrc\" \"${file}\""
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Python: Lint with pylint (standard)",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": {
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "owner": "python",
+        "pattern": {
+          "column": 3,
+          "file": 1,
+          "line": 2,
+          "message": 5,
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
+          "severity": 4
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "pylint --rcfile=\"${workspaceFolder}/.pylintrc-django\" --load-plugins=pylint_django \"${file}\""
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Python: Lint with pylint (Django)",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": {
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "owner": "python",
+        "pattern": {
+          "column": 3,
+          "file": 1,
+          "line": 2,
+          "message": 5,
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
+          "severity": 4
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "dependsOn": [
+        "Python: Sort imports with isort",
+        "Python: Format with autopep8",
+        "Python: Lint with pylint (standard)",
+        "Python: Type check with mypy (standard)"
+      ],
+      "dependsOrder": "sequence",
+      "group": "none",
+      "label": "Python: Fix all (standard)",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "dependsOn": [
+        "Python: Sort imports with isort",
+        "Python: Format with autopep8",
+        "Python: Lint with pylint (Django)",
+        "Python: Type check with mypy (Django)",
+        "Python: Security check with bandit"
+      ],
+      "dependsOrder": "sequence",
+      "group": "none",
+      "label": "Python: Fix all (Django)",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "args": [
+        "-c",
+        "mypy --no-config --ignore-missing-imports --disallow-untyped-defs --no-implicit-optional \"${file}\""
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Python: Type check with mypy (config files)",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": {
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "owner": "python",
+        "pattern": {
+          "file": 1,
+          "line": 2,
+          "message": 4,
+          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
+          "severity": 3
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "djlint \"${file}\" --reformat"],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "HTML: Format with djlint",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "djlint \"${file}\""],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "HTML: Lint with djlint",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": {
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "owner": "djlint",
+        "pattern": {
+          "column": 3,
+          "file": 1,
+          "line": 2,
+          "message": 5,
+          "regexp": "^(.+):(\\d+):(\\d+):\\s+(\\w+)\\s+(.+)$",
+          "severity": 4
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "npx prettier --write \"${file}\""],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "JavaScript: Format with prettier",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "npx eslint \"${file}\""],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "JavaScript: Lint with eslint",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "npx eslint --fix \"${file}\""],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "JavaScript: Fix eslint issues",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": ["$eslint-stylish"],
+      "type": "shell"
+    },
+    {
+      "dependsOn": [
+        "JavaScript: Format with prettier",
+        "JavaScript: Fix eslint issues"
+      ],
+      "dependsOrder": "sequence",
+      "group": "none",
+      "label": "JavaScript: Fix all",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "args": ["-c", "npx prettier --write \"${file}\""],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "CSS: Format with prettier",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "npx stylelint \"${file}\" --config \"${workspaceFolder}/stylelint.config.js\""
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "CSS: Lint with stylelint",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": {
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "owner": "stylelint",
+        "pattern": {
+          "column": 3,
+          "file": 1,
+          "line": 2,
+          "message": 5,
+          "regexp": "^([^:]+):(\\d+):(\\d+):\\s+(.+)\\s+(.+)$",
+          "severity": 4
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "npx stylelint \"${file}\" --config \"${workspaceFolder}/stylelint.config.js\" --fix"
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "CSS: Fix stylelint issues",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "dependsOn": ["CSS: Format with prettier", "CSS: Fix stylelint issues"],
+      "dependsOrder": "sequence",
+      "group": "none",
+      "label": "CSS: Fix all",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "args": ["-c", "npx prettier --write \"${file}\""],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "JSON: Format with prettier",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "npx prettier --config \"${workspaceFolder}/.prettierrc\" --write \"${file}\""
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "YAML: Format with prettier",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "npx prettier --write \"${file}\""],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Markdown: Format with prettier",
+      "presentation": {
+        "clear": true,
+        "panel": "shared",
+        "reveal": "silent"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "/usr/local/share/nvm/current/bin/markdownlint-cli2 --fix \"${file}\""
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Markdown: Lint with markdownlint",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": {
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "owner": "markdownlint",
+        "pattern": {
+          "column": 3,
+          "file": 1,
+          "line": 2,
+          "message": 4,
+          "regexp": "^(.+?):(\\d+)(?::(\\d+))? (.+)$"
+        }
+      },
+      "type": "shell"
+    },
+    {
       "dependsOn": [
         "Markdown: Format with prettier",
         "Markdown: Lint with markdownlint"
