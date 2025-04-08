@@ -10,6 +10,7 @@ import os
 import shutil
 # nosec B404 - subprocess is necessary but used with all security precautions
 import subprocess  # nosec B404
+from pathlib import Path
 from shlex import quote
 from subprocess import (PIPE, CalledProcessError, CompletedProcess,  # nosec B404
                         TimeoutExpired)
@@ -56,7 +57,9 @@ class Command(BaseCommand):
             app_configs = apps.get_app_configs()
             for app_config in app_configs:
                 # Skip Django's built-in apps
-                if not app_config.path.startswith(settings.BASE_DIR):
+                base_dir_str = str(settings.BASE_DIR)
+                app_path_str = str(app_config.path)
+                if not app_path_str.startswith(base_dir_str):
                     continue
                 self.process_app(app_config, force)
 
@@ -254,6 +257,24 @@ class Command(BaseCommand):
             shell=False,  # nosec B603
             timeout=timeout
         )
+
+    def _verify_generated_file(self, proto_file, output_dir):
+        """Verify that the compiled protobuf file was generated successfully."""
+        base_name = os.path.splitext(proto_file)[0]
+        expected_output = os.path.join(output_dir, f"{base_name}_pb2.py")
+
+        if not os.path.exists(expected_output):
+            self.stdout.write(
+                self.style.ERROR(
+                    f"Expected output file {expected_output} was not generated"
+                )
+            )
+            return False
+
+        self.stdout.write(
+            self.style.SUCCESS(f"Successfully compiled {proto_file}")
+        )
+        return True
 
     def _handle_compilation_error(self, proto_file, error):
         """Handle errors during proto file compilation."""

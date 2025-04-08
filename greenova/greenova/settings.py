@@ -196,7 +196,7 @@ MIDDLEWARE = [
     'django_htmx.middleware.HtmxMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',  # Debug after core middleware
     'django_browser_reload.middleware.BrowserReloadMiddleware',
-    'django_pdb.middleware.PdbMiddleware',
+    # 'django_pdb.middleware.PdbMiddleware',
     'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     # 'allauth.usersessions.middleware.UserSessionMiddleware',
 ]

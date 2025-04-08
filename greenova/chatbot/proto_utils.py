@@ -8,7 +8,6 @@ This module provides serialization and deserialization functions for
 converting between Django models and Protocol Buffer messages in the
 chatbot application.
 """
-import datetime
 import logging
 import os
 import sys
@@ -21,9 +20,26 @@ from django.utils import timezone
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
+# Create minimal stubs for the protocol buffer classes
+class DummyMessage:
+    """Stub class used when protocol buffers are not available."""
+
+    def SerializeToString(self):
+        return b''
+
+    def ParseFromString(self, data):
+        pass
+
 # Import generated protobuf modules with improved error handling
 try:
-    from .proto import chatbot_pb2
+    # First try importing from the top-level module
+    try:
+        import chatbot_pb2
+        logger.info("Successfully imported chatbot_pb2 from top-level")
+    except ImportError:
+        # If that fails, try importing from the proto subdirectory
+        from chatbot.proto import chatbot_pb2
+        logger.info("Successfully imported chatbot_pb2 from proto package")
 except ImportError:
     logger.error("Failed to import chatbot_pb2. Protocol buffer definition missing.")
 
@@ -40,12 +56,10 @@ except ImportError:
         logger.error("chatbot.proto file not found in the proto directory.")
 
     # Create a minimal stub for the module to allow Django to continue loading
-    from types import ModuleType
-    chatbot_pb2 = ModuleType('chatbot_pb2')
-    sys.modules['chatbot.proto.chatbot_pb2'] = chatbot_pb2
+    chatbot_pb2 = type('chatbot_pb2', (), {})
 
     # Define minimal classes needed for type hinting
-    class ChatMessage:
+    class ChatMessage(DummyMessage):
         class MessageType:
             MESSAGE_TYPE_TEXT_UNSPECIFIED = 0
             MESSAGE_TYPE_IMAGE = 1
@@ -57,27 +71,15 @@ except ImportError:
             self.timestamp = 0
             self.type = self.MessageType.MESSAGE_TYPE_TEXT_UNSPECIFIED
 
-        def SerializeToString(self):
-            return b''
-
-        def ParseFromString(self, data):
-            pass
-
-    class ChatResponse:
-        def SerializeToString(self):
-            return b''
-
-        def ParseFromString(self, data):
-            pass
+    class ChatResponse(DummyMessage):
+        def __init__(self):
+            self.message_id = ""
+            self.content = ""
+            self.timestamp = 0
 
     chatbot_pb2.ChatMessage = ChatMessage
     chatbot_pb2.ChatResponse = ChatResponse
 
-try:
-    from . import chatbot_pb2
-except ImportError:
-    logger.error("chatbot_pb2 module not found. Ensure to compile the protobuf files.")
-    chatbot_pb2 = None
 
 def serialize_chat_message(chat_message) -> Optional[bytes]:
     """
@@ -95,48 +97,16 @@ def serialize_chat_message(chat_message) -> Optional[bytes]:
 
         # Set basic fields
         if hasattr(chat_message, 'user') and chat_message.user:
-            # Initialize attributes properly
-            proto = build_chat_message_proto(
-                user_id=str(chat_message.user.id),
-                content=chat_message.content,
-                timestamp=(
-                    int(chat_message.timestamp.timestamp())
-                    if hasattr(chat_message, 'timestamp') else None
-                ),
-                message_type=(
-                    chatbot_pb2.ChatMessage.MessageType.MESSAGE_TYPE_TEXT_UNSPECIFIED
-                )
-            )
-        else:
-            # If no user, still set other attributes
-            timestamp = None
-            if hasattr(chat_message, 'timestamp'):
-                timestamp = int(chat_message.timestamp.timestamp())
+            proto.user_id = str(chat_message.user.id)
 
-            message_type = (
-                chatbot_pb2.ChatMessage.MessageType.MESSAGE_TYPE_TEXT_UNSPECIFIED
-            )
-
-            proto = build_chat_message_proto(
-                user_id=None,
-                content=chat_message.content,
-                timestamp=timestamp,
-                message_type=message_type
-            )
+        proto.content = chat_message.content
+        proto.timestamp = int(chat_message.timestamp.timestamp())
+        proto.type = chatbot_pb2.ChatMessage.MessageType.MESSAGE_TYPE_TEXT_UNSPECIFIED
 
         # Serialize to bytes
         return proto.SerializeToString()
-    except ValueError as e:
-        logger.error("Value error during chat message serialization: %s", str(e))
-        return None
-    except AttributeError as e:
-        logger.error("Attribute error during chat message serialization: %s", str(e))
-        return None
-    except TypeError as e:
-        logger.error("Type error during chat message serialization: %s", str(e))
-        return None
-    except (OverflowError, MemoryError, RuntimeError) as e:
-        logger.error("Runtime error during chat message serialization: %s", str(e))
+    except Exception as e:
+        logger.error("Error during chat message serialization: %s", str(e))
         return None
 
 
@@ -192,29 +162,19 @@ def deserialize_chat_message(data: bytes) -> Optional[dict]:
         # Add user if present
         if proto.user_id:
             try:
-                user = User.objects.get(id=int(proto.user_id))
-                message_dict['user'] = user
-            except (User.DoesNotExist, ValueError):
+                message_dict['user'] = User.objects.get(id=proto.user_id)
+            except User.DoesNotExist:
                 logger.warning("User with ID %s not found", proto.user_id)
 
         # Add timestamp if present
         if proto.timestamp:
-            message_dict['timestamp'] = timezone.make_aware(
-                datetime.datetime.fromtimestamp(proto.timestamp)
+            message_dict['timestamp'] = timezone.datetime.fromtimestamp(
+                proto.timestamp, tz=timezone.get_current_timezone()
             )
 
         return message_dict
-    except ValueError as e:
-        logger.error("Value error during message deserialization: %s", str(e))
-        return None
-    except AttributeError as e:
-        logger.error("Attribute error during message deserialization: %s", str(e))
-        return None
-    except TypeError as e:
-        logger.error("Type error during message deserialization: %s", str(e))
-        return None
-    except (KeyError, IndexError, OverflowError) as e:
-        logger.error("Data structure error during message deserialization: %s", str(e))
+    except Exception as e:
+        logger.error("Error during message deserialization: %s", str(e))
         return None
 
 
@@ -234,7 +194,7 @@ def create_chat_response(message_id: str, content: str) -> Optional[bytes]:
         proto = chatbot_pb2.ChatResponse()
 
         # Set fields
-        proto.message_id = message_id
+        proto.message_id = str(message_id)
         proto.content = content
 
         # Set timestamp
@@ -242,17 +202,8 @@ def create_chat_response(message_id: str, content: str) -> Optional[bytes]:
 
         # Serialize to bytes
         return proto.SerializeToString()
-    except ValueError as e:
-        logger.error("Value error during chat response creation: %s", str(e))
-        return None
-    except AttributeError as e:
-        logger.error("Attribute error during chat response creation: %s", str(e))
-        return None
-    except TypeError as e:
-        logger.error("Type error during chat response creation: %s", str(e))
-        return None
-    except (OverflowError, MemoryError) as e:
-        logger.error("Resource error during chat response creation: %s", str(e))
+    except Exception as e:
+        logger.error("Error during chat response creation: %s", str(e))
         return None
 
 
@@ -279,20 +230,11 @@ def parse_chat_response(data: bytes) -> Optional[dict]:
 
         # Add timestamp if present
         if proto.timestamp:
-            response_dict['timestamp'] = timezone.make_aware(
-                datetime.datetime.fromtimestamp(proto.timestamp)
+            response_dict['timestamp'] = timezone.datetime.fromtimestamp(
+                proto.timestamp, tz=timezone.get_current_timezone()
             )
 
         return response_dict
-    except ValueError as e:
-        logger.error("Value error during chat response parsing: %s", str(e))
-        return None
-    except AttributeError as e:
-        logger.error("Attribute error during chat response parsing: %s", str(e))
-        return None
-    except TypeError as e:
-        logger.error("Type error during chat response parsing: %s", str(e))
-        return None
-    except (KeyError, IndexError, OverflowError) as e:
-        logger.error("Data structure error during chat response parsing: %s", str(e))
+    except Exception as e:
+        logger.error("Error during chat response parsing: %s", str(e))
         return None

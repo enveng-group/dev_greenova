@@ -39,19 +39,6 @@ def chatbot_home(request):
 
     return render(request, 'chatbot/home.html', context)
 
-    return JsonResponse({
-        'user_message': {
-            'id': user_message.id,
-            'content': escape(user_message.content),
-            'timestamp': user_message.timestamp.isoformat(),
-        },
-        'bot_response': {
-            'content': escape(bot_response),
-        }
-    })
-    except Exception as e:
-        logger.error(f"Error processing message: {str(e)}")
-        return JsonResponse({'error': 'Failed to process message'}, status=500)
 
 @login_required
 def create_conversation(request):
@@ -129,8 +116,8 @@ def send_message(request, conversation_id):
                 'content': escape(bot_response),
             }
         })
-    except (json.JSONDecodeError, KeyError, AttributeError) as e:
-        logger.error("Error processing message: %s", str(e))
+    except Exception as e:
+        logger.error(f"Error processing message: {str(e)}")
         return JsonResponse({'error': 'Failed to process message'}, status=500)
 
 

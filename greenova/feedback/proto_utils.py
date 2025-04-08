@@ -22,7 +22,8 @@ logger = logging.getLogger(__name__)
 
 # Import generated protobuf modules with improved error handling
 try:
-    from . import feedback_pb2
+    from .proto import feedback_pb2
+    logger.info("Successfully imported feedback_pb2 from proto subdirectory")
 except ImportError:
     logger.error("feedback_pb2 module not found. Ensure to compile the protobuf files.")
     feedback_pb2 = None
