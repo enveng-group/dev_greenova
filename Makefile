@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 .PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind compile-proto check-tailwind tailwind tailwind-install update update-recurring-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint
-=======
-.PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev compile-proto check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-update_recurring-inspection-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
@@ -54,18 +50,6 @@ dotenv-push:
 	@echo "Pushing .env file to dotenv-vault"
 	@npx dotenv-vault@latest push
 
-<<<<<<< HEAD
-=======
-# Compiles our chatbot protocol buffer
-# protoc --proto_path=./greenova/chatbot/ --python_out=./greenova/chatbot/ ./greenova/chatbot/chatdata.proto
-CHAT_BOT_DIR = ./greenova/chatbot/
-CHAT_BOT_DATA_DIR = $(CHAT_BOT_DIR)data/
-CHAT_BOT_FNAME = chatdata.proto
-proto-compile:
-	protoc --proto_path=$(CHAT_BOT_DATA_DIR) --python_out=$(CHAT_BOT_DATA_DIR) $(CHAT_BOT_DATA_DIR)$(CHAT_BOT_FNAME)
-	cd $(CHAT_BOT_DIR) && python3 create_input.py
-
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 #run django system check
 check:
 	$(CD_CMD) python3 manage.py check
@@ -75,11 +59,7 @@ run:
 	@echo "Starting Tailwind CSS and Django server..."
 	@mkdir -p logs
 	@$(CD_CMD) (python3 manage.py tailwind start > ../logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && \
-<<<<<<< HEAD
 	python3 manage.py runserver
-=======
-	gunicorn greenova.wsgi -c ../gunicorn.conf.py
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 # Alternative approach with separate commands
 #start only Django server
@@ -103,39 +83,9 @@ tailwind-build:
 tailwind-install:
 	$(CD_CMD) python3 manage.py tailwind install
 
-<<<<<<< HEAD
 #Update data from CSV file
 update:
 	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --force-update
-=======
-#Create database migrations
-migrations:
-	$(CD_CMD) python3 manage.py makemigrations
-
-#Apply database migrations
-migrate:
-	$(CD_CMD) python3 manage.py migrate
-
-#collect static files to staticfiles
-static:
-	$(CD_CMD) python3 manage.py collectstatic --clear --noinput
-
-#Create Django superuser
-user:
-	$(CD_CMD) python3 manage.py createsuperuser
-
-#Import data from CSV file
-import:
-	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --no-transaction
-
-#Update data from CSV file
-update:
-	$(CD_CMD) python3 manage.py import_obligations dummy_data.csv --force-update
-
-#synchronize mechanisms
-sync:
-	$(CD_CMD) python3 manage.py sync_mechanisms
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 #Update recurring inspection dates
 update-recurring-dates:
@@ -161,18 +111,6 @@ prod:
 tailwind:
 	$(CD_CMD) python3 manage.py tailwind start
 
-<<<<<<< HEAD
-=======
-# Add a new command for running just gunicorn with config
-run-gunicorn:
-	@echo "Starting Gunicorn server..."
-	@mkdir -p logs
-	@gunicorn greenova.wsgi -c gunicorn.conf.py
-
-# Combined command for database updates
-db: migrations migrate
-
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 # Template linting commands
 #Lint Django template files
 lint-templates:
@@ -226,16 +164,6 @@ help:
 	@echo "  make update-recurring-dates - Update recurring inspection dates"
 	@echo "  make normalize-frequencies - Normalize existing frequencies"
 	@echo "  make clean-csv     - Clean CSV file"
-<<<<<<< HEAD
-=======
-	@echo "  make user         - Create superuser"
-	@echo "  make db           - Run both migrations and migrate"
-	@echo "  make static       - Collect static files (with --clear)"
-	@echo "  make compile-proto - Compile proto file"
-	@echo "  make migrate      - Apply migrations"
-	@echo "  make migrations   - Create new migrations"
-	@echo "  make run          - Start development server"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 	@echo "  make tailwind     - Start Tailwind CSS server"
 	@echo "  make venv           - Create virtual environment"
 	@echo "  make install        - Install dependencies"

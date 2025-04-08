@@ -1,12 +1,7 @@
 from django import template
 from django.utils.html import format_html
-<<<<<<< HEAD
 
 from ..models import Company, CompanyMembership
-=======
-from django.contrib.auth.models import User
-from ..models import CompanyMembership, Company
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 register = template.Library()
 
@@ -27,12 +22,10 @@ def company_role(user, company):
 @register.filter
 def company_role_badge(role):
     """Return HTML badge for a company role."""
-<<<<<<< HEAD
     badge_mapping = {
         'owner': '<mark role="status" class="info">Owner</mark>',
         'admin': '<mark role="status" class="info">Admin</mark>',
         'manager': '<mark role="status" class="info">Manager</mark>',
-        'member': '<mark role="status">Member</mark>',
         'client_contact': '<mark role="status">Client Contact</mark>',
         'contractor': '<mark role="status">Contractor</mark>',
         'view_only': '<mark role="status">View Only</mark>',
@@ -40,28 +33,10 @@ def company_role_badge(role):
 
     badge_html = badge_mapping.get(role, f'<mark role="status">{role}</mark>')
     return format_html(badge_html)
-=======
     if role == 'owner':
         return format_html('<mark role="status" class="info">Owner</mark>')
     elif role == 'admin':
         return format_html('<mark role="status" class="info">Admin</mark>')
-    elif role == 'manager':
-        return format_html('<mark role="status" class="info">Manager</mark>')
-    elif role == 'member':
-        return format_html('<mark role="status">Member</mark>')
-    elif role == 'client_contact':
-        return format_html('<mark role="status">Client Contact</mark>')
-    elif role == 'contractor':
-        return format_html('<mark role="status">Contractor</mark>')
-    elif role == 'view_only':
-        return format_html('<mark role="status">View Only</mark>')
-    return format_html('<mark role="status">{}</mark>', role)
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
-
-
-@register.filter
-def primary_company(user):
-    """Return user's primary company."""
     try:
         membership = CompanyMembership.objects.get(user=user, is_primary=True)
         return membership.company
@@ -93,13 +68,9 @@ def company_selector(user):
     companies = Company.objects.filter(members=user).order_by('name')
 
     if not companies:
-<<<<<<< HEAD
         return format_html(
             '<div class="no-companies">You are not associated with any companies</div>'
         )
-=======
-        return format_html('<div class="no-companies">You are not associated with any companies</div>')
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
     output = ['<select name="company" id="company-selector" class="company-selector">']
 
@@ -112,7 +83,6 @@ def company_selector(user):
             is_primary = False
             role = 'Unknown'
 
-<<<<<<< HEAD
         output.append(
             format_html(
                 '<option value="{}" {}>{name} ({role})</option>',
@@ -125,11 +95,3 @@ def company_selector(user):
 
     output.append('</select>')
     return format_html(''.join(output))
-=======
-        selected = 'selected' if is_primary else ''
-        output.append(f'<option value="{company.id}" {selected}>{company.name} ({role})</option>')
-
-    output.append('</select>')
-    return format_html(''.join(output))
-
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

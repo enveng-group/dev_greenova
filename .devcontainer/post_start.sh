@@ -86,15 +86,12 @@ setup_venv() {
       pre-commit install
     else
       echo "Warning: pre-commit not found, skipping installation"
-<<<<<<< HEAD
     fi
 
     if command -v pre-commit >/dev/null 2>&1; then
       pre-commit install
     else
       echo "Warning: pre-commit not found, skipping installation"
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     fi
   fi
 }
@@ -173,7 +170,6 @@ EOL
   "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript.py"
 }
 
-<<<<<<< HEAD
 # Fix hyperscript_dump.py type annotation issues
 fix_hyperscript_dump() {
   echo "Checking for hyperscript_dump.py type annotation issues..."
@@ -263,8 +259,6 @@ EOL
   "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript_dump.py"
 }
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 # Setup Fish shell with direnv
 setup_fish_direnv() {
   FISH_CONFIG="${HOME}/.config/fish/config.fish"
@@ -313,11 +307,7 @@ setup_fish_direnv() {
       echo "    # Add Node.js binary path to fish PATH"
       echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
       echo "    # For accessing node and npm globally from default NVM version"
-<<<<<<< HEAD
       echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
-=======
-      echo "    set -gx PATH /usr/local/share/nvm/versions/node/v18.20.7/bin \$PATH"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       echo "end"
 
       echo "# Function to use NVM in fish"
@@ -327,20 +317,12 @@ setup_fish_direnv() {
 
       echo "# Ensure npm is accessible as a command"
       echo "if not type -q npm"
-<<<<<<< HEAD
       echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
-=======
-      echo "    alias npm='/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       echo "end"
 
       echo "# Ensure node is accessible as a command"
       echo "if not type -q node"
-<<<<<<< HEAD
       echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
-=======
-      echo "    alias node='/usr/local/share/nvm/versions/node/v18.20.7/bin/node'"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       echo "end"
     } >>"$FISH_CONFIG"
     echo "Fish shell configured with direnv hook, virtual env support, and Node.js/npm"
@@ -360,11 +342,7 @@ setup_fish_direnv() {
         echo "    # Add Node.js binary path to fish PATH"
         echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
         echo "    # For accessing node and npm globally from default NVM version"
-<<<<<<< HEAD
         echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
-=======
-        echo "    set -gx PATH /usr/local/share/nvm/versions/node/v18.20.7/bin \$PATH"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
         echo "end"
 
         echo "# Function to use NVM in fish"
@@ -374,20 +352,12 @@ setup_fish_direnv() {
 
         echo "# Ensure npm is accessible as a command"
         echo "if not type -q npm"
-<<<<<<< HEAD
         echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
-=======
-        echo "    alias npm='/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
         echo "end"
 
         echo "# Ensure node is accessible as a command"
         echo "if not type -q node"
-<<<<<<< HEAD
         echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
-=======
-        echo "    alias node='/usr/local/share/nvm/versions/node/v18.20.7/bin/node'"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
         echo "end"
       } >>"$FISH_CONFIG"
       echo "Added Node.js and npm configuration to fish shell"
@@ -414,13 +384,10 @@ main() {
   echo "Fixing django-hyperscript..."
   fix_django_hyperscript
 
-<<<<<<< HEAD
   # Fix hyperscript_dump type annotation
   echo "Fixing hyperscript_dump..."
   fix_hyperscript_dump
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   # Setup NVM and Node.js
   echo "Setting up NVM and Node.js..."
   setup_nvm || {
@@ -446,7 +413,6 @@ main() {
   # Configure Fish shell with direnv (after venv is set up)
   echo "Setting up Fish shell with direnv..."
   setup_fish_direnv
-<<<<<<< HEAD
 
   # Ensure PYTHONPATH is set
   export PYTHONPATH=/workspaces/greenova:$PYTHONPATH
@@ -456,8 +422,6 @@ main() {
     echo "Updating pre-commit hooks..."
     pre-commit autoupdate
   fi
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
 
 main "$@"

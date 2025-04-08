@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
-=======
-#!/usr/bin/env python3.9
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 import atexit
 import os
 import readline

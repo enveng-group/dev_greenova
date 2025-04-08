@@ -19,12 +19,6 @@
 {% load tailwind_tags %}
 {% load user_tags %}
 {% load core_tags %}
-<<<<<<< HEAD
-
-=======
-{% load user_tags %}
-{% load core_tags %}
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 <!DOCTYPE html>
 <html lang="en" data-theme="light dark">
   <head>
@@ -34,213 +28,165 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="keywords"
           content="environmental compliance, management system, greenova, sustainability" />
-    <meta name="description" content="
-      {% block meta_description %} Environmental Compliance Management System {% endblock meta_description %}" />
-      <title>
+    <meta name="description"
+          content=" {% block meta_description %} Environmental Compliance Management System {% endblock meta_description %}" />
+    <title>
 
-        {% block title %}
+      {% block title %}
 
-          {% block page_title %}
+        {% block page_title %}
 
-<<<<<<< HEAD
             greenova
-          {% endblock page_title %}
-        {% endblock title %}
-      </title>
-      <!-- Favicon -->
-      <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
-      <!-- Critical CSS -->
-      <link rel="preload"
-            href="{% static 'css/critical-styles.css' %}"
-            as="style" />
-      <!-- CSS files -->
-      <link rel="stylesheet" href="{% static 'css/critical-styles.css' %}" />
-      <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
-      {% tailwind_css %}
+        {% endblock page_title %}
+      {% endblock title %}
+    </title>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+    <!-- Critical CSS -->
+    <link rel="preload"
+          href="{% static 'css/critical-styles.css' %}"
+          as="style" />
+    <!-- CSS files -->
+    <link rel="stylesheet" href="{% static 'css/critical-styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+{% tailwind_css %}
 
-      {% block extra_head %}
-      {% endblock extra_head %}
-    </head>
-    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-          hx-ext="head-support, loading-states, class-tools, path-deps"
-          hx-indicator="#htmx-indicator"
-          aria-live="polite">
-      <!-- Skip to main content link for accessibility -->
-      <a class="skip-link" href="#main-content">Skip to content</a>
-      <!-- {% include "core/components/error_boundary.html" %}
+    {% block extra_head %}
+    {% endblock extra_head %}
+  </head>
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        hx-ext="head-support, loading-states, class-tools, path-deps"
+        hx-indicator="#htmx-indicator"
+        aria-live="polite">
+    <!-- Skip to main content link for accessibility -->
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <!-- {% include "core/components/error_boundary.html" %}
 
  -->
-      <!-- Header with semantic nav -->
-      <header role="banner">
-
-        {% block header %}
-
-          <nav>
-            <ul class="theme-container">
-              <li>
-                <a href="#" data-theme-switcher="auto">Auto</a>
-              </li>
-              <li>
-                <a href="#" data-theme-switcher="light">Light</a>
-              </li>
-              <li>
-                <a href="#" data-theme-switcher="dark">Dark</a>
-              </li>
-            </ul>
-            <ul role="menubar" aria-label="Primary navigation">
-              {% if request.user.is_authenticated %}
-                <!-- Left side navigation items -->
-                <li role="none" class="menubar-breadcrumbs">
-                  <nav aria-label="Primary navigation" role="navigation">
-                    <ul>
-                      <li>
-                        <a href="{% url 'dashboard:home' %}"
-                           role="menuitem"
-                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %} page {% endif %}"
-                           _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
-                      </li>
-                      {% if request.resolver_match.namespace != 'dashboard' %}
-
-                        <li>
-                          <span role="menuitem">{{ request.resolver_match.namespace|title }}</span>
-                        </li>
-                      {% endif %}
-
-                      {% block breadcrumbs %}
-                      {% endblock breadcrumbs %}
-
-                    </ul>
-                  </nav>
-                </li>
-                <!-- Auth Actions (right-aligned) -->
-                <li role="none" class="auth-actions">
-                  {% load chatbot_tags %}
-
-                  {% chat_widget %}
-                  <a href="{% url 'users:profile' %}"
-                     role="menuitem"
-                     {% if request.path == '/users/profile/' %}aria-current="page"{% endif %}>Profile</a>
-                  {% if request.user.is_staff %}
-                    <a href="{% url 'company:list' %}"
-                       role="menuitem"
-                       {% if '/company/' in request.path %}aria-current="page"{% endif %}>Companies</a>
-                  {% endif %}
-                  <!-- Logout -->
-                  <a href="#"
-                     role="menuitem"
-                     hx-post="{% url 'account_logout' %}"
-                     hx-push-url="true"
-                     hx-target="body"
-                     hx-redirect="/"
-                     hx-include="[name='csrfmiddlewaretoken']">Logout</a>
-                  <form id="logout-form" class="hidden">
-                    {% csrf_token %}
-
-                  </form>
-                </li>
-              {% else %}
-                <!-- Unauthenticated user navigation -->
-                <li role="none" class="auth-actions">
-                  <a href="{% url 'account_signup' %}"
-                     role="menuitem"
-                     aria-label="Register"
-                     _="on load if location.pathname is '{% url 'account_signup' %}' then hide me">Register</a>
-                  <a href="{% url 'account_login' %}"
-                     role="menuitem"
-                     aria-label="Login"
-                     _="on load if location.pathname is '{% url 'account_login' %}' then hide me">Login</a>
-                  <a href="{% url 'admin:index' %}"
-                     role="menuitem"
-                     aria-label="Admin"
-                     _="on load if location.pathname.startsWith('/admin/') then hide me">Admin</a>
-                </li>
-              {% endif %}
-
-            </ul>
-          </nav>
-        {% endblock header %}
-
-      </header>
-      <!-- After header, before main content -->
-      {% include "core/components/status_messages.html" %}
-
-      <!-- Main content -->
-      <main id="main-content" role="main">
-
-        {% block body %}
-
-          {% block content %}
-          {% endblock content %}
-        {% endblock body %}
-
-      </main>
-      <!-- Footer -->
-
-      {% block footer %}
-
-        <footer role="contentinfo">
-          <div class="container">
-            <p>
-              © {% now "Y" %} greenova environmental management. <small>version {% site_version %}</small>
-            </p>
-          </div>
-        </footer>
-      {% endblock footer %}
-      <!-- Loading indicator for HTMX requests -->
-      <div id="htmx-indicator" class="htmx-indicator" aria-hidden="true">
-        <div class="spinner"></div>
-      </div>
-      <!-- JavaScript at the end for better performance -->
-      <script src="{% static 'js/vendor/htmx/htmx.min.js' %}" defer></script>
-      {% django_htmx_script %}
-      <!-- Extensions -->
-      <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}" defer></script>
-      <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}" defer></script>
-      <script src="{% static 'js/vendor/htmx/ext/class-tools.min.js' %}" defer></script>
-      <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}" defer></script>
-      <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
-      <script src="{% static 'js/app.js' %}" defer></script>
-      <!-- Initialize extensions -->
-      <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        htmx.config.useTemplateFragments = true;
-        // Don't try to define extensions, they're already registered via the hx-ext attribute
-
-=======
     <!-- Header with semantic nav -->
     <header role="banner">
-      <!-- MAIN NAVIGATION: Full-width container -->
-      <nav role="navigation" aria-label="Main navigation">
-        <!-- LEFT ALIGNED: Theme switcher -->
-        {% theme_switcher %}
 
-        <!-- BREADCRUMB NAVIGATION: Top of content area -->
-        <nav aria-label="Breadcrumb navigation" role="navigation" class="breadcrumb-container">
-          <ul>
-            <!-- LEFT ALIGNED: Breadcrumbs -->
-            <li class="menubar-breadcrumbs">
-              {% breadcrumb_navigation %}
+      {% block header %}
+
+        <nav>
+          <ul class="theme-container">
+            <li>
+              <a href="#" data-theme-switcher="auto">Auto</a>
+            </li>
+            <li>
+              <a href="#" data-theme-switcher="light">Light</a>
+            </li>
+            <li>
+              <a href="#" data-theme-switcher="dark">Dark</a>
             </li>
           </ul>
+          <ul role="menubar" aria-label="Primary navigation">
+            {% if request.user.is_authenticated %}
+              <!-- Left side navigation items -->
+              <li role="none" class="menubar-breadcrumbs">
+                <nav aria-label="Primary navigation" role="navigation">
+                  <ul>
+                    <li>
+                      <a href="{% url 'dashboard:home' %}"
+                         role="menuitem"
+                         aria-current="{% if request.resolver_match.namespace == 'dashboard' %} page {% endif %}"
+                         _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
+                    </li>
+                    {% if request.resolver_match.namespace != 'dashboard' %}
+
+                      <li>
+                        <span role="menuitem">{{ request.resolver_match.namespace|title }}</span>
+                      </li>
+                    {% endif %}
+
+                    {% block breadcrumbs %}
+                    {% endblock breadcrumbs %}
+
+                  </ul>
+                </nav>
+              </li>
+              <!-- Auth Actions (right-aligned) -->
+              <li role="none" class="auth-actions">
+{% load chatbot_tags %}
+
+{% chat_widget %}
+                <a href="{% url 'users:profile' %}"
+                   role="menuitem"
+                   {% if request.path == '/users/profile/' %}aria-current="page"{% endif %}>Profile</a>
+                {% if request.user.is_staff %}
+                  <a href="{% url 'company:list' %}"
+                     role="menuitem"
+                     {% if '/company/' in request.path %}aria-current="page"{% endif %}>Companies</a>
+                {% endif %}
+                <!-- Logout -->
+                <a href="#"
+                   role="menuitem"
+                   hx-post="{% url 'account_logout' %}"
+                   hx-push-url="true"
+                   hx-target="body"
+                   hx-redirect="/"
+                   hx-include="[name='csrfmiddlewaretoken']">Logout</a>
+                <form id="logout-form" class="hidden">
+{% csrf_token %}
+
+                </form>
+              </li>
+            {% else %}
+              <!-- Unauthenticated user navigation -->
+              <li role="none" class="auth-actions">
+                <a href="{% url 'account_signup' %}"
+                   role="menuitem"
+                   aria-label="Register"
+                   _="on load if location.pathname is '{% url 'account_signup' %}' then hide me">Register</a>
+                <a href="{% url 'account_login' %}"
+                   role="menuitem"
+                   aria-label="Login"
+                   _="on load if location.pathname is '{% url 'account_login' %}' then hide me">Login</a>
+                <a href="{% url 'admin:index' %}"
+                   role="menuitem"
+                   aria-label="Admin"
+                   _="on load if location.pathname.startsWith('/admin/') then hide me">Admin</a>
+              </li>
+            {% endif %}
+
+          </ul>
         </nav>
+      {% endblock header %}
 
-    <!-- FOOTER: Full-width at bottom of page -->
+    </header>
+    <!-- After header, before main content -->
+{% include "core/components/status_messages.html" %}
+
+    <!-- Main content -->
+    <main id="main-content" role="main">
+
+      {% block body %}
+
+        {% block content %}
+        {% endblock content %}
+      {% endblock body %}
+
+    </main>
+    <!-- Footer -->
+
     {% block footer %}
-    <footer role="contentinfo">
-      <p>
-        © {% now "Y" %} <a href="https://www.enveng-group.com.au/"
-        target="_blank"
-        rel="noopener noreferrer">Enveng Group</a> |
-        Licensed under <a href="https://www.gnu.org/licenses/agpl-3.0.html"
-        target="_blank"
-        rel="noopener noreferrer">GNU AGPL v3.0</a>
-      </p>
-    </footer>
-    {% endblock footer %}
 
-    <!-- SCRIPTS: Loaded at end of document -->
+      <footer role="contentinfo">
+        <div class="container">
+          <p>
+              © {% now "Y" %} greenova environmental management. <small>version {% site_version %}</small>
+          </p>
+        </div>
+      </footer>
+    {% endblock footer %}
+    <!-- Loading indicator for HTMX requests -->
+    <div id="htmx-indicator" class="htmx-indicator" aria-hidden="true">
+      <div class="spinner">
+      </div>
+    </div>
+    <!-- JavaScript at the end for better performance -->
     <script src="{% static 'js/vendor/htmx/htmx.min.js' %}" defer></script>
-    {% django_htmx_script %}
+{% django_htmx_script %}
     <!-- Extensions -->
     <script src="{% static 'js/vendor/htmx/ext/head-support.min.js' %}" defer></script>
     <script src="{% static 'js/vendor/htmx/ext/loading-states.min.js' %}" defer></script>
@@ -248,14 +194,12 @@
     <script src="{% static 'js/vendor/htmx/ext/path-deps.min.js' %}" defer></script>
     <script src="{% static 'js/vendor/_hyperscript.min.js' %}" defer></script>
     <script src="{% static 'js/app.js' %}" defer></script>
-
     <!-- Initialize extensions -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         htmx.config.useTemplateFragments = true;
         // Don't try to define extensions, they're already registered via the hx-ext attribute
 
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
         {% if debug %}
           if (typeof window.htmx !== "undefined") {
               htmx.on("htmx:afterSettle", function(detail) {
@@ -269,22 +213,16 @@
           }
         {% endif %}
       });
-<<<<<<< HEAD
-      </script>
-      <!-- Custom Scripts -->
-      <script src="{% static 'js/components/foldable.js' %}" defer></script>
-      <script src="{% static 'js/components/scrollable.js' %}" defer></script>
-
-      {% block extra_js %}
-      {% endblock extra_js %}
-
-      <!-- Include at the end of your body section before the closing body tag -->
-      {% include "chatbot/chat_widget.html" %}
-
-    </body>
-  </html>
-=======
     </script>
+    <!-- Custom Scripts -->
+    <script src="{% static 'js/components/foldable.js' %}" defer></script>
+    <script src="{% static 'js/components/scrollable.js' %}" defer></script>
+
+    {% block extra_js %}
+    {% endblock extra_js %}
+
+    <!-- Include at the end of your body section before the closing body tag -->
+{% include "chatbot/chat_widget.html" %}
+
   </body>
 </html>
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

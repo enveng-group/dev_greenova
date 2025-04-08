@@ -1,12 +1,8 @@
 from django import forms
+
 from .models import Conversation, TrainingData
 
-<<<<<<< HEAD
-from .models import Conversation, TrainingData
 
-
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 class ConversationForm(forms.ModelForm):
     """Form for creating a new conversation."""
     class Meta:

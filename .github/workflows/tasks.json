@@ -1,11 +1,7 @@
 {
-<<<<<<< HEAD
   "tasks": [
     {
-      "args": [
-        "-c",
-        "autopep8 --in-place \"${file}\""
-      ],
+      "args": ["-c", "autopep8 --in-place \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Format with autopep8",
@@ -18,10 +14,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "isort \"${file}\""
-      ],
+      "args": ["-c", "isort \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Sort imports with isort",
@@ -34,10 +27,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "pylint \"${file}\""
-      ],
+      "args": ["-c", "pylint \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Lint with pylint",
@@ -46,10 +36,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -63,10 +50,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "mypy \"${file}\""
-      ],
+      "args": ["-c", "mypy \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Type check with mypy",
@@ -75,10 +59,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -103,10 +84,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -136,10 +114,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -152,10 +127,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "bandit -r \"${file}\" --skip B101"
-      ],
+      "args": ["-c", "bandit -r \"${file}\" --skip B101"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Python: Security check with bandit",
@@ -167,101 +139,10 @@
       "type": "shell"
     },
     {
-=======
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Python: Format with autopep8",
-      "type": "shell",
-      "command": "autopep8",
-      "args": ["--in-place", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "Python: Sort imports with isort",
-      "type": "shell",
-      "command": "isort",
-      "args": ["${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "Python: Lint with pylint",
-      "type": "shell",
-      "command": "pylint",
-      "args": ["${file}"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": {
-        "owner": "python",
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "pattern": {
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        }
-      },
-      "group": "none"
-    },
-    {
-      "label": "Python: Type check with mypy",
-      "type": "shell",
-      "command": "mypy",
-      "args": ["${file}"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": {
-        "owner": "python",
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "pattern": {
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "file": 1,
-          "line": 2,
-          "severity": 3,
-          "message": 4
-        }
-      },
-      "group": "none"
-    },
-    {
-      "label": "Python: Security check with bandit",
-      "type": "shell",
-      "command": "bandit",
-      "args": ["-r", "${file}"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "Python: Fix all",
-      "dependsOrder": "sequence",
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       "dependsOn": [
         "Python: Sort imports with isort",
         "Python: Format with autopep8",
         "Python: Lint with pylint",
-<<<<<<< HEAD
         "Python: Type check with mypy (standard)",
         "Python: Security check with bandit"
       ],
@@ -287,10 +168,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -316,10 +194,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "column": 3,
@@ -378,10 +253,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "python",
         "pattern": {
           "file": 1,
@@ -394,10 +266,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "djlint \"${file}\" --reformat"
-      ],
+      "args": ["-c", "djlint \"${file}\" --reformat"],
       "command": "/bin/sh",
       "group": "none",
       "label": "HTML: Format with djlint",
@@ -410,10 +279,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "djlint \"${file}\""
-      ],
+      "args": ["-c", "djlint \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "HTML: Lint with djlint",
@@ -422,10 +288,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "djlint",
         "pattern": {
           "column": 3,
@@ -439,10 +302,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JavaScript: Format with prettier",
@@ -455,10 +315,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx eslint \"${file}\""
-      ],
+      "args": ["-c", "npx eslint \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JavaScript: Lint with eslint",
@@ -466,16 +323,11 @@
         "panel": "shared",
         "reveal": "always"
       },
-      "problemMatcher": [
-        "$eslint-stylish"
-      ],
+      "problemMatcher": ["$eslint-stylish"],
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx eslint --fix \"${file}\""
-      ],
+      "args": ["-c", "npx eslint --fix \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JavaScript: Fix eslint issues",
@@ -484,107 +336,14 @@
         "panel": "shared",
         "reveal": "silent"
       },
-      "problemMatcher": [
-        "$eslint-stylish"
-      ],
+      "problemMatcher": ["$eslint-stylish"],
       "type": "shell"
     },
     {
-=======
-        "Python: Type check with mypy"
-      ],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-
-    {
-      "label": "HTML: Format with djlint",
-      "type": "shell",
-      "command": "djlint",
-      "args": ["${file}", "--reformat"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "HTML: Lint with djlint",
-      "type": "shell",
-      "command": "djlint",
-      "args": ["${file}"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": {
-        "owner": "djlint",
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "pattern": {
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(\\w+)\\s+(.+)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        }
-      },
-      "group": "none"
-    },
-
-    {
-      "label": "JavaScript: Format with prettier",
-      "type": "shell",
-      "command": "npx",
-      "args": ["prettier", "--write", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "JavaScript: Lint with eslint",
-      "type": "shell",
-      "command": "npx",
-      "args": ["eslint", "${file}"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": ["$eslint-stylish"],
-      "group": "none"
-    },
-    {
-      "label": "JavaScript: Fix eslint issues",
-      "type": "shell",
-      "command": "npx",
-      "args": ["eslint", "--fix", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": ["$eslint-stylish"],
-      "group": "none"
-    },
-    {
-      "label": "JavaScript: Fix all",
-      "dependsOrder": "sequence",
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       "dependsOn": [
         "JavaScript: Format with prettier",
         "JavaScript: Fix eslint issues"
       ],
-<<<<<<< HEAD
       "dependsOrder": "sequence",
       "group": "none",
       "label": "JavaScript: Fix all",
@@ -595,10 +354,7 @@
       "problemMatcher": []
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "CSS: Format with prettier",
@@ -623,10 +379,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "stylelint",
         "pattern": {
           "column": 3,
@@ -656,10 +409,7 @@
       "type": "shell"
     },
     {
-      "dependsOn": [
-        "CSS: Format with prettier",
-        "CSS: Fix stylelint issues"
-      ],
+      "dependsOn": ["CSS: Format with prettier", "CSS: Fix stylelint issues"],
       "dependsOrder": "sequence",
       "group": "none",
       "label": "CSS: Fix all",
@@ -670,10 +420,7 @@
       "problemMatcher": []
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "JSON: Format with prettier",
@@ -702,10 +449,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "npx prettier --write \"${file}\""
-      ],
+      "args": ["-c", "npx prettier --write \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Markdown: Format with prettier",
@@ -730,10 +474,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "markdownlint",
         "pattern": {
           "column": 3,
@@ -746,115 +487,10 @@
       "type": "shell"
     },
     {
-=======
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-
-    {
-      "label": "CSS: Format with prettier",
-      "type": "shell",
-      "command": "npx",
-      "args": ["prettier", "--write", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-
-    {
-      "label": "JSON: Format with prettier",
-      "type": "shell",
-      "command": "npx",
-      "args": ["prettier", "--write", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-
-    {
-      "label": "YAML: Format with prettier",
-      "type": "shell",
-      "command": "npx",
-      "args": ["prettier", "--write", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-
-    {
-      "label": "TOML: Format with prettier",
-      "type": "shell",
-      "command": "npx",
-      "args": ["prettier", "--write", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-
-    {
-      "label": "Markdown: Format with prettier",
-      "type": "shell",
-      "command": "npx",
-      "args": ["prettier", "--write", "${file}"],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared",
-        "clear": true
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "Markdown: Lint with markdownlint",
-      "type": "shell",
-      "command": "npx",
-      "args": ["markdownlint", "${file}"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": {
-        "owner": "markdownlint",
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "pattern": {
-          "regexp": "^(.+?):(\\d+)(?::(\\d+))? (.+)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "message": 4
-        }
-      },
-      "group": "none"
-    },
-    {
-      "label": "Markdown: Fix all",
-      "dependsOrder": "sequence",
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       "dependsOn": [
         "Markdown: Format with prettier",
         "Markdown: Lint with markdownlint"
       ],
-<<<<<<< HEAD
       "dependsOrder": "sequence",
       "group": "none",
       "label": "Markdown: Fix all",
@@ -865,10 +501,7 @@
       "problemMatcher": []
     },
     {
-      "args": [
-        "-c",
-        "shellcheck \"${file}\""
-      ],
+      "args": ["-c", "shellcheck \"${file}\""],
       "command": "/bin/sh",
       "group": "none",
       "label": "Shell: Check with shellcheck",
@@ -877,10 +510,7 @@
         "reveal": "always"
       },
       "problemMatcher": {
-        "fileLocation": [
-          "relative",
-          "${workspaceFolder}"
-        ],
+        "fileLocation": ["relative", "${workspaceFolder}"],
         "owner": "shellcheck",
         "pattern": {
           "column": 3,
@@ -894,10 +524,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "${command:workbench.action.terminal.clear}"
-      ],
+      "args": ["-c", "${command:workbench.action.terminal.clear}"],
       "command": "/bin/sh",
       "group": {
         "isDefault": true,
@@ -905,10 +532,7 @@
       },
       "label": "Format current file",
       "linux": {
-        "args": [
-          "-c",
-          "clear"
-        ],
+        "args": ["-c", "clear"],
         "command": "/bin/sh"
       },
       "presentation": {
@@ -918,10 +542,7 @@
       "problemMatcher": [],
       "type": "shell",
       "windows": {
-        "args": [
-          "/c",
-          "cls"
-        ],
+        "args": ["/c", "cls"],
         "command": "cmd.exe"
       }
     },
@@ -1001,10 +622,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py migrate"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py migrate"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Apply migrations",
@@ -1046,10 +664,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py sync_mechanisms"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py sync_mechanisms"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Sync mechanisms",
@@ -1061,10 +676,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py createsuperuser"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py createsuperuser"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Create superuser",
@@ -1076,10 +688,7 @@
       "type": "shell"
     },
     {
-      "dependsOn": [
-        "Django: Run Tailwind",
-        "Django: Run server"
-      ],
+      "dependsOn": ["Django: Run Tailwind", "Django: Run server"],
       "dependsOrder": "parallel",
       "group": "none",
       "label": "Django: Development environment",
@@ -1091,10 +700,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py tailwind start"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py tailwind start"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Run Tailwind",
@@ -1106,10 +712,7 @@
       "type": "shell"
     },
     {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py runserver"
-      ],
+      "args": ["-c", "cd greenova && python3 manage.py runserver"],
       "command": "/bin/sh",
       "group": "none",
       "label": "Django: Run server",
@@ -1122,129 +725,4 @@
     }
   ],
   "version": "2.0.0"
-=======
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-
-    {
-      "label": "Shell: Check with shellcheck",
-      "type": "shell",
-      "command": "shellcheck",
-      "args": ["${file}"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": {
-        "owner": "shellcheck",
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "pattern": {
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(note|warning|error|style):\\s+(.*)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        }
-      },
-      "group": "none"
-    },
-
-    {
-      "label": "Format current file",
-      "type": "shell",
-      "command": "${command:workbench.action.terminal.clear}",
-      "dependsOn": "Format current file (detected)",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    },
-    {
-      "label": "Format current file (detected)",
-      "type": "shell",
-      "command": "echo",
-      "args": ["Formatting ${file}..."],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none",
-      "options": {
-        "statusbar": {
-          "hide": true
-        }
-      }
-    },
-    {
-      "label": "Lint current file",
-      "type": "shell",
-      "command": "${command:workbench.action.terminal.clear}",
-      "dependsOn": "Lint current file (detected)",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "Lint current file (detected)",
-      "type": "shell",
-      "command": "echo",
-      "args": ["Linting ${file}..."],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none",
-      "options": {
-        "statusbar": {
-          "hide": true
-        }
-      }
-    },
-    {
-      "label": "Fix all for current file",
-      "type": "shell",
-      "command": "${command:workbench.action.terminal.clear}",
-      "dependsOn": "Fix all for current file (detected)",
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none"
-    },
-    {
-      "label": "Fix all for current file (detected)",
-      "type": "shell",
-      "command": "echo",
-      "args": ["Fixing all issues in ${file}..."],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": [],
-      "group": "none",
-      "options": {
-        "statusbar": {
-          "hide": true
-        }
-      }
-    }
-  ]
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }

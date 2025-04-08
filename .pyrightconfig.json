@@ -13,9 +13,7 @@
     "**/node_modules",
     "**/.vscode-server"
   ],
-  "extraPaths": [
-    "${workspaceRoot}/greenova"
-  ],
+  "extraPaths": ["${workspaceRoot}/greenova"],
   "ignore": [
     "**/__pycache__",
     "**/.pytest_cache",
@@ -24,9 +22,7 @@
     "**/node_modules",
     "**/.vscode-server"
   ],
-  "include": [
-    "greenova"
-  ],
+  "include": ["greenova"],
   "pythonPlatform": "Linux",
   "pythonVersion": "3.9",
   "reportGeneralTypeIssues": "error",
@@ -38,7 +34,6 @@
   "reportUnknownParameterType": "warning",
   "reportUnknownVariableType": "warning",
   "reportUntypedFunctionDecorator": "warning",
-<<<<<<< HEAD
   "reportUnusedCoroutine": "warning",
   "stubPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
   "typeCheckingMode": "strict",
@@ -53,7 +48,4 @@
   "typeshedPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
   "useLibraryCodeForTypes": true,
   "venvPath": ".venv"
-=======
-  "stubPath": ".venv/lib/python3.9/site-packages/django-stubs"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }

@@ -103,7 +103,6 @@ yarn.lock
 !.env.vault.example
 .env.keys
 !.envrc
-<<<<<<< HEAD
 
 # Docker
 .docker/
@@ -159,16 +158,7 @@ site/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 .env*
 .flaskenv*
 !.env.project
-<<<<<<< HEAD
-=======
-!.env.vault
-.venvmake/
-*.bak
-None
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

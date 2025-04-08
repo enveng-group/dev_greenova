@@ -18,13 +18,7 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: none;
-<<<<<<< HEAD
   scrollbar-width: none;
-=======
-
-  /* Padding to make the layout fit within the app */
-  padding-top: var(--greenova-spacing-large);
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
 
 .chart-scroll-container {
@@ -63,22 +57,11 @@
   padding: var(--greenova-padding);
 }
 
-<<<<<<< HEAD
 .mechanism-chart {
   flex-grow: 1;
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-=======
-.mechanism-chart figure {
-  margin: 0;
-  padding: 0;
-}
-
-.mechanism-chart figure figcaption {
-  /* Add padding to make it look pretty */
-  padding: var(--greenova-padding);
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
 
 .mechanism-chart img {
@@ -89,6 +72,7 @@
   display: block;
   margin: 0 auto;
 }
+
 .mechanism-chart h3 {
   margin: 0 0 var(--greenova-spacing);
   font-size: 1rem;
@@ -143,10 +127,6 @@
 }
 
 /* Navigation buttons */
-<<<<<<< HEAD
-=======
-/*.chart-nav*/
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 nav[role='navigation'].chart-nav {
   display: flex;
   justify-content: flex-end;
@@ -201,46 +181,3 @@ nav[role='navigation'].chart-nav button {
     display: none !important;
   }
 }
-<<<<<<< HEAD
-=======
-
-/* Add styles for chart gallery */
-.chart-gallery {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  gap: var(--greenova-spacing);
-  padding: var(--greenova-padding);
-  margin: var(--greenova-spacing) 0;
-  -webkit-overflow-scrolling: touch;
-  align-items: stretch;
-  min-height: 400px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.chart-gallery::-webkit-scrollbar {
-  display: none;
-}
-
-/* Ensure mechanism-chart styles apply properly */
-.chart-gallery .mechanism-chart {
-  flex: 0 0 var(--greenova-charts-width);
-  min-width: var(--greenova-charts-width);
-  scroll-snap-align: start;
-  margin: var(--greenova-spacing-small);
-  padding: var(--greenova-padding);
-  background: var(--greenova-background-secondary);
-  border-radius: var(--greenova-border-radius);
-  box-shadow: var(--greenova-shadow);
-  display: flex;
-  flex-direction: column;
-}
-
-.chart-gallery .mechanism-chart img {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-}
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

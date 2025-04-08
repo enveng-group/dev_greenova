@@ -3,13 +3,7 @@ import io
 import logging
 
 import matplotlib
-<<<<<<< HEAD
 from django.contrib.auth.mixins import LoginRequiredMixin
-=======
-import matplotlib.pyplot as plt
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers

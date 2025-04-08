@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 from allauth.account.models import EmailAddress
 from allauth.account.utils import user_display
 from django import template
 from django.utils.html import format_html
-=======
-from django import template
-from django.contrib.auth.models import User
-from django.utils.html import format_html
-from allauth.account.utils import user_display
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 register = template.Library()
 
@@ -34,16 +27,9 @@ def user_role(user):
     """Return human-readable role for user."""
     if user.is_superuser:
         return "Admin"
-<<<<<<< HEAD
     if user.is_staff:
         return "Staff"
     return "User"
-=======
-    elif user.is_staff:
-        return "Staff"
-    else:
-        return "User"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 
 @register.filter
@@ -63,16 +49,9 @@ def auth_status_badge(user):
 
     if user.is_superuser:
         return format_html('<span class="auth-badge auth-badge-admin">Admin</span>')
-<<<<<<< HEAD
     if user.is_staff:
         return format_html('<span class="auth-badge auth-badge-staff">Staff</span>')
     return format_html('<span class="auth-badge auth-badge-user">User</span>')
-=======
-    elif user.is_staff:
-        return format_html('<span class="auth-badge auth-badge-staff">Staff</span>')
-    else:
-        return format_html('<span class="auth-badge auth-badge-user">User</span>')
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 
 @register.filter
@@ -80,11 +59,6 @@ def has_verified_email(user):
     """Check if the user has at least one verified email address."""
     if not user.is_authenticated:
         return False
-<<<<<<< HEAD
-=======
-
-    from allauth.account.models import EmailAddress
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     return EmailAddress.objects.filter(user=user, verified=True).exists()
 
 

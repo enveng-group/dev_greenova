@@ -1,34 +1,50 @@
 <section class="table-container">
   {% if users %}
-<<<<<<< HEAD
     <!-- Add a debug comment with usernames to help with testing -->
     <!-- Users: {% for user in users %}{{ user.username }} {% endfor %} -->
     <table id="user-list-table">
-=======
-    <table>
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Department</th>
-          <th>Status</th>
-          <th>Role</th>
-          <th>Date Joined</th>
-          <th>Actions</th>
+          <th>
+Username
+          </th>
+          <th>
+Name
+          </th>
+          <th>
+Email
+          </th>
+          <th>
+Department
+          </th>
+          <th>
+Status
+          </th>
+          <th>
+Role
+          </th>
+          <th>
+Date Joined
+          </th>
+          <th>
+Actions
+          </th>
         </tr>
       </thead>
       <tbody>
         {% for user in users %}
-<<<<<<< HEAD
           <tr id="user-row-{{ user.id }}"
               class="user-row"
               data-username="{{ user.username }}">
-            <td class="username-cell">{{ user.username }}</td>
-            <td>{{ user.get_full_name|default:"-" }}</td>
-            <td>{{ user.email|default:"-" }}</td>
-            <td>{{ user.profile.department|default:"-" }}</td>
+            <td>
+{{ user.get_full_name|default:"-" }}
+            </td>
+            <td>
+{{ user.email|default:"-" }}
+            </td>
+            <td>
+{{ user.profile.department|default:"-" }}
+            </td>
             <td>
               {% if user.is_active %}
                 <mark role="status" class="success">Active</mark>
@@ -45,7 +61,9 @@
                 User
               {% endif %}
             </td>
-            <td>{{ user.date_joined|date:"Y-m-d" }}</td>
+            <td>
+{{ user.date_joined|date:"Y-m-d" }}
+            </td>
             <td class="actions-column">
               <div class="action-buttons">
                 <a href="{% url 'users:admin_user_edit' user.id %}"
@@ -55,65 +73,27 @@
                   <button class="action-btn delete"
                           hx-get="{% url 'users:admin_user_delete' user.id %}"
                           hx-target="#modal-container"
-                          title="Delete {{ user.username }}">Delete</button>
+                          title="Delete {{ user.username }}">
+Delete
+                  </button>
                 {% endif %}
               </div>
             </td>
           </tr>
-=======
-        <tr id="user-row-{{ user.id }}">
-          <td>{{ user.username }}</td>
-          <td>{{ user.get_full_name|default:"-" }}</td>
-          <td>{{ user.email|default:"-" }}</td>
-          <td>{{ user.profile.department|default:"-" }}</td>
-          <td>
-            {% if user.is_active %}
-              <mark role="status" class="success">Active</mark>
-            {% else %}
-              <mark role="status" class="warning">Inactive</mark>
-            {% endif %}
-          </td>
-          <td>
-            {% if user.is_superuser %}
-              <mark role="status" class="info">Admin</mark>
-            {% elif user.is_staff %}
-              <mark role="status" class="info">Staff</mark>
-            {% else %}
-              User
-            {% endif %}
-          </td>
-          <td>{{ user.date_joined|date:"Y-m-d" }}</td>
-          <td class="actions-column">
-            <div class="action-buttons">
-              <a href="{% url 'users:admin_user_edit' user.id %}" class="action-btn edit"
-                 title="Edit {{ user.username }}">
-                Edit
-              </a>
-
-              {% if user != request.user %}
-              <button class="action-btn delete"
-                      hx-get="{% url 'users:admin_user_delete' user.id %}"
-                      hx-target="#modal-container"
-                      title="Delete {{ user.username }}">
-                Delete
-              </button>
-              {% endif %}
+          <tr id="user-row-{{ user.id }}">
+            <td>
+{{ user.username }}
+            </td>
+            <td>
+{{ user.get_full_name|default:"-" }}
+            </td>
+            <div class="centered-message">
+              <p>
+No users found.
+              </p>
             </div>
-          </td>
-        </tr>
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <div class="centered-message">
-      <p>No users found.</p>
-    </div>
-  {% endif %}
-</section>
-<<<<<<< HEAD
-=======
-
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
-<!-- Modal container for delete confirmation -->
-<div id="modal-container"></div>
+          {% endif %}
+        </section>
+        <!-- Modal container for delete confirmation -->
+        <div id="modal-container">
+        </div>

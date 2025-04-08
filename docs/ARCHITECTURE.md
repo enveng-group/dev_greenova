@@ -8,10 +8,7 @@ obligations management system.
 ## Software Components
 
 ### Backend
-<<<<<<< HEAD
 
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 - Django 4.1.13
 - SQLite3 Database
 - MatPlotlib for data visualization

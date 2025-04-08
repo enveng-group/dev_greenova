@@ -8,35 +8,23 @@ nav.breadcrumb-container {
 }
 
 /* The list of elements (breadcrumbs menu and chatbot) */
-<<<<<<< HEAD
 nav.breadcrumb-container > ul {
-=======
-nav.breadcrumb-container>ul {
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   display: flex;
   width: 100%;
   margin-left: var(--greenova-spacing-small);
 }
 
 /* Breadcrumbs */
-<<<<<<< HEAD
 nav.breadcrumb-container > ul > li.menubar-breadcrumbs {
-=======
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs {
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   display: flex;
   flex-flow: row;
 }
 
 /* Container for individual breadcrumbs */
-<<<<<<< HEAD
 nav.breadcrumb-container
   > ul
   > li.menubar-breadcrumbs
   > nav[role='navigation'] {
-=======
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] {
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   /* Align left*/
   margin: 0;
   padding: 0;
@@ -46,28 +34,20 @@ nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] {
 }
 
 /* Force styling to be in a straight row*/
-<<<<<<< HEAD
 nav.breadcrumb-container
   > ul
   > li.menubar-breadcrumbs
   > nav[role='navigation']
   > ol {
-=======
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation]>ol {
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   display: flex;
 }
 
 /* Styling for individual breadcrumb */
-<<<<<<< HEAD
 nav.breadcrumb-container
   > ul
   > li.menubar-breadcrumbs
   > nav[role='navigation']
   [role='menuitem'] {
-=======
-nav.breadcrumb-container>ul>li.menubar-breadcrumbs>nav[role=navigation] [role=menuitem] {
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   background: var(--greenova-beige-primary);
   color: var(--greenova-text-primary-dark);
 
