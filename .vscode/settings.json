@@ -753,4 +753,5 @@
   "yaml.completion": true,
   "yaml.format.enable": true,
   "yaml.validate": true
+},
 }
