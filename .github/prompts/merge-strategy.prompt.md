@@ -8,8 +8,8 @@ efficiently while maintaining code quality and following project conventions.
 
 Greenova follows a progressive squash merge workflow with these repositories:
 
-- Development: <https://github.com/enveng-group/dev_greenova>
-- Production: <https://github.com/enssol/greenova>
+- Development: https://github.com/enveng-group/dev_greenova
+- Production: https://github.com/enssol/greenova
 
 We use Django 4.1.13 with Python 3.9.21 and follow strict code quality
 standards.

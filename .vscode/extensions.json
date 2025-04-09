@@ -29,7 +29,6 @@
     "plex.vscode-protolint",
     "bradlc.vscode-tailwindcss",
     "esbenp.prettier-vscode",
-    "pycqa.bandit-pycqa",
-    "mtxr.sqltools"
+    "pycqa.bandit-pycqa"
   ]
 }
