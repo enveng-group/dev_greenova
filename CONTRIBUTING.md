@@ -48,17 +48,22 @@ divergent branches and ensure smooth integration:
 
 ### Initial Setup
 
-1. Fork the repository on GitHub from https://github.com/enssol/greenova
+1. Fork the repository on GitHub from <https://github.com/enssol/greenova>
 2. Clone your fork to your local machine:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/greenova.git
    cd greenova
    ```
+
 3. Add the upstream repository as a remote:
+
    ```bash
    git remote add upstream https://github.com/enssol/greenova.git
    ```
+
 4. Verify your remotes:
+
    ```bash
    git remote -v
    ```
@@ -95,6 +100,7 @@ divergent branches and ensure smooth integration:
    ```
 
 5. Push your changes to your fork:
+
    ```bash
    git push origin feature-branch
    # If you've rebased, you might need to force push:
@@ -137,6 +143,7 @@ divergent branches and ensure smooth integration:
    ```
 
 3. Sync your fork with the updated upstream:
+
    ```bash
    git fetch upstream
    git checkout main
@@ -151,6 +158,7 @@ divergent branches and ensure smooth integration:
 - Keep feature branches short-lived (< 2 weeks)
 - Use `git pull --rebase` instead of regular `git pull`
 - Consider a monthly "deep cleaning":
+
   ```bash
   git reflog expire --expire=30.days --all
   git gc --aggressive --prune=now
@@ -196,7 +204,7 @@ Before you begin:
 
 `git push origin --delete feature-branch`
 
-# Note: Ensure the feature branch is no longer needed before deleting it remotely.
+# Note: Ensure the feature branch is no longer needed before deleting it remotely
 
 ## Conflict Resolution Guidelines
 
@@ -205,9 +213,11 @@ If you encounter merge conflicts:
 1. Understand both sides of the conflict before resolving
 2. When in doubt, consult with team members familiar with the code
 3. For complex conflicts, consider using a visual merge tool:
+
    ```bash
    git mergetool
    ```
+
 4. Always test thoroughly after resolving conflicts
 5. Document complex conflict resolutions in your commit message
 

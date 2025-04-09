@@ -1,7 +1,9 @@
-from django.contrib import admin
 from logging import getLogger
-from typing import Optional, Sequence, TypeVar, Generic
+from typing import Generic, Optional, Sequence, TypeVar
+
+from django.contrib import admin
 from django.http import HttpRequest
+
 from .models import Project, ProjectMembership
 
 logger = getLogger(__name__)
@@ -44,29 +46,37 @@ class ProjectMembershipAdmin(BaseModelAdmin[ProjectMembership]):
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
 
+    @admin.display(
+        description='Project',
+        ordering='project__name',
+    )
     def get_project(self, obj: ProjectMembership) -> str:
         """Get project name."""
         return str(obj.project.name)
-    get_project.short_description = 'Project'
-    get_project.admin_order_field = 'project__name'
 
+    @admin.display(
+        description='User',
+        ordering='user__username',
+    )
     def get_user(self, obj: ProjectMembership) -> str:
         """Get username."""
         return str(obj.user.username)
-    get_user.short_description = 'User'
-    get_user.admin_order_field = 'user__username'
 
+    @admin.display(
+        description='Role',
+        ordering='role',
+    )
     def get_role(self, obj: ProjectMembership) -> str:
         """Get role."""
         return str(obj.role)
-    get_role.short_description = 'Role'
-    get_role.admin_order_field = 'role'
 
+    @admin.display(
+        description='Created',
+        ordering='created_at',
+    )
     def get_created(self, obj: ProjectMembership) -> str:
         """Get creation date."""
         return obj.created_at.strftime('%Y-%m-%d %H:%M')
-    get_created.short_description = 'Created'
-    get_created.admin_order_field = 'created_at'
 
     def save_model(self, request, obj, form, change):
         """Log changes when saving model."""

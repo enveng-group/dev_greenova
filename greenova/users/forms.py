@@ -53,13 +53,13 @@ class UserProfileForm(forms.ModelForm):
 class AdminUserForm(forms.ModelForm):
     """Admin form for creating and updating users."""
     password1 = forms.CharField(
-        label="Password",
+        label='Password',
         widget=forms.PasswordInput,
         required=False,
         help_text="Leave blank if you don't want to change the password."
     )
     password2 = forms.CharField(
-        label="Confirm Password",
+        label='Confirm Password',
         widget=forms.PasswordInput,
         required=False
     )
