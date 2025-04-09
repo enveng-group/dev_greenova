@@ -1,78 +1,98 @@
-# TODO
+# Greenova Project TODO
 
+This document tracks tasks and action items for the Greenova environmental
+management application.
 
-profile
-company
-detailed chart view
-reset password
-register
-interactivity of the mechanism charts
-html first by design principles, python and django first, html second picoclasscss third, custom plain css fourth, hyperscript fifth, htmx sixth, native web apis seventh, plain javascript eighth
+## Todo.txt Format Task List
 
-Tuesday - charts and obligations list back online
-Wednesday - add obligation conditionally to projects and tested with CRUD
-Thursday - detailed view
-Friday - login page with customer or admin endpoint choice
-Monday - profile
-Tuesday - company
-Wednesday - reset password
-Thursday - register
+```txt
+(A) 2024-05-21 Charts and obligations list back online +Frontend
+(A) 2024-05-22 Add obligation conditionally to projects with CRUD testing +Backend
+(A) 2024-05-23 Implement detailed view +Frontend
+(A) 2024-05-24 Create login page with customer/admin endpoint choice +Frontend @auth
+(A) 2024-05-27 Implement user profile functionality +Frontend @auth
+(A) 2024-05-28 Develop company features +Frontend
+(A) 2024-05-29 Add reset password functionality +Frontend @auth
+(A) 2024-05-30 Create registration flow +Frontend @auth
+(B) Organize CSS files for better readability and maintainability +Frontend @css
+(B) Optimize CSS for performance +Frontend @css
+(B) Enhance responsiveness and cross-browser compatibility +Frontend @css
+(B) Implement PostCSS or Sass for enhanced functionality +Frontend @css
+(B) Set up TypeScript development environment +Frontend @js
+(B) Set up AssemblyScript development environment +Frontend @js
+(B) Identify performance-critical sections in app.js +Frontend @js
+(B) Write TypeScript code for DOM manipulation and event handling +Frontend @js
+(B) Write AssemblyScript code for performance-critical parts +Frontend @js
+(B) Compile AssemblyScript to WebAssembly +Frontend @js
+(B) Integrate WebAssembly modules with TypeScript +Frontend @js
+(B) Update build and deployment process +DevOps @js
+(C) Implement stylelint for CSS linting +DevOps @linting
+(C) Setup Django testing framework +Backend @testing
+(C) Configure hadolint for Dockerfile linting +DevOps @linting
+(C) Create Docker architecture diagram +Documentation @docker
+(C) Create Docker workflow diagram +Documentation @docker
+(C) Create Docker environment diagram +Documentation @docker
+x Setup djlint +DevOps @linting
+x Configure prettier +DevOps @linting
+x Install autopep8 +DevOps @linting
+x Setup pylance +DevOps @linting
+x Configure eslint +DevOps @linting
+```
 
-https://djlint.com/
-https://stylelint.io/
-https://prettier.io/
-https://pypi.org/project/autopep8/
-https://docs.djangoproject.com/en/4.2/topics/testing/overview/
-https://github.com/microsoft/pyright
-https://github.com/hadolint/hadolint
-https://eslint.org/
-https://setuptools.pypa.io/en/latest/index.html
+## Technology Integration Tasks
 
+### Frontend Tools & Libraries
 
-### Written Plan
+- [ ] Implement SASS/PostCSS for advanced styling
+- [ ] Set up TypeScript with proper configuration
+- [ ] Configure AssemblyScript for WASM components
+- [ ] Improve mechanism charts interactivity
+- [ ] Implement detailed chart view
 
-1. **Project Overview**:
-   - Define the purpose and scope of your Docker project.
-   - List the main components and services that will be containerized.
+### Authentication & User Management
 
-2. **Technical Requirements**:
-   - Specify the software and hardware requirements.
-   - Detail the dependencies and configurations needed for each service.
+- [ ] `django-allauth[MFA]`
+- [ ] `django-allauth[user-sessions]`
+- [ ] Reset password functionality
+- [ ] Registration flow
 
-3. **Dockerfile and Docker Compose**:
-   - Create a `Dockerfile` for each service to define how the Docker image should be built.
-   - Use `docker-compose.yml` to manage multi-container Docker applications.
+### DevOps & Infrastructure
 
-4. **Build and Deployment Process**:
-   - Outline the steps for building Docker images and running containers.
-   - Include commands and scripts for automation (e.g., `build.sh`, `run.sh`).
+- [ ] certbot let's encrypt SSL setup
+- [ ] Configure MySQL or PostgreSQL in devcontainer
+- [ ] Set up Caddy with devcontainer feature
+- [ ] Configure cloudflared devcontainer feature
+- [ ] Evaluate DoltDB integration
+- [ ] Set up django-channels
+- [ ] Configure daphne as web server
+- [ ] Implement websockets
+- [ ] Configure proper direnv setup
+- [ ] Set up gh-cli properly
 
-5. **Testing and Validation**:
-   - Describe the testing strategy for your Docker containers.
-   - Include any tools or frameworks used for testing.
+### Code Quality & CI/CD
 
-### Visual Plan
+- [ ] Configure pre-commit hooks
+- [ ] Set up GPG commit signing
+- [ ] Better integration of git-crypt and git-lfs
+- [ ] Create Makefile for common development tasks
+- [ ] Add `npx dotenv-vault@latest pull` to post_create.sh
 
-1. **Architecture Diagram**:
-   - Create a visual representation of your application's architecture.
-   - Show how different services interact within containers.
+### Documentation & Architecture
 
-2. **Workflow Diagram**:
-   - Illustrate the build and deployment workflow.
-   - Include steps from code commit to running containers in production.
+- [ ] Modularize base.html template
+- [ ] Document HTML-first design principles
+- [ ] Create architecture diagrams for Docker setup
 
-3. **Environment Diagram**:
-   - Map out the different environments (development, staging, production).
-   - Show how containers are deployed and managed in each environment.
+## References
 
-
-- django-allauth[MFA]
-- django-allauth[user-sessions]
-- [certbot let's encrypt](https://medium.com/@samson_sham/setup-lets-encrypt-https-server-fa54abff688)
-- [Typescript](https://www.webdevtutor.net/blog/typescript-and-django)
-- [Arial](https://learn.microsoft.com/en-us/typography/font-list/arial)
-- [DoltDB](https://www.dolthub.com/blog/2024-01-31-dolt-django/)
-- [lit](https://lit.dev)
-- [SASS](https://sass-lang.com)
-- [PostCSS](https://postcss.org)
-- [Pyodide](https://pyodide.org/en/stable/index.html)
+- [djlint](https://djlint.com/)
+- [stylelint](https://stylelint.io/)
+- [prettier](https://prettier.io/)
+- [autopep8](https://pypi.org/project/autopep8/)
+- [Django Testing](https://docs.djangoproject.com/en/4.2/topics/testing/overview/)
+- [pylance](https://github.com/microsoft/pylance)
+- [hadolint](https://github.com/hadolint/hadolint)
+- [eslint](https://eslint.org/)
+- [setuptools](https://setuptools.pypa.io/en/latest/index.html)
+- [pre-commit](https://pre-commit.com)
+- [pre-commit hooks](https://pre-commit.com/hooks.html)

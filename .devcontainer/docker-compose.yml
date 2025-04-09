@@ -6,10 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - '8000:8000'
     environment:
       PYTHONUNBUFFERED: 1
-    command: ["/bin/bash"]
+    command: ['/bin/bash']
 
 volumes:
   greenova:

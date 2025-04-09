@@ -1,0 +1,12 @@
+{
+  "enableManualReview": true,
+  "enabled": true,
+  "excludeFiles": [
+    "**/tests/**",
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/__pycache__/**"
+  ],
+  "ignoreRules": [],
+  "severityThreshold": "critical"
+}

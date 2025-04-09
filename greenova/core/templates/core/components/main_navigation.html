@@ -1,14 +1,11 @@
 {% load static %}
 {% load user_tags %}
 {% load company_tags %}
-
+{% load core_tags %}
 <nav role="navigation" aria-label="Main navigation">
   <ul role="menubar">
     <!-- Left aligned navigation items -->
-    <li role="none" class="menubar-breadcrumbs">
-      {% breadcrumb_navigation %}
-    </li>
-
+    <li role="none" class="menubar-breadcrumbs">{% breadcrumb_navigation %}</li>
     <!-- Right aligned navigation items -->
     <li role="none">
       {% if user.is_authenticated %}
@@ -16,69 +13,27 @@
         <a href="{% url 'dashboard:home' %}"
            role="menuitem"
            aria-label="Dashboard"
-           {% if request.path == '/dashboard/' %}aria-current="page"{% endif %}>
-          Dashboard
-        </a>
-
+           {% if request.path == '/dashboard/' %}aria-current="page"{% endif %}>Dashboard</a>
         <!-- Projects link -->
         <a href="{% url 'projects:list' %}"
            role="menuitem"
            aria-label="Projects"
-           {% if request.path|slice:":10" == '/projects/' %}aria-current="page"{% endif %}>
-          Projects
-        </a>
-
+           {% if request.path|slice:":10" == '/projects/' %}aria-current="page"{% endif %}>Projects</a>
         <!-- Obligations link -->
         <a href="{% url 'obligations:list' %}"
            role="menuitem"
            aria-label="Obligations"
-           {% if request.path|slice:":13" == '/obligations/' %}aria-current="page"{% endif %}>
-          Obligations
-        </a>
-
-        <!-- Companies link -->
-        <a href="{% url 'company:list' %}"
-           role="menuitem"
-           aria-label="Companies"
-           {% if request.path|slice:":9" == '/company/' %}aria-current="page"{% endif %}>
-          Companies
-        </a>
-
-        <!-- Admin panel link for staff users -->
-        {% if user.is_staff %}
-          <a href="{% url 'admin:index' %}"
-             role="menuitem"
-             aria-label="Admin"
-             {% if request.path|slice:":7" == '/admin/' %}aria-current="page"{% endif %}>
-            Admin
-          </a>
-        {% endif %}
-
-        <!-- User profile link -->
-        <a href="{% url 'users:profile' %}"
-           role="menuitem"
-           aria-label="Profile"
-           {% if request.path == '/users/profile/' %}aria-current="page"{% endif %}>
-          Profile
-          {% if user|primary_company %}
-            <small>({{ user|primary_company }})</small>
-          {% endif %}
-        </a>
+           {% if request.path|slice:":13" == '/obligations/' %}aria-current="page"{% endif %}>Obligations</a>
       {% else %}
         <!-- Login link for unauthenticated users -->
-        <a href="{% url 'account_login' %}"
-           role="menuitem"
-           aria-label="Login">
-          Login
-        </a>
-
+        <a href="{% url 'account_login' %}" role="menuitem" aria-label="Login">Login</a>
         <!-- Register link for unauthenticated users -->
         <a href="{% url 'account_signup' %}"
            role="menuitem"
-           aria-label="Register">
-          Register
-        </a>
+           aria-label="Register">Register</a>
       {% endif %}
+      <!-- Theme switcher -->
+      {% theme_switcher %}
     </li>
   </ul>
 </nav>

@@ -1,8 +1,10 @@
 # Greenova
 
-A Django-based web application focused on HTML-first development and progressive enhancement strategies.
+A Django-based web application focused on HTML-first development and
+progressive enhancement strategies.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Code style: djlint](https://img.shields.io/badge/html%20style-djlint-blue.svg)](https://www.djlint.com)
 
 ## 📋 Table of Contents
 
@@ -19,7 +21,10 @@ A Django-based web application focused on HTML-first development and progressive
 
 ## 🌟 Overview
 
-Greenova is a POSIX-compliant Django web application that prioritizes semantic HTML structure, progressive enhancement, and accessibility. The project follows data-oriented programming principles and provides a modular framework for building robust web applications.
+Greenova is a Django web application that prioritizes semantic HTML structure,
+progressive enhancement, and accessibility. The project follows data-oriented
+programming principles and provides a modular framework for building robust web
+applications.
 
 ## ✨ Features
 
@@ -36,6 +41,7 @@ Greenova is a POSIX-compliant Django web application that prioritizes semantic H
 ## 🛠️ Tech Stack
 
 ### Backend
+
 - Python 3.9.21
 - Django 4.2.20
 - SQLite3
@@ -46,12 +52,14 @@ Greenova is a POSIX-compliant Django web application that prioritizes semantic H
 - Django-Allauth 65.4.1
 
 ### Frontend
+
 - HTML5
 - PicoCSS (classless framework)
 - Django-Tailwind (for utility classes)
 - Modern-Normalize
 
 ### DevOps
+
 - Docker
 - GitHub CI/CD
 - venv (virtual environment)
@@ -61,7 +69,8 @@ Greenova is a POSIX-compliant Django web application that prioritizes semantic H
 The application follows a modular design with clear separation of concerns:
 
 1. **Data Definition Layer**: Immutable data structures with validation
-2. **Data Processing Layer**: Functional transformations using map, filter, and reduce
+2. **Data Processing Layer**: Functional transformations using map, filter, and
+   reduce
 3. **Data Flow Layer**: Pipelines for managing workflow
 4. **Exception Handling Layer**: Business rule and system exception management
 5. **Data Storage Layer**: Immutable data storage with optimized queries
@@ -71,6 +80,7 @@ The application follows a modular design with clear separation of concerns:
 ## 📥 Installation
 
 ### Prerequisites
+
 - Python 3.9.21
 - Node.js 18.20.7
 - npm 10.8.2

@@ -1,17 +1,22 @@
-from django.db import models
-from django.db.models.signals import post_save, post_delete, pre_save
-from django.dispatch import receiver
-from projects.models import Project
-from typing import Any, Type, Optional, ClassVar
-from django.core.exceptions import ValidationError
-from core.utils.roles import get_responsibility_choices
-from django.core.validators import FileExtensionValidator
-from datetime import timedelta, date
-from dateutil.relativedelta import relativedelta
-from django.utils import timezone
 import logging
 import re
-from .constants import STATUS_CHOICES, STATUS_COMPLETED, STATUS_IN_PROGRESS, STATUS_NOT_STARTED, FREQUENCY_DAILY, FREQUENCY_WEEKLY, FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL, FREQUENCY_ANNUAL
+from datetime import date, timedelta
+from typing import Any, ClassVar, Optional, Type
+
+from core.utils.roles import get_responsibility_choices
+from dateutil.relativedelta import relativedelta
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
+from django.db import models
+from django.db.models.signals import post_delete, post_save, pre_save
+from django.dispatch import receiver
+from django.utils import timezone
+from projects.models import Project
+
+from .constants import (FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL, FREQUENCY_DAILY,
+                        FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY,
+                        FREQUENCY_WEEKLY, STATUS_CHOICES, STATUS_COMPLETED,
+                        STATUS_IN_PROGRESS, STATUS_NOT_STARTED)
 from .utils import normalize_frequency
 
 logger = logging.getLogger(__name__)
@@ -21,7 +26,7 @@ class Obligation(models.Model):
     obligation_number = models.CharField(
         max_length=20,
         primary_key=True,
-        help_text="Format: PCEMP-XXX where XXX is a number"
+        help_text='Format: PCEMP-XXX where XXX is a number'
     )
     project = models.ForeignKey(
         Project,
@@ -37,7 +42,7 @@ class Obligation(models.Model):
     )
     procedure: Optional[str] = models.TextField(
         default='Missing procedure',
-        help_text="Procedure to follow for this obligation",
+        help_text='Procedure to follow for this obligation',
         choices=[
             ('Cultural Heritage Management', 'Cultural Heritage Management'),
             ('Threated Species Management', 'Threated Species Management'),
@@ -121,7 +126,7 @@ class Obligation(models.Model):
     compliance_comments: Optional[str] = models.TextField(blank=True, null=True)
     non_conformance_comments: Optional[str] = models.TextField(blank=True, null=True)
     evidence_notes = models.TextField(blank=True, null=True,
-                                  help_text="Notes about the uploaded evidence")
+                                      help_text='Notes about the uploaded evidence')
     recurring_obligation = models.BooleanField(default=False)
     recurring_frequency: Optional[str] = models.CharField(
         max_length=50,
@@ -139,7 +144,7 @@ class Obligation(models.Model):
             ('Decommissioning', 'Decommissioning'),
             ('Extreme Weather', 'Extreme Weather'),
         ]
-        )
+    )
     recurring_status: Optional[str] = models.CharField(
         max_length=50,
         default='not started',
@@ -150,7 +155,7 @@ class Obligation(models.Model):
             ('completed', 'Completed'),
             ('overdue', 'Overdue'),
         ],
-        )
+    )
     recurring_forcasted_date: Optional[models.DateField] = models.DateField(blank=True, null=True)
     inspection = models.BooleanField(default=False)
     inspection_frequency: Optional[str] = models.CharField(
@@ -203,7 +208,7 @@ class Obligation(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"{self.obligation_number} - {self.project.name}"
+        return f'{self.obligation_number} - {self.project.name}'
 
     def calculate_next_recurring_date(self) -> Optional[date]:
         """
@@ -275,7 +280,7 @@ class Obligation(models.Model):
         Returns:
             str: The next obligation number (e.g., PCEMP-101)
         """
-        prefix = "PCEMP-"
+        prefix = 'PCEMP-'
 
         # Extract the highest numeric value from all obligation numbers
         highest_number = 0
@@ -301,7 +306,7 @@ class Obligation(models.Model):
         next_number = highest_number + 1
 
         # Format with leading zeros (e.g., PCEMP-001)
-        return f"{prefix}{next_number:03d}"
+        return f'{prefix}{next_number:03d}'
 
     def clean(self) -> None:
         """Validate the obligation number format."""
@@ -347,10 +352,10 @@ def update_mechanism_counts_on_save(sender, instance, **kwargs):
         if instance.primary_environmental_mechanism:
             instance.primary_environmental_mechanism.update_obligation_counts()
             logger.info(
-                f"Updated counts for mechanism {instance.primary_environmental_mechanism.name}"
+                f'Updated counts for mechanism {instance.primary_environmental_mechanism.name}'
             )
     except Exception as e:
-        logger.error(f"Error updating mechanism counts on save: {str(e)}")
+        logger.error(f'Error updating mechanism counts on save: {str(e)}')
 
 @receiver(post_delete, sender=Obligation)
 def update_mechanism_counts_on_delete(sender, instance, **kwargs):
@@ -369,7 +374,7 @@ class ObligationEvidence(models.Model):
             )
         ],
         max_length=255,
-        help_text="Upload evidence documents (25MB max)"
+        help_text='Upload evidence documents (25MB max)'
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=True)
@@ -380,17 +385,17 @@ class ObligationEvidence(models.Model):
         verbose_name_plural = 'Evidence Files'
 
     def __str__(self):
-        return f"Evidence for {self.obligation} - {self.file.name}"
+        return f'Evidence for {self.obligation} - {self.file.name}'
 
     def file_size(self):
         """Return the file size in a human-readable format."""
         size = self.file.size
         if size < 1024:
-            return f"{size} bytes"
+            return f'{size} bytes'
         elif size < 1024 * 1024:
-            return f"{size/1024:.1f} KB"
+            return f'{size/1024:.1f} KB'
         else:
-            return f"{size/(1024*1024):.1f} MB"
+            return f'{size/(1024*1024):.1f} MB'
 
 @receiver(pre_save, sender='obligations.Obligation')
 def update_forecasted_date_on_change(sender, instance, **kwargs):
@@ -434,5 +439,3 @@ def ensure_obligation_number(sender, instance, **kwargs):
     """
     if not instance.pk and (not instance.obligation_number or instance.obligation_number.strip() == ''):
         instance.obligation_number = Obligation.get_next_obligation_number()
-
-

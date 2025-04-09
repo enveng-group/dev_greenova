@@ -1,31 +1,36 @@
-from django.contrib import admin
-from django.urls import path, include
+import logging
+from typing import List, Union
+
+from debug_toolbar.toolbar import debug_toolbar_urls
 from django.conf import settings
 from django.conf.urls.static import static
-from typing import List, Union
-from django.urls.resolvers import URLPattern, URLResolver
+from django.contrib import admin
+from django.http import HttpRequest, HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.shortcuts import redirect
-from django.http import HttpRequest, HttpResponseRedirect, HttpResponsePermanentRedirect
-import logging
-from debug_toolbar.toolbar import debug_toolbar_urls
+from django.urls import include, path
+from django.urls.resolvers import URLPattern, URLResolver
 
 logger = logging.getLogger(__name__)
 
 def home_router(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponsePermanentRedirect]:
     """Route to appropriate home page based on auth status."""
-    logger.debug(f"Home router - User authenticated: {request.user.is_authenticated}")
+    logger.debug(f'Home router - User authenticated: {request.user.is_authenticated}')
 
     # If user is not authenticated, always go to landing page
     if not request.user.is_authenticated:
-        logger.info("Unauthenticated user - redirecting to landing page")
+        logger.info('Unauthenticated user - redirecting to landing page')
         return redirect('landing:home')
 
     # Only redirect to dashboard if authenticated
-    logger.info("Authenticated user - redirecting to dashboard")
+    logger.info('Authenticated user - redirecting to dashboard')
     return redirect('dashboard:home')
 
+# This is a view that will trigger an error
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 urlpatterns: List[Union[URLPattern, URLResolver]] = [
-    path("__reload__/", include("django_browser_reload.urls")),
+    path('__reload__/', include('django_browser_reload.urls')),
     # Landing page should be first to take precedence
     path('', home_router, name='home'),
     path('landing/', include('landing.urls')),
@@ -33,17 +38,21 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
 
     # Authentication URLs
     path('authentication/', include('allauth.urls')),
-    path('dashboard/', include('dashboard.urls', namespace="dashboard")),
-    path('users/', include('users.urls', namespace="users")),
+    path('dashboard/', include('dashboard.urls', namespace='dashboard')),
+    path('chatbot/', include('chatbot.urls', namespace='chatbot')),
+    path('users/', include('users.urls', namespace='users')),
     path('projects/', include('projects.urls')),
     path('obligations/', include('obligations.urls')),
-    path('chat/', include('chatbot.urls')),
+    # Use a different namespace for the /chat/ URL pattern
+    path('chat/', include('chatbot.urls', namespace='chat')),
     path('mechanisms/', include('mechanisms.urls')),
     path('procedures/', include('procedures.urls')),
     # Add company URLs
-    path('company/', include('company.urls', namespace="company")),
+    path('company/', include('company.urls', namespace='company')),
     # Add responsibility URLs - create a new file for this
     path('responsibility/', include('responsibility.urls')),
+    # Sentry error page to verify Sentry is working
+    path('sentry-debug/', trigger_error),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:

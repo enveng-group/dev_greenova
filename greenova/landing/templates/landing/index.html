@@ -1,65 +1,86 @@
 {% extends "base.html" %}
-  {% block title %}
-    Welcome to Greenova
-  {% endblock title %}
-  {% block body %}
-    <article>
-      <header>
-        <hgroup>
-          <h1>Welcome to Greenova</h1>
-          <h2>Environmental Compliance Management System</h2>
-        </hgroup>
-        <p>Track, manage, and report on environmental obligations with ease.</p>
-      </header>
-      <section>
-        <!-- Landing page content -->
-        <nav _="on load if user_authenticated then show else hide">
-          <a href="{% url 'account_signup' %}"
-            role="button"
-            class="primary">Get Started</a>
-          <a href="#features" role="button" class="outline">Learn More</a>
-        </nav>
-      </section>
-      <section id="features" aria-labelledby="features-heading">
-        <h2 id="features-heading">Key Features</h2>
-        <div class="grid">
-          <article>
-            <header>
-              <h3>Obligation Tracking</h3>
-            </header>
-            <p>Monitor and manage environmental obligations across multiple projects</p>
-          </article>
-          <article>
-            <header>
-              <h3>Compliance Dashboard</h3>
-            </header>
-            <p>Real-time insights into your environmental compliance status</p>
-          </article>
-          <article>
-            <header>
-              <h3>Automated Reporting</h3>
-            </header>
-            <p>Generate comprehensive reports with just a few clicks</p>
-          </article>
-        </div>
-      </section>
-      <section id="about" aria-labelledby="about-heading">
-        <h2 id="about-heading">About Greenova</h2>
-        <p>
-          Greenova is designed to help environmental professionals manage their
-          obligations effectively. Our platform simplifies compliance tracking,
-          reporting, and team collaboration.
-        </p>
-      </section>
-      <section aria-labelledby="cta-heading">
-        <h2 id="cta-heading">Ready to get started?</h2>
-        <p>
-          Join environmental professionals who trust Greenova for their
-          compliance management needs.
-        </p>
-        <nav aria-label="Sign up">
-          <a href="{% url 'account_signup' %}" role="button">Sign Up Now</a>
-        </nav>
-      </section>
-    </article>
-  {% endblock body %}
+{% block title %}
+  Welcome to Greenova
+{% endblock title %}
+{% block content %}
+  <article>
+    <header>
+      <hgroup>
+        <h1>Welcome to Greenova</h1>
+        <h2>Environmental Compliance Management System</h2>
+      </hgroup>
+      <p>
+        At Enveng Group, we are committed to making environmental compliance on major capital projects easier and more transparent. Our innovative app is designed to streamline the management of environmental regulations, ensuring that your projects not only meet but exceed compliance standards, commitments and obligations.
+      </p>
+    </header>
+    <section>
+      <!-- Landing page content -->
+      <nav {% if not user_authenticated %} style="display: block" {% else %} style="display: none" {% endif %}>
+        <a href="{% url 'account_signup' %}" class="primary">Get Started</a>
+        <a href="#features" role="button" class="outline">Learn More</a>
+      </nav>
+    </section>
+    <section id="mission" aria-labelledby="mission-heading">
+      <h2 id="mission-heading">Our Mission</h2>
+      <p>
+        Our mission is to empower Environmental Managers, environmental consultants, and stakeholders with the tools they need
+        to efficiently manage environmental compliance. We believe that transparency and ease of use are key to achieving
+        sustainable and successful projects.
+      </p>
+    </section>
+    <section id="features" aria-labelledby="features-heading">
+      <h2 id="features-heading">Key Features</h2>
+      <div class="grid">
+        <article>
+          <h3>Real-Time Monitoring</h3>
+          <p>Stay updated with real-time data on environmental compliance metrics.</p>
+        </article>
+        <article>
+          <h3>Comprehensive Reporting</h3>
+          <p>Generate detailed reports that provide insights into compliance status and areas for improvement.</p>
+        </article>
+        <article>
+          <h3>User-Friendly Interface</h3>
+          <p>Navigate through our intuitive interface designed for ease of use and accessibility.</p>
+        </article>
+        <article>
+          <h3>Collaboration Tools</h3>
+          <p>Facilitate seamless communication and collaboration among team members and stakeholders.</p>
+        </article>
+      </div>
+    </section>
+    <section id="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">Why Choose Us?</h2>
+      <div class="grid">
+        <article>
+          <h3>Expertise</h3>
+          <p>
+            Our team consists of industry experts with years of experience in environmental compliance and project management.
+          </p>
+        </article>
+        <article>
+          <h3>Innovation</h3>
+          <p>We leverage the latest technology to provide cutting-edge solutions that simplify compliance management.</p>
+        </article>
+        <article>
+          <h3>Commitment</h3>
+          <p>We are dedicated to helping you achieve your environmental goals and ensuring the success of your projects.</p>
+        </article>
+      </div>
+    </section>
+    <section id="get-involved" aria-labelledby="get-involved-heading">
+      <h2 id="get-involved-heading">Get Involved</h2>
+      <p>
+        We are excited to share our journey with you. Stay tuned for updates on our app development and upcoming features.
+        Join our community and be a part of the movement towards more transparent and efficient environmental compliance management.
+      </p>
+    </section>
+    <section aria-labelledby="cta-heading">
+      <h2 id="cta-heading">Ready to get started?</h2>
+      <p>Join Greenova today and take control of your environmental compliance management.</p>
+      <nav aria-label="Sign up">
+        <a href="{% url 'account_signup' %}" class="primary">Sign Up Now</a>
+      </nav>
+    </section>
+  </article>
+{% endblock content %}

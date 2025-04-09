@@ -11,6 +11,16 @@ setup.cfg text
 setup.py text
 pyproject.toml text
 requirements*.txt text
+*.typed text
+
+# Django files
+*.djhtml text diff=html
+*.djt text diff=html
+*.html text diff=html
+*.htm text diff=html
+*.jinja text diff=html
+*.jinja2 text diff=html
+migrations/*.py -diff
 
 # Scripts
 *.sh text eol=lf
@@ -28,33 +38,60 @@ Makefile text
 .dockerignore text
 docker-compose*.yml text
 Dockerfile text
+.babelrc text
+.prettierrc text
+.eslintrc text
+.markdownlint-cli2.jsonc text
+*.config.js text
+tailwind.config.js text diff=javascript
 
 # Git related
 .gitconfig text
 .gitignore text
 .gitattributes text
+.gitmessage text
+
+# Frontend files
+*.js text diff=javascript
+*.jsx text diff=javascript
+*.ts text diff=typescript
+*.tsx text diff=typescript
+*.css text diff=css
+*.scss text diff=css
+*.sass text diff=css
+*.less text diff=css
+*.svg text
+*.htmx text diff=html
+*.hyperscript text diff=javascript
 
 # Encrypted files
 *secret* filter=git-crypt diff=git-crypt
 *.key filter=git-crypt diff=git-crypt
 .snyk filter=git-crypt diff=git-crypt
 .env* filter=git-crypt diff=git-crypt
+\!.env.example
+\!.env.vault
 
 # VS Code
 .vscode/* text
 *.json text
-
-# Web files
-*.js text diff=javascript
-*.css text diff=css
-*.htm text diff=html
-*.html text diff=html
 
 # Documentation
 *.txt text
 *.rst text
 *.md text diff=markdown
 LICENSE text
+*.pdf -diff
+
+# Data formats
+*.csv text
+*.json text
+*.xml text
+*.xlsx binary
+*.xls binary
+
+# Protocol buffers
+*.proto text diff=proto
 
 # Binary files
 *.pkl binary
@@ -68,3 +105,16 @@ LICENSE text
 *.jpg binary
 *.png binary
 *.pdf binary
+*.webp binary
+*.avif binary
+
+# Fonts
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+
+# Audio/Video
+*.mp3 binary
+*.mp4 binary

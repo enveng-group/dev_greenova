@@ -1,11 +1,16 @@
-from typing import Union, Optional, Dict, Any
+import logging
 from datetime import date, timedelta
+from typing import Any, Dict, Optional, Union
+
+from core.utils.roles import get_role_display
 from django.utils import timezone
-from .constants import (
-    STATUS_COMPLETED, STATUS_OVERDUE, STATUS_UPCOMING, FREQUENCY_ALIASES, FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL,
-    FREQUENCY_DAILY, FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY,
-    FREQUENCY_WEEKLY
-)
+
+from .constants import (FREQUENCY_ALIASES, FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL,
+                        FREQUENCY_DAILY, FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY,
+                        FREQUENCY_QUARTERLY, FREQUENCY_WEEKLY, STATUS_COMPLETED,
+                        STATUS_OVERDUE, STATUS_UPCOMING)
+
+logger = logging.getLogger(__name__)
 
 def is_obligation_overdue(obligation: Union['Obligation', Dict[str, Any]], reference_date: Optional[date] = None) -> bool:
     """
@@ -83,7 +88,7 @@ def normalize_frequency(frequency: str) -> str:
         str: The normalized frequency string
     """
     if not frequency:
-        return ""
+        return ''
 
     # Convert to lowercase for case-insensitive matching
     frequency_lower = frequency.lower().strip()
@@ -118,3 +123,25 @@ def normalize_frequency(frequency: str) -> str:
 
     # If we can't normalize it, return as-is
     return frequency_lower
+
+def get_responsibility_display_name(responsibility_value: str) -> str:
+    """
+    Get the display name for a responsibility value.
+
+    Args:
+        responsibility_value: The responsibility value to get display name for
+
+    Returns:
+        str: The display name for the responsibility
+    """
+    # First check if this is already a display name (as stored in older records)
+    if 'Perdaman' in responsibility_value or 'SCJV' in responsibility_value:
+        return responsibility_value
+
+    # Try to get role display from the role utilities
+    role_display = get_role_display(responsibility_value)
+    if role_display != responsibility_value:  # If we got a match
+        return role_display
+
+    # Fallback: just return the input with title casing for readability
+    return responsibility_value.replace('_', ' ').title()

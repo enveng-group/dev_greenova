@@ -1,25 +1,69 @@
-from typing import Dict, List, Optional, Union
-import matplotlib.pyplot as plt
-import io
 import base64
-from matplotlib.figure import Figure
-from django.utils import timezone
+import io
 import logging
+from typing import Dict, List, Tuple
+
+import matplotlib.pyplot as plt
+from django.utils import timezone
+from matplotlib.figure import Figure
+
 from .models import EnvironmentalMechanism
 
 logger = logging.getLogger(__name__)
 
-def get_mechanism_chart(mechanism_id: int, fig_width: int = 300, fig_height: int = 250) -> plt.Figure:
+def generate_pie_chart(data: List[int], labels: List[str], colors: List[str], fig_width: int = 300, fig_height: int = 250) -> Figure:
     """
-    Generate a pie chart for a specific mechanism's obligation statuses.
+    Generate a pie chart for given data and labels with percentages in the legend.
+    """
+    fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
+    ax = fig.add_subplot(111)
+
+    if sum(data) > 0:
+        # Calculate percentages
+        total = sum(data)
+        percentages = [(value / total) * 100 for value in data]
+
+        # Create legend labels with percentages
+        legend_labels = [f'{label} ({value} - {pct:.1f}%)'
+                         for label, value, pct in zip(labels, data, percentages)]
+
+        # Create pie without percentage text on slices
+        wedges, _ = ax.pie(
+            data,
+            colors=colors,
+            startangle=90,
+            labels=None,
+            wedgeprops={'edgecolor': 'white', 'linewidth': 1}
+        )
+
+        # Add legend with combined labels
+        ax.legend(wedges, legend_labels, loc='best', fontsize=8, title='Status')
+    else:
+        ax.text(0.5, 0.5, 'No data available', horizontalalignment='center', verticalalignment='center')
+
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
+    fig.tight_layout()
+
+    return fig
+
+def encode_figure_to_base64(fig: Figure) -> str:
+    """
+    Convert a matplotlib figure to a base64 encoded string.
+    """
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', bbox_inches='tight')
+    buf.seek(0)
+    return base64.b64encode(buf.getvalue()).decode('utf-8')
+
+def get_mechanism_chart(mechanism_id: int, fig_width: int = 300, fig_height: int = 250) -> Tuple[Figure, str]:
+    """
+    Get pie chart for a specific mechanism based on its statuses.
+    Returns both the figure and base64 encoded image data.
     """
     try:
-        # Get the mechanism
         mechanism = EnvironmentalMechanism.objects.get(id=mechanism_id)
-
-        # Prepare status data
         labels = ['Not Started', 'In Progress', 'Completed', 'Overdue']
-        sizes = [
+        data = [
             mechanism.not_started_count,
             mechanism.in_progress_count,
             mechanism.completed_count,
@@ -27,95 +71,38 @@ def get_mechanism_chart(mechanism_id: int, fig_width: int = 300, fig_height: int
         ]
         colors = ['#f9c74f', '#90be6d', '#43aa8b', '#f94144']
 
-        # Create figure and plot
-        fig = Figure(figsize=(fig_width/100, fig_height/100), dpi=100)
-        ax = fig.add_subplot(111)
+        fig = generate_pie_chart(data, labels, colors, fig_width, fig_height)
+        encoded_image = encode_figure_to_base64(fig)
+        return fig, encoded_image
+    except EnvironmentalMechanism.DoesNotExist:
+        logger.error(f'Mechanism with ID {mechanism_id} does not exist.')
+        fig = generate_pie_chart([0, 0, 0, 0], ['None', 'None', 'None', 'None'], ['#ccc', '#ccc', '#ccc', '#ccc'], fig_width, fig_height)
+        encoded_image = encode_figure_to_base64(fig)
+        return fig, encoded_image
 
-        # Only plot if there's data
-        if sum(sizes) > 0:
-            # Modified pie chart code - use legend instead of direct labels
-            patches, _, autotexts = ax.pie(
-                sizes,
-                colors=colors,
-                autopct='%1.1f%%',
-                startangle=90,
-                labels=None  # Remove direct labels
-            )
-
-            # Make percentage text smaller and more readable
-            for autotext in autotexts:
-                autotext.set_fontsize(8)
-
-            # Add a legend instead
-            ax.legend(patches, labels, loc="best", fontsize=8)
-        else:
-            ax.text(0.5, 0.5, "No data available", horizontalalignment='center', verticalalignment='center')
-
-        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
-        fig.tight_layout()
-
-        return fig
-
-    except Exception as e:
-        logger.error(f"Error generating mechanism chart: {str(e)}")
-        # Return a simple error figure
-        fig = Figure(figsize=(fig_width/100, fig_height/100), dpi=100)
-        ax = fig.add_subplot(111)
-        ax.text(0.5, 0.5, f"Error: {str(e)}", horizontalalignment='center', verticalalignment='center')
-        return fig
-
-def get_overall_chart(project_id: int, fig_width: int = 300, fig_height: int = 250) -> plt.Figure:
+def get_overall_chart(project_id: int, fig_width: int = 300, fig_height: int = 250) -> Tuple[Figure, str]:
     """
-    Generate an overall pie chart for all mechanisms in a project.
+    Get overall pie chart for all mechanisms in a project.
+    Returns both the figure and base64 encoded image data.
     """
     try:
-        # Get all mechanisms for this project
         mechanisms = EnvironmentalMechanism.objects.filter(project_id=project_id)
 
-        # Sum up all status counts
+        # Aggregate data
         not_started = sum(m.not_started_count for m in mechanisms)
         in_progress = sum(m.in_progress_count for m in mechanisms)
         completed = sum(m.completed_count for m in mechanisms)
         overdue = sum(m.overdue_count for m in mechanisms)
 
-        # Prepare chart data
         labels = ['Not Started', 'In Progress', 'Completed', 'Overdue']
-        sizes = [not_started, in_progress, completed, overdue]
+        data = [not_started, in_progress, completed, overdue]
         colors = ['#f9c74f', '#90be6d', '#43aa8b', '#f94144']
 
-        # Create figure
-        fig = Figure(figsize=(fig_width/100, fig_height/100), dpi=100)
-        ax = fig.add_subplot(111)
-
-        # Only plot if there's data
-        if sum(sizes) > 0:
-            # Modified pie chart code - use legend instead of direct labels
-            patches, _, autotexts = ax.pie(
-                sizes,
-                colors=colors,
-                autopct='%1.1f%%',
-                startangle=90,
-                labels=None  # Remove direct labels
-            )
-
-            # Make percentage text smaller and more readable
-            for autotext in autotexts:
-                autotext.set_fontsize(8)
-
-            # Add a legend instead
-            ax.legend(patches, labels, loc="best", fontsize=8)
-        else:
-            ax.text(0.5, 0.5, "No data available", horizontalalignment='center', verticalalignment='center')
-
-        ax.axis('equal')
-        fig.tight_layout()
-
-        return fig
-
+        fig = generate_pie_chart(data, labels, colors, fig_width, fig_height)
+        encoded_image = encode_figure_to_base64(fig)
+        return fig, encoded_image
     except Exception as e:
-        logger.error(f"Error generating overall chart: {str(e)}")
-        # Return error figure
-        fig = Figure(figsize=(fig_width/100, fig_height/100), dpi=100)
-        ax = fig.add_subplot(111)
-        ax.text(0.5, 0.5, f"Error: {str(e)}", horizontalalignment='center', verticalalignment='center')
-        return fig
+        logger.error(f'Error generating overall chart: {str(e)}')
+        fig = generate_pie_chart([0, 0, 0, 0], ['None', 'None', 'None', 'None'], ['#ccc', '#ccc', '#ccc', '#ccc'], fig_width, fig_height)
+        encoded_image = encode_figure_to_base64(fig)
+        return fig, encoded_image
