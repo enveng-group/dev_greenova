@@ -23,44 +23,6 @@
       "version": "latest"
     }
   },
-  "features": {
-    "ghcr.io/devcontainers-extra/features/direnv:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {},
-    "ghcr.io/devcontainers-extra/features/markdownlint-cli2:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/pre-commit:2": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/protoc:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/shfmt:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/git:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "installDirectlyFromGitHubRelease": true,
-      "version": "latest"
-    },
-    "ghcr.io/kreemer/features/chrometesting:1": {
-      "version": "Stable"
-    },
-    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
-      "version": "latest"
-    },
-    "ghcr.io/r3dpoint/devcontainer-features/tailwindcss-standalone-cli:1": {
-      "version": "latest"
-    }
-  },
-  "forwardPorts": [
-    8000
-  ],
-  "image": "mcr.microsoft.com/devcontainers/python:3.9",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
