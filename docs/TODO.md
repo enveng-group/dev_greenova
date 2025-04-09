@@ -3,9 +3,6 @@
 This document tracks tasks and action items for the Greenova environmental
 management application.
 
-<<<<<<< HEAD
-## Completed Tasks
-=======
 profile
 company
 
@@ -14,7 +11,7 @@ company
 1. **Select Project on Dashboard**
    - **Context**: The dashboard is a central part of the application’s user interface. It provides users with an overview of projects and other critical information.
    - **Implementation**: Ensure the dashboard allows users to easily select and switch between projects. This could involve adding a dropdown or a list of projects with clickable links.
-   - **Example**: 
+   - **Example**:
      ```html
      <nav>
        <ul>
@@ -398,19 +395,9 @@ reset password
 register
 interactivity of the mechanism charts
 html first by design principles, python and django first, html second picoclasscss third, custom plain css fourth, hyperscript fifth, htmx sixth, native web apis seventh, plain javascript eighth
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 The following tasks have been completed and moved to `done.txt`:
 
-<<<<<<< HEAD
-- Charts and obligations list back online
-- Add obligation conditionally to projects with CRUD testing
-- Implement detailed view
-- Create login page with customer/admin endpoint choice
-- Implement user profile functionality
-- Develop company features
-- Implement stylelint for CSS linting
-=======
 https://djlint.com/ - DONE
 https://stylelint.io/
 https://prettier.io/ - DONE
@@ -420,7 +407,6 @@ https://github.com/microsoft/pylance - DONE
 https://github.com/hadolint/hadolint
 https://eslint.org/ - DONE
 https://setuptools.pypa.io/en/latest/index.html
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 ## Technology Integration Tasks
 
@@ -479,36 +465,6 @@ https://setuptools.pypa.io/en/latest/index.html
 
 ### Migrate Templates from DTL to Jinja2
 
-<<<<<<< HEAD
-- [ ] Authentication
-- [ ] Chatbot
-- [ ] Company
-- [ ] Core
-- [] Dashboard
-- [x] Feedback
-- [ ] Landing
-- [ ] Mechanisms
-- [ ] Obligations
-- [] Procedures
-- [ ] Projects
-- [ ] Responsibility
-- [ ] Templates
-- [ ] Users
-
-## References
-
-- [djlint](https://djlint.com/)
-- [stylelint](https://stylelint.io/)
-- [prettier](https://prettier.io/)
-- [autopep8](https://pypi.org/project/autopep8/)
-- [Django Testing](https://docs.djangoproject.com/en/4.2/topics/testing/overview/)
-- [pylance](https://github.com/microsoft/pylance)
-- [hadolint](https://github.com/hadolint/hadolint)
-- [eslint](https://eslint.org/)
-- [setuptools](https://setuptools.pypa.io/en/latest/index.html)
-- [pre-commit](https://pre-commit.com)
-- [pre-commit hooks](https://pre-commit.com/hooks.html)
-=======
 - django-allauth[MFA]
 - django-allauth[user-sessions]
 - [certbot let's encrypt](https://medium.com/@samson_sham/setup-lets-encrypt-https-server-fa54abff688)
@@ -546,4 +502,3 @@ better use of git-crypt and git-lfs
 add `npx dotenv-vault@latest pull` to `post_create.sh` in `.devcontainer/` directory
 MOdularise base.html
 combine and collate numerous commmands into makefile to automate the setup development environment process
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

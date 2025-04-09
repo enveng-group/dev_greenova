@@ -158,7 +158,6 @@ For production, you can encrypt your environment variables:
 <<<<<<< HEAD:docs/resources/config/dotenv.md
 
 =======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6)):docs/resources/dotenv.md
    - `.env.vault`: Contains encrypted variables
    - `.env.keys`: Contains encryption keys
 

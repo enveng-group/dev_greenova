@@ -103,72 +103,11 @@ yarn.lock
 !.env.vault.example
 .env.keys
 !.envrc
-<<<<<<< HEAD
-
-# Docker
-.docker/
-docker-compose.override.yml
-docker-volume/
-
-# Test coverage
-coverage/
-.coverage.*
-coverage.xml
-*.cover
-cov.xml
-.hypothesis/
-nosetests.xml
-
-# Proto3 generated code
-*_pb2.py
-*_pb2_grpc.py
-*_pb.js
-*_pb.d.ts
-
-# Tailwind
-.tailwind-cache/
-tailwind-output.css
-
-# JS/TS build artifacts
-.parcel-cache/
-.cache/
-dist/
-.vercel/
-*.tsbuildinfo
-
-# Project specific
-*.bak
-*.tmp
-*.swp
-*.dump
-*.sqlite3
-*.csv
-*.pickle
-uploads/
-downloads/
-backups/
-
-# Documentation
-docs/_build/
-docs/api/
-site/
-
-# Visual Studio Code workspace settings
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 .env*
 .flaskenv*
 !.env.project
-<<<<<<< HEAD
-=======
 !.env.vault
 .venvmake/
 *.bak
 None
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

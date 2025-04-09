@@ -18,13 +18,9 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: none;
-<<<<<<< HEAD
-  scrollbar-width: none;
-=======
 
   /* Padding to make the layout fit within the app */
   padding-top: var(--greenova-spacing-large);
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
 
 .chart-scroll-container {
@@ -63,13 +59,6 @@
   padding: var(--greenova-padding);
 }
 
-<<<<<<< HEAD
-.mechanism-chart {
-  flex-grow: 1;
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-=======
 .mechanism-chart figure {
   margin: 0;
   padding: 0;
@@ -78,7 +67,6 @@
 .mechanism-chart figure figcaption {
   /* Add padding to make it look pretty */
   padding: var(--greenova-padding);
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
 
 .mechanism-chart img {
@@ -144,10 +132,7 @@
 }
 
 /* Navigation buttons */
-<<<<<<< HEAD
-=======
 /*.chart-nav*/
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 nav[role='navigation'].chart-nav {
   display: flex;
   justify-content: flex-end;
@@ -202,8 +187,6 @@ nav[role='navigation'].chart-nav button {
     display: none !important;
   }
 }
-<<<<<<< HEAD
-=======
 
 /* Add styles for chart gallery */
 .chart-gallery {
@@ -244,4 +227,3 @@ nav[role='navigation'].chart-nav button {
   height: auto;
   object-fit: contain;
 }
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

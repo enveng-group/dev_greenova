@@ -3,49 +3,6 @@
  *               Dark-mode Coloring               *
  *                                                *
  **************************************************/
-<<<<<<< HEAD
-:root:not([data-theme='light']),
-:root[data-theme='dark'] {
-  /**************************************************
-   *                                                *
-   *                 Primary colours                *
-   *                                                *
-   **************************************************/
-
-  /* Green Primary - Use Cases: Body backgrounds, icon backgrounds, buttons */
-  --greenova-green-primary: #b5c29a;
-
-  /* Green Secondary - Use Cases: Header backgrounds */
-  --greenova-green-secondary: #5a6a4b;
-
-  /* Green Tertiary - Use Cases: Focus Areas on header or background backgrounds */
-  --greenova-green-tertiary: #4d5741;
-
-  /* Beige Primary - Use Cases: Secondary accent, navigation bars, icons in focus */
-  --greenova-beige-primary: #c0b0a0;
-
-  /* Beige Secondary - Use Cases: Beige alternate, when Beige Primary in use */
-  --greenova-beige-secondary: #9e8e7e;
-
-  /* Background Primary - Use Cases: Frame Colour, main background*/
-  --greenova-background-primary: #2c3328;
-
-  /* Background Secondary - Use Cases: Container background colour*/
-  --greenova-background-secondary: #3d4d36;
-
-  /* Text Primary Dark - Use Cases: Immutable Text, for Titles. Icons */
-  --greenova-text-primary-dark: #fff;
-
-  /* Text Secondary Dark - Use Cases: Immutable Text, Headings and body*/
-  --greenova-text-secondary-dark: #e8e8e8;
-
-  /* Text Tertiary Dark - Use Cases: Mutable Text, for text box hints */
-  --greenova-text-tertiary-dark: #a0a0a0;
-
-  /* Text Primary Light - Use Cases: All text on coloured backgrounds*/
-  --greenova-text-primary-light: #000;
-}
-=======
  :root:not([data-theme=light]),
  :root[data-theme=dark] {
 
@@ -89,4 +46,3 @@
    --greenova-primary-light: #000000;
 
  }
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

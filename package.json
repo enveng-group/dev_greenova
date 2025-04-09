@@ -1,11 +1,8 @@
 {
-<<<<<<< HEAD
-=======
   "name": "greenova",
   "version": "0.0.2",
   "private": true,
   "type": "module",
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   "dependencies": {
     "@picocss/pico": "2.0.6",
     "htmx-ext-class-tools": "2.0.2",
@@ -40,10 +37,6 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-<<<<<<< HEAD
-  "type": "module",
-  "version": "0.0.2"
-=======
   "devDependencies": {
     "@eslint/eslintrc": "3.3.0",
     "@eslint/js": "9.22.0",
@@ -53,5 +46,4 @@
     "globals": "16.0.0",
     "prettier": "3.5.3"
   }
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }

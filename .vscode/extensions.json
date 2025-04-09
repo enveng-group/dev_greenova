@@ -26,25 +26,6 @@
     "ms-vscode.makefile-tools",
     "redhat.vscode-yaml",
     "zxh404.vscode-proto3",
-<<<<<<< HEAD
-    "plex.vscode-protolint",
-    "bradlc.vscode-tailwindcss",
-    "esbenp.prettier-vscode",
-    "pycqa.bandit-pycqa",
-    "bmalehorn.vscode-fish",
-    "willumz.generic-pseudocode",
-    "stylelint.vscode-stylelint",
-    "wholroyd.jinja",
-    "rarnoldmobile.todo-txt",
-    "mermaidchart.vscode-mermaid-chart",
-    "github.vscode-github-actions",
-    "ymotongpoo.licenser",
-    "marp-team.marp-vscode",
-    "dbcode.dbcode",
-    "ms-vscode.copilot-mermaid-diagram",
-    "ms-vscode.vscode-websearchforcopilot"
-=======
     "plex.vscode-protolint"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   ]
 }

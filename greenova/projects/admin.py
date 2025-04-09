@@ -14,26 +14,8 @@ T = TypeVar('T')
 class BaseModelAdmin(admin.ModelAdmin, Generic[T]):
     """Base admin class with type safety."""
 
-<<<<<<< HEAD
-    def dispatch(
-        self, request: HttpRequest, object_id: str, from_field: None = None
-    ) -> Optional[T]:
-        obj = super().get_object(request, object_id, from_field)
-        if obj:
-            if not self.has_view_or_change_permission(request, obj):
-                logger.warning(
-                    'Permission denied for user %s on object %s',
-                    request.user,
-                    object_id
-                )
-                raise PermissionDenied(
-                    'You do not have permission to access this object.'
-                )
-        return obj
-=======
     def dispatch(self, request: HttpRequest, object_id: str, from_field: Optional[str] = None) -> Optional[T]:
         return super().get_object(request, object_id, from_field)
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 class ProjectMembershipInline(admin.TabularInline):
     """Inline admin for project memberships."""

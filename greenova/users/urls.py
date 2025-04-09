@@ -1,8 +1,4 @@
 from django.urls import path
-<<<<<<< HEAD
-
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 from . import views
 
 app_name = 'users'

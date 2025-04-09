@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# Greenova Project Technical Context
-=======
 # GitHub Copilot Instructions for Django Development with Python
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 ## Project Domain
 
@@ -11,15 +7,6 @@ tracking environmental obligations and compliance requirements.
 
 ## Technical Stack
 
-<<<<<<< HEAD
-We use Python 3.9.21 with Django 4.1.13 for backend development.
-
-Our frontend uses PicoCSS as the primary CSS framework. Only use Tailwind CSS
-
-We implement frontend interactivity with django-hyperscript for simple
-interactions and django-htmx for more complex AJAX functionality. Custom
-JavaScript is only used as a last resort.
-=======
 ```html
 <body>
   <header role="banner">
@@ -41,28 +28,10 @@ JavaScript is only used as a last resort.
 
 Reference: See `/docs/resources/htmx.md` for more examples of semantic HTML
 structure with proper ARIA attributes for accessibility.
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 We follow PEP 8 style guidelines with a strict maximum line length of 88
 characters for all Python files.
 
-<<<<<<< HEAD
-We organize code in a modular Django architecture with specialized apps for
-different functional areas.
-
-We use class-based views with mixins for code reuse in Django.
-
-We implement proper model relationships and constraints in our database design.
-
-We handle authentication using django-allauth with multi-factor authentication
-support.
-
-## Data Structure
-
-Our primary data model is the Obligation model which tracks environmental
-compliance requirements. Obligations are related to Projects, Mechanisms, and
-Procedures.
-=======
 ```html
 <form method="post" action="/submit">
   <label for="name">Name:</label>
@@ -86,18 +55,9 @@ implementation and `/docs/resources/htmx.md` for django-htmx integration
 patterns.
 
 - Layer 4: Web APIs for data
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 Users are assigned Responsibilities related to Obligations.
 
-<<<<<<< HEAD
-We follow data-oriented programming principles with immutable data structures
-and functional transformations.
-
-## Version Control and Quality
-
-We use git with pre-commit hooks.
-=======
 Reference: See `/docs/resources/matplotlib.md` for integrating Matplotlib with
 Django for data visualization.
 
@@ -109,14 +69,10 @@ Django for data visualization.
   <noscript>Please enter date in YYYY-MM-DD format</noscript>
 </div>
 ```
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 We enforce code quality with pylint, pylint-django, eslint, djlint, and
 markdownlint.
 
-<<<<<<< HEAD
-We format code with autopep8, prettier, and isort.
-=======
 ```html
 <button
   type="button"
@@ -127,13 +83,9 @@ We format code with autopep8, prettier, and isort.
   Filter Active
 </button>
 ```
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 We use mypy with django-stubs for type checking Python code.
 
-<<<<<<< HEAD
-## Dependencies
-=======
 ```html
 <form method="post" action="/submit" novalidate>
   {% csrf_token %}
@@ -152,19 +104,9 @@ We use mypy with django-stubs for type checking Python code.
   <button type="submit">Submit</button>
 </form>
 ```
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 We maintain compatible versions of dependencies:
 
-<<<<<<< HEAD
-- Python 3.9.21
-- Django 4.1.13
-- Node.js 18.20.7
-- NPM 10.8.2
-- @picocss/pico 2.0.6
-- htmx.org 1.9.12
-- hyperscript.org 0.9.14
-=======
 1. HTML Hierarchy:
 
    - Proper use of h1-h6 elements
@@ -966,4 +908,3 @@ CREATE TRIGGER update_obligations_timestamp
    - Author: Adrian Gallo
    - Email: agallo@enveng-group.com.au
    - License: AGPL-3.0
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))

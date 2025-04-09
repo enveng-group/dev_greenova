@@ -1,12 +1,9 @@
-<<<<<<< HEAD
-=======
 from typing import Any, Dict, Tuple, Optional, TypedDict, Union, Set, cast
 from django.core.management.base import BaseCommand, CommandParser
 from django.utils.dateparse import parse_date
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.utils import timezone
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 import csv
 import logging
 import os
@@ -24,17 +21,9 @@ from projects.models import Project
 
 logger = logging.getLogger(__name__)
 
-<<<<<<< HEAD
-
 # Define TypedDict for obligation data structure
 class ObligationData(TypedDict, total=False):
     """Type definition for obligation data dictionary."""
-
-=======
-# Define TypedDict for obligation data structure
-class ObligationData(TypedDict, total=False):
-    """Type definition for obligation data dictionary."""
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     obligation_number: str
     project: Project
     primary_environmental_mechanism: Optional[EnvironmentalMechanism]
@@ -61,12 +50,6 @@ class ObligationData(TypedDict, total=False):
     site_or_desktop: str
     gap_analysis: bool
     notes_for_gap_analysis: str
-<<<<<<< HEAD
-    created_at: Any  # Datetime
-    updated_at: Any  # Datetime
-
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
 class Command(BaseCommand):
     help = 'Import obligations from CSV file'
@@ -80,15 +63,9 @@ class Command(BaseCommand):
 
     # Add mapping for obligation number prefixes
     OBLIGATION_PREFIX_MAPPING: Dict[str, str] = {
-<<<<<<< HEAD
-        'Condition': 'MS1180-',
-        'Condtion': 'MS1180-',
-        'PCEMP': 'PCEMP-',
-=======
         'Condition': 'MS1180-',   # Map "Condition X" to "MS1180-X"
         'Condtion': 'MS1180-',    # Handle typo in source data
         'PCEMP': 'PCEMP-',        # Keep PCEMP prefix as is
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     }
 
     def add_arguments(self, parser: CommandParser) -> None:
@@ -188,34 +165,8 @@ class Command(BaseCommand):
             name=mechanism_name, project=project
         ).first()
 
-<<<<<<< HEAD
-        if mechanism:
-            return mechanism, False
-
-        # Create new mechanism if not found
-        mechanism = EnvironmentalMechanism(
-            name=mechanism_name, project=project, reference_number=mechanism_id
-        )
-        mechanism.save()
-        return mechanism, True
-
-    def process_row(self, row: Dict[str, Any], project: Project) -> ObligationData:
-        """Process a single CSV row into an ObligationData dictionary."""
-        # Map CSV fields to ObligationData fields
-        mechanism_name = row.get('primary__environmental__mechanism', '')
-        mechanism, _ = self.get_or_create_mechanism(mechanism_name, project)
-
-        # Process dates
-        action_due_date = None
-        if row.get('action__due_date'):
-            action_due_date = parse_date(row['action__due_date'])
-
-        close_out_date = None
-        if row.get('close__out__date'):
-            close_out_date = parse_date(row['close__out__date'])
-=======
-            # Try to get existing mechanism
-            try:
+           # Try to get existing mechanism
+           try:
                 mechanism = EnvironmentalMechanism.objects.get(
                     name=mech_name,
                     project=project
@@ -315,18 +266,9 @@ class Command(BaseCommand):
                 close_out_date = parse_date(str(row.get('close__out__date')))
             except (ValueError, TypeError):
                 logger.warning(f"Invalid close out date: {row.get('close__out__date')}")
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
         recurring_forecasted_date = None
         if row.get('recurring__forcasted__date'):
-<<<<<<< HEAD
-            recurring_forecasted_date = parse_date(row['recurring__forcasted__date'])
-
-        # Normalize obligation number
-        obligation_number = self.normalize_obligation_number(
-            row.get('obligation__number', '')
-        )
-=======
             try:
                 recurring_date = parse_date(str(row.get('recurring__forcasted__date')))
             except (ValueError, TypeError):
@@ -337,7 +279,6 @@ class Command(BaseCommand):
         if not obligation_number:
             obligation_number = f"UNKNOWN-{timezone.now().timestamp()}"
             logger.warning(f"Missing obligation number, using generated number: {obligation_number}")
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 
         # Normalize recurring frequency
         recurring_frequency = ''
@@ -347,15 +288,6 @@ class Command(BaseCommand):
         # Set timestamps for new records
         now = timezone.now()
 
-<<<<<<< HEAD
-        # Create the ObligationData dictionary
-        obligation_data: ObligationData = {
-            'obligation_number': obligation_number,
-            'project': project,
-            'primary_environmental_mechanism': mechanism,
-            'procedure': row.get('procedure', ''),
-            'environmental_aspect': row.get('environmental__aspect', ''),
-=======
         # Prepare cleaned data
         result: ObligationData = {
             'obligation_number': normalized_obligation_number,
@@ -363,75 +295,18 @@ class Command(BaseCommand):
             'primary_environmental_mechanism': mechanism,
             'procedure': row.get('procedure', ''),
             'environmental_aspect': environmental_aspect,
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
             'obligation': row.get('obligation', ''),
             'accountability': row.get('accountability', ''),
             'responsibility': row.get('responsibility', ''),
             'project_phase': row.get('project_phase', ''),
             'action_due_date': action_due_date,
             'close_out_date': close_out_date,
-<<<<<<< HEAD
-            'status': row.get('status', 'not started'),
-=======
             'status': status,
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
             'supporting_information': row.get('supporting__information', ''),
             'general_comments': row.get('general__comments', ''),
             'compliance_comments': row.get('compliance__comments', ''),
             'non_conformance_comments': row.get('non_conformance__comments', ''),
             'evidence_notes': row.get('evidence', ''),
-<<<<<<< HEAD
-            'recurring_obligation': self.clean_boolean(
-                row.get('recurring__obligation', False)
-            ),
-            'recurring_frequency': recurring_frequency,
-            'recurring_status': row.get('recurring__status', ''),
-            'recurring_forcasted_date': recurring_forecasted_date,
-            'inspection': self.clean_boolean(row.get('inspection', False)),
-            'inspection_frequency': row.get('inspection__frequency', ''),
-            'site_or_desktop': row.get('site_or__desktop', ''),
-            'gap_analysis': self.clean_boolean(row.get('gap__analysis', False)),
-            'notes_for_gap_analysis': row.get('notes_for__gap__analysis', ''),
-            'created_at': now,
-            'updated_at': now,
-        }
-        return result
-
-        return obligation_data
-
-    def create_or_update_obligation(
-        self, obligation_data: ObligationData, force_update: bool = False
-    ) -> Tuple[Union[Obligation, bool, None], str]:
-        """Create or update an obligation from the data dictionary."""
-        obligation_number = obligation_data.get('obligation_number', '')
-        if not obligation_number:
-            return None, 'Missing obligation number'
-
-        # Check if obligation already exists
-        existing_obligation = Obligation.objects.filter(
-            obligation_number=obligation_number
-        ).first()
-
-        if existing_obligation and not force_update:
-            return (
-                False,
-                f'Obligation {obligation_number} already exists (use --update to update)',
-            )
-
-        try:
-            if existing_obligation:
-                # Update existing obligation
-                for key, value in obligation_data.items():
-                    if (
-                        key != 'obligation_number' and key != 'created_at'
-                    ):  # Skip primary key and created_at
-                        setattr(existing_obligation, key, value)
-
-                # Always update the updated_at timestamp
-                existing_obligation.updated_at = timezone.now()
-                existing_obligation.save()
-                return existing_obligation, f'Updated obligation {obligation_number}'
-=======
             'recurring_obligation': self.clean_boolean(row.get('recurring__obligation')),
             'recurring_frequency': row.get('recurring__frequency', ''),
             'recurring_status': row.get('recurring__status', ''),
@@ -474,167 +349,10 @@ class Command(BaseCommand):
                         setattr(existing, key, value)
                 existing.save()
                 return existing, "updated"
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
             else:
                 # Create new obligation
                 new_obligation = Obligation(**obligation_data)
                 new_obligation.save()
-<<<<<<< HEAD
-                return new_obligation, f'Created obligation {obligation_number}'
-        except Exception as e:
-            return None, f'Failed to save obligation: {str(e)}'
-
-    def process_csv_file(
-        self, file_path: str, options: Dict[str, Any]
-    ) -> Tuple[int, int, int, List[str]]:
-        """Process the entire CSV file."""
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f'CSV file not found: {file_path}')
-
-        # Get default project from options or create one
-        default_project_name = options.get('project')
-        default_project = None
-
-        if default_project_name:
-            default_project = Project.objects.filter(name=default_project_name).first()
-            if not default_project:
-                default_project = Project.objects.create(name=default_project_name)
-                logger.info(f'Created default project: {default_project_name}')
-
-        created = 0
-        updated = 0
-        skipped = 0
-        errors = []
-
-        # Open and process the CSV file
-        with open(file_path, encoding='utf-8-sig') as csvfile:
-            reader = csv.DictReader(csvfile)
-
-            for row_num, row in enumerate(
-                reader, start=2
-            ):  # Start at 2 to account for header row
-                # Use transaction per row to prevent cascading failures
-                try:
-                    with transaction.atomic():
-                        # Determine project for this row
-                        project_name = row.get('project__name', '')
-                        if not project_name and not default_project:
-                            errors.append(
-                                f'Row {row_num}: Missing project name and no default project specified'
-                            )
-                            skipped += 1
-                            continue
-
-                        if project_name:
-                            project = Project.objects.filter(name=project_name).first()
-                            if not project:
-                                project = Project.objects.create(name=project_name)
-                                logger.info(f'Created project: {project_name}')
-                        else:
-                            project = default_project
-
-                        # Process the row into ObligationData
-                        obligation_data = self.process_row(row, project)
-
-                        # Create or update the obligation
-                        if options.get('dry_run'):
-                            self.stdout.write(
-                                f"Would import: {obligation_data['obligation_number']} - {obligation_data['obligation'][:50]}..."
-                            )
-                            created += 1
-                        else:
-                            result, message = self.create_or_update_obligation(
-                                obligation_data,
-                                force_update=options.get('update', False),
-                            )
-
-                            if result is None:
-                                errors.append(f'Row {row_num}: {message}')
-                                skipped += 1
-                            elif result is False:
-                                self.stdout.write(f'Skipped: {message}')
-                                skipped += 1
-                            elif isinstance(result, Obligation):
-                                if 'Updated' in message:
-                                    updated += 1
-                                else:
-                                    created += 1
-                                self.stdout.write(f'Success: {message}')
-                except Exception as e:
-                    logger.exception(f'Error processing row {row_num}: {str(e)}')
-                    errors.append(f'Row {row_num}: {str(e)}')
-                    skipped += 1
-
-                    if not options.get('continue_on_error', False):
-                        # Break the loop if not continuing on errors
-                        errors.append(
-                            'Import halted due to error. Use --continue-on-error to process all rows.'
-                        )
-                        break
-
-        return created, updated, skipped, errors
-
-    def handle(self, *args: Any, **options: Any) -> None:
-        """Main command handler."""
-        csv_file = options['csv_file']
-
-        self.stdout.write(f'Importing obligations from {csv_file}')
-
-        if options.get('dry_run'):
-            self.stdout.write(
-                self.style.WARNING('DRY RUN - no changes will be made to the database')
-            )
-
-        try:
-            # Disconnect signals temporarily to prevent unnecessary processing
-            post_save_receivers = post_save.receivers
-            post_save.receivers = []
-
-            # Process the CSV file - NOT within an atomic transaction
-            created, updated, skipped, errors = self.process_csv_file(csv_file, options)
-
-            # Report results
-            if errors:
-                self.stdout.write(
-                    self.style.WARNING(f'Encountered {len(errors)} errors:')
-                )
-                for error in errors[:10]:  # Show first 10 errors
-                    self.stdout.write(self.style.WARNING(f'  • {error}'))
-                if len(errors) > 10:
-                    self.stdout.write(
-                        self.style.WARNING(f'  • ...and {len(errors) - 10} more errors')
-                    )
-
-            if options.get('dry_run'):
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f'Would create {created} obligations, update {updated}, skip {skipped}'
-                    )
-                )
-            else:
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f'Successfully created {created} obligations, updated {updated}, skipped {skipped}'
-                    )
-                )
-        finally:
-            # Reconnect signals
-            post_save.receivers = post_save_receivers
-
-            # Now trigger an update for mechanisms
-            if not options.get('dry_run'):
-                self.stdout.write('Updating mechanism counts...')
-                try:
-                    from mechanisms.models import update_all_mechanism_counts
-
-                    count = update_all_mechanism_counts()
-                    self.stdout.write(f'Updated counts for {count} mechanisms')
-                except Exception as e:
-                    self.stdout.write(
-                        self.style.ERROR(f'Failed to update mechanism counts: {str(e)}')
-                    )
-                    # Don't let this error cause the whole command to fail
-=======
                 return new_obligation, "created"
 
         except Exception as e:
@@ -768,4 +486,3 @@ class Command(BaseCommand):
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Import failed: {str(e)}"))
             logger.error(f"Import error: {str(e)}")
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
