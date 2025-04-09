@@ -40,7 +40,7 @@ button,
 }
 
 /* Font on */
-button#chat-toggle > span {
+button#chat-toggle>span {
   font-weight: normal !important;
 }
 
@@ -48,6 +48,7 @@ button#chat-toggle > span {
 [role='menuitem'] {
   margin: 0px var(--greenova-spacing);
 }
+
 
 .btn-primary {
   background-color: var(--greenova-green-primary);
@@ -62,11 +63,9 @@ button#chat-toggle > span {
 }
 
 /* Add obligation button in navbar */
-.add-obligation-btn {
-}
+.add-obligation-btn {}
 
-.add-obligation-btn:hover {
-}
+.add-obligation-btn:hover {}
 
 .add-obligation-btn svg {
   width: 16px;
@@ -80,15 +79,15 @@ button#chat-toggle > span {
   gap: var(--greenova-spacing-small);
   margin-top: var(--greenova-spacing);
   padding-top: var(--greenova-padding);
+
 }
 
+
 /* Pico CSS Override */
-nav li [role='button'],
-nav li [type='button'],
+nav li [role=button],
+nav li [type=button],
 nav li button,
-nav
-  li
-  input:not([type='checkbox'], [type='radio'], [type='range'], [type='file']),
+nav li input:not([type=checkbox], [type=radio], [type=range], [type=file]),
 nav li select {
   /* Keeps add obligation inline with other buttons */
   margin: 0;
@@ -97,4 +96,5 @@ nav li select {
 a[role='button'] {
   /* Used to make it look more like a proper button */
   padding-top: 0.55rem !important;
+
 }

@@ -1,18 +1,15 @@
 {% if mechanism_charts %}
   <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">Environmental Mechanisms Analysis</h2>
+
     <!-- Chart Navigation -->
     <nav class="chart-nav" aria-label="Mechanism charts navigation">
       <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">←</button>
-      <button type="button"
-              onclick="scrollCharts('right')"
-              aria-label="Scroll right">→</button>
+      <button type="button" onclick="scrollCharts('right')" aria-label="Scroll right">→</button>
     </nav>
+
     <!-- Chart Gallery -->
-    <div id="chartGallery"
-         class="chart-gallery"
-         role="region"
-         aria-label="Chart gallery">
+    <div id="chartGallery" class="chart-gallery" role="region" aria-label="Chart gallery">
       {% for mech in mechanism_charts %}
         <article class="mechanism-chart">
           <header>
@@ -20,15 +17,12 @@
           </header>
           <figure>
             <figcaption>{{ mech.name }} Status Distribution</figcaption>
-            <img src="data:image/png;base64,{{ mech.image_data }}"
-                 alt="Chart for {{ mech.name }}"
-                 class="chart-image"
-                 width="400"
-                 height="400" />
+            <img src="{{ mech.chart }}" alt="Chart for {{ mech.name }}" class="chart-image">
           </figure>
         </article>
       {% endfor %}
     </div>
+
     {% if table_data %}
       <!-- Detailed Data Table -->
       <article class="data-table">
@@ -59,9 +53,7 @@
                   <td>{{ item.total }}</td>
                   <td>
                     {% if item.id %}
-                      <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
-                         class="btn-secondary"
-                         aria-label="View details for {{ item.name }}">View</a>
+                    <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}" class="btn-secondary" aria-label="View details for {{ item.name }}">View</a>
                     {% endif %}
                   </td>
                 </tr>
@@ -72,6 +64,7 @@
       </article>
     {% endif %}
   </section>
+
 {% elif error %}
   <div role="alert" class="notice error">
     <p>{{ error }}</p>
