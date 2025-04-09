@@ -155,9 +155,7 @@ For production, you can encrypt your environment variables:
    ```
 
 4. This creates:
-<<<<<<< HEAD:docs/resources/config/dotenv.md
 
-=======
    - `.env.vault`: Contains encrypted variables
    - `.env.keys`: Contains encryption keys
 

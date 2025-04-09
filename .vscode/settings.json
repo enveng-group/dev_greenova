@@ -70,12 +70,6 @@
     "editor.suggest.insertMode": "replace",
     "editor.tabSize": 2
   },
-  "[proto3]": {
-    "editor.defaultFormatter": "zxh404.vscode-proto3",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true
-  },
   "[javascript]": {
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
@@ -91,17 +85,6 @@
     "editor.insertSpaces": true,
     "editor.suggest.insertMode": "replace",
     "editor.tabSize": 2
-  },
-  "[dockerfile]": {
-    "editor.quickSuggestions": {
-      "strings": true
-    }
-  },
-  "[shellcheckrc]": {
-    "editor.defaultFormatter": "timonwong.shellcheck",
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -158,12 +141,9 @@
       "source.fixAll": "explicit",
       "source.organizeImports": "explicit"
     },
-<<<<<<< HEAD
     "editor.defaultFormatter": "ms-python.autopep8",
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
-=======
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
     "editor.rulers": [88, 100],
     "editor.wordBasedSuggestions": "off"
   },
@@ -183,20 +163,6 @@
     "editor.formatOnSave": true,
     "editor.insertSpaces": true,
     "editor.tabSize": 4
-  },
-  "[dotenv]": {
-    "editor.defaultFormatter": "dotenv.dotenv-vscode",
-    "editor.formatOnSave": true,
-    "files.eol": "\n"
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml",
-    "editor.formatOnSave": true,
-    "files.eol": "\n"
-  },
-  "[makefile]": {
-    "editor.defaultFormatter": "ms-vscode.makefile-tools",
-    "editor.insertSpaces": false
   },
   "autopep8.args": [
     "--max-line-length=88",

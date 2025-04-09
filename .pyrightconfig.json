@@ -34,5 +34,18 @@
   "reportUnknownParameterType": "warning",
   "reportUnknownVariableType": "warning",
   "reportUntypedFunctionDecorator": "warning",
-  "stubPath": ".venv/lib/python3.9/site-packages/django-stubs"
+  "reportUnusedCoroutine": "warning",
+  "stubPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
+  "typeCheckingMode": "strict",
+  "typeStubTargets": [
+    "django-stubs",
+    "django-stubs-ext",
+    "types-python-dateutil",
+    "types-PyYAML",
+    "types-setuptools",
+    "types-stdlib-list"
+  ],
+  "typeshedPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
+  "useLibraryCodeForTypes": true,
+  "venvPath": ".venv"
 }

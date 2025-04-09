@@ -1,11 +1,4 @@
 {
-<<<<<<< HEAD
-=======
-  "name": "greenova",
-  "version": "0.0.4",
-  "private": true,
-  "type": "module",
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   "dependencies": {
     "@picocss/pico": "2.0.6",
     "htmx-ext-class-tools": "2.0.2",
@@ -15,7 +8,6 @@
     "htmx.org": "1.9.12",
     "hyperscript.org": "0.9.14"
   },
-<<<<<<< HEAD
   "devDependencies": {
     "@eslint/eslintrc": "3.3.0",
     "@eslint/js": "9.22.0",
@@ -37,22 +29,10 @@
   "name": "greenova",
   "packageManager": "npm@10.8.2",
   "private": true,
-=======
-  "engines": {
-    "node": "18.20.7"
-  },
-  "packageManager": "npm@10.8.2",
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-<<<<<<< HEAD
   "type": "module",
   "version": "0.0.2"
-=======
-  "devDependencies": {
-    "eslint": "9.21.0"
-  }
->>>>>>> b3f8326 (release(v0.0.4): comprehensive platform enhancements and new features (#6))
 }
