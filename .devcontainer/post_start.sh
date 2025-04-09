@@ -1,56 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
-set -euo pipefail
-echo "=== Running post_start.sh ==="
-echo "Starting post_start process..."
-
-
-
-#Function to clone the project
-clone(){
-  VENV_PATH="/workspaces/greenova/.venv"
-  VOLUME_PATH="/workspaces/greenova"
-  REPO_URL="https://github.com/alexcao123456/dev_greenova.git"
-
-  # if the volume is empty, clone from github
-  if [ ! -d "$VOLUME_PATH/.git" ]; then
-    echo "[build.sh] No .git detected. Cloning from $REPO_URL ..."
-    cd "$VOLUME_PATH"
-    git init
-    git remote add origin "$REPO_URL"
-    git clean -fd
-    git pull origin main
-  else
-    echo "[build.sh] .git folder found. Skipping clone."
-  fi
-}
-
-# Function to setup pyenv environment
-setup_pyenv(){
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  export PYTHON_CONFIGURE_OPTS="--enable-shared"
-
-  if [ ! -d "$PYENV_ROOT" ]; then
-    echo "[pyenv] Installing pyenv..."
-    git clone https://github.com/pyenv/pyenv.git "$PYENV_ROOT"
-  fi
-
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-
-  # install Python
-  PYTHON_VERSION="3.9.21"
-  if ! pyenv versions | grep -q "$PYTHON_VERSION"; then
-    echo "[pyenv] Installing Python $PYTHON_VERSION..."
-    pyenv install "$PYTHON_VERSION"
-  fi
-
-  pyenv global "$PYTHON_VERSION"
-  export PATH="$PYENV_ROOT/versions/$PYTHON_VERSION/bin:$PATH"
-  echo "[pyenv] Python set to: $(python --version)"
-}
 
 # Function to setup NVM environment
 setup_nvm() {
@@ -109,15 +59,6 @@ setup_venv() {
     rm -rf "/workspaces/greenova/.direnv"
   fi
 
-  #if the current venv is owned by root, remove it
-  #if [ -d "$VENV_PATH" ]; then
-  #  owner=$(stat -c "%U" "$VENV_PATH")
-  #  if [ "$owner" = "root" ]; then
-  #    echo " .venv is owned by root. Deleting to avoid permission issues..."
-  #    rm -rf "$VENV_PATH"
-  #  fi
-  #fi
-
   # Create virtual environment if it doesn't exist
   if [ ! -d "$VENV_PATH" ]; then
     echo "Creating Python virtual environment..."
@@ -128,23 +69,8 @@ setup_venv() {
   echo "Activating virtual environment..."
   source "$VENV_PATH/bin/activate"
 
-  # Check if pip is actually usable
-  if ! python -m pip --version >/dev/null 2>&1; then
-    echo " pip not found or broken, attempting to bootstrap with ensurepip..."
-    python -m ensurepip --upgrade
-  fi
-
-  # Now upgrade pip properly
-  if python -m pip --version >/dev/null 2>&1; then
-    echo " Upgrading pip..."
-    python -m pip install --upgrade pip setuptools wheel
-  else
-    echo " pip still broken after ensurepip. Aborting setup."
-    exit 1
-  fi
-
   # Upgrade pip
-  # python -m pip install --upgrade pip
+  python -m pip install --upgrade pip
 
   # Install requirements if present
   if [ -f "/workspaces/greenova/requirements.txt" ]; then
@@ -154,6 +80,12 @@ setup_venv() {
     else
       echo "Warning: constraints.txt not found, installing without constraints"
       pip install -r "/workspaces/greenova/requirements.txt"
+    fi
+
+    if command -v pre-commit >/dev/null 2>&1; then
+      pre-commit install
+    else
+      echo "Warning: pre-commit not found, skipping installation"
     fi
 
     if command -v pre-commit >/dev/null 2>&1; then
@@ -238,6 +170,95 @@ EOL
   "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript.py"
 }
 
+# Fix hyperscript_dump.py type annotation issues
+fix_hyperscript_dump() {
+  echo "Checking for hyperscript_dump.py type annotation issues..."
+
+  # Create directory for scripts if it doesn't exist
+  mkdir -p "/workspaces/greenova/scripts"
+
+  # Create the fix script if it doesn't exist
+  if [ ! -f "/workspaces/greenova/scripts/fix_hyperscript_dump.py" ]; then
+    cat >"/workspaces/greenova/scripts/fix_hyperscript_dump.py" <<'EOL'
+#!/usr/bin/env python3
+"""
+Fix for hyperscript_dump.py type annotation syntax for Python 3.9 compatibility.
+"""
+import os
+import sys
+import logging
+import re
+from pathlib import Path
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
+
+def fix_hyperscript_dump():
+    """Fix type annotation syntax in hyperscript_dump.py for Python 3.9."""
+    # Get the virtual environment path
+    venv_path = os.environ.get('VIRTUAL_ENV', '/workspaces/greenova/.venv')
+
+    # Build the path to the problematic file
+    file_path = Path(venv_path) / "lib" / "python3.9" / "site-packages" / "hyperscript_dump.py"
+
+    if not file_path.exists():
+        logger.info(f"File not found: {file_path}")
+        return True
+
+    logger.info(f"Found hyperscript_dump.py at {file_path}")
+
+    # Read the file
+    with open(file_path, 'r') as f:
+        content = f.read()
+
+    # Check if the file already imports Union
+    imports_union = re.search(r'from\s+typing\s+import\s+.*Union.*', content) is not None
+
+    # Replace the pipe syntax with Union
+    pattern = r'event:\s*str\s*\|\s*None\s*='
+    replacement = 'event: Union[str, None] ='
+
+    if re.search(pattern, content):
+        # Add Union import if needed
+        if not imports_union:
+            if 'from typing import' in content:
+                content = re.sub(
+                    r'from\s+typing\s+import\s+(.*)',
+                    r'from typing import \1, Union',
+                    content
+                )
+            else:
+                content = re.sub(
+                    r'import json',
+                    r'import json\nfrom typing import Union',
+                    content
+                )
+
+        # Replace the type annotation
+        content = re.sub(pattern, replacement, content)
+
+        # Write the fixed content back
+        with open(file_path, 'w') as f:
+            f.write(content)
+        logger.info("Successfully fixed the type annotation in hyperscript_dump.py")
+        return True
+    else:
+        logger.info("No type annotation issue found or it's already fixed")
+        return True
+
+if __name__ == "__main__":
+    success = fix_hyperscript_dump()
+    sys.exit(0 if success else 1)
+EOL
+    chmod +x "/workspaces/greenova/scripts/fix_hyperscript_dump.py"
+  fi
+
+  # Run the fix script with the virtual environment's Python
+  echo "Running hyperscript_dump fix script..."
+  "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript_dump.py"
+}
+
 # Setup Fish shell with direnv
 setup_fish_direnv() {
   FISH_CONFIG="${HOME}/.config/fish/config.fish"
@@ -286,7 +307,7 @@ setup_fish_direnv() {
       echo "    # Add Node.js binary path to fish PATH"
       echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
       echo "    # For accessing node and npm globally from default NVM version"
-      echo "    set -gx PATH /usr/local/share/nvm/versions/node/v18.20.7/bin \$PATH"
+      echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
       echo "end"
 
       echo "# Function to use NVM in fish"
@@ -296,12 +317,12 @@ setup_fish_direnv() {
 
       echo "# Ensure npm is accessible as a command"
       echo "if not type -q npm"
-      echo "    alias npm='/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'"
+      echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
       echo "end"
 
       echo "# Ensure node is accessible as a command"
       echo "if not type -q node"
-      echo "    alias node='/usr/local/share/nvm/versions/node/v18.20.7/bin/node'"
+      echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
       echo "end"
     } >>"$FISH_CONFIG"
     echo "Fish shell configured with direnv hook, virtual env support, and Node.js/npm"
@@ -321,7 +342,7 @@ setup_fish_direnv() {
         echo "    # Add Node.js binary path to fish PATH"
         echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
         echo "    # For accessing node and npm globally from default NVM version"
-        echo "    set -gx PATH /usr/local/share/nvm/versions/node/v18.20.7/bin \$PATH"
+        echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
         echo "end"
 
         echo "# Function to use NVM in fish"
@@ -331,12 +352,12 @@ setup_fish_direnv() {
 
         echo "# Ensure npm is accessible as a command"
         echo "if not type -q npm"
-        echo "    alias npm='/usr/local/share/nvm/versions/node/v18.20.7/bin/npm'"
+        echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
         echo "end"
 
         echo "# Ensure node is accessible as a command"
         echo "if not type -q node"
-        echo "    alias node='/usr/local/share/nvm/versions/node/v18.20.7/bin/node'"
+        echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
         echo "end"
       } >>"$FISH_CONFIG"
       echo "Added Node.js and npm configuration to fish shell"
@@ -355,31 +376,24 @@ setup_fish_direnv() {
 }
 
 main() {
-  clone
-
-  # install Python
-  #echo "Installing up Python environment..."
-  #setup_pyenv
-
   # Setup Python environment first
   echo "Setting up Python environment..."
   setup_venv
-
-  #install Python tools
-  echo "Installing Python lint & format tools inside venv..."
-  pip install --upgrade pip setuptools wheel
-  pip install --no-cache-dir isort autopep8 pylint
 
   # Fix django-hyperscript syntax error
   echo "Fixing django-hyperscript..."
   fix_django_hyperscript
 
+  # Fix hyperscript_dump type annotation
+  echo "Fixing hyperscript_dump..."
+  fix_hyperscript_dump
+
   # Setup NVM and Node.js
-  #echo "Setting up NVM and Node.js..."
-  #setup_nvm || {
-  #  echo "NVM setup failed. Exiting." >&2
-  #  exit 1
-  #}
+  echo "Setting up NVM and Node.js..."
+  setup_nvm || {
+    echo "NVM setup failed. Exiting." >&2
+    exit 1
+  }
 
   # Install npm 10.8.2 (compatible with Node.js 18.20.7)
   echo "Installing npm 10.8.2..."
@@ -393,16 +407,21 @@ main() {
     echo "Snyk is already installed, skipping..."
   fi
 
-  #install prettier
-  echo "Installing global prettier..."
-  npm install -g prettier
-
   # Install node packages if package.json exists
   [ -f "/workspaces/greenova/package.json" ] && npm install
 
   # Configure Fish shell with direnv (after venv is set up)
   echo "Setting up Fish shell with direnv..."
   setup_fish_direnv
+
+  # Ensure PYTHONPATH is set
+  export PYTHONPATH=/workspaces/greenova:$PYTHONPATH
+
+  # Ensure Pre-Commit is updated
+  if command -v pre-commit >/dev/null 2>&1; then
+    echo "Updating pre-commit hooks..."
+    pre-commit autoupdate
+  fi
 }
 
 main "$@"
