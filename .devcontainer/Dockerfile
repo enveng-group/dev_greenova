@@ -26,7 +26,7 @@ RUN ln -sf /usr/bin/python3 /usr/bin/python && \
     ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # copy requirements.txt file and package.json file
-COPY requirements.txt constraints.txt package.json ./
+#COPY requirements.txt constraints.txt package.json ./
 COPY post_start.sh /usr/local/scripts/post_start.sh
 COPY run.sh /usr/local/scripts/run.sh
 RUN chmod +x /usr/local/scripts/*.sh

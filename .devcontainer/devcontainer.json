@@ -2,10 +2,7 @@
   "name": "Greenova Development",
   // "dockerComposeFile": "docker-compose.yml",
   //"service": "greenova",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "."
-  },
+  "image": "ghcr.io/alexcao123456/greenova-dev:latest",
   /*
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {
