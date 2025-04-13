@@ -210,6 +210,10 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# mfa settings
+MFA_SUPPORTED_TYPES = ['totp', 'webauthn', 'recovery_codes']
+
+
 LOGIN_REDIRECT_URL = 'dashboard:home'  # OR LOGIN_REDIRECT_URL = "dashboard:profile"
 # LOGOUT_REDIRECT_URL = "landing:home"
 LOGIN_URL = 'authentication:login'
