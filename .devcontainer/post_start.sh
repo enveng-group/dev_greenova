@@ -403,6 +403,26 @@ main() {
   # Configure Fish shell with direnv (after venv is set up)
   echo "Setting up Fish shell with direnv..."
   setup_fish_direnv
-}
 
+  echo "Removing DEFAULT_KWARGS block in hyperscript.py by keyword..."
+  sed -i '/^DEFAULT_KWARGS *= *{/,/^ *raise TypeError/d' /workspaces/greenova/.venv/lib/python3.9/site-packages/django_hyperscript/templatetags/hyperscript.py
+  
+  echo " Pulling environment variables from dotenv-vault..."
+  npx dotenv-vault@latest pull --yes
+
+  echo " Run a series of make commands"
+  (
+  make migrations &&
+  make migrate &&
+  make import &&
+  make sync &&
+  make static &&
+  make user
+  ) || {
+  echo " Make commands failed."
+  exit 1
+  }
+
+  echo " Post-create script completed successfully!"
+}
 main "$@"
