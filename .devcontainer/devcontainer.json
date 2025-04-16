@@ -190,7 +190,7 @@
   ],
   "name": "Greenova Development",
   "postCreateCommand": "sudo chown vscode:vscode /home && sudo chown vscode:vscode /usr/local && sudo chown vscode:vscode /workspaces",
-  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
+  //"postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
   "remoteUser": "vscode",
   "updateRemoteUserUID": true,
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",

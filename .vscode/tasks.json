@@ -609,33 +609,7 @@
       "problemMatcher": [],
       "type": "shell"
     },
-    {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures feedback"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Create migrations",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py migrate"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Apply migrations",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
+    
     {
       "args": [
         "-c",
@@ -651,6 +625,7 @@
       "problemMatcher": [],
       "type": "shell"
     },
+
     {
       "args": [
         "-c",
@@ -730,6 +705,21 @@
       "type": "shell"
     },
     {
+      "args": [
+        "-c",
+        "cd greenova && python manage.py create_missing_profiles"
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Django: Create Missing Profiles",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
       "args": ["-c", "cd greenova && python3 manage.py check"],
       "command": "/bin/sh",
       "group": "none",
@@ -764,6 +754,64 @@
       },
       "problemMatcher": [],
       "type": "shell"
+    }
+    {
+      "args": [
+        "-c",
+        "cd greenova && python3 manage.py makemigrations chatbot company users mechanisms obligations projects responsibility procedures feedback"
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Django: Create migrations",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": ["-c", "cd greenova && python3 manage.py migrate"],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Django: Apply migrations",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "args": [
+        "-c",
+        "find . -path \"*/migrations/*.py\" -not -name \"__init__.py\" -delete"
+      ],
+      "command": "/bin/sh",
+      "group": "none",
+      "label": "Django: Delete Migrations",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "label": "Django: Refresh migrations",
+      "dependsOn": [
+        "Django: Delete Migrations",
+        "Django: Create migrations",
+        "Django: Apply migrations"
+      ],
+      "dependsOrder": "sequence",
+      "type": "shell",
+      "group": "none",
+      "presentation": {
+        "panel": "shared",
+        "reveal": "always"
+      },
+      "problemMatcher": []
     }
   ],
   "version": "2.0.0"
