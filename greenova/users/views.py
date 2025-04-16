@@ -1,14 +1,12 @@
-from typing import Any, Dict
-
 from django.contrib import messages
-from django.contrib.auth import get_user_model  # Updated import for User model
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import PasswordChangeForm
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 
-from .forms import AdminUserForm, ProfileImageForm, UserProfileForm
 from .models import Profile
 
 User = get_user_model()  # Use the recommended method to get the User model
@@ -23,9 +21,37 @@ def is_admin(user: User) -> bool:
 def profile_view(request: HttpRequest) -> HttpResponse:
     """View for displaying user's profile."""
     profile: Profile = request.user.profile
-    context: Dict[str, Any] = {
+
+    company_memberships = CompanyMembership.objects.filter(user_id=request.user.id)
+    
+    if not company_memberships:
+        # No company memberships found for user
+
+        context: Dict[str, Any] = {
         'profile': profile,
+        'overdue_count': 0
     }
+    else:
+        # Get all the roles this user has across companies
+        user_roles = company_memberships.values_list('role', flat=True).distinct()
+        
+        # Find obligations that match any of the user's roles
+        project_ids = Project.objects.filter(members=request.user.id).values_list('id', flat=True)
+        
+        # Find obligations that match any of the user's roles and are in their projects
+        obligations = Obligation.objects.filter(
+            responsibility__in=user_roles,
+            project_id__in=project_ids
+        ).select_related('project').distinct()
+        
+        # Get obligations that are overdue (due_date is in the past)
+        overdue_obligations = [obligation for obligation in obligations if obligation.is_overdue]
+        
+        context: Dict[str, Any] = {
+        'profile': profile,
+        'overdue_count': len(overdue_obligations),
+        }
+    
 
     if request.htmx:
         return render(request, 'users/partials/profile_detail.html', context)
