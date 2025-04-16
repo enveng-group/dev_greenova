@@ -3,6 +3,9 @@
   // "dockerComposeFile": "docker-compose.yml",
   //"service": "greenova",
   "image": "ghcr.io/alexcao123456/greenova-dev:latest",
+  //"build": {
+  //  "dockerfile": "Dockerfile"
+  //},
   
   "features": {
   /*
@@ -178,7 +181,7 @@
   },
   //  "initializeCommand": "echo 'Deleting .venv as root...' && rm -rf /workspaces/greenova/.venv || true && chown -R vscode:vscode /workspaces/greenova",
   "postCreateCommand": "bash /usr/local/scripts/post_start.sh",
-  //"postStartCommand": "bash /usr/local/scripts/run.sh",
+  "postStartCommand": "bash /usr/local/scripts/run.sh",
   "forwardPorts": [
     8000
   ]

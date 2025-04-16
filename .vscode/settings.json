@@ -332,7 +332,7 @@
   "git.countBadge": "all",
   "git.decorations.enabled": true,
   "git.diagnosticsCommitHook.Enabled": false,
-  "git.enableCommitSigning": true,
+  "git.enableCommitSigning": false,
   "git.enableSmartCommit": true,
   "git.enableStatusBarSync": true,
   "git.enabled": true,
