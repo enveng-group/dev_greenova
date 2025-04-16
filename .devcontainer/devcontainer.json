@@ -3,8 +3,9 @@
   // "dockerComposeFile": "docker-compose.yml",
   //"service": "greenova",
   "image": "ghcr.io/alexcao123456/greenova-dev:latest",
-  /*
+  
   "features": {
+  /*
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
       "version": "latest"
@@ -19,6 +20,7 @@
     "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
       "version": "latest"
     },
+    */
     "ghcr.io/devcontainers-extra/features/protoc:1": {
       "version": "latest"
     },
@@ -26,7 +28,7 @@
       "version": "latest"
     }
   },
-*/
+
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
@@ -176,7 +178,7 @@
   },
   //  "initializeCommand": "echo 'Deleting .venv as root...' && rm -rf /workspaces/greenova/.venv || true && chown -R vscode:vscode /workspaces/greenova",
   "postCreateCommand": "bash /usr/local/scripts/post_start.sh",
-  "postStartCommand": "bash /usr/local/scripts/run.sh",
+  //"postStartCommand": "bash /usr/local/scripts/run.sh",
   "forwardPorts": [
     8000
   ]
