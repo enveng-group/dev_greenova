@@ -125,8 +125,8 @@ setup_venv() {
   fi
 
   # Activate virtual environment
-  echo "Activating virtual environment..."
-  source "$VENV_PATH/bin/activate"
+  #echo "Activating virtual environment..."
+  #source "$VENV_PATH/bin/activate"
 
   # Check if pip is actually usable
   if ! python -m pip --version >/dev/null 2>&1; then
