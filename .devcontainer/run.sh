@@ -23,7 +23,7 @@ if [ ! -f "$FIRST_RUN_FLAG" ]; then
   echo "[run.sh] First-time setup running..."
 
   echo "Pulling .env with dotenv-vault"
-  npx dotenv-vault@latest pull -y || {
+  echo yes | npx dotenv-vault@latest pull || {
     echo "[run.sh] dotenv-vault pull failed"; exit 1;
   }
 

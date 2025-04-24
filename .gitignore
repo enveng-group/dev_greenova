@@ -162,3 +162,6 @@ site/
 .env*
 .flaskenv*
 !.env.project
+
+# flag document
+.devcontainer/.run_once_done

@@ -9,18 +9,26 @@
 
 ## 🚀 Quick Start
 
-1. **Clone the project**
+> ⚠️ **Important Notice Before You Begin**
 
-   ```bash
-   git clone https://github.com/your-org/greenova.git
-   cd greenova
-   ```
+Before using this project, please follow the steps below to ensure a smooth setup and prevent any loss of your local code:
 
-2. **Open the project in VS Code**
+1. Backup your existing code
+
+If you have any local changes, **make sure to push your current project to a remote repository (e.g., GitHub)** before cloning this one. This prevents any accidental data loss during the setup process.
+
+2. Update the clone URL in `post_start.sh`
+
+Before launching the DevContainer, you must **edit line 14 of the `.devcontainer/post_start.sh` file**:
+
+```bash
+git clone https://github.com/your-org/greenova.git
+
+3. **Open the project in VS Code**
 
    Open VS Code, then open the project directory.
 
-3. **Start the DevContainer**
+4. **Start the DevContainer**
 
    > 🔄 **Important:**  
    If any changes are made to the `.devcontainer` folder (such as updates to `devcontainer.json` or `Dockerfile`), you must run  
@@ -29,7 +37,7 @@
    - Click the bottom-left blue icon in VS Code → Select `Reopen in Container`  
    - Or press `Ctrl + Shift + P` (or `Cmd + Shift + P` on macOS) and search for `Reopen in Container`
 
-4. **Start coding**
+5. **Start coding**
 
    All dependencies and development tools will be installed automatically within the container.
 
@@ -44,6 +52,9 @@
   - Node.js dependencies (`npm install`)
   - Development tools: Prettier, Pylint, djLint, etc.
 - Python virtual environment is managed via `.venv` (auto-created and activated)
+- Automatically fix django hyperscript
+- Automatically npx
+- Automatically run make commands
 
 ---
 
