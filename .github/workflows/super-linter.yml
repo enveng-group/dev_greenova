@@ -9,6 +9,8 @@ on:
 jobs:
   run-lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # Minimal permissions required for this job
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

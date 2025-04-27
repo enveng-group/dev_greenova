@@ -6,9 +6,14 @@ on:
   pull_request:
     branches: ['main']
 
+permissions:
+  contents: read # Minimal permissions required for this workflow
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # Explicitly set minimal permissions for the job
     strategy:
       matrix:
         python-version: ['3.9']
