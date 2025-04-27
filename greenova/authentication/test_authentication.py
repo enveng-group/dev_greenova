@@ -343,7 +343,7 @@ class TestSocialAuthentication:
         content = response.content.decode()
 
         # Check for GitHub provider in the list
-        assert 'Sign in with a third-party' in content
+        assert '/accounts/github/login' in content
 
         # One of these patterns should match depending on the template
         assert ('GitHub' in content or

@@ -1,29 +1,48 @@
-# This workflow executes several linters on changed files based on languages used in your code base whenever
-# you push a code or open a pull request.
-#
-# You can adjust the behavior by modifying this file.
-# For more information, see:
-# https://github.com/github/super-linter
-# name: Lint Code Base
+name: Super-Linter
 
-# on:
-#   push:
-#     branches: ['main']
-#   pull_request:
-#     branches: ['main']
-# jobs:
-#   run-lint:
-#     runs-on: ubuntu-20.04
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           # Full git history is needed to get a proper list of changed files within `super-linter`
-#           fetch-depth: 0
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
 
-#       - name: Lint Code Base
-#         uses: github/super-linter@v4
-#         env:
-#           VALIDATE_ALL_CODEBASE: false
-#           DEFAULT_BRANCH: 'main'
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Minimal permissions required for this job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Lint Code Base
+        uses: github/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: 'main'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Python linting
+          VALIDATE_PYTHON: true
+          PYTHON_BLACK_CONFIG_FILE: pyproject.toml
+          PYTHON_ISORT_CONFIG_FILE: isort.cfg
+          VALIDATE_PYLINT: true
+          PYTHON_PYLINT_CONFIG_FILE: .pylintrc-django
+          # JavaScript linting
+          VALIDATE_JAVASCRIPT_ES: true
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          # CSS linting
+          VALIDATE_CSS: true
+          CSS_FILE_NAME: stylelint.config.js
+          # HTML linting (Django templates)
+          VALIDATE_DJANGO: true
+          # Markdown linting
+          VALIDATE_MARKDOWN: true
+          MARKDOWN_CONFIG_FILE: .markdownlint-cli2.jsonc
+          # Shell script linting
+          VALIDATE_BASH: true
+          BASH_CONFIG_FILE: .shellcheckrc
+          # Exclusions
+          FILTER_REGEX_EXCLUDE: (.*\/node_modules\/.*|.*\/static\/.*|.*\/staticfiles\/.*|.*\/media\/.*|.*\/migrations\/.*|.*\.min\.js|.*\.min\.css)

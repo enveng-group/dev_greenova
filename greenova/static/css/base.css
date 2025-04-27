@@ -131,4 +131,9 @@ textarea {
   top: var(--greenova-spacing-small, 0.5rem);
 }
 
+/* Remove navigation */
+.skip-link {
+  display: none;
+}
+
 /* Rest of your CSS remains unchanged... */

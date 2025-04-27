@@ -80,6 +80,14 @@ body > header {
       padding: 0;
     }
 
+    /* Chatbot and user login */
+    div.auth-status-container {
+      /* We want these elements to be spaced vertically and in columns */
+      display: flex;
+      flex-direction: row;
+      gap: var(--greenova-spacing-small);
+    }
+
     flex-direction: row;
     gap: var(--greenova-spacing-small);
   }

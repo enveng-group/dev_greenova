@@ -210,12 +210,10 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = 'dashboard:home'  # OR LOGIN_REDIRECT_URL = "dashboard:profile"
-# LOGOUT_REDIRECT_URL = "landing:home"
-LOGIN_URL = 'authentication:login'
-# LOGIN_REDIRECT_URL = "admin:index"
-# LOGOUT_REDIRECT_URL = "admin:login"
-# LOGIN_URL = "admin:login"
+MFA_SUPPORTED_TYPES = ['totp', 'recovery_codes']
+LOGIN_REDIRECT_URL = 'dashboard:home'
+LOGOUT_REDIRECT_URL = 'landing:home'
+
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         'SCOPE': [
