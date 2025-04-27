@@ -26,7 +26,6 @@ def company_role_badge(role):
         'owner': '<mark role="status" class="info">Owner</mark>',
         'admin': '<mark role="status" class="info">Admin</mark>',
         'manager': '<mark role="status" class="info">Manager</mark>',
-        'member': '<mark role="status">Member</mark>',
         'client_contact': '<mark role="status">Client Contact</mark>',
         'contractor': '<mark role="status">Contractor</mark>',
         'view_only': '<mark role="status">View Only</mark>',
@@ -34,11 +33,10 @@ def company_role_badge(role):
 
     badge_html = badge_mapping.get(role, f'<mark role="status">{role}</mark>')
     return format_html(badge_html)
-
-
-@register.filter
-def primary_company(user):
-    """Return user's primary company."""
+    if role == 'owner':
+        return format_html('<mark role="status" class="info">Owner</mark>')
+    elif role == 'admin':
+        return format_html('<mark role="status" class="info">Admin</mark>')
     try:
         membership = CompanyMembership.objects.get(user=user, is_primary=True)
         return membership.company

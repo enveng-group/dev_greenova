@@ -5,14 +5,30 @@
     <table id="user-list-table">
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Department</th>
-          <th>Status</th>
-          <th>Role</th>
-          <th>Date Joined</th>
-          <th>Actions</th>
+          <th>
+Username
+          </th>
+          <th>
+Name
+          </th>
+          <th>
+Email
+          </th>
+          <th>
+Department
+          </th>
+          <th>
+Status
+          </th>
+          <th>
+Role
+          </th>
+          <th>
+Date Joined
+          </th>
+          <th>
+Actions
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -20,10 +36,15 @@
           <tr id="user-row-{{ user.id }}"
               class="user-row"
               data-username="{{ user.username }}">
-            <td class="username-cell">{{ user.username }}</td>
-            <td>{{ user.get_full_name|default:"-" }}</td>
-            <td>{{ user.email|default:"-" }}</td>
-            <td>{{ user.profile.department|default:"-" }}</td>
+            <td>
+{{ user.get_full_name|default:"-" }}
+            </td>
+            <td>
+{{ user.email|default:"-" }}
+            </td>
+            <td>
+{{ user.profile.department|default:"-" }}
+            </td>
             <td>
               {% if user.is_active %}
                 <mark role="status" class="success">Active</mark>
@@ -40,7 +61,9 @@
                 User
               {% endif %}
             </td>
-            <td>{{ user.date_joined|date:"Y-m-d" }}</td>
+            <td>
+{{ user.date_joined|date:"Y-m-d" }}
+            </td>
             <td class="actions-column">
               <div class="action-buttons">
                 <a href="{% url 'users:admin_user_edit' user.id %}"
@@ -50,19 +73,27 @@
                   <button class="action-btn delete"
                           hx-get="{% url 'users:admin_user_delete' user.id %}"
                           hx-target="#modal-container"
-                          title="Delete {{ user.username }}">Delete</button>
+                          title="Delete {{ user.username }}">
+Delete
+                  </button>
                 {% endif %}
               </div>
             </td>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <div class="centered-message">
-      <p>No users found.</p>
-    </div>
-  {% endif %}
-</section>
-<!-- Modal container for delete confirmation -->
-<div id="modal-container"></div>
+          <tr id="user-row-{{ user.id }}">
+            <td>
+{{ user.username }}
+            </td>
+            <td>
+{{ user.get_full_name|default:"-" }}
+            </td>
+            <div class="centered-message">
+              <p>
+No users found.
+              </p>
+            </div>
+          {% endif %}
+        </section>
+        <!-- Modal container for delete confirmation -->
+        <div id="modal-container">
+        </div>

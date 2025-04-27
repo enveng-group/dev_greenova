@@ -70,7 +70,6 @@ class SectionMixin(ContextMixin):
         context['active_section'] = self.get_active_section()
         return context
 
-
 class ViewMixin(BreadcrumbMixin, PageTitleMixin, SectionMixin):
     """
     Combined mixin for standard view context data.
@@ -81,7 +80,6 @@ class ViewMixin(BreadcrumbMixin, PageTitleMixin, SectionMixin):
             active_section = "dashboard"
             breadcrumbs = [('Home', 'home'), ('Dashboard', None)]
     """
-
 
 class AuthViewMixin(LoginRequiredMixin, ViewMixin):
     """

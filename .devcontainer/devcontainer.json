@@ -43,8 +43,7 @@
         "marp-team.marp-vscode",
         "DBCode.dbcode",
         "ms-vscode.copilot-mermaid-diagram",
-        "ms-vscode.vscode-websearchforcopilot",
-        "ms-python.vscode-python-envs@prerelease"
+        "ms-vscode.vscode-websearchforcopilot"
       ],
       "settings": {
         "[django-html]": {

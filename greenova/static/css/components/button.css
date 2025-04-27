@@ -37,10 +37,6 @@ nav li [type='button'],
     color: var(--greenova-text-dark);
   }
 }
-/* Font on */
-button.chat-toggle > span {
-  font-weight: normal !important;
-}
 
 /* This is stating that if the header has an element named .btn-fold,
    we want to make sure all the elements are line iso the button can be on the right. */
@@ -53,6 +49,10 @@ header:has(.btn-fold) {
 /* If the button is apart of a menu */
 [role='menuitem'] {
   margin: 0 var(--greenova-spacing);
+}
+
+.btn-primary {
+  background-color: var(--greenova-green-primary);
 }
 
 .btn-primary {

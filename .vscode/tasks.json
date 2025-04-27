@@ -467,7 +467,7 @@
     {
       "args": [
         "-c",
-        "/usr/local/share/nvm/current/bin/markdownlint-cli2 \"${file}\""
+        "/usr/local/share/nvm/current/bin/markdownlint-cli2 --fix \"${file}\""
       ],
       "command": "/bin/sh",
       "group": "none",

@@ -26,7 +26,6 @@ def get_user_display_name(user) -> str:
 
     return user.username if hasattr(user, 'username') else str(user)
 
-
 def get_app_settings() -> Dict[str, Any]:
     """Get application settings for templates."""
     return {

@@ -10,44 +10,70 @@
                alt="Profile picture"
                class="profile-image" />
         {% else %}
-          <div class="profile-initial">{{ profile.user.username|first|upper }}</div>
+          <div class="profile-initial">
+{{ profile.user.username|first|upper }}
+          </div>
         {% endif %}
       </div>
       <div class="profile-details">
-        <h2 id="profile-heading">{{ profile.user.get_full_name|default:profile.user.username }}</h2>
-        <p class="profile-position">{{ profile.position|default:"" }}</p>
-        <p class="profile-department">{{ profile.department|default:"" }}</p>
+        <h2 id="profile-heading">
+{{ profile.user.get_full_name|default:profile.user.username }}
+        </h2>
+        <p class="profile-position">
+{{ profile.position|default:"" }}
+        </p>
+        <p class="profile-department">
+{{ profile.department|default:"" }}
+        </p>
       </div>
     </div>
     <div class="profile-content">
       <div class="profile-section">
-        <h3>Contact Information</h3>
+        <h3>
+Contact Information
+        </h3>
         <dl>
-          <dt>Email:</dt>
+          <dt>
+Email:
+          </dt>
           <dd>
             {{ profile.user.email }}
           </dd>
-          <dt>Phone:</dt>
+          <dt>
+Phone:
+          </dt>
           <dd>
             {{ profile.phone_number|default:"Not provided" }}
           </dd>
         </dl>
       </div>
       <div class="profile-section">
-        <h3>About Me</h3>
-        <div class="profile-bio">{{ profile.bio|default:"No bio information provided."|linebreaks }}</div>
+        <h3>
+About Me
+        </h3>
+        <div class="profile-bio">
+{{ profile.bio|default:"No bio information provided."|linebreaks }}
+        </div>
       </div>
       <!-- New section for company affiliations -->
       <div class="profile-section company-affiliations">
-        <h3>Company Affiliations</h3>
+        <h3>
+Company Affiliations
+        </h3>
         {% with memberships=profile.user.company_memberships.all %}
           {% if memberships %}
             <table>
               <thead>
                 <tr>
-                  <th scope="col">Company</th>
-                  <th scope="col">Role</th>
-                  <th scope="col">Primary</th>
+                  <th scope="col">
+Company
+                  </th>
+                  <th scope="col">
+Role
+                  </th>
+                  <th scope="col">
+Primary
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -56,16 +82,22 @@
                     <td>
                       <a href="{% url 'company:detail' membership.company.id %}">{{ membership.company.name }}</a>
                     </td>
-                    <td>{{ membership.role|company_role_badge }}</td>
                     <td>
-                      {% if membership.is_primary %}<mark role="status" class="success">Yes</mark>{% endif %}
+{{ membership.role|company_role_badge }}
+                    </td>
+                    <td>
+                      {% if membership.is_primary %}
+                        <mark role="status" class="success">Yes</mark>
+                      {% endif %}
                     </td>
                   </tr>
                 {% endfor %}
               </tbody>
             </table>
           {% else %}
-            <p>No company affiliations.</p>
+            <p>
+No company affiliations.
+            </p>
           {% endif %}
         {% endwith %}
       </div>

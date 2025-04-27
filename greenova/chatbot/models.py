@@ -5,43 +5,6 @@ from django.utils import timezone
 # Import proto utility functions at the top level
 from .proto_utils import deserialize_chat_message, serialize_chat_message
 
-# Import generated protobuf modules with improved error handling
-try:
-    from .proto import chatbot_pb2
-except ImportError:
-    import logging
-    import os
-    logger = logging.getLogger(__name__)
-
-    # Check if the proto file exists
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    proto_file = os.path.join(current_dir, 'proto', 'chatbot.proto')
-
-    if os.path.exists(proto_file):
-        logger.error(
-            "chatbot.proto exists but chatbot_pb2.py not found. "
-            "Run 'python manage.py compile_protos --app=chatbot' to generate it."
-        )
-    else:
-        logger.error(
-            "Failed to import chatbot_pb2. Protocol buffer definition missing."
-        )
-        logger.error("Please ensure chatbot.proto exists in the proto directory.")
-
-    # Create a minimal stub for the module to allow Django to continue loading
-    import sys
-    from types import ModuleType
-    chatbot_pb2 = ModuleType('chatbot_pb2')
-    sys.modules['chatbot.chatbot_pb2'] = chatbot_pb2
-
-    # Set minimal attributes needed by the models
-    class DummyMessage:
-        pass
-    chatbot_pb2.Conversation = DummyMessage
-    chatbot_pb2.ChatMessage = DummyMessage
-    chatbot_pb2.PredefinedResponse = DummyMessage
-    chatbot_pb2.TrainingData = DummyMessage
-
 User = get_user_model()
 
 class Conversation(models.Model):

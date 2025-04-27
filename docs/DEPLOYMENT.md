@@ -2,7 +2,8 @@
 
 ## Architecture Overview
 
-This guide outlines deploying a Django application with the following secure architecture:
+This guide outlines deploying a Django application with the following secure
+architecture:
 
 ```
 User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → Django
@@ -13,7 +14,8 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 - End-to-end encryption (HTTPS everywhere)
 - DDoS protection via Cloudflare
 - Performance optimization through Cloudflare's edge network
-- Proper separation of concerns (Nginx handles static files, Gunicorn handles Python)
+- Proper separation of concerns (Nginx handles static files, Gunicorn handles
+  Python)
 
 ## Prerequisites
 
@@ -27,12 +29,7 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 
 ## Installation Steps
 
-1. Create virtual environment:
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+1. Create virtual environment: python3 -m venv venv
 
 2. Install required packages:
 
@@ -251,7 +248,8 @@ Address any warnings or errors reported by this command.
 2. Configure SSL/TLS settings:
 
    - Go to SSL/TLS tab in Cloudflare dashboard
-   - Set SSL mode to "Full (strict)" since you have a valid certificate on your origin server
+   - Set SSL mode to "Full (strict)" since you have a valid certificate on your
+     origin server
 
 3. Configure SSL/TLS settings:
 

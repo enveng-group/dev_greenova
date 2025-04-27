@@ -1,11 +1,12 @@
 {% load static %}
 {% load user_tags %}
 {% load company_tags %}
-{% load core_tags %}
 <nav role="navigation" aria-label="Main navigation">
   <ul role="menubar">
     <!-- Left aligned navigation items -->
-    <li role="none" class="menubar-breadcrumbs">{% breadcrumb_navigation %}</li>
+    <li role="none" class="menubar-breadcrumbs">
+{% breadcrumb_navigation %}
+    </li>
     <!-- Right aligned navigation items -->
     <li role="none">
       {% if user.is_authenticated %}
@@ -33,7 +34,7 @@
            aria-label="Register">Register</a>
       {% endif %}
       <!-- Theme switcher -->
-      {% theme_switcher %}
+{% theme_switcher %}
     </li>
   </ul>
 </nav>

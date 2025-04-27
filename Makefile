@@ -54,7 +54,7 @@ dotenv-push:
 check:
 	$(CD_CMD) python3 manage.py check
 
-# Updated run command with better process management
+# Updated run command with better process management and gunicorn config
 run:
 	@echo "Starting Tailwind CSS and Django server..."
 	@mkdir -p logs
@@ -64,7 +64,7 @@ run:
 # Alternative approach with separate commands
 #start only Django server
 run-django:
-	$(CD_CMD) python3 manage.py runserver
+	$(CD_CMD) gunicorn greenova.wsgi -c ../gunicorn.conf.py
 
 #Start only Tailwind CSS
 run-tailwind:

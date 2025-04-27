@@ -13,9 +13,7 @@
     "**/node_modules",
     "**/.vscode-server"
   ],
-  "extraPaths": [
-    "${workspaceRoot}/greenova"
-  ],
+  "extraPaths": ["${workspaceRoot}/greenova"],
   "ignore": [
     "**/__pycache__",
     "**/.pytest_cache",
@@ -24,9 +22,7 @@
     "**/node_modules",
     "**/.vscode-server"
   ],
-  "include": [
-    "greenova"
-  ],
+  "include": ["greenova"],
   "pythonPlatform": "Linux",
   "pythonVersion": "3.9",
   "reportGeneralTypeIssues": "error",

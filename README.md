@@ -22,13 +22,11 @@ their environmental responsibilities efficiently.
 
 ## 🛠️ Technology Stack
 
-### Backend
+Greenova is a Django web application that prioritizes semantic HTML structure,
+progressive enhancement, and accessibility. The project follows data-oriented
+programming principles and provides a modular framework for building robust web
+applications.
 
-- Python 3.9.21
-- Django 4.1.13
-- SQLite3 (development)
-- Matplotlib 3.10.0
-- Django-HTMX 1.22.0
 - Django-Hyperscript 1.0.2
 - Django-Tailwind 3.6.0
 - Django-Allauth 65.4.1

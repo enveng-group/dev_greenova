@@ -116,8 +116,8 @@ def send_message(request, conversation_id):
                 'content': escape(bot_response),
             }
         })
-    except (json.JSONDecodeError, KeyError, AttributeError) as e:
-        logger.error("Error processing message: %s", str(e))
+    except Exception as e:
+        logger.error(f"Error processing message: {str(e)}")
         return JsonResponse({'error': 'Failed to process message'}, status=500)
 
 

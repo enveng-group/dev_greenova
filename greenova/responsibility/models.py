@@ -7,8 +7,8 @@ from django.db.models import CharField, TextField
 
 class Responsibility(models.Model):
     """
-    Model representing a responsibility that can be assigned to obligations.
-    These values match the responsibility choices in obligations.models.Obligation.
+    Model representing a responsibility role that can be assigned to users
+    for specific obligations.
     """
 
     name: CharField = models.CharField(
@@ -19,9 +19,10 @@ class Responsibility(models.Model):
     description: Optional[TextField] = models.TextField(blank=True)
 
     class Meta:
-        verbose_name = 'Responsibility'
-        verbose_name_plural = 'Responsibilities'
-        ordering = ['name']
+        unique_together = ['user', 'obligation', 'role']
+        ordering = ['-created_at']
+        verbose_name = 'Responsibility Assignment'
+        verbose_name_plural = 'Responsibility Assignments'
 
     def __str__(self):
         return str(self.name)

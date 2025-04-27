@@ -1,18 +1,13 @@
 {
   "compounds": [
     {
-      "configurations": [
-        "Django: Run Server"
-      ],
+      "configurations": ["Django: Run Server"],
       "name": "Django: Full Stack"
     }
   ],
   "configurations": [
     {
-      "args": [
-        "runserver",
-        "--noreload"
-      ],
+      "args": ["runserver", "--noreload"],
       "cwd": "${workspaceFolder}/greenova",
       "django": true,
       "env": {
@@ -26,10 +21,7 @@
       "type": "debugpy"
     },
     {
-      "args": [
-        "-xvs",
-        "--no-header"
-      ],
+      "args": ["-xvs", "--no-header"],
       "cwd": "${workspaceFolder}/greenova",
       "env": {
         "DJANGO_SETTINGS_MODULE": "greenova.settings"
@@ -42,10 +34,7 @@
       "type": "debugpy"
     },
     {
-      "args": [
-        "${file}",
-        "-xvs"
-      ],
+      "args": ["${file}", "-xvs"],
       "cwd": "${workspaceFolder}/greenova",
       "env": {
         "DJANGO_SETTINGS_MODULE": "greenova.settings"
@@ -87,9 +76,7 @@
       "type": "debugpy"
     },
     {
-      "args": [
-        "shell"
-      ],
+      "args": ["shell"],
       "cwd": "${workspaceFolder}/greenova",
       "django": true,
       "env": {
