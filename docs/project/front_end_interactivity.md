@@ -198,12 +198,16 @@ Wednesday and Thursday 10am to 2pm
 
 give or take last week of May 23rd
 
-<@358385377645428737> here is more context with modularising javascript and transitioning to Typescript:
+<@358385377645428737> here is more context with modularising javascript and
+transitioning to Typescript:
 
-JavaScript/TypeScript Directory Structure Recommendations for Django
-Based on reviewing your JavaScript files, here's a recommended structure to make your scripts more modular and easier to maintain, along with guidance for transitioning to TypeScript.
+JavaScript/TypeScript Directory Structure Recommendations for Django Based on
+reviewing your JavaScript files, here's a recommended structure to make your
+scripts more modular and easier to maintain, along with guidance for
+transitioning to TypeScript.
 
 Recommended Directory Structure
+
 ```plaintext
 /static/js/
 ├── main.js                    # Main entry point that imports and initializes all modules
@@ -255,37 +259,34 @@ Recommended Directory Structure
     ├── htmx.d.ts              # Type definitions for HTMX
     └── hyperscript.d.ts       # Type definitions for Hyperscript
 ```
-Key Benefits of This Structure
-Improved Separation of Concerns:
 
-Core application logic separated from UI components
-Feature-specific code isolated in its own directory
-Clear boundaries between application code and vendor scripts
-Better Maintainability:
+Key Benefits of This Structure Improved Separation of Concerns:
 
-Smaller, more focused files
-Logical grouping of related functionality
-Easier to locate and modify specific features
-Simplified Dependency Management:
+Core application logic separated from UI components Feature-specific code
+isolated in its own directory Clear boundaries between application code and
+vendor scripts Better Maintainability:
 
-Clear import paths
-Centralized vendor script management
-Better control over script loading order
-Enhanced Team Collaboration:
+Smaller, more focused files Logical grouping of related functionality Easier to
+locate and modify specific features Simplified Dependency Management:
 
-Multiple developers can work on different components without conflicts
-Clear ownership of code modules
-Consistent structure across the project
-TypeScript Migration Guidance
-1. Initial Setup
-Add TypeScript to your Django project:
+Clear import paths Centralized vendor script management Better control over
+script loading order Enhanced Team Collaboration:
+
+Multiple developers can work on different components without conflicts Clear
+ownership of code modules Consistent structure across the project TypeScript
+Migration Guidance
+
+1. Initial Setup Add TypeScript to your Django project:
+
 ```bash
 # Install TypeScript and types for libraries
 npm install --save-dev typescript @types/node
 # For your libraries (if available)
 npm install --save-dev @types/htmx
 ```
+
 Create a tsconfig.json at project root:
+
 ```json
 {
   "compilerOptions": {
@@ -310,33 +311,33 @@ Create a tsconfig.json at project root:
   "exclude": ["node_modules"]
 }
 ```
-2. Phased Migration Strategy
-Setup TypeScript Source Directory:
 
-Create a /typescript directory at project root with the same structure as /static/js/
-Configure Django to serve compiled JavaScript from /static/js/dist/
+2. Phased Migration Strategy Setup TypeScript Source Directory:
+
+Create a /typescript directory at project root with the same structure as
+/static/js/ Configure Django to serve compiled JavaScript from /static/js/dist/
 Start with Type Definitions:
 
-Create type definitions for existing JavaScript modules
-Add TypeScript interfaces for your data structures and API responses
-Incremental Module Migration:
+Create type definitions for existing JavaScript modules Add TypeScript
+interfaces for your data structures and API responses Incremental Module
+Migration:
 
-Start with independent utilities and smaller components
-Rename .js files to .ts files and add type annotations
-Address TypeScript errors as they appear
-Implement proper interfaces for function parameters and return types
-Configure Build Process:
+Start with independent utilities and smaller components Rename .js files to .ts
+files and add type annotations Address TypeScript errors as they appear
+Implement proper interfaces for function parameters and return types Configure
+Build Process:
 
-Add npm scripts for TypeScript compilation
-Set up watch mode for development
-Add integration with Django's static file collection
-3. Django Integration
+Add npm scripts for TypeScript compilation Set up watch mode for development
+Add integration with Django's static file collection 3. Django Integration
 Update your Django templates to include the compiled JavaScript:
+
 ```html
 {% load static %}
 <script src="{% static 'js/dist/main.js' %}"></script>
 ```
+
 Set up a build script in package.json:
+
 ```json
 {
   "scripts": {
@@ -347,12 +348,16 @@ Set up a build script in package.json:
   }
 }
 ```
-4. Webpack Integration (Optional)
-For a more robust build system, consider adding Webpack:
+
+4. Webpack Integration (Optional) For a more robust build system, consider
+   adding Webpack:
+
 ```sh
 npm install --save-dev webpack webpack-cli ts-loader
 ```
+
 Create a webpack.config.js:
+
 ```js
 const path = require('path');
 
@@ -373,8 +378,8 @@ module.exports = {
       '@core': path.resolve(__dirname, 'typescript/core/'),
       '@components': path.resolve(__dirname, 'typescript/components/'),
       '@features': path.resolve(__dirname, 'typescript/features/'),
-      '@lib': path.resolve(__dirname, 'typescript/lib/')
-    }
+      '@lib': path.resolve(__dirname, 'typescript/lib/'),
+    },
   },
   output: {
     filename: 'bundle.js',
@@ -382,11 +387,12 @@ module.exports = {
   },
 };
 ```
-5. Tips for TypeScript Migration
-Start with strict mode disabled and gradually enable it as codebase matures
-Create proper interfaces for your Django API responses
-Use enums for constants that are currently defined as strings
-Add event typing for all event handlers
-Create utility types for common patterns in your application
-Document public APIs with JSDoc comments for better IDE support
-This structure and migration plan will help organize your JavaScript code better while providing a clear path to TypeScript adoption, improving maintainability and type safety in your Django project.
+
+5. Tips for TypeScript Migration Start with strict mode disabled and gradually
+   enable it as codebase matures Create proper interfaces for your Django API
+   responses Use enums for constants that are currently defined as strings Add
+   event typing for all event handlers Create utility types for common patterns
+   in your application Document public APIs with JSDoc comments for better IDE
+   support This structure and migration plan will help organize your JavaScript
+   code better while providing a clear path to TypeScript adoption, improving
+   maintainability and type safety in your Django project.

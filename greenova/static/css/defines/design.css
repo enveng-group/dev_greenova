@@ -31,10 +31,12 @@
   --greenova-button-size: 0.8rem;
 
   /* For visual clearity */
-  --greenova-table-border: 0.05rem solid #000000;
+  --greenova-table-border: 0.05rem solid #000;
 
   /* Chat Radius Box */
   --greenova-chat-border-radius: 1rem;
-  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
-  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
+  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
+  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
 }

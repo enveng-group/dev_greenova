@@ -7,54 +7,32 @@ tracking environmental obligations and compliance requirements.
 
 ## Technical Stack
 
-```html
-<body>
-  <header role="banner">
-    <nav role="navigation" aria-label="Main navigation">...</nav>
-  </header>
-  <main role="main">
-    <article>
-      <header>
-        <h1>...</h1>
-      </header>
-      <section aria-labelledby="section-heading">
-        <h2 id="section-heading">...</h2>
-      </section>
-    </article>
-  </main>
-  <footer role="contentinfo">...</footer>
-</body>
-```
+We use Python 3.9.21 with Django 4.1.13 for backend development.
 
-Reference: See `/docs/resources/htmx.md` for more examples of semantic HTML
-structure with proper ARIA attributes for accessibility.
+Our frontend uses PicoCSS as the primary CSS framework. Only use Tailwind CSS
+
+We implement frontend interactivity with django-hyperscript for simple
+interactions and django-htmx for more complex AJAX functionality. Custom
+JavaScript is only used as a last resort.
 
 We follow PEP 8 style guidelines with a strict maximum line length of 88
 characters for all Python files.
 
-```html
-<form method="post" action="/submit">
-  <label for="name">Name:</label>
-  <input type="text" id="name" name="name" required />
-  <button type="submit">Submit</button>
-</form>
-```
+We organize code in a modular Django architecture with specialized apps for
+different functional areas.
 
-- Layer 2: CSS for styling (classless-PicoCSS directly in html) and only use
-  Django-Tailwind-Framework for utility classes as a last resort
+We use class-based views with mixins for code reuse in Django.
 
-Reference: See `/docs/resources/pico.md` for comprehensive PicoCSS
-documentation and `/docs/resources/tailwind.md` for guidance on using Tailwind
-CSS as a last resort.
+We implement proper model relationships and constraints in our database design.
 
-- Layer 3: Django-Hyperscript first and then Django-HTMX second for
-  interactivity
+We handle authentication using django-allauth with multi-factor authentication
+support.
 
-Reference: See `/docs/resources/hyperscript.md` for django-hyperscript
-implementation and `/docs/resources/htmx.md` for django-htmx integration
-patterns.
+## Data Structure
 
-- Layer 4: Web APIs for data
+Our primary data model is the Obligation model which tracks environmental
+compliance requirements. Obligations are related to Projects, Mechanisms, and
+Procedures.
 
 Users are assigned Responsibilities related to Obligations.
 
@@ -392,7 +370,7 @@ FUNCTION shutdownSystem():
 - Orchestrate workflow execution.
 - Ensure fault tolerance and scalability.
 
-```pseudocode
+````pseudocode
 FUNCTION main():
     initializeSystem()
     processAutomatedTransaction()
@@ -563,7 +541,7 @@ Pipeline{% endblock %} {% block dashboard_content %}
 
 2. **Data Processing Templates**
 
-```html
+````html
 {% for transaction in enriched_transactions %}
 <tr>
   <td>{{ transaction.id }}</td>
@@ -906,5 +884,5 @@ CREATE TRIGGER update_obligations_timestamp
 
 1. Author Information:
    - Author: Adrian Gallo
-   - Email: agallo@enveng-group.com.au
+   - Email: <agallo@enveng-group.com.au>
    - License: AGPL-3.0

@@ -49,9 +49,6 @@ main,
 }
 
 /* Typography */
-/* Headings, paragraphs, etc. */
-
-/* Typography */
 h1,
 h2,
 h3,
@@ -117,56 +114,26 @@ textarea {
   outline-offset: 2px;
 }
 
-/* Add these missing normalizations from modern-normalize */
-
-/* Table border color inheritance fix */
-table {
-  border-color: currentcolor;
+/* Skip link for accessibility - making it visible when focused */
+.skip-link {
+  position: absolute;
+  top: -50px;
+  left: var(--greenova-spacing-medium, 1rem);
+  padding: var(--greenova-spacing-small, 0.5rem)
+    var(--greenova-spacing-medium, 1rem);
+  background: var(--greenova-green-primary);
+  color: var(--greenova-text-primary-light);
+  z-index: 100;
+  transition: top 0.2s ease;
 }
 
-/* Fix legend padding */
-legend {
-  padding: 0;
-}
-
-/* Fix progress vertical alignment */
-progress {
-  vertical-align: baseline;
-}
-
-/* Monospace font handling */
-code,
-kbd,
-samp,
-pre {
-  font-family:
-    ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 1em;
-}
-
-/* Small text */
-small {
-  font-size: 80%;
-}
-
-/* Subscript and superscript handling */
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-
-sub {
-  bottom: -1 * var(--greenova-spacing-small);
-}
-
-sup {
-  top: -1 * var(--greenova-spacing-small);
+.skip-link:focus {
+  top: var(--greenova-spacing-small, 0.5rem);
 }
 
 /* Remove navigation */
 .skip-link {
   display: none;
 }
+
+/* Rest of your CSS remains unchanged... */

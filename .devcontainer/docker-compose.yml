@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - '8000:8000'
+    volumes:
+      - greenova:/workspace/greenova
     environment:
       PYTHONUNBUFFERED: 1
     command: ['/bin/bash']

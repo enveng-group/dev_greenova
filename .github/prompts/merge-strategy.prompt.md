@@ -8,8 +8,8 @@ efficiently while maintaining code quality and following project conventions.
 
 Greenova follows a progressive squash merge workflow with these repositories:
 
-- Development: https://github.com/enveng-group/dev_greenova
-- Production: https://github.com/enssol/greenova
+- Development: [https://github.com/enveng-group/dev_greenova](https://github.com/enveng-group/dev_greenova)
+- Production: [https://github.com/enssol/greenova](https://github.com/enssol/greenova)
 
 We use Django 4.1.13 with Python 3.9.21 and follow strict code quality
 standards.
@@ -179,16 +179,20 @@ When suggesting conflict resolutions:
 
 Example output format:
 
-````
 ### Conflict Analysis
-There is a conflict in `models.py` where both branches added different fields to the Obligation model.
+
+There is a conflict in `models.py` where both branches added different fields
+to the Obligation model.
+
 - Current branch added `deadline` field
 - Incoming branch added `priority` field
 
 ### Resolution Option
+
 Preserve both additions as they serve different purposes and don't conflict functionally.
 
 ### Resolved Code
+
 ```python
 class Obligation(models.Model):
     # Base fields
@@ -202,7 +206,7 @@ class Obligation(models.Model):
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=2)
 
     # Rest of the model...
-````
+```
 
 ### Verification Steps
 
@@ -210,21 +214,22 @@ class Obligation(models.Model):
 2. Run tests to verify both deadline and priority functionality
 3. Check admin interface to ensure both fields appear correctly
 
-```
-
 ## Special Considerations
 
 ### Django Migrations
+
 - Keep all migration files intact
 - Ensure dependencies are correctly ordered
 - Add comments explaining merger decisions
 
 ### Settings Files
+
 - Preserve all unique settings from both branches
 - Watch for environment variable references
 - Be cautious with security settings
 
 ### Package Dependencies
+
 - Include requirements from both branches
 - Maintain version compatibility
 - Note any potential conflicts
@@ -232,9 +237,11 @@ class Obligation(models.Model):
 ## Advanced Conflict Resolution
 
 For complex conflicts:
+
 1. Suggest creating a temporary integration branch
 2. Recommend smaller, incremental rebases
 3. Propose clear steps to verify correctness at each stage
 
-Remember: Always prioritize data integrity and application functionality over code style issues. When in doubt, preserve both changes and add a comment for developer review.
-```
+Remember: Always prioritize data integrity and application functionality over
+code style issues. When in doubt, preserve both changes and add a comment for
+developer review.

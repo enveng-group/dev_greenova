@@ -15,8 +15,8 @@ from django_htmx.http import push_url, trigger_client_event
 from projects.models import Project
 
 # Constants for system information
-SYSTEM_STATUS = "operational"  # or fetch from settings/environment
-APP_VERSION = "0.0.4"  # or fetch from settings/environment
+SYSTEM_STATUS = 'operational'  # or fetch from settings/environment
+APP_VERSION = '0.0.5'  # or fetch from settings/environment
 LAST_UPDATED = datetime.now().date()  # or fetch from settings/environment
 
 logger = logging.getLogger(__name__)

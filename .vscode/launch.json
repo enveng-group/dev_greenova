@@ -59,7 +59,10 @@
       "type": "debugpy"
     },
     {
-      "args": ["import_obligations", "dummy_data.csv"],
+      "args": [
+        "import_obligations",
+        "dummy_data.csv"
+      ],
       "cwd": "${workspaceFolder}/greenova",
       "django": true,
       "env": {

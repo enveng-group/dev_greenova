@@ -1,13 +1,7 @@
-from typing import Any, Dict, Tuple, Optional, TypedDict, Union, Set, cast
-from django.core.management.base import BaseCommand, CommandParser
-from django.utils.dateparse import parse_date
-from django.db import transaction
-from django.db.models.signals import post_save
-from django.utils import timezone
 import csv
 import logging
 import os
-from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
 from django.core.management.base import BaseCommand, CommandParser
 from django.db import IntegrityError, transaction
@@ -114,11 +108,6 @@ class Command(BaseCommand):
             action='store_true',
             help='Process each row without wrapping in a transaction (use for database issues)'
         )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
-        )
 
     def clean_boolean(self, value: Any) -> bool:
         """Convert various boolean representations to Python booleans."""
@@ -165,24 +154,24 @@ class Command(BaseCommand):
             name=mechanism_name, project=project
         ).first()
 
-           # Try to get existing mechanism
-           try:
-                mechanism = EnvironmentalMechanism.objects.get(
-                    name=mech_name,
-                    project=project
-                )
-                return mechanism, False
-            except EnvironmentalMechanism.DoesNotExist:
-                mechanism = EnvironmentalMechanism.objects.create(
-                    name=mech_name,
-                    project=project,
-                    primary_environmental_mechanism=mechanism_name
-                )
-                # Use getattr for safer access
-                mech_name = getattr(mechanism, 'name', mech_name)
-                proj_name = getattr(project, 'name', 'Unknown')
-                logger.info(f"Created new mechanism: {mech_name} for project {proj_name}")
-                return mechanism, True
+        # Try to get existing mechanism
+        try:
+            mechanism = EnvironmentalMechanism.objects.get(
+                name=mech_name,
+                project=project
+            )
+            return mechanism, False
+        except EnvironmentalMechanism.DoesNotExist:
+            mechanism = EnvironmentalMechanism.objects.create(
+                name=mech_name,
+                project=project,
+                primary_environmental_mechanism=mechanism_name
+            )
+            # Use getattr for safer access
+            mech_name = getattr(mechanism, 'name', mech_name)
+            proj_name = getattr(project, 'name', 'Unknown')
+            logger.info(f"Created new mechanism: {mech_name} for project {proj_name}")
+            return mechanism, True
 
         except Exception as e:
             logger.error(f"Error creating mechanism {mechanism_name}: {str(e)}")
@@ -318,6 +307,8 @@ class Command(BaseCommand):
             'notes_for_gap_analysis': row.get('notes_for__gap__analysis', ''),
         }
         return result
+
+        return obligation_data
 
     def create_or_update_obligation(self, obligation_data: ObligationData, force_update: bool = False) -> Tuple[Union[Obligation, bool, None], str]:
         """
