@@ -104,3 +104,8 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: '/language:${{ matrix.language }}'
+
+      # Ensure the workflow fails if the analysis step fails
+      - name: Check for Analysis Failure
+        if: failure()
+        run: exit 1
