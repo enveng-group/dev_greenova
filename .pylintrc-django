@@ -4,7 +4,7 @@ suggestion-mode=yes
 unsafe-load-any-extension=no
 load-plugins=tools.pylint.fix_good_names,pylint_django,tools.pylint.gevent_checker
 ignore=migrations,venv,.venv
-django-settings-module=greenova.greenova.settings
+django-settings-module=tools.pre_commit.mock_settings
 
 # Add project root to Python path
 init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova'); sys.path.insert(0, '/workspaces/greenova/greenova')"

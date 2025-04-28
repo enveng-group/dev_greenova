@@ -237,10 +237,10 @@ git push origin main
    - Always start your day by updating your branches
 
    ```bash
-   git checkout development
-   git pull
+   git checkout main
+   git pull origin main
    git checkout your-feature-branch
-   git rebase development
+   git rebase main
    ```
 
 2. **Small, Focused Features**
@@ -335,18 +335,19 @@ git cherry-pick main
 ## References
 
 [1] Git Documentation, "Git Merge Strategies," Git SCM, 2023. [Online].
-Available: https://git-scm.com/docs/merge-strategies [Accessed: Apr. 10, 2025].
+Available: <https://git-scm.com/docs/merge-strategies> [Accessed: Apr. 10,
+2025].
 
 [2] GitHub Docs, "About merge methods on GitHub," GitHub, 2023. [Online].
 Available:
-https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github
+<https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github>
 [Accessed: Apr. 10, 2025].
 
 [3] Atlassian, "Merging vs. Rebasing," Atlassian Git Tutorial, 2023. [Online].
-Available: https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+Available: <https://www.atlassian.com/git/tutorials/merging-vs-rebasing>
 [Accessed: Apr. 10, 2025].
 
 [4] Microsoft, "Merging with squash," Microsoft Azure DevOps
 Documentation, 2023. [Online]. Available:
-https://learn.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash
+<https://learn.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash>
 [Accessed: Apr. 10, 2025].

@@ -35,7 +35,7 @@ RUN chmod +x /usr/local/scripts/*.sh
 #RUN npm install
 
 # install Python dependencies
-#RUN pip install -r requirements.txt -c constraints.txt --no-deps
+#RUN pip install -r requirements.txt -c constraints.txt
 #RUN pip install --no-cache-dir -r requirements.txt
 
 # add vscode user and group(UID = 1000)

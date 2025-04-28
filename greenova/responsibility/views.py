@@ -1,6 +1,7 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import ResponsibilityRole, ResponsibilityAssignment
+from django.shortcuts import render
+
+from .models import ResponsibilityAssignment, ResponsibilityRole
 
 
 @login_required

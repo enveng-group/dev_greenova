@@ -1,22 +1,35 @@
 {% load company_tags %}
 
 <section class="company-profile" aria-labelledby="company-profile-heading">
-  <h2 id="company-profile-heading">Company Profile</h2>
+  <h2 id="company-profile-heading">
+Company Profile
+  </h2>
   <div class="company-details">
     <div class="company-header">
       <div class="company-logo-container">
         {% if company.logo %}
-          <img src="{{ company.logo.url }}" alt="{{ company.name }} logo" class="company-logo" />
+          <img src="{{ company.logo.url }}"
+               alt="{{ company.name }} logo"
+               class="company-logo" />
         {% else %}
-          <div class="company-logo placeholder">{{ company.name|slice:":1" }}</div>
+          <div class="company-logo placeholder">
+{{ company.name|slice:":1" }}
+          </div>
         {% endif %}
       </div>
 
       <div class="company-basic-info">
-        <p><strong>Type:</strong> {{ company.company_type|company_type_label }}</p>
-        <p><strong>Industry:</strong> {{ company.industry|industry_label|default:"Not specified" }}</p>
-        <p><strong>Size:</strong> {{ company.size|default:"Not specified" }}</p>
-        <p><strong>Status:</strong>
+        <p>
+          <strong>Type:</strong> {{ company.company_type|company_type_label }}
+        </p>
+        <p>
+          <strong>Industry:</strong> {{ company.industry|industry_label|default:"Not specified" }}
+        </p>
+        <p>
+          <strong>Size:</strong> {{ company.size|default:"Not specified" }}
+        </p>
+        <p>
+          <strong>Status:</strong>
           {% if company.is_active %}
             <mark role="status" class="success">Active</mark>
           {% else %}
@@ -28,24 +41,56 @@
 
     <div class="company-body">
       <section aria-labelledby="description-heading">
-        <h3 id="description-heading">Description</h3>
-        <p>{{ company.description|default:"No description provided." }}</p>
+        <h3 id="description-heading">
+Description
+        </h3>
+        <p>
+{{ company.description|default:"No description provided." }}
+        </p>
       </section>
 
       <section aria-labelledby="contact-heading">
-        <h3 id="contact-heading">Contact Information</h3>
+        <h3 id="contact-heading">
+Contact Information
+        </h3>
         <dl>
-          <dt>Website</dt>
-          <dd>{% if company.website %}<a href="{{ company.website }}" target="_blank" rel="noopener noreferrer">{{ company.website }}</a>{% else %}Not provided{% endif %}</dd>
+          <dt>
+Website
+          </dt>
+          <dd>
+            {% if company.website %}
+              <a href="{{ company.website }}"
+                 target="_blank"
+                 rel="noopener noreferrer">{{ company.website }}</a>
+            {% else %}
+Not provided
+            {% endif %}
+          </dd>
 
-          <dt>Email</dt>
-          <dd>{% if company.email %}<a href="mailto:{{ company.email }}">{{ company.email }}</a>{% else %}Not provided{% endif %}</dd>
+          <dt>
+Email
+          </dt>
+          <dd>
+            {% if company.email %}
+              <a href="mailto:{{ company.email }}">{{ company.email }}</a>
+            {% else %}
+Not provided
+            {% endif %}
+          </dd>
 
-          <dt>Phone</dt>
-          <dd>{{ company.phone|default:"Not provided" }}</dd>
+          <dt>
+Phone
+          </dt>
+          <dd>
+{{ company.phone|default:"Not provided" }}
+          </dd>
 
-          <dt>Address</dt>
-          <dd>{{ company.address|default:"Not provided"|linebreaks }}</dd>
+          <dt>
+Address
+          </dt>
+          <dd>
+{{ company.address|default:"Not provided"|linebreaks }}
+          </dd>
         </dl>
       </section>
     </div>
@@ -54,7 +99,9 @@
 
 <section class="company-projects" aria-labelledby="projects-heading">
   <header>
-    <h2 id="projects-heading">Projects</h2>
+    <h2 id="projects-heading">
+Projects
+    </h2>
   </header>
 
   {% if projects %}
@@ -62,42 +109,56 @@
       <table>
         <thead>
           <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Status</th>
-            <th scope="col">Created</th>
+            <th scope="col">
+Name
+            </th>
+            <th scope="col">
+Status
+            </th>
+            <th scope="col">
+Created
+            </th>
           </tr>
         </thead>
         <tbody>
           {% for project in projects %}
-          <tr>
-            <td><a href="{% url 'projects:detail' project.id %}">{{ project.name }}</a></td>
-            <td>
-              {% if project.is_active %}
-                <mark role="status" class="success">Active</mark>
-              {% else %}
-                <mark role="status" class="warning">Inactive</mark>
-              {% endif %}
-            </td>
-            <td>{{ project.created_at|date:"d M Y" }}</td>
-          </tr>
+            <tr>
+              <td>
+                <a href="{% url 'projects:detail' project.id %}">{{ project.name }}</a>
+              </td>
+              <td>
+                {% if project.is_active %}
+                  <mark role="status" class="success">Active</mark>
+                {% else %}
+                  <mark role="status" class="warning">Inactive</mark>
+                {% endif %}
+              </td>
+              <td>
+{{ project.created_at|date:"d M Y" }}
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   {% else %}
-    <p>No projects associated with this company.</p>
+    <p>
+No projects associated with this company.
+    </p>
   {% endif %}
 </section>
 
 <section class="company-members" aria-labelledby="members-heading">
   <header>
-    <h2 id="members-heading">Team Members</h2>
+    <h2 id="members-heading">
+Team Members
+    </h2>
     {% if can_manage_members %}
-    <div class="header-actions">
-      <a href="{% url 'company:members' company.id %}" role="button">
+      <div class="header-actions">
+        <a href="{% url 'company:members' company.id %}" role="button">
         Manage Members
-      </a>
-    </div>
+        </a>
+      </div>
     {% endif %}
   </header>
 
@@ -106,48 +167,68 @@
       <table>
         <thead>
           <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Position</th>
-            <th scope="col">Department</th>
-            <th scope="col">Role</th>
+            <th scope="col">
+Name
+            </th>
+            <th scope="col">
+Position
+            </th>
+            <th scope="col">
+Department
+            </th>
+            <th scope="col">
+Role
+            </th>
           </tr>
         </thead>
         <tbody>
           {% for member in members %}
-          <tr>
-            <td>{{ member.user.get_full_name|default:member.user.username }}</td>
-            <td>{{ member.position|default:"Not specified" }}</td>
-            <td>{{ member.department|default:"Not specified" }}</td>
-            <td>{{ member.role|company_role_badge }}</td>
-          </tr>
+            <tr>
+              <td>
+{{ member.user.get_full_name|default:member.user.username }}
+              </td>
+              <td>
+{{ member.position|default:"Not specified" }}
+              </td>
+              <td>
+{{ member.department|default:"Not specified" }}
+              </td>
+              <td>
+{{ member.role|company_role_badge }}
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   {% else %}
-    <p>No members in this company.</p>
+    <p>
+No members in this company.
+    </p>
   {% endif %}
 </section>
 
 <section class="company-documents" aria-labelledby="documents-heading">
   <header>
-    <h2 id="documents-heading">Documents</h2>
+    <h2 id="documents-heading">
+Documents
+    </h2>
     {% if can_edit %}
-    <div class="header-actions">
-      <button
-        class="btn-secondary"
-        hx-get="{% url 'company:upload_document' company.id %}"
-        hx-target="#document-form-container"
-        hx-swap="innerHTML">
+      <div class="header-actions">
+        <button class="btn-secondary"
+                hx-get="{% url 'company:upload_document' company.id %}"
+                hx-target="#document-form-container"
+                hx-swap="innerHTML">
         Upload Document
-      </button>
-    </div>
+        </button>
+      </div>
     {% endif %}
   </header>
 
-  <div id="document-form-container"></div>
+  <div id="document-form-container">
+  </div>
 
   <div class="documents-container">
-    {% include "company/partials/document_list.html" %}
+{% include "company/partials/document_list.html" %}
   </div>
 </section>

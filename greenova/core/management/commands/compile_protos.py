@@ -10,7 +10,6 @@ import os
 import shutil
 # nosec B404 - subprocess is necessary but used with all security precautions
 import subprocess  # nosec B404
-from pathlib import Path
 from shlex import quote
 from subprocess import (PIPE, CalledProcessError, CompletedProcess,  # nosec B404
                         TimeoutExpired)

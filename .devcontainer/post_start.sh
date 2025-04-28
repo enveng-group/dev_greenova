@@ -76,19 +76,13 @@ setup_venv() {
   if [ -f "/workspaces/greenova/requirements.txt" ]; then
     echo "Installing Python requirements with constraints..."
     if [ -f "/workspaces/greenova/constraints.txt" ]; then
-      pip install -r "/workspaces/greenova/requirements.txt" -c "/workspaces/greenova/constraints.txt" --no-deps
+      pip install -r "/workspaces/greenova/requirements.txt" -c "/workspaces/greenova/constraints.txt"
     else
       echo "Warning: constraints.txt not found, installing without constraints"
       pip install -r "/workspaces/greenova/requirements.txt"
     fi
 
-    if command -v pre-commit >/dev/null 2>&1; then
-      pre-commit install
-    else
-      echo "Warning: pre-commit not found, skipping installation"
-    fi
-
-    if command -v pre-commit >/dev/null 2>&1; then
+    if command -v pre-commit 1>/dev/null 2>/dev/null; then
       pre-commit install
     else
       echo "Warning: pre-commit not found, skipping installation"
@@ -376,6 +370,17 @@ setup_fish_direnv() {
 }
 
 main() {
+  # Ensure Django settings script is executable
+  if [ -f "/workspaces/greenova/scripts/ensure_django_settings.sh" ]; then
+    chmod +x "/workspaces/greenova/scripts/ensure_django_settings.sh"
+  fi
+
+  # Ensure Django settings module consistency
+  if [ -f "/workspaces/greenova/scripts/ensure_django_settings.sh" ]; then
+    echo "Running Django settings consistency script..."
+    /workspaces/greenova/scripts/ensure_django_settings.sh
+  fi
+
   # Setup Python environment first
   echo "Setting up Python environment..."
   setup_venv
@@ -400,7 +405,7 @@ main() {
   npm install -g npm@10.8.2
 
   # Install snyk globally only if not already installed
-  if ! command -v snyk &>/dev/null; then
+  if ! command -v snyk 1>/dev/null 2>/dev/null; then
     echo "Installing snyk globally..."
     npm install snyk -g
   else
@@ -418,9 +423,11 @@ main() {
   export PYTHONPATH=/workspaces/greenova:$PYTHONPATH
 
   # Ensure Pre-Commit is updated
-  if command -v pre-commit >/dev/null 2>&1; then
+  if which pre-commit 1>/dev/null 2>/dev/null; then
     echo "Updating pre-commit hooks..."
     pre-commit autoupdate
+  else
+    echo "Pre-commit not found, skipping update..."
   fi
 }
 

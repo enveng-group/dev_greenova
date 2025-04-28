@@ -23,21 +23,17 @@ class HttpRequest(HttpRequestBase):
 # Generic QuerySet type that can be used in models
 class QuerySet(DjangoQuerySet, Generic[T]):
     """Enhanced QuerySet type for better type checking."""
-    pass
 
 # Common type for status data responses
 class StatusData(Dict[str, int]):
     """Type for status data dictionaries with string keys and integer values."""
-    pass
 
 # Exception handler types
 class DjangoError:
     """Base class for custom Django error types."""
-    pass
 
 class ModelOperationError(DjangoError, Exception):
     """Error during model operations."""
-    pass
 
 # Type for model field choices
 ChoicesType = List[tuple[str, str]]

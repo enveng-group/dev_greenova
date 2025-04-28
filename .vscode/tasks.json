@@ -691,75 +691,15 @@
       "type": "shell"
     },
     {
-      "dependsOn": ["Django: Run Tailwind", "Django: Run server"],
-      "dependsOrder": "parallel",
-      "group": "none",
-      "label": "Django: Development environment",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
       "args": [
         "-c",
-        "cd greenova/theme/static_src/src && npm install && cd ../../.. && python3 manage.py tailwind check-updates && python3 manage.py tailwind update && python3 manage.py tailwind install && python3 manage.py tailwind build"
+        "cd greenova && python manage.py create_missing_profiles"
       ],
       "command": "/bin/sh",
       "group": "none",
-      "label": "Django: Build and install Tailwind",
+      "label": "Django: Create Missing Profiles",
       "presentation": {
         "panel": "dedicated",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py runserver"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Run server",
-      "presentation": {
-        "panel": "dedicated",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py check"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Check",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python3 manage.py compile_protos"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Compile Proto",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "npx protolint lint --fix ."],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Protolint: Lint with protolint",
-      "presentation": {
-        "panel": "shared",
         "reveal": "always"
       },
       "problemMatcher": [],

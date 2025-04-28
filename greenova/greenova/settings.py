@@ -352,7 +352,6 @@ CACHES = {
 
 # Create logs directory if it doesn't exist
 LOGS_DIR = os.path.join(str(BASE_DIR).replace(' ', '_').replace(':', '_'), 'logs')
-LOGS_DIR = os.path.join(str(BASE_DIR).replace(' ', '_').replace(':', '_'), 'logs')
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
 

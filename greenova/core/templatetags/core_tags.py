@@ -1,12 +1,11 @@
-from django import template
-from django.urls import reverse, NoReverseMatch
-from django.utils.html import format_html
-from django.conf import settings
-from typing import Dict, List, Optional, Union
 import logging
 
-from core.constants import MAIN_NAVIGATION, USER_NAVIGATION, AUTH_NAVIGATION, THEME_OPTIONS
 from core.commons import get_active_namespace, get_user_display_name
+from core.constants import (AUTH_NAVIGATION, MAIN_NAVIGATION, THEME_OPTIONS,
+                            USER_NAVIGATION)
+from django import template
+from django.conf import settings
+from django.urls import NoReverseMatch, reverse
 
 logger = logging.getLogger(__name__)
 register = template.Library()
@@ -24,7 +23,7 @@ def active_link(context, url_name, css_class="active"):
         if current_url.startswith(target_url):
             return css_class
     except NoReverseMatch:
-        logger.debug(f"No reverse match for {url_name}")
+        logger.debug("No reverse match for %s", url_name)
     return ""
 
 @register.inclusion_tag('core/components/breadcrumbs.html', takes_context=True)

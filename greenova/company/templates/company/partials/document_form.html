@@ -1,29 +1,37 @@
 <div class="document-form-container">
-  <h3>Upload New Document</h3>
+  <h3>
+Upload New Document
+  </h3>
   <form method="post"
         enctype="multipart/form-data"
         action="{% url 'company:upload_document' company.id %}"
         hx-post="{% url 'company:upload_document' company.id %}"
         hx-target=".documents-container"
         hx-swap="innerHTML">
-    {% csrf_token %}
+{% csrf_token %}
 
     {% if form.errors %}
-    <div class="alert error" role="alert">
-      <h4>Please correct the following errors:</h4>
-      <ul>
-        {% for field in form %}
-          {% for error in field.errors %}
-            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+      <div class="alert error" role="alert">
+        <h4>
+Please correct the following errors:
+        </h4>
+        <ul>
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li>
+                <strong>{{ field.label }}:</strong> {{ error }}
+              </li>
+            {% endfor %}
           {% endfor %}
-        {% endfor %}
-      </ul>
-    </div>
+        </ul>
+      </div>
     {% endif %}
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ form.name.id_for_label }}">Document Name</label>
+        <label for="{{ form.name.id_for_label }}">
+Document Name
+        </label>
         {{ form.name }}
         {% if form.name.help_text %}
           <small>{{ form.name.help_text }}</small>
@@ -31,7 +39,9 @@
       </div>
 
       <div class="form-group">
-        <label for="{{ form.document_type.id_for_label }}">Document Type</label>
+        <label for="{{ form.document_type.id_for_label }}">
+Document Type
+        </label>
         {{ form.document_type }}
         {% if form.document_type.help_text %}
           <small>{{ form.document_type.help_text }}</small>
@@ -40,7 +50,9 @@
     </div>
 
     <div class="form-group">
-      <label for="{{ form.description.id_for_label }}">Description</label>
+      <label for="{{ form.description.id_for_label }}">
+Description
+      </label>
       {{ form.description }}
       {% if form.description.help_text %}
         <small>{{ form.description.help_text }}</small>
@@ -48,7 +60,9 @@
     </div>
 
     <div class="form-group">
-      <label for="{{ form.file.id_for_label }}">File</label>
+      <label for="{{ form.file.id_for_label }}">
+File
+      </label>
       {{ form.file }}
       {% if form.file.help_text %}
         <small>{{ form.file.help_text }}</small>
@@ -56,12 +70,16 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn-primary">Upload Document</button>
+      <button type="submit" class="btn-primary">
+Upload Document
+      </button>
       <button type="button"
               class="btn-secondary"
               hx-get="{% url 'company:detail' company.id %}"
               hx-target="#document-form-container"
-              hx-swap="innerHTML">Cancel</button>
+              hx-swap="innerHTML">
+Cancel
+      </button>
     </div>
   </form>
 </div>

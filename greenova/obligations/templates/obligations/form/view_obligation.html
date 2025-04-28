@@ -3,48 +3,78 @@
 {% block crud_title %}
   Obligation Details
 {% endblock crud_title %}
-{% block breadcrumb_active %}Obligation Details{% endblock %}
+{% block breadcrumb_active %}
+Obligation Details
+{% endblock %}
 {% block form_title %}
   Obligation: {{ obligation.obligation_number }}
 {% endblock form_title %}
-{% block form_heading %}Obligation Details{% endblock %}
+{% block form_heading %}
+Obligation Details
+{% endblock %}
 {% block form_content %}
   <div class="obligation-details">
     <div class="form-grid">
       <!-- Basic details -->
       <fieldset>
-        <legend>Basic Details</legend>
+        <legend>
+Basic Details
+        </legend>
         <div class="form-row">
           <div class="form-group">
-            <label>Obligation Number</label>
-            <div class="detail-value">{{ obligation.obligation_number }}</div>
+            <label>
+Obligation Number
+            </label>
+            <div class="detail-value">
+{{ obligation.obligation_number }}
+            </div>
           </div>
           <div class="form-group">
-            <label>Project</label>
-            <div class="detail-value">{{ obligation.project.name }}</div>
+            <label>
+Project
+            </label>
+            <div class="detail-value">
+{{ obligation.project.name }}
+            </div>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Environmental Aspect</label>
-            <div class="detail-value">{{ obligation.environmental_aspect }}</div>
+            <label>
+Environmental Aspect
+            </label>
+            <div class="detail-value">
+{{ obligation.environmental_aspect }}
+            </div>
           </div>
           <div class="form-group">
-            <label>Status</label>
-            <div class="detail-value">{% status_badge obligation|display_status %}</div>
+            <label>
+Status
+            </label>
+            <div class="detail-value">
+{% status_badge obligation|display_status %}
+            </div>
           </div>
         </div>
       </fieldset>
       <!-- Obligation details -->
       <fieldset>
-        <legend>Obligation Details</legend>
+        <legend>
+Obligation Details
+        </legend>
         <div class="form-group">
-          <label>Obligation</label>
-          <div class="detail-value">{{ obligation.obligation|linebreaks }}</div>
+          <label>
+Obligation
+          </label>
+          <div class="detail-value">
+{{ obligation.obligation|linebreaks }}
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Environmental Mechanism</label>
+            <label>
+Environmental Mechanism
+            </label>
             <div class="detail-value">
               {% if obligation.primary_environmental_mechanism %}
                 {{ obligation.primary_environmental_mechanism.name }}
@@ -54,66 +84,116 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Procedure</label>
-            <div class="detail-value">{{ obligation.procedure|default:"Not specified"|linebreaks }}</div>
+            <label>
+Procedure
+            </label>
+            <div class="detail-value">
+{{ obligation.procedure|default:"Not specified"|linebreaks }}
+            </div>
           </div>
         </div>
         <div class="form-group">
-          <label>Responsibility</label>
-          <div class="detail-value">{{ obligation.responsibility|display_responsibility }}</div>
+          <label>
+Responsibility
+          </label>
+          <div class="detail-value">
+{{ obligation.responsibility|display_responsibility }}
+          </div>
         </div>
       </fieldset>
       <!-- Timeline details -->
       <fieldset>
-        <legend>Timeline</legend>
+        <legend>
+Timeline
+        </legend>
         <div class="form-row">
           <div class="form-group">
-            <label>Action Due Date</label>
-            <div class="detail-value">{{ obligation.action_due_date|format_due_date }}</div>
+            <label>
+Action Due Date
+            </label>
+            <div class="detail-value">
+{{ obligation.action_due_date|format_due_date }}
+            </div>
           </div>
           <div class="form-group">
-            <label>Close Out Date</label>
-            <div class="detail-value">{{ obligation.close_out_date|format_due_date }}</div>
+            <label>
+Close Out Date
+            </label>
+            <div class="detail-value">
+{{ obligation.close_out_date|format_due_date }}
+            </div>
           </div>
         </div>
       </fieldset>
       <!-- Recurring details -->
       <fieldset>
-        <legend>Recurring Information</legend>
+        <legend>
+Recurring Information
+        </legend>
         <div class="form-row">
           <div class="form-group">
-            <label>Recurring Obligation</label>
-            <div class="detail-value">{{ obligation.recurring_obligation|yesno:"Yes,No" }}</div>
+            <label>
+Recurring Obligation
+            </label>
+            <div class="detail-value">
+{{ obligation.recurring_obligation|yesno:"Yes,No" }}
+            </div>
           </div>
           <div class="form-group">
-            <label>Frequency</label>
-            <div class="detail-value">{{ obligation.recurring_frequency|default:"N/A" }}</div>
+            <label>
+Frequency
+            </label>
+            <div class="detail-value">
+{{ obligation.recurring_frequency|default:"N/A" }}
+            </div>
           </div>
           <div class="form-group">
-            <label>Forecasted Date</label>
-            <div class="detail-value">{{ obligation.recurring_forcasted_date|format_due_date }}</div>
+            <label>
+Forecasted Date
+            </label>
+            <div class="detail-value">
+{{ obligation.recurring_forcasted_date|format_due_date }}
+            </div>
           </div>
         </div>
       </fieldset>
       <!-- Comments and additional info -->
       <fieldset>
-        <legend>Comments and Additional Information</legend>
+        <legend>
+Comments and Additional Information
+        </legend>
         <div class="form-group">
-          <label>General Comments</label>
-          <div class="detail-value">{{ obligation.general_comments|default:"No comments"|linebreaks }}</div>
+          <label>
+General Comments
+          </label>
+          <div class="detail-value">
+{{ obligation.general_comments|default:"No comments"|linebreaks }}
+          </div>
         </div>
         <div class="form-group">
-          <label>Supporting Information</label>
-          <div class="detail-value">{{ obligation.supporting_information|default:"None provided"|linebreaks }}</div>
+          <label>
+Supporting Information
+          </label>
+          <div class="detail-value">
+{{ obligation.supporting_information|default:"None provided"|linebreaks }}
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Compliance Comments</label>
-            <div class="detail-value">{{ obligation.compliance_comments|default:"No comments"|linebreaks }}</div>
+            <label>
+Compliance Comments
+            </label>
+            <div class="detail-value">
+{{ obligation.compliance_comments|default:"No comments"|linebreaks }}
+            </div>
           </div>
           <div class="form-group">
-            <label>Non-Conformance Comments</label>
-            <div class="detail-value">{{ obligation.non_conformance_comments|default:"No comments"|linebreaks }}</div>
+            <label>
+Non-Conformance Comments
+            </label>
+            <div class="detail-value">
+{{ obligation.non_conformance_comments|default:"No comments"|linebreaks }}
+            </div>
           </div>
         </div>
       </fieldset>

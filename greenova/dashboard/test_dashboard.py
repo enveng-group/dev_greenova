@@ -1,6 +1,7 @@
 """
 Pytest tests for dashboard functionality.
 """
+import json
 from datetime import date
 
 import pytest
@@ -9,7 +10,7 @@ from projects.models import Project, ProjectMembership
 
 
 @pytest.fixture
-def setup_dashboard(db, regular_user):
+def setup_dashboard(regular_user):
     """Set up test data for dashboard tests."""
     # Create a test project
     project = Project.objects.create(
@@ -50,7 +51,7 @@ class TestDashboardViews:
         assert response.status_code == 200
         assert 'dashboard/dashboard.html' in [t.name for t in response.templates]
 
-    def test_dashboard_context_data(self, authenticated_client, setup_dashboard):
+    def test_dashboard_context_data(self, authenticated_client):
         """Test that the dashboard view provides the correct context data."""
         project = setup_dashboard['project']
         response = authenticated_client.get(reverse('dashboard:home'))
@@ -72,7 +73,7 @@ class TestDashboardViews:
         assert str(project.pk) in user_roles
         assert user_roles[str(project.pk)] == 'member'
 
-    def test_dashboard_with_project_selection(self, authenticated_client, setup_dashboard):
+    def test_dashboard_with_project_selection(self, authenticated_client):
         """Test dashboard view when a project is selected via query params."""
         project = setup_dashboard['project']
         response = authenticated_client.get(
@@ -87,7 +88,7 @@ class TestDashboardViews:
 class TestDashboardHtmx:
     """Test cases for HTMX functionality in dashboard views."""
 
-    def test_htmx_dashboard_template(self, authenticated_client, setup_dashboard):
+    def test_htmx_dashboard_template(self, authenticated_client):
         """Test that HTMX requests use the partial template."""
         response = authenticated_client.get(
             reverse('dashboard:home'),
@@ -121,7 +122,7 @@ class TestDashboardHtmx:
         assert 'HX-Trigger' in response.headers
         assert 'dashboardLoaded' in response.headers['HX-Trigger']
 
-    def test_htmx_with_project_id(self, authenticated_client, setup_dashboard):
+    def test_htmx_with_project_id(self, authenticated_client):
         """Test HTMX request with project_id triggers projectSelected event."""
         project = setup_dashboard['project']
         response = authenticated_client.get(
@@ -133,7 +134,6 @@ class TestDashboardHtmx:
         assert 'HX-Trigger' in response.headers
 
         # Parse the JSON in HX-Trigger header to check for projectSelected event
-        import json
         trigger_data = json.loads(response.headers['HX-Trigger'])
         assert 'projectSelected' in trigger_data
         assert trigger_data['projectSelected']['projectId'] == str(project.id)
@@ -205,12 +205,12 @@ class TestOverdueCount:
     def test_overdue_count_exception(self, monkeypatch, authenticated_client):
         """Test the overdue_count method handles exceptions."""
         # Configure the mock to raise an exception using pytest
-        def raise_exception(**kwargs):
-            raise Exception('Database error')
+        def raise_specific_exception(**kwargs):
+            raise ValueError('Database error occurred while filtering obligations.')
 
         monkeypatch.setattr(
             'obligations.models.Obligation.objects.filter',
-            raise_exception
+            raise_specific_exception
         )
 
         # Call the view

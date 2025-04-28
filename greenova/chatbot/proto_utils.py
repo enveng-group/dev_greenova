@@ -10,7 +10,6 @@ chatbot application.
 """
 import logging
 import os
-import sys
 import time
 from typing import Optional
 
@@ -105,8 +104,11 @@ def serialize_chat_message(chat_message) -> Optional[bytes]:
 
         # Serialize to bytes
         return proto.SerializeToString()
-    except Exception as e:
+    except (AttributeError, TypeError) as e:
         logger.error("Error during chat message serialization: %s", str(e))
+        return None
+    except ValueError as e:
+        logger.error("Value error during chat message serialization: %s", str(e))
         return None
 
 
@@ -173,8 +175,11 @@ def deserialize_chat_message(data: bytes) -> Optional[dict]:
             )
 
         return message_dict
-    except Exception as e:
+    except (AttributeError, TypeError) as e:
         logger.error("Error during message deserialization: %s", str(e))
+        return None
+    except ValueError as e:
+        logger.error("Value error during message deserialization: %s", str(e))
         return None
 
 
@@ -202,8 +207,11 @@ def create_chat_response(message_id: str, content: str) -> Optional[bytes]:
 
         # Serialize to bytes
         return proto.SerializeToString()
-    except Exception as e:
+    except (AttributeError, TypeError) as e:
         logger.error("Error during chat response creation: %s", str(e))
+        return None
+    except ValueError as e:
+        logger.error("Value error during chat response creation: %s", str(e))
         return None
 
 
@@ -235,6 +243,9 @@ def parse_chat_response(data: bytes) -> Optional[dict]:
             )
 
         return response_dict
-    except Exception as e:
+    except (AttributeError, TypeError) as e:
         logger.error("Error during chat response parsing: %s", str(e))
+        return None
+    except ValueError as e:
+        logger.error("Value error during chat response parsing: %s", str(e))
         return None

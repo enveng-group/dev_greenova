@@ -89,7 +89,7 @@ update:
 
 #Update recurring inspection dates
 update-recurring-dates:
-	$(CD_CMD) python3 manage.py update-recurring-inspection-dates
+    $(CD_CMD) python3 manage.py update_recurring_inspection_dates
 
 #Normalize existing frequencies
 normalize-frequencies:

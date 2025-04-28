@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     help = 'Ensures the default TBA company with ID 1 exists'
 
-    def handle(self, *args, **kwargs):
-        default_company, created = Company.objects.get_or_create(
+    def handle(self, *args, **options):
+        _, created = Company.objects.get_or_create(
             id=1,
             defaults={
                 'name': 'TBA',
@@ -20,7 +20,11 @@ class Command(BaseCommand):
         )
 
         if created:
-            self.stdout.write(self.style.SUCCESS('Created default TBA company with ID 1'))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    'Created default TBA company with ID 1'
+                )
+            )
         else:
             self.stdout.write(self.style.SUCCESS('Default TBA company already exists'))
 

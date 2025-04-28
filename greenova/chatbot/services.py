@@ -3,8 +3,7 @@ import logging
 from django.db.models import Q
 
 from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
-from .proto_utils import (create_chat_response, deserialize_chat_message,
-                          parse_chat_response, serialize_chat_message)
+from .proto_utils import create_chat_response, parse_chat_response
 
 logger = logging.getLogger(__name__)
 

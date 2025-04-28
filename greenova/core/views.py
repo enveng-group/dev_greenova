@@ -1,12 +1,12 @@
-from django.views.generic import TemplateView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.urls import reverse
-from typing import Dict, Any
 import logging
+from typing import Any, Dict
 
-from .mixins import ViewMixin, AuthViewMixin
+from django.conf import settings
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.views.generic import TemplateView, View
+
+from .constants import AUTH_NAVIGATION, MAIN_NAVIGATION, USER_NAVIGATION
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +25,8 @@ class HomeRouterView(View):
 class HealthCheckView(View):
     """Simple health check view for monitoring."""
 
-    def get(self, request: HttpRequest) -> JsonResponse:
+    def get(self, request: HttpRequest) -> JsonResponse:  # pylint: disable=unused-argument
         """Return health status."""
-        from django.conf import settings
-
         return JsonResponse({
             'status': 'ok',
             'version': getattr(settings, 'APP_VERSION', 'unknown'),
@@ -36,12 +34,11 @@ class HealthCheckView(View):
             'debug': settings.DEBUG,
         })
 
-class BaseTemplateView(ViewMixin, TemplateView):
+class BaseTemplateView(TemplateView):
     """Base view with common template context."""
 
     def get_context_data(self, **kwargs) -> Dict[str, Any]:
         """Add common context data."""
-        from .constants import MAIN_NAVIGATION, USER_NAVIGATION, AUTH_NAVIGATION
 
         context = super().get_context_data(**kwargs)
         context.update({

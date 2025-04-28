@@ -1,7 +1,7 @@
 import logging
 import re
-from datetime import date, timedelta
-from typing import Any, ClassVar, Optional, Type
+from datetime import date
+from typing import Any, Optional
 
 from core.utils.roles import get_responsibility_choices
 from dateutil.relativedelta import relativedelta
@@ -16,7 +16,7 @@ from projects.models import Project
 from .constants import (FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL, FREQUENCY_DAILY,
                         FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY,
                         FREQUENCY_WEEKLY, STATUS_CHOICES, STATUS_COMPLETED,
-                        STATUS_IN_PROGRESS, STATUS_NOT_STARTED)
+                        STATUS_NOT_STARTED)
 from .utils import normalize_frequency
 
 logger = logging.getLogger(__name__)
@@ -247,10 +247,9 @@ class Obligation(models.Model):
             return base_date + relativedelta(months=6)
         elif normalized_frequency == FREQUENCY_ANNUAL:
             return base_date + relativedelta(years=1)
-        else:
-            # Default to monthly if we don't recognize the frequency
-            logger.warning(f"Unrecognized frequency '{self.recurring_frequency}' - defaulting to monthly")
-            return base_date + relativedelta(months=1)
+        # Default to monthly if we don't recognize the frequency
+        logger.warning("Unrecognized frequency '%s' - defaulting to monthly", self.recurring_frequency)
+        return base_date + relativedelta(months=1)
 
     def update_recurring_forecasted_date(self) -> bool:
         """
@@ -296,8 +295,7 @@ class Obligation(models.Model):
                     current_number = int(number_part)
 
                     # Update highest if we found a larger number
-                    if current_number > highest_number:
-                        highest_number = current_number
+                    highest_number = max(highest_number, current_number)
                 except (ValueError, IndexError):
                     # Skip if we can't parse the number
                     continue
@@ -320,7 +318,7 @@ class Obligation(models.Model):
                     'obligation_number': 'Obligation number must be in the format PCEMP-XXX where XXX is a number'
                 })
 
-    def save(self, *args: Any, **kwargs: Any) -> None:
+    def save(self, *args, **kwargs) -> None:
         """Override save to update mechanism counts and ensure proper obligation number format."""
         # Generate a new obligation number if one isn't provided
         if not self.obligation_number or self.obligation_number.strip() == '':
@@ -330,7 +328,10 @@ class Obligation(models.Model):
         if not self.obligation_number.startswith('PCEMP-'):
             self.obligation_number = f"PCEMP-{self.obligation_number.split('-')[-1] if '-' in self.obligation_number else self.obligation_number}"
 
-        super().save(*args, **kwargs)
+        try:
+            super().save(*args, **kwargs)
+        except Exception as exc:
+            logger.error('Error saving obligation: %s', str(exc))
 
         # Update mechanism counts
         if self.primary_environmental_mechanism:
@@ -339,7 +340,6 @@ class Obligation(models.Model):
     @property
     def is_overdue(self):
         """Check if obligation is overdue."""
-        from django.utils import timezone
         if self.status != 'completed' and self.action_due_date:
             return self.action_due_date < timezone.now().date()
         return False
@@ -352,10 +352,10 @@ def update_mechanism_counts_on_save(sender, instance, **kwargs):
         if instance.primary_environmental_mechanism:
             instance.primary_environmental_mechanism.update_obligation_counts()
             logger.info(
-                f'Updated counts for mechanism {instance.primary_environmental_mechanism.name}'
+                'Updated counts for mechanism %s', instance.primary_environmental_mechanism.name
             )
     except Exception as e:
-        logger.error(f'Error updating mechanism counts on save: {str(e)}')
+        logger.error('Error updating mechanism counts on save: %s', str(e))
 
 @receiver(post_delete, sender=Obligation)
 def update_mechanism_counts_on_delete(sender, instance, **kwargs):

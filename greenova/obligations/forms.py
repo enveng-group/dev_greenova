@@ -1,4 +1,5 @@
 import logging
+import re
 
 from core.utils.roles import get_responsibility_choices
 from django import forms
@@ -341,7 +342,8 @@ class ObligationForm(forms.ModelForm):
         widget=Select2MultipleWidget(
             attrs={'class': 'form-input', 'aria-describedby': 'responsibilities-help'}
         ),
-        required=True,  # Make this required to ensure at least one responsibility is assigned
+        required=True,
+        # Make this required to ensure at least one responsibility is assigned
         label='Assign Responsibilities',
         help_text='Select one or more responsibilities for this obligation',
     )
@@ -409,10 +411,19 @@ class ObligationForm(forms.ModelForm):
         # Add help text to fields
         help_texts = {
             'obligation_number': 'Unique identifier for this obligation',
-            'environmental_aspect': 'Select an environmental aspect or "Other" to specify a custom aspect',
-            'custom_environmental_aspect': 'Required if Environmental Aspect is "Other"',
+            'environmental_aspect': (
+                'Select an environmental aspect or "Other" to specify a custom '
+                'aspect'
+            ),
+            'custom_environmental_aspect': (
+                'Required if Environmental Aspect is '
+                '"Other"'
+            ),
             'action_due_date': 'When this obligation needs to be fulfilled',
-            'recurring_obligation': 'Does this obligation repeat on a regular schedule?',
+            'recurring_obligation': (
+                'Does this obligation repeat on a regular '
+                'schedule?'
+            ),
             'recurring_frequency': 'How often this obligation repeats',
             'inspection': 'Is an inspection required for this obligation?',
             'evidence_notes': 'Notes about uploaded evidence files',
@@ -431,22 +442,21 @@ class ObligationForm(forms.ModelForm):
             return obligation_number
 
         if obligation_number:
-            # Check if it matches the required format
-            import re
-
             if not re.match(r'^PCEMP-\d+$', obligation_number):
                 # Try to fix it if possible
+                # Add appropriate logic here if needed
                 if obligation_number.isdigit():
                     # If it's just a number, add the prefix
                     return f'PCEMP-{obligation_number}'
-                elif '-' in obligation_number:
+                if '-' in obligation_number:
                     # If it has a different prefix, replace it
                     parts = obligation_number.split('-', 1)
                     if len(parts) > 1 and parts[1].isdigit():
                         return f'PCEMP-{parts[1]}'
 
                 raise ValidationError(
-                    'Obligation number must be in the format PCEMP-XXX where XXX is a number.'
+                    'Obligation number must be in the format PCEMP-XXX '
+                    'where XXX is a number.'
                 )
 
             # Check for duplicate obligation numbers
@@ -519,7 +529,8 @@ class ObligationForm(forms.ModelForm):
                 if not cleaned_data.get(field):
                     self.add_error(
                         field,
-                        f'{field.replace("_", " ").title()} is required for recurring obligations',
+                        f'{field.replace("_", " ").title()} is required for '
+                        f'recurring obligations',
                     )
 
         # Validate inspection fields
@@ -529,7 +540,8 @@ class ObligationForm(forms.ModelForm):
                 if not cleaned_data.get(field):
                     self.add_error(
                         field,
-                        f'{field.replace("_", " ").title()} is required when inspection is enabled',
+                        f'{field.replace("_", " ").title()} is required when '
+                        f'inspection is enabled',
                     )
 
         # Validate gap analysis notes
@@ -569,9 +581,6 @@ class ObligationForm(forms.ModelForm):
     class Meta:
         model = Obligation
         fields = '__all__'
-        exclude = [
-            'person_email'
-        ]  # This field appears to be unused based on the templates
         widgets = {
             'obligation': forms.Textarea(attrs={'rows': 4}),
             'supporting_information': forms.Textarea(attrs={'rows': 3}),
@@ -590,8 +599,13 @@ class ObligationForm(forms.ModelForm):
             'recurring_forcasted_date': 'Next Forecasted Due Date',
         }
         help_texts = {
-            'environmental_aspect': 'Select the environmental aspect this obligation relates to',
-            'custom_environmental_aspect': 'If "Other" is selected above, please specify the aspect',
+            'environmental_aspect': (
+                'Select the environmental aspect this obligation '
+                'relates to'
+            ),
+            'custom_environmental_aspect': (
+                'If "Other" is selected above, please specify the aspect'
+            ),
             'obligation': 'Describe the specific obligation requirement',
             'recurring_obligation': 'Does this obligation recur on a regular schedule?',
             'inspection': 'Does this obligation require inspections?',
@@ -609,7 +623,10 @@ class EvidenceUploadForm(forms.ModelForm):
                 'accept': '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.txt,.csv',
             }
         ),
-        help_text='Upload evidence files (max 25MB). Allowed formats: PDF, DOC, DOCX, XLS, XLSX, PNG, JPG, JPEG, GIF, TXT, CSV',
+        help_text=(
+            'Upload evidence files (max 25MB). Allowed formats: PDF, DOC, DOCX, '
+            'XLS, XLSX, PNG, JPG, JPEG, GIF, TXT, CSV'
+        ),
     )
 
     description = forms.CharField(
@@ -649,7 +666,8 @@ class EvidenceUploadForm(forms.ModelForm):
             file_ext = file.name.split('.')[-1].lower()
             if file_ext not in allowed_extensions:
                 raise ValidationError(
-                    f"File type not allowed. Allowed types: {', '.join(allowed_extensions)}"
+                    f"File type not allowed. Allowed types: "
+                    f"{', '.join(allowed_extensions)}"
                 )
 
             # Check if this obligation already has 5 files
@@ -670,5 +688,9 @@ class EvidenceUploadForm(forms.ModelForm):
         model = ObligationEvidence
         fields = ['file', 'description']
         widgets = {
-            'description': forms.TextInput(attrs={'placeholder': 'Brief description of the file'}),
+            'description': forms.TextInput(
+                attrs={
+                    'placeholder': 'Brief description of the file',
+                }
+            ),
         }

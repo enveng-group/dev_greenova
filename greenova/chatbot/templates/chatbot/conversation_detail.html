@@ -7,15 +7,23 @@
   <main role="main">
     <article>
       <header>
-        <h1>{{ conversation.title }}</h1>
-        <p>Started on {{ conversation.created_at|date:"F j, Y" }}</p>
+        <h1>
+{{ conversation.title }}
+        </h1>
+        <p>
+Started on {{ conversation.created_at|date:"F j, Y" }}
+        </p>
       </header>
       <div class="chat-container">
         <div id="chat-messages" class="messages-container" aria-live="polite">
           {% for message in messages %}
             <div class="message {% if message.is_bot %}bot{% else %}user{% endif %}">
-              <div class="message-content">{{ message.content }}</div>
-              <div class="message-time">{{ message.timestamp|date:"H:i" }}</div>
+              <div class="message-content">
+{{ message.content }}
+              </div>
+              <div class="message-time">
+{{ message.timestamp|date:"H:i" }}
+              </div>
             </div>
           {% endfor %}
         </div>
@@ -32,7 +40,9 @@
                    placeholder="Type your message..."
                    required
                    aria-label="Message input" />
-            <button type="submit" aria-label="Send message">Send</button>
+            <button type="submit" aria-label="Send message">
+Send
+            </button>
           </div>
         </form>
       </div>

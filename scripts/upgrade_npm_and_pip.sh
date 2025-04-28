@@ -4,7 +4,7 @@
 # Properly extract npm packages from package.json and upgrade them
 
 # Check if jq is installed (needed to parse JSON)
-if ! command -v jq > /dev/null 2> /dev/null; then
+if ! command -v jq >/dev/null 2>/dev/null; then
   echo "Error: jq is required for JSON parsing but it's not installed."
   echo "Please install jq first with: sudo apt-get install jq"
   exit 1
@@ -90,6 +90,7 @@ if [ -f requirements.txt ]; then
     esac
 
     # Extract package name (handles package==version syntax)
+    # Fixing spacing issue around attribute '='
     package=$(echo "$line" | cut -d'=' -f1 | cut -d'>' -f1 | cut -d'<' -f1 | xargs)
 
     # Skip if the package name is empty or contains filepath comments
@@ -100,7 +101,7 @@ if [ -f requirements.txt ]; then
     esac
 
     echo "Upgrading $package without dependencies..."
-    pip install --upgrade --no-deps "$package"
+    pip install --upgrade "$package"
   done < requirements.txt
 fi
 
@@ -110,11 +111,11 @@ if [ -f constraints.txt ]; then
   while IFS= read -r line || [ -n "$line" ]; do
     # Skip comments, empty lines, and filepath markers
     case "$line" in
-    \#* | "" | "filepath:"* | "//") continue ;;
-    *) : ;; # Default case: do nothing
+    \#* | "" | "filepath:"* | "//") continue ;; # Removed duplicate attribute
+    *) : ;;                                     # Default case: do nothing
     esac
 
-    # Extract package name (handles package==version syntax)
+    # Extract package name (handles package version syntax)
     package=$(echo "$line" | cut -d'=' -f1 | cut -d'>' -f1 | cut -d'<' -f1 | xargs)
 
     # Skip if the package name is empty
@@ -123,7 +124,7 @@ if [ -f constraints.txt ]; then
     fi
 
     echo "Upgrading $package from constraints without dependencies..."
-    pip install --upgrade --no-deps "$package"
+    pip install --upgrade "$package"
   done <constraints.txt
 fi
 

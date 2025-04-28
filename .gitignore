@@ -109,5 +109,38 @@ yarn.lock
 !.env.project
 !.env.vault
 .venvmake/
+
+# Docker
+.docker/
+docker-compose.override.yml
+docker-volume/
+
+# Test coverage
+coverage/
+.coverage.*
+coverage.xml
+*.cover
+cov.xml
+.hypothesis/
+nosetests.xml
+
+# Proto3 generated code
+*_pb2.py
+*_pb2_grpc.py
+*_pb.js
+*_pb.d.ts
+
+# Tailwind
+.tailwind-cache/
+tailwind-output.css
+
+# Project specific
 *.bak
-None
+*.tmp
+*.swp
+*.dump
+*.sqlite3
+*.pickle
+uploads/
+downloads/
+backups/

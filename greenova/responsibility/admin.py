@@ -1,20 +1,12 @@
 from django.contrib import admin
-from .models import ResponsibilityRole, ResponsibilityAssignment
+
+from .models import Responsibility, ResponsibilityAssignment
 
 
-@admin.register(ResponsibilityRole)
-class ResponsibilityRoleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'company', 'company_role', 'is_active')
-    list_filter = ('company', 'is_active', 'company_role')
-    search_fields = ('name', 'description', 'company__name')
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'company', 'description')
-        }),
-        ('Role Configuration', {
-            'fields': ('company_role', 'is_active')
-        }),
-    )
+@admin.register(Responsibility)
+class ResponsibilityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    search_fields = ('name', 'description')
 
 
 @admin.register(ResponsibilityAssignment)

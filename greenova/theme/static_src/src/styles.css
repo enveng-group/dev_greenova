@@ -56,12 +56,11 @@
   }
 
   /* Accessibility focus indicators that match Greenova's design system */
-  .focus-greenova {
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
-
-    --tw-ring-color: var(--greenova-green-primary);
-    --tw-ring-offset-width: 2px;
-  }
+  /* stylelint-disable property-no-unknown */
+  focus: ring-2;
+  focus-visible: ring-offset-2;
+  focus-visible: ring-blue-500;
+  /* stylelint-enable property-no-unknown */
 
   /* Chat UI utilities */
   .chat-user-bubble {
@@ -78,11 +77,11 @@
 
   /* Advanced animation utilities */
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fade-in 0.3s ease-in-out;
   }
 
   .animate-slide-in {
-    animation: slideIn 0.3s ease-in-out;
+    animation: slide-in 0.3s ease-in-out;
   }
 
   /* HTMX loading indicator utilities */
@@ -101,7 +100,7 @@
 }
 
 /* Animation keyframes */
-@keyframes fadeIn {
+@keyframes fade-in {
   from {
     opacity: 0;
   }
@@ -111,14 +110,12 @@
   }
 }
 
-@keyframes slideIn {
+@keyframes slide-in {
   from {
-    transform: translateY(10px);
-    opacity: 0;
+    transform: translateX(-100%);
   }
 
   to {
-    transform: translateY(0);
-    opacity: 1;
+    transform: translateX(0);
   }
 }

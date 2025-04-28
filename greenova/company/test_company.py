@@ -6,10 +6,12 @@ from company.models import Company, CompanyDocument, CompanyMembership
 from company.views import is_company_admin
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test.client import RequestFactory
 from django.urls import reverse
 
 User = get_user_model()
+
+# pylint: disable=redefined-outer-name
+# The above disable is needed because we're using pytest fixtures
 
 # ----- FIXTURES -----
 
@@ -34,7 +36,7 @@ def test_document():
     os.unlink(doc_path)  # Delete the file after test
 
 @pytest.fixture
-def test_company(db):
+def test_company():
     """Create a test company."""
     return Company.objects.create(
         name='Test Company',
@@ -45,7 +47,7 @@ def test_company(db):
     )
 
 @pytest.fixture
-def test_users(db, django_user_model):
+def test_users(django_user_model):
     """Create test users with different roles."""
     users = {
         'superuser': django_user_model.objects.create_superuser(
@@ -70,26 +72,38 @@ def test_users(db, django_user_model):
     return users
 
 @pytest.fixture
-def company_with_members(db, test_company, test_users):
+def initial_company(test_company, test_users):
     """Create a test company with members in different roles."""
     # Add members to company with different roles
     CompanyMembership.objects.create(
-        company=test_company, user=test_users['company_owner'], role='owner', is_primary=True
+        company=test_company,
+        user=test_users['company_owner'],
+        role='owner',
+        is_primary=True
     )
     CompanyMembership.objects.create(
-        company=test_company, user=test_users['company_admin'], role='admin', is_primary=True
+        company=test_company,
+        user=test_users['company_admin'],
+        role='admin',
+        is_primary=True
     )
     CompanyMembership.objects.create(
-        company=test_company, user=test_users['company_manager'], role='manager', is_primary=True
+        company=test_company,
+        user=test_users['company_manager'],
+        role='manager',
+        is_primary=True
     )
     CompanyMembership.objects.create(
-        company=test_company, user=test_users['company_member'], role='member', is_primary=True
+        company=test_company,
+        user=test_users['company_member'],
+        role='member',
+        is_primary=True
     )
 
     return test_company
 
 @pytest.fixture
-def authenticated_client(client, test_users, request):
+def auth_client(client, test_users, request):
     """Return an authenticated client for a specified user role."""
     user_role = request.param
     user = test_users[user_role]
@@ -103,36 +117,42 @@ def authenticated_client(client, test_users, request):
 class TestCompanyModels:
     """Test company models functionality."""
 
-    def test_company_creation(self, test_company):
+    def test_company_creation(self, initial_company):
         """Test company model creation."""
-        assert test_company.name == 'Test Company'
-        assert test_company.company_type == 'client'
-        assert test_company.is_active is True
+        assert initial_company.name == 'Test Company'
+        assert initial_company.company_type == 'client'
+        assert initial_company.is_active is True
 
-    def test_company_str_representation(self, test_company):
+    def test_company_str_representation(self, initial_company):
         """Test the company string representation."""
-        assert str(test_company) == 'Test Company'
+        assert str(initial_company) == 'Test Company'
 
-    def test_company_methods(self, company_with_members):
+    def test_company_methods(self, initial_company):
         """Test company model methods."""
         # Test member count
-        assert company_with_members.get_member_count() == 4
+        assert initial_company.get_member_count() == 4
 
         # Test get_members_by_role
-        owners = company_with_members.get_members_by_role('owner')
+        owners = initial_company.get_members_by_role('owner')
         assert owners.count() == 1
         assert owners.first().username == 'owner'
 
         # Test add_member and remove_member methods
         new_user = User.objects.create_user('newuser', 'new@example.com', 'password')
-        company_with_members.add_member(new_user, 'view_only')
+        initial_company.add_member(new_user, 'view_only')
 
-        assert CompanyMembership.objects.filter(company=company_with_members, user=new_user).exists()
-        assert company_with_members.get_member_count() == 5
+        assert CompanyMembership.objects.filter(
+            company=initial_company,
+            user=new_user
+        ).exists()
+        assert initial_company.get_member_count() == 5
 
-        company_with_members.remove_member(new_user)
-        assert not CompanyMembership.objects.filter(company=company_with_members, user=new_user).exists()
-        assert company_with_members.get_member_count() == 4
+        initial_company.remove_member(new_user)
+        assert not CompanyMembership.objects.filter(
+            company=initial_company,
+            user=new_user
+        ).exists()
+        assert initial_company.get_member_count() == 4
 
     def test_membership_primary_constraint(self, test_users):
         """Test that only one company can be primary for a user."""
@@ -157,13 +177,13 @@ class TestCompanyModels:
         membership1.refresh_from_db()
         assert membership1.is_primary is False
 
-    def test_company_document_creation(self, test_company, test_users, test_document):
+    def test_document_creation(self, initial_company, test_users, test_document):
         """Test creating company documents."""
         user = test_users['company_owner']
 
         with open(test_document, 'rb') as f:
             document = CompanyDocument.objects.create(
-                company=test_company,
+                company=initial_company,
                 name='Test Document',
                 description='A test document',
                 file=SimpleUploadedFile('test.pdf', f.read()),
@@ -172,7 +192,7 @@ class TestCompanyModels:
             )
 
         assert document.name == 'Test Document'
-        assert document.company == test_company
+        assert document.company == initial_company
         assert document.uploaded_by == user
         assert str(document) == 'Test Document (Test Company)'
 
@@ -188,7 +208,7 @@ class TestCompanyViews:
         url = reverse('company:list')
         response = client.get(url)
 
-        # Should redirect to login page
+        # Should redirect to login
         assert response.status_code == 302
         assert '/accounts/login/' in response['Location']
 
@@ -198,9 +218,10 @@ class TestCompanyViews:
         url = reverse('company:list')
         response = authenticated_client.get(url)
 
+        content = response.content.decode()
         assert response.status_code == 200
-        assert test_company.name in response.content.decode()
-        assert 'Companies' in response.content.decode()
+        assert test_company.name in content
+        assert 'Companies' in content
 
     @pytest.mark.parametrize('authenticated_client', ['regular_user'], indirect=True)
     def test_company_detail_view(self, authenticated_client, test_company):
@@ -216,9 +237,21 @@ class TestCompanyViews:
         """Test company search and filter functionality."""
         # Create test companies
         client.force_login(test_users['regular_user'])
-        Company.objects.create(name='Alpha Manufacturing', company_type='client', industry='manufacturing')
-        Company.objects.create(name='Beta Construction', company_type='contractor', industry='construction')
-        Company.objects.create(name='Gamma Energy', company_type='consultant', industry='energy')
+        Company.objects.create(
+            name='Alpha Manufacturing',
+            company_type='client',
+            industry='manufacturing'
+        )
+        Company.objects.create(
+            name='Beta Construction',
+            company_type='contractor',
+            industry='construction'
+        )
+        Company.objects.create(
+            name='Gamma Energy',
+            company_type='consultant',
+            industry='energy'
+        )
 
         # Test search by name
         url = reverse('company:list') + '?search=alpha'
@@ -285,7 +318,7 @@ class TestCompanyCreation:
         assert membership.is_primary is True
 
     @pytest.mark.parametrize('authenticated_client', ['company_admin'], indirect=True)
-    def test_company_create_by_company_admin(self, authenticated_client, company_with_members):
+    def test_company_create_by_company_admin(self, authenticated_client):
         """Test company creation by a company admin."""
         url = reverse('company:create')
         response = authenticated_client.get(url)
@@ -326,7 +359,7 @@ class TestCompanyEditing:
             'name': company_with_members.name,
             'description': 'Updated description',
             'company_type': company_with_members.company_type,
-            'industry': 'energy',  # Changed industry
+            'industry': 'energy',
             'is_active': company_with_members.is_active,
         }
 
@@ -339,14 +372,19 @@ class TestCompanyEditing:
         assert company_with_members.industry == 'energy'
 
     @pytest.mark.parametrize('authenticated_client', ['company_member'], indirect=True)
-    def test_company_edit_by_regular_member(self, authenticated_client, company_with_members):
+    def test_company_edit_by_regular_member(
+        self, authenticated_client, company_with_members
+    ):
         """Test company editing by regular member - should be denied."""
         url = reverse('company:edit', kwargs={'company_id': company_with_members.id})
         response = authenticated_client.get(url)
 
         # Should redirect with error message
         assert response.status_code == 302
-        assert reverse('company:detail', kwargs={'company_id': company_with_members.id}) in response['Location']
+        assert (
+            reverse('company:detail', kwargs={'company_id': company_with_members.id})
+            in response['Location']
+        )
 
 
 @pytest.mark.django_db
@@ -410,7 +448,9 @@ class TestCompanyMemberManagement:
     @pytest.mark.parametrize('authenticated_client', ['company_admin'], indirect=True)
     def test_add_member(self, authenticated_client, company_with_members, test_users):
         """Test adding a member to a company."""
-        url = reverse('company:add_member', kwargs={'company_id': company_with_members.id})
+        url = reverse('company:add_member', kwargs={
+            'company_id': company_with_members.id
+        })
         new_user = test_users['regular_user']
 
         data = {
@@ -425,7 +465,10 @@ class TestCompanyMemberManagement:
         assert response.status_code == 200
 
         # Verify membership was created
-        membership = CompanyMembership.objects.get(company=company_with_members, user=new_user)
+        membership = CompanyMembership.objects.get(
+            company=company_with_members,
+            user=new_user
+        )
         assert membership.role == 'view_only'
         assert membership.department == 'Testing'
         assert membership.is_primary is True
@@ -493,9 +536,13 @@ class TestCompanyDocumentManagement:
     """Test company document management functionality."""
 
     @pytest.mark.parametrize('authenticated_client', ['company_admin'], indirect=True)
-    def test_upload_document(self, authenticated_client, company_with_members, test_document):
+    def test_upload_document(
+        self, authenticated_client, company_with_members, test_document
+    ):
         """Test uploading a document to a company."""
-        url = reverse('company:upload_document', kwargs={'company_id': company_with_members.id})
+        url = reverse('company:upload_document', kwargs={
+            'company_id': company_with_members.id
+        })
 
         # First get the form
         response = authenticated_client.get(url)
@@ -522,7 +569,9 @@ class TestCompanyDocumentManagement:
         ).exists()
 
     @pytest.mark.parametrize('authenticated_client', ['company_admin'], indirect=True)
-    def test_delete_document(self, authenticated_client, company_with_members, test_document, test_users):
+    def test_delete_document(
+        self, authenticated_client, company_with_members, test_document, test_users
+    ):
         """Test deleting a document from a company."""
         # First create a document
         with open(test_document, 'rb') as doc_file:
@@ -557,49 +606,50 @@ class TestCompanyDocumentManagement:
 class TestCompanyPermissions:
     """Test company permission checks."""
 
-    def test_is_company_admin_function(self, test_users, company_with_members):
+    def test_is_company_admin_function(self, test_users):
         """Test the is_company_admin permission check function."""
-        # Setup request factory
-        factory = RequestFactory()
-
-        # Test with superuser
-        superuser = test_users['superuser']
-        assert is_company_admin(superuser) is True
-
-        # Test with company owner
-        owner = test_users['company_owner']
-        assert is_company_admin(owner) is True
-
-        # Test with company admin
+        superuser = test_users['superuser']  # break up long line
+        owner = test_users['company_owner']  # by storing in variables
         admin = test_users['company_admin']
-        assert is_company_admin(admin) is True
-
-        # Test with company manager (not an admin)
         manager = test_users['company_manager']
-        assert is_company_admin(manager) is False
 
-        # Test with unauthenticated user
+        assert is_company_admin(superuser) is True
+        assert is_company_admin(owner) is True
+        assert is_company_admin(admin) is True
+        assert is_company_admin(manager) is False
         assert is_company_admin(None) is False
 
     @pytest.mark.parametrize('authenticated_client', ['company_member'], indirect=True)
     def test_member_permissions(self, authenticated_client, company_with_members):
         """Test regular member permissions."""
         # Members can view company details
-        url = reverse('company:detail', kwargs={'company_id': company_with_members.id})
-        response = authenticated_client.get(url)
+        detail_url = reverse(
+            'company:detail',
+            kwargs={'company_id': company_with_members.id}
+        )
+        response = authenticated_client.get(detail_url)
         assert response.status_code == 200
 
         # Members can't edit company
-        url = reverse('company:edit', kwargs={'company_id': company_with_members.id})
-        response = authenticated_client.get(url)
+        edit_url = reverse(
+            'company:edit',
+            kwargs={'company_id': company_with_members.id}
+        )
+        response = authenticated_client.get(edit_url)
         assert response.status_code == 302  # Redirect with error
 
         # Members can't manage members
-        url = reverse('company:members', kwargs={'company_id': company_with_members.id})
-        response = authenticated_client.get(url)
+        members_url = reverse(
+            'company:members',
+            kwargs={'company_id': company_with_members.id}
+        )
+        response = authenticated_client.get(members_url)
         assert response.status_code == 302  # Redirect with error
 
         # Members can't upload documents
-        url = reverse('company:upload_document', kwargs={'company_id': company_with_members.id})
-        response = authenticated_client.get(url)
+        doc_url = reverse(
+            'company:upload_document',
+            kwargs={'company_id': company_with_members.id}
+        )
+        response = authenticated_client.get(doc_url)
         assert response.status_code == 302  # Redirect with error

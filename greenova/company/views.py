@@ -4,7 +4,6 @@ from typing import Any, Dict, Optional
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import User
 from django.core.paginator import Page, Paginator
 from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -20,6 +19,7 @@ from .models import Company, CompanyDocument, CompanyMembership
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
+
 
 def is_company_admin(user: User) -> bool:
     """Check if user is a company admin or superuser."""
@@ -108,7 +108,9 @@ def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
     projects = company.projects.all()
 
     # Get members with their roles
-    members = CompanyMembership.objects.filter(company=company).select_related('user')
+    members = CompanyMembership.objects.filter(
+        company=company
+    ).select_related('user')
 
     # Get documents
     documents = company.documents.all()
@@ -189,27 +191,30 @@ def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for editing a company."""
     company = get_object_or_404(Company, id=company_id)
 
-    # Check if user has permission to edit this company
-    has_permission: bool = request.user.is_superuser
-    if not has_permission:
+    # Check permissions
+    if not (request.user.is_superuser or is_company_admin(request.user)):
         try:
             membership = CompanyMembership.objects.get(
-                company=company,
-                user=request.user
+                company=company, user=request.user
             )
-            has_permission = membership.role in ['owner', 'admin']
+            if membership.role not in ['owner', 'admin']:
+                messages.error(
+                    request, "You do not have permission to edit this company."
+                )
+                return redirect('company:detail', company_id=company_id)
         except CompanyMembership.DoesNotExist:
-            pass
-
-    if not has_permission:
-        messages.error(request, "You don't have permission to edit this company.")
-        return redirect('company:detail', company_id=company.id)
+            messages.error(
+                request, "You do not have permission to edit this company."
+            )
+            return redirect('company:detail', company_id=company_id)
 
     if request.method == 'POST':
         form = CompanyForm(request.POST, request.FILES, instance=company)
         if form.is_valid():
             company: Company = form.save()
-            messages.success(request, f"Company '{company.name}' updated successfully!")
+            messages.success(
+                request, f"Company '{company.name}' updated successfully!"
+            )
 
             if hasattr(request, 'htmx') and request.htmx:
                 return HttpResponse(
@@ -222,7 +227,11 @@ def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
     else:
         form = CompanyForm(instance=company)
 
-    context: Dict[str, Any] = {'form': form, 'company': company, 'action': 'Update'}
+    context: Dict[str, Any] = {
+        'form': form,
+        'company': company,
+        'action': 'Update',
+    }
 
     if hasattr(request, 'htmx') and request.htmx:
         return render(request, 'company/partials/company_form.html', context)
@@ -237,15 +246,9 @@ def company_delete(request: HttpRequest, company_id: int) -> HttpResponse:
 
     # Check if user has permission to delete this company
     if not request.user.is_superuser:
-        try:
-            # Note: We're using the membership value now
-            membership = CompanyMembership.objects.get(
-                company=company,
-                user=request.user,
-                role='owner'
-            )
-            # We could check membership.role here if needed
-        except CompanyMembership.DoesNotExist:
+        if not CompanyMembership.objects.filter(
+            company=company, user=request.user, role='owner'
+        ).exists():
             messages.error(request, "Only the owner can delete this company.")
             return redirect('company:detail', company_id=company.id)
 
@@ -293,7 +296,9 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
         return redirect('company:detail', company_id=company.id)
 
     # Get all members
-    members = CompanyMembership.objects.filter(company=company).select_related('user')
+    members = CompanyMembership.objects.filter(
+        company=company
+    ).select_related('user')
 
     # Initialize forms
     add_user_form = AddUserToCompanyForm()
@@ -362,7 +367,11 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
         )
 
         # Return updated member list
-        members = CompanyMembership.objects.filter(company=company).select_related('user')
+        members = CompanyMembership.objects.filter(
+            company=company
+        ).select_related(
+            'user'
+        )
         html = render_to_string('company/partials/member_list.html', {
             'members': members,
             'company': company,
@@ -376,7 +385,11 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
 
 @login_required
 @require_http_methods(["POST"])
-def remove_member(request: HttpRequest, company_id: int, member_id: int) -> HttpResponse:
+def remove_member(
+    request: HttpRequest,
+    company_id: int,
+    member_id: int
+) -> HttpResponse:
     """View for removing a member from a company."""
     company = get_object_or_404(Company, id=company_id)
     membership = get_object_or_404(CompanyMembership, id=member_id, company=company)
@@ -424,10 +437,16 @@ def remove_member(request: HttpRequest, company_id: int, member_id: int) -> Http
 
 
 @login_required
-def update_member_role(request: HttpRequest, company_id: int, member_id: int) -> HttpResponse:
+def update_member_role(
+    request: HttpRequest,
+    company_id: int,
+    member_id: int
+) -> HttpResponse:
     """View for updating a member's role in a company."""
     company = get_object_or_404(Company, id=company_id)
-    membership = get_object_or_404(CompanyMembership, id=member_id, company=company)
+    membership = get_object_or_404(
+        CompanyMembership, id=member_id, company=company
+    )
 
     # Check permissions
     can_manage = False
@@ -436,8 +455,7 @@ def update_member_role(request: HttpRequest, company_id: int, member_id: int) ->
     else:
         try:
             user_membership = CompanyMembership.objects.get(
-                company=company,
-                user=request.user
+                company=company, user=request.user
             )
             # Only owner and admin can update roles
             if user_membership.role in ['owner', 'admin']:
@@ -446,25 +464,31 @@ def update_member_role(request: HttpRequest, company_id: int, member_id: int) ->
             pass
 
     if not can_manage:
-        return JsonResponse({'status': 'error', 'message': 'Permission denied'},
-                            status=403)
+        return JsonResponse(
+            {'status': 'error', 'message': 'Permission denied'},
+            status=403
+        )
 
     if request.method == 'POST':
         form = CompanyMembershipForm(request.POST, instance=membership)
         if form.is_valid():
             form.save()
             return JsonResponse({'status': 'success'})
-        return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+        return JsonResponse(
+            {'status': 'error', 'errors': form.errors},
+            status=400
+        )
 
     form = CompanyMembershipForm(instance=membership)
-
     context: Dict[str, Any] = {
         'form': form,
         'membership': membership,
         'company': company
     }
 
-    return render(request, 'company/partials/member_role_form.html', context)
+    return render(
+        request, 'company/partials/member_role_form.html', context
+    )
 
 
 @login_required
@@ -478,8 +502,7 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
         can_edit = True
     try:
         membership = CompanyMembership.objects.get(
-            company=company,
-            user=request.user
+            company=company, user=request.user
         )
         if membership.role in ['owner', 'admin', 'manager']:
             can_edit = True
@@ -487,7 +510,9 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
         pass
 
     if not can_edit:
-        messages.error(request, "You don't have permission to upload documents.")
+        messages.error(
+            request, "You don't have permission to upload documents."
+        )
         return redirect('company:detail', company_id=company.id)
 
     if request.method == 'POST':
@@ -498,16 +523,22 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
             document.uploaded_by = request.user
             document.save()
 
-            messages.success(request,
-                             f"Document '{document.name}' uploaded successfully!")
+            messages.success(
+                request,
+                f"Document '{document.name}' uploaded successfully!"
+            )
 
             if hasattr(request, 'htmx') and request.htmx:
                 documents = company.documents.all()
-                html = render_to_string('company/partials/document_list.html', {
-                    'documents': documents,
-                    'company': company,
-                    'can_edit': can_edit
-                }, request=request)
+                html = render_to_string(
+                    'company/partials/document_list.html',
+                    {
+                        'documents': documents,
+                        'company': company,
+                        'can_edit': can_edit
+                    },
+                    request=request
+                )
                 return HttpResponse(html)
             return redirect('company:detail', company_id=company.id)
     else:
@@ -519,15 +550,21 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
     }
 
     if hasattr(request, 'htmx') and request.htmx:
-        return render(request, 'company/partials/document_form.html', context)
+        return render(
+            request, 'company/partials/document_form.html', context
+        )
     return render(request, 'company/document_form.html', context)
 
 
 @login_required
-def delete_document(request: HttpRequest, company_id: int, document_id: int) -> HttpResponse:
+def delete_document(
+    request: HttpRequest, company_id: int, document_id: int
+) -> HttpResponse:
     """View for deleting a document from a company."""
     company = get_object_or_404(Company, id=company_id)
-    document = get_object_or_404(CompanyDocument, id=document_id, company=company)
+    document = get_object_or_404(
+        CompanyDocument, id=document_id, company=company
+    )
 
     # Check permissions
     can_edit = False
@@ -536,8 +573,7 @@ def delete_document(request: HttpRequest, company_id: int, document_id: int) -> 
     else:
         try:
             membership = CompanyMembership.objects.get(
-                company=company,
-                user=request.user
+                company=company, user=request.user
             )
             if membership.role in ['owner', 'admin']:
                 can_edit = True
@@ -545,20 +581,28 @@ def delete_document(request: HttpRequest, company_id: int, document_id: int) -> 
             pass
 
     if not can_edit:
-        return JsonResponse({'status': 'error', 'message': 'Permission denied'},
-                            status=403)
+        return JsonResponse(
+            {'status': 'error', 'message': 'Permission denied'},
+            status=403
+        )
 
     if request.method == 'POST':
         document.delete()
-        messages.success(request, f"Document '{document.name}' deleted successfully!")
+        messages.success(
+            request, f"Document '{document.name}' deleted successfully!"
+        )
 
         if hasattr(request, 'htmx') and request.htmx:
             documents = company.documents.all()
-            html = render_to_string('company/partials/document_list.html', {
-                'documents': documents,
-                'company': company,
-                'can_edit': can_edit
-            }, request=request)
+            html = render_to_string(
+                'company/partials/document_list.html',
+                {
+                    'documents': documents,
+                    'company': company,
+                    'can_edit': can_edit
+                },
+                request=request
+            )
             return HttpResponse(html)
         return redirect('company:detail', company_id=company.id)
 
@@ -568,5 +612,7 @@ def delete_document(request: HttpRequest, company_id: int, document_id: int) -> 
     }
 
     if hasattr(request, 'htmx') and request.htmx:
-        return render(request, 'company/partials/document_delete_confirm.html', context)
+        return render(
+            request, 'company/partials/document_delete_confirm.html', context
+        )
     return render(request, 'company/document_delete.html', context)

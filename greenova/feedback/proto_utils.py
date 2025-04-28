@@ -47,6 +47,54 @@ except ImportError:
 
     # Define minimal classes needed for type hinting
     class BugReportProto:
+        # pylint: disable=too-many-instance-attributes
+        def __init__(self):
+            # Core fields that must be instance attributes
+            self.id = 0
+            self.title = ""
+            self.description = ""
+            # Store all environment and problem details in dicts
+            self._environment = {
+                "application_version": "",
+                "operating_system": "",
+                "browser": "",
+                "device_type": "",
+            }
+            self._problem_details = {
+                "steps_to_reproduce": "",
+                "expected_behavior": "",
+                "actual_behavior": "",
+            }
+
+        @property
+        def application_version(self):
+            return self._environment["application_version"]
+
+        @property
+        def operating_system(self):
+            return self._environment["operating_system"]
+
+        @property
+        def browser(self):
+            return self._environment["browser"]
+
+        @property
+        def device_type(self):
+            return self._environment["device_type"]
+
+        @property
+        def steps_to_reproduce(self):
+            return self._problem_details["steps_to_reproduce"]
+
+        @property
+        def expected_behavior(self):
+            return self._problem_details["expected_behavior"]
+
+        @property
+        def actual_behavior(self):
+            return self._problem_details["actual_behavior"]
+
+        # Define enum-like classes for consistency
         class Frequency:
             FREQUENCY_UNKNOWN_UNSPECIFIED = 0
             FREQUENCY_ALWAYS = 1
@@ -76,7 +124,8 @@ except ImportError:
             pass
 
     class BugReportCollection:
-        reports = []
+        def __init__(self):
+            self.reports = []
 
         def SerializeToString(self):
             return b''
@@ -194,6 +243,8 @@ def deserialize_bug_report(data: bytes) -> Optional[BugReport]:
     except (OSError, SystemError, OverflowError) as e:
         logger.error("Failed to deserialize bug report: %s", str(e))
         return None
+
+
 def serialize_bug_reports(bug_reports: List[BugReport]) -> Optional[bytes]:
     """
     Serialize a list of BugReport instances to Protocol Buffer collection.
@@ -234,6 +285,8 @@ def serialize_bug_reports(bug_reports: List[BugReport]) -> Optional[bytes]:
     except (OSError, SystemError) as e:
         logger.error("Failed to serialize bug report collection: %s", str(e))
         return None
+
+
 def deserialize_bug_reports(data: bytes) -> List[BugReport]:
     """
     Deserialize Protocol Buffer collection data to a list of BugReport instances.

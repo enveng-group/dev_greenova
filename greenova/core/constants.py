@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Any
+from typing import List, Tuple
 
 # Main navigation structure
 # Format: (name, url_name, icon_class)

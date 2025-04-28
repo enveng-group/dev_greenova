@@ -1,5 +1,3 @@
-import base64
-import io
 import logging
 
 import matplotlib
@@ -79,14 +77,26 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                     'in_progress': m.in_progress_count,
                     'completed': m.completed_count,
                     'overdue': m.overdue_count,
-                    'total': m.not_started_count + m.in_progress_count + m.completed_count + m.overdue_count
+                    'total': (
+                        m.not_started_count
+                        + m.in_progress_count
+                        + m.completed_count
+                        + m.overdue_count
+                    )
                 } for m in mechanisms
             ]
 
         except Project.DoesNotExist:
             context['error'] = f'Project with ID {project_id} not found'
-        except Exception as e:
-            logger.error(f'Error generating mechanism charts: {str(e)}')
-            context['error'] = f'Error generating charts: {str(e)}'
+        except Project.DoesNotExist:
+            context['error'] = f'Project with ID {project_id} not found'
+        except EnvironmentalMechanism.DoesNotExist:
+            context['error'] = 'No mechanisms found for the selected project'
+        except ValueError as e:
+            logger.error('Value error while generating mechanism charts: %s', str(e))
+            context['error'] = f'Invalid data encountered: {str(e)}'
+        except RuntimeError as e:
+            logger.error('Runtime error generating mechanism charts: %s', str(e))
+            context['error'] = 'A runtime error occurred. Please try again later.'
 
         return context

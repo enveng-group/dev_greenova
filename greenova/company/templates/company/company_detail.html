@@ -2,26 +2,34 @@
 {% load static %}
 {% load company_tags %}
 
-{% block title %}{{ company.name }}{% endblock title %}
+{% block title %}
+{{ company.name }}
+{% endblock title %}
 
 {% block content %}
-<article>
-  <header>
-    <h1>{{ company.name }}</h1>
-    {% if can_edit %}
-    <div class="header-actions">
-      <a href="{% url 'company:edit' company.id %}" role="button" class="btn-secondary">
+  <article>
+    <header>
+      <h1>
+{{ company.name }}
+      </h1>
+      {% if can_edit %}
+        <div class="header-actions">
+          <a href="{% url 'company:edit' company.id %}"
+             role="button"
+             class="btn-secondary">
         Edit
-      </a>
-      <a href="{% url 'company:delete' company.id %}" role="button" class="btn-danger">
+          </a>
+          <a href="{% url 'company:delete' company.id %}"
+             role="button"
+             class="btn-danger">
         Delete
-      </a>
-    </div>
-    {% endif %}
-  </header>
+          </a>
+        </div>
+      {% endif %}
+    </header>
 
-  <div class="company-container" hx-target="this" hx-swap="innerHTML">
-    {% include "company/partials/company_detail.html" %}
-  </div>
-</article>
+    <div class="company-container" hx-target="this" hx-swap="innerHTML">
+{% include "company/partials/company_detail.html" %}
+    </div>
+  </article>
 {% endblock content %}

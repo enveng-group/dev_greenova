@@ -1,3 +1,5 @@
+# Dev Container Setup for Greenova
+
 ## 📦 Requirements
 
 - Docker must be installed and running
@@ -7,7 +9,7 @@
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 1. **Clone the project**
 
@@ -20,18 +22,18 @@
 
    Open VS Code, then open the project directory.
 
-3. **Start the DevContainer**
+3. **Install Dependencies**:
 
-   > 🔄 **Important:**  
-   If any changes are made to the `.devcontainer` folder (such as updates to `devcontainer.json` or `Dockerfile`), you must run  
-   **"Rebuild and Reopen in Container"** to apply them.
+   - Run `make install` to set up Python and Node.js dependencies.
 
-   - Click the bottom-left blue icon in VS Code → Select `Reopen in Container`  
-   - Or press `Ctrl + Shift + P` (or `Cmd + Shift + P` on macOS) and search for `Reopen in Container`
+4. **Set up Database**:
 
-4. **Start coding**
+   - Run `make migrate` to apply Django database migrations.
+   - Optionally, run `make import-data` to load initial dummy data.
 
-   All dependencies and development tools will be installed automatically within the container.
+5. **Run the Development Server**:
+   - Execute `make run` to start the Django development server.
+   - Access the application at [http://localhost:8000](http://localhost:8000).
 
 ---
 
@@ -43,12 +45,15 @@
   - Python dependencies (`requirements.txt`)
   - Node.js dependencies (`npm install`)
   - Development tools: Prettier, Pylint, djLint, etc.
-- Python virtual environment is managed via `.venv` (auto-created and activated)
+- Python virtual environment is managed via `.venv` (auto-created and
+  activated)
 
 ---
 
 ## 🐍 Python Virtual Environment
 
 - The virtual environment is automatically created at `./.venv`
-- If `.venv` is accidentally created as `root`, it will be cleaned during container setup
-- All dependencies from `requirements.txt` will be installed, including dev tools like `pylint`, `djlint`, and `autopep8`
+- If `.venv` is accidentally created as `root`, it will be cleaned during
+  container setup
+- All dependencies from `requirements.txt` will be installed, including dev
+  tools like `pylint`, `djlint`, and `autopep8`

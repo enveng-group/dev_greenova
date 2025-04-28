@@ -2,21 +2,27 @@
 {% load static %}
 {% load company_tags %}
 
-{% block title %}{{ company.name }} - Manage Members{% endblock title %}
+{% block title %}
+{{ company.name }} - Manage Members
+{% endblock title %}
 
 {% block content %}
-<article>
-  <header>
-    <h1>{{ company.name }} - Manage Members</h1>
-    <div class="header-actions">
-      <a href="{% url 'company:detail' company.id %}" role="button" class="btn-secondary">
+  <article>
+    <header>
+      <h1>
+{{ company.name }} - Manage Members
+      </h1>
+      <div class="header-actions">
+        <a href="{% url 'company:detail' company.id %}"
+           role="button"
+           class="btn-secondary">
         Back to Company
-      </a>
-    </div>
-  </header>
+        </a>
+      </div>
+    </header>
 
-  <div class="members-container" hx-target="this" hx-swap="innerHTML">
-    {% include "company/partials/company_members.html" %}
-  </div>
-</article>
+    <div class="members-container" hx-target="this" hx-swap="innerHTML">
+{% include "company/partials/company_members.html" %}
+    </div>
+  </article>
 {% endblock content %}

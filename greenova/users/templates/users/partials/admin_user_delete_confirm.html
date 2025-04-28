@@ -1,39 +1,77 @@
 <section class="delete-confirmation">
   <div class="alert warning">
-    <h4>Warning!</h4>
-    <p>You are about to delete the user <strong>{{ user_obj.username }}</strong>.</p>
-    <p>This action cannot be undone. All data associated with this user will be permanently deleted.</p>
+    <h4>
+Warning!
+    </h4>
+    <p>
+      You are about to delete the user <strong>{{ user_obj.username }}</strong>.
+    </p>
+    <p>
+This action cannot be undone. All data associated with this user will be permanently deleted.
+    </p>
   </div>
 
   <div class="user-info">
-    <h3>User Information</h3>
+    <h3>
+User Information
+    </h3>
     <dl>
-      <dt>Username:</dt>
-      <dd>{{ user_obj.username }}</dd>
+      <dt>
+Username:
+      </dt>
+      <dd>
+{{ user_obj.username }}
+      </dd>
 
-      <dt>Name:</dt>
-      <dd>{{ user_obj.get_full_name|default:"Not provided" }}</dd>
+      <dt>
+Name:
+      </dt>
+      <dd>
+{{ user_obj.get_full_name|default:"Not provided" }}
+      </dd>
 
-      <dt>Email:</dt>
-      <dd>{{ user_obj.email|default:"Not provided" }}</dd>
+      <dt>
+Email:
+      </dt>
+      <dd>
+{{ user_obj.email|default:"Not provided" }}
+      </dd>
 
-      <dt>Department:</dt>
-      <dd>{{ user_obj.profile.department|default:"Not provided" }}</dd>
+      <dt>
+Department:
+      </dt>
+      <dd>
+{{ user_obj.profile.department|default:"Not provided" }}
+      </dd>
 
-      <dt>Position:</dt>
-      <dd>{{ user_obj.profile.position|default:"Not provided" }}</dd>
+      <dt>
+Position:
+      </dt>
+      <dd>
+{{ user_obj.profile.position|default:"Not provided" }}
+      </dd>
 
-      <dt>Account created:</dt>
-      <dd>{{ user_obj.date_joined|date:"F j, Y" }}</dd>
+      <dt>
+Account created:
+      </dt>
+      <dd>
+{{ user_obj.date_joined|date:"F j, Y" }}
+      </dd>
     </dl>
   </div>
 
   <div class="action-buttons">
-    <form method="post" hx-post="{% url 'users:admin_user_delete' user_obj.id %}" hx-target=".users-container">
-      {% csrf_token %}
+    <form method="post"
+          hx-post="{% url 'users:admin_user_delete' user_obj.id %}"
+          hx-target=".users-container">
+{% csrf_token %}
       <div class="form-actions">
-        <button type="submit" class="btn-danger">Confirm Delete</button>
-        <a href="{% url 'users:admin_user_list' %}" class="btn-secondary" role="button">Cancel</a>
+        <button type="submit" class="btn-danger">
+Confirm Delete
+        </button>
+        <a href="{% url 'users:admin_user_list' %}"
+           class="btn-secondary"
+           role="button">Cancel</a>
       </div>
     </form>
   </div>

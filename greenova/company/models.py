@@ -1,12 +1,13 @@
 import logging
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import DatabaseError, connection, models
 from django.db.models import QuerySet
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class Company(models.Model):
@@ -28,7 +29,11 @@ class Company(models.Model):
         ('internal', 'Internal Department'),
         ('other', 'Other'),
     ]
-    company_type = models.CharField(max_length=20, choices=COMPANY_TYPES, default='client')
+    company_type = models.CharField(
+        max_length=20,
+        choices=COMPANY_TYPES,
+        default='client'
+    )
 
     # Company size choices
     COMPANY_SIZES = [
@@ -79,17 +84,13 @@ class Company(models.Model):
         ordering = ['name']
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name) if self.name else "Unnamed Company"
 
     def get_member_count(self) -> int:
         """Get count of company members."""
         return self.members.count()
 
     def get_active_projects_count(self) -> int:
-        """Get count of active projects associated with this company."""
-        from django.db import connection
-
-        # Check if is_active field exists in projects_project table
         try:
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -100,14 +101,11 @@ class Company(models.Model):
                     """
                 )
                 is_active_exists = cursor.fetchone()[0] > 0
-
             if is_active_exists:
                 return self.projects.filter(is_active=True).count()
-            else:
-                # If is_active doesn't exist yet, count all projects
-                return self.projects.count()
-        except Exception as e:
-            logger.error(f'Error counting active projects: {str(e)}')
+            return self.projects.count()
+        except DatabaseError as exc:
+            logger.error('Error counting active projects: %s', str(exc))
             return 0
 
     def get_members_by_role(self, role: str) -> QuerySet:
@@ -125,12 +123,17 @@ class Company(models.Model):
                 user=user,
                 role=role
             )
-            logger.info(f'Added user {user.username} to company {self.name} with role {role}')
+            logger.info(
+                'Added user %s to company %s with role %s',
+                user.username,
+                self.name,
+                role
+            )
 
     def remove_member(self, user: User) -> None:
         """Remove a user from the company."""
         CompanyMembership.objects.filter(company=self, user=user).delete()
-        logger.info(f'Removed user {user.username} from company {self.name}')
+        logger.info('Removed user %s from company %s', user.username, self.name)
 
 
 class CompanyMembership(models.Model):
@@ -175,7 +178,13 @@ class CompanyMembership(models.Model):
         verbose_name_plural = 'Company Memberships'
 
     def __str__(self) -> str:
-        return f'{self.user.username} - {self.company.name} ({self.role})'
+        if self.user and self.company:
+            return (
+                f'{self.user.username} - '
+                f'{self.company.name} '
+                f'({self.role})'
+            )
+        return "Invalid Membership"
 
     def save(self, *args, **kwargs):
         """Override save to ensure only one company is primary."""
@@ -224,4 +233,6 @@ class CompanyDocument(models.Model):
         verbose_name_plural = 'Company Documents'
 
     def __str__(self) -> str:
-        return f'{self.name} ({self.company.name})'
+        if self.name and self.company:
+            return f'{self.name} ({self.company.name})'
+        return "Unnamed Document"
