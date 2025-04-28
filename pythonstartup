@@ -18,3 +18,31 @@ except FileNotFoundError:
     pass
 
 atexit.register(readline.write_history_file, histfile)
+
+print("pythonstartup executed successfully.")
+print("=" * 50)
+
+#   Check all .py files for syntax or encoding errors
+for root, _, files in os.walk("."):
+    for file in files:
+        if file.endswith(".py"):
+            print(f"Found Python file: {os.path.join(root, file)}")
+            path = os.path.join(root, file)
+            try:
+                with open(path, encoding="utf-8") as file_obj:
+                    source = file_obj.read()
+                compile(source, path, "exec")
+                print(f"✅ Syntax OK: {path}")
+            except (SyntaxError, UnicodeDecodeError) as e:
+                print(f"❌ Error in {path}: {type(e).__name__} - {e}")
+
+#   Enable autoreload for modules in IPython
+try:
+    from IPython import get_ipython
+    ipy = get_ipython()
+    if ipy:
+        ipy.run_line_magic("load_ext", "autoreload")
+        ipy.run_line_magic("autoreload", "2")
+        print("IPython autoreload extension loaded")
+except (ImportError, AttributeError) as e:
+    print("Failed to load autoreload:", e)
