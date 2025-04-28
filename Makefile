@@ -1,4 +1,4 @@
-.PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev compile-proto check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-update-recurring-inspection-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint django-build 
+.PHONY: app install venv dotenv-pull dotenv-push check run run-django run-tailwind dev compile-proto check-tailwind tailwind tailwind-install migrations migrate static user db import update sync update-recurring-dates normalize-frequencies clean-csv prod lint-templates format-templates check-templates format-lint django-build 
 
 # Change to greenova directory before running commands
 CD_CMD = cd greenova &&
