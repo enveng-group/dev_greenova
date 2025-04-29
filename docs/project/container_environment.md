@@ -1,6 +1,6 @@
-## Project Business Scope Plan
+# Project Business Scope Plan
 
-### Project Title
+## Project Title
 
 Automating Python Projects with Docker
 

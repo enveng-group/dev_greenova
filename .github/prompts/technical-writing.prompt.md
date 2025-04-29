@@ -71,14 +71,19 @@ guidelines.
 
 ### Example Reference List
 
-```
+```md
 ## References
 
-[1] Django Software Foundation, "Django Documentation," Django Project, 2023. [Online]. Available: https://docs.djangoproject.com/ [Accessed: Oct. 15, 2023].
+[1] Django Software Foundation, "Django Documentation," Django Project, 2023.
+[Online]. Available: https://docs.djangoproject.com/
+[Accessed: Oct. 15, 2023].
 
-[2] A. Holovaty and J. Kaplan-Moss, "The Definitive Guide to Django: Web Development Done Right," 2nd ed. Berkeley, CA: Apress, 2009.
+[2] A. Holovaty and J. Kaplan-Moss, "The Definitive Guide to Django:
+Web Development Done Right," 2nd ed. Berkeley, CA: Apress, 2009.
 
-[3] M. Smith and P. Johnson, "Environmental Compliance Tracking Systems: A Review," Journal of Environmental Management, vol. 45, no. 2, pp. 112-125, Apr. 2022, doi:10.1234/jem.2022.045.
+[3] M. Smith and P. Johnson, "Environmental Compliance Tracking Systems:
+A Review," Journal of Environmental Management, vol. 45, no. 2,
+pp. 112-125, Apr. 2022, doi:10.1234/jem.2022.045.
 ```
 
 ## Formatting and Style

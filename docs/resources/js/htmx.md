@@ -261,7 +261,7 @@ In your `message_response.html`:
     <div id="data"></div>
   </div>
   <noscript>
-    <a href="/load-data/">Load Data (JavaScript disabled)</a>
+    <a href="{% url 'load_data' %}">Load Data (JavaScript disabled)</a>
   </noscript>
   <div id="data"></div>
 </div>
@@ -269,12 +269,14 @@ In your `message_response.html`:
 
 ## Advanced Techniques
 
+```html
 <a href="{% url 'about' %}" hx-boost="true">About Us</a>
+```
 
 Boosting allows regular links and forms to use HTMX:
 
 ```html
-<a href="/about/" hx-boost="true">About Us</a>
+<a href="{% url 'about' %}" hx-boost="true">About Us</a>
 ```
 
 ### Indicators for Loading States
@@ -308,11 +310,14 @@ Add this CSS:
 
 ### Triggering Events
 
-````html
+```html
 <button
   hx-get="/info/"
   hx-target="#info"
-  hx-trigger="click, keyup[key=='Enter']"
+  hx-trigger="click,keyup[key=='Enter']"
+></button>
+```
+
 ## Partial Rendering
 
 When working with HTMX, you often only need to render part of a page since only
@@ -323,17 +328,20 @@ and maintainability.
 
 The `django-template-partials` package extends Django's Template Language with
 reusable sections called "partials" that can be rendered independently.
-When working with HTMX, you often only need to render part of a page since only a specific section is being updated. This optimization can improve performance and maintainability.
+When working with HTMX, you often only need to render part of a page since only
+a specific section is being updated. This optimization can improve performance
+and maintainability.
 
-### Using django-template-partials
+### Leveraging django-template-partials for Reusability
 
-The `django-template-partials` package extends Django's Template Language with reusable sections called "partials" that can be rendered independently.
+The `django-template-partials` package extends Django's Template Language with
+reusable sections called "partials" that can be rendered independently.
 
 #### 1. Installation
 
 ```bash
 pip install django-template-partials
-````
+```
 
 Add it to `INSTALLED_APPS`:
 
@@ -400,7 +408,8 @@ the entire template.
     )
 ```
 
-HTMX requests will render only the partial, while full page requests will render the entire template.
+HTMX requests will render only the partial, while full page requests will
+render the entire template.
 
 ### Swapping the Base Template
 
@@ -432,7 +441,9 @@ def partial_rendering(request):
     )
 ```
 
-#### 2. In Your Template (page.html)
+#### 2. Template Structure
+
+Main template (page.html):
 
 ```html
 {% extends base_template %} {% block body %}
@@ -441,12 +452,16 @@ def partial_rendering(request):
   {% for item in items %}
   <div class="item">{{ item.name }}</div>
   {% endfor %}
+</div>
+{% endblock body %}
+
+<!-- Example base template (_base.html) -->
 <!doctype html>
 <html lang="en">
   <head>
     <title>My Site</title>
-    <meta name="description" content="Environmental management application">
-    <meta name="keywords" content="environment, management, compliance">
+    <meta name="description" content="Environmental management application" />
+    <meta name="keywords" content="environment, management, compliance" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <script src="{% static 'js/htmx.min.js' %}"></script>
   </head>
@@ -462,26 +477,22 @@ def partial_rendering(request):
     </footer>
   </body>
 </html>
-        <!-- Navigation items -->
-      </nav>
-    </header>
-    <main id="main">{% block body %}{% endblock %}</main>
-    <footer>
-      <!-- Footer content -->
-This technique ensures HTMX requests receive only the necessary HTML, reducing
-payload size and improving performance.
-  </body>
-</html>
 ```
 
-Partial template (\_partial.html):
+This technique ensures HTMX requests receive only the necessary HTML, reducing
+payload size and improving performance.
 
+#### Partial template (\_partial.html)
+
+```html
 <div id="content">
-  <!-- Initial results -->
+  <!-- Render initial results from the included partial -->
   {% include "partials/results.html" %}
 </div>
+```
 
-This technique ensures HTMX requests receive only the necessary HTML, reducing payload size and improving performance.
+This technique ensures HTMX requests receive only the necessary HTML,
+reducing payload size and improving performance.
 
 ## Common Use Cases
 
@@ -535,11 +546,13 @@ This technique ensures HTMX requests receive only the necessary HTML, reducing p
 
 ## Best Practices
 
-1. **Use Request.HTMX**: Check `request.htmx` to determine if a request came from HTMX.
+1. **Use Request.HTMX**: Check `request.htmx` to determine
+   if a request came from HTMX.
 
 2. **Keep Templates DRY**: Use template partials for HTMX responses.
 
-3. **Proper Error Handling**: Return appropriate HTTP status codes for HTMX requests.
+3. **Proper Error Handling**: Return appropriate HTTP status codes
+   for HTMX requests.
 
 4. **Accessibility**: Ensure your UI remains accessible when using HTMX.
 
@@ -582,41 +595,38 @@ Django applications.
 - [Django-HTMX GitHub Repository](https://github.com/adamchainz/django-htmx)
 - [HTMX Extensions Catalog](https://htmx.org/extensions/)
 
-## HTMX Extensions
+## Extensions Overview
 
-HTMX provides extensions that add additional functionality beyond its core features. These extensions can be particularly useful for specific use cases in Django applications.
+HTMX provides extensions that add functionality beyond its core features.
+These extensions can enhance your Django applications in various ways.
 
-### How to Use Extensions
+### Head Support Extension Overview
 
 ### Head Support Extension
 
-The [Head Support Extension](https://htmx.org/extensions/head-support/) allows
-you to update the `<head>` of your document with content from HTMX responses.
+The Head Support Extension enables updating the `<head> example </head>`
+section of your document with HTMX responses.
 
-<script src="https://unpkg.com/htmx.org@1.9.6"></script>
-<script src="https://unpkg.com/htmx.org/dist/ext/head-support.js"></script>
+First, include the extension script:
 
-```
-
-Then initialize it:
-
-#### Django Head Support Example
+```html
 <body hx-ext="head-support">
   <!-- Your content -->
 </body>
 ```
 
-### Head Support Extension
+### Using Head Support
 
-The [Head Support Extension](https://htmx.org/extensions/head-support/) allows you to update the `<head>` of your document with content from HTMX responses.
+The Head Support Extension enables dynamic updates to document metadata
+through HTMX responses.
 
-#### Use Cases
+#### Typical Use Cases
 
-- Update page title, meta tags, or styles without full page reload
-- Improve SEO by updating meta information during SPA-like navigation
-- Load page-specific styles or scripts dynamically
+- Update page title and meta tags without full page reload
+- Improve SEO with dynamic meta information updates
+- Load page-specific styles or scripts as needed
 
-#### Example with Django
+#### Path Dependencies Example with Django
 
 ```html
 <!-- In your template -->
@@ -638,9 +648,12 @@ The [Head Support Extension](https://htmx.org/extensions/head-support/) allows y
 </body>
 ```
 
-### Loading States Extension
+## Loading States Extension
 
-The [Loading States Extension](https://github.com/bigskysoftware/htmx-extensions/blob/main/src/loading-states/README.md) provides sophisticated loading states for HTMX requests, beyond the basic indicators.
+### Loading States Extension Overview
+
+The [Loading States Extension](https://htmx.org/extensions/loading-states/)
+provides sophisticated loading states for HTMX requests.
 
 #### Features
 
@@ -648,22 +661,17 @@ The [Loading States Extension](https://github.com/bigskysoftware/htmx-extensions
 - Fine-grained control over UI during AJAX requests
 - Customizable timing options
 
-#### Example with Django
+#### Django Comments Example
 
 ```html
 <div hx-ext="loading-states">
   <form hx-post="{% url 'create_item' %}" hx-target="#result">
     {% csrf_token %}
     <input type="text" name="name" required />
-
     <button
       type="submit"
       loading-states
       loading-path="/create_item"
-### Class Tools Extension
-
-The [Class Tools Extension](https://github.com/bigskysoftware/htmx-extensions/blob/main/src/class-tools/README.md)
-provides additional class manipulation tools for HTML elements.
       ls-error-class="error"
     >
       <span ls-initialized-show>Create</span>
@@ -672,41 +680,47 @@ provides additional class manipulation tools for HTML elements.
       <span ls-error-show>Failed</span>
     </button>
   </form>
-
   <div id="result"></div>
 </div>
 ```
 
-### Class Tools Extension
+### Class Tools Extension Overview
 
-The [Class Tools Extension](https://github.com/bigskysoftware/htmx-extensions/blob/main/src/class-tools/README.md) provides additional class manipulation tools for HTML elements.
+The Class Tools Extension enables advanced class manipulation for HTML elements.
+[View documentation](https://htmx.org/extensions/class-tools/)
 
 #### Key Features
 
-- Add/remove classes after delays
-- Create complex class addition/removal sequences
-- Simplifies UI transitions and animations
-  classes="add saving:mousedown remove saving:htmx:afterOnLoad
-  add saved:htmx:afterOnLoad remove saved:3s"
+- Add/remove classes with timing controls
+- Create complex class sequences
+- Simplify UI transitions and animations
 
 #### Example with Django
+
+### Path Dependencies Overview
+
+The Path Dependencies Extension helps manage relationships between HTMX requests.
+[View documentation](https://htmx.org/extensions/path-deps/)
 
 ```html
 <div hx-ext="class-tools">
   <div
     id="notification"
-    classes="add fade-in:load remove fade-in:2s add fade-out:2s remove fade-out:hidden:3s"
-### Path Dependencies Extension
-
-The [Path Dependencies Extension](https://github.com/bigskysoftware/htmx-extensions/blob/main/src/path-deps/README.md)
-allows you to define dependencies between HTMX requests based on path patterns.
-    {% endfor %} {% endif %}
-  </div>
+    classes="
+      add fade-in:load
+      remove fade-in:2s
+      add fade-out:2s
+      remove fade-out:hidden:3s"
+  ></div>
 
   <button
     hx-post="{% url 'save_data' %}"
     hx-target="#result"
-    classes="add saving:mousedown remove saving:htmx:afterOnLoad add saved:htmx:afterOnLoad remove saved:3s"
+    classes="
+      add saving:mousedown
+      remove saving:htmx:afterOnLoad
+      add saved:htmx:afterOnLoad
+      remove saved:3s"
   >
     Save Data
   </button>
@@ -715,41 +729,6 @@ allows you to define dependencies between HTMX requests based on path patterns.
 </div>
 ```
 
-### Path Dependencies Extension
-
-The [Path Dependencies Extension](https://github.com/bigskysoftware/htmx-extensions/blob/main/src/path-deps/README.md) allows you to define dependencies between HTMX requests based on path patterns.
-
-#### Benefits
-
-- Automatically refresh content when related resources change
-- Maintain consistency between related UI components
-- Reduce boilerplate code for managing related updates
-
-#### Example with Django
-
-````html
-<div hx-ext="path-deps">
-  <!-- This component will be refreshed when a new comment is added -->
-  <div
-  <div id="comments-list">{% include "partials/comments.html" %}</div>
-    hx-get="{% url 'comment_count' post.id %}"
-    path-deps="/posts/{{ post.id }}/comments"
-  >
-    <!-- Comment count content -->
-  </div>
-
-def add_comment(request, post_id):
-    # Process the comment
-    # ...
-
-    # Return just the new comment
-    response = render(request, "partials/comment.html", {"comment": comment})
-
-    # Set the path-deps header to trigger updates
-    response['HX-Trigger-After-Settle'] = f"{% url 'comment_path' post_id %}"
-    return response
-
-  <!-- Comments list -->
 ## Conclusion
 
 HTMX with Django provides a powerful way to create dynamic, interactive web
@@ -757,22 +736,3 @@ applications with minimal JavaScript. By leveraging Django's templating system
 alongside HTMX's declarative approach to AJAX, you can build modern user
 experiences while maintaining the simplicity and robustness of server-rendered
 HTML.
-
-In your Django view:
-
-```python
-def add_comment(request, post_id):
-    # Process the comment
-    # ...
-
-    # Return just the new comment
-    response = render(request, 'partials/comment.html', {'comment': comment})
-
-    # Set the path-deps header to trigger updates
-    response['HX-Trigger-After-Settle'] = f"{{% url 'comment_path' post_id %}}"
-    return response
-````
-
-## Conclusion
-
-HTMX with Django provides a powerful way to create dynamic, interactive web applications with minimal JavaScript. By leveraging Django's templating system alongside HTMX's declarative approach to AJAX, you can build modern user experiences while maintaining the simplicity and robustness of server-rendered HTML.

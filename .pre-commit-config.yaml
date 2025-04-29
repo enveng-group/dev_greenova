@@ -110,6 +110,14 @@ repos:
           - stylelint-config-tailwindcss@1.0.0
           - postcss-html@1.6.0
 
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types_or: [javascript, css, yaml, markdown]
+        exclude: '.*\.html$' # Exclude HTML files from prettier
+        args: ['--config', '${REPO_ROOT_DIR}/.prettierrc']
+
   - repo: https://github.com/djlint/djLint
     rev: v1.36.4
     hooks:
@@ -125,14 +133,6 @@ repos:
           - --max-line-length=88
           - --use-gitignore
           - --ignore=H014,H015,T002
-
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
-    hooks:
-      - id: prettier
-        types_or: [javascript, css, yaml, markdown]
-        exclude: '.*\.html$' # Exclude HTML files from prettier
-        args: ['--config', '${REPO_ROOT_DIR}/.prettierrc']
 
   - repo: https://github.com/adamchainz/django-upgrade
     rev: 1.24.0

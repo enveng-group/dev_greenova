@@ -47,7 +47,9 @@ custom CSS classes. This aligns with our project's HTML-first development
 approach.
 
 Example:
-Pico's classless mode allows for styling with semantic HTML without requiring custom CSS classes. This aligns with our project's HTML-first development approach.
+Pico's classless mode allows for styling with semantic HTML without requiring
+custom CSS classes. This aligns with our project's HTML-first development
+approach.
 
 Example:
 
@@ -191,67 +193,72 @@ Pico uses CSS variables for easy customization:
 }
 ```
 
+```html
 <!-- Light theme by default -->
 <html lang="en" data-theme="light">
-<head>
-  <title>Page Title</title>
-  <meta name="description" content="Description of the page">
-  <meta name="keywords" content="pico, css, theme, light">
-  <!-- Content -->
-</head>
-<body>
-  <!-- Content -->
-</body>
+  <head>
+    <title>Page Title</title>
+    <meta name="description" content="Description of the page" />
+    <meta name="keywords" content="pico, css, theme, light" />
+    <!-- Content -->
+  </head>
+  <body>
+    <!-- Content -->
+  </body>
 </html>
 
 <!-- Dark theme by default -->
 <html lang="en" data-theme="dark">
-<head>
-  <title>Page Title</title>
-  <meta name="description" content="Description of the page">
-  <meta name="keywords" content="pico, css, theme, dark">
-  <!-- Content -->
-</head>
-<body>
-  <!-- Content -->
-</body>
+  <head>
+    <title>Page Title</title>
+    <meta name="description" content="Description of the page" />
+    <meta name="keywords" content="pico, css, theme, dark" />
+    <!-- Content -->
+  </head>
+  <body>
+    <!-- Content -->
+  </body>
 </html>
 
 <!-- Auto theme by default -->
 <html lang="en" data-theme="auto">
-<head>
-  <title>Page Title</title>
-1. Add the CDN link in your base template:
-  <meta name="keywords" content="pico, css, theme, auto">
-  <!-- Content -->
-{% block styles %}
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-/>
-{% endblock styles %}
-    <!-- Auto theme by default (based on user's system preference) -->
-    <html data-theme="auto"></html>
-  </html>
+  <head>
+    <title>Page Title</title>
+    <meta
+      name="description"
+      content="This is a sample page using Pico CSS with auto theme."
+    />
+    <meta name="keywords" content="pico, css, theme, auto" />
+    {% block styles %}
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    {% endblock styles %}
+  </head>
+  <body>
+    <!-- Content -->
+  </body>
 </html>
 ```
 
 Toggle between themes with JavaScript:
 
 - Use appropriate HTML5 elements (header, main, section, etc.)
-  // Function to toggle themes
-  function toggleTheme() {
+
+```javascript
+// Function to toggle themes
+function toggleTheme() {
   const html = document.documentElement;
   const currentTheme = html.getAttribute('data-theme');
 
-if (currentTheme === 'dark') {
-html.setAttribute('data-theme', 'light');
-} else {
-html.setAttribute('data-theme', 'dark');
+  if (currentTheme === 'dark') {
+    html.setAttribute('data-theme', 'light');
+  } else {
+    html.setAttribute('data-theme', 'dark');
+  }
 }
-}
-
-````
+```
 
 ## Integration with Django
 
@@ -265,16 +272,17 @@ To use Pico CSS with Django templates:
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
 />
-{% endblock %}
-````
+{% endblock styles %}
+```
 
-2. Or install via npm and include in your static files
+1. Or install via npm and include in your static files
 
 ## Best Practices for Greenova Project
 
 1. **Follow semantic HTML structure**
 
-   - Use appropriate HTML5 elements (`<header>`, `<main>`, `<section>`, etc.)
+   - Use appropriate HTML5 elements (\`&lt;header&gt;\`, \`&lt;main&gt;\`,
+     \`&lt;section&gt;\`, etc.)
    - Maintain proper heading hierarchy (h1-h6)
 
 2. **Progressive enhancement**

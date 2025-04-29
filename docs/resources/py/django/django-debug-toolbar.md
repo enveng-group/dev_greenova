@@ -158,11 +158,9 @@ Customize the toolbar appearance and behavior:
 ```python
 DEBUG_TOOLBAR_CONFIG = {
     # Toolbar options
-    'INSERT_BEFORE': '&lt;/body&gt;',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-        'debug_toolbar.panels.profiling.ProfilingPanel',
-    },
-    'INSERT_BEFORE': '</body>',
+    <!-- markdownlint-disable -->
+        'INSERT_BEFORE': '<body>',  # Ensure this matches an actual opening tag in your HTML
+    <!-- markdownlint-enable -->
     'RENDER_PANELS': None,
     'RESULTS_CACHE_SIZE': 25,
     'SHOW_COLLAPSED': False,
