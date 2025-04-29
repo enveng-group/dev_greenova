@@ -1,0 +1,29 @@
+[MASTER]
+# Pre-commit configuration for Python files - Django-specific plugins disabled
+persistent = yes
+suggestion-mode = yes
+unsafe-load-any-extension = no
+ignore = migrations, venv, .venv
+# Explicitly disable Django-specific plugins to avoid app registry issues
+load-plugins =
+# Disable Django checks
+django-settings-module =
+
+[FORMAT]
+max-line-length = 88
+
+[MESSAGES CONTROL]
+# Adding R0801 to the disabled messages to prevent duplicate code warnings
+# Also disabling Django-specific checks
+disable = no-member, C0111, R0903, C0103, R0801, imported-auth-user, invalid-name,
+         model-missing-unicode, model-has-unicode, model-no-explicit-unicode
+
+[SIMILARITIES]
+ignore-comments = yes
+ignore-docstrings = yes
+ignore-imports = yes
+# Increase the minimum similarity to avoid duplicate code warnings for standard patterns
+min-similarity-lines = 12
+
+[BASIC]
+good-names = _, i, j, k, e, f, db, id, pk, setUp, tearDown, maxDiff, Meta

@@ -4,10 +4,9 @@ suggestion-mode=yes
 unsafe-load-any-extension=no
 load-plugins=tools.pylint.fix_good_names,pylint_django,tools.pylint.gevent_checker
 ignore=migrations,venv,.venv
-django-settings-module=tools.pre_commit.mock_settings
+# django-settings-module=tools.pre_commit.mock_settings  # Commented out to use environment variable
 
-# Add project root to Python path
-init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova'); sys.path.insert(0, '/workspaces/greenova/greenova')"
+# init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova'); sys.path.insert(0, '/workspaces/greenova/greenova')" # Removed to rely on PYTHONPATH from task
 
 [FORMAT]
 max-line-length=88

@@ -9,7 +9,7 @@ tracking environmental obligations and compliance requirements.
 
 We use Python 3.9.21 with Django 4.1.13 for backend development.
 
-Our frontend uses PicoCSS as the primary CSS framework. Only use Tailwind CSS
+Our frontend uses Tailwind CSS as the primary CSS framework.
 
 We implement frontend interactivity with django-hyperscript for simple
 interactions and django-htmx for more complex AJAX functionality. Custom
@@ -65,7 +65,7 @@ markdownlint.
 We use mypy with django-stubs for type checking Python code.
 
 ```html
-<form method="post" action="/submit" novalidate>
+<form method="post" action="{% url 'submit' %}" novalidate>
   {% csrf_token %}
   <fieldset>
     <legend>Contact Information</legend>
@@ -112,7 +112,7 @@ We maintain compatible versions of dependencies:
 </main>
 ```
 
-2. Progressive Enhancement:
+1. Progressive Enhancement:
    - Base functionality without JavaScript
    - Django-HTMX integration with proper attributes
    - CSRF token handling in forms
@@ -120,7 +120,8 @@ We maintain compatible versions of dependencies:
 
 ```html
 <!-- Base functionality -->
-<form method="post" action="/search">
+<form method="post" action="{% url 'search' %}">
+  {% csrf_token %}
   <input type="search" name="q" />
   <button type="submit">Search</button>
 </form>
@@ -187,20 +188,18 @@ We maintain compatible versions of dependencies:
 
 1. Use comments to explain why the code exists, not what it does.
 2. Write docstrings for all public modules, functions, classes, and methods
-   using triple quotes.
+   using triple quotes. Follow Google style docstrings.
 3. Ensure inline comments are concise and placed at least two spaces away from
-   the statement.
-
-4. Ensure inline comments are concise and placed at least two spaces away from
    the statement.
 
 ### Logging
 
 1. Use the `logging` module instead of print statements.
-
 2. Choose appropriate logging levels (DEBUG, INFO, WARNING, ERROR, CRITICAL).
-
-3. Configure logs with timestamps and ensure efficient log file management.
+3. Use lazy formatting with `%` style or `logging.Formatter` for log messages,
+   avoiding f-strings directly in logging calls (prevents `pylint: W1203`).
+   Example: `logger.info("Processing item %s", item_id)`
+4. Configure logs with timestamps and ensure efficient log file management.
 
 ### Virtual Environments
 
@@ -212,215 +211,38 @@ We maintain compatible versions of dependencies:
 3. Include a `pyproject.toml` file and `requirements.txt` for dependency
    management with `pip`.
 
-## Code Generation Workflow - Generic Framework Template
-
-## 1. Data Definition and Validation
-
-- Define immutable data structures.
-- Validate schema integrity.
-- Establish data relationships.
-
-```pseudocode
-    roles: Array[String]
-    id: String
-    roles: Array[String]
-
-DATA_MODEL Transaction:
-
-DATA_MODEL Transaction:
-    id: String
-    userId: String
-    status: String
-    timestamp: DateTime
-
-FUNCTION validateData(data, schema):
-    IF NOT schema.validate(data):
-        THROW "Invalid data schema"
-    RETURN data
-```
-
-## 2. Data Processing and Transformation
-
-- Implement functional transformations.
-- Use map, filter, and reduce for processing.
-
-```pseudocode
-FUNCTION processTransaction(transaction):
-    validatedTransaction = validateData(transaction, TransactionSchema)
-    enrichedTransaction = enrichTransaction(validatedTransaction)
-    RETURN enrichedTransaction
-
-FUNCTION enrichTransaction(transaction):
-    RETURN transaction WITH timestamp = NOW()
-```
-
-## 3. Data Flow and Pipeline Management
-
-- Define pipelines for data flow.
-- Use events to trigger workflows.
-
-```pseudocode
-PIPELINE transactionProcessingPipeline(transaction):
-    processedTransaction = processTransaction(transaction)
-    SAVE processedTransaction
-    LOG "Transaction processed: " + processedTransaction.id
-```
-
-## 4. Exception Handling and Error Management
-
-- Handle business rule and system exceptions.
-- Implement retry and fallback mechanisms.
-
-```pseudocode
-FUNCTION safeProcessTransaction(transaction):
-    TRY:
-        RETURN processTransaction(transaction)
-    CATCH error:
-        LOG "Transaction processing failed: " + error.message
-        RETRY_PROCESS_TRANSACTION(transaction)
-```
-
-## 5. Data Storage and Retrieval
-
-- Store data in an immutable format.
-- Optimize queries and indexing.
-
-```pseudocode
-FUNCTION saveTransaction(transaction):
-    transactionWithTimestamp = transaction WITH timestamp = NOW()
-    DATABASE.save(transactionWithTimestamp)
-
-FUNCTION getTransactionById(transactionId):
-    RETURN DATABASE.query("SELECT * FROM transactions WHERE id = ?", transactionId)
-```
-
-## 6. Automation Workflow Management
-
-- Automate task execution and exception handling.
-- Implement logging and monitoring.
-
-```pseudocode
-WORKFLOW processAutomatedTransaction():
-    WHILE hasPendingTransactions():
-        transaction = GET_NEXT_TRANSACTION()
-        safeProcessTransaction(transaction)
-```
-
-## 7. Logging, Monitoring, and Reporting
-
-- Log key system events.
-- Generate performance reports.
-
-```pseudocode
-FUNCTION logEvent(event, message):
-    WRITE_TO_LOG(event + ": " + message)
-
-FUNCTION generateReport():
-    RETURN COLLECT_LOGS_AND_METRICS()
-```
-
-## 8. Security and Access Control
-
-- Encrypt sensitive data.
-- Implement role-based access control.
-
-```pseudocode
-FUNCTION encryptData(data):
-    RETURN ENCRYPT(data, encryption_key)
-
-FUNCTION decryptData(encryptedData):
-    RETURN DECRYPT(encryptedData, encryption_key)
-```
-
-## 9. Retry Mechanism and Resilience
-
-- Implement automated retry logic.
-- Handle failures gracefully.
-
-```pseudocode
-FUNCTION retryTransaction(transaction):
-    retry_count = 0
-    WHILE retry_count < MAX_RETRIES:
-        TRY:
-            RETURN processTransaction(transaction)
-        CATCH error:
-            retry_count++
-            LOG "Retry attempt " + retry_count + " failed: " + error.message
-    LOG "Max retries reached for transaction: " + transaction.id
-```
-
-## 10. System Initialization and Shutdown
-
-- Start and stop all necessary applications.
-
-```pseudocode
-FUNCTION initializeSystem():
-    FOR EACH application IN requiredApplications:
-        OPEN application
-        LOGIN application WITH credentials
-
-FUNCTION shutdownSystem():
-    FOR EACH application IN requiredApplications:
-        LOGOUT application
-        CLOSE application
-```
-
-## 11. Main Execution Flow
-
-- Orchestrate workflow execution.
-- Ensure fault tolerance and scalability.
-
-````pseudocode
-FUNCTION main():
-    initializeSystem()
-    processAutomatedTransaction()
-This template provides a **modular, scalable, and fault-tolerant** approach,
-integrating **data-oriented programming** with **automated workflow management**.
-    generateReport()
-This template provides a **modular, scalable, and fault-tolerant** approach to
-integrate **data-oriented programming** with **automated workflow management**.
-
-This template provides a **modular, scalable, and fault-tolerant** approach, integrating **data-oriented programming** with **automated workflow management**.
-
-## POSIX Compliance Guidelines
-
-### Standard Libraries
-
-1. Prefer Python’s standard libraries designed for portability and POSIX compliance.
-
-2. Use modules like `os`, `shutil`, and `subprocess` for system operations.
-
-3. Avoid Windows-specific functions like `os.startfile()`.
-
-### File and Directory Operations
-
-1. Use `os.path` or `pathlib` for path handling.
-
-2. Access and modify environment variables using `os.environ`.
-
-### Process Management
-
-1. Use the `subprocess` module for creating and managing processes.
-
-2. Avoid using `os.system()` for security and flexibility reasons.
-
-### Error Handling
-
-1. Handle exceptions using `try-except` blocks.
-
-2. Ensure resource cleanup with `finally` or context managers.
-
 ### Text Encoding
 
-1. Use UTF-8 encoding for text files.
-
-2. Explicitly handle text encoding and decoding with `str.encode()` and `str.decode()`.
+1. Use UTF-8 encoding for text files whenever possible.
+2. Explicitly handle text encoding and decoding with `str.encode()` and
+   `str.decode()`.
+3. Always specify `encoding="utf-8"` when using `open()` (prevents
+   `pylint: W1514`). Example:
+   `with open("file.txt", "r", encoding="utf-8") as f:`
 
 ### Testing on POSIX Systems
 
 1. Test code on multiple POSIX-compliant systems (e.g., Linux, macOS).
 
 2. Use CI tools to automate testing across environments.
+
+### Common Linting and Typing Issues (Pylint/MyPy)
+
+Refer to the `.github/.copilot-codeGeneration-instructions.md` and
+`.github/.copilot-review-instructions.md` for detailed guidance on avoiding
+common errors like:
+
+- **Pylint**: `line-too-long`, `import-outside-toplevel`, `import-error`,
+  `logging-fstring-interpolation`, `invalid-str-returned`, `unused-argument`,
+  `broad-exception-caught`, `too-many-return-statements`, `no-else-return`,
+  `consider-using-max-builtin`, `unnecessary-pass`, `unspecified-encoding`,
+  `too-many-ancestors`, `redefined-outer-name`, `unused-variable`.
+- **MyPy**: Incompatible imports, name redefinitions, unused type ignores,
+  incorrect arguments (`call-arg`), missing type annotations
+  (`no-untyped-def`).
+
+Strict adherence to the code generation and review guidelines will help prevent
+these recurring issues.
 
 ## Django-Specific Guidelines
 
@@ -450,13 +272,14 @@ This template provides a **modular, scalable, and fault-tolerant** approach, int
 
 ### Settings and Configuration
 
-1. Use environment variables to manage sensitive information (e.g., `os.environ`).
+1. Use environment variables to manage sensitive information (e.g.,
+   `os.environ`).
 
    ```python
    # Example of proper environment variable usage
    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
    DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-````
+   ```
 
 2. Follow Django's settings module structure for organization.
 
@@ -511,14 +334,11 @@ This template provides a **modular, scalable, and fault-tolerant** approach, int
 
 ### Template Structure Guidelines
 
-{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
-Pipeline{% endblock title %} {% block dashboard_content %}
-{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
-Pipeline{% endblock title %} {% block dashboard_content %}
+#### Transaction Pipeline Template
 
 ```html
-{% extends 'layouts/dashboard_base.html' %} {% block title %}Transaction
-Pipeline{% endblock %} {% block dashboard_content %}
+{% extends "layouts/dashboard_base.html" %} {% block title %}Transaction
+Pipeline{% endblock title %} {% block dashboard_content %}
 <h2>Transaction Data</h2>
 <table>
   <tr>
@@ -531,17 +351,17 @@ Pipeline{% endblock %} {% block dashboard_content %}
   <tr>
     <td>{{ transaction.id }}</td>
     <td>{{ transaction.userId }}</td>
-    {% endblock dashboard_content %}
+    <td>{{ transaction.status }}</td>
     <td>{{ transaction.timestamp }}</td>
   </tr>
   {% endfor %}
 </table>
-{% endblock %}
+{% endblock dashboard_content %}
 ```
 
-2. **Data Processing Templates**
+#### Data Processing Templates
 
-````html
+```html
 {% for transaction in enriched_transactions %}
 <tr>
   <td>{{ transaction.id }}</td>
@@ -549,28 +369,41 @@ Pipeline{% endblock %} {% block dashboard_content %}
   <td>{{ transaction.status }}</td>
   <td>{{ transaction.timestamp }}</td>
 </tr>
-{% endfor %} {% extends "layouts/dashboard_base.html" %} {% block title
-%}System Monitoring{% endblock title %} {% block dashboard_content %} 3.
-**Pipeline Management Templates** ```html {% extends
-'layouts/dashboard_base.html' %} {% block title %}System Monitoring{% endblock
-%} {% block dashboard_content %}
+{% endfor %}
+```
+
+#### Pipeline Management Template
+
+```html
+{% extends "layouts/dashboard_base.html" %} {% block title %}System
+Monitoring{% endblock title %} {% block dashboard_content %}
 <h2>Pipeline Status</h2>
 <p>Active Transactions: {{ active_transactions }}</p>
 <p>Pending Retries: {{ pending_retries }}</p>
-{% endblock %} {% extends "base.html" %} {% block title %}Server Error{%
-endblock title %} {% block content %} 4. **Error Management Templates** ```html
-{% extends 'base.html' %} {% block title %}Server Error{% endblock %} {% block
-content %}
+{% endblock dashboard_content %}
+```
+
+#### Error Management Templates
+
+### 500 - Server Error Template
+
+```html
+{% extends "base.html" %} {% block title %}Server Error{% endblock title %} {%
+block content %}
 <h1>500 - Server Error</h1>
 <p>Something went wrong. Our team is investigating.</p>
-{% endblock %} {% extends "base.html" %} {% block title %}Access Denied{%
-endblock title %} {% block content %} 5. **Security Templates** ```html {%
-extends 'base.html' %} {% block title %}Access Denied{% endblock %} {% block
-content %}
+{% endblock content %}
+```
+
+### 403 - Access Denied Template
+
+```html
+{% extends "base.html" %} {% block title %}Access Denied{% endblock title %} {%
+block content %}
 <h1>403 - Forbidden</h1>
 <p>You do not have permission to access this page.</p>
-{% endblock %}
-````
+{% endblock content %}
+```
 
 #### Template Design Principles
 
@@ -640,14 +473,14 @@ content %}
 ```sql
 -- Create the obligations table with improved data types and constraints
 CREATE TABLE Obligations (
-    obligation__number VARCHAR(20) PRIMARY KEY,  -- Changed from INT since some IDs like 'PCEMP-01'
+    obligation__number VARCHAR(20) PRIMARY KEY,
     project__name VARCHAR(255) NOT NULL,
     primary__environmental__mechanism TEXT,
     procedure TEXT,
     environmental__aspect TEXT,
     obligation TEXT NOT NULL,
-    accountability VARCHAR(255),  -- Changed from INT to VARCHAR since it contains text
-    responsibility VARCHAR(255),  -- Changed from INT to VARCHAR since it contains text
+    accountability VARCHAR(255),
+    responsibility VARCHAR(255),
     project_phase TEXT,
     action__due_date DATE,
     close__out__date DATE,
@@ -764,7 +597,7 @@ CREATE TRIGGER update_obligations_timestamp
 16. **Debugpy**: Python debugger for VS Code.
 17. **Django-Hyperscript**: Python implementation to use hyperscript in Django.
 18. **venv**: Python virtual environment tool.
-19. **PicoCSS-classless**: Minimal CSS framework.
+19. **TailwindCSS**: Utility-first CSS framework.
 20. **Django-Tailwind**: Python implementation of TailwindCSS for Django.
 
 ### Dependencies
@@ -788,7 +621,7 @@ CREATE TRIGGER update_obligations_timestamp
    - npm 10.8.2 (exact version)
 
 2. Required Libraries:
-   - @picocss/pico==2.0.6
+   - tailwindcss==3.3.2
 
 ### NPM Configuration
 
@@ -873,16 +706,18 @@ CREATE TRIGGER update_obligations_timestamp
    - Python 3.9.21 (exact version)
    - Email: `agallo@enveng-group.com.au`
 
-### Project Metadata
+### Django Version Metadata
 
-2. Django Version:
+1. Django Version:
+
    - Django 4.2.20 (exact version)
    - Ensure compatibility with Django 5.1.x features
-   - Email: <agallo@enveng-group.com.au>
+   - Email: [agallo@enveng-group.com.au](mailto:agallo@enveng-group.com.au)
 
-### Project Metadata
+### Author Metadata
 
 1. Author Information:
+
    - Author: Adrian Gallo
-   - Email: <agallo@enveng-group.com.au>
+   - Email: [agallo@enveng-group.com.au](mailto:agallo@enveng-group.com.au)
    - License: AGPL-3.0

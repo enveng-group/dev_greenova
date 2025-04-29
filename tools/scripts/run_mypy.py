@@ -27,6 +27,9 @@ def setup_environment() -> None:
     project_root = get_project_root()
     os.environ['PYTHONPATH'] = str(project_root)
 
+    # Add this line to ensure Django uses the mock settings
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'tools.pre_commit.mock_settings'
+
 
 def build_mypy_command(args: List[str]) -> List[str]:
     """Construct the mypy command with appropriate arguments."""
