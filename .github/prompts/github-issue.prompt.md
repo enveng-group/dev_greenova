@@ -1,5 +1,35 @@
 # GitHub Issue Template for Greenova Project
 
+## Project Fields (for GitHub Project Automation)
+
+When creating or updating an issue, you may set the following project fields:
+
+| Field Name           | Field ID                       | Type                       | Options (if applicable)                                         |
+| -------------------- | ------------------------------ | -------------------------- | --------------------------------------------------------------- |
+| Title                | PVTF_lAHOCchfJ84A3c00zgslf0M   | ProjectV2Field             |                                                                 |
+| Assignees            | PVTF_lAHOCchfJ84A3c00zgslf0Q   | ProjectV2Field             |                                                                 |
+| Status               | PVTSSF_lAHOCchfJ84A3c00zgslf0U | ProjectV2SingleSelectField | Sort, Set In Order, Shine, Standardize, Sustain, Safety, Spirit |
+| Labels               | PVTF_lAHOCchfJ84A3c00zgslf0Y   | ProjectV2Field             |                                                                 |
+| Linked pull requests | PVTF_lAHOCchfJ84A3c00zgslf0c   | ProjectV2Field             |                                                                 |
+| Milestone            | PVTF_lAHOCchfJ84A3c00zgslf0g   | ProjectV2Field             |                                                                 |
+| Repository           | PVTF_lAHOCchfJ84A3c00zgslf0k   | ProjectV2Field             |                                                                 |
+| Reviewers            | PVTF_lAHOCchfJ84A3c00zgslf0w   | ProjectV2Field             |                                                                 |
+| Parent issue         | PVTF_lAHOCchfJ84A3c00zgslf00   | ProjectV2Field             |                                                                 |
+| Sub-issues progress  | PVTF_lAHOCchfJ84A3c00zgslf04   | ProjectV2Field             |                                                                 |
+| Priority             | PVTSSF_lAHOCchfJ84A3c00zgslf9E | ProjectV2SingleSelectField | P1, P2, P3, P4                                                  |
+| Size                 | PVTSSF_lAHOCchfJ84A3c00zgslf9I | ProjectV2SingleSelectField | XS, S, M, L, XL                                                 |
+| Effort               | PVTF_lAHOCchfJ84A3c00zgslf9M   | ProjectV2Field             | Number (1-8)                                                    |
+| Start date           | PVTF_lAHOCchfJ84A3c00zgslf9Q   | ProjectV2Field             |                                                                 |
+| End date             | PVTF_lAHOCchfJ84A3c00zgslf9U   | ProjectV2Field             |                                                                 |
+
+- For single select fields (Status, Priority, Size), use the option names as
+  shown above.
+- For the Effort field, use a number between 1 and 8.
+- Use the Field ID when automating or scripting issue creation with the GitHub
+  API or CLI.
+
+---
+
 ## Issue Type
 
 {Choose one: Bug, Feature Request, Enhancement, Documentation, Test,
@@ -80,6 +110,19 @@ From the bug report's "Environment" section:
 ### Visual Evidence
 
 Reference any screenshots or videos from the bug report.
+
+### Mermaid Diagram (Optional)
+
+If helpful, include a Mermaid diagram to visualize workflows, data models, or
+bug scenarios.
+
+```mermaid
+<!-- Example: Replace with your diagram -->
+flowchart TD
+    A[Start] --> B{Is it a bug?}
+    B -- Yes --> C[Describe bug flow]
+    B -- No --> D[Describe feature flow]
+```
 
 ### Proposed Implementation
 
