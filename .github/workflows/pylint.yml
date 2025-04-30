@@ -2,9 +2,24 @@ name: Pylint
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - 'main'
+    paths:
+      - '**.py'
+      - 'requirements.txt'
+      - 'constraints.txt'
+      - '.pylintrc'
+      - '.pylintrc-django'
   pull_request:
-    branches: ['main']
+    branches:
+      - 'main'
+    paths:
+      - '**.py'
+      - 'requirements.txt'
+      - 'constraints.txt'
+      - '.pylintrc'
+      - '.pylintrc-django'
+  workflow_dispatch: # Allow manual triggering
 
 permissions:
   contents: read # Minimal permissions required for this workflow

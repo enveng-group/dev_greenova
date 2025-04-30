@@ -1,0 +1,48 @@
+name: Dotenv Vault
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.env*'
+      - '.env.vault'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - '.env*'
+      - '.env.vault'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  dotenv:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Minimal permissions required for this job
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dotenv-vault
+        run: npm install -g dotenv-vault@latest
+
+      - name: Check if .env.vault exists
+        id: check_vault
+        run: |
+          if [ -f ".env.vault" ]; then
+            echo "vault_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "vault_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build .env.vault
+        if: steps.check_vault.outputs.vault_exists != 'true'
+        run: dotenv-vault build
+        env:
+          DOTENV_KEY: ${{ secrets.DOTENV_KEY }}
+
+      - name: Verify .env.vault
+        run: dotenv-vault verify
+        env:
+          DOTENV_KEY: ${{ secrets.DOTENV_KEY }}

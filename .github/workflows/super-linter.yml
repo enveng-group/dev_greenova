@@ -2,9 +2,42 @@ name: Super-Linter
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - 'main'
+    paths:
+      - '**.py'
+      - '**.js'
+      - '**.css'
+      - '**.html'
+      - '**.md'
+      - '**.sh'
+      - '.pylintrc'
+      - '.pylintrc-django'
+      - 'pyproject.toml'
+      - 'isort.cfg'
+      - 'eslint.config.js'
+      - 'stylelint.config.js'
+      - '.markdownlint-cli2.jsonc'
+      - '.shellcheckrc'
   pull_request:
-    branches: ['main']
+    branches:
+      - 'main'
+    paths:
+      - '**.py'
+      - '**.js'
+      - '**.css'
+      - '**.html'
+      - '**.md'
+      - '**.sh'
+      - '.pylintrc'
+      - '.pylintrc-django'
+      - 'pyproject.toml'
+      - 'isort.cfg'
+      - 'eslint.config.js'
+      - 'stylelint.config.js'
+      - '.markdownlint-cli2.jsonc'
+      - '.shellcheckrc'
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   run-lint:

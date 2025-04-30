@@ -2,25 +2,33 @@
 
 ## Project Fields (for GitHub Project Automation)
 
-When creating or updating an issue, you may set the following project fields:
+Prompt: please generate the github issue including pseudocode to help plan out
+resolution of issue, mermaid diagrams (flow for workflows and erds for database
+and data relationships,) and also use the current files for additional context
+from the project in body to visually provide context by updating
+`github_issue.fish` and then run in fish terminal, if labels not found, please
+create label with gh-cli `gh label create` command. The current script format
+in `github_issue.fish`
 
-| Field Name           | Field ID                       | Type                       | Options (if applicable)                                         |
-| -------------------- | ------------------------------ | -------------------------- | --------------------------------------------------------------- |
-| Title                | PVTF_lAHOCchfJ84A3c00zgslf0M   | ProjectV2Field             |                                                                 |
-| Assignees            | PVTF_lAHOCchfJ84A3c00zgslf0Q   | ProjectV2Field             |                                                                 |
-| Status               | PVTSSF_lAHOCchfJ84A3c00zgslf0U | ProjectV2SingleSelectField | Sort, Set In Order, Shine, Standardize, Sustain, Safety, Spirit |
-| Labels               | PVTF_lAHOCchfJ84A3c00zgslf0Y   | ProjectV2Field             |                                                                 |
-| Linked pull requests | PVTF_lAHOCchfJ84A3c00zgslf0c   | ProjectV2Field             |                                                                 |
-| Milestone            | PVTF_lAHOCchfJ84A3c00zgslf0g   | ProjectV2Field             |                                                                 |
-| Repository           | PVTF_lAHOCchfJ84A3c00zgslf0k   | ProjectV2Field             |                                                                 |
-| Reviewers            | PVTF_lAHOCchfJ84A3c00zgslf0w   | ProjectV2Field             |                                                                 |
-| Parent issue         | PVTF_lAHOCchfJ84A3c00zgslf00   | ProjectV2Field             |                                                                 |
-| Sub-issues progress  | PVTF_lAHOCchfJ84A3c00zgslf04   | ProjectV2Field             |                                                                 |
-| Priority             | PVTSSF_lAHOCchfJ84A3c00zgslf9E | ProjectV2SingleSelectField | P1, P2, P3, P4                                                  |
-| Size                 | PVTSSF_lAHOCchfJ84A3c00zgslf9I | ProjectV2SingleSelectField | XS, S, M, L, XL                                                 |
-| Effort               | PVTF_lAHOCchfJ84A3c00zgslf9M   | ProjectV2Field             | Number (1-8)                                                    |
-| Start date           | PVTF_lAHOCchfJ84A3c00zgslf9Q   | ProjectV2Field             |                                                                 |
-| End date             | PVTF_lAHOCchfJ84A3c00zgslf9U   | ProjectV2Field             |                                                                 |
+- **Title**: `PVTF_lAHOCchfJ84A3c00zgslf0M` (ProjectV2Field)
+- **Assignees**: `PVTF_lAHOCchfJ84A3c00zgslf0Q` (ProjectV2Field)
+- **Status**: `PVTSSF_lAHOCchfJ84A3c00zgslf0U` (ProjectV2SingleSelectField)
+  Options: Sort, Set In Order, Shine, Standardize, Sustain, Safety, Spirit
+- **Labels**: `PVTF_lAHOCchfJ84A3c00zgslf0Y` (ProjectV2Field)
+- **Linked pull requests**: `PVTF_lAHOCchfJ84A3c00zgslf0c` (ProjectV2Field)
+- **Milestone**: `PVTF_lAHOCchfJ84A3c00zgslf0g` (ProjectV2Field)
+- **Repository**: `PVTF_lAHOCchfJ84A3c00zgslf0k` (ProjectV2Field)
+- **Reviewers**: `PVTF_lAHOCchfJ84A3c00zgslf0w` (ProjectV2Field)
+- **Parent issue**: `PVTF_lAHOCchfJ84A3c00zgslf00` (ProjectV2Field)
+- **Sub-issues progress**: `PVTF_lAHOCchfJ84A3c00zgslf04` (ProjectV2Field)
+- **Priority**: `PVTSSF_lAHOCchfJ84A3c00zgslf9E` (ProjectV2SingleSelectField)
+  Options: P1, P2, P3, P4
+- **Size**: `PVTSSF_lAHOCchfJ84A3c00zgslf9I` (ProjectV2SingleSelectField)
+  Options: XS, S, M, L, XL
+- **Effort**: `PVTF_lAHOCchfJ84A3c00zgslf9M` (ProjectV2Field)
+  Options: Number (1-8)
+- **Start date**: `PVTF_lAHOCchfJ84A3c00zgslf9Q` (ProjectV2Field)
+- **End date**: `PVTF_lAHOCchfJ84A3c00zgslf9U` (ProjectV2Field)
 
 - For single select fields (Status, Priority, Size), use the option names as
   shown above.
@@ -94,6 +102,58 @@ From the bug report's "Environment" section:
   affected template file}
 - **Template Engine**: {Jinja2 or Django Template Language}
 
+### Pseudocode
+
+Include pseudocode to outline the logic or flow of the issue. For example:
+
+```pseudocode
+FUNCTION redesignNavigationBarAndHeader()
+    removeRedundantHeader()
+    resizeBannerHeader()
+    moveBreadcrumbsToBannerHeader()
+    implementThemeToggleWithIcons()
+    improveNavBarStyling()
+END FUNCTION
+```
+
+### Mermaid Flow Diagram
+
+Provide a flowchart to visualize workflows or processes. For example:
+
+```mermaid
+flowchart TD
+    A[Start Redesign] --> B{Remove redundant header?}
+    B -- Yes --> C[Delete extra header element]
+    C --> D[Resize banner-header]
+    D --> E[Move breadcrumbs into banner-header]
+    E --> F[Implement theme toggle with icons]
+    F --> G[Improve nav bar styling]
+    G --> H[End]
+    B -- No --> D
+```
+
+### ERD Diagram
+
+Include an Entity-Relationship Diagram (ERD) to show data relationships with
+data in models.py. For example:
+
+```mermaid
+erDiagram
+    Header ||--o{ BannerHeader : contains
+    BannerHeader ||--o{ Breadcrumbs : contains
+    BannerHeader ||--o{ ThemeToggle : contains
+    BannerHeader ||--o{ NavigationBar : contains
+    NavigationBar {
+        string label
+        string url
+        string icon
+    }
+    ThemeToggle {
+        string mode
+        string icon
+    }
+```
+
 ### Logs and Error Details
 
 - **Error Messages**: {Exact error text from bug report}
@@ -107,37 +167,9 @@ From the bug report's "Environment" section:
 - **User Impact**: {Description of how users are affected}
 - **Frequency**: {How often the issue occurs, from bug report}
 
-### Visual Evidence
+### Visual Workflow
 
 Reference any screenshots or videos from the bug report.
-
-### Mermaid Diagram (Optional)
-
-If helpful, include a Mermaid diagram to visualize workflows, data models, or
-bug scenarios.
-
-```mermaid
-<!-- Example: Replace with your diagram -->
-flowchart TD
-    A[Start] --> B{Is it a bug?}
-    B -- Yes --> C[Describe bug flow]
-    B -- No --> D[Describe feature flow]
-```
-
-### Proposed Implementation
-
-For bugs:
-
-- Outline potential fix approach based on bug analysis
-- Reference any identified cause from bug report
-
-For features/enhancements:
-
-- Outline a potential approach following project principles:
-  - HTML-first approach with semantic markup
-  - Progressive enhancement using our technology stack
-  - Data-oriented programming principles
-  - WCAG 2.1 AA compliance
 
 ### Acceptance Criteria
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.9
 """
 Simplified pylint wrapper for pre-commit that doesn't use Django plugins.
 This avoids app registry initialization issues during pre-commit hooks.
