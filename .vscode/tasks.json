@@ -609,7 +609,7 @@
       "problemMatcher": [],
       "type": "shell"
     },
-    
+
     {
       "args": [
         "-c",
@@ -754,7 +754,7 @@
       },
       "problemMatcher": [],
       "type": "shell"
-    }
+    },
     {
       "args": [
         "-c",
