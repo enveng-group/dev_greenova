@@ -39,7 +39,7 @@ local_settings.py
 # Django specific
 **/migrations/**
 !**/migrations/__init__.py
-db.sqlite3-journal
+db.sqlite3*
 collected_static/
 .env.dev
 .env.prod

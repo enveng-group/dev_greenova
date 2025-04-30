@@ -46,6 +46,8 @@ class ObligationData(TypedDict, total=False):
     site_or_desktop: str
     gap_analysis: bool
     notes_for_gap_analysis: str
+    obligation_type: str  # Added from sample data
+    new_control_action_required: bool  # Added from sample data
     created_at: Any  # Datetime
     updated_at: Any  # Datetime
 
@@ -65,6 +67,38 @@ class Command(BaseCommand):
         'Condition': 'MS1180-',
         'Condtion': 'MS1180-',
         'PCEMP': 'PCEMP-',
+    }
+
+    # CSV field mapping to model fields
+    CSV_FIELD_MAPPING: Dict[str, str] = {
+        'project__name': 'project',
+        'primary__environmental__mechanism': 'primary_environmental_mechanism',
+        'procedure': 'procedure',
+        'environmental__aspect': 'environmental_aspect',
+        'obligation__number': 'obligation_number',
+        'obligation': 'obligation',
+        'accountability': 'accountability',
+        'responsibility': 'responsibility',
+        'project_phase': 'project_phase',
+        'action__due_date': 'action_due_date',
+        'close__out__date': 'close_out_date',
+        'status': 'status',
+        'supporting__information': 'supporting_information',
+        'general__comments': 'general_comments',
+        'compliance__comments': 'compliance_comments',
+        'non_conformance__comments': 'non_conformance_comments',
+        'evidence': 'evidence_notes',
+        'recurring__obligation': 'recurring_obligation',
+        'recurring__frequency': 'recurring_frequency',
+        'recurring__status': 'recurring_status',
+        'recurring__forcasted__date': 'recurring_forcasted_date',
+        'inspection': 'inspection',
+        'inspection__frequency': 'inspection_frequency',
+        'site_or__desktop': 'site_or_desktop',
+        'gap__analysis': 'gap_analysis',
+        'notes_for__gap__analysis': 'notes_for_gap_analysis',
+        'obligation_type': 'obligation_type',
+        'new__control__action_required': 'new_control_action_required',
     }
 
     def add_arguments(self, parser: CommandParser) -> None:
@@ -99,19 +133,9 @@ class Command(BaseCommand):
             help='Process each row without wrapping in a transaction (use for database issues)'
         )
         parser.add_argument(
-            '--no-transaction',
+            '--verbose',
             action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
-        )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
-        )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
+            help='Show detailed information about each processed row'
         )
 
     def clean_boolean(self, value: Any) -> bool:
@@ -122,6 +146,22 @@ class Command(BaseCommand):
             value = value.lower().strip()
             return value in ('true', 'yes', 'y', '1', 'on', 't')
         return bool(value)
+
+    def clean_text(self, text: Optional[str]) -> str:
+        """Clean and normalize text fields."""
+        if not text:
+            return ''
+        
+        # Replace special characters that might be in CSV from Excel
+        text = str(text).strip()
+        # Replace non-breaking spaces and other special characters
+        text = text.replace('\u00a0', ' ')
+        # Replace bullet points that might come from Excel (�)
+        text = text.replace('�', '- ')
+        # Replace multiple spaces with a single space
+        text = ' '.join(text.split())
+        
+        return text
 
     def normalize_obligation_number(self, obligation_number: str) -> str:
         """Normalize obligation number format."""
@@ -169,6 +209,36 @@ class Command(BaseCommand):
         mechanism.save()
         return mechanism, True
 
+    def parse_date_safely(self, date_str: Optional[str]) -> Optional[Any]:
+        """Safely parse date strings, handling various formats."""
+        if not date_str:
+            return None
+            
+        date_str = str(date_str).strip()
+        if not date_str:
+            return None
+            
+        try:
+            # Handle common European format (DD-MM-YYYY)
+            if len(date_str) == 10 and date_str[2] == date_str[5] == '-':
+                day, month, year = date_str.split('-')
+                date_str = f"{year}-{month}-{day}"
+                
+            # Handle Excel's numeric date format (common problem)
+            if date_str.isdigit() and len(date_str) <= 5:
+                # This is likely an Excel serial date - we can't reliably parse these
+                self.stdout.write(
+                    self.style.WARNING(f"Ignoring possible Excel serial date: {date_str}")
+                )
+                return None
+                
+            return parse_date(date_str)
+        except Exception as e:
+            self.stdout.write(
+                self.style.WARNING(f"Failed to parse date '{date_str}': {str(e)}")
+            )
+            return None
+
     def process_row(self, row: Dict[str, Any], project: Project) -> ObligationData:
         """Process a single CSV row into an ObligationData dictionary."""
         # Map CSV fields to ObligationData fields
@@ -176,17 +246,9 @@ class Command(BaseCommand):
         mechanism, _ = self.get_or_create_mechanism(mechanism_name, project)
 
         # Process dates
-        action_due_date = None
-        if row.get('action__due_date'):
-            action_due_date = parse_date(row['action__due_date'])
-
-        close_out_date = None
-        if row.get('close__out__date'):
-            close_out_date = parse_date(row['close__out__date'])
-
-        recurring_forecasted_date = None
-        if row.get('recurring__forcasted__date'):
-            recurring_forecasted_date = parse_date(row['recurring__forcasted__date'])
+        action_due_date = self.parse_date_safely(row.get('action__due_date'))
+        close_out_date = self.parse_date_safely(row.get('close__out__date'))
+        recurring_forecasted_date = self.parse_date_safely(row.get('recurring__forcasted__date'))
 
         # Normalize obligation number
         obligation_number = self.normalize_obligation_number(
@@ -201,51 +263,75 @@ class Command(BaseCommand):
         # Set timestamps for new records
         now = timezone.now()
 
+        # Clean text fields to handle special characters from Excel
+        obligation_text = self.clean_text(row.get('obligation', ''))
+        supporting_info = self.clean_text(row.get('supporting__information', ''))
+        general_comments = self.clean_text(row.get('general__comments', ''))
+        compliance_comments = self.clean_text(row.get('compliance__comments', ''))
+        non_conformance_comments = self.clean_text(row.get('non_conformance__comments', ''))
+
         # Create the ObligationData dictionary
         obligation_data: ObligationData = {
             'obligation_number': obligation_number,
             'project': project,
             'primary_environmental_mechanism': mechanism,
-            'procedure': row.get('procedure', ''),
-            'environmental_aspect': row.get('environmental__aspect', ''),
-            'obligation': row.get('obligation', ''),
-            'accountability': row.get('accountability', ''),
-            'responsibility': row.get('responsibility', ''),
-            'project_phase': row.get('project_phase', ''),
+            'procedure': self.clean_text(row.get('procedure', '')),
+            'environmental_aspect': self.clean_text(row.get('environmental__aspect', '')),
+            'obligation': obligation_text,
+            'accountability': self.clean_text(row.get('accountability', '')),
+            'responsibility': self.clean_text(row.get('responsibility', '')),
+            'project_phase': self.clean_text(row.get('project_phase', '')),
             'action_due_date': action_due_date,
             'close_out_date': close_out_date,
-            'status': row.get('status', 'not started'),
-            'supporting_information': row.get('supporting__information', ''),
-            'general_comments': row.get('general__comments', ''),
-            'compliance_comments': row.get('compliance__comments', ''),
-            'non_conformance_comments': row.get('non_conformance__comments', ''),
-            'evidence_notes': row.get('evidence', ''),
+            'status': self.clean_text(row.get('status', 'not started')),
+            'supporting_information': supporting_info,
+            'general_comments': general_comments,
+            'compliance_comments': compliance_comments,
+            'non_conformance_comments': non_conformance_comments,
+            'evidence_notes': self.clean_text(row.get('evidence', '')),
             'recurring_obligation': self.clean_boolean(
                 row.get('recurring__obligation', False)
             ),
             'recurring_frequency': recurring_frequency,
-            'recurring_status': row.get('recurring__status', ''),
+            'recurring_status': self.clean_text(row.get('recurring__status', '')),
             'recurring_forcasted_date': recurring_forecasted_date,
             'inspection': self.clean_boolean(row.get('inspection', False)),
-            'inspection_frequency': row.get('inspection__frequency', ''),
-            'site_or_desktop': row.get('site_or__desktop', ''),
+            'inspection_frequency': self.clean_text(row.get('inspection__frequency', '')),
+            'site_or_desktop': self.clean_text(row.get('site_or__desktop', '')),
             'gap_analysis': self.clean_boolean(row.get('gap__analysis', False)),
-            'notes_for_gap_analysis': row.get('notes_for__gap__analysis', ''),
+            'notes_for_gap_analysis': self.clean_text(row.get('notes_for__gap__analysis', '')),
+            'obligation_type': self.clean_text(row.get('obligation_type', '')),
+            'new_control_action_required': self.clean_boolean(row.get('new__control__action_required', False)),
             'created_at': now,
             'updated_at': now,
         }
-        return result
 
         return obligation_data
 
+    def validate_obligation_data(self, obligation_data: ObligationData) -> Tuple[bool, str]:
+        """Validate the obligation data before saving."""
+        # Check required fields
+        if not obligation_data.get('obligation_number'):
+            return False, "Missing obligation number"
+            
+        if not obligation_data.get('obligation'):
+            return False, f"Missing obligation text for {obligation_data.get('obligation_number')}"
+            
+        # Additional validation can be added here
+        
+        return True, ""
+
     def create_or_update_obligation(
-        self, obligation_data: ObligationData, force_update: bool = False
+        self, obligation_data: ObligationData, force_update: bool = False, verbose: bool = False
     ) -> Tuple[Union[Obligation, bool, None], str]:
         """Create or update an obligation from the data dictionary."""
         obligation_number = obligation_data.get('obligation_number', '')
-        if not obligation_number:
-            return None, 'Missing obligation number'
-
+        
+        # Validate the data
+        is_valid, validation_message = self.validate_obligation_data(obligation_data)
+        if not is_valid:
+            return None, validation_message
+            
         # Check if obligation already exists
         existing_obligation = Obligation.objects.filter(
             obligation_number=obligation_number
@@ -269,11 +355,24 @@ class Command(BaseCommand):
                 # Always update the updated_at timestamp
                 existing_obligation.updated_at = timezone.now()
                 existing_obligation.save()
+                
+                if verbose:
+                    self.stdout.write(f'Updated fields for {obligation_number}: {", ".join(obligation_data.keys())}')
+                    
                 return existing_obligation, f'Updated obligation {obligation_number}'
             else:
                 # Create new obligation
-                new_obligation = Obligation(**obligation_data)
+                # Filter obligation_data to only include fields that exist in the model
+                # This prevents errors with fields that might be in the CSV but not in the model
+                model_fields = [field.name for field in Obligation._meta.get_fields()]
+                filtered_data = {k: v for k, v in obligation_data.items() if k in model_fields}
+                
+                new_obligation = Obligation(**filtered_data)
                 new_obligation.save()
+                
+                if verbose:
+                    self.stdout.write(f'Created with fields: {", ".join(filtered_data.keys())}')
+                    
                 return new_obligation, f'Created obligation {obligation_number}'
         except Exception as e:
             return None, f'Failed to save obligation: {str(e)}'
@@ -299,78 +398,156 @@ class Command(BaseCommand):
         updated = 0
         skipped = 0
         errors = []
+        verbose = options.get('verbose', False)
 
-        # Open and process the CSV file
+        # Open and process the CSV file - handle BOM in Excel-generated CSVs
         with open(file_path, encoding='utf-8-sig') as csvfile:
-            reader = csv.DictReader(csvfile)
-
-            for row_num, row in enumerate(
-                reader, start=2
-            ):  # Start at 2 to account for header row
-                # Use transaction per row to prevent cascading failures
-                try:
-                    with transaction.atomic():
-                        # Determine project for this row
-                        project_name = row.get('project__name', '')
-                        if not project_name and not default_project:
-                            errors.append(
-                                f'Row {row_num}: Missing project name and no default project specified'
-                            )
+            # Check if the file is empty
+            if os.path.getsize(file_path) == 0:
+                errors.append("CSV file is empty")
+                return created, updated, skipped, errors
+                
+            # Print header info in verbose mode
+            if verbose:
+                csvfile.seek(0)
+                first_line = csvfile.readline().strip()
+                self.stdout.write(f"CSV Header: {first_line}")
+                csvfile.seek(0)
+            
+            try:
+                reader = csv.DictReader(csvfile)
+                
+                # Verify CSV headers
+                if not reader.fieldnames:
+                    errors.append("CSV file has no header row")
+                    return created, updated, skipped, errors
+                    
+                if verbose:
+                    self.stdout.write(f"Detected CSV fields: {', '.join(reader.fieldnames)}")
+                    
+                # Check for required columns
+                required_columns = ['obligation__number', 'obligation']
+                missing_columns = [col for col in required_columns if col not in reader.fieldnames]
+                if missing_columns:
+                    errors.append(f"CSV is missing required columns: {', '.join(missing_columns)}")
+                    return created, updated, skipped, errors
+                
+                for row_num, row in enumerate(
+                    reader, start=2
+                ):  # Start at 2 to account for header row
+                    # Skip empty rows
+                    if not any(value.strip() if isinstance(value, str) else value for value in row.values()):
+                        if verbose:
+                            self.stdout.write(f"Skipping empty row {row_num}")
+                        continue
+                        
+                    # Use transaction per row to prevent cascading failures
+                    try:
+                        # Skip transaction if --no-transaction flag is set
+                        if options.get('no_transaction'):
+                            process_row_fn = self._process_row_without_transaction
+                        else:
+                            process_row_fn = self._process_row_with_transaction
+                        
+                        result = process_row_fn(row, row_num, default_project, options)
+                        
+                        if result is None:
+                            # Row processing was skipped
                             skipped += 1
-                            continue
-
-                        if project_name:
-                            project = Project.objects.filter(name=project_name).first()
-                            if not project:
-                                project = Project.objects.create(name=project_name)
-                                logger.info(f'Created project: {project_name}')
-                        else:
-                            project = default_project
-
-                        # Process the row into ObligationData
-                        obligation_data = self.process_row(row, project)
-
-                        # Create or update the obligation
-                        if options.get('dry_run'):
-                            self.stdout.write(
-                                f"Would import: {obligation_data['obligation_number']} - {obligation_data['obligation'][:50]}..."
-                            )
-                            created += 1
-                        else:
-                            result, message = self.create_or_update_obligation(
-                                obligation_data,
-                                force_update=options.get('update', False),
-                            )
-
-                            if result is None:
+                        elif isinstance(result, tuple) and len(result) == 2:
+                            status, message = result
+                            if status == 'created':
+                                created += 1
+                                self.stdout.write(f'Success: {message}')
+                            elif status == 'updated':
+                                updated += 1
+                                self.stdout.write(f'Success: {message}')
+                            elif status == 'skipped':
+                                skipped += 1
+                                self.stdout.write(f'Skipped: {message}')
+                            elif status == 'error':
                                 errors.append(f'Row {row_num}: {message}')
                                 skipped += 1
-                            elif result is False:
-                                self.stdout.write(f'Skipped: {message}')
-                                skipped += 1
-                            elif isinstance(result, Obligation):
-                                if 'Updated' in message:
-                                    updated += 1
-                                else:
-                                    created += 1
-                                self.stdout.write(f'Success: {message}')
-                except Exception as e:
-                    logger.exception(f'Error processing row {row_num}: {str(e)}')
-                    errors.append(f'Row {row_num}: {str(e)}')
-                    skipped += 1
+                                
+                                if not options.get('continue_on_error'):
+                                    errors.append(
+                                        'Import halted due to error. Use --continue-on-error to process all rows.'
+                                    )
+                                    break
+                    except Exception as e:
+                        logger.exception(f'Error processing row {row_num}: {str(e)}')
+                        errors.append(f'Row {row_num}: {str(e)}')
+                        skipped += 1
 
-                    if not options.get('continue_on_error', False):
-                        # Break the loop if not continuing on errors
-                        errors.append(
-                            'Import halted due to error. Use --continue-on-error to process all rows.'
-                        )
-                        break
+                        if not options.get('continue_on_error', False):
+                            # Break the loop if not continuing on errors
+                            errors.append(
+                                'Import halted due to error. Use --continue-on-error to process all rows.'
+                            )
+                            break
+            except csv.Error as e:
+                errors.append(f"CSV parsing error: {str(e)}")
+                logger.exception(f"CSV parsing error: {str(e)}")
 
         return created, updated, skipped, errors
+        
+    def _process_row_with_transaction(self, row, row_num, default_project, options):
+        """Process a row within a transaction."""
+        with transaction.atomic():
+            return self._process_row(row, row_num, default_project, options)
+            
+    def _process_row_without_transaction(self, row, row_num, default_project, options):
+        """Process a row without a transaction."""
+        return self._process_row(row, row_num, default_project, options)
+    
+    def _process_row(self, row, row_num, default_project, options):
+        """Common row processing logic."""
+        verbose = options.get('verbose', False)
+        
+        # Determine project for this row
+        project_name = row.get('project__name', '')
+        if not project_name and not default_project:
+            return 'error', 'Missing project name and no default project specified'
+
+        if project_name:
+            project = Project.objects.filter(name=project_name).first()
+            if not project:
+                project = Project.objects.create(name=project_name)
+                logger.info(f'Created project: {project_name}')
+        else:
+            project = default_project
+
+        # Process the row into ObligationData
+        obligation_data = self.process_row(row, project)
+        
+        if verbose:
+            obligation_number = obligation_data.get('obligation_number', 'unknown')
+            self.stdout.write(f"Processing obligation {obligation_number} (row {row_num})")
+
+        # Create or update the obligation
+        if options.get('dry_run'):
+            return 'created', f"Would import: {obligation_data.get('obligation_number', 'unknown')} - {obligation_data.get('obligation', '')[:50]}..."
+        else:
+            result, message = self.create_or_update_obligation(
+                obligation_data,
+                force_update=options.get('update', False),
+                verbose=verbose
+            )
+
+            if result is None:
+                return 'error', message
+            elif result is False:
+                return 'skipped', message
+            elif isinstance(result, Obligation):
+                if 'Updated' in message:
+                    return 'updated', message
+                else:
+                    return 'created', message
 
     def handle(self, *args: Any, **options: Any) -> None:
         """Main command handler."""
         csv_file = options['csv_file']
+        verbose = options.get('verbose', False)
 
         self.stdout.write(f'Importing obligations from {csv_file}')
 
@@ -384,8 +561,13 @@ class Command(BaseCommand):
             post_save_receivers = post_save.receivers
             post_save.receivers = []
 
+            start_time = timezone.now()
+            
             # Process the CSV file - NOT within an atomic transaction
             created, updated, skipped, errors = self.process_csv_file(csv_file, options)
+
+            end_time = timezone.now()
+            duration = (end_time - start_time).total_seconds()
 
             # Report results
             if errors:
@@ -408,7 +590,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f'Successfully created {created} obligations, updated {updated}, skipped {skipped}'
+                        f'Successfully created {created} obligations, updated {updated}, skipped {skipped} in {duration:.2f} seconds'
                     )
                 )
         finally:
