@@ -98,21 +98,6 @@ class Command(BaseCommand):
             action='store_true',
             help='Process each row without wrapping in a transaction (use for database issues)'
         )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
-        )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
-        )
-        parser.add_argument(
-            '--no-transaction',
-            action='store_true',
-            help='Process each row without wrapping in a transaction (use for database issues)'
-        )
 
     def clean_boolean(self, value: Any) -> bool:
         """Convert various boolean representations to Python booleans."""
@@ -234,7 +219,6 @@ class Command(BaseCommand):
             'created_at': now,
             'updated_at': now,
         }
-        return result
 
         return obligation_data
 
@@ -309,51 +293,37 @@ class Command(BaseCommand):
             ):  # Start at 2 to account for header row
                 # Use transaction per row to prevent cascading failures
                 try:
-                    with transaction.atomic():
-                        # Determine project for this row
-                        project_name = row.get('project__name', '')
-                        if not project_name and not default_project:
-                            errors.append(
-                                f'Row {row_num}: Missing project name and no default project specified'
-                            )
-                            skipped += 1
-                            continue
-
-                        if project_name:
-                            project = Project.objects.filter(name=project_name).first()
-                            if not project:
-                                project = Project.objects.create(name=project_name)
-                                logger.info(f'Created project: {project_name}')
-                        else:
-                            project = default_project
-
-                        # Process the row into ObligationData
-                        obligation_data = self.process_row(row, project)
-
-                        # Create or update the obligation
-                        if options.get('dry_run'):
-                            self.stdout.write(
-                                f"Would import: {obligation_data['obligation_number']} - {obligation_data['obligation'][:50]}..."
-                            )
+                    # Skip transaction if --no-transaction flag is set
+                    if options.get('no_transaction'):
+                        process_row_fn = self._process_row_without_transaction
+                    else:
+                        process_row_fn = self._process_row_with_transaction
+                    
+                    result = process_row_fn(row, row_num, default_project, options)
+                    
+                    if result is None:
+                        # Row processing was skipped
+                        skipped += 1
+                    elif isinstance(result, tuple) and len(result) == 2:
+                        status, message = result
+                        if status == 'created':
                             created += 1
-                        else:
-                            result, message = self.create_or_update_obligation(
-                                obligation_data,
-                                force_update=options.get('update', False),
-                            )
-
-                            if result is None:
-                                errors.append(f'Row {row_num}: {message}')
-                                skipped += 1
-                            elif result is False:
-                                self.stdout.write(f'Skipped: {message}')
-                                skipped += 1
-                            elif isinstance(result, Obligation):
-                                if 'Updated' in message:
-                                    updated += 1
-                                else:
-                                    created += 1
-                                self.stdout.write(f'Success: {message}')
+                            self.stdout.write(f'Success: {message}')
+                        elif status == 'updated':
+                            updated += 1
+                            self.stdout.write(f'Success: {message}')
+                        elif status == 'skipped':
+                            skipped += 1
+                            self.stdout.write(f'Skipped: {message}')
+                        elif status == 'error':
+                            errors.append(f'Row {row_num}: {message}')
+                            skipped += 1
+                            
+                            if not options.get('continue_on_error'):
+                                errors.append(
+                                    'Import halted due to error. Use --continue-on-error to process all rows.'
+                                )
+                                break
                 except Exception as e:
                     logger.exception(f'Error processing row {row_num}: {str(e)}')
                     errors.append(f'Row {row_num}: {str(e)}')
@@ -367,6 +337,52 @@ class Command(BaseCommand):
                         break
 
         return created, updated, skipped, errors
+        
+    def _process_row_with_transaction(self, row, row_num, default_project, options):
+        """Process a row within a transaction."""
+        with transaction.atomic():
+            return self._process_row(row, row_num, default_project, options)
+            
+    def _process_row_without_transaction(self, row, row_num, default_project, options):
+        """Process a row without a transaction."""
+        return self._process_row(row, row_num, default_project, options)
+    
+    def _process_row(self, row, row_num, default_project, options):
+        """Common row processing logic."""
+        # Determine project for this row
+        project_name = row.get('project__name', '')
+        if not project_name and not default_project:
+            return 'error', 'Missing project name and no default project specified'
+
+        if project_name:
+            project = Project.objects.filter(name=project_name).first()
+            if not project:
+                project = Project.objects.create(name=project_name)
+                logger.info(f'Created project: {project_name}')
+        else:
+            project = default_project
+
+        # Process the row into ObligationData
+        obligation_data = self.process_row(row, project)
+
+        # Create or update the obligation
+        if options.get('dry_run'):
+            return 'created', f"Would import: {obligation_data['obligation_number']} - {obligation_data['obligation'][:50]}..."
+        else:
+            result, message = self.create_or_update_obligation(
+                obligation_data,
+                force_update=options.get('update', False),
+            )
+
+            if result is None:
+                return 'error', message
+            elif result is False:
+                return 'skipped', message
+            elif isinstance(result, Obligation):
+                if 'Updated' in message:
+                    return 'updated', message
+                else:
+                    return 'created', message
 
     def handle(self, *args: Any, **options: Any) -> None:
         """Main command handler."""
