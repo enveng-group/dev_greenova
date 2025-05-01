@@ -1,4 +1,6 @@
 from typing import Any, Dict
+from django.urls import reverse
+
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model  # Updated import for User model
@@ -25,6 +27,12 @@ def profile_view(request: HttpRequest) -> HttpResponse:
     profile: Profile = request.user.profile
     context: Dict[str, Any] = {
         'profile': profile,
+        'breadcrumbs': [
+            {"title": "Dashboard", "url": reverse("dashboard:home")},
+            {"title": "Companies", "url": reverse("company:list")},
+            {"title": "Profile", "active": True}
+        ]
+
     }
 
     if request.htmx:

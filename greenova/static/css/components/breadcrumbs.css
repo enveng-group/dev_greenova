@@ -55,3 +55,26 @@ nav.breadcrumb-container
     background: var(--greenova-beige-secondary);
   }
 }
+
+.breadcrumb-nav {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.breadcrumb-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-list li {
+  font-size: 0.875rem;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb-list li:not(:last-child)::after {
+  content: '/';
+  margin: 0 0.5rem;
+  color: var(--greenova-text-muted);
+}

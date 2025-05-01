@@ -104,6 +104,9 @@ class DashboardHomeView(LoginRequiredMixin, TemplateView):
                 'error': None,
                 'user_roles': user_roles,
                 'show_feedback_link': True,  # Add this to enable the feedback link
+                 'breadcrumbs': [ # Breadcrumbs for navigation
+        {"title": "Dashboard", "active": True}
+    ]
             })
 
             logger.debug(
