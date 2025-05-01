@@ -1,111 +1,93 @@
-# Pull Request Template
+# Pull Request: Release v0.0.6
 
 ## Title
 
-`release(v0.0.5): comprehensive platform enhancements and new features`
+`release(v0.0.6): Company management, authentication & auditing system enhancements`
 
 ## Description
 
 ### Purpose
 
-Pre-release v0.0.5 integrating multiple feature branches and improvements
-across the Greenova platform. This release enhances development infrastructure,
-user experience, testing capabilities, and adds new functional modules for
-company management and user profiles.
+This PR delivers pre-release v0.0.6 which integrates multiple feature branches
+and infrastructure improvements across the Greenova platform. This release
+focuses on company management capabilities, authentication enhancements,
+improved development workflows, and better data management tooling.
 
 ### Changes
 
-#### Development Infrastructure
+#### Authentication Framework
 
-- Updated development tooling with enhanced pre-commit hooks and custom pylint
-  extensions.
-- Configured mypy with django-stubs for better type checking.
-- Standardized editor configuration and VSCode settings.
-- Improved devcontainer configuration with Snyk CLI and Git features.
-- Integrated Sentry for error tracking.
-- Added direnv support for environment variable management.
-- Configured Prettier for consistent code formatting.
-- Migrated to dotenv-vault for environment management.
+- Implemented proper authentication namespace in URLs.py
+- Added correct namespace routing for login redirects
+- Configured LOGIN_URL setting to use authentication namespace
+- Fixed test_company_create_requires_login test
 
-#### UI/UX Improvements
+#### Company Management Module
 
-- Enhanced landing page with mission statement and key features sections.
-- Implemented theme switching functionality with WCAG 2.1 AA compliance.
-- Refined dashboard interface, navigation, and component organization.
-- Added responsive layouts and improved semantic HTML structure.
-- Optimized chart generation with centralized logic in `figures.py`.
-- Reorganized CSS directory structure for better organization.
-- Enhanced breadcrumb component with better styling and accessibility.
+- Added Company and UserCompany models with proper relationships
+- Implemented company-scoped data access control
+- Created middleware for active company context
+- Added mixins for company-scoped views
+- Enhanced company templates with improved UI components
 
-#### New Features
+#### Auditing Module
 
-- **Company Management Module**
-  - Company models, views, and templates.
-  - Document management capabilities.
-  - Member role management.
-  - Navigation integration.
-  - CSS styling for company components.
-- **User Profile Functionality**
-  - Complete user profile management.
-  - Password change capability.
-  - Admin interfaces for user management.
-- **Chatbot Development**
-  - Implemented chatbot conversation management.
-  - Added chatbot message styles and variables.
-  - Chatbot serialization and protocol buffer support.
+- Created dedicated auditing app for compliance and non-conformance tracking
+- Extracted comments into standalone models for better data management
+- Added admin interface for audit record management
+- Implemented history tracking for key operations
 
-#### Testing and Quality
+#### Development Workflow
 
-- Integrated pytest framework with comprehensive test coverage across all apps.
-- Added new test files for authentication, chatbot, company, core, and other
-  modules.
-- Refactored code structure to improve testability.
-- Implemented ESLint for JavaScript.
-- Added djlint for Django HTML templates.
-- Configured autopep8 for Python formatting.
+- Added IPython integration with autoreload capabilities
+- Added bash aliases for improved developer workflow
+- Enhanced VSCode tasks.json for improved development workflow
+- Migrated to dotenv-vault for more secure environment management
+- Rebuilt django-build command in Makefile
 
-#### Documentation
+#### Data Management
 
-- Restructured `docs/resources` with logical subdirectories.
-- Added commit message templates, code review templates, and GitHub issue
-  templates.
-- Updated environment configuration documentation and technical guides.
-- Added GitHub CLI usage instructions.
-- Included changelog references.
-- Enhanced front-end interactivity documentation.
-- Added comprehensive Makefile comments.
+- Refactored obligation import command for improved reliability
+- Enhanced error handling and reporting during imports
+- Added transaction support to prevent partial imports
+- Improved progress reporting and logging
 
-#### Dependencies
+#### User Experience
 
-- Updated packages for compatibility with Python 3.9.21 and Django 4.1.13.
-- Downgraded matplotlib version for compatibility.
-- Revised environment variable configurations in `.env.vault`.
-- Included pre-commit dependency in `requirements.txt`.
+- Added interactive hyperlinks for status counts in procedure views
+- Enhanced user profile functionality with role relationship display
+- Added overdue actions display to user dashboard
+- Improved data filtering with HTMX for dynamic content loading
 
 ### Related Issues
 
-- Closes #33, #41
+- Fixes #72 - Authentication namespace implementation
+- Fixes #87 - Company management module
+- Fixes #88 - Obligation import improvements
+- Fixes #37 - Auditing module implementation
 
 ### Testing Performed
 
-- Comprehensive test suite execution with pytest.
-- Manual testing of new company management features.
-- User profile functionality verification.
-- Chatbot interaction testing.
-- Theme switching and accessibility compliance validation.
-- Cross-browser compatibility testing.
+- Comprehensive test suite execution with pytest
+- Verified proper authentication flow with login redirects
+- Tested company management features with multi-company scenarios
+- Validated obligation import process with error handling
+- Verified audit record creation and management
+- Tested integration between company and obligation models
+- Validated development environment configuration
 
 ### Deployment Notes
 
-- Contains multiple database migrations.
-- Requires updated environment variables via `.env.vault`.
-- Updated dependency requirements need to be installed.
-- Sentry integration requires configuration of Sentry DSN.
+- Contains database migrations for company model and auditing module
+- Requires updated environment variables via `.env.vault`
+- Updated dependency requirements in requirements.txt
+- Includes infrastructure changes for development workflow
 
 ### Contributors
 
 - [agallo](https://github.com/enveng-group)
 - [JaredStanbrook](https://github.com/JaredStanbrook)
-- [cameronsims](https://github.com/cameronsims)
+- [mhahmad0](https://github.com/mhahmad0)
 - [Channing88](https://github.com/Channing88)
-- [muhammadhaseebahmad](https://github.com/mhahmad0)
+- [camersonsims](https://github.com/camersonsims)
+- [alexcao123456](https://github.com/alexcao123456)

@@ -1,4 +1,4 @@
-<!-- markdownlint-configure-file { "MD024": { "allow_different_nesting": true } } -->
+<!-- markdownlint-disable MD013 MD024 -->
 
 # Changelog
 
@@ -28,7 +28,8 @@ All notable changes to this project will be documented in this file.
 
 - None
 
-[Unreleased]: https://github.com/username/greenova/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/username/greenova/compare/v0.0.6...HEAD
+[v0.0.6]: https://github.com/username/greenova/compare/v0.0.5...v0.0.6
 [v0.0.5]: https://github.com/username/greenova/compare/v0.0.4...v0.0.5
 [v0.0.4]: https://github.com/username/greenova/compare/v0.0.3...v0.0.4
 [v0.0.3]: https://github.com/username/greenova/compare/v0.0.2...v0.0.3
@@ -36,6 +37,83 @@ All notable changes to this project will be documented in this file.
 [v0.0.1]: https://github.com/username/greenova/releases/tag/v0.0.1
 
 - None
+
+## [v0.0.6] - 2025-05-01
+
+### Added
+
+- **Company Management Module**
+
+  - Added Company and UserCompany models with proper relationships
+  - Implemented company-scoped data access control
+  - Created middleware for active company context
+  - Added mixins for company-scoped views
+
+- **Authentication Framework**
+
+  - Implemented proper authentication namespace in URLs.py
+  - Added namespace routing for login redirects
+  - Configured LOGIN_URL setting to use authentication namespace
+
+- **Auditing Module**
+
+  - Created dedicated auditing app for compliance and non-conformance tracking
+  - Extracted comments into standalone models for better data management
+  - Added admin interface for audit record management
+  - Implemented history tracking for key operations
+
+- **Obligation Management**
+  - Added interactive hyperlinks for status counts in procedure views
+  - Improved data filtering with HTMX for dynamic content loading
+  - Enhanced obligation list templates with better organization
+
+### Changed
+
+- **Development Environment**
+
+  - Added IPython integration with autoreload capabilities
+  - Added bash aliases for improved developer workflow
+  - Enhanced VSCode tasks.json for improved development workflow
+  - Migrated to dotenv-vault for more secure environment management
+
+- **Data Import Process**
+
+  - Refactored obligation import command for improved reliability
+  - Enhanced error handling and reporting during imports
+  - Added transaction support to prevent partial imports
+  - Improved progress reporting and logging
+
+- **Build System**
+
+  - Rebuilt django-build command in Makefile
+  - Fixed syntax errors in build scripts
+  - Improved virtual environment setup instructions
+
+- **User Experience**
+  - Enhanced user profile functionality with role relationship display
+  - Added overdue actions display to user dashboard
+  - Streamlined migrations process for better developer experience
+
+### Deprecated
+
+- None
+
+### Removed
+
+- None
+
+### Fixed
+
+- Fixed failing test for company creation authentication requirements
+- Resolved issues with obligation import process
+- Fixed login redirect issues in authentication workflow
+- Corrected constraints handling in data models
+- Improved error handling in core components
+
+### Security
+
+- Enhanced authentication workflow with proper namespace isolation
+- Improved environment variable management with dotenv-vault
 
 ## [v0.0.5] - Pre-release
 

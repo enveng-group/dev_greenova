@@ -4,6 +4,11 @@
 {
   // Disable some built-in rules
   "config": {
+    "line-length": false, // MD013
+    "no-duplicate-heading": {
+      // MD024
+      "siblings_only": true,
+    },
     "no-trailing-spaces": false,
     "no-multiple-blanks": false,
   },
