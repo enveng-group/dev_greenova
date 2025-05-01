@@ -161,6 +161,7 @@ INSTALLED_APPS = [
     'responsibility',  # Likely domain-specific
     'obligations',  # Related to `responsibility`
     'procedures',  # Depends on `obligations`
+    'auditing',  # Depends on `obligations`
     'dashboard',  # UI and analytics
     'landing',  # Landing page or homepage
     'theme',  # UI Styling

@@ -123,8 +123,8 @@ class Obligation(models.Model):
     )
     supporting_information: Optional[str] = models.TextField(blank=True, null=True)
     general_comments: Optional[str] = models.TextField(blank=True, null=True)
-    compliance_comments: Optional[str] = models.TextField(blank=True, null=True)
-    non_conformance_comments: Optional[str] = models.TextField(blank=True, null=True)
+    # compliance_comments: Optional[str] = models.TextField(blank=True, null=True)
+    # non_conformance_comments: Optional[str] = models.TextField(blank=True, null=True)
     evidence_notes = models.TextField(blank=True, null=True,
                                       help_text='Notes about the uploaded evidence')
     recurring_obligation = models.BooleanField(default=False)
