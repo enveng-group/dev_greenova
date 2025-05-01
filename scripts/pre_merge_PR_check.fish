@@ -16,13 +16,28 @@ end
 function fetch_all_pull_requests
     git fetch --all
     # Fetch PR data and their branches
-    gh pr list --json number,title,headRefName,baseRefName > logs/PR_info.log
+    gh pr list --json number,title,headRefName,baseRefName >logs/PR_info.log
     set pull_requests (cat logs/PR_info.log | jq -c '.[]')
+
+    # Save current branch name
+    set original_branch (git symbolic-ref --short HEAD 2>/dev/null)
+    echo "Current branch is: $original_branch"
+
     for pr in $pull_requests
         set pr_number (echo $pr | jq -r '.number')
         set head_branch (echo $pr | jq -r '.headRefName')
-        gh pr checkout $pr_number
-        git checkout - # Return to previous branch
+
+        # Check if there are uncommitted changes
+        if git diff --quiet
+            # No uncommitted changes, safe to checkout
+            gh pr checkout $pr_number
+            # Return to original branch using its name, not dash shorthand
+            git checkout $original_branch
+        else
+            echo "Skipping checkout of PR #$pr_number due to uncommitted changes"
+            # Just fetch the PR branch without checking it out
+            git fetch origin pull/$pr_number/head:$head_branch 2>/dev/null || true
+        end
     end
     echo "Pull requests fetched and logged"
 end
@@ -33,7 +48,7 @@ function check_target_branch
     for pr in $pull_requests
         set base_branch (echo $pr | jq -r '.baseRefName')
         set pr_number (echo $pr | jq -r '.number')
-        if test "$base_branch" = "main" -o "$base_branch" = "master"
+        if test "$base_branch" = main -o "$base_branch" = master
             echo "PR #$pr_number is targeting $base_branch. Changing target to staging."
             gh pr edit $pr_number --base staging
         end
@@ -43,15 +58,26 @@ end
 # Function to compare PR branches with the target branch
 function compare_with_target_branch
     set pull_requests (cat logs/PR_info.log | jq -c '.[]')
+
+    # Save current branch name
+    set original_branch (git symbolic-ref --short HEAD 2>/dev/null)
+
     for pr in $pull_requests
         set pr_number (echo $pr | jq -r '.number')
         set head_branch (echo $pr | jq -r '.headRefName')
         set base_branch (echo $pr | jq -r '.baseRefName')
 
-        # Try to fetch the PR branch directly
+        # Try to fetch the PR branch directly without checkout if we have uncommitted changes
         if not git show-ref --verify --quiet refs/heads/$head_branch
-            gh pr checkout $pr_number
-            git checkout - # Return to previous branch
+            if git diff --quiet
+                # No uncommitted changes, safe to checkout
+                gh pr checkout $pr_number
+                git checkout $original_branch
+            else
+                # Try fetching without checkout
+                echo "Fetching PR #$pr_number branch directly due to uncommitted changes"
+                git fetch origin pull/$pr_number/head:$head_branch 2>/dev/null || true
+            end
         end
 
         if git show-ref --verify --quiet refs/heads/$head_branch
@@ -67,15 +93,29 @@ end
 function check_modification_conflicts
     set pull_requests (cat logs/PR_info.log | jq -c '.[]')
     set -g overlap_found 0
+
+    # Store current branch to return to it later
+    set current_branch (git symbolic-ref --short HEAD 2>/dev/null)
+
     for pr in $pull_requests
         set pr_number (echo $pr | jq -r '.number')
         set head_branch (echo $pr | jq -r '.headRefName')
         set base_branch (echo $pr | jq -r '.baseRefName')
 
+        # Track if we need to restore the branch at the end
+        set need_restore 0
+
         # Try to fetch the PR branch if not already present
         if not git show-ref --verify --quiet refs/heads/$head_branch
-            gh pr checkout $pr_number
-            git checkout - # Return to previous branch
+            # Check for uncommitted changes before checkout
+            if git diff --quiet
+                gh pr checkout $pr_number
+                set need_restore 1
+            else
+                # Try fetching without checkout
+                echo "Fetching PR #$pr_number branch directly due to uncommitted changes"
+                git fetch origin pull/$pr_number/head:$head_branch 2>/dev/null || true
+            end
         end
 
         if git show-ref --verify --quiet refs/heads/$head_branch
@@ -98,6 +138,15 @@ function check_modification_conflicts
                             echo "Potential conflict at line $line in file $file" | tee -a logs/conflict_patterns.log
                         end
                     end
+                end
+            end
+
+            # Return to original branch if we changed it
+            if test $need_restore -eq 1
+                if git diff --quiet
+                    git checkout $current_branch
+                else
+                    echo "Cannot return to original branch due to uncommitted changes"
                 end
             end
         else
