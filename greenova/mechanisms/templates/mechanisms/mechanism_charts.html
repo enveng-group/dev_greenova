@@ -13,7 +13,7 @@ Environmental Mechanisms Analysis
         ←
       </button>
       <button type="button"
-              onclick="scrollCharts('right')"
+              onclick="scrollCharts('chartGallery', 'right')"
               aria-label="Scroll right">
 →
       </button>
@@ -149,16 +149,3 @@ Please select a project to view mechanism charts.
     </p>
   </div>
 {% endif %}
-<script>
-  function scrollCharts(direction) {
-    const container = document.getElementById('chartGallery');
-    const scrollAmount = 350;
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
-
- else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  }
-</script>

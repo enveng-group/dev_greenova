@@ -1,15 +1,3 @@
-// Chart scrolling functionality
-function scrollCharts(direction) {
-  const container = document.getElementById('chartScroll');
-  if (!container) return;
-
-  const scrollAmount = 320;
-  container.scrollBy({
-    left: direction === 'left' ? -scrollAmount : scrollAmount,
-    behavior: 'smooth',
-  });
-}
-
 // Initialize chart navigation
 document.addEventListener('htmx:afterSettle', function () {
   const chartScroll = document.getElementById('chartScroll');
