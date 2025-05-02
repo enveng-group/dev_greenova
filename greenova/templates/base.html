@@ -100,7 +100,7 @@
                 <li role="none">
                   <a href="{% url 'company:list' %}"
                      role="menuitem"
-                     {% if '/company/' in request.path %} aria-current="page" {% endif %}>Companies</a>
+                     {% if request.resolver_match.url_name == 'list' and request.resolver_match.namespace == 'company' %} aria-current="page" {% endif %}>Companies</a>
                 </li>
 
               {% endif %}
