@@ -52,6 +52,7 @@
     <!-- CSS files -->
     <link rel="stylesheet" href="{% static 'css/critical-styles.css' %}" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/components/breadcrumbs.css' %}" />
 {% tailwind_css %}
 
     {% block extra_head %}
@@ -83,55 +84,35 @@
               <a href="#" data-theme-switcher="dark">Dark</a>
             </li>
           </ul>
+
+          <!-- Primary navigation bar (main menu) -->
           <ul role="menubar" aria-label="Primary navigation">
             {% if request.user.is_authenticated %}
               <!-- Left side navigation items -->
-              <li role="none" class="menubar-breadcrumbs">
-                <nav aria-label="Primary navigation" role="navigation">
-                  <ul>
-                    {% if request.resolver_match.namespace == 'dashboard' %}
-                      <li>
-                        <a href="{% url 'dashboard:home' %}"
-                           role="menuitem"
-                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
-                                           page
-                                         {% endif %}"
-                           _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
-                      </li>
-                    {% else %}
-                      <li>
-                        <a href="{% url 'dashboard:home' %}"
-                           role="menuitem"
-                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
-                                           page
-                                         {% endif %}"
-                           _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
-                      </li>
-                    {% endif %}
-
-                    {% block breadcrumbs %}
-                    {% endblock breadcrumbs %}
-
-                  </ul>
-                </nav>
+              <li role="none">
+                <a href="{% url 'dashboard:home' %}"
+                   role="menuitem"
+                   aria-current="{% if request.resolver_match.namespace == 'dashboard' %}page{% endif %}">
+                  Dashboard
+                </a>
               </li>
+              {% if request.user.is_staff %}
+                <li role="none">
+                  <a href="{% url 'company:list' %}"
+                     role="menuitem"
+                     {% if request.resolver_match.url_name == 'list' and request.resolver_match.namespace == 'company' %} aria-current="page" {% endif %}>Companies</a>
+                </li>
+
+              {% endif %}
+
               <!-- Auth Actions (right-aligned) -->
               <li role="none" class="auth-actions">
 {% load chatbot_tags %}
-
 {% chat_widget %}
                 <a href="{% url 'users:profile' %}"
                    role="menuitem"
-                   {% if request.path == '/users/profile/' %}
-                     aria-current="page"
-                   {% endif %}>Profile</a>
-                {% if request.user.is_staff %}
-                  <a href="{% url 'company:list' %}"
-                     role="menuitem"
-                     {% if '/company/' in request.path %}
-                       aria-current="page"
-                     {% endif %}>Companies</a>
-                {% endif %}
+                   {% if request.path == '/users/profile/' %} aria-current="page" {% endif %}>Profile</a>
+
                 <!-- Logout -->
                 <a href="#"
                    role="menuitem"
@@ -142,10 +123,10 @@
                    hx-include="[name='csrfmiddlewaretoken']">Logout</a>
                 <form id="logout-form" class="hidden">
 {% csrf_token %}
-
                 </form>
               </li>
             {% else %}
+
               <!-- Unauthenticated user navigation -->
               <li role="none" class="auth-actions">
                 <a href="{% url 'account_signup' %}"
@@ -165,6 +146,9 @@
 
           </ul>
         </nav>
+        <!-- Breadcrumbs -->
+        {% include "core/components/breadcrumbs.html" with crumbs=breadcrumbs %}
+
       {% endblock header %}
 
     </header>

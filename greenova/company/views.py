@@ -92,6 +92,11 @@ def company_list(request: HttpRequest) -> HttpResponse:
         'user_permissions': user_permissions,
         'page_obj': companies,
         'can_create': is_company_admin(request.user),
+        'breadcrumbs': [
+    {"title": "Dashboard", "url": reverse("dashboard:home")},
+    {"title": "Companies", "active": True}
+],
+
     }
 
     if hasattr(request, 'htmx') and request.htmx:
