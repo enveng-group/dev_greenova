@@ -1,6 +1,6 @@
 from django import forms
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
+from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 
 from .models import BugReport
@@ -50,9 +50,9 @@ class BugReportForm(forms.ModelForm):
         ]
 
         # Load the mandatory field message
-        mandatory_message = render_to_string(
+        mandatory_message = escape(render_to_string(
             'feedback/form/messages/mandatory_item.txt'
-        )
+        ))
 
         # Define field help text
         field_help = {
@@ -83,4 +83,4 @@ class BugReportForm(forms.ModelForm):
                 field.required = True
                 field.label = f'{field.label}*'  # Add asterisk to required field labels
                 # Add the mandatory message to error messages
-                field.error_messages['required'] = mark_safe(mandatory_message)
+                field.error_messages['required'] = escape(mandatory_message)

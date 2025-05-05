@@ -1,0 +1,3 @@
+"""
+Authentication OpenID integration package.
+"""

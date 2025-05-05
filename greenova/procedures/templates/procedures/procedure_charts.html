@@ -19,22 +19,32 @@
             <li>
               <a href="#" hx-get="javascript:history.back()">Mechanisms</a>
             </li>
-            <li>{{ mechanism.name }}</li>
+            <li>
+{{ mechanism.name }}
+            </li>
           </ol>
         </nav>
-        <h1>Procedure Analysis</h1>
-        <h2>{{ mechanism.name }}</h2>
+        <h1>
+Procedure Analysis
+        </h1>
+        <h2>
+{{ mechanism.name }}
+        </h2>
       </hgroup>
     </header>
     {% if error %}
 
       <div class="notice error" role="alert">
-        <p>{{ error }}</p>
+        <p>
+{{ error }}
+        </p>
       </div>
     {% else %}
       <!-- Filter Section -->
       <section aria-labelledby="filter-heading" class="filter-section">
-        <h2 id="filter-heading">Filter Options</h2>
+        <h2 id="filter-heading">
+Filter Options
+        </h2>
         <form method="get"
               action="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
               class="filter-container"
@@ -44,9 +54,13 @@
                  name="mechanism_id"
                  value="{{ mechanism.id }}" />
           <div class="filter-group">
-            <label for="phase">Project Phase</label>
+            <label for="phase">
+Project Phase
+            </label>
             <select name="phase" id="phase">
-              <option value="">All Phases</option>
+              <option value="">
+All Phases
+              </option>
               {% for phase in available_phases %}
                 <option value="{{ phase }}" {% if filter_phase == phase %}selected{% endif %}>
                   {{ phase }}
@@ -57,9 +71,13 @@
             </select>
           </div>
           <div class="filter-group">
-            <label for="responsibility">Responsibility</label>
+            <label for="responsibility">
+Responsibility
+            </label>
             <select name="responsibility" id="responsibility">
-              <option value="">All Responsibilities</option>
+              <option value="">
+All Responsibilities
+              </option>
               {% for resp in available_responsibilities %}
                 <option value="{{ resp }}"
                         {% if filter_responsibility == resp %}selected{% endif %}>
@@ -71,9 +89,13 @@
             </select>
           </div>
           <div class="filter-group">
-            <label for="status">Status</label>
+            <label for="status">
+Status
+            </label>
             <select name="status" id="status">
-              <option value="">All Statuses</option>
+              <option value="">
+All Statuses
+              </option>
               {% for status_value, status_label in status_options %}
                 <option value="{{ status_value }}"
                         {% if filter_status == status_value %}selected{% endif %}>
@@ -101,7 +123,9 @@
             </label>
           </div>
           <div class="filter-actions">
-            <button type="submit" class="btn-primary">Apply Filters</button>
+            <button type="submit" class="btn-primary">
+Apply Filters
+            </button>
             <a href="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
                role="button"
                class="btn-secondary">Reset</a>
@@ -110,31 +134,41 @@
       </section>
       <!-- New Responsibility Distribution Section -->
       <section aria-labelledby="responsibility-heading" class="charts-section">
-        <h2 id="responsibility-heading">Responsibility Distribution</h2>
+        <h2 id="responsibility-heading">
+Responsibility Distribution
+        </h2>
         <article class="overall-chart">
           <figure>
-            <figcaption>Obligations by Responsibility</figcaption>
+            <figcaption>
+Obligations by Responsibility
+            </figcaption>
             {{ responsibility_chart|safe }}
 
           </figure>
         </article>
       </section>
       <section aria-labelledby="charts-heading" class="charts-section">
-        <h2 id="charts-heading">Procedures by Status</h2>
+        <h2 id="charts-heading">
+Procedures by Status
+        </h2>
         <!-- Chart Navigation -->
         <nav role="navigation"
              aria-label="Procedure charts navigation"
              class="chart-nav">
           <button type="button"
                   onclick="scrollCharts('chartScroll', 'left')"
-                  aria-label="Scroll left">←</button>
+                  aria-label="Scroll left">
+←
+          </button>
           <button type="button"
                   onclick="scrollCharts('chartScroll', 'right')"
-                  aria-label="Scroll right">→</button>
+                  aria-label="Scroll right">
+→
+          </button>
         </nav>
         <div id="chartScroll" class="chart-scroll-container">
           {% for proc in procedure_charts %}
-            {% procedure_chart_card proc %}
+{% procedure_chart_card proc %}
           {% endfor %}
 
         </div>
@@ -142,20 +176,36 @@
       <!-- Data Table -->
       <article class="data-table">
         <header>
-          <h3>Detailed Statistics</h3>
+          <h3>
+Detailed Statistics
+          </h3>
           <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">-</button>
+                  class="btn-fold">
+-
+          </button>
         </header>
         <div class="table-container">
           <table role="grid">
             <thead>
               <tr>
-                <th scope="col">Procedure</th>
-                <th scope="col">Not Started</th>
-                <th scope="col">In Progress</th>
-                <th scope="col">Completed</th>
-                <th scope="col">Overdue</th>
-                <th scope="col">Total</th>
+                <th scope="col">
+Procedure
+                </th>
+                <th scope="col">
+Not Started
+                </th>
+                <th scope="col">
+In Progress
+                </th>
+                <th scope="col">
+Completed
+                </th>
+                <th scope="col">
+Overdue
+                </th>
+                <th scope="col">
+Total
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -163,14 +213,58 @@
 
                 <tr>
                   <td>
-                    <h2>{{ item.name|format_procedure_name }}</h2>
+                    <h2>
+{{ item.name|format_procedure_name }}
+                    </h2>
                     <span class="status">{{ item.status|format_procedure_status }}</span>
                   </td>
-                  <td>{{ item.not_started }}</td>
-                  <td>{{ item.in_progress }}</td>
-                  <td>{{ item.completed }}</td>
-                  <td>{{ item.overdue }}</td>
-                  <td>{{ item.total }}</td>
+                  <td>
+                    <a href="#"
+                       class="status-count-link"
+                       hx-get="{% url 'obligations:summary' %}?status=not_started&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
+                       hx-target="#obligation-list-container"
+                       hx-swap="innerHTML"
+                       hx-trigger="click"
+                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Not Started obligations for {{ item.name }}'">
+                      {{ item.not_started }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="#"
+                       class="status-count-link"
+                       hx-get="{% url 'obligations:summary' %}?status=in_progress&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
+                       hx-target="#obligation-list-container"
+                       hx-swap="innerHTML"
+                       hx-trigger="click"
+                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'In Progress obligations for {{ item.name }}'">
+                      {{ item.in_progress }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="#"
+                       class="status-count-link"
+                       hx-get="{% url 'obligations:summary' %}?status=completed&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
+                       hx-target="#obligation-list-container"
+                       hx-swap="innerHTML"
+                       hx-trigger="click"
+                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Completed obligations for {{ item.name }}'">
+                      {{ item.completed }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="#"
+                       class="status-count-link"
+                       hx-get="{% url 'obligations:summary' %}?status=overdue&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
+                       hx-target="#obligation-list-container"
+                       hx-swap="innerHTML"
+                       hx-trigger="click"
+                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Overdue obligations for {{ item.name }}'">
+                      {{ item.overdue }}
+                    </a>
+                  </td>
+                  <td>
+{{ item.total }}
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -188,6 +282,12 @@
           </div>
         </div>
       </article>
+      <!-- Add container for filtered obligations -->
+      <div id="obligation-list-container"
+           aria-live="polite"
+           class="obligations-container">
+        <!-- Filtered obligations will be loaded here via HTMX -->
+      </div>
     {% endif %}
   </article>
   <script>

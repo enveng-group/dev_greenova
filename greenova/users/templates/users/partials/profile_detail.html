@@ -8,7 +8,9 @@
         {% if profile.profile_image %}
           <img src="{{ profile.profile_image.url }}"
                alt="Profile picture"
-               class="profile-image" />
+               class="profile-image"
+               height="150"
+               width="150" />
         {% else %}
           <div class="profile-initial">
 {{ profile.user.username|first|upper }}
@@ -26,6 +28,11 @@
 {{ profile.department|default:"" }}
         </p>
       </div>
+    </div>
+    <div class="profile-section">
+      <p>
+        You currently have <strong>{{ overdue_count }}</strong> overdue responsibilities.
+      </p>
     </div>
     <div class="profile-content">
       <div class="profile-section">

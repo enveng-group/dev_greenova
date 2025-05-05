@@ -1,49 +1,63 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Companies{% endblock title %}
+{% block title %}
+Companies
+{% endblock title %}
 
 {% block content %}
-<article>
-  <header>
-    <h1>Companies</h1>
-    {% if can_create %}
-    <div class="header-actions">
-      <a href="{% url 'company:create' %}" role="button" class="btn-primary">
-        <i class="icon-plus"></i> Add Company
-      </a>
+  <article>
+    <header>
+      <h1>
+Companies
+      </h1>
+      {% if can_create %}
+        <div class="header-actions">
+          <a href="{% url 'company:create' %}" role="button" class="btn-primary">
+            <i class="icon-plus"></i> Add Company
+          </a>
+        </div>
+      {% endif %}
+    </header>
+
+    <section class="filter-container">
+      <form class="search-form"
+            id="company-search-form"
+            hx-post="{% url 'company:search' %}"
+            hx-target="#company-list-container">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="{{ search_form.search.id_for_label }}">
+Search
+            </label>
+            {{ search_form.search }}
+          </div>
+          <div class="form-group">
+            <label for="{{ search_form.company_type.id_for_label }}">
+Company Type
+            </label>
+            {{ search_form.company_type }}
+          </div>
+          <div class="form-group">
+            <label for="{{ search_form.industry.id_for_label }}">
+Industry
+            </label>
+            {{ search_form.industry }}
+          </div>
+          <div class="form-group checkbox-group">
+            <label>
+              {{ search_form.is_active }} Show active companies only
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn-secondary">
+Filter
+        </button>
+      </form>
+    </section>
+
+    <div id="company-list-container" class="table-container">
+{% include "company/partials/company_list.html" %}
     </div>
-    {% endif %}
-  </header>
-
-  <!-- Search and filter form -->
-  <section class="filter-container">
-    <form class="search-form" id="company-search-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="{{ search_form.search.id_for_label }}">Search</label>
-          {{ search_form.search }}
-        </div>
-        <div class="form-group">
-          <label for="{{ search_form.company_type.id_for_label }}">Company Type</label>
-          {{ search_form.company_type }}
-        </div>
-        <div class="form-group">
-          <label for="{{ search_form.industry.id_for_label }}">Industry</label>
-          {{ search_form.industry }}
-        </div>
-        <div class="form-group checkbox-group">
-          <label>
-            {{ search_form.is_active }}
-            Show active companies only
-          </label>
-        </div>
-      </div>
-    </form>
-  </section>
-
-  <div id="company-list-container" class="table-container">
-    {% include "company/partials/company_list.html" %}
-  </div>
-</article>
-{% endblock %}
+  </article>
+{% endblock content %}

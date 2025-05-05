@@ -1,27 +1,70 @@
-# use Alpine Linux as base image
-FROM alpine:3.18
+# Use the official Python 3.12 image based on Debian (more compatible than Alpine)
+FROM mcr.microsoft.com/devcontainers/python:3.12-bookworm
 
-# install system dependencies
-RUN apk add --no-cache python3=3.9.21 nodejs=18.20.7 npm=10.8.2 git bash
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  NODE_VERSION=20.19.1 \
+  NPM_VERSION=11.3.0 \
+  NVM_DIR="/usr/local/share/nvm" \
+  DJANGO_SETTINGS_MODULE=greenova.settings
 
-# set Python 3 as the default Python version
-RUN ln -sf /usr/bin/python3 /usr/bin/python
+# Install system dependencies
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+  && apt-get -y install --no-install-recommends \
+  fish \
+  direnv \
+  curl \
+  git \
+  make \
+  sqlite3 \
+  shellcheck \
+  vim \
+  python3-pip \
+  python3-venv \
+  gh \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-# set the working directory
+# Ensure pip is properly installed and upgraded
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Set up Node.js using the pre-installed NVM
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION} \
+  && nvm alias default ${NODE_VERSION} \
+  && npm install -g npm@${NPM_VERSION}
+
+# Create required directories for fish shell
+RUN mkdir -p /home/vscode/.config/fish /home/vscode/.config/fish/functions /home/vscode/.local/share/fish \
+  && chown -R vscode:vscode /home/vscode/.config /home/vscode/.local
+
+# We'll install Python dependencies after the workspace is mounted
+# in the postCreateCommand or postStartCommand
+
+# Make prepare vscode user for development
+USER vscode
+
+# Ensure fish shell is properly configured
+RUN echo 'set -gx PATH /usr/local/share/nvm/versions/node/v${NODE_VERSION}/bin $PATH' > /home/vscode/.config/fish/config.fish \
+  && echo 'set -gx NODE_PATH /usr/local/share/nvm/versions/node/v${NODE_VERSION}/lib/node_modules' >> /home/vscode/.config/fish/config.fish \
+  && echo 'set -gx PYTHONPATH /workspaces/greenova:/workspaces/greenova/greenova $PYTHONPATH' >> /home/vscode/.config/fish/config.fish \
+  && echo 'set -gx PYTHONSTARTUP /workspaces/greenova/pythonstartup' >> /home/vscode/.config/fish/config.fish
+
+# Set working directory
 WORKDIR /workspaces/greenova
 
-# copy requirements.txt file and package.json file
-COPY requirements.txt package.json ./
+# Switch back to root to ensure entrypoint can handle permissions properly
+USER root
 
-# install Node.js dependencies
-RUN npm install
+# Copy entrypoint script and make it executable
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# install Python dependencies
-RUN pip install -r requirements.txt -c constraints.txt --no-deps
-#RUN pip install --no-cache-dir -r requirements.txt
+# Set the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# set environment variables
-ENV PYTHONUNBUFFERED=1
+# Switch back to vscode user for operations
+USER vscode
 
-# lunch bash
-CMD ["/bin/bash"]
+# Default command
+CMD ["sleep", "infinity"]

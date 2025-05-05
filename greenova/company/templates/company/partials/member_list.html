@@ -1,56 +1,79 @@
 {% load company_tags %}
 
 {% if members %}
-<table aria-label="Company members">
-  <thead>
-    <tr>
-      <th scope="col">User</th>
-      <th scope="col">Role</th>
-      <th scope="col">Department</th>
-      <th scope="col">Position</th>
-      <th scope="col">Primary</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for member in members %}
-    <tr>
-      <td>{{ member.user.get_full_name|default:member.user.username }}</td>
-      <td>{{ member.role|company_role_badge }}</td>
-      <td>{{ member.department|default:"Not specified" }}</td>
-      <td>{{ member.position|default:"Not specified" }}</td>
-      <td>
-        {% if member.is_primary %}
-          <mark role="status" class="success">Yes</mark>
-        {% else %}
-          <mark role="status">No</mark>
-        {% endif %}
-      </td>
-      <td class="action-buttons">
-        {% if can_edit %}
-          <button class="btn-secondary"
-                  hx-get="{% url 'company:update_role' company.id member.id %}"
-                  hx-target="#role-form-container"
-                  hx-swap="innerHTML">
+  <table aria-label="Company members">
+    <thead>
+      <tr>
+        <th scope="col">
+User
+        </th>
+        <th scope="col">
+Role
+        </th>
+        <th scope="col">
+Department
+        </th>
+        <th scope="col">
+Position
+        </th>
+        <th scope="col">
+Primary
+        </th>
+        <th scope="col">
+Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in members %}
+        <tr>
+          <td>
+{{ member.user.get_full_name|default:member.user.username }}
+          </td>
+          <td>
+{{ member.role|company_role_badge }}
+          </td>
+          <td>
+{{ member.department|default:"Not specified" }}
+          </td>
+          <td>
+{{ member.position|default:"Not specified" }}
+          </td>
+          <td>
+            {% if member.is_primary %}
+              <mark role="status" class="success">Yes</mark>
+            {% else %}
+              <mark role="status">No</mark>
+            {% endif %}
+          </td>
+          <td class="action-buttons">
+            {% if can_edit %}
+              <button class="btn-secondary"
+                      hx-get="{% url 'company:update_role' company.id member.id %}"
+                      hx-target="#role-form-container"
+                      hx-swap="innerHTML">
             Edit Role
-          </button>
-          <button class="btn-danger"
-                  hx-post="{% url 'company:remove_member' company.id member.id %}"
-                  hx-target="#members-list-container"
-                  hx-confirm="Are you sure you want to remove {{ member.user.username }} from this company?">
+              </button>
+              <button class="btn-danger"
+                      hx-post="{% url 'company:remove_member' company.id member.id %}"
+                      hx-target="#members-list-container"
+                      hx-confirm="Are you sure you want to remove {{ member.user.username }} from this company?">
             Remove
-          </button>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+              </button>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-<div id="role-form-container"></div>
+  <div id="role-form-container">
+  </div>
 
 {% else %}
-<div class="centered-message">
-  <p>No members in this company.</p>
-</div>
+  <div class="centered-message">
+    <p>
+No members in this company.
+    </p>
+  </div>
 {% endif %}

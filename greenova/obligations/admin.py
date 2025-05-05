@@ -36,6 +36,7 @@ class OverdueFilter(admin.SimpleListFilter):
             return queryset.exclude(action_due_date__lt=today).exclude(
                 status='completed'
             )
+        return queryset
 
 
 class ObligationAdminForm(forms.ModelForm):
@@ -73,16 +74,39 @@ class ObligationAdminForm(forms.ModelForm):
 
     class Meta:
         model = Obligation
-        exclude = ['obligation_number']  # Exclude from form but handle in save
+        fields = [
+            'recurring_obligation',
+            'inspection',
+            'inspection_frequency',
+            'responsibility',
+            'project',
+            'primary_environmental_mechanism',
+            'environmental_aspect',
+            'obligation',
+            'obligation_type',
+            'action_due_date',
+            'close_out_date',
+            'status',
+            'recurring_frequency',
+            'recurring_status',
+            'recurring_forcasted_date',
+            'site_or_desktop',
+            'accountability',
+            'project_phase',
+            'supporting_information',
+            'general_comments',
+            'compliance_comments',
+            'non_conformance_comments',
+        ]  # Explicitly list all fields instead of using exclude
 
     def save(self, commit=True):
         """Override save to ensure obligation_number is set before validation."""
         instance = super().save(commit=False)
 
-        # For new instances, generate obligation number and ensure datetime fields are set
+        # For new instances, generate obligation number and set datetime fields
         if not instance.pk:
             instance.obligation_number = Obligation.get_next_obligation_number()
-            # Explicitly set created_at and updated_at for new instances to fix the NOT NULL constraint
+            # Explicitly set created_at and updated_at for new instances
             if not instance.created_at:
                 instance.created_at = timezone.now()
             if not instance.updated_at:
@@ -103,7 +127,10 @@ class ObligationEvidenceInline(admin.TabularInline):
     verbose_name_plural = 'Evidence Files'
 
     def get_formset(self, request, obj=None, **kwargs):
-        """Only show inline when editing an existing obligation (not during creation)."""
+        """
+        Only show inline when editing an existing obligation
+        (not during creation).
+        """
         if obj is None:
             self.extra = 0  # No empty forms when creating a new obligation
         else:
@@ -176,8 +203,6 @@ class ObligationAdmin(admin.ModelAdmin):
         ),
     ]
 
-    # No need for explicit exclude since we're using a custom form
-
     list_filter = [
         OverdueFilter,
         'status',
@@ -185,7 +210,12 @@ class ObligationAdmin(admin.ModelAdmin):
         'project_phase',
         'recurring_obligation',
     ]
-    search_fields = ['obligation_number', 'obligation', 'project__name', 'responsibility']
+    search_fields = [
+        'obligation_number',
+        'obligation',
+        'project__name',
+        'responsibility',
+    ]
     date_hierarchy = 'action_due_date'
 
     @admin.display(
@@ -235,8 +265,8 @@ class ObligationAdmin(admin.ModelAdmin):
 
             action = 'Updated' if change else 'Created'
             logger.info(
-                f'{action} obligation {obj.obligation_number} '
-                f'for project {obj.project.name}'
+                '%s obligation %s for project %s',
+                action, obj.obligation_number, obj.project.name
             )
             super().save_model(request, obj, form, change)
 
@@ -244,7 +274,7 @@ class ObligationAdmin(admin.ModelAdmin):
             if obj.primary_environmental_mechanism:
                 obj.primary_environmental_mechanism.update_obligation_counts()
         except Exception as e:
-            logger.error(f'Error saving obligation: {str(e)}')
+            logger.error('Error saving obligation: %s', str(e))
             raise
 
     actions = ['update_recurring_dates']

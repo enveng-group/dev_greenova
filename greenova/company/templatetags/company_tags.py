@@ -30,18 +30,8 @@ def company_role_badge(role):
         'contractor': '<mark role="status">Contractor</mark>',
         'view_only': '<mark role="status">View Only</mark>',
     }
-
     badge_html = badge_mapping.get(role, f'<mark role="status">{role}</mark>')
     return format_html(badge_html)
-    if role == 'owner':
-        return format_html('<mark role="status" class="info">Owner</mark>')
-    elif role == 'admin':
-        return format_html('<mark role="status" class="info">Admin</mark>')
-    try:
-        membership = CompanyMembership.objects.get(user=user, is_primary=True)
-        return membership.company
-    except CompanyMembership.DoesNotExist:
-        return None
 
 
 @register.filter

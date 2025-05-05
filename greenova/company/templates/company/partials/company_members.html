@@ -1,34 +1,44 @@
 {% load company_tags %}
 
 <section class="add-member" aria-labelledby="add-member-heading">
-  <h2 id="add-member-heading">Add Member</h2>
+  <h2 id="add-member-heading">
+Add Member
+  </h2>
 
   <form id="add-member-form"
         hx-post="{% url 'company:add_member' company.id %}"
         hx-target="#members-list-container"
         hx-swap="innerHTML">
-    {% csrf_token %}
+{% csrf_token %}
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ add_user_form.user.id_for_label }}">User</label>
+        <label for="{{ add_user_form.user.id_for_label }}">
+User
+        </label>
         {{ add_user_form.user }}
       </div>
 
       <div class="form-group">
-        <label for="{{ add_user_form.role.id_for_label }}">Role</label>
+        <label for="{{ add_user_form.role.id_for_label }}">
+Role
+        </label>
         {{ add_user_form.role }}
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ add_user_form.department.id_for_label }}">Department</label>
+        <label for="{{ add_user_form.department.id_for_label }}">
+Department
+        </label>
         {{ add_user_form.department }}
       </div>
 
       <div class="form-group">
-        <label for="{{ add_user_form.position.id_for_label }}">Position</label>
+        <label for="{{ add_user_form.position.id_for_label }}">
+Position
+        </label>
         {{ add_user_form.position }}
       </div>
     </div>
@@ -41,15 +51,19 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn-primary">Add Member</button>
+      <button type="submit" class="btn-primary">
+Add Member
+      </button>
     </div>
   </form>
 </section>
 
 <section class="current-members" aria-labelledby="current-members-heading">
-  <h2 id="current-members-heading">Current Members</h2>
+  <h2 id="current-members-heading">
+Current Members
+  </h2>
 
   <div id="members-list-container">
-    {% include "company/partials/member_list.html" %}
+{% include "company/partials/member_list.html" %}
   </div>
 </section>

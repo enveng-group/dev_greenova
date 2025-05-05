@@ -35,12 +35,13 @@
     "stylelint.vscode-stylelint",
     "wholroyd.jinja",
     "rarnoldmobile.todo-txt",
-    "mermaidchart.vscode-mermaid-chart",
     "github.vscode-github-actions",
     "ymotongpoo.licenser",
     "marp-team.marp-vscode",
     "dbcode.dbcode",
     "ms-vscode.copilot-mermaid-diagram",
-    "ms-vscode.vscode-websearchforcopilot"
+    "ms-toolsai.datawrangler",
+    "charliermarsh.ruff",
+    "ms-python.flake8"
   ]
 }

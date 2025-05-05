@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Edit Profile{% endblock title %}
+{% block title %}
+Edit Profile
+{% endblock title %}
 
 {% block content %}
-<article>
-  <header>
-    <h1>Edit Profile</h1>
-  </header>
+  <article>
+    <header>
+      <h1>
+Edit Profile
+      </h1>
+    </header>
 
-  <div class="profile-container" hx-target="this" hx-swap="outerHTML">
-    {% include "users/partials/profile_edit_form.html" %}
-  </div>
-</article>
+    <div class="profile-container" hx-target="this" hx-swap="outerHTML">
+{% include "users/partials/profile_edit_form.html" %}
+    </div>
+  </article>
 {% endblock content %}

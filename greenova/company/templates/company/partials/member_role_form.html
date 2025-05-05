@@ -1,27 +1,41 @@
-<div class="modal" aria-labelledby="update-role-heading" role="dialog" aria-modal="true">
+<div class="modal"
+     aria-labelledby="update-role-heading"
+     role="dialog"
+     aria-modal="true">
   <div class="modal-content">
     <header>
-      <h3 id="update-role-heading">Update Role for {{ membership.user.get_full_name|default:membership.user.username }}</h3>
-      <button class="close-modal" onclick="document.getElementById('role-form-container').innerHTML = ''">&times;</button>
+      <h3 id="update-role-heading">
+Update Role for {{ membership.user.get_full_name|default:membership.user.username }}
+      </h3>
+      <button class="close-modal"
+              onclick="document.getElementById('role-form-container').innerHTML = ''">
+&times;
+      </button>
     </header>
 
     <form hx-post="{% url 'company:update_role' company.id membership.id %}"
           hx-target="#members-list-container"
           hx-swap="innerHTML">
-      {% csrf_token %}
+{% csrf_token %}
 
       <div class="form-group">
-        <label for="{{ form.role.id_for_label }}">Role</label>
+        <label for="{{ form.role.id_for_label }}">
+Role
+        </label>
         {{ form.role }}
       </div>
 
       <div class="form-group">
-        <label for="{{ form.department.id_for_label }}">Department</label>
+        <label for="{{ form.department.id_for_label }}">
+Department
+        </label>
         {{ form.department }}
       </div>
 
       <div class="form-group">
-        <label for="{{ form.position.id_for_label }}">Position</label>
+        <label for="{{ form.position.id_for_label }}">
+Position
+        </label>
         {{ form.position }}
       </div>
 
@@ -33,8 +47,14 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn-primary">Update</button>
-        <button type="button" class="btn-secondary" onclick="document.getElementById('role-form-container').innerHTML = ''">Cancel</button>
+        <button type="submit" class="btn-primary">
+Update
+        </button>
+        <button type="button"
+                class="btn-secondary"
+                onclick="document.getElementById('role-form-container').innerHTML = ''">
+Cancel
+        </button>
       </div>
     </form>
   </div>

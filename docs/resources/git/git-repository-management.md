@@ -17,7 +17,10 @@
 
 ## Overview
 
-This document outlines our strategy for managing Git repository health, addressing divergent branches, and maintaining consistency across forks. It establishes procedures to reduce merge conflicts and streamline collaborative development.
+This document outlines our strategy for managing Git repository health,
+addressing divergent branches, and maintaining consistency across forks.
+It establishes procedures to reduce merge conflicts and streamline
+collaborative development.
 
 ## Current Issues
 
@@ -146,17 +149,17 @@ git fsck
 
 ## Git Commands Reference
 
-| Command                    | Purpose                             | When to Use                      |
-| -------------------------- | ----------------------------------- | -------------------------------- |
-| `git pull --rebase`        | Update branch without merge commits | Daily when starting work         |
-| `git rebase upstream/main` | Sync branch with upstream changes   | Before creating PRs              |
-| `git merge --squash`       | Combine changes into single commit  | When merging feature branches    |
-| `git gc`                   | Garbage collection                  | Weekly maintenance               |
-| `git fsck`                 | File system check                   | Monthly or when issues suspected |
-| `git repack`               | Optimize repository storage         | Monthly maintenance              |
-| `git reflog`               | View reference logs                 | When tracking down lost commits  |
-| `git clean`                | Remove untracked files              | When cleaning working directory  |
-| `git prune`                | Remove unreferenced objects         | Monthly maintenance              |
+| Command                    | Purpose                    | When to Use         |
+| -------------------------- | -------------------------- | ------------------- |
+| `git pull --rebase`        | Update branch              | Daily when starting |
+| `git rebase upstream/main` | Sync with upstream         | Before PRs          |
+| `git merge --squash`       | Combine into single commit | For feature merges  |
+| `git gc`                   | Garbage collection         | Weekly              |
+| `git fsck`                 | File system check          | When issues occur   |
+| `git repack`               | Optimize storage           | Monthly             |
+| `git reflog`               | View ref logs              | Track lost commits  |
+| `git clean`                | Remove untracked files     | Workspace cleanup   |
+| `git prune`                | Remove orphaned objects    | Monthly             |
 
 ## Team Guidelines
 

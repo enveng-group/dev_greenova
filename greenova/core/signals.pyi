@@ -1,0 +1,9 @@
+# Stub file for core.signals
+from django.dispatch import Signal
+
+theme_preference_changed: Signal
+navigation_accessed: Signal
+
+def log_user_login(_sender, _request, user, **_kwargs): ...
+def log_user_logout(_sender, _request, user, **_kwargs): ...
+def handle_user_update(_sender, instance, created, **_kwargs): ...

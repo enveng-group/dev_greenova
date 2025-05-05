@@ -113,7 +113,8 @@ across different environments.
 
 # Environment Variables with Dotenv Vault
 
-This project uses `python-dotenv-vault` to manage environment variables securely across different environments.
+This project uses `python-dotenv-vault` to manage environment variables
+securely across different environments.
 
 ## Development Environment
 

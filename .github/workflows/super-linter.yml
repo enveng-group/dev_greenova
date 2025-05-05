@@ -1,29 +1,85 @@
-# This workflow executes several linters on changed files based on languages used in your code base whenever
-# you push a code or open a pull request.
-#
-# You can adjust the behavior by modifying this file.
+# Super-Linter Workflow
+# This workflow runs Super-Linter to validate code quality across multiple languages.
 # For more information, see:
 # https://github.com/github/super-linter
-# name: Lint Code Base
 
-# on:
-#   push:
-#     branches: ['main']
-#   pull_request:
-#     branches: ['main']
-# jobs:
-#   run-lint:
-#     runs-on: ubuntu-20.04
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#         with:
-#           # Full git history is needed to get a proper list of changed files within `super-linter`
-#           fetch-depth: 0
+name: Super-Linter
 
-#       - name: Lint Code Base
-#         uses: github/super-linter@v4
-#         env:
-#           VALIDATE_ALL_CODEBASE: false
-#           DEFAULT_BRANCH: 'main'
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+on:
+  push:
+    branches:
+      - 'main' # Run on pushes to the main branch
+    paths:
+      - '**.py' # Trigger on changes to Python files
+      - '**.js' # Trigger on changes to JavaScript files
+      - '**.css' # Trigger on changes to CSS files
+      - '**.html' # Trigger on changes to HTML files
+      - '**.md' # Trigger on changes to Markdown files
+      - '**.sh' # Trigger on changes to Shell scripts
+      - '.pylintrc' # Trigger on changes to Pylint configuration
+      - '.pylintrc-django' # Trigger on changes to Django-specific Pylint configuration
+      - 'pyproject.toml' # Trigger on changes to Python project configuration
+      - 'isort.cfg' # Trigger on changes to isort configuration
+      - 'eslint.config.js' # Trigger on changes to ESLint configuration
+      - 'stylelint.config.js' # Trigger on changes to Stylelint configuration
+      - '.markdownlint-cli2.jsonc' # Trigger on changes to Markdownlint configuration
+      - '.shellcheckrc' # Trigger on changes to ShellCheck configuration
+  pull_request:
+    branches:
+      - 'main' # Run on pull requests targeting the main branch
+    paths:
+      - '**.py' # Trigger on changes to Python files
+      - '**.js' # Trigger on changes to JavaScript files
+      - '**.css' # Trigger on changes to CSS files
+      - '**.html' # Trigger on changes to HTML files
+      - '**.md' # Trigger on changes to Markdown files
+      - '**.sh' # Trigger on changes to Shell scripts
+      - '.pylintrc' # Trigger on changes to Pylint configuration
+      - '.pylintrc-django' # Trigger on changes to Django-specific Pylint configuration
+      - 'pyproject.toml' # Trigger on changes to Python project configuration
+      - 'isort.cfg' # Trigger on changes to isort configuration
+      - 'eslint.config.js' # Trigger on changes to ESLint configuration
+      - 'stylelint.config.js' # Trigger on changes to Stylelint configuration
+      - '.markdownlint-cli2.jsonc' # Trigger on changes to Markdownlint configuration
+      - '.shellcheckrc' # Trigger on changes to ShellCheck configuration
+  workflow_dispatch: # Allow manual triggering of the workflow
+
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+    permissions:
+      contents: read # Minimal permissions required for this job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Check out the repository code
+        with:
+          fetch-depth: 0 # Fetch full git history for proper file change detection
+
+      - name: Lint Code Base
+        uses: github/super-linter@v5 # Run Super-Linter
+        env:
+          VALIDATE_ALL_CODEBASE: false # Only validate changed files
+          DEFAULT_BRANCH: 'main' # Set the default branch for comparison
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the GitHub token for authentication
+          # Python linting
+          VALIDATE_PYTHON: true # Enable Python validation
+          PYTHON_BLACK_CONFIG_FILE: pyproject.toml # Use Black configuration from pyproject.toml
+          PYTHON_ISORT_CONFIG_FILE: isort.cfg # Use isort configuration from isort.cfg
+          VALIDATE_PYLINT: true # Enable Pylint validation
+          PYTHON_PYLINT_CONFIG_FILE: .pylintrc-django # Use Django-specific Pylint configuration
+          # JavaScript linting
+          VALIDATE_JAVASCRIPT_ES: true # Enable JavaScript validation
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js # Use ESLint configuration
+          # CSS linting
+          VALIDATE_CSS: true # Enable CSS validation
+          CSS_FILE_NAME: stylelint.config.js # Use Stylelint configuration
+          # HTML linting (Django templates)
+          VALIDATE_DJANGO: true # Enable Django template validation
+          # Markdown linting
+          VALIDATE_MARKDOWN: true # Enable Markdown validation
+          MARKDOWN_CONFIG_FILE: .markdownlint-cli2.jsonc # Use Markdownlint configuration
+          # Shell script linting
+          VALIDATE_BASH: true # Enable Shell script validation
+          BASH_CONFIG_FILE: .shellcheckrc # Use ShellCheck configuration
+          # Exclusions
+          FILTER_REGEX_EXCLUDE: (.*\/node_modules\/.*|.*\/static\/.*|.*\/staticfiles\/.*|.*\/media\/.*|.*\/migrations\/.*|.*\.min\.js|.*\.min\.css) # Exclude specific paths and files

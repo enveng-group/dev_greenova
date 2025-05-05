@@ -1,0 +1,54 @@
+# Dotenv Vault Workflow
+# This workflow manages `.env` files using Dotenv Vault.
+# For more information, see:
+# https://dotenv.org/vault
+
+name: Dotenv Vault
+
+on:
+  push:
+    branches:
+      - 'main' # Run on pushes to the main branch
+    paths:
+      - '.env*' # Trigger on changes to `.env` files
+      - '.env.vault' # Trigger on changes to `.env.vault`
+  pull_request:
+    branches:
+      - 'main' # Run on pull requests targeting the main branch
+    paths:
+      - '.env*' # Trigger on changes to `.env` files
+      - '.env.vault' # Trigger on changes to `.env.vault`
+  workflow_dispatch: # Allow manual triggering of the workflow
+
+jobs:
+  dotenv:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+    permissions:
+      contents: read # Minimal permissions required for this job
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4 # Check out the repository code
+
+      - name: Install dotenv-vault
+        run: npm install -g dotenv-vault@latest # Install the latest version of Dotenv Vault
+
+      - name: Check if .env.vault exists
+        id: check_vault # Assign an ID to this step for conditional logic
+        run: |
+          if [ -f ".env.vault" ]; then
+            echo "vault_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "vault_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build .env.vault
+        if: steps.check_vault.outputs.vault_exists != 'true' # Only run if `.env.vault` does not exist
+        run: dotenv-vault build # Build the `.env.vault` file
+        env:
+          DOTENV_KEY: ${{ secrets.DOTENV_KEY }} # Use the secret key for Dotenv Vault
+
+      - name: Verify .env.vault
+        run: dotenv-vault verify # Verify the `.env.vault` file
+        env:
+          DOTENV_KEY: ${{ secrets.DOTENV_KEY }} # Use the secret key for Dotenv Vault

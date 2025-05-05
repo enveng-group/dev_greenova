@@ -1,63 +1,78 @@
 <section class="profile-edit">
-  <form method="post" enctype="multipart/form-data"
+  <form method="post"
+        enctype="multipart/form-data"
         hx-post="{% url 'users:profile_edit' %}"
         hx-target=".profile-container"
         _="on submit add .is-submitting to me">
-    {% csrf_token %}
+{% csrf_token %}
 
     <div class="form-group">
-      <label for="{{ form.first_name.id_for_label }}">First Name</label>
+      <label for="{{ form.first_name.id_for_label }}">
+First Name
+      </label>
       {{ form.first_name }}
       {{ form.first_name.errors }}
     </div>
 
     <div class="form-group">
-      <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+      <label for="{{ form.last_name.id_for_label }}">
+Last Name
+      </label>
       {{ form.last_name }}
       {{ form.last_name.errors }}
     </div>
 
     <div class="form-group">
-      <label for="{{ form.email.id_for_label }}">Email Address</label>
+      <label for="{{ form.email.id_for_label }}">
+Email Address
+      </label>
       {{ form.email }}
       {{ form.email.errors }}
     </div>
 
     <div class="form-group">
-      <label for="{{ form.bio.id_for_label }}">Bio</label>
+      <label for="{{ form.bio.id_for_label }}">
+Bio
+      </label>
       {{ form.bio }}
       {{ form.bio.errors }}
     </div>
 
     <div class="form-grid">
       <div class="form-group">
-        <label for="{{ form.position.id_for_label }}">Position</label>
+        <label for="{{ form.position.id_for_label }}">
+Position
+        </label>
         {{ form.position }}
         {{ form.position.errors }}
       </div>
 
       <div class="form-group">
-        <label for="{{ form.department.id_for_label }}">Department</label>
+        <label for="{{ form.department.id_for_label }}">
+Department
+        </label>
         {{ form.department }}
         {{ form.department.errors }}
       </div>
     </div>
 
     <div class="form-group">
-      <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+      <label for="{{ form.phone_number.id_for_label }}">
+Phone Number
+      </label>
       {{ form.phone_number }}
       {{ form.phone_number.errors }}
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn-primary"
-              _="on click if closest('form').classList.contains('is-submitting') then this.disabled = true
-                            add {'loading': ''} to me
-                            set my innerHTML to 'Saving...'">
+      <button type="submit"
+              class="btn-primary"
+              _="on click if closest('form').classList.contains('is-submitting') then this.disabled = true add {'loading': ''} to me set my innerHTML to 'Saving...'">
         Save Changes
       </button>
 
-      <button type="button" class="btn-secondary"
+      <button type="button"
+              class="btn-secondary"
               hx-get="{% url 'users:profile' %}"
               hx-target=".profile-container"
               hx-push-url="true">

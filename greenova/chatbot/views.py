@@ -116,9 +116,18 @@ def send_message(request, conversation_id):
                 'content': escape(bot_response),
             }
         })
-    except Exception as e:
-        logger.error(f"Error processing message: {str(e)}")
-        return JsonResponse({'error': 'Failed to process message'}, status=500)
+    except json.JSONDecodeError as e:
+        logger.error('Invalid JSON in request body: %s', str(e))
+        return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+    except KeyError as e:
+        logger.error('Missing key in request data: %s', str(e))
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    except ValueError as e:
+        logger.error('Value error processing message: %s', str(e))
+        return JsonResponse({'error': 'Invalid value provided'}, status=400)
+    except RuntimeError as e:
+        logger.error('Runtime error processing message: %s', str(e))
+        return JsonResponse({'error': 'A runtime error occurred'}, status=500)
 
 
 @login_required

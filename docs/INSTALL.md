@@ -2,7 +2,7 @@
 
 ## System Requirements
 
-- Python 3.9.21
+- Python 3.12.9
 - SQLite3
 - pip package manager
 

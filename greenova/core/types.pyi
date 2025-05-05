@@ -1,0 +1,16 @@
+# Stub file for core.types
+from typing import Dict, Generic, List, TypeVar
+
+from django.db.models import Model
+from django.db.models import QuerySet as DjangoQuerySet
+from django.http import HttpRequest as HttpRequestBase
+
+T = TypeVar("T", bound=Model)
+
+class HttpRequest(HttpRequestBase): ...
+class QuerySet(DjangoQuerySet, Generic[T]): ...
+class StatusData(Dict[str, int]): ...
+class DjangoError: ...
+class ModelOperationError(DjangoError, Exception): ...
+
+ChoicesType = List[tuple[str, str]]

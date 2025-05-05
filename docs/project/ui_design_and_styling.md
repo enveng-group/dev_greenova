@@ -1,6 +1,6 @@
-## Project Business Scope Plan
+# Project Business Scope Plan
 
-### Project Title
+## Project Title
 
 Front-End UI Design and Styling Using PicoCSS and Django-Tailwind
 
@@ -137,6 +137,15 @@ version of Tailwind CSS.
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Greenova - Environmental Management System"
+    />
+    <meta
+      name="keywords"
+      content="Greenova, Environmental Management, Compliance,
+          Sustainability"
+    />
     <title>Greenova</title>
     <link
       rel="stylesheet"
@@ -145,20 +154,22 @@ version of Tailwind CSS.
   </head>
   <body>
     <header>
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
-        </ul>
-      </nav>
+      <li><a href="{% url 'about' %}">About</a></li>
+      <li><a href="{% url 'contact' %}">Contact</a></li>
+      <li><a href="{% url 'contact' %}">Contact</a></li>
+      <li><a href="{% url 'about' %}">About</a></li>
+      <li><a href="{% url 'contact' %}">Contact</a></li>
+      <ul>
+        <li><a href="{% url 'about' %}">About</a></li>
+        <li><a href="{% url 'contact' %}">Contact</a></li>
+      </ul>
     </header>
     <main>
       <h1>Welcome to Greenova</h1>
-      <p>This is the home page of Greenova project.</p>
+      <p>© 2025 Greenova. All rights reserved.</p>
     </main>
     <footer>
-      <p>&copy; 2025 Greenova. All rights reserved.</p>
+      <p>© 2025 Greenova. All rights reserved.</p>
     </footer>
   </body>
 </html>
@@ -562,7 +573,7 @@ button,
    - Include in deployment workflow
    - Ensure both development and production builds work
 
-### Resources
+### References
 
 - [SASS Documentation](https://sass-lang.com)
 - [PostCSS Documentation](https://postcss.org)

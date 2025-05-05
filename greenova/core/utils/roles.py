@@ -85,7 +85,7 @@ def get_role_display(role_value: str) -> str:
 
 def get_role_color(role_value: str) -> str:
     """Get the display color for a role value."""
-    return ROLE_COLORS.get(role_value, 'default')
+    return ROLE_COLORS.get(role_value, "default")
 
 def get_role_choices() -> List[Tuple[str, str]]:
     """
@@ -109,7 +109,7 @@ def get_responsibility_choices() -> List[Tuple[str, str]]:
     return [(display_name, display_name) for _, display_name in get_role_choices()
             if display_name not in ['Owner', 'Manager', 'Member', 'Viewer']]
 
-def get_role_from_responsibility(responsibility: str) -> str:
+def get_role_from_responsibility(responsibility: str) -> str | None:
     """
     Convert a responsibility display name to its corresponding role value.
 
@@ -117,12 +117,12 @@ def get_role_from_responsibility(responsibility: str) -> str:
         responsibility (str): The display name of the responsibility
 
     Returns:
-        str: The corresponding role value or None if not found
+        str | None: The corresponding role value or None if not found
     """
     inverse_map = {display: value for value, display in get_role_choices()}
     return inverse_map.get(responsibility)
 
-def get_responsibility_from_role(role: str) -> str:
+def get_responsibility_from_role(role: str) -> str | None:
     """
     Convert a role value to its corresponding responsibility display name.
 
@@ -130,7 +130,7 @@ def get_responsibility_from_role(role: str) -> str:
         role (str): The role value
 
     Returns:
-        str: The corresponding responsibility display name or None if not found
+        str | None: The corresponding responsibility display name or None if not found
     """
     return ROLE_DISPLAY_NAMES.get(role)
 

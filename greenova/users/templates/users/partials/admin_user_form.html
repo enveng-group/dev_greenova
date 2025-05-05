@@ -1,12 +1,16 @@
 <section class="admin-user-form">
   <form method="post" enctype="multipart/form-data" hx-boost="true">
-    {% csrf_token %}
+{% csrf_token %}
 
-    <h2>User Account</h2>
+    <h2>
+User Account
+    </h2>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ form.username.id_for_label }}">Username</label>
+        <label for="{{ form.username.id_for_label }}">
+Username
+        </label>
         {{ form.username }}
         {% if form.username.errors %}
           <small class="error">{{ form.username.errors.0 }}</small>
@@ -14,7 +18,9 @@
       </div>
 
       <div class="form-group">
-        <label for="{{ form.email.id_for_label }}">Email Address</label>
+        <label for="{{ form.email.id_for_label }}">
+Email Address
+        </label>
         {{ form.email }}
         {% if form.email.errors %}
           <small class="error">{{ form.email.errors.0 }}</small>
@@ -24,7 +30,9 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ form.first_name.id_for_label }}">First Name</label>
+        <label for="{{ form.first_name.id_for_label }}">
+First Name
+        </label>
         {{ form.first_name }}
         {% if form.first_name.errors %}
           <small class="error">{{ form.first_name.errors.0 }}</small>
@@ -32,7 +40,9 @@
       </div>
 
       <div class="form-group">
-        <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+        <label for="{{ form.last_name.id_for_label }}">
+Last Name
+        </label>
         {{ form.last_name }}
         {% if form.last_name.errors %}
           <small class="error">{{ form.last_name.errors.0 }}</small>
@@ -42,7 +52,9 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ form.password1.id_for_label }}">Password</label>
+        <label for="{{ form.password1.id_for_label }}">
+Password
+        </label>
         {{ form.password1 }}
         {% if form.password1.errors %}
           <small class="error">{{ form.password1.errors.0 }}</small>
@@ -51,7 +63,9 @@
       </div>
 
       <div class="form-group">
-        <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+        <label for="{{ form.password2.id_for_label }}">
+Confirm Password
+        </label>
         {{ form.password2 }}
         {% if form.password2.errors %}
           <small class="error">{{ form.password2.errors.0 }}</small>
@@ -59,7 +73,9 @@
       </div>
     </div>
 
-    <h2>User Permissions</h2>
+    <h2>
+User Permissions
+    </h2>
 
     <div class="form-row">
       <div class="form-group checkbox-group">
@@ -97,54 +113,70 @@
     </div>
 
     {% if profile_form %}
-    <h2>Profile Information</h2>
+      <h2>
+Profile Information
+      </h2>
 
-    <div class="form-group">
-      <label for="{{ profile_form.bio.id_for_label }}">Bio</label>
+      <div class="form-group">
+        <label for="{{ profile_form.bio.id_for_label }}">
+Bio
+        </label>
       {{ profile_form.bio }}
-      {% if profile_form.bio.errors %}
-        <small class="error">{{ profile_form.bio.errors.0 }}</small>
-      {% endif %}
-    </div>
+        {% if profile_form.bio.errors %}
+          <small class="error">{{ profile_form.bio.errors.0 }}</small>
+        {% endif %}
+      </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="{{ profile_form.position.id_for_label }}">Position</label>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="{{ profile_form.position.id_for_label }}">
+Position
+          </label>
         {{ profile_form.position }}
-        {% if profile_form.position.errors %}
-          <small class="error">{{ profile_form.position.errors.0 }}</small>
+          {% if profile_form.position.errors %}
+            <small class="error">{{ profile_form.position.errors.0 }}</small>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ profile_form.department.id_for_label }}">
+Department
+          </label>
+        {{ profile_form.department }}
+          {% if profile_form.department.errors %}
+            <small class="error">{{ profile_form.department.errors.0 }}</small>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="{{ profile_form.phone_number.id_for_label }}">
+Phone Number
+        </label>
+      {{ profile_form.phone_number }}
+        {% if profile_form.phone_number.errors %}
+          <small class="error">{{ profile_form.phone_number.errors.0 }}</small>
         {% endif %}
       </div>
 
       <div class="form-group">
-        <label for="{{ profile_form.department.id_for_label }}">Department</label>
-        {{ profile_form.department }}
-        {% if profile_form.department.errors %}
-          <small class="error">{{ profile_form.department.errors.0 }}</small>
+        <label for="{{ profile_form.profile_image.id_for_label }}">
+Profile Image
+        </label>
+      {{ profile_form.profile_image }}
+        {% if profile_form.profile_image.errors %}
+          <small class="error">{{ profile_form.profile_image.errors.0 }}</small>
         {% endif %}
       </div>
-    </div>
-
-    <div class="form-group">
-      <label for="{{ profile_form.phone_number.id_for_label }}">Phone Number</label>
-      {{ profile_form.phone_number }}
-      {% if profile_form.phone_number.errors %}
-        <small class="error">{{ profile_form.phone_number.errors.0 }}</small>
-      {% endif %}
-    </div>
-
-    <div class="form-group">
-      <label for="{{ profile_form.profile_image.id_for_label }}">Profile Image</label>
-      {{ profile_form.profile_image }}
-      {% if profile_form.profile_image.errors %}
-        <small class="error">{{ profile_form.profile_image.errors.0 }}</small>
-      {% endif %}
-    </div>
     {% endif %}
 
     <div class="form-actions">
-      <button type="submit" class="btn-primary">{{ action }} User</button>
-      <a href="{% url 'users:admin_user_list' %}" class="btn-secondary" role="button">Cancel</a>
+      <button type="submit" class="btn-primary">
+{{ action }} User
+      </button>
+      <a href="{% url 'users:admin_user_list' %}"
+         class="btn-secondary"
+         role="button">Cancel</a>
     </div>
   </form>
 </section>

@@ -1,17 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Delete Document{% endblock title %}
+{% block title %}
+Delete Document
+{% endblock title %}
 
 {% block content %}
-<article>
-  <header>
-    <h1>Delete Document</h1>
-    <h2>{{ company.name }}</h2>
-  </header>
+  <article>
+    <header>
+      <h1>
+Delete Document
+      </h1>
+      <h2>
+{{ company.name }}
+      </h2>
+    </header>
 
-  <div class="delete-container" hx-target="this" hx-swap="outerHTML">
-    {% include "company/partials/document_delete_confirm.html" %}
-  </div>
-</article>
+    <div class="delete-container" hx-target="this" hx-swap="outerHTML">
+{% include "company/partials/document_delete_confirm.html" %}
+    </div>
+  </article>
 {% endblock content %}

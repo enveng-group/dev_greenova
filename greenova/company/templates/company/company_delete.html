@@ -1,16 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Delete Company{% endblock title %}
+{% block title %}
+Delete Company
+{% endblock title %}
 
 {% block content %}
-<article>
-  <header>
-    <h1>Delete Company</h1>
-  </header>
+  <article>
+    <header>
+      <h1>
+Delete Company
+      </h1>
+    </header>
 
-  <div class="delete-container" hx-target="this" hx-swap="outerHTML">
-    {% include "company/partials/company_delete_confirm.html" %}
-  </div>
-</article>
+    <p>
+Are you sure you want to delete the company "{{ company.name }}"?
+    </p>
+
+    <form method="post">
+{% csrf_token %}
+      <button type="submit" class="btn btn-danger">
+Confirm Delete
+      </button>
+      <a href="{% url 'company:list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </article>
 {% endblock content %}

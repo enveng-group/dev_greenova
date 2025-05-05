@@ -2,18 +2,23 @@
 persistent=yes
 suggestion-mode=yes
 unsafe-load-any-extension=no
-load-plugins=tools.pylint.fix_good_names,pylint_django,tools.pylint.gevent_checker
-ignore=migrations,venv,.venv
+load-plugins=pylint_django
 django-settings-module=greenova.greenova.settings
-
-# Add project root to Python path
-init-hook="import sys, os; sys.path.insert(0, '/workspaces/greenova'); sys.path.insert(0, '/workspaces/greenova/greenova')"
+ignore=migrations,venv,.venv
 
 [FORMAT]
 max-line-length=88
 
 [MESSAGES CONTROL]
-disable=no-member,C0111,R0903,C0103
+disable=
+    C0111, # missing-docstring
+    C0103, # invalid-name
+    W0613, # unused-argument
+    W0703, # broad-except
+    R0903, # too-few-public-methods
+    R0901, # too-many-ancestors
+    W0212, # protected-access
+    W0221, # arguments-differ
 
 [SIMILARITIES]
 ignore-comments=yes
@@ -21,4 +26,10 @@ ignore-docstrings=yes
 ignore-imports=yes
 
 [BASIC]
-good-names=_,i,j,k,e,f,db,id,pk,setUp,tearDown,maxDiff,Meta
+good-names=i,j,k,ex,Run,_,id,pk,setUp,tearDown
+
+[DESIGN]
+max-parents=13
+
+[TYPECHECK]
+ignored-classes=WSGIRequest,HttpRequest,HttpResponse,QuerySet,ManyToManyField

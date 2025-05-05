@@ -99,4 +99,29 @@ The following tasks have been completed and moved to `done.txt`:
 - [eslint](https://eslint.org/)
 - [setuptools](https://setuptools.pypa.io/en/latest/index.html)
 - [pre-commit](https://pre-commit.com)
-- [pre-commit hooks](https://pre-commit.com/hooks.html)
+
+mysql
+caddy
+<https://pypi.org/project/doltpy/>
+django-channels
+web server: daphne
+websockets
+forward-proxy: mitmproxy
+reverse-proxy: proxy.py
+load-balancing- pyloadbalancer
+DDOD protection - <https://github.com/nky001/ddos>
+SSL termination - pyOpenSSL and certbot and certbot-django
+pythsonstartup
+fish.config
+devcontainer.json to use final base image for smallest possivle image
+assemblyscript
+dotfiles improve, put necessary config stuff in dotfiles and then let setup.sh apply to container
+gpg commit signing
+github projects
+github copilot prompts
+proper direnv setup
+proper gh-cli setup
+better use of git-crypt and git-lfs
+add `npx dotenv-vault@latest pull` to `post_create.sh` in `.devcontainer/` directory
+MOdularise base.html
+combine and collate numerous commmands into makefile to automate the setup development environment process

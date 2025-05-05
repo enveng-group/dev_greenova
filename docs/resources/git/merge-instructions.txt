@@ -1,0 +1,524 @@
+# Greenova Merge Instructions - Comprehensive Strategy
+
+## 1. PRs Analysis
+
+### PRs with High Risk of Conflicts (Priority Order)
+
+0. **cherry-pick/selected-pr-updates** - Extensive Foundational Changes
+   - Risk Areas: Authentication templates, company models, obligation templates, core components, dev environment
+   - Key files:
+     - Multiple authentication templates
+     - greenova/company/models.py (deletes middleware.py)
+     - greenova/obligations/templates/* (removes obligation_list.html)
+     - .devcontainer configuration files
+     - Environment configuration files (.env.vault)
+
+1. **PR #131** - Authentication URLs and Core Changes
+   - Risk Areas: URL routing, settings, authentication flow
+   - Key files:
+     - greenova/authentication/urls.py (new)
+     - greenova/greenova/settings.py
+     - greenova/greenova/urls.py
+     - greenova/company/test_company.py
+
+2. **PR #102** - Company Management Module
+   - Risk Areas: Database models, middleware, company functionality
+   - Key files:
+     - greenova/company/models.py
+     - greenova/company/middleware.py (new)
+     - greenova/company/mixins.py (new)
+     - greenova/company/views.py
+
+3. **PR #128** - Task Configuration and Import Changes
+   - Risk Areas: Data import, task configuration
+   - Key files:
+     - greenova/dummy_data.csv
+     - greenova/obligations/management/commands/import_obligations.py
+     - .vscode/tasks.json
+
+4. **PR #103** - Development Environment Configuration
+   - Risk Areas: Environment setup, dependencies
+   - Key files:
+     - .devcontainer/devcontainer.json
+     - requirements.txt
+     - .env.vault
+
+### Safe to Merge PRs (In Order)
+
+1. **PR #90** - Makefile Updates (Safest, minimal changes)
+2. **PR #99** - Obligation List UI Updates
+3. **PR #97** - User Profile Updates
+4. **PR #104** - Environment Variable Updates
+5. **PR #144** - Core Feature Updates
+6. **PR #145** - Auditing Module (After core updates)
+
+## 2. Repository Health Check and Preparation
+
+### Pre-Merge Analysis
+
+```bash
+# Create a detailed comparison report
+mkdir -p analysis_logs
+git fetch --all
+
+# Repository status and commit history comparison
+git status > analysis_logs/repo_status.log
+git log --graph --oneline --decorate upstream/main...origin/staging > analysis_logs/commit_history.log
+
+# File differences between branches
+git diff --name-status upstream/main origin/staging > analysis_logs/changed_files.log
+git diff --stat upstream/main origin/staging > analysis_logs/diff_stats.log
+
+# Conflict detection check
+git checkout -b temp_analysis_branch upstream/main
+git merge --no-commit --no-ff origin/staging &> analysis_logs/potential_conflicts.log || echo "Conflicts detected, see log"
+git merge --abort
+git checkout staging
+git branch -D temp_analysis_branch
+
+# Check common conflict areas
+git diff upstream/main origin/staging -- greenova/company/models.py greenova/greenova/settings.py \
+  greenova/authentication/urls.py greenova/greenova/urls.py > analysis_logs/critical_files_diff.log
+
+# Review analysis logs before proceeding
+cat analysis_logs/*.log > upstream_merge_analysis.log
+```
+
+### Repository Optimization
+
+```bash
+# Perform repository optimization before major merges
+git reflog expire --expire=now --all
+git gc --prune=now --aggressive
+git repack -Ad
+git fsck
+```
+
+## 3. Merge Strategy
+
+### Phase 1: Preparation
+
+```bash
+# Ensure clean working state
+git status
+git stash    # if needed
+
+# Update all remotes
+git fetch --all --prune
+
+# Create integration branch from a clean state
+git checkout -b integration/v0.0.6 origin/staging
+```
+
+### Phase 1.5: Integrate cherry-picked updates first
+
+```bash
+# Create a test branch for conflict detection only
+git checkout -b conflict-detection cherry-pick/selected-pr-updates
+git merge origin/staging
+# If conflicts are found, resolve them to understand what you'll face
+# Then abort this merge and continue with your original plan
+git merge --abort
+git checkout staging
+git branch -D conflict-detection
+
+# Merge the cherry-pick/selected-pr-updates branch first as it contains foundational changes
+git merge cherry-pick/selected-pr-updates
+# Resolve any conflicts carefully - this is the most complex merge
+git add .
+git commit -m "feat(core): integrate foundational infrastructure improvements
+
+- Update authentication templates
+- Improve development environment configuration
+- Update core templates and components
+- Add infrastructure for CI/CD workflows
+
+Resolves conflicts with cherry-pick/selected-pr-updates"
+
+# TEST thoroughly after this merge before proceeding
+python manage.py migrate
+python manage.py test
+make lint
+# Manually verify key functionality works
+```
+
+### Phase 2: Safe PRs First (Sequential Order)
+
+1. Merge PR #90 (Makefile updates):
+```bash
+gh pr checkout 90
+git merge integration/v0.0.6
+git add .
+git commit -m "chore(build): update Makefile for improved build process"
+gh pr merge 90 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only pr/Channing88/90
+```
+
+2. Merge PR #99 (Obligation List UI):
+```bash
+gh pr checkout 99
+git merge integration/v0.0.6
+# Note: May have conflicts if cherry-pick branch removed obligation_list.html
+# If conflicts, prefer the cherry-pick branch structure and adapt PR #99 changes
+git add .
+git commit -m "feat(ui): implement interactive hyperlinks for status counts in procedure view
+
+- Adapts changes to new structure from cherry-pick branch
+- Preserves interactive HTMX functionality"
+gh pr merge 99 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only pr/mhahmad0/99
+```
+
+3. Continue with PR #97 (User Profile):
+```bash
+gh pr checkout 97
+git merge integration/v0.0.6
+git add .
+git commit -m "feat(users): streamline user profile management and improve UI"
+gh pr merge 97 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only pr/JaredStanbrook/97
+```
+
+4. Continue with PR #104 (Environment Variables):
+```bash
+gh pr checkout 104
+git merge integration/v0.0.6
+git add .
+git commit -m "chore(env): update environment configuration for improved security"
+gh pr merge 104 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only dotenv-vault
+```
+
+### Phase 3: Complex PRs (Sequential Order)
+
+1. PR #131 (Authentication):
+```bash
+gh pr checkout 131
+git merge integration/v0.0.6
+# Resolve conflicts in:
+# - greenova/authentication/urls.py
+# - greenova/greenova/settings.py
+# - greenova/greenova/urls.py
+git add .
+git commit -m "feat(auth): implement proper authentication namespaces and fix login redirects
+
+- Define namespace 'authentication' in urls.py
+- Update LOGIN_URL in settings.py to use namespace
+- Fixes test_company_create_requires_login"
+gh pr merge 131 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only mhahmad0/issue72
+
+# Verify authentication flow
+python manage.py test authentication
+python manage.py test company.test_company
+```
+
+2. PR #102 (Company Management):
+```bash
+gh pr checkout 102
+git merge integration/v0.0.6
+# Major conflicts likely if cherry-pick branch deleted middleware.py
+# Resolve conflicts, preserving both:
+# - Company model structure from PR #102
+# - Improvements from cherry-pick branch
+git add .
+git commit -m "feat(company): implement company management module
+
+- Add Company and UserCompany models with proper relationships
+- Update middleware for company context
+- Implement view mixins for company-scoped access control
+- Fix conflict issues with cherry-pick branch"
+gh pr merge 102 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only mhahmad0/issue87
+
+# Test database migrations and company functionality
+python manage.py makemigrations --check
+python manage.py test company
+```
+
+3. PR #128 (Import Obligations):
+```bash
+gh pr checkout 128
+git merge integration/v0.0.6
+# Resolve conflicts in task and import files
+git add .
+git commit -m "fix(obligations): improve obligation import functionality
+
+- Update CSV import logic
+- Fix constraints handling
+- Improve error reporting during import"
+gh pr merge 128 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only fix/import_obligations
+
+# Test import functionality
+python manage.py import_obligations --dry-run
+```
+
+4. PR #103 (Dev Environment):
+```bash
+gh pr checkout 103
+git merge integration/v0.0.6
+# Resolve conflicts in environment files
+git add .
+git commit -m "feat(dev): update development environment configuration
+
+- Add IPython integration
+- Update bash aliases for improved workflow
+- Configure pythonstartup for better development experience"
+gh pr merge 103 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only ipython-integration
+
+# Verify development environment
+. .env
+```
+
+5. PR #145 (Auditing Module):
+```bash
+# Only merge if all previous PRs integrated successfully
+gh pr checkout 145
+git merge integration/v0.0.6
+git add .
+git commit -m "feat(audit): add auditing module for compliance and non-conformance tracking
+
+- Extract compliance and non-conformance comments to dedicated models
+- Add admin interface for audit management
+- Implement history tracking for key operations"
+gh pr merge 145 --squash --delete-branch
+git checkout integration/v0.0.6
+git merge --ff-only feature/issue53
+
+# Verify migrations and auditing functionality
+python manage.py test auditing
+```
+
+## 4. Comprehensive Testing Protocol
+
+After each merge and after all merges:
+
+1. Verify database integrity:
+```bash
+python manage.py makemigrations --check
+python manage.py migrate --plan
+python manage.py showmigrations
+```
+
+2. Run comprehensive test suite:
+```bash
+python manage.py test
+```
+
+3. Check code quality:
+```bash
+make lint
+python -m mypy greenova
+```
+
+4. Verify core functionality paths:
+```bash
+# Create test script to exercise key application functionality
+cat > test_core_functionality.py << EOF
+import os
+import django
+import sys
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "greenova.settings")
+django.setup()
+
+from django.contrib.auth import get_user_model
+from company.models import Company
+from obligations.models import Obligation
+
+# Test user authentication
+User = get_user_model()
+assert User.objects.filter(is_staff=True).exists(), "No admin users found"
+
+# Test company functionality
+assert Company.objects.count() > 0, "No companies found"
+
+# Test obligations
+assert Obligation.objects.count() > 0, "No obligations found"
+
+print("Core functionality verified successfully")
+EOF
+
+python test_core_functionality.py
+```
+
+## 5. Final Integration with Upstream
+
+```bash
+# Create a production-ready merge branch
+git checkout -b production-merge-2025-05 upstream/main
+
+# Squash merge from integration branch
+git merge --squash integration/v0.0.6
+
+# Create a comprehensive commit message
+git commit -m "release(v0.0.6): May 2025 comprehensive update
+
+- Authentication namespace integration (#131)
+- Company management module enhancements (#102)
+- Import obligation improvements (#128)
+- User profile updates (#97)
+- Development environment optimizations (#103)
+- Auditing module implementation (#145)
+
+Contains migrations 00XX-00XX
+Fixes #72, #87, #88, #37"
+
+# Run final verification
+python manage.py test
+make lint
+
+# Verify clean linear history with no merge conflicts
+git log --graph --oneline -n 10
+
+# Push to upstream (requires proper permissions)
+git push upstream production-merge-2025-05:main
+
+# Post verification
+git fetch upstream
+git log --graph --oneline upstream/main -n 5
+```
+
+## 6. Conflict Resolution Guidelines
+
+### Cherry-Pick Branch Conflicts
+
+1. Authentication Templates:
+   - The cherry-pick branch modifies numerous authentication templates
+   - Keep template structure from cherry-pick branch when conflicts occur
+   - Ensure custom functionality from PRs is integrated into the new template structure
+
+2. Company Module:
+   - Cherry-pick branch deletes company/middleware.py but PR #102 adds it
+   - If cherry-pick removed it for a reason, consider refactoring PR #102 to work without it
+   - Review company model changes carefully to ensure compatibility:
+     ```python
+     # Example resolution approach for company/models.py
+     from company.models import Company
+
+     class Company(models.Model):
+         # Fields from cherry-pick branch
+         name = models.CharField(max_length=255)
+         slug = models.SlugField(unique=True)
+
+         # Fields from PR #102
+         logo = models.ImageField(upload_to='company_logos', blank=True)
+         address = models.TextField(blank=True)
+
+         # Methods from both sources combined
+         def get_absolute_url(self):
+             return reverse('company:detail', kwargs={'slug': self.slug})
+     ```
+
+3. Obligation Templates:
+   - Cherry-pick branch removes obligation_list.html which PR #99 modifies
+   - Determine if functionality was moved elsewhere and adapt PR #99 changes accordingly
+   - Example adaptation:
+     ```
+     # If cherry-pick moved functionality to a component-based approach:
+     # 1. Find the new component location
+     # 2. Transfer the relevant HTMX attributes and event handlers
+     # 3. Update selectors and target ids as needed
+     ```
+
+4. Development Environment:
+   - Favor cherry-pick branch configuration for .devcontainer setup
+   - Preserve PR #103 aliases and custom development tools
+   - Merge requirements.txt carefully to avoid version conflicts:
+     ```
+     # Resolve by taking the higher version when conflicts occur
+     # Unless a specific version is required for compatibility
+     ```
+
+### Authentication (PR #131)
+
+1. URLs and Settings:
+   - Ensure `app_name = 'authentication'` is set in authentication/urls.py
+   - Check that `LOGIN_URL = 'authentication:login'` is properly set in settings.py
+   - Verify login redirect behavior with test cases
+
+### Company Management (PR #102)
+
+1. Models and Database:
+   - Check cascade behavior on foreign key relationships
+   - Ensure company-obligation relationship is properly defined
+   - Verify middleware context handling respects user permissions
+
+### Import Obligations (PR #128)
+
+1. Data Import Logic:
+   - Preserve error handling improvements
+   - Maintain transaction integrity
+   - Keep progress reporting functionality
+
+## 7. Alternative Strategies
+
+If the recommended order causes issues:
+
+1. Reverse-Order Strategy:
+```bash
+# Start from lowest-risk PR and progress to higher-risk ones
+# This is less optimal but may help isolate conflict sources
+```
+
+2. Bundle Strategy:
+```bash
+# Group related PRs and merge them together
+# Example: merge all UI-related PRs in one step
+```
+
+3. Cherry-pick Strategy:
+```bash
+# Instead of merging entire PRs, cherry-pick specific commits
+git log pr/mhahmad0/102 --oneline
+git cherry-pick <commit-hash>
+```
+
+## 8. Post-Integration Maintenance
+
+After successful upstream integration:
+
+```bash
+# Update local main
+git checkout main
+git pull upstream main
+git push origin main
+
+# Clean up branches
+git branch -D integration/v0.0.6 production-merge-2025-05
+git remote prune origin
+
+# Optimize repository
+git gc --aggressive
+git prune
+
+# Run final database integrity check
+python manage.py dbshell
+# Run: PRAGMA integrity_check;
+```
+
+## 9. Documentation Updates
+
+After successful integration, update:
+
+1. CHANGELOG.md with all included changes
+2. Update version numbers in relevant files
+3. Tag the release in the production repository
+```bash
+git tag -a v0.0.6 -m "Release v0.0.6 - May 2025 Update"
+git push upstream v0.0.6
+```
+
+---
+
+**Note**: This plan has been optimized based on detailed analysis of the current repository state to minimize conflicts while maintaining code quality and functionality. Always perform backups before proceeding.

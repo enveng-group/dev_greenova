@@ -1,17 +1,21 @@
 import base64
 import io
 import logging
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
-import matplotlib.pyplot as plt
-from django.utils import timezone
 from matplotlib.figure import Figure
 
 from .models import EnvironmentalMechanism
 
 logger = logging.getLogger(__name__)
 
-def generate_pie_chart(data: List[int], labels: List[str], colors: List[str], fig_width: int = 300, fig_height: int = 250) -> Figure:
+def generate_pie_chart(
+    data: List[int],
+    labels: List[str],
+    colors: List[str],
+    fig_width: int = 300,
+    fig_height: int = 250
+) -> Figure:
     """
     Generate a pie chart for given data and labels with percentages in the legend.
     """
@@ -39,7 +43,13 @@ def generate_pie_chart(data: List[int], labels: List[str], colors: List[str], fi
         # Add legend with combined labels
         ax.legend(wedges, legend_labels, loc="best", fontsize=8, title="Status")
     else:
-        ax.text(0.5, 0.5, "No data available", horizontalalignment='center', verticalalignment='center')
+        ax.text(
+            0.5,
+            0.5,
+            "No data available",
+            horizontalalignment='center',
+            verticalalignment='center'
+        )
 
     ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
     fig.tight_layout()
@@ -55,7 +65,11 @@ def encode_figure_to_base64(fig: Figure) -> str:
     buf.seek(0)
     return base64.b64encode(buf.getvalue()).decode('utf-8')
 
-def get_mechanism_chart(mechanism_id: int, fig_width: int = 300, fig_height: int = 250) -> Tuple[Figure, str]:
+def get_mechanism_chart(
+    mechanism_id: int,
+    fig_width: int = 300,
+    fig_height: int = 250
+) -> Tuple[Figure, str]:
     """
     Get pie chart for a specific mechanism based on its statuses.
     Returns both the figure and base64 encoded image data.
@@ -75,12 +89,22 @@ def get_mechanism_chart(mechanism_id: int, fig_width: int = 300, fig_height: int
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image
     except EnvironmentalMechanism.DoesNotExist:
-        logger.error(f"Mechanism with ID {mechanism_id} does not exist.")
-        fig = generate_pie_chart([0, 0, 0, 0], ["None", "None", "None", "None"], ['#ccc', '#ccc', '#ccc', '#ccc'], fig_width, fig_height)
+        logger.error("Mechanism with ID %s does not exist.", mechanism_id)
+        fig = generate_pie_chart(
+            [0, 0, 0, 0],
+            ["None", "None", "None", "None"],
+            ['#ccc', '#ccc', '#ccc', '#ccc'],
+            fig_width,
+            fig_height
+        )
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image
 
-def get_overall_chart(project_id: int, fig_width: int = 300, fig_height: int = 250) -> Tuple[Figure, str]:
+def get_overall_chart(
+    project_id: int,
+    fig_width: int = 300,
+    fig_height: int = 250
+) -> Tuple[Figure, str]:
     """
     Get overall pie chart for all mechanisms in a project.
     Returns both the figure and base64 encoded image data.
@@ -101,8 +125,25 @@ def get_overall_chart(project_id: int, fig_width: int = 300, fig_height: int = 2
         fig = generate_pie_chart(data, labels, colors, fig_width, fig_height)
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image
-    except Exception as e:
-        logger.error(f"Error generating overall chart: {str(e)}")
-        fig = generate_pie_chart([0, 0, 0, 0], ["None", "None", "None", "None"], ['#ccc', '#ccc', '#ccc', '#ccc'], fig_width, fig_height)
+    except EnvironmentalMechanism.DoesNotExist as e:
+        logger.error("Error generating overall chart: %s", str(e))
+        fig = generate_pie_chart(
+            [0, 0, 0, 0],
+            ["None", "None", "None", "None"],
+            ['#ccc', '#ccc', '#ccc', '#ccc'],
+            fig_width,
+            fig_height
+        )
+        encoded_image = encode_figure_to_base64(fig)
+        return fig, encoded_image
+    except ValueError as e:
+        logger.error("Value error while generating overall chart: %s", str(e))
+        fig = generate_pie_chart(
+            [0, 0, 0, 0],
+            ["None", "None", "None", "None"],
+            ['#ccc', '#ccc', '#ccc', '#ccc'],
+            fig_width,
+            fig_height
+        )
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image

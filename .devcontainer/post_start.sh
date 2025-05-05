@@ -1,427 +1,294 @@
-#!/bin/sh
-
+#!/bin/bash
 set -e
 
-# Function to setup NVM environment
-setup_nvm() {
-  # First, update NVM to latest version
-  echo "Updating NVM to latest version..."
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+WORKSPACE_DIR="/workspaces/greenova"
+VENV_DIR="$WORKSPACE_DIR/.venv"
+LOG_FILE="$WORKSPACE_DIR/logs/devcontainer_setup.log"
 
-  # Force reload NVM
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+# Create logs directory if it doesn't exist
+mkdir -p "$WORKSPACE_DIR/logs"
+touch "$LOG_FILE"
 
-  # Setup NVM environment variables
-  {
-    echo '. /usr/local/share/nvm/nvm.sh'
-    echo '. /usr/local/share/nvm/bash_completion'
-  } >"${HOME}/.bash_env"
+echo "$(date): Starting post_start.sh script" | tee -a "$LOG_FILE"
 
-  # Source the environment file
-  . "${HOME}/.bash_env"
-
-  # Rest of your existing setup...
-  command -v nvm >/dev/null 2>&1 || {
-    echo "Error: NVM not found" >&2
-    return 1
-  }
-
-  # Continue with Node.js installation
-  if ! nvm install 18.20.7 -b; then
-    echo "Error: Failed to install Node.js 18.20.7" >&2
-    return 1
-  fi
-
-  command -v nvm >/dev/null 2>&1 || {
-    echo "Error: NVM not found" >&2
-    return 1
-  }
-
-  if ! nvm use 18.20.7; then
-    echo "Error: Failed to use Node.js 18.20.7" >&2
-    return 1
-  fi
-
-  if ! nvm alias default node; then
-    echo "Error: Failed to set default Node.js version" >&2
-    return 1
-  fi
+# Function to log messages
+log() {
+    echo "$(date): $1" | tee -a "$LOG_FILE"
 }
 
-# Setup Python virtual environment
-setup_venv() {
-  VENV_PATH="/workspaces/greenova/.venv"
+# Ensure we're not in a virtual environment
+if [ -n "$VIRTUAL_ENV" ]; then
+    log "Deactivating any active virtual environment"
+    # shellcheck disable=SC1091
+    deactivate 2>/dev/null || true
+    unset VIRTUAL_ENV
+fi
 
-  # Remove any existing .direnv folder to avoid conflicts
-  if [ -d "/workspaces/greenova/.direnv" ]; then
-    echo "Removing conflicting .direnv directory..."
-    rm -rf "/workspaces/greenova/.direnv"
-  fi
-
-  # Create virtual environment if it doesn't exist
-  if [ ! -d "$VENV_PATH" ]; then
-    echo "Creating Python virtual environment..."
-    python -m venv "$VENV_PATH"
-  fi
-
-  # Activate virtual environment
-  echo "Activating virtual environment..."
-  source "$VENV_PATH/bin/activate"
-
-  # Upgrade pip
-  python -m pip install --upgrade pip
-
-  # Install requirements if present
-  if [ -f "/workspaces/greenova/requirements.txt" ]; then
-    echo "Installing Python requirements with constraints..."
-    if [ -f "/workspaces/greenova/constraints.txt" ]; then
-      pip install -r "/workspaces/greenova/requirements.txt" -c "/workspaces/greenova/constraints.txt" --no-deps
-    else
-      echo "Warning: constraints.txt not found, installing without constraints"
-      pip install -r "/workspaces/greenova/requirements.txt"
+# Clean up any stale virtual environment
+log "Cleaning up virtual environment"
+if [ -d "$VENV_DIR" ]; then
+    # Try to unmount the virtual environment if it's mounted
+    if mountpoint -q "$VENV_DIR" 2>/dev/null; then
+        log "Unmounting virtual environment"
+        sudo umount -l "$VENV_DIR" 2>/dev/null || true
     fi
 
-    if command -v pre-commit >/dev/null 2>&1; then
-      pre-commit install
-    else
-      echo "Warning: pre-commit not found, skipping installation"
-    fi
+    # Remove the directory
+    sudo rm -rf "$VENV_DIR" 2>/dev/null || true
+fi
 
-    if command -v pre-commit >/dev/null 2>&1; then
-      pre-commit install
-    else
-      echo "Warning: pre-commit not found, skipping installation"
-    fi
-  fi
-}
+# Fix workspace permissions before doing anything else, ignoring errors
+log "Ensuring workspace permissions are correct"
+find "$WORKSPACE_DIR" -path "$WORKSPACE_DIR/.git/fsmonitor--daemon.ipc" -prune -o -exec sudo chown "$(id -u):$(id -g)" {} \; 2>/dev/null || true
+sudo chmod -R 755 "$WORKSPACE_DIR" 2>/dev/null || true
 
-# Fix django-hyperscript syntax error
-fix_django_hyperscript() {
-  echo "Checking for django-hyperscript syntax error..."
+# Create fresh virtual environment directory
+log "Creating fresh virtual environment directory"
+sudo mkdir -p "$VENV_DIR"
+sudo chown -R "$(id -u):$(id -g)" "$VENV_DIR"
 
-  # Create directory for scripts if it doesn't exist
-  mkdir -p "/workspaces/greenova/scripts"
+# Create new virtual environment
+log "Creating new virtual environment"
+python3 -m venv "$VENV_DIR"
 
-  # Create the fix script if it doesn't exist
-  if [ ! -f "/workspaces/greenova/scripts/fix_hyperscript.py" ]; then
-    cat >"/workspaces/greenova/scripts/fix_hyperscript.py" <<'EOL'
-#!/usr/bin/env python3
-"""
-Fix for django-hyperscript syntax error in templatetags/hyperscript.py.
-"""
-import os
-import sys
-import logging
-from pathlib import Path
+# Install pip directly
+log "Installing pip"
+curl -sSL https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
+"$VENV_DIR/bin/python3" /tmp/get-pip.py --force-reinstall
+rm /tmp/get-pip.py
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-logger = logging.getLogger(__name__)
+# Activate virtual environment
+log "Activating virtual environment"
+# shellcheck disable=SC1091
+source "$VENV_DIR/bin/activate"
 
-def fix_hyperscript():
-    """Fix syntax error in django_hyperscript package."""
-    # Get the virtual environment path
-    venv_path = os.environ.get('VIRTUAL_ENV', '/workspaces/greenova/.venv')
+# Create Fish activation script if it doesn't exist
+if [ ! -f "$VENV_DIR/bin/activate.fish" ]; then
+    log "Creating Fish activation script"
+    mkdir -p "$VENV_DIR/bin"
+    cat > "$VENV_DIR/bin/activate.fish" << 'EOL'
+# This file must be used with "source <venv>/bin/activate.fish" *from fish*
+# you cannot run it directly
 
-    # Build the path to the problematic file
-    file_path = Path(venv_path) / "lib" / "python3.9" / "site-packages" / "django_hyperscript" / "templatetags" / "hyperscript.py"
+function deactivate  -d "Exit virtual environment and return to normal shell environment"
+    # reset old environment variables
+    if test -n "$_OLD_VIRTUAL_PATH"
+        set -gx PATH $_OLD_VIRTUAL_PATH
+        set -e _OLD_VIRTUAL_PATH
+    end
+    if test -n "$_OLD_VIRTUAL_PYTHONHOME"
+        set -gx PYTHONHOME $_OLD_VIRTUAL_PYTHONHOME
+        set -e _OLD_VIRTUAL_PYTHONHOME
+    end
 
-    if not file_path.exists():
-        logger.info(f"File not found: {file_path}")
-        return True
+    if test -n "$_OLD_FISH_PROMPT_OVERRIDE"
+        functions -e fish_prompt
+        set -e _OLD_FISH_PROMPT_OVERRIDE
+        functions -c _old_fish_prompt fish_prompt
+        functions -e _old_fish_prompt
+    end
 
-    logger.info(f"Found hyperscript.py at {file_path}")
+    set -e VIRTUAL_ENV
+    if test "$argv[1]" != "nondestructive"
+        # Self-destruct!
+        functions -e deactivate
+    end
+end
 
-    # Read the file
-    with open(file_path, 'r') as f:
-        content = f.readlines()
+# Unset irrelevant variables.
+deactivate "nondestructive"
 
-    # Look for the specific pattern with the error
-    fixed = False
-    for i, line in enumerate(content):
-        if "accepted_kwargs.items(" in line and line.strip().endswith("accepted_kwargs.items("):
-            if i+1 < len(content) and ")])}." in content[i+1]:
-                # Join the broken lines
-                content[i] = line.rstrip() + "])}.\n"
-                content.pop(i+1)
-                fixed = True
-                break
+set -gx VIRTUAL_ENV "/workspaces/greenova/.venv"
 
-    if fixed:
-        # Write the fixed content back
-        with open(file_path, 'w') as f:
-            f.writelines(content)
-        logger.info("Successfully fixed the syntax error in django_hyperscript")
-    else:
-        logger.info("No syntax error pattern found or it's already fixed")
+set -gx _OLD_VIRTUAL_PATH $PATH
+set -gx PATH "$VIRTUAL_ENV/bin" $PATH
 
-    return True
+# Unset PYTHONHOME if set.
+if set -q PYTHONHOME
+    set -gx _OLD_VIRTUAL_PYTHONHOME $PYTHONHOME
+    set -e PYTHONHOME
+end
 
-if __name__ == "__main__":
-    success = fix_hyperscript()
-    sys.exit(0 if success else 1)
+if test -z "$VIRTUAL_ENV_DISABLE_PROMPT"
+    # Fish uses a function instead of an env var to generate the prompt.
+
+    # Save the current fish_prompt function as the function _old_fish_prompt.
+    functions -c fish_prompt _old_fish_prompt
+
+    # With the original prompt function renamed, we can override with our own.
+    function fish_prompt
+        # Save the return status of the last command.
+        set -l old_status $status
+
+        # Output the venv prompt; color taken from the blue of the Python logo.
+        printf "%s%s%s" (set_color 4B8BBE) "(greenova-venv) " (set_color normal)
+
+        # Restore the return status of the previous command.
+        echo "exit $old_status" | .
+        # Output the original/"old" prompt.
+        _old_fish_prompt
+    end
+
+    set -gx _OLD_FISH_PROMPT_OVERRIDE "$VIRTUAL_ENV"
+end
 EOL
-    chmod +x "/workspaces/greenova/scripts/fix_hyperscript.py"
-  fi
+    chmod +x "$VENV_DIR/bin/activate.fish"
+    log "Fish activation script created"
+fi
 
-  # Run the fix script with the virtual environment's Python
-  echo "Running django-hyperscript fix script..."
-  "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript.py"
-}
+# Install base requirements
+log "Installing base Python packages"
+python -m pip install --upgrade pip setuptools wheel
 
-# Fix hyperscript_dump.py type annotation issues
-fix_hyperscript_dump() {
-  echo "Checking for hyperscript_dump.py type annotation issues..."
-
-  # Create directory for scripts if it doesn't exist
-  mkdir -p "/workspaces/greenova/scripts"
-
-  # Create the fix script if it doesn't exist
-  if [ ! -f "/workspaces/greenova/scripts/fix_hyperscript_dump.py" ]; then
-    cat >"/workspaces/greenova/scripts/fix_hyperscript_dump.py" <<'EOL'
-#!/usr/bin/env python3
-"""
-Fix for hyperscript_dump.py type annotation syntax for Python 3.9 compatibility.
-"""
-import os
-import sys
-import logging
-import re
-from pathlib import Path
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-logger = logging.getLogger(__name__)
-
-def fix_hyperscript_dump():
-    """Fix type annotation syntax in hyperscript_dump.py for Python 3.9."""
-    # Get the virtual environment path
-    venv_path = os.environ.get('VIRTUAL_ENV', '/workspaces/greenova/.venv')
-
-    # Build the path to the problematic file
-    file_path = Path(venv_path) / "lib" / "python3.9" / "site-packages" / "hyperscript_dump.py"
-
-    if not file_path.exists():
-        logger.info(f"File not found: {file_path}")
-        return True
-
-    logger.info(f"Found hyperscript_dump.py at {file_path}")
-
-    # Read the file
-    with open(file_path, 'r') as f:
-        content = f.read()
-
-    # Check if the file already imports Union
-    imports_union = re.search(r'from\s+typing\s+import\s+.*Union.*', content) is not None
-
-    # Replace the pipe syntax with Union
-    pattern = r'event:\s*str\s*\|\s*None\s*='
-    replacement = 'event: Union[str, None] ='
-
-    if re.search(pattern, content):
-        # Add Union import if needed
-        if not imports_union:
-            if 'from typing import' in content:
-                content = re.sub(
-                    r'from\s+typing\s+import\s+(.*)',
-                    r'from typing import \1, Union',
-                    content
-                )
-            else:
-                content = re.sub(
-                    r'import json',
-                    r'import json\nfrom typing import Union',
-                    content
-                )
-
-        # Replace the type annotation
-        content = re.sub(pattern, replacement, content)
-
-        # Write the fixed content back
-        with open(file_path, 'w') as f:
-            f.write(content)
-        logger.info("Successfully fixed the type annotation in hyperscript_dump.py")
-        return True
-    else:
-        logger.info("No type annotation issue found or it's already fixed")
-        return True
-
-if __name__ == "__main__":
-    success = fix_hyperscript_dump()
-    sys.exit(0 if success else 1)
-EOL
-    chmod +x "/workspaces/greenova/scripts/fix_hyperscript_dump.py"
-  fi
-
-  # Run the fix script with the virtual environment's Python
-  echo "Running hyperscript_dump fix script..."
-  "${VENV_PATH}/bin/python" "/workspaces/greenova/scripts/fix_hyperscript_dump.py"
-}
-
-# Setup Fish shell with direnv
-setup_fish_direnv() {
-  FISH_CONFIG="${HOME}/.config/fish/config.fish"
-
-  # Ensure fish config directory exists
-  mkdir -p "$(dirname "$FISH_CONFIG")"
-
-  # Check if direnv hook already exists in config
-  if ! grep -q "direnv hook fish" "$FISH_CONFIG" 2>/dev/null; then
-    echo "Configuring direnv hook for Fish shell..."
-    {
-      echo ""
-      echo "# Set up direnv"
-      echo "if type -q direnv"
-      echo "    direnv hook fish | source"
-      echo "end"
-
-      echo "# Python virtual environment indicator for Fish"
-      echo "function show_virtual_env --description 'Show virtual env name'"
-      echo "    if set -q VIRTUAL_ENV"
-      echo "        echo -n '('(basename \$VIRTUAL_ENV)') '"
-      echo "    end"
-      echo "end"
-
-      echo "# Setup Fish prompt to show virtual env"
-      echo "if not set -q __fish_prompt_orig"
-      echo "    functions -c fish_prompt __fish_prompt_orig"
-      echo "    functions -e fish_prompt"
-      echo "end"
-
-      echo "function fish_prompt"
-      echo "    show_virtual_env"
-      echo "    __fish_prompt_orig"
-      echo "end"
-
-      echo "# Activate Python virtual environment on startup"
-      echo "if test -d /workspaces/greenova/.venv"
-      echo "    if not set -q VIRTUAL_ENV"
-      echo "        cd /workspaces/greenova"
-      echo "    end"
-      echo "end"
-
-      echo "# NVM and Node.js setup for fish"
-      echo "set -gx NVM_DIR /usr/local/share/nvm"
-      echo "if test -d \$NVM_DIR"
-      echo "    # Add Node.js binary path to fish PATH"
-      echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
-      echo "    # For accessing node and npm globally from default NVM version"
-      echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
-      echo "end"
-
-      echo "# Function to use NVM in fish"
-      echo "function nvm"
-      echo "    bass source /usr/local/share/nvm/nvm.sh --no-use ';' nvm \$argv"
-      echo "end"
-
-      echo "# Ensure npm is accessible as a command"
-      echo "if not type -q npm"
-      echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
-      echo "end"
-
-      echo "# Ensure node is accessible as a command"
-      echo "if not type -q node"
-      echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
-      echo "end"
-    } >>"$FISH_CONFIG"
-    echo "Fish shell configured with direnv hook, virtual env support, and Node.js/npm"
-
-    # If bass (Bash script adapter for fish) is not installed, install it
-    fish -c 'if not type -q bass; and type -q fisher; fisher install edc/bass; end' || true
-  else
-    echo "Fish shell already configured with direnv hook"
-    # Still ensure NVM paths are added if not already present
-    if ! grep -q "NVM_DIR" "$FISH_CONFIG" 2>/dev/null; then
-      echo "Adding NVM configuration to fish shell..."
-      {
-        echo ""
-        echo "# NVM and Node.js setup for fish"
-        echo "set -gx NVM_DIR /usr/local/share/nvm"
-        echo "if test -d \$NVM_DIR"
-        echo "    # Add Node.js binary path to fish PATH"
-        echo "    set -gx PATH \$HOME/.nvm/versions/node/v18.20.7/bin \$PATH"
-        echo "    # For accessing node and npm globally from default NVM version"
-        echo "    set -gx PATH /home/vscode/.nvm/versions/node/v18.20.7/bin \$PATH"
-        echo "end"
-
-        echo "# Function to use NVM in fish"
-        echo "function nvm"
-        echo "    bass source /usr/local/share/nvm/nvm.sh --no-use ';' nvm \$argv"
-        echo "end"
-
-        echo "# Ensure npm is accessible as a command"
-        echo "if not type -q npm"
-        echo "    alias npm='/home/vscode/.nvm/versions/node/v18.20.7/bin/npm'"
-        echo "end"
-
-        echo "# Ensure node is accessible as a command"
-        echo "if not type -q node"
-        echo "    alias node='/home/vscode/.nvm/versions/node/v18.20.7/bin/node'"
-        echo "end"
-      } >>"$FISH_CONFIG"
-      echo "Added Node.js and npm configuration to fish shell"
-    fi
-  fi
-
-  # Ensure .envrc has proper permissions
-  if [ -f "/workspaces/greenova/.envrc" ]; then
-    chmod +x "/workspaces/greenova/.envrc"
-    echo "Set execute permissions on .envrc file"
-
-    # Force direnv to reload with the new .envrc
-    cd /workspaces/greenova
-    direnv allow
-  fi
-}
-
-main() {
-  # Setup Python environment first
-  echo "Setting up Python environment..."
-  setup_venv
-
-  # Fix django-hyperscript syntax error
-  echo "Fixing django-hyperscript..."
-  fix_django_hyperscript
-
-  # Fix hyperscript_dump type annotation
-  echo "Fixing hyperscript_dump..."
-  fix_hyperscript_dump
-
-  # Setup NVM and Node.js
-  echo "Setting up NVM and Node.js..."
-  setup_nvm || {
-    echo "NVM setup failed. Exiting." >&2
+# Install project dependencies
+if [ -f "$WORKSPACE_DIR/requirements/dev.txt" ]; then
+    log "Installing project dependencies"
+    python -m pip install -r "$WORKSPACE_DIR/requirements/dev.txt" --constraint "$WORKSPACE_DIR/requirements/constraints.txt"
+else
+    log "Requirements file not found: $WORKSPACE_DIR/requirements/dev.txt"
     exit 1
-  }
+fi
 
-  # Install npm 10.8.2 (compatible with Node.js 18.20.7)
-  echo "Installing npm 10.8.2..."
-  npm install -g npm@10.8.2
+# Update uvx
+if [ -f "$WORKSPACE_DIR/.venv/bin/uvx" ]; then
+    log "Updating uvx"
+    "$WORKSPACE_DIR/.venv/bin/uvx" self update
+else
+    log "uvx not found, installing it"
+    pip install --disable-pip-version-check --no-cache-dir uvx
+fi
 
-  # Install snyk globally only if not already installed
-  if ! command -v snyk &>/dev/null; then
-    echo "Installing snyk globally..."
-    npm install snyk -g
-  else
-    echo "Snyk is already installed, skipping..."
-  fi
+# Install Node.js dependencies if needed
+if [ -f "$WORKSPACE_DIR/package.json" ]; then
+    log "Installing Node.js dependencies"
+    cd "$WORKSPACE_DIR" && npm install
+fi
 
-  # Install node packages if package.json exists
-  [ -f "/workspaces/greenova/package.json" ] && npm install
+# Set up Fish shell configuration if it doesn't exist
+if [ ! -f "/home/vscode/.config/fish/config.fish" ]; then
+    log "Setting up Fish shell configuration"
+    mkdir -p /home/vscode/.config/fish
+    cat > /home/vscode/.config/fish/config.fish << 'EOL'
+# Set up environment variables
+set -gx PYTHONPATH /workspaces/greenova:/workspaces/greenova/greenova $PYTHONPATH
+set -gx PYTHONSTARTUP /workspaces/greenova/pythonstartup
+set -gx PATH /workspaces/greenova/.venv/bin /usr/local/share/nvm/current/bin/npm $PATH
+set -gx VIRTUAL_ENV /workspaces/greenova/.venv
 
-  # Configure Fish shell with direnv (after venv is set up)
-  echo "Setting up Fish shell with direnv..."
-  setup_fish_direnv
+# Source virtual environment if it exists
+if test -f /workspaces/greenova/.venv/bin/activate.fish
+    source /workspaces/greenova/.venv/bin/activate.fish
+end
 
-  # Ensure PYTHONPATH is set
-  export PYTHONPATH=/workspaces/greenova:$PYTHONPATH
+# Set up Node.js environment
+if test -d /usr/local/share/nvm
+    set -gx NVM_DIR /usr/local/share/nvm
+end
 
-  # Ensure Pre-Commit is updated
-  if command -v pre-commit >/dev/null 2>&1; then
-    echo "Updating pre-commit hooks..."
-    pre-commit autoupdate
-  fi
-}
+# Welcome message
+function fish_greeting
+    echo "Welcome to the Greenova development environment!"
+    echo "Python: "(python --version)
+    echo "Node: "(node --version)
+    echo "npm: "(npm --version)
+    echo ""
+end
+EOL
+fi
 
-main "$@"
+# Create a fish function for common project commands
+mkdir -p /home/vscode/.config/fish/functions
+cat > /home/vscode/.config/fish/functions/greenova.fish << 'EOL'
+function greenova --description "Greenova project helper"
+    set -l cmd $argv[1]
+    set -l args $argv[2..-1]
+
+    switch "$cmd"
+        case "setup"
+            echo "Setting up Greenova environment..."
+            cd /workspaces/greenova
+            python -m venv .venv
+
+            # Create activate.fish if it doesn't exist after venv creation
+            if not test -f /workspaces/greenova/.venv/bin/activate.fish
+                echo "Creating Fish activation file..."
+                mkdir -p /workspaces/greenova/.venv/bin
+                echo '# Fish activation script for greenova venv' > /workspaces/greenova/.venv/bin/activate.fish
+                echo 'set -gx VIRTUAL_ENV "/workspaces/greenova/.venv"' >> /workspaces/greenova/.venv/bin/activate.fish
+                echo 'set -gx PATH "$VIRTUAL_ENV/bin" $PATH' >> /workspaces/greenova/.venv/bin/activate.fish
+                chmod +x /workspaces/greenova/.venv/bin/activate.fish
+            end
+
+            source /workspaces/greenova/.venv/bin/activate.fish
+            pip install --upgrade pip
+            pip install -r requirements/dev.txt -c requirements/constraints.txt
+            cd greenova
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+            echo "Setup complete!"
+
+        case "run"
+            echo "Starting Greenova development server..."
+            cd /workspaces/greenova/greenova
+            python manage.py runserver 0.0.0.0:8000
+
+        case "makemigrations"
+            cd /workspaces/greenova/greenova
+            python manage.py makemigrations $args
+
+        case "migrate"
+            cd /workspaces/greenova/greenova
+            python manage.py migrate $args
+
+        case "shell"
+            cd /workspaces/greenova/greenova
+            python manage.py shell
+
+        case "test"
+            cd /workspaces/greenova/greenova
+            python manage.py test $args
+
+        case "help"
+            echo "Greenova helper commands:"
+            echo "  greenova setup         - Set up the development environment"
+            echo "  greenova run           - Run the development server"
+            echo "  greenova makemigrations - Create new migrations"
+            echo "  greenova migrate       - Apply migrations"
+            echo "  greenova shell         - Open Django shell"
+            echo "  greenova test          - Run tests"
+            echo "  greenova help          - Show this help"
+
+        case "*"
+            echo "Unknown command: $cmd"
+            echo "Run 'greenova help' for a list of commands"
+    end
+end
+EOL
+
+# Ensure scripts are executable
+find "$WORKSPACE_DIR/scripts" -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+find "$WORKSPACE_DIR/scripts" -name "*.fish" -exec chmod +x {} \; 2>/dev/null || true
+
+# Final checks
+log "Performing final checks"
+if python -m pip --version > /dev/null 2>&1; then
+    log "Setup completed successfully"
+    python -m pip --version
+else
+    log "Setup failed - pip is not working correctly"
+    exit 1
+fi
+
+# Print success message
+log "Container setup complete! You can now use the development environment."
+log "Run 'greenova help' to see available commands in the fish shell."
+
+# Print final status
+echo ""
+echo "----------------------------------------------------------------"
+echo "Greenova Dev Container Setup Complete"
+echo "Python version: $(python --version 2>&1)"
+echo "Node version: $(node --version 2>&1)"
+echo "npm version: $(npm --version 2>&1)"
+echo "----------------------------------------------------------------"
+echo ""

@@ -30,7 +30,7 @@ python -m venv env
 source env/bin/activate  # On Windows use `env\Scripts\activate`
 
 # Install Django
-pip install Django==4.2.20
+pip install Django==5.2
 
 # Create a project
 django-admin startproject myproject

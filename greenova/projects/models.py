@@ -1,4 +1,5 @@
 import logging
+from typing import TypeVar, cast
 
 from core.utils.roles import ProjectRole, get_role_choices
 from django.contrib.auth import get_user_model
@@ -10,19 +11,20 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
+UserType = TypeVar('UserType', bound=models.Model)  # Type variable for User model
 
 
 class Project(models.Model):
     """Project model to group obligations."""
-    name = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-    members = models.ManyToManyField(
+    name: models.CharField = models.CharField(max_length=200)
+    description: models.TextField = models.TextField(blank=True)
+    members: models.ManyToManyField = models.ManyToManyField(
         User,
         through='ProjectMembership',
         related_name='projects'
     )
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Project'
@@ -84,12 +86,12 @@ class Project(models.Model):
         ).delete()
         logger.info(f'Removed user {user} from project {self.name}')
 
-    def get_members_by_role(self, role: str) -> QuerySet[AbstractUser]:
+    def get_members_by_role(self, role: str) -> QuerySet[UserType]:
         """Get all users with specified role."""
-        return User.objects.filter(
+        return cast(QuerySet[UserType], User.objects.filter(
             project_memberships__project=self,
             project_memberships__role=role
-        )
+        ))
 
     @property
     def obligations(self):
@@ -101,23 +103,23 @@ class Project(models.Model):
 
 class ProjectMembership(models.Model):
     """Through model for project memberships."""
-    user = models.ForeignKey(
+    user: models.ForeignKey = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='project_memberships'
     )
-    project = models.ForeignKey(
+    project: models.ForeignKey = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
         related_name='memberships'
     )
-    role = models.CharField(
+    role: models.CharField = models.CharField(
         max_length=50,  # Increased length for compatibility
         choices=get_role_choices(),
         default=ProjectRole.MEMBER.value
     )
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ['user', 'project']
@@ -126,23 +128,26 @@ class ProjectMembership(models.Model):
         verbose_name_plural = 'Project Memberships'
 
     def __str__(self) -> str:
-        return f'{self.user.username} - {self.project.name} ({self.role})'
+        """String representation with proper type checking."""
+        username = getattr(self.user, 'username', 'Unknown user') if self.user else 'Unknown user'
+        project_name = getattr(self.project, 'name', 'Unknown project') if self.project else 'Unknown project'
+        return f'{username} - {project_name} ({self.role})'
 
 
 class ProjectObligation(models.Model):
     """Through model for project obligations."""
-    project = models.ForeignKey(
+    project: models.ForeignKey = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
         related_name='project_obligations'
     )
-    obligation = models.ForeignKey(
+    obligation: models.ForeignKey = models.ForeignKey(
         'obligations.Obligation',
         on_delete=models.CASCADE,
         related_name='project_obligations'
     )
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ['project', 'obligation']
@@ -151,5 +156,7 @@ class ProjectObligation(models.Model):
         verbose_name_plural = 'Project Obligations'
 
     def __str__(self) -> str:
-        """Return string representation of ProjectObligation."""
-        return f'{self.project.name} - {self.obligation.obligation_number}'
+        """Return string representation of ProjectObligation with proper type checking."""
+        project_name = getattr(self.project, 'name', 'Unknown project') if self.project else 'Unknown project'
+        obligation_number = getattr(self.obligation, 'obligation_number', 'Unknown obligation') if self.obligation else 'Unknown obligation'
+        return f'{project_name} - {obligation_number}'

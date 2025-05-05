@@ -6,9 +6,9 @@
           <span>{{ crumb.title }}</span>
         </li>
       {% else %}
-      <li role="menuitem">
-        <a href="{{ crumb.url }}">{{ crumb.title }}</a>
-      </li>
+        <li role="menuitem">
+          <a href="{{ crumb.url }}">{{ crumb.title }}</a>
+        </li>
       {% endif %}
     {% endfor %}
   </ol>

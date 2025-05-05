@@ -3,24 +3,32 @@
 {% block crud_title %}
   Edit Obligation
 {% endblock crud_title %}
-{% block breadcrumb_active %}Edit Obligation{% endblock %}
+{% block breadcrumb_active %}
+Edit Obligation
+{% endblock %}
 {% block form_title %}
   Edit Obligation: {{ form.instance.obligation_number }}
 {% endblock form_title %}
-{% block form_heading %}Edit Obligation Form{% endblock %}
+{% block form_heading %}
+Edit Obligation Form
+{% endblock %}
 {% block form_content %}
   <form method="post"
         enctype="multipart/form-data"
         novalidate
         hx-ext="path-deps"
         hx-on="htmx:afterRequest: if(event.detail.successful) PathDeps.refresh('/obligations/')">
-    {% csrf_token %}
+{% csrf_token %}
     <!-- Basic Information Fieldset -->
     <fieldset>
-      <legend>Basic Information</legend>
+      <legend>
+Basic Information
+      </legend>
       <!-- Obligation Number (read-only in edit mode) -->
       <div class="form-group">
-        <label for="id_obligation_number">Obligation Number</label>
+        <label for="id_obligation_number">
+Obligation Number
+        </label>
         <input type="text"
                id="id_obligation_number"
                value="{{ form.instance.obligation_number }}"
@@ -33,10 +41,14 @@
         <div class="form-group">
           {{ form.project.label_tag }}
           {{ form.project }}
-          {% if form.project.help_text %}<small>{{ form.project.help_text }}</small>{% endif %}
+          {% if form.project.help_text %}
+            <small>{{ form.project.help_text }}</small>
+          {% endif %}
           {% if form.project.errors %}
             <div class="invalid-feedback">
-              {% for error in form.project.errors %}{{ error }}{% endfor %}
+              {% for error in form.project.errors %}
+{{ error }}
+              {% endfor %}
             </div>
           {% endif %}
         </div>
@@ -51,17 +63,23 @@
         {% endif %}
         {% if form.primary_environmental_mechanism.errors %}
           <div class="invalid-feedback">
-            {% for error in form.primary_environmental_mechanism.errors %}{{ error }}{% endfor %}
+            {% for error in form.primary_environmental_mechanism.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.environmental_aspect.label_tag }}
         {{ form.environmental_aspect }}
-        {% if form.environmental_aspect.help_text %}<small>{{ form.environmental_aspect.help_text }}</small>{% endif %}
+        {% if form.environmental_aspect.help_text %}
+          <small>{{ form.environmental_aspect.help_text }}</small>
+        {% endif %}
         {% if form.environmental_aspect.errors %}
           <div class="invalid-feedback">
-            {% for error in form.environmental_aspect.errors %}{{ error }}{% endfor %}
+            {% for error in form.environmental_aspect.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
@@ -77,7 +95,9 @@
           {% endif %}
           {% if form.custom_environmental_aspect.errors %}
             <div class="invalid-feedback">
-              {% for error in form.custom_environmental_aspect.errors %}{{ error }}{% endfor %}
+              {% for error in form.custom_environmental_aspect.errors %}
+{{ error }}
+              {% endfor %}
             </div>
           {% endif %}
         </div>
@@ -85,73 +105,101 @@
       <div class="form-group">
         {{ form.obligation.label_tag }}
         {{ form.obligation }}
-        {% if form.obligation.help_text %}<small>{{ form.obligation.help_text }}</small>{% endif %}
+        {% if form.obligation.help_text %}
+          <small>{{ form.obligation.help_text }}</small>
+        {% endif %}
         {% if form.obligation.errors %}
           <div class="invalid-feedback">
-            {% for error in form.obligation.errors %}{{ error }}{% endfor %}
+            {% for error in form.obligation.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.obligation_type.label_tag }}
         {{ form.obligation_type }}
-        {% if form.obligation_type.help_text %}<small>{{ form.obligation_type.help_text }}</small>{% endif %}
+        {% if form.obligation_type.help_text %}
+          <small>{{ form.obligation_type.help_text }}</small>
+        {% endif %}
         {% if form.obligation_type.errors %}
           <div class="invalid-feedback">
-            {% for error in form.obligation_type.errors %}{{ error }}{% endfor %}
+            {% for error in form.obligation_type.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
     </fieldset>
     <!-- Dates and Status Fieldset -->
     <fieldset>
-      <legend>Dates and Status</legend>
+      <legend>
+Dates and Status
+      </legend>
       <div class="form-group">
         {{ form.action_due_date.label_tag }}
         {{ form.action_due_date }}
-        {% if form.action_due_date.help_text %}<small>{{ form.action_due_date.help_text }}</small>{% endif %}
+        {% if form.action_due_date.help_text %}
+          <small>{{ form.action_due_date.help_text }}</small>
+        {% endif %}
         <div id="date-warning" class="warning" style="display:none;">
           <small>This date is in the past. The obligation will be marked as overdue.</small>
         </div>
         {% if form.action_due_date.errors %}
           <div class="invalid-feedback">
-            {% for error in form.action_due_date.errors %}{{ error }}{% endfor %}
+            {% for error in form.action_due_date.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.close_out_date.label_tag }}
         {{ form.close_out_date }}
-        {% if form.close_out_date.help_text %}<small>{{ form.close_out_date.help_text }}</small>{% endif %}
+        {% if form.close_out_date.help_text %}
+          <small>{{ form.close_out_date.help_text }}</small>
+        {% endif %}
         {% if form.close_out_date.errors %}
           <div class="invalid-feedback">
-            {% for error in form.close_out_date.errors %}{{ error }}{% endfor %}
+            {% for error in form.close_out_date.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.status.label_tag }}
         {{ form.status }}
-        {% if form.status.help_text %}<small>{{ form.status.help_text }}</small>{% endif %}
+        {% if form.status.help_text %}
+          <small>{{ form.status.help_text }}</small>
+        {% endif %}
         {% if form.status.errors %}
           <div class="invalid-feedback">
-            {% for error in form.status.errors %}{{ error }}{% endfor %}
+            {% for error in form.status.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
     </fieldset>
     <!-- Recurring Details Fieldset -->
     <fieldset>
-      <legend>Recurring Details</legend>
+      <legend>
+Recurring Details
+      </legend>
       <div class="form-group checkbox-group">
         <label>
           {{ form.recurring_obligation }}
           {{ form.recurring_obligation.label }}
         </label>
-        {% if form.recurring_obligation.help_text %}<small>{{ form.recurring_obligation.help_text }}</small>{% endif %}
+        {% if form.recurring_obligation.help_text %}
+          <small>{{ form.recurring_obligation.help_text }}</small>
+        {% endif %}
         {% if form.recurring_obligation.errors %}
           <div class="invalid-feedback">
-            {% for error in form.recurring_obligation.errors %}{{ error }}{% endfor %}
+            {% for error in form.recurring_obligation.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
@@ -162,20 +210,28 @@
         <div class="form-group">
           {{ form.recurring_frequency.label_tag }}
           {{ form.recurring_frequency }}
-          {% if form.recurring_frequency.help_text %}<small>{{ form.recurring_frequency.help_text }}</small>{% endif %}
+          {% if form.recurring_frequency.help_text %}
+            <small>{{ form.recurring_frequency.help_text }}</small>
+          {% endif %}
           {% if form.recurring_frequency.errors %}
             <div class="invalid-feedback">
-              {% for error in form.recurring_frequency.errors %}{{ error }}{% endfor %}
+              {% for error in form.recurring_frequency.errors %}
+{{ error }}
+              {% endfor %}
             </div>
           {% endif %}
         </div>
         <div class="form-group">
           {{ form.recurring_status.label_tag }}
           {{ form.recurring_status }}
-          {% if form.recurring_status.help_text %}<small>{{ form.recurring_status.help_text }}</small>{% endif %}
+          {% if form.recurring_status.help_text %}
+            <small>{{ form.recurring_status.help_text }}</small>
+          {% endif %}
           {% if form.recurring_status.errors %}
             <div class="invalid-feedback">
-              {% for error in form.recurring_status.errors %}{{ error }}{% endfor %}
+              {% for error in form.recurring_status.errors %}
+{{ error }}
+              {% endfor %}
             </div>
           {% endif %}
         </div>
@@ -187,7 +243,9 @@
           {% endif %}
           {% if form.recurring_forcasted_date.errors %}
             <div class="invalid-feedback">
-              {% for error in form.recurring_forcasted_date.errors %}{{ error }}{% endfor %}
+              {% for error in form.recurring_forcasted_date.errors %}
+{{ error }}
+              {% endfor %}
             </div>
           {% endif %}
         </div>
@@ -195,16 +253,22 @@
     </fieldset>
     <!-- Inspection Details Fieldset -->
     <fieldset>
-      <legend>Inspection Details</legend>
+      <legend>
+Inspection Details
+      </legend>
       <div class="form-group checkbox-group">
         <label>
           {{ form.inspection }}
           {{ form.inspection.label }}
         </label>
-        {% if form.inspection.help_text %}<small>{{ form.inspection.help_text }}</small>{% endif %}
+        {% if form.inspection.help_text %}
+          <small>{{ form.inspection.help_text }}</small>
+        {% endif %}
         {% if form.inspection.errors %}
           <div class="invalid-feedback">
-            {% for error in form.inspection.errors %}{{ error }}{% endfor %}
+            {% for error in form.inspection.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
@@ -215,20 +279,28 @@
         <div class="form-group">
           {{ form.inspection_frequency.label_tag }}
           {{ form.inspection_frequency }}
-          {% if form.inspection_frequency.help_text %}<small>{{ form.inspection_frequency.help_text }}</small>{% endif %}
+          {% if form.inspection_frequency.help_text %}
+            <small>{{ form.inspection_frequency.help_text }}</small>
+          {% endif %}
           {% if form.inspection_frequency.errors %}
             <div class="invalid-feedback">
-              {% for error in form.inspection_frequency.errors %}{{ error }}{% endfor %}
+              {% for error in form.inspection_frequency.errors %}
+{{ error }}
+              {% endfor %}
             </div>
           {% endif %}
         </div>
         <div class="form-group">
           {{ form.site_or_desktop.label_tag }}
           {{ form.site_or_desktop }}
-          {% if form.site_or_desktop.help_text %}<small>{{ form.site_or_desktop.help_text }}</small>{% endif %}
+          {% if form.site_or_desktop.help_text %}
+            <small>{{ form.site_or_desktop.help_text }}</small>
+          {% endif %}
           {% if form.site_or_desktop.errors %}
             <div class="invalid-feedback">
-              {% for error in form.site_or_desktop.errors %}{{ error }}{% endfor %}
+              {% for error in form.site_or_desktop.errors %}
+{{ error }}
+              {% endfor %}
             </div>
           {% endif %}
         </div>
@@ -236,64 +308,90 @@
     </fieldset>
     <!-- Additional Information Fieldset -->
     <fieldset>
-      <legend>Additional Information</legend>
+      <legend>
+Additional Information
+      </legend>
       <div class="form-group">
         {{ form.accountability.label_tag }}
         {{ form.accountability }}
-        {% if form.accountability.help_text %}<small>{{ form.accountability.help_text }}</small>{% endif %}
+        {% if form.accountability.help_text %}
+          <small>{{ form.accountability.help_text }}</small>
+        {% endif %}
         {% if form.accountability.errors %}
           <div class="invalid-feedback">
-            {% for error in form.accountability.errors %}{{ error }}{% endfor %}
+            {% for error in form.accountability.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.responsibility.label_tag }}
         {{ form.responsibility }}
-        {% if form.responsibility.help_text %}<small>{{ form.responsibility.help_text }}</small>{% endif %}
+        {% if form.responsibility.help_text %}
+          <small>{{ form.responsibility.help_text }}</small>
+        {% endif %}
         {% if form.responsibility.errors %}
           <div class="invalid-feedback">
-            {% for error in form.responsibility.errors %}{{ error }}{% endfor %}
+            {% for error in form.responsibility.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.project_phase.label_tag }}
         {{ form.project_phase }}
-        {% if form.project_phase.help_text %}<small>{{ form.project_phase.help_text }}</small>{% endif %}
+        {% if form.project_phase.help_text %}
+          <small>{{ form.project_phase.help_text }}</small>
+        {% endif %}
         {% if form.project_phase.errors %}
           <div class="invalid-feedback">
-            {% for error in form.project_phase.errors %}{{ error }}{% endfor %}
+            {% for error in form.project_phase.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.supporting_information.label_tag }}
         {{ form.supporting_information }}
-        {% if form.supporting_information.help_text %}<small>{{ form.supporting_information.help_text }}</small>{% endif %}
+        {% if form.supporting_information.help_text %}
+          <small>{{ form.supporting_information.help_text }}</small>
+        {% endif %}
         {% if form.supporting_information.errors %}
           <div class="invalid-feedback">
-            {% for error in form.supporting_information.errors %}{{ error }}{% endfor %}
+            {% for error in form.supporting_information.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.general_comments.label_tag }}
         {{ form.general_comments }}
-        {% if form.general_comments.help_text %}<small>{{ form.general_comments.help_text }}</small>{% endif %}
+        {% if form.general_comments.help_text %}
+          <small>{{ form.general_comments.help_text }}</small>
+        {% endif %}
         {% if form.general_comments.errors %}
           <div class="invalid-feedback">
-            {% for error in form.general_comments.errors %}{{ error }}{% endfor %}
+            {% for error in form.general_comments.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.compliance_comments.label_tag }}
         {{ form.compliance_comments }}
-        {% if form.compliance_comments.help_text %}<small>{{ form.compliance_comments.help_text }}</small>{% endif %}
+        {% if form.compliance_comments.help_text %}
+          <small>{{ form.compliance_comments.help_text }}</small>
+        {% endif %}
         {% if form.compliance_comments.errors %}
           <div class="invalid-feedback">
-            {% for error in form.compliance_comments.errors %}{{ error }}{% endfor %}
+            {% for error in form.compliance_comments.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
@@ -305,17 +403,23 @@
         {% endif %}
         {% if form.non_conformance_comments.errors %}
           <div class="invalid-feedback">
-            {% for error in form.non_conformance_comments.errors %}{{ error }}{% endfor %}
+            {% for error in form.non_conformance_comments.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.evidence_notes.label_tag }}
         {{ form.evidence_notes }}
-        {% if form.evidence_notes.help_text %}<small>{{ form.evidence_notes.help_text }}</small>{% endif %}
+        {% if form.evidence_notes.help_text %}
+          <small>{{ form.evidence_notes.help_text }}</small>
+        {% endif %}
         {% if form.evidence_notes.errors %}
           <div class="invalid-feedback">
-            {% for error in form.evidence_notes.errors %}{{ error }}{% endfor %}
+            {% for error in form.evidence_notes.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
@@ -329,7 +433,9 @@
         {% endif %}
         {% if form.new_control_action_required.errors %}
           <div class="invalid-feedback">
-            {% for error in form.new_control_action_required.errors %}{{ error }}{% endfor %}
+            {% for error in form.new_control_action_required.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
@@ -338,20 +444,28 @@
           {{ form.gap_analysis }}
           {{ form.gap_analysis.label }}
         </label>
-        {% if form.gap_analysis.help_text %}<small>{{ form.gap_analysis.help_text }}</small>{% endif %}
+        {% if form.gap_analysis.help_text %}
+          <small>{{ form.gap_analysis.help_text }}</small>
+        {% endif %}
         {% if form.gap_analysis.errors %}
           <div class="invalid-feedback">
-            {% for error in form.gap_analysis.errors %}{{ error }}{% endfor %}
+            {% for error in form.gap_analysis.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <div class="form-group">
         {{ form.notes_for_gap_analysis.label_tag }}
         {{ form.notes_for_gap_analysis }}
-        {% if form.notes_for_gap_analysis.help_text %}<small>{{ form.notes_for_gap_analysis.help_text }}</small>{% endif %}
+        {% if form.notes_for_gap_analysis.help_text %}
+          <small>{{ form.notes_for_gap_analysis.help_text }}</small>
+        {% endif %}
         {% if form.notes_for_gap_analysis.errors %}
           <div class="invalid-feedback">
-            {% for error in form.notes_for_gap_analysis.errors %}{{ error }}{% endfor %}
+            {% for error in form.notes_for_gap_analysis.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
@@ -359,23 +473,31 @@
       <div class="form-group">
         {{ form.responsibilities.label_tag }}
         {{ form.responsibilities }}
-        {% if form.responsibilities.help_text %}<small>{{ form.responsibilities.help_text }}</small>{% endif %}
+        {% if form.responsibilities.help_text %}
+          <small>{{ form.responsibilities.help_text }}</small>
+        {% endif %}
         {% if form.responsibilities.errors %}
           <div class="invalid-feedback">
-            {% for error in form.responsibilities.errors %}{{ error }}{% endfor %}
+            {% for error in form.responsibilities.errors %}
+{{ error }}
+            {% endfor %}
           </div>
         {% endif %}
       </div>
       <!-- Evidence File Upload -->
       <div class="form-group">
-        <label for="id_evidence_file">Upload Evidence Files</label>
+        <label for="id_evidence_file">
+Upload Evidence Files
+        </label>
         <input type="file" name="evidence_file" id="id_evidence_file" multiple />
         <small>Allowed formats: PDF, DOC, DOCX, XLS, XLSX, PNG, JPG, JPEG, GIF, TXT, CSV (max 25MB)</small>
       </div>
       <!-- Display existing evidence files -->
       {% if form.instance.evidences.exists %}
         <div class="existing-files">
-          <h3>Existing Evidence Files</h3>
+          <h3>
+Existing Evidence Files
+          </h3>
           <ul class="evidence-list">
             {% for evidence in form.instance.evidences.all %}
               <li>
@@ -387,7 +509,9 @@
                           hx-delete="{% url 'obligations:delete_evidence' evidence.id %}"
                           hx-confirm="Are you sure you want to delete this file?"
                           hx-target="closest li"
-                          hx-swap="outerHTML">Delete</button>
+                          hx-swap="outerHTML">
+Delete
+                  </button>
                 {% endif %}
               </li>
             {% endfor %}
@@ -395,13 +519,17 @@
         </div>
       {% else %}
         <div class="existing-files">
-          <p>No evidence files uploaded yet.</p>
+          <p>
+No evidence files uploaded yet.
+          </p>
         </div>
       {% endif %}
     </fieldset>
     <!-- Form Actions -->
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Update Obligation</button>
+      <button type="submit" class="btn btn-primary">
+Update Obligation
+      </button>
       <a href="{% url 'dashboard:home' %}?project_id={{ project_id|default:form.instance.project.id }}"
          class="btn btn-secondary">Cancel</a>
       <!-- Delete button with confirmation (uses Hyperscript for interaction) -->

@@ -11,7 +11,6 @@ nav li [type='button'],
 .btn-danger,
 .btn-fold,
 .action-btn,
-.btn-fold,
 .quick-filter-btn {
   /* Set default style attributes. */
   font-size: var(--greenova-button-size);
@@ -49,10 +48,6 @@ header:has(.btn-fold) {
 /* If the button is apart of a menu */
 [role='menuitem'] {
   margin: 0 var(--greenova-spacing);
-}
-
-.btn-primary {
-  background-color: var(--greenova-green-primary);
 }
 
 .btn-primary {

@@ -9,11 +9,11 @@ converting between Django models and Protocol Buffer messages in the
 feedback application.
 """
 import logging
-import os
 import sys
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from django.contrib.auth import get_user_model
+from django.utils.timezone import datetime  # Import datetime explicitly
 
 from .models import BugReport
 
@@ -26,27 +26,45 @@ try:
     logger.info("Successfully imported feedback_pb2 from proto subdirectory")
 except ImportError:
     logger.error("feedback_pb2 module not found. Ensure to compile the protobuf files.")
-    feedback_pb2 = None
-
-    # Check if the proto file exists
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    proto_file = os.path.join(current_dir, 'proto', 'feedback.proto')
-
-    if os.path.exists(proto_file):
-        logger.info(
-            "feedback.proto exists but feedback_pb2.py not found. "
-            "Run 'python manage.py compile_protos --app=feedback' to generate it."
-        )
-    else:
-        logger.error("feedback.proto file not found in the proto directory.")
 
     # Create a minimal stub for the module to allow Django to continue loading
     from types import ModuleType
-    feedback_pb2 = ModuleType('feedback_pb2')
+    feedback_pb2: ModuleType = ModuleType('feedback_pb2')
     sys.modules['feedback.proto.feedback_pb2'] = feedback_pb2
 
     # Define minimal classes needed for type hinting
     class BugReportProto:
+        # pylint: disable=too-many-instance-attributes
+        def __init__(self):
+            # Core fields that must be instance attributes
+            self.id = 0
+            self.title = ""
+            self.description = ""
+            # Environment fields
+            self.application_version = ""
+            self.operating_system = ""
+            self.browser = ""
+            self.device_type = ""
+            # Problem details
+            self.steps_to_reproduce = ""
+            self.expected_behavior = ""
+            self.actual_behavior = ""
+            # Additional properties
+            self.environment = ""
+            self.error_messages = ""
+            self.trace_report = ""
+            self.frequency = 0
+            self.impact_severity = ""
+            self.user_impact = ""
+            self.workarounds = ""
+            self.additional_comments = ""
+            self.github_issue_url = ""
+            self.severity = ""
+            self.status = ""
+            self.admin_comment = ""
+            self.reports = []
+
+        # Define enum-like classes for consistency
         class Frequency:
             FREQUENCY_UNKNOWN_UNSPECIFIED = 0
             FREQUENCY_ALWAYS = 1
@@ -69,21 +87,26 @@ except ImportError:
             STATUS_CLOSED = 4
             STATUS_REJECTED = 5
 
-        def SerializeToString(self):
+        def SerializeToString(self) -> bytes:
             return b''
 
-        def ParseFromString(self, data):
+        def ParseFromString(self, data: bytes) -> None:
             pass
 
     class BugReportCollection:
-        reports = []
+        def __init__(self):
+            self.reports = []
 
-        def SerializeToString(self):
+        def SerializeToString(self) -> bytes:
             return b''
 
-        def ParseFromString(self, data):
+        def ParseFromString(self, data: bytes) -> None:
             pass
 
+        def append(self, item: Any) -> None:
+            self.reports.append(item)
+
+    # Add the classes to the module
     feedback_pb2.BugReportProto = BugReportProto
     feedback_pb2.BugReportCollection = BugReportCollection
 
@@ -194,6 +217,8 @@ def deserialize_bug_report(data: bytes) -> Optional[BugReport]:
     except (OSError, SystemError, OverflowError) as e:
         logger.error("Failed to deserialize bug report: %s", str(e))
         return None
+
+
 def serialize_bug_reports(bug_reports: List[BugReport]) -> Optional[bytes]:
     """
     Serialize a list of BugReport instances to Protocol Buffer collection.
@@ -214,7 +239,7 @@ def serialize_bug_reports(bug_reports: List[BugReport]) -> Optional[bytes]:
             if report_proto_data:
                 report_proto = feedback_pb2.BugReportProto()
                 report_proto.ParseFromString(report_proto_data)
-                collection.reports.append(report_proto)
+                collection.append(report_proto)
 
         # Serialize the collection to bytes
         return collection.SerializeToString()
@@ -234,6 +259,8 @@ def serialize_bug_reports(bug_reports: List[BugReport]) -> Optional[bytes]:
     except (OSError, SystemError) as e:
         logger.error("Failed to serialize bug report collection: %s", str(e))
         return None
+
+
 def deserialize_bug_reports(data: bytes) -> List[BugReport]:
     """
     Deserialize Protocol Buffer collection data to a list of BugReport instances.

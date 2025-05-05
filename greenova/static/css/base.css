@@ -117,18 +117,14 @@ textarea {
 /* Skip link for accessibility - making it visible when focused */
 .skip-link {
   position: absolute;
-  top: -50px;
-  left: var(--greenova-spacing-medium, 1rem);
-  padding: var(--greenova-spacing-small, 0.5rem)
-    var(--greenova-spacing-medium, 1rem);
-  background: var(--greenova-green-primary);
-  color: var(--greenova-text-primary-light);
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px;
   z-index: 100;
-  transition: top 0.2s ease;
 }
 
 .skip-link:focus {
-  top: var(--greenova-spacing-small, 0.5rem);
+  top: 0;
 }
-
-/* Rest of your CSS remains unchanged... */

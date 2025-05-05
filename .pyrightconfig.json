@@ -24,7 +24,7 @@
   ],
   "include": ["greenova"],
   "pythonPlatform": "Linux",
-  "pythonVersion": "3.9",
+  "pythonVersion": "3.12",
   "reportGeneralTypeIssues": "error",
   "reportMissingImports": true,
   "reportMissingTypeStubs": "warning",
@@ -35,7 +35,7 @@
   "reportUnknownVariableType": "warning",
   "reportUntypedFunctionDecorator": "warning",
   "reportUnusedCoroutine": "warning",
-  "stubPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
+  "stubPath": "${workspaceRoot}/.venv/lib/python3.12/site-packages",
   "typeCheckingMode": "strict",
   "typeStubTargets": [
     "django-stubs",
@@ -45,7 +45,7 @@
     "types-setuptools",
     "types-stdlib-list"
   ],
-  "typeshedPath": "${workspaceRoot}/.venv/lib/python3.9/site-packages",
+  "typeshedPath": "${workspaceRoot}/.venv/lib/python3.12/site-packages",
   "useLibraryCodeForTypes": true,
   "venvPath": ".venv"
 }

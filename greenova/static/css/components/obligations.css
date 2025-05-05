@@ -244,3 +244,25 @@ td:nth-child(22) {
     display: none !important;
   }
 }
+
+/* Interactive status count styles */
+.status-count-link {
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--primary-color);
+}
+
+.status-count-link:hover {
+  color: var(--hover-color);
+}
+
+.status-count-link.selected {
+  font-weight: bold;
+}
+
+.obligations-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}

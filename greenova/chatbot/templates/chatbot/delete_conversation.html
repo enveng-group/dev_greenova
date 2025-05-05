@@ -6,18 +6,28 @@
   <main role="main">
     <article>
       <header>
-        <h1>Delete Conversation</h1>
+        <h1>
+Delete Conversation
+        </h1>
       </header>
       <section aria-labelledby="delete-confirmation">
-        <h2 id="delete-confirmation">Confirm Deletion</h2>
+        <h2 id="delete-confirmation">
+Confirm Deletion
+        </h2>
         <div class="confirmation-message">
-          <p>Are you sure you want to delete the conversation "{{ conversation.title }}"?</p>
-          <p>This action cannot be undone.</p>
+          <p>
+Are you sure you want to delete the conversation "{{ conversation.title }}"?
+          </p>
+          <p>
+This action cannot be undone.
+          </p>
         </div>
         <form method="post" novalidate>
-          {% csrf_token %}
+{% csrf_token %}
           <div class="button-group">
-            <button type="submit" class="destructive">Delete Conversation</button>
+            <button type="submit" class="destructive">
+Delete Conversation
+            </button>
             <a href="{% url 'chatbot:conversation_detail' conversation.id %}"
                role="button"
                class="secondary">Cancel</a>

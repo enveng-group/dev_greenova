@@ -1,51 +1,56 @@
 {
+  "name": "Greenova Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "greenova",
+  "workspaceFolder": "/workspaces/greenova",
+  "remoteUser": "vscode",
+  "updateRemoteUserUID": true,
   "containerUser": "vscode",
+  "forwardPorts": [8000],
+
   "customizations": {
     "vscode": {
-      "extensions": [
-        "GitHub.copilot",
-        "GitHub.copilot-chat",
-        "ms-python.autopep8",
-        "ms-python.python",
-        "EditorConfig.EditorConfig",
-        "GitHub.vscode-pull-request-github",
-        "mechatroner.rainbow-csv",
-        "dotenv.dotenv-vscode",
-        "dbaeumer.vscode-eslint",
-        "monosans.djlint",
-        "batisteo.vscode-django",
-        "esbenp.prettier-vscode",
-        "ms-python.isort",
-        "ms-toolsai.jupyter",
-        "ms-python.pylint",
-        "snyk-security.snyk-vulnerability-scanner",
-        "MS-CST-E.vscode-devskim",
-        "timonwong.shellcheck",
-        "ms-vscode.makefile-tools",
-        "redhat.vscode-yaml",
-        "foxundermoon.shell-format",
-        "tamasfe.even-better-toml",
-        "ms-python.mypy-type-checker",
-        "DavidAnson.vscode-markdownlint",
-        "zxh404.vscode-proto3",
-        "Plex.vscode-protolint",
-        "bradlc.vscode-tailwindcss",
-        "pycqa.bandit-pycqa",
-        "ms-vscode.vscode-copilot-data-analysis",
-        "bmalehorn.vscode-fish",
-        "willumz.generic-pseudocode",
-        "stylelint.vscode-stylelint",
-        "wholroyd.jinja",
-        "rarnoldmobile.todo-txt",
-        "MermaidChart.vscode-mermaid-chart",
-        "GitHub.vscode-github-actions",
-        "ymotongpoo.licenser",
-        "marp-team.marp-vscode",
-        "DBCode.dbcode",
-        "ms-vscode.copilot-mermaid-diagram",
-        "ms-vscode.vscode-websearchforcopilot"
-      ],
       "settings": {
+        "terminal.integrated.defaultProfile.linux": "fish",
+        "terminal.integrated.profiles.linux": {
+          "fish": {
+            "path": "/usr/bin/fish"
+          }
+        },
+        "terminal.integrated.env.linux": {
+          "PYTHONPATH": "/workspaces/greenova:/workspaces/greenova/greenova:${containerEnv:PYTHONPATH}",
+          "PYTHONUNBUFFERED": "1",
+          "DJANGO_SETTINGS_MODULE": "greenova.settings",
+          "PATH": "/home/vscode/.local/bin:/workspaces/greenova/.venv/bin/:/usr/local/share/nvm/current/bin/npm:${containerEnv:PATH}",
+          "PYTHONSTARTUP": "/workspaces/greenova/pythonstartup",
+          "NVM_DIR": "/usr/local/share/nvm"
+        },
+        "python.defaultInterpreterPath": "/workspaces/greenova/.venv/bin/python",
+        "python.analysis.extraPaths": [
+          "/workspaces/greenova",
+          "/workspaces/greenova/greenova"
+        ],
+        "files.associations": {
+          "*.html": "django-html",
+          "*.css": "css",
+          "*.js": "javascript",
+          "*.md": "markdown",
+          "*.py": "python",
+          ".env*": "dotenv",
+          "dev.txt": "pip-requirements",
+          "base.txt": "pip-requirements",
+          "prod.txt": "pip-requirements",
+          "constraints.txt": "pip-requirements",
+          "base.in": "pip-requirements",
+          "dev.in": "pip-requirements",
+          "prod.in": "pip-requirements",
+          "combined.in": "pip-requirements"
+        },
+        "editor.formatOnSave": true,
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.autopep8",
+          "editor.formatOnSave": true
+        },
         "[django-html]": {
           "editor.defaultFormatter": "monosans.djlint",
           "editor.formatOnSave": true
@@ -53,146 +58,62 @@
         "[javascript]": {
           "editor.defaultFormatter": "dbaeumer.vscode-eslint",
           "editor.formatOnSave": true
-        },
-        "[python]": {
-          "editor.defaultFormatter": "ms-python.autopep8",
-          "editor.formatOnSave": true,
-          "python.analysis.extraPaths": [
-            "${containerWorkspaceFolder}/.venv/lib/python3.9/site-packages"
-          ],
-          "python.analysis.languageServerMode": "Jedi",
-          "python.analysis.nodeExecutable": "/home/vscode/.nvm/versions/node/v18.20.7/bin/node",
-          "python.analysis.typeCheckingMode": "strict",
-          "python.languageServer": "Jedi",
-          "python.linting.enabled": true,
-          "python.linting.pylintEnabled": true,
-          "python.terminal.activateEnvInCurrentTerminal": true,
-          "python.terminal.activateEnvironment": true,
-          "python.terminal.shellIntegration.enabled": true
-        },
-        "dev.containers.gpuAvailability": "none",
-        "dotfiles.installCommand": "bash /home/vscode/dotfiles/setup.sh && echo 'Setup complete' || echo 'No setup.sh found';",
-        "dotfiles.repository": "https://github.com/enssol/dotfiles.git",
-        "dotfiles.targetPath": "/home/vscode/dotfiles",
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true,
-        "editor.occurrencesHighlight": "off",
-        "editor.semanticHighlighting.enabled": false,
-        "eslint.format.enable": true,
-        "eslint.lintTask.enable": true,
-        "files.associations": {
-          "*.css": "css",
-          "*.html": "django-html",
-          "*.js": "javascript",
-          "*.json": "json",
-          "*.md": "markdown",
-          "*.py": "python",
-          "*.toml": "toml",
-          "*.txt": "plaintext",
-          ".bandit": "yaml",
-          ".env*": "dotenv",
-          ".jinja": "jinja",
-          ".pylintrc": "ini",
-          ".pylintrc-django": "ini",
-          "constraints*.txt": "pip-requirements",
-          "pdm.toml": "toml",
-          "poetry.toml": "toml",
-          "pyproject.toml": "toml",
-          "requirements*.txt": "pip-requirements",
-          "tailwindcss.lint": "json"
-        },
-        "files.exclude": {
-          "**/*.pyc": true,
-          "**/.DS_Store": true,
-          "**/.git": true,
-          "**/.hg": true,
-          "**/.pytest_cache": true,
-          "**/.svn": true,
-          "**/.venv": true,
-          "**/CVS": true,
-          "**/__pycache__": true,
-          "**/node_modules": true,
-          "**~/.vscode-server/**": true,
-          "**~/.vscode/**": true,
-          ".venv": true
-        },
-        "files.watcherExclude": {
-          "**/*.pyc": true,
-          "**/.DS_Store": true,
-          "**/.env": true,
-          "**/.git": true,
-          "**/.git/objects/**": true,
-          "**/.git/subtree-cache/**": true,
-          "**/.hg": true,
-          "**/.pytest_cache": true,
-          "**/.svn": true,
-          "**/.venv": true,
-          "**/.venv/**": true,
-          "**/CVS": true,
-          "**/__pycache__": true,
-          "**/__pycache__/**": true,
-          "**/node_modules": true,
-          "**/node_modules/**": true,
-          "**~/.vscode-server/**": true,
-          "**~/.vscode/**": true,
-          ".venv": true
-        },
-        "snyk.advanced.cliPath": "/usr/local/share/nvm/versions/node/v18.20.7/bin/snyk",
-        "snyk.trustedFolders": ["/workspaces/greenova/"],
-        "terminal.integrated.cwd": "${containerWorkspaceFolder}",
-        "terminal.integrated.defaultProfile.linux": "fish",
-        "terminal.integrated.env.linux": {
-          "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
-          "PYTHONSTARTUP": "${containerWorkspaceFolder}/.devcontainer/pythonstartup.py",
-          "PYTHONUNBUFFERED": "1",
-          "VENV_PATH": "${containerWorkspaceFolder}/.venv"
-        },
-        "terminal.integrated.shellIntegration.enabled": true
-      }
+        }
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.autopep8",
+        "ms-python.isort",
+        "ms-python.pylint",
+        "ms-python.mypy-type-checker",
+        "batisteo.vscode-django",
+        "monosans.djlint",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "bmalehorn.vscode-fish",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml",
+        "DavidAnson.vscode-markdownlint",
+        "timonwong.shellcheck",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "foxundermoon.shell-format",
+        "EditorConfig.EditorConfig",
+        "ms-vscode.vscode-copilot-data-analysis",
+        "github.vscode-pull-request-github",
+        "ms-azuretools.vscode-docker",
+        "dotenv.dotenv-vscode",
+        "ms-toolsai.jupyter",
+        "snyk-security.snyk-vulnerability-scanner",
+        "ms-cst-e.vscode-devskim",
+        "ms-vscode.makefile-tools",
+        "zxh404.vscode-proto3",
+        "plex.vscode-protolint",
+        "bradlc.vscode-tailwindcss",
+        "pycqa.bandit-pycqa",
+        "willumz.generic-pseudocode",
+        "stylelint.vscode-stylelint",
+        "wholroyd.jinja",
+        "rarnoldmobile.todo-txt",
+        "github.vscode-github-actions",
+        "ymotongpoo.licenser",
+        "marp-team.marp-vscode",
+        "dbcode.dbcode",
+        "ms-vscode.copilot-mermaid-diagram",
+        "ms-toolsai.datawrangler",
+        "charliermarsh.ruff",
+        "ms-python.flake8"
+      ]
     }
   },
-  "features": {
-    "ghcr.io/devcontainers-extra/features/direnv:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/fish-apt-get:1": {},
-    "ghcr.io/devcontainers-extra/features/markdownlint-cli2:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/pre-commit:2": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/protoc:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers-extra/features/shfmt:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/git:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "installDirectlyFromGitHubRelease": true,
-      "version": "latest"
-    },
-    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
-      "version": "latest"
-    },
-    "ghcr.io/r3dpoint/devcontainer-features/tailwindcss-standalone-cli:1": {
-      "version": "latest"
-    }
-  },
-  "forwardPorts": [8000],
-  "image": "mcr.microsoft.com/devcontainers/python:3.9",
+
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=delegated",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
   ],
-  "name": "Greenova Development",
-  "postCreateCommand": "sudo chown vscode:vscode /home && sudo chown vscode:vscode /usr/local && sudo chown vscode:vscode /workspaces",
-  "postStartCommand": "bash ${containerWorkspaceFolder}/.devcontainer/post_start.sh",
-  "remoteUser": "vscode",
-  "updateRemoteUserUID": true,
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "workspaceMount": "source=greenova,target=${containerWorkspaceFolder},type=volume"
+
+  "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode && mkdir -p /home/vscode/.local/share/fish && chmod -R 755 /home/vscode && chmod +x /workspaces/greenova/.devcontainer/post_start.sh",
+  "postStartCommand": "cd /workspaces/greenova && /bin/bash ./.devcontainer/post_start.sh || echo 'Warning: post_start.sh had errors but container setup will continue'"
 }

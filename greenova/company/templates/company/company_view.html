@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{ company.name }}
+{% endblock title %}
+
+{% block content %}
+  <article>
+    <header>
+      <h1>
+{{ company.name }}
+      </h1>
+    </header>
+
+    <div class="details-container">
+      <p>
+        <strong>ID:</strong> {{ company.id }}
+      </p>
+      <p>
+        <strong>Name:</strong> {{ company.name }}
+      </p>
+      <p>
+        <strong>Description:</strong> {{ company.description }}
+      </p>
+    </div>
+
+    <footer class="actions-container">
+      <a href="{% url 'company:edit' company.id %}" class="btn btn-secondary">Edit</a>
+      <form method="post"
+            action="{% url 'company:delete' company.id %}"
+            class="inline-form">
+{% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+Delete
+        </button>
+      </form>
+    </footer>
+  </article>
+{% endblock content %}

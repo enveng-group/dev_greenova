@@ -13,8 +13,8 @@ all necessary information is included.
 
 ### Environment Details
 
-- Django Version: 4.1.13
-- Python Version: 3.9.21
+- Django Version: 5.2
+- Python Version: 3.12.9
 - Frontend Technologies: PicoCSS, django-hyperscript, django-htmx
 - Browser and version (if applicable)
 - Device type and operating system

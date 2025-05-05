@@ -26,7 +26,7 @@ Django app that integrates Tailwind CSS into your Django project.
 ### 1. Install Django Tailwind package
 
 ```bash
-pip install django-tailwind==3.6.0
+pip install django-tailwind==4.0.1
 ```
 
 ### 2. Add to INSTALLED_APPS
@@ -186,23 +186,15 @@ module.exports = {
 };
 ```
 
-/_theme/static_src/src/input.css _/
-@tailwind base;
-@tailwind components;
+/_theme/static_src/src/input.css _/ @tailwind base; @tailwind components;
 @tailwind utilities;
 
-/_Custom component classes_/
-@layer components {
-.btn-primary {
-@apply py-2 px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90
-focus:outline-none focus:ring-2 focus:ring-brand-primary
-focus:ring-opacity-50;
-}
-}
-.btn-primary {
-@apply py-2 px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50;
-}
-}
+/_Custom component classes_/ @layer components { .btn-primary { @apply py-2
+px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90
+focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50;
+} } .btn-primary { @apply py-2 px-4 bg-brand-primary text-white rounded-md
+hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary
+focus:ring-opacity-50; } }
 
 ```
 <nav
@@ -294,10 +286,10 @@ tailwindcss      3.4.17  3.4.17  4.0.15  node_modules/tailwindcss     static_src
 
 ```
 
-Package Current Wanted Latest Location Depended by
-postcss-import 15.1.0 15.1.0 16.1.0 node_modules/postcss-import static_src
-postcss-nested 6.2.0 6.2.0 7.0.2 node_modules/postcss-nested static_src
-tailwindcss 3.4.17 3.4.17 4.0.15 node_modules/tailwindcss static_src
+Package Current Wanted Latest Location Depended by postcss-import 15.1.0 15.1.0
+16.1.0 node_modules/postcss-import static_src postcss-nested 6.2.0 6.2.0 7.0.2
+node_modules/postcss-nested static_src tailwindcss 3.4.17 3.4.17 4.0.15
+node_modules/tailwindcss static_src
 
 ````
 

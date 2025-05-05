@@ -5,13 +5,28 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - '8000:8000'
     volumes:
-      - greenova:/workspace/greenova
+      - ..:/workspaces/greenova:cached
+      - venv:/workspaces/greenova/.venv:delegated
+      - home:/home/vscode:delegated
+      - ${HOME}${USERPROFILE}/.ssh:/home/vscode/.ssh:ro
+      - dotfiles:/home/vscode/dotfiles:delegated
     environment:
       PYTHONUNBUFFERED: 1
-    command: ['/bin/bash']
+      DJANGO_SETTINGS_MODULE: greenova.settings
+      PYTHONSTARTUP: /workspaces/greenova/pythonstartup
+      VIRTUAL_ENV: /workspaces/greenova/.venv
+      PATH: /workspaces/greenova/.venv/bin:/usr/local/share/nvm/current/bin/npm:${PATH}
+    ports:
+      - '8000:8000'
+    user: vscode
+    init: true
+    command: sleep infinity
 
 volumes:
-  greenova:
+  venv:
+    name: greenova-venv
+  home:
+    name: greenova-home
+  dotfiles:
+    name: dotfiles
