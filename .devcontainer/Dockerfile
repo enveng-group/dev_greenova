@@ -22,6 +22,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   vim \
   python3-pip \
   python3-venv \
+  gh \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
