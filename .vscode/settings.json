@@ -292,16 +292,15 @@
   "eslint.format.enable": true,
   "eslint.ignoreUntitled": true,
   "eslint.lintTask.enable": true,
-  "eslint.lintTask.options": "${workspaceFolder}/.eslintrc.js",
+  "eslint.lintTask.options": "${workspaceFolder}/.eslint.config.js",
   "eslint.nodeEnv": "development",
-  "eslint.nodePath": "/home/vscode/.nvm/versions/node/v20.19.1/bin/node",
+  "eslint.nodePath": "/usr/local/share/nvm/current/bin/node",
   "eslint.probe": ["javascript"],
   "eslint.run": "onSave",
-  "eslint.runtime": "/home/vscode/.nvm/versions/node/v20.19.1/bin/node",
   "eslint.useESLintClass": true,
   "eslint.useFlatConfig": false,
   "eslint.validate": ["javascript"],
-  "eslint.workingDirectories": ["./greenova"],
+  "eslint.workingDirectories": ["."],
   "evenBetterToml.taplo.bundled": true,
   "extensions.ignoreRecommendations": true,
   "files.associations": {
@@ -430,7 +429,6 @@
     }
   ],
   "github.copilot.chat.useProjectTemplates": true,
-  "github.copilot.editor.enableAutoCompletions": true,
   "github.copilot.editor.enableCodeActions": true,
   "github.copilot.nextEditSuggestions.enabled": true,
   "github.copilot.renameSuggestions.triggerAutomatically": true,
@@ -734,5 +732,13 @@
   "workbench.editor.enablePreview": false,
   "yaml.completion": true,
   "yaml.format.enable": true,
-  "yaml.validate": true
+  "yaml.validate": true,
+  "ruff.codeAction.fixViolation": {
+    "enable": true
+  },
+  "ruff.enable": true,
+  "ruff.lint.enable": true,
+  "ruff.fixAll": true,
+  "ruff.nativeServer": "auto",
+  "flake8.enabled": true
 }
