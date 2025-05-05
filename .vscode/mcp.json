@@ -6,20 +6,19 @@
       "description": "GitHub Personal Access Token",
       "password": true
     },
+    {
+      "type": "promptString",
+      "id": "db_path",
+      "description": "SQLite Database Path",
+      "default": "/workspaces/greenova/greenova/db.sqlite3"
+    }
   ],
   "servers": {
     "github": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
-      ],
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
       }
     },
     "filesystem": {
@@ -34,19 +33,32 @@
       "command": "npx",
       "args": ["@gongrzhe/server-json-mcp@1.0.3"]
     },
-    "figma": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "figma-developer-mcp",
-        "--figma-api-key=${env:FIGMA_PERSONAL_ACCESS_TOKEN}",
-        "--stdio"
-      ]
-    },
     "Context7": {
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "sqlite": {
+      "command": "uvenv",
+      "args": [
+        "run",
+        "mcp-server-sqlite",
+        "--",
+        "--db-path",
+        "${input:db_path}"
+      ]
+    },
+    "git": {
+      "command": "uvenv",
+      "args": ["run", "mcp-server-git"]
+    },
+    "fetch": {
+      "command": "uvenv",
+      "args": ["run", "mcp-server-fetch"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     }
   }
 }

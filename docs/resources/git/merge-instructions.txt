@@ -404,6 +404,8 @@ git log --graph --oneline upstream/main -n 5
    - Review company model changes carefully to ensure compatibility:
      ```python
      # Example resolution approach for company/models.py
+     from company.models import Company
+
      class Company(models.Model):
          # Fields from cherry-pick branch
          name = models.CharField(max_length=255)

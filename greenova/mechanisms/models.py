@@ -7,8 +7,12 @@ from django.core.exceptions import FieldError, ObjectDoesNotExist
 from django.db import models
 from django.db.models.query import QuerySet
 from django_matplotlib.fields import MatplotlibFigureField  # type: ignore
-from obligations.constants import (STATUS_CHOICES, STATUS_COMPLETED, STATUS_IN_PROGRESS,
-                                   STATUS_NOT_STARTED)
+from obligations.constants import (
+    STATUS_CHOICES,
+    STATUS_COMPLETED,
+    STATUS_IN_PROGRESS,
+    STATUS_NOT_STARTED,
+)
 from obligations.utils import is_obligation_overdue
 
 logger = logging.getLogger(__name__)

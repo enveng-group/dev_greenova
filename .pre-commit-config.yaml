@@ -2,25 +2,130 @@
 exclude: '^$'
 fail_fast: false # Add this line to continue running hooks even when some fail
 repos:
+  # 1. File integrity, merge, and security checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      - id: trailing-whitespace
-        exclude: '.*\.(html|djhtml|jinja)$'
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-        args: ['--maxkb=500']
-      - id: mixed-line-ending
-        args: ['--fix=lf']
       - id: check-merge-conflict
       - id: detect-private-key
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        exclude: '.*\.(html|djhtml|jinja)$'
+        args: ['--markdown-linebreak-ext=md']
+      - id: mixed-line-ending
+        args: ['--fix=lf']
       - id: requirements-txt-fixer
       - id: no-commit-to-branch
         args: ['--branch', 'main', '--branch', 'master']
-      - id: trailing-whitespace
-        args: ['--markdown-linebreak-ext=md']
+      - id: debug-statements
 
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.25.1
+    hooks:
+      - id: gitleaks
+
+  # 2. Code cleanup
+  - repo: https://github.com/pycqa/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        args:
+          [
+            '--in-place',
+            '--remove-all-unused-imports',
+            '--remove-unused-variables',
+          ]
+  - repo: https://github.com/asottile/dead
+    rev: v2.1.0
+    hooks:
+      - id: dead
+
+  # 3. Import sorting (isort, or use Ruff's import sorting if preferred)
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        args: ['--profile', 'black']
+
+  # 4. Python formatting and linting (Ruff as primary)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.8
+    hooks:
+      - id: ruff
+        types_or: [python, pyi]
+        args: ['--fix']
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  # 5. Additional Python linting
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.3.6
+    hooks:
+      - id: pylint
+        name: pylint (python)
+        entry: pylint
+        language: system
+        types: [python]
+        args: ['--rcfile=.pylintrc']
+        exclude: "greenova/.*\\.py$"
+      - id: pylint
+        name: pylint (django)
+        entry: env PYTHONPATH=/workspaces/greenova:/workspaces/greenova/greenova DJANGO_SETTINGS_MODULE=greenova.greenova.settings pylint
+        language: system
+        types: [python]
+        args:
+          [
+            '--rcfile=.pylintrc-django',
+            '--load-plugins=pylint_django',
+            '--django-settings-module=greenova.greenova.settings',
+          ]
+        files: "greenova/.*\\.py$"
+
+  # 6. Type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        name: mypy (standard)
+        args:
+          [
+            '--ignore-missing-imports',
+            '--disallow-untyped-defs',
+            '--no-implicit-optional',
+            '--namespace-packages',
+          ]
+        exclude: "greenova/.*\\.py$|setup\\.py"
+        additional_dependencies:
+          - 'types-requests'
+          - 'types-PyYAML'
+          - 'types-python-dateutil'
+          - 'pytest-stub'
+          - 'types-setuptools'
+      - id: mypy
+        name: mypy (django)
+        args: ['--config-file=mypy.ini', '--namespace-packages']
+        files: "greenova/.*\\.py$"
+        additional_dependencies:
+          - 'django-stubs'
+          - 'django-stubs-ext'
+          - 'types-requests'
+          - 'types-Pillow'
+          - 'types-PyYAML'
+          - 'types-python-dateutil'
+          - 'types-protobuf'
+          - 'matplotlib-stubs'
+          - 'pandas-stubs'
+          - 'types-pytz'
+          - 'pytest-stub'
+          - 'types-jinja2'
+          - 'types-setuptools'
+
+  # 7. Pattern-based checks
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
@@ -32,60 +137,32 @@ repos:
       - id: rst-inline-touching-normal
       - id: text-unicode-replacement-char
 
-  - repo: https://github.com/pre-commit/sync-pre-commit-deps
-    rev: v0.0.3
+  # 8. Framework-specific tools
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: 1.24.0
     hooks:
-      - id: sync-pre-commit-deps
+      - id: django-upgrade
+        args: ['--target-version', '5.2']
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+  # 9. Documentation and text tools
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
     hooks:
-      - id: pyupgrade
-
-  - repo: https://github.com/hhatto/autopep8
-    rev: v2.3.2
-    hooks:
-      - id: autopep8
-        args:
-          [
-            '--max-line-length=88',
-            '--aggressive',
-            '--aggressive',
-            '--aggressive',
-            '--in-place',
-          ]
-
-  - repo: https://github.com/pycqa/isort
-    rev: 6.0.1
-    hooks:
-      - id: isort
-
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.3
-    hooks:
-      - id: bandit
-        args: ['-c', '.bandit', '-r', '--config', '.bandit']
-        exclude: 'tests/'
-
+      - id: codespell
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.17.2
     hooks:
       - id: markdownlint-cli2
         args: ['--config', '.markdownlint-cli2.jsonc', '--fix']
 
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.10.0
+  # 10. Frontend formatting and linting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
     hooks:
-      - id: shellcheck
-        language: system
-        entry: shellcheck
-        args: ['-e', 'SC2155,SC2034'] # Ignore these specific shellcheck warnings
-        types: [shell]
-        files: '.*\.sh$'
-        exclude: '.*\.envrc$|.*\.env$'
-
+      - id: prettier
+        types_or: [javascript, css, markdown, yaml, json]
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.25.1
+    rev: v9.26.0
     hooks:
       - id: eslint
         files: \.(js|ts|jsx|tsx)$
@@ -96,12 +173,11 @@ repos:
           - prettier@3.2.4
           - eslint-config-prettier@9.1.0
           - eslint-plugin-prettier@5.1.3
-
   - repo: https://github.com/thibaudcolas/pre-commit-stylelint
     rev: v16.19.1
     hooks:
       - id: stylelint
-        files: \.(css|scss|sass|less)$ # Remove html from stylelint
+        files: \.(css|scss|sass|less)$
         args: ['--fix', '--config', 'stylelint.config.js']
         additional_dependencies:
           - stylelint@16.17.0
@@ -110,107 +186,40 @@ repos:
           - stylelint-config-tailwindcss@1.0.0
           - postcss-html@1.6.0
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+  # 11. Shell and other tools
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
     hooks:
-      - id: prettier
-        types_or: [javascript, css, yaml, markdown]
-        exclude: '.*\.html$' # Exclude HTML files from prettier
-        args: ['--config', '${REPO_ROOT_DIR}/.prettierrc']
+      - id: shellcheck
+        args: ['--severity=warning']
+        entry: shellcheck
+        language: system
 
-  - repo: https://github.com/djlint/djLint
-    rev: v1.36.4
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
     hooks:
-      - id: djlint-django
-        files: \.(html|djhtml|jinja)$
-        args:
-          - --reformat
-          - --quiet
-          - --indent=2
-          - --preserve-blank-lines
-          - --preserve-leading-space
-          - --profile=django
-          - --max-line-length=88
-          - --use-gitignore
-          - --ignore=H014,H015,T002
+      - id: pyupgrade
+        args: ['--py312-plus']
 
-  - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.24.0
-    hooks:
-      - id: django-upgrade
-        args: ['--target-version', '4.1']
-
+  # 12. Security checks (that may take longer)
   - repo: local
     hooks:
+      - id: bandit
+        name: bandit
+        entry: /workspaces/greenova/.venv/bin/bandit
+        language: system
+        args: ['--configfile', 'pyproject.toml']
+        exclude: 'tests/.*'
+        types: [python]
       - id: safety-check
         name: Safety dependency checker
-        # Use the new scan command in non-interactive mode with environment-only scanning
         entry: bash -c 'pip install safety && safety check --ignore 65278,66704,65212,65647,62556,62044,75180'
         language: system
         types: [python]
         pass_filenames: false
 
-      - id: autopep8-aggressive
-        name: autopep8 (aggressive)
-        entry: autopep8
-        language: system
-        types: [python]
-        args:
-          [
-            '--in-place',
-            '--aggressive',
-            '--aggressive',
-            '--aggressive',
-            '--max-line-length=88',
-          ]
-        exclude: 'migrations/'
-
-      - id: eslint
-        name: eslint
-        entry: npx eslint --fix
-        language: system
-        types: [javascript]
-        args: ['--max-warnings=9999']
-
-      - id: mypy-check
-        name: mypy (script)
-        language: python
-        # Use bash -c to set environment variables before running mypy
-        entry: bash -c 'export PYTHONPATH="/workspaces/greenova:/workspaces/greenova/greenova"; export DJANGO_SETTINGS_MODULE="tools.pre_commit.mock_settings"; mypy --config-file=mypy.ini "$@"' --
-        types: [python]
-        exclude: 'migrations/|settings.py|\\.git/|\\.mypy_cache/|\\.pytest_cache/'
-        additional_dependencies:
-          [
-            'mypy==1.15.0',
-            'django-stubs==5.1.3',
-            'django-stubs-ext==5.1.3',
-            'types-python-dateutil==2.9.0.20241206',
-            'types-PyYAML==6.0.12.20241230',
-            'types-setuptools==76.0.0.20250313',
-            'annotated-types==0.7.0',
-            'microsoft-python-type-stubs @ git+https://github.com/microsoft/python-type-stubs.git@dcb5c8c2a61a2e4653b4becc9f20f6c42858a701',
-            'mypy-extensions==1.0.0',
-            'pytest-stub==1.1.0',
-            'types-Pillow==10.2.0.20240822',
-            'types-python-dateutil==2.9.0.20241206',
-            'types-requests==2.32.0.20250328',
-            'types-stdlib-list==0.8.3.4',
-            'typing_extensions==4.13.1',
-            'django-allauth==0.63.3',
-            'django-cors-headers',
-            'django-debug-toolbar',
-            'django-htmx',
-            'django-hyperscript',
-            'django-matplotlib',
-            'django-template-partials',
-            'django-tailwind',
-            'django-silk',
-          ]
-        pass_filenames: true # Ensure filenames are passed to the script
-
-      - id: pylint-local
-        name: pylint (no django)
-        entry: tools/pre_commit/patches/pylint_no_django.py # Path to the local script
-        language: script # Use 'script' for executable scripts
-        types: [python]
-        exclude: 'migrations/'
+  # 13. Dependency management (should run last)
+  - repo: https://github.com/pre-commit/sync-pre-commit-deps
+    rev: v0.0.3
+    hooks:
+      - id: sync-pre-commit-deps

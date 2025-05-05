@@ -25,8 +25,8 @@ in `github_issue.fish`
   Options: P1, P2, P3, P4
 - **Size**: `PVTSSF_lAHOCchfJ84A3c00zgslf9I` (ProjectV2SingleSelectField)
   Options: XS, S, M, L, XL
-- **Effort**: `PVTF_lAHOCchfJ84A3c00zgslf9M` (ProjectV2Field)
-  Options: Number (1-8)
+- **Effort**: `PVTF_lAHOCchfJ84A3c00zgslf9M` (ProjectV2Field) Options: Number
+  (1-8)
 - **Start date**: `PVTF_lAHOCchfJ84A3c00zgslf9Q` (ProjectV2Field)
 - **End date**: `PVTF_lAHOCchfJ84A3c00zgslf9U` (ProjectV2Field)
 
@@ -93,8 +93,8 @@ From the bug report's "Environment" section:
 
 ### Technical Context
 
-- **Django Version**: 4.1.13
-- **Python Version**: 3.9.21
+- **Django Version**: 5.2
+- **Python Version**: 3.12.9
 - **Frontend Technologies**: PicoCSS, django-hyperscript, django-htmx
 - **Database**: SQLite3 (development)
 - **Affected Module/App**: {Specify the Django app affected}

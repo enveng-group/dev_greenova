@@ -11,10 +11,12 @@ chatbot application.
 import logging
 import os
 import time
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+
+# Import datetime explicitly to fix the module attribute error
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -23,22 +25,17 @@ logger = logging.getLogger(__name__)
 class DummyMessage:
     """Stub class used when protocol buffers are not available."""
 
-    def SerializeToString(self):
+    def SerializeToString(self) -> bytes:
         return b''
 
-    def ParseFromString(self, data):
+    def ParseFromString(self, data: bytes) -> None:
         pass
 
 # Import generated protobuf modules with improved error handling
 try:
-    # First try importing from the top-level module
-    try:
-        import chatbot_pb2
-        logger.info("Successfully imported chatbot_pb2 from top-level")
-    except ImportError:
-        # If that fails, try importing from the proto subdirectory
-        from chatbot.proto import chatbot_pb2
-        logger.info("Successfully imported chatbot_pb2 from proto package")
+    # Use relative import to ensure consistent module path
+    from .proto import chatbot_pb2
+    logger.info("Successfully imported chatbot_pb2 from proto package")
 except ImportError:
     logger.error("Failed to import chatbot_pb2. Protocol buffer definition missing.")
 
@@ -112,7 +109,8 @@ def serialize_chat_message(chat_message) -> Optional[bytes]:
         return None
 
 
-def build_chat_message_proto(user_id, content, timestamp, message_type):
+def build_chat_message_proto(user_id: Optional[str], content: str, timestamp: Optional[int],
+                             message_type: int) -> 'chatbot_pb2.ChatMessage':
     """
     Build a ChatMessage protobuf object with proper initialization.
 
@@ -140,7 +138,7 @@ def build_chat_message_proto(user_id, content, timestamp, message_type):
     return proto
 
 
-def deserialize_chat_message(data: bytes) -> Optional[dict]:
+def deserialize_chat_message(data: bytes) -> Optional[Dict[str, Any]]:
     """
     Deserialize Protocol Buffer data to a dictionary that can be used to create
     a ChatMessage.
@@ -215,7 +213,7 @@ def create_chat_response(message_id: str, content: str) -> Optional[bytes]:
         return None
 
 
-def parse_chat_response(data: bytes) -> Optional[dict]:
+def parse_chat_response(data: bytes) -> Optional[Dict[str, Any]]:
     """
     Parse a serialized ChatResponse protocol buffer message.
 

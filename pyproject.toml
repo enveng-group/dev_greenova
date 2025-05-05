@@ -23,3 +23,41 @@ extension = "django-html,html,jinja"
 preserve_blank_lines = true
 preserve_leading_space = true
 require_pragma = false
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+exclude = ['^migrations/.*\.py$', '^tests/.*\.py$']
+mypy_path = "greenova/stubs"
+explicit_package_bases = true
+namespace_packages = true
+strict = true
+packages = ["greenova"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "greenova.settings"
+
+[tool.bandit]
+context_lines = 3
+exclude = [
+    "/tests",
+    "/env",
+    "/venv",
+    "/.git",
+    "*.pyc",
+    "**/test_*.py",
+    "**/*_test.py",
+    "**/mock_*.py",
+]
+skips = ["B311"]
+hardcoded_password_string = ["password", "passwd", "pwd", "secret"]
+severity = "LOW"
+confidence = "LOW"
+format = "txt"
+output = "bandit-results.txt"
+processes = 4
+exit_zero = false
+recursive = true
+verbose = true
+exclude_dirs = ["tests", "migrations", "docs"]

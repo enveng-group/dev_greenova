@@ -1,3 +1,4 @@
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
@@ -9,14 +10,14 @@ User = get_user_model()
 
 class Conversation(models.Model):
     """Model representing a chat conversation."""
-    title = models.CharField(max_length=255, default="New Conversation")
-    user = models.ForeignKey(
+    title: models.CharField = models.CharField(max_length=255, default="New Conversation")
+    user: models.ForeignKey = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='conversations'
     )
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.title} - {self.user.username}"
@@ -35,15 +36,15 @@ class Conversation(models.Model):
 
 class ChatMessage(models.Model):
     """Model representing an individual chat message."""
-    conversation = models.ForeignKey(
+    conversation: models.ForeignKey = models.ForeignKey(
         Conversation,
         on_delete=models.CASCADE,
         related_name='messages'
     )
-    content = models.TextField()
-    is_bot = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(default=timezone.now)
-    attachments = models.JSONField(default=list, blank=True)
+    content: models.TextField = models.TextField()
+    is_bot: models.BooleanField = models.BooleanField(default=False)
+    timestamp: models.DateTimeField = models.DateTimeField(default=timezone.now)
+    attachments: models.JSONField = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         prefix = "Bot" if self.is_bot else "User"
@@ -64,19 +65,19 @@ class ChatMessage(models.Model):
 
 class PredefinedResponse(models.Model):
     """Model for storing predefined chat responses."""
-    trigger_phrase = models.CharField(max_length=255)
-    response_text = models.TextField()
-    priority = models.IntegerField(default=0)
+    trigger_phrase: models.CharField = models.CharField(max_length=255)
+    response_text: models.TextField = models.TextField()
+    priority: models.IntegerField = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.trigger_phrase}"
 
 class TrainingData(models.Model):
     """Model for storing chatbot training data."""
-    question = models.TextField()
-    answer = models.TextField()
-    category = models.CharField(max_length=100, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
+    question: models.TextField = models.TextField()
+    answer: models.TextField = models.TextField()
+    category: models.CharField = models.CharField(max_length=100, blank=True)
+    created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         question_str = str(self.question)

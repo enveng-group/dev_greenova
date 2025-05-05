@@ -1,8 +1,6 @@
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
-import matplotlib
-import matplotlib.pyplot as plt
 from django.db.models import Count
 from matplotlib.figure import Figure
 from obligations.models import Obligation

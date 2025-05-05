@@ -11,8 +11,8 @@ PYTHON = $(VENV)/bin/python3
 PIP = $(VENV)/bin/pip
 
 #Variables
-REQUIREMENTS=requirements.txt
-CONSTRAINTS=constraints.txt
+REQUIREMENTS=requirements/dev.txt
+CONSTRAINTS=requirements/constraints.txt
 SETUP_SCRIPT=setup.py
 
 # Create virtual environment
@@ -50,16 +50,21 @@ dotenv-push:
 	@echo "Pushing .env file to dotenv-vault"
 	@npx dotenv-vault@latest push
 
-#run django system check
+# Validate the presence of the .env file before running checks
 check:
+	@if [ ! -f .env ]; then \
+		echo "Error: .env file is missing. Please create it and set the required environment variables."; \
+		exit 1; \
+	fi
 	$(CD_CMD) python3 manage.py check
 
 # Updated run command with better process management and gunicorn config
 run:
-	@echo "Starting Tailwind CSS and Django server..."
+	@echo "Starting Django server with pre-built Tailwind CSS..."
 	@mkdir -p logs
-	@$(CD_CMD) (python3 manage.py tailwind start > ../logs/tailwind.log 2>&1 & echo "Tailwind started (logs in logs/tailwind.log)") && \
-	python3 manage.py runserver
+	@cd /workspaces/greenova/greenova/theme/static_src && node build-tailwind.js > ../../logs/tailwind_build.log 2>&1 || (cat ../../logs/tailwind_build.log && exit 1)
+	@echo "Tailwind CSS built successfully"
+	@$(CD_CMD) python3 manage.py runserver 0.0.0.0:8000
 
 # Alternative approach with separate commands
 #start only Django server
@@ -89,7 +94,7 @@ update:
 
 #Update recurring inspection dates
 update-recurring-dates:
-    $(CD_CMD) python3 manage.py update_recurring_inspection_dates
+	$(CD_CMD) python3 manage.py update_recurring_inspection_dates
 
 #Normalize existing frequencies
 normalize-frequencies:

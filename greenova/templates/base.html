@@ -29,7 +29,10 @@
     <meta name="keywords"
           content="environmental compliance, management system, greenova, sustainability" />
     <meta name="description"
-          content=" {% block meta_description %} Environmental Compliance Management System {% endblock meta_description %}" />
+          content="
+                   {% block meta_description %}
+                     Environmental Compliance Management System
+                   {% endblock meta_description %}" />
     <title>
 
       {% block title %}
@@ -49,6 +52,8 @@
     <!-- CSS files -->
     <link rel="stylesheet" href="{% static 'css/critical-styles.css' %}" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <!-- Direct link to compiled Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}" />
 {% tailwind_css %}
 
     {% block extra_head %}
@@ -90,14 +95,18 @@
                       <li>
                         <a href="{% url 'dashboard:home' %}"
                            role="menuitem"
-                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %} page {% endif %}"
+                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
+                                           page
+                                         {% endif %}"
                            _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
                       </li>
                     {% else %}
                       <li>
                         <a href="{% url 'dashboard:home' %}"
                            role="menuitem"
-                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %} page {% endif %}"
+                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
+                                           page
+                                         {% endif %}"
                            _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
                       </li>
                     {% endif %}
@@ -115,11 +124,15 @@
 {% chat_widget %}
                 <a href="{% url 'users:profile' %}"
                    role="menuitem"
-                   {% if request.path == '/users/profile/' %} aria-current="page" {% endif %}>Profile</a>
+                   {% if request.path == '/users/profile/' %}
+                     aria-current="page"
+                   {% endif %}>Profile</a>
                 {% if request.user.is_staff %}
                   <a href="{% url 'company:list' %}"
                      role="menuitem"
-                     {% if '/company/' in request.path %} aria-current="page" {% endif %}>Companies</a>
+                     {% if '/company/' in request.path %}
+                       aria-current="page"
+                     {% endif %}>Companies</a>
                 {% endif %}
                 <!-- Logout -->
                 <a href="#"

@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from .models import ResponsibilityAssignment, ResponsibilityRole
+from .models import Responsibility, ResponsibilityAssignment
 
 
 @login_required
@@ -39,7 +39,7 @@ def role_list(request):
     """List view for responsibility roles."""
     # Get roles for companies the user belongs to
     user_companies = request.user.companies.all()
-    roles = ResponsibilityRole.objects.filter(
+    roles = Responsibility.objects.filter(
         company__in=user_companies,
         is_active=True
     ).select_related('company')

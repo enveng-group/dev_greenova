@@ -1,14 +1,27 @@
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from core.utils.roles import get_role_display
 from django.utils import timezone
 
-from .constants import (FREQUENCY_ALIASES, FREQUENCY_ANNUAL, FREQUENCY_BIANNUAL,
-                        FREQUENCY_DAILY, FREQUENCY_FORTNIGHTLY, FREQUENCY_MONTHLY,
-                        FREQUENCY_QUARTERLY, FREQUENCY_WEEKLY, STATUS_COMPLETED,
-                        STATUS_OVERDUE, STATUS_UPCOMING)
+# Import Obligation only for type checking to avoid circular imports
+if TYPE_CHECKING:
+    from .models import Obligation
+
+from .constants import (
+    FREQUENCY_ALIASES,
+    FREQUENCY_ANNUAL,
+    FREQUENCY_BIANNUAL,
+    FREQUENCY_DAILY,
+    FREQUENCY_FORTNIGHTLY,
+    FREQUENCY_MONTHLY,
+    FREQUENCY_QUARTERLY,
+    FREQUENCY_WEEKLY,
+    STATUS_COMPLETED,
+    STATUS_OVERDUE,
+    STATUS_UPCOMING,
+)
 
 logger = logging.getLogger(__name__)
 

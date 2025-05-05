@@ -19,7 +19,6 @@ single_quoted_strings = true
 indent_size = 2
 max_line_length = 88
 
-
 # JavaScript files
 [*.{js,jsx,ts,tsx}]
 indent_size = 2
@@ -136,3 +135,7 @@ max_line_length = 88
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
+
+# Added comments for clarity
+# This file ensures consistent coding styles across editors and IDEs.
+# Each section specifies rules for a specific file type or pattern.

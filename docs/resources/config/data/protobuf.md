@@ -7,8 +7,8 @@ Greenova project, follow these steps:
 
 Ensure you have the following installed and configured:
 
-1. **Python 3.9.21**: The version used in the Greenova project.
-2. **Django 4.1.13**: Ensure your Django environment is set up.
+1. **Python 3.12.9**: The version used in the Greenova project.
+2. **Django 5.2**: Ensure your Django environment is set up.
 3. **Protobuf Compiler**: Install the Protocol Buffer compiler (`protoc`).
 
    ```bash

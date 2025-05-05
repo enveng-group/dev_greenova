@@ -33,14 +33,14 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    project = forms.ModelChoiceField(
+    project: forms.ModelChoiceField = forms.ModelChoiceField(
         queryset=Project.objects.all(),
         widget=forms.Select(
             attrs={'class': 'form-input', 'aria-label': 'Select project'}
         ),
     )
 
-    primary_environmental_mechanism = forms.ModelChoiceField(
+    primary_environmental_mechanism: forms.ModelChoiceField = forms.ModelChoiceField(
         queryset=EnvironmentalMechanism.objects.all(),
         required=False,
         widget=forms.Select(
@@ -51,7 +51,7 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    environmental_aspect = forms.ChoiceField(
+    environmental_aspect: forms.ChoiceField = forms.ChoiceField(
         choices=[
             ('', '---------'),
             ('Air', 'Air'),
@@ -98,7 +98,7 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    custom_environmental_aspect = forms.CharField(
+    custom_environmental_aspect: forms.CharField = forms.CharField(
         required=False,
         max_length=255,
         widget=forms.TextInput(
@@ -109,7 +109,7 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    obligation = forms.CharField(
+    obligation: forms.CharField = forms.CharField(
         widget=forms.Textarea(
             attrs={
                 'rows': 3,
@@ -119,7 +119,7 @@ class ObligationForm(forms.ModelForm):
         )
     )
 
-    procedure = forms.ChoiceField(
+    procedure: forms.ChoiceField = forms.ChoiceField(
         choices=[
             ('', '---------'),
             ('Cultural Heritage Management', 'Cultural Heritage Management'),
@@ -135,7 +135,7 @@ class ObligationForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-input'}),
     )
 
-    obligation_type = forms.ChoiceField(
+    obligation_type: forms.ChoiceField = forms.ChoiceField(
         choices=[
             ('', '---------'),
             ('Training', 'Training'),
@@ -154,7 +154,7 @@ class ObligationForm(forms.ModelForm):
     )
 
     # Dates and Status Fields
-    action_due_date = forms.DateField(
+    action_due_date: forms.DateField = forms.DateField(
         required=False,
         widget=forms.DateInput(
             attrs={
@@ -165,25 +165,25 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    close_out_date = forms.DateField(
+    close_out_date: forms.DateField = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
     )
 
-    status = forms.ChoiceField(
+    status: forms.ChoiceField = forms.ChoiceField(
         choices=STATUS_CHOICES,
         initial=STATUS_NOT_STARTED,
         widget=forms.Select(attrs={'class': 'form-input'}),
     )
 
     # Recurring Details Fields
-    recurring_obligation = forms.BooleanField(
+    recurring_obligation: forms.BooleanField = forms.BooleanField(
         required=False,
         initial=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
     )
 
-    recurring_frequency = forms.ChoiceField(
+    recurring_frequency: forms.ChoiceField = forms.ChoiceField(
         choices=FREQUENCY_CHOICES,
         required=False,
         widget=forms.Select(
@@ -191,7 +191,7 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    recurring_status = forms.ChoiceField(
+    recurring_status: forms.ChoiceField = forms.ChoiceField(
         choices=[
             ('', '---------'),
             ('not started', 'Not Started'),
@@ -205,7 +205,7 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    recurring_forcasted_date = forms.DateField(
+    recurring_forcasted_date: forms.DateField = forms.DateField(
         required=False,
         widget=forms.DateInput(
             attrs={
@@ -217,13 +217,13 @@ class ObligationForm(forms.ModelForm):
     )
 
     # Inspection Details Fields
-    inspection = forms.BooleanField(
+    inspection: forms.BooleanField = forms.BooleanField(
         required=False,
         initial=False,
         widget=forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
     )
 
-    inspection_frequency = forms.ChoiceField(
+    inspection_frequency: forms.ChoiceField = forms.ChoiceField(
         choices=[
             ('', '---------'),
             ('Daily', 'Daily'),
@@ -239,7 +239,7 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    site_or_desktop = forms.ChoiceField(
+    site_or_desktop: forms.ChoiceField = forms.ChoiceField(
         choices=[('', '---------'), ('Site', 'Site'), ('Desktop', 'Desktop')],
         required=False,
         widget=forms.Select(
@@ -248,7 +248,7 @@ class ObligationForm(forms.ModelForm):
     )
 
     # Additional Information Fields
-    accountability = forms.ChoiceField(
+    accountability: forms.ChoiceField = forms.ChoiceField(
         choices=[
             ('', '---------'),
             ('Perdaman', 'Perdaman'),
@@ -259,14 +259,14 @@ class ObligationForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-input'}),
     )
 
-    responsibility = forms.ChoiceField(
+    responsibility: forms.ChoiceField = forms.ChoiceField(
         choices=get_responsibility_choices(),
         widget=forms.Select(attrs={'class': 'form-input'}),
         label='Primary Responsibility',
         help_text='Select the primary responsibility for this obligation'
     )
 
-    project_phase = forms.ChoiceField(
+    project_phase: forms.ChoiceField = forms.ChoiceField(
         choices=[
             ('', '---------'),
             ('Pre-Construction', 'Pre-Construction'),
@@ -280,7 +280,7 @@ class ObligationForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-input'}),
     )
 
-    supporting_information = forms.CharField(
+    supporting_information: forms.CharField = forms.CharField(
         required=False,
         widget=forms.Textarea(
             attrs={
@@ -291,19 +291,19 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    general_comments = forms.CharField(
+    general_comments: forms.CharField = forms.CharField(
         required=False, widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-input'})
     )
 
-    compliance_comments = forms.CharField(
+    compliance_comments: forms.CharField = forms.CharField(
         required=False, widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-input'})
     )
 
-    non_conformance_comments = forms.CharField(
+    non_conformance_comments: forms.CharField = forms.CharField(
         required=False, widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-input'})
     )
 
-    evidence_notes = forms.CharField(
+    evidence_notes: forms.CharField = forms.CharField(
         required=False,
         widget=forms.Textarea(
             attrs={
@@ -314,22 +314,22 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    new_control_action_required = forms.BooleanField(
+    new_control_action_required: forms.BooleanField = forms.BooleanField(
         required=False, widget=forms.CheckboxInput(attrs={'class': 'form-checkbox'})
     )
 
-    gap_analysis = forms.BooleanField(
+    gap_analysis: forms.BooleanField = forms.BooleanField(
         required=False, widget=forms.CheckboxInput(attrs={'class': 'form-checkbox'})
     )
 
-    notes_for_gap_analysis = forms.CharField(
+    notes_for_gap_analysis: forms.CharField = forms.CharField(
         required=False,
         widget=forms.Textarea(
             attrs={'rows': 3, 'class': 'form-input', 'data-conditional': 'gap_analysis'}
         ),
     )
 
-    covered_in_which_inspection_checklist = forms.CharField(
+    covered_in_which_inspection_checklist: forms.CharField = forms.CharField(
         max_length=255,
         required=False,
         widget=forms.TextInput(
@@ -337,7 +337,7 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    responsibilities = forms.ModelMultipleChoiceField(
+    responsibilities: forms.ModelMultipleChoiceField = forms.ModelMultipleChoiceField(
         queryset=Responsibility.objects.all(),
         widget=Select2MultipleWidget(
             attrs={'class': 'form-input', 'aria-describedby': 'responsibilities-help'}

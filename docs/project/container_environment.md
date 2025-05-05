@@ -56,8 +56,8 @@ project that uses Django, Node.js, and npm.
 #### Week 1: Dockerfile and .dockerignore
 
 1. **Create Dockerfile**: Write instructions to set up the environment, install
-   Alpine Linux, Python 3.9.21, Node 18.20.7, npm 10.8.2, and Django 4.2.20,
-   and run the application.
+   Alpine Linux, Python 3.12.9, Node 20.19.1, npm 11.3.0, and Django 5.2, and
+   run the application.
 2. **Create .dockerignore**: Exclude unnecessary files from the Docker build
    context.
 
@@ -134,7 +134,7 @@ project that uses Django, Node.js, and npm.
 
 #### Dockerfile
 
-1. **Base Image**: Use a lightweight base image such as `python:3.9-slim`.
+1. **Base Image**: Use a lightweight base image such as `python:3.100-slim`.
 2. **Multi-stage Builds**: Use multi-stage builds to reduce the final image
    size.
 3. **Environment Variables**: Use environment variables for configuration.
@@ -206,7 +206,7 @@ Here is an example of a Dockerfile for the Python project:
 
 ```Dockerfile
 # Use a lightweight base image
-FROM python:3.9-slim as base
+FROM python:3.100-slim as base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED 1

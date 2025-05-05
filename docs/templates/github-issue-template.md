@@ -22,7 +22,7 @@ When a user tries to edit an obligation, the following error occurs:
 
 ```python
 Traceback (most recent call last):
-  File "/home/ubuntu/greenova-0.0.5/.venv/lib/python3.9/site-packages/django/
+  File "/home/ubuntu/greenova-0.0.5/.venv/lib/python3.10/site-packages/django/
   core/handlers/exception.py", line 56, in inner
     response = get_response(request)
   # ... (traceback continues) ...
@@ -41,8 +41,8 @@ Exception Value: 'Obligation' object has no attribute 'responsibilities'
 
 ## Technical Context
 
-- **Django Version**: 4.1.13
-- **Python Version**: 3.9.21
+- **Django Version**: 5.2
+- **Python Version**: 3.12.9
 - **Frontend Technologies**: PicoCSS, django-hyperscript, django-htmx
 - **Database**: SQLite3 (development)
 - **Affected Module/App**: obligations
@@ -107,8 +107,7 @@ flowchart TD
 - **Status**: Sort
 - **Priority**: P1
 - **Size**: M
-- **Effort**: 3
-  "
+- **Effort**: 3 "
 
 ```fish
 # Execute the command to create the issue

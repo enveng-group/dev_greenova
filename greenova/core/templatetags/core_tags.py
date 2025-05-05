@@ -1,8 +1,12 @@
 import logging
 
 from core.commons import get_active_namespace, get_user_display_name
-from core.constants import (AUTH_NAVIGATION, MAIN_NAVIGATION, THEME_OPTIONS,
-                            USER_NAVIGATION)
+from core.constants import (
+    AUTH_NAVIGATION,
+    MAIN_NAVIGATION,
+    THEME_OPTIONS,
+    USER_NAVIGATION,
+)
 from django import template
 from django.conf import settings
 from django.urls import NoReverseMatch, reverse

@@ -1,54 +1,69 @@
-# use Alpine Linux as base image
-FROM python:3.9.21-alpine
+# Use the official Python 3.12 image based on Debian (more compatible than Alpine)
+FROM mcr.microsoft.com/devcontainers/python:3.12-bookworm
 
-# install system dependencies for pyenv, nvm and compiling python and node
-RUN apk add --no-cache python3 py3-pip python3-dev \
-    bash curl fish make shellcheck\
-    gcc musl-dev linux-headers git direnv
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  NODE_VERSION=20.19.1 \
+  NPM_VERSION=11.3.0 \
+  NVM_DIR="/usr/local/share/nvm" \
+  DJANGO_SETTINGS_MODULE=greenova.settings
 
-# install node
-RUN curl -fsSL https://unofficial-builds.nodejs.org/download/release/v18.20.7/node-v18.20.7-linux-x64-musl.tar.gz \
-    | tar -xz -C /usr/local --strip-components=1 --no-same-owner \
-    && ln -s /usr/local/bin/node /usr/bin/node \
-    && ln -s /usr/local/bin/npm /usr/bin/npm
+# Install system dependencies
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+  && apt-get -y install --no-install-recommends \
+  fish \
+  direnv \
+  curl \
+  git \
+  make \
+  sqlite3 \
+  shellcheck \
+  vim \
+  python3-pip \
+  python3-venv \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-# upgrade npm to v10.8.2
-RUN npm install -g npm@10.8.2
+# Ensure pip is properly installed and upgraded
+RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# verify
-RUN node -v && npm -v
+# Set up Node.js using the pre-installed NVM
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION} \
+  && nvm alias default ${NODE_VERSION} \
+  && npm install -g npm@${NPM_VERSION}
 
-# set the working directory
-WORKDIR /workspaces/greenova
+# Create required directories for fish shell
+RUN mkdir -p /home/vscode/.config/fish /home/vscode/.config/fish/functions /home/vscode/.local/share/fish \
+  && chown -R vscode:vscode /home/vscode/.config /home/vscode/.local
 
-# set Python 3 as the default Python version
-RUN ln -sf /usr/bin/python3 /usr/bin/python && \
-    ln -sf /usr/bin/pip3 /usr/bin/pip
+# We'll install Python dependencies after the workspace is mounted
+# in the postCreateCommand or postStartCommand
 
-# copy requirements.txt file and package.json file
-COPY requirements.txt constraints.txt package.json ./
-COPY post_start.sh /usr/local/scripts/post_start.sh
-COPY run.sh /usr/local/scripts/run.sh
-RUN chmod +x /usr/local/scripts/*.sh
-
-# install Node.js dependencies
-#RUN npm install
-
-# install Python dependencies
-#RUN pip install -r requirements.txt -c constraints.txt
-#RUN pip install --no-cache-dir -r requirements.txt
-
-# add vscode user and group(UID = 1000)
-RUN addgroup -g 1000 vscode && \
-    adduser -u 1000 -G vscode -s /bin/sh -D vscode && \
-    mkdir -p /home/vscode /usr/local /workspaces/greenova && \
-    chown -R vscode:vscode /home/vscode /usr/local /workspaces || true
-
-#change user to vscode
+# Make prepare vscode user for development
 USER vscode
 
-# set environment variables
-ENV PYTHONUNBUFFERED=1
+# Ensure fish shell is properly configured
+RUN echo 'set -gx PATH /usr/local/share/nvm/versions/node/v${NODE_VERSION}/bin $PATH' > /home/vscode/.config/fish/config.fish \
+  && echo 'set -gx NODE_PATH /usr/local/share/nvm/versions/node/v${NODE_VERSION}/lib/node_modules' >> /home/vscode/.config/fish/config.fish \
+  && echo 'set -gx PYTHONPATH /workspaces/greenova:/workspaces/greenova/greenova $PYTHONPATH' >> /home/vscode/.config/fish/config.fish \
+  && echo 'set -gx PYTHONSTARTUP /workspaces/greenova/pythonstartup' >> /home/vscode/.config/fish/config.fish
 
-# lunch bash
-CMD ["/bin/bash"]
+# Set working directory
+WORKDIR /workspaces/greenova
+
+# Switch back to root to ensure entrypoint can handle permissions properly
+USER root
+
+# Copy entrypoint script and make it executable
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Switch back to vscode user for operations
+USER vscode
+
+# Default command
+CMD ["sleep", "infinity"]

@@ -1,0 +1,3 @@
+"""
+Authentication allauth integration package.
+"""

@@ -36,9 +36,7 @@ All notable changes to this project will be documented in this file.
 [v0.0.2]: https://github.com/username/greenova/compare/v0.0.1...v0.0.2
 [v0.0.1]: https://github.com/username/greenova/releases/tag/v0.0.1
 
-- None
-
-## [v0.0.6] - 2025-05-01
+## [v0.0.6] - 2025-05-05
 
 ### Added
 
@@ -63,9 +61,20 @@ All notable changes to this project will be documented in this file.
   - Implemented history tracking for key operations
 
 - **Obligation Management**
+
   - Added interactive hyperlinks for status counts in procedure views
   - Improved data filtering with HTMX for dynamic content loading
   - Enhanced obligation list templates with better organization
+
+- **Development Environment**
+
+  - Updated `.devcontainer/Dockerfile` to use Python 3.12 and Node.js 20.19.1.
+  - Added `entrypoint.sh` for container initialization.
+  - Enhanced Fish shell configuration for development.
+  - Improved virtual environment setup with `post_start.sh`.
+
+- **Documentation**
+  - Added detailed `README.md` for `.devcontainer` setup.
 
 ### Changed
 
@@ -88,6 +97,14 @@ All notable changes to this project will be documented in this file.
   - Rebuilt django-build command in Makefile
   - Fixed syntax errors in build scripts
   - Improved virtual environment setup instructions
+  - Updated `.devcontainer/devcontainer.json` with streamlined settings and
+    extensions.
+  - Refactored `post_start.sh` for better maintainability.
+
+- **Environment Configuration**
+
+  - Updated `.env.example` with new default values and comments.
+  - Enhanced `.envrc` for better environment variable management.
 
 - **User Experience**
   - Enhanced user profile functionality with role relationship display
@@ -100,7 +117,11 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
-- None
+- **Legacy Files**
+  - Deleted `.bandit`, `.banditignore`, and `.banditrc` as they are no longer
+    required.
+  - Removed outdated `.devcontainer/constraints.txt` and `requirements.txt`.
+  - Deleted unused `.devcontainer/run.sh` and `.devcontainer/package.json`.
 
 ### Fixed
 
@@ -109,11 +130,15 @@ All notable changes to this project will be documented in this file.
 - Fixed login redirect issues in authentication workflow
 - Corrected constraints handling in data models
 - Improved error handling in core components
+- **Permissions**
+  - Corrected file permissions for `.devcontainer` files.
 
 ### Security
 
 - Enhanced authentication workflow with proper namespace isolation
 - Improved environment variable management with dotenv-vault
+- **Environment Management**
+  - Improved `.env.vault` with updated secrets and versioning.
 
 ## [v0.0.5] - Pre-release
 
@@ -165,7 +190,7 @@ All notable changes to this project will be documented in this file.
 - Restructured `docs/resources` with logical subdirectories.
 - Added commit message templates, code review templates, and GitHub issue
   templates.
-- Updated packages for compatibility with Python 3.9.21 and Django 4.1.13.
+- Updated packages for compatibility with Python 3.12.9 and Django 5.2.
 - Downgraded matplotlib version for compatibility.
 - Revised environment variable configurations in `.env.vault`.
 - Included pre-commit dependency in `requirements.txt`.
@@ -223,7 +248,7 @@ All notable changes to this project will be documented in this file.
 - Improve devcontainer configuration with Snyk CLI and Git features
 - Configure Prettier for consistent code formatting
 - Migrate to dotenv-vault for environment management
-- Update packages for compatibility with Python 3.9.21 and Django 4.1.13
+- Update packages for compatibility with Python 3.12.9 and Django 5.2
 - Downgrade matplotlib version for compatibility
 - Revise environment variable configurations in .env.vault
 - Include pre-commit dependency in requirements.txt

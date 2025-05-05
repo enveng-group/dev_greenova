@@ -47,9 +47,9 @@ feels welcome to contribute.
 
 1. **Prerequisites**:
 
-   - Python 3.9.21
-   - Node.js 18.20.7
-   - NPM 10.8.2
+   - Python 3.12.9
+   - Node.js 20.19.1
+   - NPM 11.3.0
    - Git
 
 2. **Clone the repository** (if you're a direct contributor) or fork it first

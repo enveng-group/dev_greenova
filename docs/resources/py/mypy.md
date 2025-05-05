@@ -46,7 +46,7 @@ Create a `mypy.ini` file in your project root:
 
 ```ini
 [mypy]
-plugins = mypy_django_plugin.main
+plugins = mypy.plugins.django-stubs
 
 [mypy.plugins.django-stubs]
 django_settings_module = "your_project.settings"

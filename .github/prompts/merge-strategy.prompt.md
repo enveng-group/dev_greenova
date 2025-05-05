@@ -8,11 +8,12 @@ efficiently while maintaining code quality and following project conventions.
 
 Greenova follows a progressive squash merge workflow with these repositories:
 
-- Development: [https://github.com/enveng-group/dev_greenova](https://github.com/enveng-group/dev_greenova)
-- Production: [https://github.com/enssol/greenova](https://github.com/enssol/greenova)
+- Development:
+  [https://github.com/enveng-group/dev_greenova](https://github.com/enveng-group/dev_greenova)
+- Production:
+  [https://github.com/enssol/greenova](https://github.com/enssol/greenova)
 
-We use Django 4.1.13 with Python 3.9.21 and follow strict code quality
-standards.
+We use Django 5.2 with Python 3.12.9 and follow strict code quality standards.
 
 ## Conflict Resolution Goals
 
@@ -189,7 +190,8 @@ to the Obligation model.
 
 ### Resolution Option
 
-Preserve both additions as they serve different purposes and don't conflict functionally.
+Preserve both additions as they serve different purposes and don't conflict
+functionally.
 
 ### Resolved Code
 

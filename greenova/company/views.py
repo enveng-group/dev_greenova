@@ -12,8 +12,13 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from .forms import (AddUserToCompanyForm, CompanyDocumentForm, CompanyForm,
-                    CompanyMembershipForm, CompanySearchForm)
+from .forms import (
+    AddUserToCompanyForm,
+    CompanyDocumentForm,
+    CompanyForm,
+    CompanyMembershipForm,
+    CompanySearchForm,
+)
 from .models import Company, CompanyDocument, CompanyMembership
 
 logger = logging.getLogger(__name__)

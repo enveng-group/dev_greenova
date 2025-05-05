@@ -9,7 +9,7 @@ obligations management system.
 
 ### Backend
 
-- Django 4.1.13
+- Django 5.2
 - SQLite3 Database
 - MatPlotlib for data visualization
 
