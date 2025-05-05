@@ -81,6 +81,7 @@ Analyze commit and file diffs between the `integration/v0.0.6` branch and the `d
 **Sources**:
 
 - `.env-vault`
+- `analysis_logs/pre_merge_analysis.log`
 
 **Expectations**: GitHub Copilot can delete and consolidate files where
 multiple implementations are found and can be merged into a single file
