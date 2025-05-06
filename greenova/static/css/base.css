@@ -38,7 +38,8 @@ body {
 /* Layout */
 main,
 #main-content,
-[role='main'] {
+[role='main'],
+header[role='banner'] {
   max-width: calc(100% - 2 * var(--greenova-main-spacing));
   margin: 0 var(--greenova-main-spacing);
   padding: var(--greenova-spacing-large) 0;

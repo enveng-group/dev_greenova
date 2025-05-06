@@ -1,0 +1,39 @@
+/* Used to theme the container for themes */
+.theme-container {
+  /* PicoCSS forces this element left. */
+  margin-left: var(--greenova-spacing) !important;
+}
+
+/* Theme icons, sun and moon */
+.theme-icon {
+  width: var(--greenova-theme-icon-size);
+  height: var(--greenova-theme-icon-size);
+  display: inline-block;
+
+  /* Ensure that the stroke colour is consistent */
+  /*fill: white;
+  stroke-width: 0.1rem;
+  stroke: white;*/
+}
+
+/* Light theme */
+.theme-icon-light {
+}
+
+/* Dark theme */
+.theme-icon-dark {
+}
+
+/* If it is not current and not the auto theme, so it. */
+ul.theme-container li:has(a:not([aria-current='true'])) {
+  display: inline-block;
+}
+
+/* Hide the auto option from the public! */
+ul.theme-container li:has(a[data-theme-switcher='auto']),
+/* This is the current theme, we want to ensure it does not show... */
+ul.theme-container li:has(a[aria-current='true']) {
+  margin: 0;
+  padding: 0;
+  display: none;
+}
