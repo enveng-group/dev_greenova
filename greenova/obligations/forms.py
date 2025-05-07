@@ -16,6 +16,20 @@ from .utils import normalize_frequency
 logger = logging.getLogger(__name__)
 
 
+class FilterForm(forms.Form):
+    """Base form for filtering with GET method."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['formmethod'] = 'get'  # Ensure GET method is used
+
+    def clean(self):
+        """Override clean to handle cleaned data appropriately."""
+        cleaned_data = super().clean()
+        # Add any additional validation or transformation logic here
+        return cleaned_data
+
+
 class ObligationForm(forms.ModelForm):
     """Form for creating and updating obligations."""
 
@@ -672,3 +686,32 @@ class EvidenceUploadForm(forms.ModelForm):
         widgets = {
             'description': forms.TextInput(attrs={'placeholder': 'Brief description of the file'}),
         }
+
+
+# Ensure forms are defined for filtering if needed
+class ObligationFilterForm(forms.Form):
+    search = forms.CharField(
+        required=False, max_length=100, label="Search",
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Search...',
+            'class': 'form-input'
+        })
+    )
+    status = forms.ChoiceField(
+        required=False,
+        choices=[("", "All"), ("open", "Open"), ("closed", "Closed")],
+        label="Status",
+        widget=forms.Select(attrs={'class': 'form-input'})
+    )
+    phase = forms.ChoiceField(
+        required=False,
+        choices=[("", "All"), ("planning", "Planning"), ("execution", "Execution")],
+        label="Phase",
+        widget=forms.Select(attrs={'class': 'form-input'})
+    )
+    sort = forms.ChoiceField(
+        required=False,
+        choices=[("", "Default"), ("name", "Name"), ("status", "Status")],
+        label="Sort By",
+        widget=forms.Select(attrs={'class': 'form-input'})
+    )

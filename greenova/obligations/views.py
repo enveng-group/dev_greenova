@@ -16,8 +16,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import (CreateView, DeleteView, DetailView, TemplateView,
-                                  UpdateView)
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  TemplateView, UpdateView)
 from django_htmx.http import trigger_client_event
 from mechanisms.models import EnvironmentalMechanism  # Added missing import
 from projects.models import Project
@@ -43,29 +43,32 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
 
     def apply_filters(self, queryset: QuerySet, filters: Dict[str, Any]) -> QuerySet:
         """Apply filters to the queryset."""
+        # Validate fields exist on the model before filtering
+        valid_fields = {'status', 'phase', 'action_due_date', 'obligation_number',
+                        'obligation', 'supporting_information',
+                        'primary_environmental_mechanism'}
+
         # Handle the date filter first (14-day lookahead)
         if filters['date_filter'] == '14days':
             today = timezone.now().date()
             two_weeks = today + timedelta(days=14)
-            queryset = queryset.filter(
-                action_due_date__gte=today,
-                action_due_date__lte=two_weeks
-            )
+            if 'action_due_date' in valid_fields:
+                queryset = queryset.filter(
+                    action_due_date__gte=today,
+                    action_due_date__lte=two_weeks
+                )
 
         # Apply status filter
-        if filters['status']:
-            # Handle the special case of 'overdue' status which isn't in the database
+        if filters['status'] and 'status' in valid_fields:
             if 'overdue' in filters['status'] and len(filters['status']) == 1:
                 from obligations.utils import is_obligation_overdue
 
-                # Filter for items that are overdue
                 filtered_ids = []
                 for obligation in queryset:
                     if is_obligation_overdue(obligation):
                         filtered_ids.append(obligation.obligation_number)
                 queryset = queryset.filter(obligation_number__in=filtered_ids)
             elif 'overdue' in filters['status'] and len(filters['status']) > 1:
-                # Handle mix of 'overdue' and other statuses
                 other_statuses = [s for s in filters['status'] if s != 'overdue']
                 filtered_ids = []
                 for obligation in queryset.filter(status__in=other_statuses):
@@ -75,17 +78,16 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
                     Q(status__in=other_statuses) | Q(obligation_number__in=filtered_ids)
                 )
             else:
-                # Normal status filtering
                 queryset = queryset.filter(status__in=filters['status'])
 
         # Apply mechanism filter if provided
-        if filters['mechanism']:
+        if filters['mechanism'] and 'primary_environmental_mechanism' in valid_fields:
             queryset = queryset.filter(
                 primary_environmental_mechanism__id__in=filters['mechanism']
             )
 
         # Apply phase filter if provided
-        if filters['phase']:
+        if filters['phase'] and 'project_phase' in valid_fields:
             queryset = queryset.filter(project_phase__in=filters['phase'])
 
         # Apply search if provided
@@ -385,3 +387,35 @@ def upload_evidence(request, obligation_id):
             'obligation': obligation,
             'form': form,
         })
+
+# Ensure the filtering and sorting logic is implemented correctly in the view
+class ObligationListView(ListView):
+    model = Obligation
+    template_name = "obligations/obligation_list.html"
+    context_object_name = "obligations"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Retrieve GET parameters
+        search_query = self.request.GET.get("search", "")
+        status_filter = self.request.GET.get("status", "")
+        phase_filter = self.request.GET.get("phase", "")
+        sort_by = self.request.GET.get("sort", "")
+
+        # Apply filters
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+        if phase_filter:
+            queryset = queryset.filter(phase=phase_filter)
+
+        # Apply sorting
+        if sort_by:
+            queryset = queryset.order_by(sort_by)
+
+        return queryset
