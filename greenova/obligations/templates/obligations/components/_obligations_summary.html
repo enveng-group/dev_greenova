@@ -6,18 +6,21 @@
          hx-trigger="path-deps:from path-deps"
          classes="add fade-in"
          _="on load transition opacity to 1 over 300ms">
-  <h2 id="obligations-heading">Obligations Overview</h2>
   {% if error %}
     <div class="notice error" role="alert">
-      <p>{{ error }}</p>
+      <p>
+{{ error }}
+      </p>
     </div>
   {% else %}
     <!-- Hidden project ID that will be included in all requests -->
-    <input type="hidden" name="mechanism_id" value="{{ mechanism_id }}">
+    <input type="hidden" name="mechanism_id" value="{{ mechanism_id }}" />
     <!-- Filter and Search Controls -->
     <div class="filter-section" aria-labelledby="filter-heading">
       <div class="filter-header">
-        <h3 id="filter-heading">Filter Obligations</h3>
+        <h3 id="filter-heading">
+Filter Obligations
+        </h3>
         <!-- Add Obligation Button -->
         <a href="{% url 'obligations:create' %}{% if request.GET.project_id %}?project_id={{ request.GET.project_id }}{% endif %}"
            class="add-obligation-btn"
@@ -32,8 +35,8 @@
                stroke-width="2"
                stroke-linecap="round"
                stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
+<line x1="12" y1="5" x2="12" y2="19"></line>
+<line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
           <span>Add Obligation</span>
         </a>
@@ -44,23 +47,31 @@
                   hx-get="/obligations/summary/"
                   hx-target="#obligations-container"
                   hx-vals='{"status": "overdue"}'
-                  aria-label="Show overdue obligations">Overdue</button>
+                  aria-label="Show overdue obligations">
+Overdue
+          </button>
           <button type="button"
                   class="quick-filter-btn"
                   hx-get="/obligations/summary/"
                   hx-target="#obligations-container"
                   hx-vals='{"date_filter": "14days"}'
-                  aria-label="Show obligations due in next 14 days">14-day Lookahead</button>
+                  aria-label="Show obligations due in next 14 days">
+14-day Lookahead
+          </button>
           <button type="button"
                   class="btn-secondary"
                   hx-get="/obligations/summary/"
-                  hx-target="#obligations-container">Reset Filters</button>
+                  hx-target="#obligations-container">
+Reset Filters
+          </button>
         </div>
       </div>
       <div class="controls-container">
         <!-- Search Box -->
         <div class="search-control">
-          <label for="search-box">Search:</label>
+          <label for="search-box">
+Search:
+          </label>
           <input type="search"
                  id="search-box"
                  name="search"
@@ -68,13 +79,15 @@
                  hx-get="/obligations/summary/"
                  hx-target="#obligations-container"
                  hx-trigger="keyup changed delay:500ms"
-                 hx-include="select[name='status'], select[name='phase']">
+                 hx-include="select[name='status'], select[name='phase']" />
         </div>
         <!-- Filter Controls -->
         <div class="filter-controls">
           <!-- Status Filter -->
           <div class="filter-group">
-            <label for="status-filter">Status:</label>
+            <label for="status-filter">
+Status:
+            </label>
             <select id="status-filter"
                     name="status"
                     multiple
@@ -83,15 +96,25 @@
                     hx-trigger="change"
                     hx-include="[name='search'], [name='phase']"
                     hx-push-url="true">
-              <option value="not started">Not Started</option>
-              <option value="in progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="overdue">Overdue</option>
+              <option value="not started">
+Not Started
+              </option>
+              <option value="in progress">
+In Progress
+              </option>
+              <option value="completed">
+Completed
+              </option>
+              <option value="overdue">
+Overdue
+              </option>
             </select>
           </div>
           <!-- Phase Filter -->
           <div class="filter-group">
-            <label for="phase-filter">Phase:</label>
+            <label for="phase-filter">
+Phase:
+            </label>
             <select id="phase-filter"
                     name="phase"
                     multiple
@@ -99,23 +122,39 @@
                     hx-target="#obligations-container"
                     hx-trigger="change"
                     hx-include="input[name='search'], select[name='status']">
-              {% for phase in phases %}<option value="{{ phase }}">{{ phase }}</option>{% endfor %}
+              {% for phase in phases %}
+                <option value="{{ phase }}">
+{{ phase }}
+                </option>
+              {% endfor %}
             </select>
           </div>
           <!-- Sort Options -->
           <div class="filter-group">
-            <label for="sort-filter">Sort By:</label>
+            <label for="sort-filter">
+Sort By:
+            </label>
             <select id="sort-filter"
                     name="sort"
                     hx-get="/obligations/summary/"
                     hx-target="#obligations-container"
                     hx-trigger="change"
                     hx-include="input[name='search'], select[name='status'], select[name='phase'], select[name='order']">
-              <option value="obligation_number">Number</option>
-              <option value="action_due_date" selected>Due Date</option>
-              <option value="status">Status</option>
-              <option value="primary_environmental_mechanism__name">Mechanism</option>
-              <option value="project_phase">Phase</option>
+              <option value="obligation_number">
+Number
+              </option>
+              <option value="action_due_date" selected>
+Due Date
+              </option>
+              <option value="status">
+Status
+              </option>
+              <option value="primary_environmental_mechanism__name">
+Mechanism
+              </option>
+              <option value="project_phase">
+Phase
+              </option>
             </select>
             <select id="order-filter"
                     name="order"
@@ -123,8 +162,12 @@
                     hx-target="#obligations-container"
                     hx-trigger="change"
                     hx-include="input[name='search'], select[name='status'], select[name='phase'], select[name='sort']">
-              <option value="asc" selected>Ascending</option>
-              <option value="desc">Descending</option>
+              <option value="asc" selected>
+Ascending
+              </option>
+              <option value="desc">
+Descending
+              </option>
             </select>
           </div>
         </div>
@@ -135,22 +178,42 @@
       {% if obligations %}
         {% if total_count %}
           <div class="results-count" role="status" aria-live="polite">
-            <p>Showing {{ obligations|length }} of {{ total_count }} obligations</p>
+            <p>
+Showing {{ obligations|length }} of {{ total_count }} obligations
+            </p>
           </div>
         {% endif %}
         <div class="horizontal-scroll">
           <table role="grid">
             <thead>
               <tr>
-                <th scope="col">Number</th>
-                <th scope="col">Obligation</th>
-                <th scope="col">Due Date</th>
-                <th scope="col">Status</th>
-                <th scope="col">Mechanism</th>
-                <th scope="col">Phase</th>
-                <th scope="col">Recurring</th>
-                <th scope="col">Responsibility</th>
-                <th scope="col">Actions</th>
+                <th scope="col">
+Number
+                </th>
+                <th scope="col">
+Obligation
+                </th>
+                <th scope="col">
+Due Date
+                </th>
+                <th scope="col">
+Status
+                </th>
+                <th scope="col">
+Mechanism
+                </th>
+                <th scope="col">
+Phase
+                </th>
+                <th scope="col">
+Recurring
+                </th>
+                <th scope="col">
+Responsibility
+                </th>
+                <th scope="col">
+Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -160,11 +223,21 @@
                     <a href="{% url 'obligations:detail' obligation.obligation_number %}"
                        class="obligation-link">{{ obligation.obligation_number }}</a>
                   </td>
-                  <td>{{ obligation.obligation|truncatechars:50 }}</td>
-                  <td>{{ obligation.action_due_date|format_due_date }}</td>
-                  <td>{{ obligation|display_status }}</td>
-                  <td>{{ obligation.primary_environmental_mechanism.name|default:"-" }}</td>
-                  <td>{{ obligation.project_phase|default:"-" }}</td>
+                  <td>
+{{ obligation.obligation|truncatechars:50 }}
+                  </td>
+                  <td>
+{{ obligation.action_due_date|format_due_date }}
+                  </td>
+                  <td>
+{{ obligation|display_status }}
+                  </td>
+                  <td>
+{{ obligation.primary_environmental_mechanism.name|default:"-" }}
+                  </td>
+                  <td>
+{{ obligation.project_phase|default:"-" }}
+                  </td>
                   <td>
                     {% if obligation.recurring_obligation %}
                       Yes
@@ -172,7 +245,9 @@
                       No
                     {% endif %}
                   </td>
-                  <td>{{ obligation.responsibility|default:"-" }}</td>
+                  <td>
+{{ obligation.responsibility|default:"-" }}
+                  </td>
                   <td class="actions-column">
                     <div class="action-buttons">
                       <a href="{% url 'obligations:detail' obligation.obligation_number %}"
@@ -192,11 +267,13 @@
         </div>
         <!-- Pagination -->
         {% if page_obj %}
-          {% include "obligations/components/_pagination.html" %}
+{% include "obligations/components/_pagination.html" %}
         {% endif %}
       {% else %}
         <div class="centered-message">
-          <p>No obligations match your criteria.</p>
+          <p>
+No obligations match your criteria.
+          </p>
         </div>
       {% endif %}
     </div>

@@ -142,10 +142,16 @@ Apply Filters
       </section>
       <!-- New Responsibility Distribution Section -->
       <section aria-labelledby="responsibility-heading" class="charts-section">
-        <h2 id="responsibility-heading">
+        <header>
+          <h2 id="responsibility-heading">
 Responsibility Distribution
-        </h2>
-        <article class="overall-chart">
+          </h2>
+          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
+                  class="btn-fold">
++
+          </button>
+        </header>
+        <article class="overall-chart" style="display: none;">
           <figure>
             <figcaption>
 Obligations by Responsibility
@@ -156,28 +162,36 @@ Obligations by Responsibility
         </article>
       </section>
       <section aria-labelledby="charts-heading" class="charts-section">
-        <h2 id="charts-heading">
+        <header>
+          <h2 id="charts-heading">
 Procedures by Status
-        </h2>
-        <!-- Chart Navigation -->
-        <nav role="navigation"
-             aria-label="Procedure charts navigation"
-             class="chart-nav">
-          <button type="button"
-                  onclick="scrollCharts('chartScroll', 'left')"
-                  aria-label="Scroll left">
-←
+          </h2>
+          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
+                  class="btn-fold">
++
           </button>
-          <button type="button"
-                  onclick="scrollCharts('chartScroll', 'right')"
-                  aria-label="Scroll right">
-→
-          </button>
-        </nav>
-        <div id="chartScroll" class="chart-scroll-container">
-          {% for proc in procedure_charts %}
+        </header>
+        <span style="display: none;">
+          <!-- Chart Navigation -->
+          <nav role="navigation"
+               aria-label="Procedure charts navigation"
+               class="chart-nav">
+            <button type="button"
+                    onclick="scrollCharts('chartScroll', 'left')"
+                    aria-label="Scroll left">
+  ←
+            </button>
+            <button type="button"
+                    onclick="scrollCharts('chartScroll', 'right')"
+                    aria-label="Scroll right">
+  →
+            </button>
+          </nav>
+          <div id="chartScroll" class="chart-scroll-container">
+            {% for proc in procedure_charts %}
 {% procedure_chart_card proc %}
-          {% endfor %}
+            {% endfor %}
+          </span>
 
         </div>
       </section>
@@ -189,10 +203,10 @@ Detailed Statistics
           </h3>
           <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
                   class="btn-fold">
--
++
           </button>
         </header>
-        <div class="table-container">
+        <div class="table-container" style="display: none;">
           <table role="grid">
             <thead>
               <tr>
@@ -246,7 +260,16 @@ Total
             </tbody>
           </table>
         </div>
-        <div id="data-containers" data-hx-ext="class-tools">
+        <header>
+          <h2 id="obligations-heading">
+        Obligations Overview
+          </h2>
+          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
+                  class="btn-fold">
+        +
+          </button>
+        </header>
+        <div id="data-containers" data-hx-ext="class-tools" style="display: none;">
           <!-- Obligations Container -->
           <div id="obligations-container"
                hx-get="{% url 'obligations:summary' %}"
