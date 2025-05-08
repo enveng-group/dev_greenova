@@ -277,5 +277,5 @@ class ObligationAdmin(admin.ModelAdmin):
     def get_inlines(self, request, obj=None):
         """Only show inlines when editing an existing object."""
         if obj:  # Only for existing obligations
-            return [ObligationEvidenceInline]
+            return [ObligationEvidenceInline, ComplianceInline, NonConformanceInline]
         return []  # No inlines when creating a new obligation
