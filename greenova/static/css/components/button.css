@@ -41,6 +41,12 @@ nav li [type='button'],
 /* This is stating that if the header has an element named .btn-fold,
    we want to make sure all the elements are line iso the button can be on the right. */
 header:has(.btn-fold) {
+  /* Make the header look pretty*/
+  margin-top: var(--greenova-spacing) !important;
+  padding: var(--greenova-padding);
+  border-radius: var(--greenova-border-radius);
+
+  /* Allow elements to flow */
   display: flex;
   flex-direction: row;
   justify-content: space-between;
