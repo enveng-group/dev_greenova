@@ -166,6 +166,8 @@ INSTALLED_APPS = [
     'theme',  # UI Styling
     'chatbot',  # Standalone feature, placed last
     'feedback',  # Add the feedback app here
+
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig' # Django Plotly Dash, this plots everything...
 ]
 
 
@@ -199,7 +201,8 @@ MIDDLEWARE = [
     # 'django_pdb.middleware.PdbMiddleware',
     'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     # 'allauth.usersessions.middleware.UserSessionMiddleware',
-]
+    'django_plotly_dash.middleware.BaseMiddleware',
+]   
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [

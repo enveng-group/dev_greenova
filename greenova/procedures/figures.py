@@ -3,6 +3,16 @@ import io
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
+# This is the interactive plotting library we're going to use!
+from dash import Dash, html, dcc, Input, Output  # pip install dash
+import plotly.express as px
+import dash_ag_grid as dag
+import dash_bootstrap_components as dbc   # pip install dash-bootstrap-components
+import pandas as pd     # pip install pandas
+from django_plotly_dash import DjangoDash
+from io import BytesIO
+import base64
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,6 +28,113 @@ from projects.models import Project
 matplotlib.use('Agg')
 
 logger = logging.getLogger(__name__)
+
+df = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/solar.csv")
+app = DjangoDash('SimpleExample')   # replaces dash.Dash
+app.layout = dbc.Container([
+    html.H1("Interactive Matplotlib with Dash", className='mb-2', style={'textAlign':'center'}),
+
+    dbc.Row([
+        dbc.Col([
+            dcc.Dropdown(
+                id='category',
+                value='Number of Solar Plants',
+                clearable=False,
+                options=df.columns[1:])
+        ], width=4)
+    ]),
+
+    dbc.Row([
+        dbc.Col([
+            html.Img(id='bar-graph-matplotlib')
+        ], width=12)
+    ]),
+
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(id='bar-graph-plotly', figure={})
+        ], width=12, md=6),
+        dbc.Col([
+            dag.AgGrid(
+                id='grid',
+                rowData=df.to_dict("records"),
+                columnDefs=[{"field": i} for i in df.columns],
+                columnSize="sizeToFit",
+            )
+        ], width=12, md=6),
+    ], className='mt-4'),
+
+])
+
+@app.callback(
+    Output(component_id='bar-graph-matplotlib', component_property='src'),
+    Output('bar-graph-plotly', 'figure'),
+    Output('grid', 'defaultColDef'),
+    Input('category', 'value'),
+)
+def plot_data(selected_yaxis):
+
+    # Build the matplotlib figure
+    fig = plt.figure(figsize=(14, 5))
+    plt.bar(df['State'], df[selected_yaxis])
+    plt.ylabel(selected_yaxis)
+    plt.xticks(rotation=30)
+
+    # Save it to a temporary buffer.
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    # Embed the result in the html output.
+    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
+
+    # Build the Plotly figure
+    fig_bar_plotly = px.bar(df, x='State', y=selected_yaxis).update_xaxes(tickangle=330)
+
+    my_cellStyle = {
+        "styleConditions": [
+            {
+                "condition": f"params.colDef.field == '{selected_yaxis}'",
+                "style": {"backgroundColor": "#d3d3d3"},
+            },
+            {   "condition": f"params.colDef.field != '{selected_yaxis}'",
+                "style": {"color": "black"}
+            },
+        ]
+    }
+
+    return fig_bar_matplotlib, fig_bar_plotly, {'cellStyle': my_cellStyle}
+
+def plot_data(selected_yaxis):
+
+    # Build the matplotlib figure
+    fig = plt.figure(figsize=(14, 5))
+    plt.bar(df['State'], df[selected_yaxis])
+    plt.ylabel(selected_yaxis)
+    plt.xticks(rotation=30)
+
+    # Save it to a temporary buffer.
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    # Embed the result in the html output.
+    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
+    fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
+
+    # Build the Plotly figure
+    fig_bar_plotly = px.bar(df, x='State', y=selected_yaxis).update_xaxes(tickangle=330)
+
+    my_cellStyle = {
+        "styleConditions": [
+            {
+                "condition": f"params.colDef.field == '{selected_yaxis}'",
+                "style": {"backgroundColor": "#d3d3d3"},
+            },
+            {   "condition": f"params.colDef.field != '{selected_yaxis}'",
+                "style": {"color": "black"}
+            },
+        ]
+    }
+
+    return fig_bar_matplotlib, fig_bar_plotly, {'cellStyle': my_cellStyle}
 
 def generate_procedure_statistics(
     project_slug: Optional[str] = None

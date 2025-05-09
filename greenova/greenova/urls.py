@@ -63,6 +63,9 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
     path('feedback/', include('feedback.urls', namespace='feedback')),
     # Sentry error page to verify Sentry is working
     path('sentry-debug/', trigger_error),
+
+    # Plotly
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
