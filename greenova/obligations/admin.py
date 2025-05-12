@@ -10,9 +10,17 @@ from django.utils import timezone
 
 from .models import Obligation, ObligationEvidence
 from .utils import is_obligation_overdue
+from auditing.models import ComplianceComment, NonConformanceComment
 
 logger = logging.getLogger(__name__)
 
+class ComplianceInline(admin.TabularInline):
+    model = ComplianceComment
+    extra = 1
+
+class NonConformanceInline(admin.TabularInline):
+    model = NonConformanceComment
+    extra = 1
 
 class OverdueFilter(admin.SimpleListFilter):
     """Filter for overdue obligations."""
@@ -116,7 +124,11 @@ class ObligationAdmin(admin.ModelAdmin):
     """Admin configuration for obligations."""
 
     form = ObligationAdminForm  # Use our custom form
-    inlines = [ObligationEvidenceInline]
+    inlines = [
+    ObligationEvidenceInline, 
+    ComplianceInline, 
+    NonConformanceInline
+    ]
 
     list_display = [
         'obligation_number',
@@ -169,8 +181,8 @@ class ObligationAdmin(admin.ModelAdmin):
                     'project_phase',
                     'supporting_information',
                     'general_comments',
-                    'compliance_comments',
-                    'non_conformance_comments',
+                    #'compliance_comments',
+                    #'non_conformance_comments',
                 ]
             },
         ),
@@ -265,5 +277,5 @@ class ObligationAdmin(admin.ModelAdmin):
     def get_inlines(self, request, obj=None):
         """Only show inlines when editing an existing object."""
         if obj:  # Only for existing obligations
-            return [ObligationEvidenceInline]
+            return [ObligationEvidenceInline, ComplianceInline, NonConformanceInline]
         return []  # No inlines when creating a new obligation
