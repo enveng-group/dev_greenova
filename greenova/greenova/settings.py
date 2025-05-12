@@ -211,8 +211,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 MFA_SUPPORTED_TYPES = ['totp', 'recovery_codes']
-LOGIN_REDIRECT_URL = 'dashboard:home'
+LOGIN_REDIRECT_URL = 'dashboard:home'  # OR LOGIN_REDIRECT_URL = "dashboard:profile"
 LOGOUT_REDIRECT_URL = 'landing:home'
+LOGIN_URL = 'authentication:login'  # Ensure this points to the correct namespace
+# LOGIN_REDIRECT_URL = "admin:index"
+# LOGOUT_REDIRECT_URL = "admin:login"
+# LOGIN_URL = "admin:login"
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
