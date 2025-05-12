@@ -654,7 +654,7 @@
     {
       "args": [
         "-c",
-        "cd greenova && python3 manage.py import_obligations dummy_data.csv"
+        "cd greenova && python3 manage.py import_obligations dummy_data.csv --continue-on-error --update"
       ],
       "command": "/bin/sh",
       "group": "none",
