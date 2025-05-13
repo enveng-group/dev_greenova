@@ -3,14 +3,16 @@
 {% load static %}
 {% load procedure_tags %}
 
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
 {% block title %}
   procedure analysis for {{ mechanism.name }}
 {% endblock title %}
 
-{% block body %}
 
-{% load plotly_dash %}
-{% plotly_app name='SimpleExample' %}
+
+{% block body %}
 
   <article>
     <header>

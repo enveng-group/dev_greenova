@@ -3,15 +3,10 @@ import io
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
-# This is the interactive plotting library we're going to use!
-from dash import Dash, html, dcc, Input, Output  # pip install dash
-import plotly.express as px
-import dash_ag_grid as dag
-import dash_bootstrap_components as dbc   # pip install dash-bootstrap-components
-import pandas as pd     # pip install pandas
-from django_plotly_dash import DjangoDash
 from io import BytesIO
 import base64
+
+import plotly.graph_objects as go
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -29,112 +24,6 @@ matplotlib.use('Agg')
 
 logger = logging.getLogger(__name__)
 
-df = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/solar.csv")
-app = DjangoDash('SimpleExample')   # replaces dash.Dash
-app.layout = dbc.Container([
-    html.H1("Interactive Matplotlib with Dash", className='mb-2', style={'textAlign':'center'}),
-
-    dbc.Row([
-        dbc.Col([
-            dcc.Dropdown(
-                id='category',
-                value='Number of Solar Plants',
-                clearable=False,
-                options=df.columns[1:])
-        ], width=4)
-    ]),
-
-    dbc.Row([
-        dbc.Col([
-            html.Img(id='bar-graph-matplotlib')
-        ], width=12)
-    ]),
-
-    dbc.Row([
-        dbc.Col([
-            dcc.Graph(id='bar-graph-plotly', figure={})
-        ], width=12, md=6),
-        dbc.Col([
-            dag.AgGrid(
-                id='grid',
-                rowData=df.to_dict("records"),
-                columnDefs=[{"field": i} for i in df.columns],
-                columnSize="sizeToFit",
-            )
-        ], width=12, md=6),
-    ], className='mt-4'),
-
-])
-
-@app.callback(
-    Output(component_id='bar-graph-matplotlib', component_property='src'),
-    Output('bar-graph-plotly', 'figure'),
-    Output('grid', 'defaultColDef'),
-    Input('category', 'value'),
-)
-def plot_data(selected_yaxis):
-
-    # Build the matplotlib figure
-    fig = plt.figure(figsize=(14, 5))
-    plt.bar(df['State'], df[selected_yaxis])
-    plt.ylabel(selected_yaxis)
-    plt.xticks(rotation=30)
-
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
-
-    # Build the Plotly figure
-    fig_bar_plotly = px.bar(df, x='State', y=selected_yaxis).update_xaxes(tickangle=330)
-
-    my_cellStyle = {
-        "styleConditions": [
-            {
-                "condition": f"params.colDef.field == '{selected_yaxis}'",
-                "style": {"backgroundColor": "#d3d3d3"},
-            },
-            {   "condition": f"params.colDef.field != '{selected_yaxis}'",
-                "style": {"color": "black"}
-            },
-        ]
-    }
-
-    return fig_bar_matplotlib, fig_bar_plotly, {'cellStyle': my_cellStyle}
-
-def plot_data(selected_yaxis):
-
-    # Build the matplotlib figure
-    fig = plt.figure(figsize=(14, 5))
-    plt.bar(df['State'], df[selected_yaxis])
-    plt.ylabel(selected_yaxis)
-    plt.xticks(rotation=30)
-
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    # Embed the result in the html output.
-    fig_data = base64.b64encode(buf.getbuffer()).decode("ascii")
-    fig_bar_matplotlib = f'data:image/png;base64,{fig_data}'
-
-    # Build the Plotly figure
-    fig_bar_plotly = px.bar(df, x='State', y=selected_yaxis).update_xaxes(tickangle=330)
-
-    my_cellStyle = {
-        "styleConditions": [
-            {
-                "condition": f"params.colDef.field == '{selected_yaxis}'",
-                "style": {"backgroundColor": "#d3d3d3"},
-            },
-            {   "condition": f"params.colDef.field != '{selected_yaxis}'",
-                "style": {"color": "black"}
-            },
-        ]
-    }
-
-    return fig_bar_matplotlib, fig_bar_plotly, {'cellStyle': my_cellStyle}
 
 def generate_procedure_statistics(
     project_slug: Optional[str] = None
@@ -294,12 +183,22 @@ def _get_status_counts(obligations: QuerySet) -> Dict[str, int]:
 
 def _create_pie_chart(title: str, status_counts: Dict[str, int]) -> Figure:
     """Create a pie chart for procedure status distribution."""
-    fig, ax = plt.subplots(figsize=(6, 5))
+    # fig, ax = plt.subplots(figsize=(6, 5))
 
     labels = list(status_counts.keys())
     sizes = list(status_counts.values())
     colors = ['#f39c12', '#3498db', '#2ecc71']
 
+    fig = go.Figure(data=[
+        go.Pie(
+            title=f"{title} Status",
+            labels=labels,
+            values=sizes,
+            marker=dict(colors=colors),
+            hole=0.4)
+    ])
+    
+    """
     ax.pie(
         sizes,
         labels=labels,
@@ -312,6 +211,7 @@ def _create_pie_chart(title: str, status_counts: Dict[str, int]) -> Figure:
 
     ax.axis('equal')
     ax.set_title(f"{title} Status", fontsize=12)
+    """
     return fig
 
 
@@ -355,16 +255,13 @@ def get_all_procedure_charts() -> Dict[str, bytes]:
     charts = {}
 
     # Get procedure status distribution chart
-    status_chart = get_procedure_status_chart()
-    charts['status_distribution'] = chart_to_png(status_chart)
+    charts['status_distribution'] = get_procedure_status_chart()
 
     # Get procedure timeline chart
-    timeline_chart = get_procedure_timeline()
-    charts['timeline'] = chart_to_png(timeline_chart)
+    charts['timeline'] = get_procedure_timeline()
 
     # Get procedure completion rate chart
-    completion_chart = get_completion_rate_chart()
-    charts['completion_rate'] = chart_to_png(completion_chart)
+    charts['completion_rate'] = get_completion_rate_chart()
 
     # Clean up
     plt.close('all')
@@ -403,9 +300,20 @@ def get_procedure_status_chart() -> Figure:
     counts = [s['count'] for s in status_counts]
 
     # Create figure
+    """
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.pie(counts, labels=statuses, autopct='%1.1f%%')
     ax.set_title('Procedure Status Distribution')
+    """
+
+    fig = go.Figure(data=[
+        go.Pie(
+            labels=statuses,
+            values=counts,
+            hole=0.4,
+            title='Procedure Status Distribution'
+        )
+    ])
 
     return fig
 

@@ -4,6 +4,11 @@ import logging
 from datetime import timedelta
 from typing import Any, Dict
 
+import plotly.graph_objects as go
+from plotly.offline import plot
+
+from . import plotlyapp
+
 import matplotlib
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
@@ -26,6 +31,18 @@ logger = logging.getLogger(__name__)
 class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     """View for displaying procedure charts filtered by environmental mechanism."""
     template_name = 'procedures/procedure_charts.html'  # Changed to HTML
+
+    # Used to generate plotly charts
+    def _generate_plotly_charts(self):
+        x_data = [0, 1, 2, 3]
+        y_data = [x**2 for x in x_data]
+        fig = go.Figure(data=[ 
+            go.Pie(labels=['Overdue','Completed','In Progress','Not Started'],
+                   values=[ 10, 15, 25, 50 ],
+                   hole=0.2) 
+            ])
+        plot_div = plot(fig, output_type='div')
+        return plot_div
 
     def get_template_names(self):
         """Return appropriate template based on request type."""
@@ -196,18 +213,6 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
         self, procedure_name, fig, obligations,
         # Removed unused argument 'filters_applied'
     ):
-        """Create data for a specific procedure chart."""
-        # Create image for this procedure
-        buf = io.BytesIO()
-        fig.savefig(buf, format='png', bbox_inches='tight')
-        buf.seek(0)
-
-        base64_data = base64.b64encode(buf.getvalue()).decode()
-        chart_img = (
-            f'<img src="data:image/png;base64,{base64_data}" '
-            f'alt="{procedure_name} Chart" '
-            f'width="300" height="250">'
-        )
 
         # Get obligations for this procedure
         proc_obligations = obligations.filter(procedure=procedure_name)
@@ -232,7 +237,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
         )
         return {
             'name': procedure_name,
-            'chart': chart_img,
+            'chart': plot(fig, output_type='div'),
             'stats': status_counts
         }
 

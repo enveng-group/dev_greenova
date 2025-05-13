@@ -66,6 +66,7 @@ urlpatterns: List[Union[URLPattern, URLResolver]] = [
 
     # Plotly
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
+
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:

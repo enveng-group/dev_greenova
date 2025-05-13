@@ -202,7 +202,21 @@ MIDDLEWARE = [
     'silk.middleware.SilkyMiddleware',  # Profiling middleware works best at the end
     # 'allauth.usersessions.middleware.UserSessionMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
+    'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
+    #'django_plotly_dash.finders.DashAssetFinder',
+    #'django_plotly_dash.finders.DashComponentFinder'
 ]   
+
+# This is for plotly's render, it won't render without this
+"""
+PLOTLY_COMPONENTS = [
+
+    'dash_core_components',
+    'dash_html_components',
+    'dash_renderer',
+
+    'dpd_components'
+]"""
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
