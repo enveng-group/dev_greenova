@@ -119,3 +119,15 @@ quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
 skip-magic-trailing-comma = false
+
+[tool.beartype]
+# Enable runtime type checking for all modules in the greenova package
+package = "greenova"
+
+[tool.stubgen]
+# Directory to output generated stubs
+output = "greenova/stubs"
+
+[tool.stubtest]
+# Target package for stubtest
+package = "greenova"

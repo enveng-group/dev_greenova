@@ -5,3 +5,7 @@ just needs cleaning up
 after selecting project, dynamically load the mechanism overview card with the selected project and
 display the mechanism charts
 when hovering over the active obligations card, it will pop up iframe view on same page of active obligations utilising existing obligation record filter logic and view list sorting by action due date oldest date most urgent first to latest date
+add chart interactivity from https://github.com/cameronsims/dev_greenova-cameronsims/tree/enhancements/139-graph
+- ae2e5841e4d162e3016d1d0ef664803fe7747da0
+- 08b0a1f91efa3f8f7c8c30c4acac3049a493f445
+- bfedda5a8fa980607237cf00993d9dd1634623ed

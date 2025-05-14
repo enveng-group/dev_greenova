@@ -118,6 +118,7 @@ repos:
           - 'types-requests'
           - 'types-Pillow'
           - 'types-PyYAML'
+          - 'django-types-extra'
           - 'types-python-dateutil'
           - 'types-protobuf'
           - 'matplotlib-stubs'
@@ -126,6 +127,9 @@ repos:
           - 'pytest-stub'
           - 'types-jinja2'
           - 'types-setuptools'
+          - 'types-cryptography'
+          - 'types-flake8'
+          - 'plotly-stubs'
 
   # 7. Pattern-based checks
   - repo: https://github.com/pre-commit/pygrep-hooks

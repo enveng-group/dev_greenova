@@ -1,1 +1,0 @@
-This file is deprecated. See requirements/README.md and docs/INSTALL.md for the new workflow using pip-tools and constraints.txt.

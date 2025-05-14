@@ -21,7 +21,7 @@
           "PYTHONPATH": "/workspaces/greenova:/workspaces/greenova/greenova:${containerEnv:PYTHONPATH}",
           "PYTHONUNBUFFERED": "1",
           "DJANGO_SETTINGS_MODULE": "greenova.settings",
-          "PATH": "/home/vscode/.local/bin:/workspaces/greenova/.venv/bin/:/usr/local/share/nvm/current/bin/npm:${containerEnv:PATH}",
+          "PATH": "/home/vscode/.local/bin:/workspaces/greenova/.venv/bin/:/usr/local/share/nvm/current/bin/npm:/usr/local/share/nvm/versions/node/v20.19.1/bin/:${containerEnv:PATH}",
           "PYTHONSTARTUP": "/workspaces/greenova/pythonstartup",
           "NVM_DIR": "/usr/local/share/nvm"
         },
@@ -42,7 +42,11 @@
         "[javascript]": {
           "editor.defaultFormatter": "dbaeumer.vscode-eslint",
           "editor.formatOnSave": true
-        }
+        },
+        "snyk.cliPath": "/usr/local/share/nvm/versions/node/v20.19.1/bin/snyk",
+        "snyk.experimental.useCli": true,
+        "snyk.languageServerPath": "/home/vscode/.local/share/snyk/snyk-ls",
+        "snyk.cachePath": "/home/vscode/.local/share/snyk"
       },
       "extensions": [
         "ms-python.python",
@@ -87,16 +91,46 @@
         "dbcode.dbcode",
         "ms-vscode.copilot-mermaid-diagram",
         "ms-toolsai.datawrangler",
-        "charliermarsh.ruff"
+        "charliermarsh.ruff",
+        "arahata.linter-actionlint"
       ]
     }
   },
 
   "mounts": [
-    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=ro",
     "source=dotfiles,target=/home/vscode/dotfiles,type=volume"
   ],
 
+  "initializeCommand": "mkdir -p \"${localWorkspaceFolder}/.devcontainer/.cache/buildx\" && (docker buildx inspect greenova >/dev/null 2>&1 && docker buildx rm greenova || true) && docker buildx create --name greenova && docker buildx use greenova && (docker buildx bake --file \"${localWorkspaceFolder}/.devcontainer/docker-bake.hcl\" --load greenova || (echo \"Docker build failed. Check configuration.\" && exit 1))",
   "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode && mkdir -p /home/vscode/.local/share/fish && chmod -R 755 /home/vscode && chmod +x /workspaces/greenova/.devcontainer/post_start.sh",
-  "postStartCommand": "cd /workspaces/greenova && /bin/bash ./.devcontainer/post_start.sh"
+  "postStartCommand": "cd /workspaces/greenova && /bin/bash ./.devcontainer/post_start.sh",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/snyk-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/r3dpoint/devcontainer-features/tailwindcss-standalone-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/marcozac/devcontainer-features/shellcheck:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/shfmt:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/curl-apt-get:1": {},
+    "ghcr.io/jungaretti/features/make:1": {},
+    "ghcr.io/swift-server-community/swift-devcontainer-features/sqlite:1": {},
+    "ghcr.io/devcontainers-extra/features/neovim-apt-get:1": {},
+    "ghcr.io/devcontainers-extra/features/actionlint:1": {
+      "version": "latest"
+    }
+  }
 }

@@ -17,7 +17,10 @@ mkdir -p /home/vscode/.config/fish
 cat >/home/vscode/.config/fish/config.fish <<'EOL'
 # Environment variables
 set -gx PYTHONPATH /workspaces/greenova:/workspaces/greenova/greenova $PYTHONPATH
-set -gx PATH /workspaces/greenova/.venv/bin $PATH
+
+# Ensure standard system paths are included first
+set -gx PATH /usr/local/bin /usr/bin /bin /usr/sbin /sbin /workspaces/greenova/.venv/bin $PATH
+
 set -gx NVM_DIR /usr/local/share/nvm
 set -gx NODE_PATH /usr/local/share/nvm/versions/node/v20.19.1/lib/node_modules
 
@@ -29,6 +32,13 @@ end
 # Add Node.js to path
 if test -d /usr/local/share/nvm/current/bin/npm
     set -gx PATH /usr/local/share/nvm/current/bin/npm $PATH
+end
+
+# Fallback for uname command if it's still missing
+if not command -s uname > /dev/null
+    function uname
+        echo "Linux"
+    end
 end
 
 # Welcome message

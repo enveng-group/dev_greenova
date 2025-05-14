@@ -1,1 +1,0 @@
-Legacy requirements files (base.in, base.txt, dev.in, dev.txt, prod.in, prod.txt) are deprecated. Please use requirements.in, requirements-dev.in, requirements-prod.in, and constraints.txt. See requirements/README.md for details.

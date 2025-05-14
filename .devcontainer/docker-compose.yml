@@ -1,8 +1,9 @@
 services:
   greenova:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    image: greenova:latest
     volumes:
       - ..:/workspaces/greenova:delegated
       - venv:/workspaces/greenova/.venv:delegated

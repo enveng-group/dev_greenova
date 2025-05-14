@@ -169,3 +169,7 @@ virtualenv==20.31.2
 wcwidth==0.2.13
 wheel==0.45.1
 whitenoise==6.9.0
+django-types-extra
+types-cryptography
+types-flake8
+plotly-stubs

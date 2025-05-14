@@ -14,16 +14,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get -y install --no-install-recommends \
   fish \
   direnv \
-  curl \
-  git \
-  make \
-  sqlite3 \
-  shellcheck \
-  vim \
   python3-pip \
   python3-venv \
-  gh \
-  shfmt \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
@@ -57,8 +49,8 @@ WORKDIR /workspaces/greenova
 # Switch back to root to ensure entrypoint can handle permissions properly
 USER root
 
-# Copy entrypoint script and make it executable
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+# Copy entrypoint script using relative path from .devcontainer directory
+COPY .devcontainer/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Set the entrypoint
