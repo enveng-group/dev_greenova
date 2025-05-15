@@ -12,6 +12,10 @@ class CorrectiveActionInline(admin.TabularInline):
 class MitigationInline(admin.TabularInline):
     model = Mitigation
     extra = 1
+    def get_formset(self, request, obj=None, **kwargs):
+        if obj and obj.finding != "noncompliant":
+            messages.warning(request, "Mitigations should only be added to non-compliant entries.")
+        return super().get_formset(request, obj, **kwargs)
 
 @admin.register(Audit)
 class AuditAdmin(admin.ModelAdmin):
@@ -50,7 +54,8 @@ class AuditAdmin(admin.ModelAdmin):
 
 @admin.register(AuditEntry)
 class AuditEntryAdmin(admin.ModelAdmin):
-    list_display = ("id", "audit", "obligation", "status")
+    list_display = ("id", "audit", "obligation", "status", "finding")
+    list_filter = ("finding",)
     inlines = [MitigationInline]
 
 @admin.register(Mitigation)
