@@ -3,6 +3,9 @@ import io
 import logging
 from typing import Dict, List, Tuple
 
+import plotly.graph_objects as go
+from plotly.offline import plot
+
 import matplotlib.pyplot as plt
 from django.utils import timezone
 from matplotlib.figure import Figure
@@ -15,7 +18,7 @@ def generate_pie_chart(data: List[int], labels: List[str], colors: List[str], fi
     """
     Generate a pie chart for given data and labels with percentages in the legend.
     """
-    fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
+    """fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
     ax = fig.add_subplot(111)
 
     if sum(data) > 0:
@@ -44,7 +47,17 @@ def generate_pie_chart(data: List[int], labels: List[str], colors: List[str], fi
     ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
     fig.tight_layout()
 
-    return fig
+    return fig"""
+    fig = go.Figure(data=[
+        go.Pie(labels=labels, 
+               values=data, 
+               hole=.3, 
+               marker=dict(colors=colors))
+    ])
+
+    fig.update_layout(width=300, height=300)
+
+    return fig 
 
 def encode_figure_to_base64(fig: Figure) -> str:
     """
@@ -55,7 +68,7 @@ def encode_figure_to_base64(fig: Figure) -> str:
     buf.seek(0)
     return base64.b64encode(buf.getvalue()).decode('utf-8')
 
-def get_mechanism_chart(mechanism_id: int, fig_width: int = 300, fig_height: int = 250) -> Tuple[Figure, str]:
+def get_mechanism_chart(mechanism_id: int, fig_width: int = 500, fig_height: int = 400) -> Tuple[Figure, str]:
     """
     Get pie chart for a specific mechanism based on its statuses.
     Returns both the figure and base64 encoded image data.
@@ -72,13 +85,14 @@ def get_mechanism_chart(mechanism_id: int, fig_width: int = 300, fig_height: int
         colors = ['#f9c74f', '#90be6d', '#43aa8b', '#f94144']
 
         fig = generate_pie_chart(data, labels, colors, fig_width, fig_height)
-        encoded_image = encode_figure_to_base64(fig)
-        return fig, encoded_image
+        #encoded_image = encode_figure_to_base64(fig)
+        return fig, ''#, encoded_image
     except EnvironmentalMechanism.DoesNotExist:
         logger.error(f"Mechanism with ID {mechanism_id} does not exist.")
         fig = generate_pie_chart([0, 0, 0, 0], ["None", "None", "None", "None"], ['#ccc', '#ccc', '#ccc', '#ccc'], fig_width, fig_height)
-        encoded_image = encode_figure_to_base64(fig)
-        return fig, encoded_image
+        return fig, ''
+        #encoded_image = encode_figure_to_base64(fig)
+        #return fig, encoded_image
 
 def get_overall_chart(project_id: int, fig_width: int = 300, fig_height: int = 250) -> Tuple[Figure, str]:
     """
@@ -99,10 +113,10 @@ def get_overall_chart(project_id: int, fig_width: int = 300, fig_height: int = 2
         colors = ['#f9c74f', '#90be6d', '#43aa8b', '#f94144']
 
         fig = generate_pie_chart(data, labels, colors, fig_width, fig_height)
-        encoded_image = encode_figure_to_base64(fig)
-        return fig, encoded_image
+        #encoded_image = encode_figure_to_base64(fig)
+        return fig, ''#, encoded_image
     except Exception as e:
         logger.error(f"Error generating overall chart: {str(e)}")
         fig = generate_pie_chart([0, 0, 0, 0], ["None", "None", "None", "None"], ['#ccc', '#ccc', '#ccc', '#ccc'], fig_width, fig_height)
-        encoded_image = encode_figure_to_base64(fig)
-        return fig, encoded_image
+        #encoded_image = encode_figure_to_base64(fig)
+        return fig, ''#,encoded_image

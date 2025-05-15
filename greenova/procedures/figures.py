@@ -191,12 +191,14 @@ def _create_pie_chart(title: str, status_counts: Dict[str, int]) -> Figure:
 
     fig = go.Figure(data=[
         go.Pie(
-            title=f"{title} Status",
+            #title=f"{title} Status",
             labels=labels,
             values=sizes,
             marker=dict(colors=colors),
             hole=0.4)
     ])
+
+    fig.update_layout( height=300, width=300 )
     
     """
     ax.pie(

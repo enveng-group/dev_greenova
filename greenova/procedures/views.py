@@ -32,18 +32,6 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     """View for displaying procedure charts filtered by environmental mechanism."""
     template_name = 'procedures/procedure_charts.html'  # Changed to HTML
 
-    # Used to generate plotly charts
-    def _generate_plotly_charts(self):
-        x_data = [0, 1, 2, 3]
-        y_data = [x**2 for x in x_data]
-        fig = go.Figure(data=[ 
-            go.Pie(labels=['Overdue','Completed','In Progress','Not Started'],
-                   values=[ 10, 15, 25, 50 ],
-                   hole=0.2) 
-            ])
-        plot_div = plot(fig, output_type='div')
-        return plot_div
-
     def get_template_names(self):
         """Return appropriate template based on request type."""
         if self.request.htmx:

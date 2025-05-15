@@ -2,6 +2,9 @@ import base64
 import io
 import logging
 
+import plotly.graph_objects as go
+from plotly.offline import plot
+
 import matplotlib
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
@@ -46,7 +49,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             # Get mechanisms for this project
             mechanisms = EnvironmentalMechanism.objects.filter(project_id=project_id)
 
-            # Generate charts for each mechanism
+            # Generate charts for each mechanis
             mechanism_charts = []
 
             # Add overall chart first
@@ -54,17 +57,19 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
 
             mechanism_charts.append({
                 'name': 'Overall Status',
-                'image_data': overall_chart_data
+                'image_data': overall_chart_data,
+                'figure': plot(_, output_type='div')
             })
 
             # Generate charts for individual mechanisms
             for mechanism in mechanisms:
-                _, chart_data = get_mechanism_chart(mechanism.id)
+                fig, chart_data = get_mechanism_chart(mechanism.id)
 
                 mechanism_charts.append({
                     'id': mechanism.id,
                     'name': mechanism.name,
-                    'image_data': chart_data
+                    'image_data': chart_data,
+                    'figure': plot(fig, output_type='div')
                 })
 
             context['mechanism_charts'] = mechanism_charts

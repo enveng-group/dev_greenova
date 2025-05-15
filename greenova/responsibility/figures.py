@@ -1,6 +1,8 @@
 import logging
 from typing import Dict, List, Optional, Union
 
+import plotly.graph_objects as go
+
 import matplotlib
 import matplotlib.pyplot as plt
 from django.db.models import Count

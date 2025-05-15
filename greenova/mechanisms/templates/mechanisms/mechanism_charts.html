@@ -40,11 +40,12 @@ Environmental Mechanisms Analysis
               <figcaption>
 {{ mech.name }} Status Distribution
               </figcaption>
-              <img src="data:image/png;base64,{{ mech.image_data }}"
-                   alt="Chart for {{ mech.name }}"
-                   class="chart-image"
-                   width="400"
-                   height="400" />
+              <!--<img src="data:image/png;base64,{{ mech.image_data }}"
+     alt="Chart for {{ mech.name }}"
+     class="chart-image"
+     width="400"
+     height="400" />-->
+              {{ mech.figure|safe }}
             </figure>
             {% if mech.id %}
             </a>
