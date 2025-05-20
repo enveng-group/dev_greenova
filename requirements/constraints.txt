@@ -84,7 +84,7 @@ contourpy==1.3.2
     # via
     #   -r /workspaces/greenova/requirements/requirements.in
     #   matplotlib
-coverage[toml]==7.8.0
+coverage==7.8.0
     # via
     #   -r /workspaces/greenova/requirements/requirements.in
     #   pytest-cov
