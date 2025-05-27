@@ -8,33 +8,32 @@ This module provides mixins that can be used with Django views to add
 dashboard-specific functionality and context data.
 """
 
-import base64
 import logging
-from typing import Any
+from typing import Any, ClassVar, cast  # Add cast
 
+from beartype import beartype
 from core.mixins import BreadcrumbMixin, PageTitleMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
+from django.db import models  # Add this import for models.Q
+from django.db.models import Count, QuerySet
 from django.utils import timezone
+from obligations.models import Obligation  # Moved to top-level import
 from projects.models import Project
-
-from .figures import (
-    create_obligations_status_chart,
-    create_project_compliance_chart,
-    create_timeline_chart,
-)
 
 logger = logging.getLogger(__name__)
 
 
+@beartype
 class ChartMixin:
     """Stub mixin for chart-related dashboard views."""
 
 
+@beartype
 class ProjectAwareDashboardMixin:
     """Stub mixin for project-aware dashboard views."""
 
 
+@beartype
 class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin):
     """
     Mixin for dashboard views that provides common context data.
@@ -44,11 +43,20 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
     """
 
     page_title = "Dashboard"
-    breadcrumbs = [("Dashboard", None)]
+    breadcrumbs: ClassVar[list[tuple[str, None]]] = [("Dashboard", None)]
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        """Add dashboard-specific context data."""
-        context = super().get_context_data(**kwargs)
+    @beartype
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Add dashboard-specific context data.
+
+        Args:
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            A dictionary containing context data for the view.
+        """
+        context: dict[str, Any] = super().get_context_data(**kwargs)
 
         # Get the current user
 
@@ -65,6 +73,7 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
 
         return context
 
+    @beartype
     def _get_current_project_id(self) -> int | None:
         """
         Get the currently selected project ID.
@@ -73,74 +82,54 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
         1. Request query parameter (highest priority)
         2. Session storage (if available)
         3. None (if no project is selected)
+
+        Returns:
+            The current project ID as an integer, or None if not found.
         """
         # First check if we have a project_id in the query string
-        project_id = self.request.GET.get("project_id")
+        project_id_str = self.request.GET.get("project_id")
 
         # If not, check the session
-        if not project_id and hasattr(self.request, "session"):
-            project_id = self.request.session.get("dashboard_project_id")
+        if not project_id_str and hasattr(self.request, "session"):
+            project_id_str = self.request.session.get("dashboard_project_id")
 
         # Convert to integer if we have a project ID
-        if project_id:
+        if project_id_str:
             try:
-                return int(project_id)
+                return int(project_id_str)
             except (ValueError, TypeError):
-                logger.warning("Invalid project ID: %s", project_id)
+                logger.warning("Invalid project ID: %s", project_id_str)
 
         return None
 
-    def _get_user_projects(self):
-        """Get projects associated with the current user."""
-        return Project.objects.filter(
-            # Filter conditions depending on user permissions
-            # For now, just return all projects
-        ).order_by("name")
-
-    def _add_chart_data(self, context: dict[str, Any], project_id: int | None) -> None:
+    @beartype
+    def _get_user_projects(self) -> QuerySet[Project]:
         """
-        Add chart data to the context.
+        Get projects associated with the current user.
 
-        Args:
-            context: The context dictionary to update
-            project_id: The current project ID (if any)
+        Returns:
+            A QuerySet of Project objects.
         """
-        try:
-            # Generate obligation status chart
-            _, status_chart_data = create_obligations_status_chart(project_id)
-            context["status_chart"] = base64.b64encode(status_chart_data).decode(
-                "utf-8"
-            )
+        user = self.request.user
+        # Filter projects where the user is a member or owner.
+        # Adjust the filter as per your Project model's fields.
+        qs = (
+            Project.objects.filter(models.Q(owner=user) | models.Q(members=user))
+            .distinct()
+            .order_by("name")
+        )
+        return cast(QuerySet[Project], qs)
 
-            # Generate timeline chart
-            _, timeline_chart_data = create_timeline_chart(project_id)
-            context["timeline_chart"] = base64.b64encode(timeline_chart_data).decode(
-                "utf-8"
-            )
-
-            # Generate project compliance chart if no specific project is selected
-            if not project_id:
-                projects = self._get_user_projects()
-                _, compliance_chart_data = create_project_compliance_chart(projects)
-                context["compliance_chart"] = base64.b64encode(
-                    compliance_chart_data
-                ).decode("utf-8")
-
-        except Exception as e:
-            logger.exception("Error generating chart data: %s", e)
-            context["chart_error"] = str(e)
-
+    @beartype
     def _add_statistics(self, context: dict[str, Any], project_id: int | None) -> None:
         """
         Add dashboard statistics to the context.
 
         Args:
-            context: The context dictionary to update
-            project_id: The current project ID (if any)
+            context: The context dictionary to update.
+            project_id: The current project ID (if any).
         """
-        from obligations.models import Obligation
-
-        filters = {}
+        filters: dict[str, Any] = {}
         if project_id:
             filters["project_id"] = project_id
 
@@ -148,12 +137,13 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
         total_obligations = Obligation.objects.filter(**filters).count()
 
         # Count by status
-        status_counts = dict(
+        status_counts_qs = (
             Obligation.objects.filter(**filters)
             .values("status")
             .annotate(count=Count("status"))
             .values_list("status", "count")
         )
+        status_counts: dict[str, int] = dict(status_counts_qs)
 
         # Count overdue obligations
         now = timezone.now().date()
@@ -162,14 +152,13 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
         ).count()
 
         # Calculate percentages
+        completed_pct = 0
+        overdue_pct = 0
         if total_obligations > 0:
             completed_pct = round(
                 (status_counts.get("completed", 0) / total_obligations) * 100
             )
             overdue_pct = round((overdue_count / total_obligations) * 100)
-        else:
-            completed_pct = 0
-            overdue_pct = 0
 
         # Add to context
         context.update(

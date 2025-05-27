@@ -8,6 +8,7 @@ import logging
 
 import pytest
 from django.template.loader import render_to_string
+from django.test import Client
 from django.urls import reverse
 
 # Copyright 2025 Enveng Group.
@@ -115,3 +116,21 @@ class TestBaseTemplates:
         assert "System Status" in content
         assert "Version" in content
         assert "Last Updated" in content
+
+    def test_dashboard_link_not_in_root_view(self, client: Client) -> None:
+        """Test that the Dashboard link is not rendered in the root view.
+
+        Args:
+            client: Django test client fixture.
+        """
+        url = reverse("landing:index")
+        dashboard_url = reverse("dashboard:home")
+        response = client.get(url)
+        content = response.content.decode("utf-8")
+        dashboard_link = (
+            f'<a href="{dashboard_url}" role="menuitem" aria-current="page">'
+            "Dashboard</a>"
+        )
+        assert dashboard_link not in content, (
+            "Dashboard link should not be present in the root view"
+        )

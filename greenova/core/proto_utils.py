@@ -11,7 +11,6 @@ across all apps in the Greenova project.
 import importlib
 import logging
 import os
-from typing import Dict, List, Optional, Type
 
 from django.apps import apps
 from django.conf import settings
@@ -24,10 +23,10 @@ logger = logging.getLogger(__name__)
 _sym_db = _symbol_database.Default()
 
 # Cache for loaded message types
-_message_type_cache: Dict[str, Type[proto_message.Message]] = {}
+_message_type_cache: dict[str, type[proto_message.Message]] = {}
 
 
-def get_proto_message_type(full_name: str) -> Optional[Type[proto_message.Message]]:
+def get_proto_message_type(full_name: str) -> type[proto_message.Message] | None:
     """
     Get a Protocol Buffer message type by its fully qualified name.
 
@@ -52,7 +51,7 @@ def get_proto_message_type(full_name: str) -> Optional[Type[proto_message.Messag
         return message_type
     except KeyError:
         # Message type not found, attempt to import relevant modules
-        namespace = full_name.split('.')[0]
+        namespace = full_name.split(".")[0]
 
         # Try to find and import the relevant *_pb2.py files
         for app_config in apps.get_app_configs():
@@ -77,12 +76,12 @@ def get_proto_message_type(full_name: str) -> Optional[Type[proto_message.Messag
             return None
 
 
-def _find_pb2_files(directory: str) -> List[str]:
+def _find_pb2_files(directory: str) -> list[str]:
     """Find all *_pb2.py files in a directory and its subdirectories."""
     pb2_files = []
     for root, _, files in os.walk(directory):
         for file in files:
-            if file.endswith('_pb2.py'):
+            if file.endswith("_pb2.py"):
                 # Get the absolute path to the file
                 file_path = os.path.join(root, file)
                 pb2_files.append(file_path)
@@ -104,5 +103,5 @@ def _get_module_name(file_path: str) -> str:
     # Remove the .py extension
     module_path = os.path.splitext(relative_path)[0]
     # Replace directory separators with dots
-    module_name = module_path.replace(os.path.sep, '.')
+    module_name = module_path.replace(os.path.sep, ".")
     return module_name

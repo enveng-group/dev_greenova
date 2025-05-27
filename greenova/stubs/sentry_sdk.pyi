@@ -1,28 +1,28 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # Placeholder for the sentry_sdk module
 def init(
-    dsn: Optional[str] = None,
+    dsn: str | None = None,
     *,
     debug: bool = False,
-    environment: Optional[str] = None,
-    release: Optional[str] = None,
-    traces_sample_rate: Optional[float] = None,
-    integrations: Optional[List[Any]] = None,
+    environment: str | None = None,
+    release: str | None = None,
+    traces_sample_rate: float | None = None,
+    integrations: list[Any] | None = None,
     **options: Any,
 ) -> None: ...
-def capture_message(message: str, level: Optional[str] = None) -> Any: ...
-def capture_exception(error: Optional[Exception] = None) -> Any: ...
+def capture_message(message: str, level: str | None = None) -> Any: ...
+def capture_exception(error: Exception | None = None) -> Any: ...
 def add_breadcrumb(
-    category: Optional[str] = None,
-    message: Optional[str] = None,
-    level: Optional[str] = None,
-    data: Optional[Dict[str, Any]] = None,
+    category: str | None = None,
+    message: str | None = None,
+    level: str | None = None,
+    data: dict[str, Any] | None = None,
 ) -> None: ...
 
 class Hub:
     def __init__(self, client: Any = None, scope: Any = None) -> None: ...
-    def capture_message(self, message: str, level: Optional[str] = None) -> Any: ...
-    def capture_exception(self, error: Optional[Exception] = None) -> Any: ...
+    def capture_message(self, message: str, level: str | None = None) -> Any: ...
+    def capture_exception(self, error: Exception | None = None) -> Any: ...
 
 current_hub = Hub()  # type: Hub

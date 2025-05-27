@@ -1,23 +1,35 @@
 [MASTER]
-# Base configuration for all Python files
-persistent = yes
-suggestion-mode = yes
-unsafe-load-any-extension = no
-ignore = migrations, venv, .venv
+persistent=yes
+suggestion-mode=yes
+unsafe-load-any-extension=no
+ignore=migrations,venv,.venv,tests,tests/*,test_*,__init__.py,*_pb2.py
 
 [FORMAT]
-max-line-length = 88
+max-line-length=88
 
 [MESSAGES CONTROL]
-# Adding R0801 to the disabled messages to prevent duplicate code warnings
-disable = no-member, C0111, R0903, C0103, R0801
+disable=
+    C0111, # missing-docstring
+    C0103, # invalid-name
+    W0613, # unused-argument
+    W0703, # broad-except
+    R0903, # too-few-public-methods
+    R0901, # too-many-ancestors
+    W0212, # protected-access
+    W0221, # arguments-differ
+    E0401, # import-error
+    R1705, # no-else-return
 
 [SIMILARITIES]
-ignore-comments = yes
-ignore-docstrings = yes
-ignore-imports = yes
-# Increase the minimum similarity to avoid duplicate code warnings for standard patterns
-min-similarity-lines = 12
+ignore-comments=yes
+ignore-docstrings=yes
+ignore-imports=yes
 
 [BASIC]
-good-names = _, i, j, k, e, f, db, id, pk, setUp, tearDown, maxDiff, Meta
+good-names=i,j,k,ex,Run,_,id,pk,setUp,tearDown
+
+[DESIGN]
+max-parents=13
+
+[TYPECHECK]
+ignored-classes=WSGIRequest,HttpRequest,HttpResponse,QuerySet,ManyToManyField

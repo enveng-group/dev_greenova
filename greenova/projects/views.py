@@ -1,5 +1,6 @@
 """
 Views for the projects app in Greenova.
+
 Handles project listing, selection, and related utilities.
 """
 
@@ -16,9 +17,8 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import ListView, TemplateView
 from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
+from models import Project
 from obligations.models import Obligation
-
-from .models import Project
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -207,7 +207,8 @@ def get_role_choices() -> list[tuple[str, str]]:
 
 def get_responsibility_choices() -> list[tuple[str, str]]:
     """
-    Get choices for the responsibility field in Obligation
+    Get choices for the responsibility field in Obligation.
+
     model. Uses display names as values for backward compatibility.
 
     Returns:

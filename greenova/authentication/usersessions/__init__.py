@@ -1,3 +1,1 @@
-"""
-Authentication user sessions management package.
-"""
+"""Authentication user sessions management package."""

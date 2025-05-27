@@ -716,3 +716,5 @@ sentry_sdk.init(
 #         "django.contrib",
 #     ),
 # }
+
+SHELL_PLUS = "ipython"

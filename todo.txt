@@ -1,7 +1,44 @@
-remove mechanism overview card
-when hovering over the overdue obligation card, it will pop up iframe view on same page of overdue obligations utilising existing obligation record filter logic and view list
-design is good
-just needs cleaning up
-after selecting project, dynamically load the mechanism overview card with the selected project and
-display the mechanism charts
-when hovering over the active obligations card, it will pop up iframe view on same page of active obligations utilising existing obligation record filter logic and view list sorting by action due date oldest date most urgent first to latest date
+# TODO List for Open Pull Requests (enveng-group/dev_greenova)
+#
+
+1. Merge #145: feat(auditing): extract compliance and non-conformance comments into standalone app
+    - High-priority refactor, modularization, and DB migrations. Merge first to avoid conflicts.
+
+2. Merge #131: The authentication namespace has been successfully registered in the …
+    - Critical authentication bugfix and test reliability.
+
+3. Merge #164: fix: resolve issue with file upload limit
+    - Bugfix for file uploads, unblocks user workflows.
+
+4. Merge #157: fix(deps): remove optional 'toml' extra from coverage to fix install error
+    - Fixes CI and local development reliability.
+
+5. Merge #155: Update .env.vault
+    - Deployment and environment fix.
+
+6. Merge #154: Enhancements/139-graph Added Mechanism Charts
+    - Adds new graph/visual features.
+
+7. Merge #151: Issue/issue-31 - Revising Procedure View
+    - UI/UX improvement for procedures.
+
+8. Merge #152: Bump protolint from 0.54.0 to 0.55.1
+    - Dependency update for lint tooling.
+
+9. Merge #153: Bump eslint-config-prettier from 10.1.3 to 10.1.5
+    - Dependency update for JavaScript linting.
+
+10. Merge #103: feat(core): add IPython autoreload, syntax checking, and bash aliases file
+     - Tooling, lowest risk, merge after critical and feature PRs.
+
+11. Merge #151: Issue/issue-31 - Revising Procedure View
+    - UI/UX improvement for procedures.
+
+12. Merge #152: Bump protolint from 0.54.0 to 0.55.1
+    - Dependency update for lint tooling.
+
+13. Merge #153: Bump eslint-config-prettier from 10.1.3 to 10.1.5
+    - Dependency update for JavaScript linting.
+
+14. Merge #103: feat(core): add IPython autoreload, syntax checking, and bash aliases file
+    - Tooling, lowest risk, merge after critical and feature PRs.

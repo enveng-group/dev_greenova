@@ -25,27 +25,138 @@ and manage obligations related to environmental regulations.
 1. **Restructured Text (RST)**: Use as the foundational layer for body, content
    and messages for HTML.
 
-1. **HTML**: Utilize for semantic structure and markup. Do not apply inline
+2. **HTML**: Utilize for semantic structure and markup. Do not apply inline
    styles and scripts.
 
-1. **Protobuf3**: Primary implementation for data serialization.
+3. **Protobuf3**: Primary implementation for data serialization.
 
-1. **Classless-CSS**: Apply minimal styling using Classless-PicoCSS as HTML.
+4. **Classless-CSS**: Apply minimal styling using Classless-PicoCSS as HTML.
 
-1. **django-hyperscript**: Primary implementation for client-side interactions.
+5. **django-hyperscript**: Primary implementation for client-side interactions.
 
-1. **django-htmx**: Secondary implementation for client-side interactions only
+6. **django-htmx**: Secondary implementation for client-side interactions only
    to compliment django-hyperscript.
 
-1. **SASS/PostCSS**: Use for advanced styling needs when required.
+7. **SASS/PostCSS**: Use for advanced styling needs when required.
 
-1. **TypeScript**: Introduce only when django-hyperscript and django-htmx
+8. **TypeScript**: Introduce only when django-hyperscript and django-htmx
    cannot meet the requirements. Use TypeScript for complex logic. Avoid using
    TypeScript for simple interactions that can be handled by django-hyperscript
    or django-htmx.
 
-1. **AssemblyScript**: Primary implementation for critical client-side
+9. **AssemblyScript**: Primary implementation for critical client-side
    interactions and web assembly (WASM) implementations.
+
+## Expectations
+
+1. Identify and remove unnecessary, outdated files and unused, code, or
+   documentation that no longer serves the project's objectives. Clearly define
+   the task's scope to focus only on relevant elements flagged in pre-commit
+   checks.
+
+2. Organize project resources, including tools, code, and documentation, into a
+   logical structure. Ensure naming conventions and folder hierarchies are
+   consistent, making it easier to locate and work with files.
+
+3. Create stub files using `stubgen` (.pyi files) for internal modules that
+   don't have proper type information.
+
+4. Add a py.typed marker file to indicate these modules have type information
+
+5. Refactor the code to address issues such as readability, maintainability,
+   and technical debt. Implement clean coding practices and resolve any flagged
+   issues in the pre-commit output, such as formatting or style violations.
+
+6. Use automated tools like bandit, autopep8, mypy, eslint, djlint,
+   markdownlint, ShellCheck, and pylint to enforce coding standards. Validate
+   compliance with the project's guidelines and ensure all pre-commit checks
+   pass without errors. Iterate running `pre-commit` to check for any remaining
+   issues after each change. Do not use the command
+   `pre-commit run --all-files`.
+
+7. Ensure that the code is well-documented, with clear explanations of
+   functions, classes, and modules. Use docstrings and comments to clarify
+   complex logic or important decisions made during development.
+
+8. Test the code thoroughly to ensure it works as intended and meets the
+   project's requirements. Write unit tests and integration tests as needed,
+   and ensure that all tests pass before finalizing the changes.
+
+9. Iterate until resolved.
+
+## Development Tools and Standards
+
+### Testing Tools
+
+- **pytest & pytest-django**: Primary testing frameworks
+- **pytest-cov**: For test coverage reporting
+- **pytest-stub**: For stub-based testing
+- **pytest-xdist**: For parallel test execution
+
+### Linting Tools
+
+- **ruff**: Primary Python linter, with rules for:
+  - pycodestyle (E)
+  - pyflakes (F)
+  - pydocstyle (D)
+  - isort (I)
+  - pep8-naming (N)
+  - pyupgrade (UP)
+  - pylint (PL\*)
+  - Ruff-specific rules (RUF)
+- **pylint & pylint-django**: Secondary Python linters
+- **djlint**: For Django template linting
+- **markdownlint-cli2**: For Markdown file linting
+- **stylelint**: CSS/SCSS linting
+- **eslint**: JavaScript/TypeScript linting
+- **shellcheck**: Shell script linting
+
+### Type Checking
+
+- **mypy**: Static type checking with configurations:
+  - `disallow_untyped_defs`: All functions must have type annotations
+  - `disallow_incomplete_defs`: All function arguments must be annotated
+  - `strict`: Enables multiple strictness flags
+- **django-stubs & django-stubs-ext**: Django-specific type stubs
+- Additional type stubs:
+  - types-requests
+  - types-Pillow
+  - types-PyYAML
+  - django-types-extra
+  - types-python-dateutil
+  - types-protobuf
+  - matplotlib-stubs
+  - pandas-stubs
+  - types-pytz
+  - pytest-stub
+  - types-jinja2
+  - types-setuptools
+  - types-cryptography
+  - types-flake8
+  - plotly-stubs
+
+### Formatting
+
+- **ruff-format** (replaces black): Python code formatting
+- **isort**: Import sorting with Black-compatible settings
+- **prettier**: JavaScript/CSS/Markdown/YAML/JSON formatting
+- **shfmt**: Shell script formatting with POSIX compatibility
+
+### Runtime Type Checking
+
+- **beartype**: Runtime type checking for all Python code
+  - Must be used in all Python modules via decorators
+
+### Stub Generation and Validation
+
+- **stubgen**: Generate type stub (.pyi) files for all Python modules
+- **stubtest**: Validate generated stubs against runtime behavior
+
+### Documentation
+
+- **pydoc**: Generate API documentation
+- **Google style docstrings**: Required for all public modules, functions,
+  classes, and methods
 
 ## Code Style and Organization
 
@@ -59,6 +170,31 @@ and manage obligations related to environmental regulations.
 - Separate top-level function and class definitions with two blank lines
 - Use Google style docstrings for all public modules, functions, classes, and
   methods
+
+### Python Type Annotations
+
+- All functions must have return type annotations (use `-> None` if no return
+  value)
+- All function parameters must have type annotations
+- Use `from typing import` for types (Dict, List, Optional, Union, etc.)
+- For runtime type checking with beartype:
+
+  ```python
+  from beartype import beartype
+
+  @beartype
+  def process_data(data: list[int]) -> int:
+      """
+      Process a list of integers and return the sum.
+
+      Args:
+          data: A list of integers to process.
+
+      Returns:
+          The sum of all integers in the list.
+      """
+      return sum(data)
+  ```
 
 ### Import Structure
 
@@ -77,6 +213,33 @@ from django.http import HttpRequest, HttpResponse
 # Local application imports
 from core.utils import format_date
 from obligations.models import Obligation
+```
+
+### Docstring Format (Google Style)
+
+```python
+def example_function(param1: str, param2: int) -> bool:
+    """One-line summary of function purpose.
+
+    Extended description of function (optional).
+
+    Args:
+        param1: Description of param1.
+        param2: Description of param2.
+            Indented continuation of parameter description.
+
+    Returns:
+        Description of return value.
+
+    Raises:
+        ValueError: If param1 is empty.
+        TypeError: If param2 is not an integer.
+
+    Examples:
+        >>> example_function("test", 123)
+        True
+    """
+    # Function body
 ```
 
 ### Logging Practices
@@ -108,62 +271,49 @@ from obligations.models import Obligation
 - Custom user model extending AbstractUser
 - Permission-based access control
 
-**Expectations**: GitHub Copilot can delete and consolidate files where
-multiple implementations are found and can be merged into a single file
-globally. Always use `use context7` to lookup documentation from the context7
-MCP server, which provides access to all project-specific configuration files
-and standards. Additional resources such as the github, filesystem, JSON,
-context7, sqlite, git, fetch, sequential-thinking, and docker MCP servers have
-been activated and are available for use by GitHub Copilot.
+## Shell Script Standards
 
-**Documentation Lookup Instructions**:
+### POSIX Compatibility
 
-- When you need more context or details about any of the following external
-  libraries, frameworks, or tools, use the `fetch` MCP server or `context7` MCP
-  server to look up their official documentation:
+- All shell scripts must be POSIX-compliant
+- Set shell to bash explicitly when bash-specific features are required
 
-  - [GSAP Animation](https://gsap.com/docs/v3/)
-  - [PicoCSS Classless](https://picocss.com/docs/classless)
-  - [Hyperscript](https://hyperscript.org/docs/)
-  - [TypeScript](https://www.typescriptlang.org/docs/)
-  - [HTMX](https://htmx.org/docs/)
-  - [django-hyperscript](https://github.com/LucLor06/django-hyperscript#readme)
-  - [django-htmx](https://django-htmx.readthedocs.io/en/latest/)
-  - [AssemblyScript](https://www.assemblyscript.org/introduction.html)
-  - [Django](https://docs.djangoproject.com/en/5.2/)
-  - [Protobuf3](https://protobuf.dev/)
-  - [SQLite](https://www.sqlite.org/docs.html)
-  - [django-pb-model](https://pypi.org/project/django-pb-model/)
-  - [Matplotlib](https://matplotlib.org/stable/users/index)
-  - [django_matplotlib](https://github.com/scidam/django_matplotlib)
-  - [Plotly](https://plotly.com/python/)
-  - [Pandas](https://pandas.pydata.org/docs/)
-  - [NumPy](https://numpy.org/doc/stable/user/index.html#user)
-  - [django-csp](https://django-csp.readthedocs.io/en/latest/)
-  - [django-template-partials](https://github.com/carltongibson/django-template-partials?tab=readme-ov-file#basic-usage)
-  - [dj-all-auth](https://github.com/deviserops/dj-all-auth)
-  - [python-dotenv-vault](https://github.com/dotenv-org/python-dotenv-vault)
+### Formatting and Linting
 
-- For project-specific configuration files and standards, always use
-  `use context7` to lookup documentation from the context7 MCP server.
+- Format with `shfmt` using:
+  - 2-space indentation
+  - Keep column alignment
+  - POSIX compatibility mode
+- Validate with `shellcheck`:
+  - Enable all optional checks
+  - Fix all warnings
+  - Follow shellcheck directives when exceptions are needed
 
-## File Operations and Encoding
+### Example shell script
 
-- Use UTF-8 encoding for all text files
-- Always specify `encoding="utf-8"` when using `open()`:
+```bash
+#!/bin/sh
+# Script description
 
-  ```python
-  with open("file.txt", "r", encoding="utf-8") as f:
-      content = f.read()
-  ```
+# Source external files safely
+# shellcheck source=../relative/path/to/script.sh
+. "../relative/path/to/script.sh"
 
-## Testing Requirements
+# Use quotes for variable references
+echo "Processing file: ${file_name}"
 
-- Write unit tests for all views, models, and forms
-- Use Django's TestCase for database-related tests
-- Use pytest fixtures for test setup
-- Mock external dependencies for isolated tests
-- Test on multiple POSIX systems (Linux, macOS)
+# Handle errors
+if ! command -v python3 > /dev/null 2> /dev/null; then
+  echo "Error: Python 3 is required but not installed" > /dev/stderr
+  exit 1
+fi
+
+# Prefer [[ ]] for tests when using bash
+if [ "$SHELL" = "/bin/bash" ]; then
+  # POSIX-compatible test
+  : # null operation
+fi
+```
 
 ## HTML and Template Guidelines
 
@@ -172,6 +322,7 @@ been activated and are available for use by GitHub Copilot.
 - Use Django's template inheritance with `{% extends %}` and `{% include %}`
 - Separate templates into layouts, components, and partials
 - Create reusable blocks for common elements
+- Templates must pass djlint validation
 
 ### HTML Structure
 
@@ -190,8 +341,8 @@ been activated and are available for use by GitHub Copilot.
 ### Example Template Structure
 
 ```html
-{% extends "base.html" %} {% block title %}Page Title{% endblock %} {% block
-content %}
+{% extends "base.html" %} {% block title %}Page Title{% endblock title %} {%
+block content %}
 <main>
   <h1>Primary Heading</h1>
 
@@ -213,8 +364,22 @@ content %}
     <div id="results" role="region" aria-live="polite"></div>
   </section>
 </main>
-{% endblock %}
+{% endblock content %}
 ```
+
+## JavaScript/TypeScript Standards
+
+### TypeScript Configuration
+
+- Use TypeScript for complex client-side logic
+- Target ES2020 or newer
+- Strict type checking enabled
+
+### ESLint Configuration
+
+- Follow project ESLint configuration in eslint.config.js
+- Use prettier for formatting
+- Fix all warnings before committing
 
 ## Environment Variable Management
 
@@ -233,34 +398,26 @@ content %}
 
 - Validate all environment variables during application startup
 
-## Development Toolchain
+## File Operations and Encoding
 
-### Quality Assurance Tools
+- Use UTF-8 encoding for all text files
+- Always specify `encoding="utf-8"` when using `open()`:
 
-1. **Code Linters**:
+  ```python
+  with open("file.txt", "r", encoding="utf-8") as f:
+      content = f.read()
+  ```
 
-   - Python: pylint, pylint-django
-   - JavaScript: eslint
-   - HTML/Templates: djlint
-   - Markdown: markdownlint
+## Testing Requirements
 
-2. **Type Checking**:
-
-   - mypy with django-stubs
-
-3. **Code Formatters**:
-
-   - Python: autopep8, isort
-   - JavaScript/CSS/JSON: prettier
-
-4. **Security Scanning**:
-   - bandit for Python security issues
-
-### Running Development Tools
-
-- Use VS Code tasks for linting and formatting
-- Run tests with pytest
-- Use pre-commit hooks for automatic quality checks
+- Write unit tests for all views, models, and forms
+- Use Django's TestCase for database-related tests
+- Use pytest fixtures for test setup
+- Mock external dependencies for isolated tests
+- Test on multiple POSIX systems (Linux, macOS)
+- Enforce test coverage requirements:
+  - Minimum 80% overall coverage
+  - 100% coverage for critical components
 
 ## Common Issues to Avoid
 
@@ -273,6 +430,9 @@ content %}
 - Unspecified file encoding (`unspecified-encoding`)
 - Too many ancestors in class inheritance (`too-many-ancestors`)
 - Unused variables (`unused-variable`)
+- Missing beartype decorators
+- Missing or incomplete Google style docstrings
+- Missing .pyi stub files
 
 ### Django/HTML
 
@@ -282,13 +442,23 @@ content %}
 - Unescaped user input
 - Missing form validation
 
+### Shell Scripts
+
+- Non-POSIX compliant syntax
+- Missing error handling
+- Unquoted variables
+- Command injection vulnerabilities
+- Missing shellcheck directives
+
 ## Handling Long Lines in Code
 
 ### Guidelines for Long Lines
 
 1. **Maximum Line Length**:
 
-   - Adhere to a strict maximum line length of 88 characters as per PEP 8.
+   - Adhere to a strict maximum line length of 88 characters as per PEP 8 for
+     Python.
+   - 80 characters for JavaScript, TypeScript, CSS, YAML.
 
 2. **Breaking Long Lines**:
 
@@ -337,20 +507,10 @@ content %}
      """This is a long docstring that spans multiple lines."""
      ```
 
-5. **Tools for Automation**:
-
-   - Use `black` to automatically format code to comply with line length
-     limits.
-   - Example command:
-
-     ```bash
-     black --line-length 88 <file>
-     ```
-
 ## Author Information
 
 - Author: Adrian Gallo
-- Email: <agallo@enveng-group.com.au>
+- Email: agallo@enveng-group.com.au
 - License: AGPL-3.0
 
 ## Context7 Documentation Lookup

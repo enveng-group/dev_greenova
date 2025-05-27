@@ -22,29 +22,35 @@ tools:
 
 Primary tool for Python linting and formatting:
 
-- Replaces multiple tools (pylint, isort)
-- Faster execution
-- More comprehensive rule set
+- Replaces multiple tools (pylint, isort, black)
+- Enforces Google style docstrings, type annotations, and import order
+- Required for all Python code
+- All code must pass ruff check and ruff format
 
 #### Usage
 
 ```bash
-# Format and fix code
 ruff check --fix .
 ruff format .
 ```
 
-### Black
+### Beartype
 
-Secondary formatter for Python:
+- All public Python functions and classes must use @beartype decorators for
+  runtime type checking.
+- Required for all Python modules.
 
-- Use when Ruff formatting is insufficient
-- Integration with pre-commit hooks
+### Stubgen and Stubtest
+
+- All Python modules must have up-to-date .pyi stub files generated with
+  stubgen.
+- All stubs must be validated with stubtest.
 
 #### Usage
 
 ```bash
-black --line-length 88 .
+stubgen -m mymodule -o stubs/
+stubtest mymodule
 ```
 
 ### MyPy
@@ -54,11 +60,37 @@ Type checking for Python code:
 - Strict mode enabled
 - Django plugin configured
 - Custom type stubs supported
+- All code must pass mypy with no errors
 
 #### Usage
 
 ```bash
 mypy .
+```
+
+## Shell Script Tools
+
+### Shellcheck
+
+- All shell scripts must pass shellcheck with no warnings
+- Enable all optional checks
+- Use POSIX compatibility mode
+
+#### Usage
+
+```bash
+shellcheck myscript.sh
+```
+
+### shfmt
+
+- All shell scripts must be formatted with shfmt
+- Use 2-space indentation and POSIX compatibility
+
+#### Usage
+
+```bash
+shfmt -i 2 -ci -s -ln posix -w myscript.sh
 ```
 
 ## Frontend Tools
@@ -226,7 +258,8 @@ prettier --write .
 mypy .
 
 # Generate stubs
-stubgen -p your_package
+stubgen -m mymodule -o stubs/
+stubtest mymodule
 ```
 
 1. Security checks:

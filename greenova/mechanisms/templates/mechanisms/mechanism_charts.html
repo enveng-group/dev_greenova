@@ -1,70 +1,58 @@
 {% load static %}
 {% load mechanism_tags %}
 
-{% if mechanism_charts %}
+{% block extra_head %}
+  <!-- Plotly JS (explicit stable version) -->
+  <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" data-hx-head="true"></script>
+  <!-- Minimal chart styles for Plotly -->
+  <link rel="stylesheet"
+        href="{% static 'mechanisms/css/plotly-chart.css' %}" />
+{% endblock extra_head %}
 
+{% if mechanism_charts %}
   <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">
-Environmental Mechanisms Analysis
+      Environmental Mechanisms Analysis
     </h2>
-    <!-- Chart Navigation -->
-    <nav class="chart-nav" aria-label="Mechanism charts navigation">
-      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">
-        ←
-      </button>
-      <button type="button"
-              onclick="scrollCharts('right')"
-              aria-label="Scroll right">
-→
-      </button>
-    </nav>
-    <!-- Chart Gallery -->
-    <div id="chartGallery"
-         class="chart-gallery"
+    <!-- Responsive Chart Grid -->
+    <div id="chartGrid"
+         class="chart-grid"
          role="region"
-         aria-label="Chart gallery">
+         aria-label="Mechanism chart grid">
       {% for mech in mechanism_charts %}
-
-        <article class="mechanism-chart">
+        <article class="mechanism-chart"
+                 tabindex="0"
+                 aria-labelledby="chart-{{ forloop.counter }}">
           <header>
-            <h3>
-{{ mech.name }}
+            <h3 id="chart-{{ forloop.counter }}">
+              {{ mech.name }}
             </h3>
           </header>
           {% if mech.id %}
             <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}"
-               style="text-decoration: none">
+               aria-label="View procedure analysis for {{ mech.name }}">
             {% endif %}
-
-            <figure>
-              <figcaption>
-{{ mech.name }} Status Distribution
-              </figcaption>
-              <img src="data:image/png;base64,{{ mech.image_data }}"
-                   alt="Chart for {{ mech.name }}"
-                   class="chart-image"
-                   width="400"
-                   height="400" />
-            </figure>
+            <div class="plotly-chart-container">
+            {{ mech.chart_html|safe }}
+            </div>
             {% if mech.id %}
             </a>
           {% endif %}
-
         </article>
       {% endfor %}
-
     </div>
-    {% if table_data %}
+    <!-- End Responsive Chart Grid -->
 
+    {% if table_data %}
       <!-- Detailed Data Table -->
       <article class="data-table">
         <header>
           <h3>
-Detailed Statistics
+            Detailed Statistics
           </h3>
           <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
                   class="btn-fold">
--
+            -
           </button>
         </header>
         <div class="table-container">
@@ -86,79 +74,32 @@ Completed
                 <th>
 Overdue
                 </th>
-                <th>
-Total
-                </th>
-                <th>
-Actions
-                </th>
               </tr>
             </thead>
             <tbody>
-              {% for item in table_data %}
-
+              {% for row in table_data %}
                 <tr>
                   <td>
-{{ item.name }}
+{{ row.name }}
                   </td>
                   <td>
-{{ item.not_started }}
+{{ row.not_started }}
                   </td>
                   <td>
-{{ item.in_progress }}
+{{ row.in_progress }}
                   </td>
                   <td>
-{{ item.completed }}
+{{ row.completed }}
                   </td>
                   <td>
-{{ item.overdue }}
-                  </td>
-                  <td>
-{{ item.total }}
-                  </td>
-                  <td>
-                    {% if item.id %}
-                      <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
-                         class="btn-secondary"
-                         aria-label="View details for {{ item.name }}">View</a>
-                    {% endif %}
-
+{{ row.overdue }}
                   </td>
                 </tr>
               {% endfor %}
-
             </tbody>
           </table>
         </div>
       </article>
     {% endif %}
-
   </section>
-{% elif error %}
-
-  <div role="alert" class="notice error">
-    <p>
-{{ error }}
-    </p>
-  </div>
-{% else %}
-
-  <div role="status" class="notice">
-    <p>
-Please select a project to view mechanism charts.
-    </p>
-  </div>
 {% endif %}
-<script>
-  function scrollCharts(direction) {
-    const container = document.getElementById('chartGallery');
-    const scrollAmount = 350;
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
-
- else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  }
-</script>

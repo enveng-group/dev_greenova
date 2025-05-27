@@ -1,3 +1,9 @@
+"""
+URL configuration for the company app in Greenova.
+
+This module defines URL patterns for the company app.
+"""
+
 from django.urls import path
 
 from . import views

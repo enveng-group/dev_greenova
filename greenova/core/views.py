@@ -1,13 +1,18 @@
+"""
+Views for the Greenova core app.
+
+This module defines core views for routing, health checks, and system endpoints.
+"""
+
 import logging
 import os
 from typing import Any
 
+from constants import AUTH_NAVIGATION, MAIN_NAVIGATION, USER_NAVIGATION
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.views.generic import TemplateView, View
-
-from .constants import AUTH_NAVIGATION, MAIN_NAVIGATION, USER_NAVIGATION
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +56,8 @@ class BaseTemplateView(TemplateView):
                 "main_navigation": MAIN_NAVIGATION,
                 "user_navigation": USER_NAVIGATION,
                 "auth_navigation": AUTH_NAVIGATION,
-                # Check if TypeScript is available (e.g., by checking if the file exists)
+                # Check if TypeScript is available (e.g., by checking if the file
+                # exists)
                 "ts_available": os.path.exists(
                     os.path.join(settings.STATIC_ROOT, "ts/dist/index.js")
                 ),

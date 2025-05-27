@@ -1,4 +1,4 @@
-# .pre-commit-config.yaml
+---
 exclude: '^$'
 fail_fast: false # Add this line to continue running hooks even when some fail
 repos:
@@ -10,6 +10,7 @@ repos:
       - id: detect-private-key
       - id: check-added-large-files
         args: ['--maxkb=500']
+        exclude: '^greenova/static/js/vendors/plotly.*\.min\.js$'
       - id: check-yaml
       - id: check-json
       - id: check-toml
@@ -20,13 +21,11 @@ repos:
       - id: mixed-line-ending
         args: ['--fix=lf']
       - id: requirements-txt-fixer
-      - id: no-commit-to-branch
-        args: ['--branch', 'main', '--branch', 'master']
       - id: debug-statements
         exclude: '^greenova/chatbot/proto/.*_pb2\.py$'
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.25.1
+    rev: v8.26.0
     hooks:
       - id: gitleaks
 
@@ -61,13 +60,17 @@ repos:
 
   # 4. Python formatting and linting (Ruff as primary)
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.9
+    rev: v0.11.10
     hooks:
       - id: ruff
         types_or: [python, pyi]
         args: ['--unsafe-fixes', '--fix']
-      - id: ruff-format
-        types_or: [python, pyi]
+
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.1.0
+    hooks:
+      - id: autopep8
+        args: [--max-line-length=88]
 
   # 5. Additional Python linting
   - repo: https://github.com/pycqa/pylint
@@ -76,48 +79,37 @@ repos:
       - id: pylint
         name: pylint (python)
         entry: pylint
-        language: system
         types: [python]
-        args: ['--rcfile=.pylintrc']
-        exclude: "greenova/.*\\.py$"
-      - id: pylint
-        name: pylint (django)
-        entry: env PYTHONPATH=/workspaces/greenova:/workspaces/greenova/greenova DJANGO_SETTINGS_MODULE=greenova.greenova.settings pylint
-        language: system
-        types: [python]
-        args: ['--rcfile=.pylintrc-django', '--load-plugins=pylint_django']
-        files: "greenova/.*\\.py$"
+        exclude: 'migrations|_pb2.py|\.venv|tests/|test_|__init__\.py|mypy_pb2_plugin\.py'
+        additional_dependencies:
+          - pylint_django
+          - pylint_pytest
+          - pylint_plugin_utils
+          - pylint_pydantic
+          - pylint_protobuf
+          - pylint_flask
+          - pylint_celery
+          - pylint_quotes
 
   # 6. Type checking
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.15.0
     hooks:
       - id: mypy
-        name: mypy (standard)
-        args:
-          [
-            '--ignore-missing-imports',
-            '--disallow-untyped-defs',
-            '--no-implicit-optional',
-            '--namespace-packages',
-          ]
-        exclude: "greenova/.*\\.py$|setup\\.py"
-        additional_dependencies:
-          - 'types-requests'
-          - 'types-PyYAML'
-          - 'types-python-dateutil'
-          - 'pytest-stub'
-          - 'types-setuptools'
-      - id: mypy
-        name: mypy (django)
+        name: mypy
         args: ['--config-file=mypy.ini', '--namespace-packages']
-        files: "greenova/.*\\.py$"
+        exclude: 'migrations|venv|\.venv|tests/|test_|__init__\.py|.*_pb2\.py$'
         additional_dependencies:
           - 'django-stubs'
           - 'django-stubs-ext'
           - 'types-requests'
           - 'types-Pillow'
+          - 'types-dataclasses-json'
           - 'types-PyYAML'
+          - 'json-types'
+          - 'types-jsonschema'
+          - 'types-simplejson'
+          - 'django-types-extra'
           - 'types-python-dateutil'
           - 'types-protobuf'
           - 'matplotlib-stubs'
@@ -126,6 +118,19 @@ repos:
           - 'pytest-stub'
           - 'types-jinja2'
           - 'types-setuptools'
+          - 'types-cryptography'
+          - 'types-flake8'
+          - 'plotly-stubs'
+          - 'types-pytest-lazy-fixture'
+          - 'types-protobuf'
+          - 'types-sqlalchemy'
+          - 'types-toml'
+          - 'types-urllib3'
+          - 'types-docutils'
+          - 'types-psutil'
+          - 'types-redis'
+          - 'types-click'
+          - 'types-markdown'
 
   # 7. Pattern-based checks
   - repo: https://github.com/pre-commit/pygrep-hooks
@@ -141,7 +146,7 @@ repos:
 
   # 8. Framework-specific tools
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.24.0
+    rev: 1.25.0
     hooks:
       - id: django-upgrade
         args: ['--target-version', '5.2']
@@ -151,18 +156,27 @@ repos:
     rev: v2.4.1
     hooks:
       - id: codespell
+        exclude: >
+          (?x)^(
+            requirements/.*\.txt|
+            requirements/.*\.in|
+            notebooks/pie_chart_gallery\.ipynb|
+            greenova/static/js/vendors/.*
+          )$
+
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.18.0
+    rev: v0.18.1
     hooks:
       - id: markdownlint-cli2
         args: ['--config', '.markdownlint-cli2.jsonc', '--fix']
 
   # 10. Frontend formatting and linting
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+    rev: v3.1.0
     hooks:
       - id: prettier
         types_or: [javascript, css, markdown, yaml, json]
+        exclude: ^greenova/static/js/vendors/.*$
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.26.0
@@ -170,26 +184,17 @@ repos:
       - id: eslint
         files: \.(js|ts|jsx|tsx)$
         types: [file]
-        args: [
-            '--fix',
-            '--max-warnings=9999',
-            '--config',
-            'eslint.config.js', # Add this line if your config is not auto-detected
-          ]
+        args:
+          - '--fix'
+          - '--max-warnings=9999'
+          - '--config'
+          - 'eslint.config.js'
         additional_dependencies:
           - eslint@9.26.0
           - prettier@3.2.4
           - eslint-config-prettier@10.1.3
           - eslint-plugin-prettier@5.4.0
           - eslint-config-stylelint@24.0.0
-
-  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-    rev: v16.19.1
-    hooks:
-      - id: stylelint
-        files: \.(css|scss|sass|less)$
-        args: ['--fix', '--config', 'stylelint.config.js']
-        additional_dependencies:
           - stylelint@16.17.0
           - stylelint-config-recommended@15.0.0
           - stylelint-config-standard@37.0.0
@@ -216,14 +221,16 @@ repos:
     hooks:
       - id: bandit
         name: bandit
-        entry: /workspaces/greenova/.venv/bin/bandit
+        entry: /usr/local/py-utils/bin/bandit
         language: system
         args: ['--configfile', 'pyproject.toml']
         exclude: 'tests/.*'
         types: [python]
       - id: safety-check
         name: Safety dependency checker
-        entry: bash -c 'pip install safety && safety check --ignore 65278,66704,65212,65647,62556,62044,75180'
+        entry: >
+          bash -c 'pip install safety &&
+          safety check --ignore 65278,66704,65212,65647,62556,62044,75180'
         language: system
         types: [python]
         pass_filenames: false

@@ -1,0 +1,327 @@
+{% load static obligation_tags %}
+<form id="obligation-edit-form" method="post">
+{% csrf_token %}
+
+  <div class="detail-section">
+    <h3 class="detail-section-title">
+Basic Information
+    </h3>
+    <div class="detail-grid">
+      <div class="detail-field">
+        <span class="detail-label">Obligation Number</span>
+        <div class="detail-value non-editable">
+{{ obligation.obligation_number }}
+        </div>
+      </div>
+      <div class="detail-field">
+        <span class="detail-label">Environmental Aspect</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode">
+{{ obligation.environmental_aspect|default:"Not specified" }}
+          </div>
+          <input type="text"
+                 name="environmental_aspect"
+                 value="{{ obligation.environmental_aspect|default:'' }}"
+                 class="detail-input edit-mode"
+                 style="display: none" />
+        </div>
+      </div>
+      <div class="detail-field">
+        <span class="detail-label">Environmental Mechanism</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode">
+{{ obligation.primary_environmental_mechanism.name|default:"Not specified" }}
+          </div>
+          <select name="primary_environmental_mechanism"
+                  class="detail-input edit-mode"
+                  style="display: none">
+            <option value="">
+Select mechanism...
+            </option>
+            {% for mechanism in available_mechanisms %}
+              <option value="{{ mechanism.id }}"
+                      {% if mechanism.id == obligation.primary_environmental_mechanism.id %}
+                        selected
+                      {% endif %}>
+                {{ mechanism.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="detail-field">
+        <span class="detail-label">Status</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode">
+{{ obligation|display_status }}
+          </div>
+          <select name="status" class="detail-input edit-mode" style="display: none;">
+            <option value="not_started"
+                    {% if obligation.status == 'not_started' %}
+                      selected
+                    {% endif %}>
+Not Started
+            </option>
+            <option value="in_progress"
+                    {% if obligation.status == 'in_progress' %}
+                      selected
+                    {% endif %}>
+In Progress
+            </option>
+            <option value="completed"
+                    {% if obligation.status == 'completed' %}
+                      selected
+                    {% endif %}>
+Completed
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h3 class="detail-section-title">
+Obligation Details
+    </h3>
+    <div class="detail-grid">
+      <div class="detail-field full-width">
+        <span class="detail-label">Obligation Description</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode textarea">
+{{ obligation.obligation|linebreaks|default:"No description provided" }}
+          </div>
+          <textarea name="obligation"
+                    class="detail-input edit-mode"
+                    style="display: none"
+                    rows="4">{{ obligation.obligation|default:'' }}</textarea>
+        </div>
+      </div>
+      <div class="detail-field">
+        <span class="detail-label">Procedure</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode">
+{{ obligation.procedure|default:"Not specified" }}
+          </div>
+          <input type="text"
+                 name="procedure"
+                 value="{{ obligation.procedure|default:'' }}"
+                 class="detail-input edit-mode"
+                 style="display: none" />
+        </div>
+      </div>
+      <div class="detail-field">
+        <span class="detail-label">Responsibility</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode">
+{{ obligation.responsibility|display_responsibility }}
+          </div>
+          <input type="text"
+                 name="responsibility"
+                 value="{{ obligation.responsibility|default:'' }}"
+                 class="detail-input edit-mode"
+                 style="display: none" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-section">
+    <h3 class="detail-section-title">
+Timeline & Dates
+    </h3>
+    <div class="detail-grid">
+      <div class="detail-field">
+        <span class="detail-label">Action Due Date</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode">
+{{ obligation.action_due_date|format_due_date }}
+          </div>
+          <input type="date"
+                 name="action_due_date"
+                 value="{{ obligation.action_due_date|date:'Y-m-d' }}"
+                 class="detail-input edit-mode"
+                 style="display: none" />
+        </div>
+      </div>
+      <div class="detail-field">
+        <span class="detail-label">Close Out Date</span>
+        <div class="detail-value-container">
+          <div class="detail-value view-mode">
+{{ obligation.close_out_date|format_due_date|default:"Not set" }}
+          </div>
+          <input type="date"
+                 name="close_out_date"
+                 value="{{ obligation.close_out_date|date:'Y-m-d'|default:'' }}"
+                 class="detail-input edit-mode"
+                 style="display: none" />
+        </div>
+      </div>
+      {% if obligation.recurring_obligation %}
+        <div class="detail-field">
+          <span class="detail-label">Recurring Frequency</span>
+          <div class="detail-value-container">
+            <div class="detail-value view-mode">
+{{ obligation.recurring_frequency|default:"Not specified" }}
+            </div>
+            <select name="recurring_frequency"
+                    class="detail-input edit-mode"
+                    style="display: none">
+              <option value="">
+Select frequency...
+              </option>
+              <option value="daily"
+                      {% if obligation.recurring_frequency == 'daily' %}
+                        selected
+                      {% endif %}>
+Daily
+              </option>
+              <option value="weekly"
+                      {% if obligation.recurring_frequency == 'weekly' %}
+                        selected
+                      {% endif %}>
+Weekly
+              </option>
+              <option value="monthly"
+                      {% if obligation.recurring_frequency == 'monthly' %}
+                        selected
+                      {% endif %}>
+Monthly
+              </option>
+              <option value="quarterly"
+                      {% if obligation.recurring_frequency == 'quarterly' %}
+                        selected
+                      {% endif %}>
+Quarterly
+              </option>
+              <option value="annually"
+                      {% if obligation.recurring_frequency == 'annually' %}
+                        selected
+                      {% endif %}>
+Annually
+              </option>
+            </select>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if obligation.general_comments or obligation.supporting_information or obligation.compliance_comments %}
+    <div class="detail-section">
+      <h3 class="detail-section-title">
+Comments & Additional Information
+      </h3>
+      <div class="detail-grid">
+        <div class="detail-field full-width">
+          <span class="detail-label">General Comments</span>
+          <div class="detail-value-container">
+            <div class="detail-value view-mode textarea">
+{{ obligation.general_comments|linebreaks|default:"No comments" }}
+            </div>
+            <textarea name="general_comments"
+                      class="detail-input edit-mode"
+                      style="display: none"
+                      rows="3">{{ obligation.general_comments|default:'' }}</textarea>
+          </div>
+        </div>
+        <div class="detail-field full-width">
+          <span class="detail-label">Supporting Information</span>
+          <div class="detail-value-container">
+            <div class="detail-value view-mode textarea">
+{{ obligation.supporting_information|linebreaks|default:"No supporting information" }}
+            </div>
+            <textarea name="supporting_information"
+                      class="detail-input edit-mode"
+                      style="display: none"
+                      rows="3">{{ obligation.supporting_information|default:'' }}</textarea>
+          </div>
+        </div>
+        <div class="detail-field full-width">
+          <span class="detail-label">Compliance Comments</span>
+          <div class="detail-value-container">
+            <div class="detail-value view-mode textarea">
+{{ obligation.compliance_comments|linebreaks|default:"No compliance comments" }}
+            </div>
+            <textarea name="compliance_comments"
+                      class="detail-input edit-mode"
+                      style="display: none"
+                      rows="3">{{ obligation.compliance_comments|default:'' }}</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if obligation.inspection %}
+    <div class="detail-section">
+      <h3 class="detail-section-title">
+Inspection Details
+      </h3>
+      <div class="detail-grid">
+        <div class="detail-field">
+          <span class="detail-label">Inspection Required</span>
+          <div class="detail-value-container">
+            <div class="detail-value view-mode">
+{{ obligation.inspection|yesno:"Yes,No" }}
+            </div>
+            <select name="inspection"
+                    class="detail-input edit-mode"
+                    style="display: none">
+              <option value="True" {% if obligation.inspection %}selected{% endif %}>
+Yes
+              </option>
+              <option value="False" {% if not obligation.inspection %}selected{% endif %}>
+No
+              </option>
+            </select>
+          </div>
+        </div>
+        {% if obligation.inspection_frequency %}
+          <div class="detail-field">
+            <span class="detail-label">Inspection Frequency</span>
+            <div class="detail-value-container">
+              <div class="detail-value view-mode">
+{{ obligation.inspection_frequency }}
+              </div>
+              <input type="text"
+                     name="inspection_frequency"
+                     value="{{ obligation.inspection_frequency|default:'' }}"
+                     class="detail-input edit-mode"
+                     style="display: none" />
+            </div>
+          </div>
+        {% endif %}
+        {% if obligation.site_or_desktop %}
+          <div class="detail-field">
+            <span class="detail-label">Inspection Type</span>
+            <div class="detail-value-container">
+              <div class="detail-value view-mode">
+{{ obligation.site_or_desktop }}
+              </div>
+              <select name="site_or_desktop"
+                      class="detail-input edit-mode"
+                      style="display: none">
+                <option value="">
+Select type...
+                </option>
+                <option value="site"
+                        {% if obligation.site_or_desktop == 'site' %}
+                          selected
+                        {% endif %}>
+Site
+                </option>
+                <option value="desktop"
+                        {% if obligation.site_or_desktop == 'desktop' %}
+                          selected
+                        {% endif %}>
+Desktop
+                </option>
+              </select>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</form>

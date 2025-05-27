@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 from django.http import HttpRequest, HttpResponse, HttpResponseBase
 
@@ -10,8 +11,8 @@ class DebugToolbar:
         request: HttpRequest,
         view_func: Callable,
         view_args: Any,
-        view_kwargs: Dict[str, Any],
-    ) -> Optional[HttpResponse]: ...
+        view_kwargs: dict[str, Any],
+    ) -> HttpResponse | None: ...
     def process_response(
         self, request: HttpRequest, response: HttpResponseBase
     ) -> HttpResponseBase: ...

@@ -33,7 +33,6 @@ Procedure Analysis
       </hgroup>
     </header>
     {% if error %}
-
       <div class="notice error" role="alert">
         <p>
 {{ error }}
@@ -67,10 +66,8 @@ All Phases
                           selected
                         {% endif %}>
                   {{ phase }}
-
                 </option>
               {% endfor %}
-
             </select>
           </div>
           <div class="filter-group">
@@ -87,10 +84,8 @@ All Responsibilities
                           selected
                         {% endif %}>
                   {{ resp }}
-
                 </option>
               {% endfor %}
-
             </select>
           </div>
           <div class="filter-group">
@@ -107,10 +102,8 @@ All Statuses
                           selected
                         {% endif %}>
                   {{ status_label }}
-
                 </option>
               {% endfor %}
-
             </select>
           </div>
           <div class="filter-buttons">
@@ -143,21 +136,7 @@ Apply Filters
           </div>
         </form>
       </section>
-      <!-- New Responsibility Distribution Section -->
-      <section aria-labelledby="responsibility-heading" class="charts-section">
-        <h2 id="responsibility-heading">
-Responsibility Distribution
-        </h2>
-        <article class="overall-chart">
-          <figure>
-            <figcaption>
-Obligations by Responsibility
-            </figcaption>
-            {{ responsibility_chart|safe }}
-
-          </figure>
-        </article>
-      </section>
+      <!-- Removed Responsibility Distribution Section -->
       <section aria-labelledby="charts-heading" class="charts-section">
         <h2 id="charts-heading">
 Procedures by Status
@@ -181,7 +160,6 @@ Procedures by Status
           {% for proc in procedure_charts %}
 {% procedure_chart_card proc %}
           {% endfor %}
-
         </div>
       </section>
       <!-- Data Table -->
@@ -221,7 +199,6 @@ Total
             </thead>
             <tbody>
               {% for item in table_data %}
-
                 <tr>
                   <td>
                     <h2>
@@ -295,7 +272,6 @@ Total
         <div id="current-filter" class="filter-label">
           <!-- Will be set dynamically -->
         </div>
-
         <div id="obligation-list-container"
              aria-live="polite"
              class="obligations-container">

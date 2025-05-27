@@ -1,3 +1,7 @@
+"""URL configuration for the projects app.
+
+Defines URL patterns for project list, selection, and API endpoints.
+"""
 from django.urls import path
 
 from . import views

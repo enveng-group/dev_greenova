@@ -7,7 +7,10 @@ profile view context and HTML structure.
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+# pylint: disable=redefined-outer-name
+
 from datetime import timedelta
+from typing import Any
 
 import pytest
 from company.models import CompanyMembership
@@ -17,6 +20,16 @@ from obligations.models import Obligation
 from users.models import Profile
 
 HTTP_OK = 200
+
+
+@pytest.fixture
+def company_project_mechanism(company, project, mechanism) -> dict[str, Any]:
+    """Fixture to bundle company, project, and mechanism for tests."""
+    return {
+        "company": company,
+        "project": project,
+        "mechanism": mechanism,
+    }
 
 
 @pytest.mark.django_db
@@ -44,13 +57,15 @@ class TestUserProfileModel:
         )
         assert membership.role in user_roles
 
-    def test_profile_overdue_obligations(
-        self, regular_user, test_company, project, mechanism
-    ):
+    def test_profile_overdue_obligations(self, regular_user, company_project_mechanism):
         """Test retrieval of overdue obligations for a user profile."""
+        company = company_project_mechanism["company"]
+        project = company_project_mechanism["project"]
+        mechanism = company_project_mechanism["mechanism"]
+
         # Create company membership
         membership = CompanyMembership.objects.create(
-            user=regular_user, company=test_company, role="manager"
+            user=regular_user, company=company, role="manager"
         )
 
         # Create overdue obligation
@@ -94,13 +109,13 @@ class TestProfileView:
     """Test suite for profile view functionality."""
 
     def test_profile_overdue_obligations_count(
-        self, authenticated_client, regular_user, company, project, mechanism
+        self, authenticated_client, regular_user, company_project_mechanism
     ):
-        """
-        Test that the profile view correctly counts and displays overdue
-        obligations.
+        """Testing profile view correctly counts and displays overdue obligations."""
+        company = company_project_mechanism["company"]
+        project = company_project_mechanism["project"]
+        mechanism = company_project_mechanism["mechanism"]
 
-        """
         # Create company membership
         membership = CompanyMembership.objects.create(
             user=regular_user, company=company, role="manager"
@@ -151,15 +166,28 @@ class TestProfileView:
         )
 
     def test_profile_view_context(
-        self, authenticated_client, regular_user, company, project, mechanism
-    ):
-        """Test that the profile view provides the correct context data."""
-        # Create company membership
+        self, authenticated_client, regular_user, company_project_mechanism
+    ) -> None:
+        """Test that the profile view provides the correct context data.
+
+        Args:
+            authenticated_client: Django test client authenticated as the user.
+            regular_user: The user instance for testing.
+            company_project_mechanism: Fixture with company, project, mechanism.
+
+        Returns:
+            None
+        """
+        # Group related objects to reduce local variables
+        context_bundle = company_project_mechanism
+        company = context_bundle["company"]
+        project = context_bundle["project"]
+        mechanism = context_bundle["mechanism"]
+
+        # Create company membership and overdue obligation
         membership = CompanyMembership.objects.create(
             user=regular_user, company=company, role="manager"
         )
-
-        # Create overdue obligation
         Obligation.objects.create(
             obligation_number="OBL003",
             obligation="Test Overdue",
@@ -169,36 +197,32 @@ class TestProfileView:
             action_due_date=timezone.now().date() - timedelta(days=1),
             responsibility=membership.role,
         )
-
-        # Add user to project
         project.members.add(regular_user)
-
-        # Make the client authenticated as the regular_user
         authenticated_client.force_login(regular_user)
-
-        # Request the profile page
         url = reverse("users:profile")
         response = authenticated_client.get(url)
 
-        # Verify context contains profile and overdue_count
-        assert "profile" in response.context
-        assert "overdue_count" in response.context
-        assert response.context["overdue_count"] == 1
+        # Group context checks
+        context = response.context
+        assert "profile" in context
+        assert "overdue_count" in context
+        assert context["overdue_count"] == 1
 
-        # Verify that the user's role from CompanyMembership is linked to responsibility
+        # Verify user's role and responsibilities
+        user_role = membership.role
         assert CompanyMembership.objects.filter(
-            user=regular_user, role=membership.role
+            user=regular_user, role=user_role
         ).exists()
-
-        # Verify the relationship between user's role and responsibilities
-        user_role = CompanyMembership.objects.get(user=regular_user).role
-        responsibilities = Obligation.objects.filter(responsibility=user_role)
-        assert responsibilities.count() == 1
+        assert Obligation.objects.filter(responsibility=user_role).count() == 1
 
     def test_profile_overdue_alert_html_structure(
-        self, authenticated_client, regular_user, company, project, mechanism
+        self, authenticated_client, regular_user, company_project_mechanism
     ):
         """Test the HTML structure of the overdue alert in profile view."""
+        company = company_project_mechanism["company"]
+        project = company_project_mechanism["project"]
+        mechanism = company_project_mechanism["mechanism"]
+
         # Create company membership
         membership = CompanyMembership.objects.create(
             user=regular_user, company=company, role="manager"

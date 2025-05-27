@@ -56,6 +56,8 @@
 @import url('components/table.css');
 @import url('components/widgets.css');
 @import url('components/stats-section.css');
+@import url('components/obligations_detail_modal.css');
+@import url('components/overdue_obligations_tooltip.css');
 
 /* Import page-specific styles */
 @import url('pages/company.css');

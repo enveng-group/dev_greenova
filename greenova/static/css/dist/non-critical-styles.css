@@ -1,15 +1,65 @@
-.sr-only:not(#\#){height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;clip:rect(0,0,0,0);border-width:0;white-space:nowrap}
-.flex-center:not(#\#){align-items:center;display:flex;justify-content:center}
-.htmx-indicator:not(#\#){opacity:0;transition:opacity .2s ease-in}
-.htmx-request.htmx-indicator:not(#\#),.htmx-request:not(#\#) .htmx-indicator{opacity:1}
-.text-balance{text-wrap:balance}
-.text-pretty{text-wrap:pretty}
-.grid-auto-fit{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));grid-template-columns:repeat(auto-fit,minmax(var(--min-col-width,250px),1fr))}
-.chat-user-bubble{background-color:var(--greenova-chat-user-background);border-radius:var(--greenova-chat-user-border-radius);color:var(--greenova-chat-user-color)}
-.chat-bot-bubble{background-color:var(--greenova-chat-bot-background);border-radius:var(--greenova-chat-bot-border-radius);color:var(--greenova-chat-bot-color)}
-.animate-fade-in{animation:fade-in .3s ease-in-out}
-.animate-slide-in{animation:slide-in .3s ease-in-out}
-0%{opacity:0}
-to{opacity:1}
-0%{transform:translateX(-100%)}
-to{transform:translateX(0)}
+.sr-only:not(#\#) {
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  clip: rect(0, 0, 0, 0);
+  border-width: 0;
+  white-space: nowrap;
+}
+.flex-center:not(#\#) {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.htmx-indicator:not(#\#) {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+}
+.htmx-request.htmx-indicator:not(#\#),
+.htmx-request:not(#\#) .htmx-indicator {
+  opacity: 1;
+}
+.text-balance {
+  text-wrap: balance;
+}
+.text-pretty {
+  text-wrap: pretty;
+}
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--min-col-width, 250px), 1fr)
+  );
+}
+.chat-user-bubble {
+  background-color: var(--greenova-chat-user-background);
+  border-radius: var(--greenova-chat-user-border-radius);
+  color: var(--greenova-chat-user-color);
+}
+.chat-bot-bubble {
+  background-color: var(--greenova-chat-bot-background);
+  border-radius: var(--greenova-chat-bot-border-radius);
+  color: var(--greenova-chat-bot-color);
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in-out;
+}
+.animate-slide-in {
+  animation: slide-in 0.3s ease-in-out;
+}
+0% {
+  opacity: 0;
+}
+to {
+  opacity: 1;
+}
+0% {
+  transform: translateX(-100%);
+}
+to {
+  transform: translateX(0);
+}

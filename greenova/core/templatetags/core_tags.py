@@ -1,7 +1,14 @@
+"""
+Custom template tags for the Greenova core app.
+
+This module defines reusable Django template tags for navigation, theming,
+and user display.
+"""
+
 import logging
 
-from core.commons import get_active_namespace, get_user_display_name
-from core.constants import (
+from commons import get_active_namespace, get_user_display_name
+from constants import (
     AUTH_NAVIGATION,
     MAIN_NAVIGATION,
     THEME_OPTIONS,

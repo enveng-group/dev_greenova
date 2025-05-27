@@ -138,10 +138,10 @@ fi
 
 # Install pip-tools and compile requirements
 log "Installing pip-tools and compiling requirements"
-$VENV_DIR/bin/pip install --upgrade pip pip
-$VENV_DIR/bin/pip install --upgrade pip wheel
-$VENV_DIR/bin/pip install --upgrade pip setuptools
-$VENV_DIR/bin/pip install --upgrade pip pip-tools
+$VENV_DIR/bin/pip install --upgrade --use-pep517 pip pip
+$VENV_DIR/bin/pip install --upgrade --use-pep517 pip wheel
+$VENV_DIR/bin/pip install --upgrade --use-pep517 pip setuptools
+$VENV_DIR/bin/pip install --upgrade --use-pep517 pip pip-tools
 
 for req in requirements.in requirements-dev.in requirements-prod.in; do
   in_file="$WORKSPACE_DIR/requirements/$req"
@@ -178,9 +178,9 @@ if [ ! -f "/home/vscode/.config/fish/config.fish" ]; then
   mkdir -p /home/vscode/.config/fish
   cat >/home/vscode/.config/fish/config.fish <<'EOL'
 # Set up environment variables
-set -gx PYTHONPATH /workspaces/greenova:/workspaces/greenova/greenova $PYTHONPATH
+set -gx PYTHONPATH "/workspaces/greenova"
 set -gx PYTHONSTARTUP /workspaces/greenova/pythonstartup
-set -gx PATH /workspaces/greenova/.venv/bin /usr/local/share/nvm/current/bin/npm $PATH
+set -gx PATH /workspaces/greenova/.venv/bin /usr/local/share/nvm/current/bin $PATH
 set -gx VIRTUAL_ENV /workspaces/greenova/.venv
 
 # Source virtual environment if it exists
@@ -191,6 +191,20 @@ end
 # Set up Node.js environment
 if test -d /usr/local/share/nvm
     set -gx NVM_DIR /usr/local/share/nvm
+
+    # Add Node.js bin to path if available
+    if test -d /usr/local/share/nvm/versions/node
+        # Get latest Node.js version directory
+        set -l node_versions (find /usr/local/share/nvm/versions/node -maxdepth 1 -mindepth 1 -type d | sort -r)
+        if test -n "$node_versions[1]"
+            set -gx PATH $node_versions[1]/bin $PATH
+        end
+    end
+end
+
+# Automatically allow direnv for this workspace
+if type -q direnv
+    direnv allow .
 end
 
 # Welcome message
@@ -228,8 +242,8 @@ function greenova --description "Greenova project helper"
             end
 
             source /workspaces/greenova/.venv/bin/activate.fish
-            pip install --upgrade pip
-            pip install -r requirements/dev.txt -c requirements/constraints.txt
+            pip install --upgrade --use-pep517 pip
+            pip install -r --use-pep517 requirements/dev.txt -c requirements/constraints.txt
             cd greenova
             python manage.py migrate
             python manage.py collectstatic --noinput

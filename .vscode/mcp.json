@@ -17,7 +17,10 @@
     "github": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
       }
@@ -34,43 +37,50 @@
     "json": {
       "type": "stdio",
       "command": "npx",
-      "args": ["@gongrzhe/server-json-mcp@1.0.3"]
+      "args": [
+        "@gongrzhe/server-json-mcp@1.0.3"
+      ]
     },
     "Context7": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
-    },
-    "sqlite": {
-      "type": "stdio",
-      "command": "uvenv",
       "args": [
-        "run",
-        "mcp-server-sqlite",
-        "--",
-        "--db-path",
-        "${input:db_path}"
+        "-y",
+        "@upstash/context7-mcp@latest"
       ]
     },
     "git": {
       "type": "stdio",
       "command": "uvenv",
-      "args": ["run", "mcp-server-git"]
+      "args": [
+        "run",
+        "mcp-server-git"
+      ]
     },
     "fetch": {
       "type": "stdio",
       "command": "uvenv",
-      "args": ["run", "mcp-server-fetch"]
+      "args": [
+        "run",
+        "mcp-server-fetch"
+      ]
     },
     "sequential-thinking": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
     },
-    "playwright": {
-      "type": "stdio",
+    "Framelink Figma MCP": {
       "command": "npx",
-      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+      "args": [
+        "-y",
+        "figma-developer-mcp",
+        "--figma-api-key=YOUR-KEY",
+        "--stdio"
+      ]
     }
   }
 }

@@ -6,16 +6,12 @@ mode: agent
 
 tools:
   - filesystem
-  - semantic_search
-  - get_errors
-  - run_tests
-  - file_search
-  - read_file
-  - insert_edit_into_file
+  - dbcode
   - context7
   - json
   - git
   - sequential-thinking
+  - github
 ---
 
 <!-- filepath: /workspaces/greenova/.github/prompts/promp-generation.prompt.md -->
@@ -64,6 +60,35 @@ servers, refactor code, update documentation, run pre-commit checks, etc.).
   until the issue is resolved.
 
 ## Additional Guidelines
+
+- **Documentation Lookup**: Always use the `fetch` and `context7` MCP servers
+  to look up and reference official documentation for the following
+  technologies as needed:
+
+  - [GSAP Animation](https://gsap.com/docs/v3/)
+  - [PicoCSS Classless](https://picocss.com/docs/classless)
+  - [Hyperscript](https://hyperscript.org/docs/)
+  - [TypeScript](https://www.typescriptlang.org/docs/)
+  - [HTMX](https://htmx.org/docs/)
+  - [django-hyperscript](https://github.com/LucLor06/django-hyperscript#readme)
+  - [django-htmx](https://django-htmx.readthedocs.io/en/latest/)
+  - [AssemblyScript](https://www.assemblyscript.org/introduction.html)
+  - [Django](https://docs.djangoproject.com/en/5.2/)
+  - [Protobuf3](https://protobuf.dev/)
+  - [SQLite](https://www.sqlite.org/docs.html)
+  - [django-pb-model](https://pypi.org/project/django-pb-model/)
+  - [Matplotlib](https://matplotlib.org/stable/users/index)
+  - [django_matplotlib](https://github.com/scidam/django_matplotlib)
+  - [Plotly](https://plotly.com/python/)
+  - [Pandas](https://pandas.pydata.org/docs/)
+  - [NumPy](https://numpy.org/doc/stable/user/index.html#user)
+  - [django-csp](https://django-csp.readthedocs.io/en/latest/)
+  - [django-template-partials](https://github.com/carltongibson/django-template-partials?tab=readme-ov-file#basic-usage)
+  - [dj-all-auth](https://github.com/deviserops/dj-all-auth)
+  - [python-dotenv-vault](https://github.com/dotenv-org/python-dotenv-vault)
+
+- **Semantic Reasoning**: Use the `semantic-thinking` MCP server for all
+  reasoning, planning, and stepwise solution development.
 
 1. **Restructured Text (RST)**: Use as the foundational layer for body,
    content, and messages for HTML.

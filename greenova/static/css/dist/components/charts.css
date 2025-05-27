@@ -8,10 +8,73 @@
   margin: var(--greenova-spacing) 0;
 }
 
-.table-container {
-  border-radius: var(--greenova-border-radius);
+/* Chart grid layout for better responsiveness and containment */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--greenova-spacing);
+  margin: var(--greenova-spacing) 0;
+}
+
+/* Mechanism chart container */
+.mechanism-chart {
   background: var(--greenova-background-secondary);
-  padding: var(--greenova-spacing);
+  border-radius: var(--greenova-border-radius);
+  box-shadow: var(--greenova-shadow);
+  padding: var(--greenova-padding);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.2s ease;
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+.mechanism-chart:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--greenova-shadow-hover);
+}
+
+.mechanism-chart header {
+  text-align: center;
+  margin-bottom: var(--greenova-spacing-small);
+}
+
+.mechanism-chart h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--greenova-text-primary-dark);
+}
+
+/* SVG chart container */
+.mechanism-chart figure {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  min-height: 200px;
+  overflow: hidden; /* Prevent SVG from overflowing */
+}
+
+/* SVG styling to ensure proper scaling */
+.mechanism-chart figure svg {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+/* Fix for Safari SVG scaling */
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) {
+    .mechanism-chart figure svg {
+      width: 95% !important;
+      height: 95% !important;
+    }
+  }
 }
 
 /* Chart scroll for horizontal scrolling */
@@ -67,6 +130,13 @@
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
+  background: var(--pico-background, #fff);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
 }
 
 .mechanism-chart img {
@@ -414,8 +484,12 @@ nav[role='navigation'].chart-nav button {
 /* Chart box grid layout for dashboard */
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--greenova-spacing);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  align-items: stretch;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .chart-grid-2cols {
@@ -523,57 +597,24 @@ nav[role='navigation'].chart-nav button {
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
-  .chart-grid-2cols,
-  .chart-grid-3cols {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-grid-item-2x1,
-  .chart-grid-item-1x2,
-  .chart-grid-item-2x2 {
-    grid-column: auto;
-    grid-row: auto;
+  .chart-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 }
 
 @media (max-width: 768px) {
-  .chart-card {
-    min-width: 280px;
-    flex: 0 0 280px;
-  }
-
-  .chart-scroll {
-    padding-bottom: var(--greenova-padding-small);
-  }
-
   .chart-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .chart-row {
-    flex-direction: column;
-  }
-
-  .chart-col {
-    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
 @media (max-width: 576px) {
-  .chart-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  .chart-grid {
+    grid-template-columns: 1fr;
   }
 
-  .chart-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
-
-  .chart-legend {
-    flex-direction: column;
-    gap: 0.5rem;
+  .mechanism-chart figure {
+    min-height: 180px;
   }
 }
 

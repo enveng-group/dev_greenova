@@ -11,14 +11,13 @@ from typing import Any, TypedDict
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
-from django_htmx.http import HttpResponseClientRefresh, push_url
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +58,7 @@ class HomeView(TemplateView):
             request, "is_post_logout", False
         ):
             logger.debug("Redirecting authenticated user to dashboard")
-            return HttpResponseClientRefresh("/dashboard/")
+            return redirect("/dashboard/")
 
         # Get standard response
         response = super().get(request, *args, **kwargs)
@@ -71,11 +70,15 @@ class HomeView(TemplateView):
 
         # Handle HTMX-specific behavior
         if getattr(request, "htmx", None):
-            push_url(response, request.path)
+            # Set HX-Push-Url header directly
+            response["HX-Push-Url"] = request.path
 
             # Check for forced refresh after logout
             if request.session.pop("_force_refresh", False):
-                return HttpResponseClientRefresh()
+                # Return a response with HX-Refresh header
+                refresh_response = HttpResponse()
+                refresh_response["HX-Refresh"] = "true"
+                return refresh_response
 
         return response
 

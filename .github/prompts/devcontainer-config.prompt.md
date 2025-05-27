@@ -46,7 +46,7 @@ tools:
 
 ```json
 {
-  "python.defaultInterpreterPath": "/usr/local/bin/python",
+  "python.defaultInterpreterPath": "/workspaces/greenova/.venv/bin/python",
   "python.formatting.provider": "black",
   "python.linting.enabled": true,
   "python.linting.mypyEnabled": true,

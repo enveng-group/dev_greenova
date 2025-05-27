@@ -1,3 +1,10 @@
+"""
+Middleware for attaching the active company to the request object.
+
+This module provides middleware to manage the active company context for
+authenticated users in the Greenova company app.
+"""
+
 import logging
 
 from django.utils.deprecation import MiddlewareMixin
@@ -17,7 +24,12 @@ class ActiveCompanyMiddleware(MiddlewareMixin):
     of the company and handles cases where they are not.
     """
 
-    def process_request(self, request):
+    def process_request(self, request) -> None:
+        """Attach the active company to the request if the user is authenticated.
+
+        Args:
+            request: The HTTP request object.
+        """
         if request.user.is_authenticated:
             active_company_id = request.session.get("active_company_id")
             if active_company_id:

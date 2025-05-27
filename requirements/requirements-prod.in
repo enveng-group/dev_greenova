@@ -1,8 +1,5 @@
 -r requirements.in
 -c constraints.txt
 # Production server
-gunicorn
-uvicorn
-uvicorn-worker
 # Performance monitoring
 gprof2dot

@@ -1,3 +1,8 @@
+"""URL configuration for the users app in Greenova.
+
+Defines URL patterns for user profile management, listing, and admin management.
+"""
+
 from django.urls import path
 
 from . import views

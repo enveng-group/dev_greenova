@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 # Dependency management is handled via pip-tools and requirements/*.in files.
@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.autopep8]
 max_line_length = 88
-ignore = ["E501", "E302", "E305"]
+ignore = ["E302", "E305"]
 in-place = true
 recursive = true
 aggressive = 3
@@ -23,7 +23,7 @@ format_css = false
 format_js = false
 ignore = "H014,H015,T002"
 include = "**/*.html,**/*.jinja,**/*.djhtml"
-exclude = "**/node_modules/**,**/bower_components/**,**/vendors/**,**/static/**,**/media/**,**/migrations/**,**/__pycache__/**,**/.git/**,**/.venv/**,**/.env/**,**/.pytest_cache/**,**/.mypy_cache/**,**/build/**,**/dist/**,**/.eggs/**,**/docs/conf.py/**,**/requirements/**"
+exclude = "**/node_modules/**,**/bower_components/**,**/vendors/**,**/static/**,**/media/**,**/migrations/**,**/__pycache__/**,**/.git/**,**/.venv/**,**/.env/**,**/.pytest_cache/**,**/.mypy_cache/**,**/build/**,**/dist/**,**/.eggs/**,**/docs/conf.py/**,**/requirements/**,**/*.py,**/*.pyi"
 extension = "django-html,html,jinja"
 preserve_blank_lines = true
 preserve_leading_space = true
@@ -32,7 +32,7 @@ require_pragma = false
 [tool.mypy]
 python_version = "3.12"
 plugins = ["mypy_django_plugin.main"]
-exclude = ['^migrations/.*\.py$', '^tests/.*\.py$']
+exclude = ['^migrations/.*\.py$', '^tests/.*\.py$', '.*_pb2\.py$']
 mypy_path = "greenova/stubs"
 explicit_package_bases = true
 namespace_packages = true
@@ -41,7 +41,7 @@ packages = ["greenova"]
 ignore_missing_imports = true
 
 [tool.django-stubs]
-django_settings_module = "greenova.greenova.settings"
+django_settings_module = "greenova.settings"
 
 [tool.bandit]
 context_lines = 3
@@ -84,6 +84,7 @@ extend-exclude = [
     "build",
     "dist",
     ".eggs",
+    "*_pb2.py",
 ]
 
 [tool.ruff.lint]
@@ -100,7 +101,7 @@ select = [
     "PLW", # pylint
     "RUF", # Ruff-specific rules
 ]
-ignore = ["E501", "D203", "D212"]
+ignore = ["D203", "D212"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -112,10 +113,22 @@ max-statements = 50
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
-"tests/*" = ["S101", "S105", "S106", "S107"]
+"tests/*" = ["D100", "S105", "S106", "S107"]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
 skip-magic-trailing-comma = false
+
+[tool.beartype]
+# Enable runtime type checking for all modules in the greenova package
+package = "greenova"
+
+[tool.stubgen]
+# Directory to output generated stubs
+output = "greenova/stubs"
+
+[tool.stubtest]
+# Target package for stubtest
+package = "greenova"

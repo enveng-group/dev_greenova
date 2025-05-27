@@ -14,4 +14,5 @@ class ReportListView(LoginRequiredMixin, ListView):
     context_object_name = "reports"
 
     def get_queryset(self):
+        """Return the queryset of all reports for the list view."""
         return Report.objects.all()

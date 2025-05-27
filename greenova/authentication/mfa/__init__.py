@@ -1,3 +1,1 @@
-"""
-Authentication multi-factor authentication package.
-"""
+"""Authentication multi-factor authentication package."""

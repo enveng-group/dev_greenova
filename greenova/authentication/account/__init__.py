@@ -1,3 +1,1 @@
-"""
-Authentication account package.
-"""
+"""Authentication account package."""

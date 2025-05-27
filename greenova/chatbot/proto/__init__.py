@@ -1,2 +1,6 @@
-# Copyright 2025 Enveng Group.
-# SPDX-License-Identifier: 	AGPL-3.0-or-later
+"""
+Protocol buffer subpackage for the chatbot app.
+
+This package contains protocol buffer definitions and generated code for
+serializing and deserializing chatbot messages and responses.
+"""

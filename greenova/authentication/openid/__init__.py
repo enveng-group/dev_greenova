@@ -1,3 +1,1 @@
-"""
-Authentication OpenID integration package.
-"""
+"""Authentication OpenID integration package."""

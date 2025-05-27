@@ -109,9 +109,6 @@ The application follows a modular design with clear separation of concerns:
    python manage.py migrate
    ```
 
-> **Note:** All dependencies are managed with pip-tools and constraints.txt for
-> reproducibility. See requirements/README.md for details.
-
 7. Create a superuser:
 
    ```bash
@@ -123,6 +120,9 @@ The application follows a modular design with clear separation of concerns:
    ```bash
    python manage.py runserver
    ```
+
+> **Note:** All dependencies are managed with pip-tools and constraints.txt for
+> reproducibility. See requirements/README.md for details.
 
 ## Dependency Management
 
@@ -247,6 +247,15 @@ starting the development server.
 3. Add obligations related to your projects
 4. Assign responsibilities to users
 5. Monitor compliance status
+6. CRUD user profiles and company information 7 Drill down into mechanisms,
+   then into procedures, then into obligations for detailed information.
+   - Perform CRUD operations on obligations.
+7. When hovering over the overdue obligations card, a tooltip will display a
+   list of overdue obligations.
+   - Each overdue obligation will be listed and clickable, linking to its
+     detail page.
+   - You can edit individual obligation records from their detail pages.
+   - Full CRUD operations are supported for overdue obligations.
 
 ## 🤝 Contributing
 

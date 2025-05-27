@@ -1,0 +1,110 @@
+/* Plotly chart styling */
+
+.plotly-tooltip {
+  position: absolute;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  min-width: 200px;
+  max-width: 320px;
+  font-size: 0.9rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.plotly-tooltip.active {
+  opacity: 1;
+}
+
+/* Tooltip header styling */
+.obligation-insight-tooltip {
+  font-family: var(--font-family, system-ui, -apple-system, sans-serif);
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.tooltip-header h4 {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.tooltip-count {
+  background-color: #f3f3f3;
+  color: #333;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.9rem;
+}
+
+.tooltip-content {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tooltip-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tooltip-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  border-bottom: 1px dotted #f0f0f0;
+}
+
+.item-title {
+  font-weight: 500;
+  color: #333;
+}
+
+.item-date {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.tooltip-footer {
+  margin-top: 8px;
+  text-align: center;
+  padding-top: 4px;
+  border-top: 1px solid #eee;
+}
+
+.view-all {
+  font-size: 0.85rem;
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+/* Chart container styling */
+.plotly-chart {
+  width: 100%;
+  height: 300px;
+}
+
+/* Custom legend styling */
+.plotly-chart .legend {
+  font-family: var(--font-family, system-ui, -apple-system, sans-serif);
+  font-size: 0.85rem;
+}

@@ -1,0 +1,158 @@
+{% load static obligation_tags %}
+<div class="detail-section">
+  <h3 class="detail-section-title">
+Basic Information
+  </h3>
+  <div class="detail-grid">
+    <div class="detail-field">
+      <span class="detail-label">Obligation Number</span>
+      <div class="detail-value">
+{{ obligation.obligation_number }}
+      </div>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Environmental Aspect</span>
+      <div class="detail-value">
+{{ obligation.environmental_aspect|default:"Not specified" }}
+      </div>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Environmental Mechanism</span>
+      <div class="detail-value">
+{{ obligation.primary_environmental_mechanism.name|default:"Not specified" }}
+      </div>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Status</span>
+      <div class="detail-value">
+{{ obligation|display_status }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="detail-section">
+  <h3 class="detail-section-title">
+Obligation Details
+  </h3>
+  <div class="detail-grid">
+    <div class="detail-field full-width">
+      <span class="detail-label">Obligation Description</span>
+      <div class="detail-value textarea">
+{{ obligation.obligation|linebreaks|default:"No description provided" }}
+      </div>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Procedure</span>
+      <div class="detail-value">
+{{ obligation.procedure|default:"Not specified" }}
+      </div>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Responsibility</span>
+      <div class="detail-value">
+{{ obligation.responsibility|display_responsibility }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="detail-section">
+  <h3 class="detail-section-title">
+Timeline & Dates
+  </h3>
+  <div class="detail-grid">
+    <div class="detail-field">
+      <span class="detail-label">Action Due Date</span>
+      <div class="detail-value">
+{{ obligation.action_due_date|format_due_date }}
+      </div>
+    </div>
+    <div class="detail-field">
+      <span class="detail-label">Close Out Date</span>
+      <div class="detail-value">
+{{ obligation.close_out_date|format_due_date|default:"Not set" }}
+      </div>
+    </div>
+    {% if obligation.recurring_obligation %}
+      <div class="detail-field">
+        <span class="detail-label">Recurring Frequency</span>
+        <div class="detail-value">
+{{ obligation.recurring_frequency|default:"Not specified" }}
+        </div>
+      </div>
+      <div class="detail-field">
+        <span class="detail-label">Next Forecasted Date</span>
+        <div class="detail-value">
+{{ obligation.recurring_forcasted_date|format_due_date|default:"Not calculated" }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if obligation.general_comments or obligation.supporting_information or obligation.compliance_comments %}
+  <div class="detail-section">
+    <h3 class="detail-section-title">
+Comments & Additional Information
+    </h3>
+    <div class="detail-grid">
+      {% if obligation.general_comments %}
+        <div class="detail-field full-width">
+          <span class="detail-label">General Comments</span>
+          <div class="detail-value textarea">
+{{ obligation.general_comments|linebreaks }}
+          </div>
+        </div>
+      {% endif %}
+      {% if obligation.supporting_information %}
+        <div class="detail-field full-width">
+          <span class="detail-label">Supporting Information</span>
+          <div class="detail-value textarea">
+{{ obligation.supporting_information|linebreaks }}
+          </div>
+        </div>
+      {% endif %}
+      {% if obligation.compliance_comments %}
+        <div class="detail-field full-width">
+          <span class="detail-label">Compliance Comments</span>
+          <div class="detail-value textarea">
+{{ obligation.compliance_comments|linebreaks }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% if obligation.inspection %}
+  <div class="detail-section">
+    <h3 class="detail-section-title">
+Inspection Details
+    </h3>
+    <div class="detail-grid">
+      <div class="detail-field">
+        <span class="detail-label">Inspection Required</span>
+        <div class="detail-value">
+{{ obligation.inspection|yesno:"Yes,No" }}
+        </div>
+      </div>
+      {% if obligation.inspection_frequency %}
+        <div class="detail-field">
+          <span class="detail-label">Inspection Frequency</span>
+          <div class="detail-value">
+{{ obligation.inspection_frequency }}
+          </div>
+        </div>
+      {% endif %}
+      {% if obligation.site_or_desktop %}
+        <div class="detail-field">
+          <span class="detail-label">Inspection Type</span>
+          <div class="detail-value">
+{{ obligation.site_or_desktop }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

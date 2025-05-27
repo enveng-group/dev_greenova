@@ -1,3 +1,8 @@
+<!--
+  NOTE: The #htmx-indicator element is provided by base.html and must remain outside any htmx swap targets.
+  Do NOT include #htmx-indicator in any content that may be swapped by htmx, or remove it from the DOM.
+  See docs/style_guide.md and docs/resources/js/htmx.md for details.
+ -->
 {% extends "base.html" %}
 
 {% load static %}
@@ -8,11 +13,6 @@
 {% block title %}
 Dashboard | Greenova
 {% endblock title %}
-
-{% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/dist/layouts/sidebar.css' %}" />
-  <link rel="stylesheet" href="{% static 'css/dist/components/chat.css' %}" />
-{% endblock extra_css %}
 
 {% block navbar_extra %}
   <!-- Dashboard-specific navbar content -->
@@ -56,7 +56,7 @@ Dashboard | Greenova
 {% include "dashboard/components/sidebar.html" %}
 
     <!-- Semantic breadcrumbs navigation for accessibility and navigation -->
-        {# Render breadcrumbs for both authenticated and anonymous users #}
+                {# Render breadcrumbs for both authenticated and anonymous users #}
 {% include "layouts/_breadcrumbs.html" %}
 
     <!-- Main dashboard content area -->

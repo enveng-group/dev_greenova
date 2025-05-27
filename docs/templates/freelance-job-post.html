@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>freelance-job-post.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description"
+          content="Freelance Django developer job post for Greenova, an open-source environmental compliance platform. Help build, refactor, and deliver a robust Django web application for tracking environmental obligations and compliance." />
+    <meta name="keywords"
+          content="Django, freelance, job, Greenova, environmental compliance, Python, PicoCSS, django-hyperscript, htmx, open source, developer, web application, obligations, environmental management" />
+
+    <style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+    </style>
+
+    <style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+    </style>
+
+    <style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page" /> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+@media print {
+  a[href]:after { content: " (" attr(href) ")"; }
+  pre, code { background: #f8f8f8 !important; }
+}
+    </style>
+
+  </head>
+  <body>
+    <main>
+      <h1 id="freelance-django-developer-needed-greenova-environmental-compliance-platform">
+Freelance Django Developer Needed: Greenova Environmental Compliance Platform
+      </h1>
+      <h2 id="project-overview">
+Project Overview
+      </h2>
+      <p>
+Greenova is an open-source Django web application for environmental
+professionals to track, manage, and report on environmental obligations and
+compliance requirements. The platform is modular, extensible, and currently at
+the proof-of-concept stage. We are seeking a Django development firm or
+experienced freelancers to help advance the project to production readiness.
+      </p>
+      <h2 id="project-goals">
+Project Goals
+      </h2>
+      <ul>
+        <li>
+Deliver a robust, maintainable proof-of-concept for stakeholders and
+outsourcing partners
+        </li>
+        <li>
+Achieve high code quality, documentation, and test coverage
+        </li>
+        <li>
+Implement features and improvements as outlined in the
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/ROADMAP.md">project roadmap</a>
+and open issues
+        </li>
+      </ul>
+      <h2 id="technical-stack--skills-required">
+Technical Stack &amp; Skills Required
+      </h2>
+      <ul>
+        <li>
+          <strong>Backend</strong>: Python 3.12.9, Django 5.2
+        </li>
+        <li>
+          <strong>Frontend</strong>: Semantic HTML5, PicoCSS (classless), django-hyperscript,
+django-htmx
+        </li>
+        <li>
+          <strong>Database</strong>: SQLite3 (development/production)
+        </li>
+        <li>
+          <strong>Other</strong>: Protobuf3 for data serialization, SASS/PostCSS,
+TypeScript/AssemblyScript (as needed)
+        </li>
+        <li>
+          <strong>Testing</strong>: pytest, pytest-django, pytest-cov, pytest-xdist
+        </li>
+        <li>
+          <strong>Linting/Formatting</strong>: ruff, pylint, djlint, markdownlint, stylelint,
+eslint, shellcheck, ruff-format, isort, prettier, shfmt
+        </li>
+        <li>
+          <strong>Type Checking</strong>: mypy (strict), beartype (runtime), stubgen/stubtest for
+stubs
+        </li>
+      </ul>
+      <h2 id="project-status">
+Project Status
+      </h2>
+      <ul>
+        <li>
+Modular Django project with specialized apps
+          (<a href="https://github.com/enveng-group/dev_greenova/tree/main/greenova">see codebase</a>)
+        </li>
+        <li>
+Core models, views, and forms for obligation tracking
+        </li>
+        <li>
+Initial API endpoints and admin interfaces
+        </li>
+        <li>
+Comprehensive documentation:
+          <ul>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/README.md">README</a>
+            </li>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/ARCHITECTURE.md">Architecture</a>
+            </li>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/API_DOCUMENTATION.md">API Documentation</a>
+            </li>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/TESTING.md">Testing</a>
+            </li>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/ROADMAP.md">Roadmap</a>
+            </li>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/style_guide.md">Style Guide</a>
+            </li>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/FAQ.md">FAQ</a>
+            </li>
+            <li>
+              <a href="https://github.com/enveng-group/dev_greenova/blob/main/CONTRIBUTING.md">CONTRIBUTING</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+Open issues and pull requests:
+          <a href="https://github.com/enveng-group/dev_greenova/issues">GitHub Issues</a>,
+          <a href="https://github.com/enveng-group/dev_greenova/pulls">Pull Requests</a>
+        </li>
+      </ul>
+      <h2 id="scope-of-work">
+Scope of Work
+      </h2>
+      <ol>
+        <li>
+          <p>
+Log in using the credentials created during setup
+          </p>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+Login template and backend implemented; user model extended.
+            </li>
+            <li>
+MFA and advanced error handling not yet present.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Integrate django-allauth for multi-factor authentication (MFA).
+            </li>
+            <li>
+Refactor login template for accessibility (ARIA, focus management) and
+PicoCSS/classless style.
+            </li>
+            <li>
+Add runtime type checking and Google-style docstrings to authentication
+views.
+            </li>
+            <li>
+Write unit tests for login/logout flows.
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>Login flow:
+  IF user visits login page THEN
+    credentials := get user input
+    IF credentials are valid THEN
+      login user
+      redirect to dashboard
+    ELSE
+      show error and retry
+</div></code></pre>
+      <ol start="2">
+        <li>
+          <p>
+Create projects and define environmental mechanisms
+          </p>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+Project and Membership models implemented; EnvironmentalMechanism model
+exists.
+            </li>
+            <li>
+Admin CRUD available; user-facing CRUD limited.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Add user-facing forms/views for project and mechanism creation.
+            </li>
+            <li>
+Enforce project-mechanism relationships.
+            </li>
+            <li>
+Refactor models for strict type annotations and docstrings.
+            </li>
+            <li>
+Add PicoCSS styling and accessibility to forms.
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>Project and mechanism relationships:
+  Project has many Memberships
+  Project has many EnvironmentalMechanisms
+  Membership links User to Project
+  EnvironmentalMechanism belongs to Project
+</div></code></pre>
+      <ol start="3">
+        <li>
+          <p>
+Add obligations related to your projects
+          </p>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+Obligation model and signals implemented; linked to projects and
+mechanisms.
+            </li>
+            <li>
+Admin CRUD present; user-facing CRUD limited.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Implement user-facing obligation creation/editing forms.
+            </li>
+            <li>
+Enforce validation (due dates, project linkage).
+            </li>
+            <li>
+Add PicoCSS and accessibility improvements to forms.
+            </li>
+            <li>
+Refactor for type annotations and docstrings.
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>Obligation relationships:
+  Project has many Obligations
+  EnvironmentalMechanism has many Obligations
+  Obligation belongs to Project and EnvironmentalMechanism
+</div></code></pre>
+      <ol start="4">
+        <li>
+          <p>
+Assign responsibilities to users
+          </p>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+ResponsibilityAssignment model links users to obligations/projects.
+            </li>
+            <li>
+Admin interface present; user-facing assignment UI minimal.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Add user-facing forms/views for assigning responsibilities.
+            </li>
+            <li>
+Enforce permission checks (only managers/admins can assign).
+            </li>
+            <li>
+Refactor for type annotations, docstrings, and runtime type checking.
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>Responsibility assignment:
+  ResponsibilityAssignment links User to Obligation
+</div></code></pre>
+      <ol start="5">
+        <li>
+          <p>
+Monitor compliance status
+          </p>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+Dashboard shows compliance cards and status summaries.
+            </li>
+            <li>
+Status logic in models and signals.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Add filtering and drill-down for compliance status.
+            </li>
+            <li>
+Refactor dashboard for accessibility and semantic HTML.
+            </li>
+            <li>
+Add ARIA live regions for dynamic updates.
+            </li>
+            <li>
+Improve code documentation and type safety.
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>Compliance dashboard logic:
+  status_cards := fetch compliance data
+  display status cards
+  IF user clicks card THEN
+    show detail drilldown
+  ELSE
+    wait for interaction
+</div></code></pre>
+      <ol start="6">
+        <li>
+          <p>
+CRUD user profiles and company information
+          </p>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+UserProfile, Company, and Membership models implemented.
+            </li>
+            <li>
+Admin CRUD present; user-facing CRUD limited.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Add user-facing forms/views for profile and company CRUD.
+            </li>
+            <li>
+Enforce permissions (users edit own profile, admins manage companies).
+            </li>
+            <li>
+Refactor for type annotations, docstrings, and runtime type checking.
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>User profile and company relationships:
+  User has UserProfile
+  User has many Memberships
+  Company has many Memberships
+  Membership links User to Company
+</div></code></pre>
+      <ol start="7">
+        <li>
+          <p>
+Drill down into mechanisms, then into procedures, then into obligations for
+detailed information
+          </p>
+          <ul>
+            <li>
+Perform CRUD operations on obligations
+            </li>
+          </ul>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+Models for mechanisms, procedures, and obligations exist.
+            </li>
+            <li>
+Some detail views present; drill-down navigation limited.
+            </li>
+            <li>
+CRUD for obligations mostly in admin.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Implement user-facing drill-down navigation (mechanism → procedure →
+obligation).
+            </li>
+            <li>
+Add detail views and breadcrumbs for navigation.
+            </li>
+            <li>
+Procuedure charts need to display in interactive grid format.
+            </li>
+            <li>
+Add filtering and sorting options for obligations.
+            </li>
+            <li>
+Refactor for accessibility and semantic HTML.
+            </li>
+            <li>
+Add CRUD forms/views for obligations.
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>Drill-down navigation:
+  mechanism := select mechanism
+  procedures := list procedures for mechanism
+  procedure := select procedure
+  obligations := list obligations for procedure
+  view or edit obligation
+</div></code></pre>
+      <ol start="8">
+        <li>
+          <p>
+When hovering over the overdue obligations card, a tooltip will display a
+list of overdue obligations
+          </p>
+          <p>
+            <strong>Status:</strong>
+          </p>
+          <ul>
+            <li>
+Dashboard card for overdue obligations exists.
+            </li>
+            <li>
+No tooltip or interactive list on hover; obligation detail/edit pages
+exist in admin.
+            </li>
+          </ul>
+          <p>
+            <strong>Gaps &amp; Improvements:</strong>
+          </p>
+          <ul>
+            <li>
+Implement accessible tooltip using django-hyperscript or htmx.
+            </li>
+            <li>
+List overdue obligations in tooltip, each linking to detail page.
+            </li>
+            <li>
+Add user-facing CRUD for overdue obligations.
+            </li>
+            <li>
+Refactor for accessibility (keyboard, ARIA).
+            </li>
+          </ul>
+          <p>
+            <strong>Pseudocode:</strong>
+          </p>
+        </li>
+      </ol>
+      <pre class="hljs"><code><div>Overdue obligations tooltip:
+  IF hover over overdue card THEN
+    overdue_list := get overdue obligations
+    show tooltip with overdue_list
+    IF click obligation in overdue_list THEN
+      go to detail page
+      edit obligation
+</div></code></pre>
+      <ul>
+        <li>
+Each overdue obligation will be listed and clickable, linking to its detail
+page
+        </li>
+        <li>
+You can edit individual obligation records from their detail pages
+        </li>
+        <li>
+Full CRUD operations are supported for overdue obligations
+        </li>
+      </ul>
+      <ol start="9">
+        <li>
+Generate charts and data visualizations using matplotlib and Plotly:
+          <ul>
+            <li>
+Integrate static and interactive charts into dashboard and reporting views
+(compliance status, overdue obligations, project summaries)
+            </li>
+            <li>
+Use matplotlib for server-side static reporting (SVG charts for reports,
+emails, server-rendered templates)
+            </li>
+            <li>
+Use Plotly (Python SDK) for client-side, interactive, user-driven data
+exploration and compliance tracking
+            </li>
+            <li>
+Use protobuf3 and django-pb-model for data serialization and transport
+between backend and frontend, especially for chart data and API endpoints
+            </li>
+            <li>
+Ensure all visualizations are accessible (ARIA, keyboard navigation, color
+contrast) and follow project style guidelines
+            </li>
+            <li>
+All documentation for charting and data visualization features must be
+written in reStructuredText (RST) format
+            </li>
+          </ul>
+        </li>
+        <li>
+Implement and maintain Protocol Buffer (protobuf3) schemas:
+          <ul>
+            <li>
+Use protobuf3 for data serialization between backend and any external
+systems or services
+            </li>
+            <li>
+Ensure all protocol buffer definitions are versioned, documented, and
+tested
+            </li>
+            <li>
+Integrate protobuf workflows into the Django project as per the
+architecture and requirements
+            </li>
+          </ul>
+        </li>
+        <li>
+Review and refactor existing codebase for maintainability, readability, and
+compliance with project standards
+        </li>
+        <li>
+Implement missing features and resolve open issues as prioritized in the
+roadmap and GitHub tracker
+        </li>
+        <li>
+Write and improve unit/integration tests to meet coverage requirements
+        </li>
+        <li>
+Generate and validate type stubs for all internal modules
+        </li>
+        <li>
+Ensure all code passes automated pre-commit checks (ruff, mypy, pylint,
+djlint, etc.)
+        </li>
+        <li>
+Update and expand documentation as needed (RST format)
+        </li>
+        <li>
+Prepare the project for handoff to a larger development team or firm
+        </li>
+      </ol>
+      <hr />
+      <p>
+For each item, actionable tasks include:
+      </p>
+      <ul>
+        <li>
+Refactor code for strict type annotations, Google-style docstrings, and
+beartype decorators
+        </li>
+        <li>
+Ensure all templates use semantic HTML, PicoCSS, and are accessible (WCAG 2.1
+AA)
+        </li>
+        <li>
+Add/expand unit and integration tests for all user-facing flows
+        </li>
+        <li>
+Document all new/updated modules and workflows per project standards
+        </li>
+        <li>
+Use diagrams and pseudocode in documentation and issues to clarify logic and
+data relationships
+        </li>
+      </ul>
+      <h2 id="deliverables">
+Deliverables
+      </h2>
+      <ul>
+        <li>
+Refactored, well-documented Django codebase
+        </li>
+        <li>
+Passing pre-commit checks and CI pipeline
+        </li>
+        <li>
+80%+ test coverage (100% for critical modules)
+        </li>
+        <li>
+Complete and validated type stubs (.pyi) and py.typed markers
+        </li>
+        <li>
+Updated documentation
+          (<a href="https://github.com/enveng-group/dev_greenova/blob/main/README.md">README</a>,
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/API_DOCUMENTATION.md">API</a>,
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/ARCHITECTURE.md">Architecture</a>,
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/TESTING.md">Testing</a>,
+etc.)
+        </li>
+        <li>
+Summary report of changes, recommendations, and next steps
+        </li>
+      </ul>
+      <h2 id="timeline--hiring-process">
+Timeline &amp; Hiring Process
+      </h2>
+      <ul>
+        <li>
+          <strong>Anticipated hire date:</strong> Immediately (project kick-off scheduled for
+Monday, 26th May 2025)
+        </li>
+        <li>
+          <strong>Project due date:</strong> 6th June 2025
+        </li>
+        <li>
+Applications reviewed for technical fit, code quality, and communication
+        </li>
+        <li>
+Shortlisted candidates may be asked to complete a small code review or test
+task
+        </li>
+        <li>
+Final selection based on technical merit, communication, and alignment with
+project goals
+        </li>
+      </ul>
+      <h2 id="application-instructions">
+Application Instructions
+      </h2>
+      <ul>
+        <li>
+Include a brief summary of your relevant experience and approach to Django
+code quality
+        </li>
+        <li>
+Reference similar projects or contributions (links preferred)
+        </li>
+        <li>
+Propose an initial review and onboarding plan
+        </li>
+        <li>
+Indicate your availability and estimated timeline for the first phase
+        </li>
+      </ul>
+      <h2 id="references--resources">
+References &amp; Resources
+      </h2>
+      <ul>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/README.md">Project README</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/CONTRIBUTING.md">Contributing Guide</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/API_DOCUMENTATION.md">API Documentation</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/ARCHITECTURE.md">Architecture</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/TESTING.md">Testing</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/ROADMAP.md">Roadmap</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/style_guide.md">Style Guide</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/FAQ.md">FAQ</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/issues">GitHub Issues</a>
+        </li>
+        <li>
+          <a href="https://github.com/enveng-group/dev_greenova/pulls">GitHub Pull Requests</a>
+        </li>
+      </ul>
+      <h2 id="additional-information">
+Additional Information
+      </h2>
+      <ul>
+        <li>
+License: AGPL-3.0
+        </li>
+        <li>
+Author: Adrian Gallo
+          (<a href="mailto:agallo@enveng-group.com.au">agallo@enveng-group.com.au</a>)
+        </li>
+        <li>
+All work must comply with project documentation, style guides, and
+accessibility requirements
+        </li>
+        <li>
+For questions, review the
+          <a href="https://github.com/enveng-group/dev_greenova/blob/main/docs/FAQ.md">FAQ</a> or
+open an issue on GitHub
+        </li>
+      </ul>
+      <hr />
+      <p>
+        <em>This job post was generated based on the Greenova project documentation,
+roadmap, and
+          <a href="https://www.upwork.com/resources/how-to-post-job-on-upwork">Upwork job posting best practices</a>.
+                        For full project context, see the linked documentation and GitHub repository.</em>
+      </p>
+    </main>
+  </body>
+</html>

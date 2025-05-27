@@ -1,3 +1,1 @@
-"""
-Authentication social account integration package.
-"""
+"""Authentication social account integration package."""

@@ -1,17 +1,27 @@
+"""Views for managing environmental obligations.
+
+This module provides views for creating, reading, updating, deleting,
+and listing environmental obligations. It also includes views for
+handling related functionalities like evidence uploads.
+"""
+
 import logging
 import os
 from datetime import date, timedelta
-from typing import Any
+from typing import Any, TypeVar, cast
 
+from beartype import beartype
 from company.models import CompanyMembership
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-from django.core.paginator import Paginator
 from django.db.models import Q, QuerySet
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_control
@@ -19,35 +29,21 @@ from django.views.decorators.vary import vary_on_headers
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 from django.views.generic.edit import DeleteView
 from django_htmx.http import trigger_client_event
+from forms import EvidenceUploadForm, ObligationForm
 from mechanisms.models import EnvironmentalMechanism
+from obligations.models import Obligation, ObligationEvidence
 from projects.models import Project, ProjectMembership
-
-from .forms import EvidenceUploadForm, ObligationForm
-from .models import Obligation, ObligationEvidence
-from .utils import is_obligation_overdue
+from utils import is_obligation_overdue
 
 # Ensure the Django settings module is correctly configured.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "greenova.settings")
 
-
 logger = logging.getLogger(__name__)
 
-# Add type hints or mock objects for Obligation and EnvironmentalMechanism to
-# resolve the missing `objects` and `DoesNotExist` members.
-Obligation.objects = Obligation.objects if hasattr(Obligation, "objects") else None
-Obligation.DoesNotExist = (
-    Obligation.DoesNotExist if hasattr(Obligation, "DoesNotExist") else None
-)
-EnvironmentalMechanism.objects = (
-    EnvironmentalMechanism.objects
-    if hasattr(EnvironmentalMechanism, "objects")
-    else None
-)
-EnvironmentalMechanism.DoesNotExist = (
-    EnvironmentalMechanism.DoesNotExist
-    if hasattr(EnvironmentalMechanism, "DoesNotExist")
-    else None
-)
+MAX_EVIDENCE_FILES = 5
+
+# Type variable for models
+T = TypeVar('T')
 
 
 @method_decorator(cache_control(max_age=300), name="dispatch")
@@ -59,17 +55,20 @@ class ObligationSummaryView(LoginRequiredMixin, View):
     dynamically loading filtered obligations.
     """
 
-    def get(self, request, *args, **kwargs):
+    @beartype
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests for obligation summary.
 
         When accessed via HTMX from procedure charts, this returns filtered obligations.
         Otherwise, it provides the full obligation summary view.
 
         Args:
-            request: The HTTP request
+            request: The HTTP request.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
-            Rendered template with appropriate context
+            Rendered template with appropriate context.
         """
         # Check if this is a filtered request from procedure charts
         status = request.GET.get("status")
@@ -78,19 +77,37 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         if status and procedure and project_id:
             try:
-                # Filter obligations based on parameters
-                obligations = Obligation.objects.filter(project_id=project_id)
+                # Fix for attr-defined error
+                obligations = Obligation.objects.filter(
+                    project_id=project_id
+                )
 
                 # Apply status filter (handle overdue special case)
-                if status == "overdue":
-                    # Find obligations that are overdue
-                    filtered_ids = []
-                    for obligation in obligations:
-                        if is_obligation_overdue(obligation):
-                            filtered_ids.append(obligation.obligation_number)
-                    obligations = obligations.filter(obligation_number__in=filtered_ids)
-                else:
-                    obligations = obligations.filter(status=status)
+                if status:
+                    # Always treat status as a list
+                    if isinstance(status, str):
+                        status_list = [status]
+                    else:
+                        status_list = list(status)
+                    # Map normalized status to canonical model value
+                    status_map = {
+                        "not_started": "not started",
+                        "not started": "not started",
+                        "in_progress": "in progress",
+                        "in progress": "in progress",
+                        "completed": "completed",
+                        "overdue": "overdue",
+                    }
+                    canonical_statuses = [
+                        status_map.get(
+                            s.replace("_", " ").lower(),
+                            s.replace("_", " ").lower(),
+                        )
+                        for s in status_list
+                    ]
+                    obligations = self._filter_by_status(
+                        obligations, canonical_statuses
+                    )
 
                 # Apply procedure filter (adjusted for TextField)
                 if procedure:
@@ -115,7 +132,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
         # For regular requests, proceed with full view
         context = self.get_context_data(**kwargs)
 
-        if self.request.htmx:
+        if self.request.htmx:  # type: ignore[attr-defined]
             return render(
                 request, "obligations/components/_obligations_summary.html", context
             )
@@ -124,20 +141,36 @@ class ObligationSummaryView(LoginRequiredMixin, View):
             request, "obligations/components/_obligations_summary.html", context
         )
 
-    def _filter_by_status(self, queryset: QuerySet, status_values: list) -> QuerySet:
+    @beartype
+    def _filter_by_status(
+        self, queryset: QuerySet[Obligation], status_values: list[str]
+    ) -> QuerySet[Obligation]:
         """Filter obligations by status, handling 'overdue' as a special case.
 
         Args:
-            queryset: Base queryset
-            status_values: List of status values to filter by
+            queryset: Base queryset.
+            status_values: List of status values to filter by.
 
         Returns:
-            Filtered queryset
+            Filtered queryset.
         """
+        # Normalize all status values to canonical model values
+        status_map = {
+            "not_started": "not started",
+            "not started": "not started",
+            "in_progress": "in progress",
+            "in progress": "in progress",
+            "completed": "completed",
+            "overdue": "overdue",
+        }
+        canonical_statuses = [
+            status_map.get(s.replace("_", " ").lower(), s.replace("_", " ").lower())
+            for s in status_values
+        ]
         # Handle the special case of 'overdue' which isn't a database field
-        if "overdue" in status_values:
+        if "overdue" in canonical_statuses:
             # Remove overdue to handle separately
-            standard_statuses = [s for s in status_values if s != "overdue"]
+            standard_statuses = [s for s in canonical_statuses if s != "overdue"]
 
             # Get obligations that match standard statuses
             if standard_statuses:
@@ -145,85 +178,74 @@ class ObligationSummaryView(LoginRequiredMixin, View):
             else:
                 filtered_by_status = queryset.none()
 
-            # Find overdue obligations
-            overdue_ids = []
-            for obligation in queryset:
-                if is_obligation_overdue(obligation):
-                    overdue_ids.append(obligation.obligation_number)
+            # Find overdue obligations: action_due_date < today and status != completed
+            today = timezone.now().date()
+            overdue_queryset = queryset.filter(action_due_date__lt=today).exclude(
+                status="completed"
+            )
 
-            if overdue_ids:
-                # Combine with standard status filter
-                overdue_queryset = queryset.filter(obligation_number__in=overdue_ids)
+            # Combine with standard status filter
+            if overdue_queryset.exists():
                 return filtered_by_status.union(overdue_queryset)
             return filtered_by_status
 
         # Standard status filtering
-        if status_values:
-            return queryset.filter(status__in=status_values)
+        if canonical_statuses:
+            return queryset.filter(status__in=canonical_statuses)
         return queryset
 
-    def apply_filters(self, queryset: QuerySet, filters: dict[str, Any]) -> QuerySet:
+    @beartype
+    def apply_filters(
+        self, queryset: QuerySet[Obligation], filters: dict[str, Any]
+    ) -> QuerySet[Obligation]:
         """Apply all filters to the queryset.
 
         Args:
-            queryset: Base queryset
-            filters: Dictionary of filter values
+            queryset: Base queryset.
+            filters: Dictionary of filter values.
 
         Returns:
-            Filtered queryset
+            Filtered queryset.
         """
         if not queryset:
             return queryset
-
-        # Apply status filter
         if filters.get("status"):
             queryset = self._filter_by_status(queryset, filters["status"])
-
-        # Apply phase filter
         if filters.get("phase"):
             queryset = queryset.filter(project_phase__in=filters["phase"])
-
-        # Apply search filter
         if filters.get("search"):
             search_term = filters["search"]
             queryset = queryset.filter(
                 Q(obligation_number__icontains=search_term)
                 | Q(obligation__icontains=search_term)
             )
-
-        # Apply date filter
         if filters.get("date_filter"):
             date_filter = filters["date_filter"]
             today = date.today()
-
             if date_filter == "past_due":
-                # Past due - action_due_date is in the past and status isn't completed
                 queryset = queryset.filter(
                     action_due_date__lt=today, status__ne="completed"
                 )
             elif date_filter == "14days":
-                # Due in next 14 days
                 future_date = today + timedelta(days=14)
                 queryset = queryset.filter(
                     action_due_date__gte=today, action_due_date__lte=future_date
                 )
             elif date_filter == "30days":
-                # Due in next 30 days
                 future_date = today + timedelta(days=30)
                 queryset = queryset.filter(
                     action_due_date__gte=today, action_due_date__lte=future_date
                 )
-            # Add more date filters as needed
-
         return queryset
 
+    @beartype
     def get_filters(self) -> dict[str, Any]:
         """Extract and normalize filter parameters from request.
 
         Returns:
-            Dictionary of filter parameters
+            Dictionary of filter parameters.
         """
-        filters = {}
+        filters: dict[str, Any] = {}
 
         # Get query parameters
         status = self.request.GET.getlist("status") or self.request.GET.getlist(
@@ -253,153 +275,145 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         return filters
 
-    def get_context_data(self, **kwargs):
+    @beartype
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Get context data for the template.
 
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
         Returns:
-            Context dictionary for rendering template
+            Context dictionary for rendering template.
         """
-        context = {}
+        context: dict[str, Any] = {}
         mechanism_id = self.request.GET.get("mechanism_id")
 
         try:
-            # Check if we're coming from user profile (without mechanism_id)
             if not mechanism_id:
-                # Get overdue obligations for the current user
-                user = self.request.user
-                user_roles = []
+                return self._get_overdue_data_for_user(context)
 
-                # Get user's company roles using the CompanyMembership model directly
-                company_memberships = CompanyMembership.objects.filter(user=user)
-                if company_memberships:
-                    user_roles = list(
-                        company_memberships.values_list("role", flat=True).distinct()
-                    )
-
-                # Get projects where user is a member using the ProjectMembership model directly
-                project_ids = []
-                project_memberships = ProjectMembership.objects.filter(user=user)
-                if project_memberships:
-                    project_ids = list(
-                        project_memberships.values_list("project_id", flat=True)
-                    )
-
-                # Find obligations that match user's roles and are in their projects
-                if user_roles and project_ids:
-                    queryset = Obligation.objects.filter(
-                        responsibility__in=user_roles, project_id__in=project_ids
-                    )
-
-                    # Find overdue obligations
-                    overdue_obligations = []
-                    for obligation in queryset:
-                        if is_obligation_overdue(obligation):
-                            overdue_obligations.append(obligation.obligation_number)
-
-                    if overdue_obligations:
-                        queryset = queryset.filter(
-                            obligation_number__in=overdue_obligations
-                        )
-                        # Create simple context for displaying just overdue obligations
-                        context.update(
-                            {
-                                "obligations": queryset,
-                                "total_count": len(queryset),
-                                "filters": {"status": ["overdue"]},
-                                "show_overdue_only": True,
-                            }
-                        )
-
-                        # Add user permissions
-                        context["user_can_edit"] = self.request.user.has_perm(
-                            "obligations.change_obligation"
-                        )
-
-                        return context
-                    else:
-                        context["error"] = "No overdue obligations found for your role"
-                        return context
-                else:
-                    context["error"] = (
-                        "You don't have any company roles or project memberships"
-                    )
-                    return context
-
-            # Regular mechanism-based view (existing code)
-            mechanism = get_object_or_404(EnvironmentalMechanism, id=mechanism_id)
-
-            # Get filters and base queryset
-            filters = self.get_filters()
-            queryset = Obligation.objects.filter(
-                primary_environmental_mechanism=mechanism_id
+            # Process mechanism-specific data
+            mechanism = EnvironmentalMechanism.objects.get(id=mechanism_id)
+            # Fix for attr-defined error
+            obligations = Obligation.objects.filter(
+                primary_environmental_mechanism=mechanism
             )
 
-            # Apply filters and sorting
-            queryset = self.apply_filters(queryset, filters)
-
-            sort_field = filters["sort"]
-            if filters["order"] == "desc":
-                sort_field = f"-{sort_field}"
-
-            queryset = queryset.order_by(sort_field)
-
-            # Paginate results
-            paginator = Paginator(queryset, 15)
-            page_number = self.request.GET.get("page", 1)
-            page_obj = paginator.get_page(page_number)
-
-            # Update context
             context.update(
                 {
-                    "obligations": page_obj,
-                    "page_obj": page_obj,
-                    "project": mechanism,
-                    "mechanism_id": mechanism_id,
-                    "filters": filters,
-                    "total_count": paginator.count,
+                    "obligations": obligations,
+                    "total_count": obligations.count(),
+                    "mechanism": mechanism,
+                    "filters": {"mechanism_id": mechanism_id},
                 }
             )
 
-            # Get unique project phases
-            phases = (
-                Obligation.objects.filter(primary_environmental_mechanism=mechanism_id)
-                .exclude(project_phase__isnull=True)
-                .exclude(project_phase="")
-                .values_list("project_phase", flat=True)
-                .distinct()
+            # Add edit permission - fix for union-attr error
+            user = cast(AbstractUser, self.request.user)
+            context["user_can_edit"] = user.has_perm("obligations.change_obligation")
+            return context
+
+        except Exception as e:
+            context["error"] = str(e)
+            return context
+
+    def _get_overdue_data_for_user(self, context: dict[str, Any]) -> dict[str, Any]:
+        """Get overdue obligations data for the current user.
+
+        Args:
+            context: The existing context dictionary.
+
+        Returns:
+            Updated context dictionary.
+        """
+        user = self.request.user
+
+        # Get company memberships and roles
+        company_memberships = CompanyMembership.objects.filter(user=user)
+        user_roles = list(company_memberships.values_list("role", flat=True).distinct())
+
+        # Get project memberships and IDs
+        project_memberships = ProjectMembership.objects.filter(user=user)
+        project_ids = list(project_memberships.values_list("project_id", flat=True))
+
+        # If user has neither company roles nor project memberships, show error
+        if not (user_roles or project_ids):
+            context["error"] = "You don't have any company roles or project memberships"
+            return context
+
+        # If user has project memberships, show overdue obligations for those projects
+        if project_ids:
+            queryset = Obligation.objects.filter(
+                project_id__in=project_ids
             )
-            context["phases"] = list({phase.strip() for phase in phases})
-
-            # Add user permissions
-            context["user_can_edit"] = self.request.user.has_perm(
-                "obligations.change_obligation"
+            # Optionally filter by responsibility if user_roles exist
+            if user_roles:
+                queryset = queryset.filter(responsibility__in=user_roles)
+            overdue_obligations = [
+                obligation.obligation_number
+                for obligation in queryset
+                if is_obligation_overdue(obligation)
+            ]
+            if not overdue_obligations:
+                context["error"] = "No overdue obligations found for your projects"
+                return context
+            queryset = queryset.filter(obligation_number__in=overdue_obligations)
+        # If only company roles, show overdue obligations for those roles
+        elif user_roles:
+            queryset = Obligation.objects.filter(
+                responsibility__in=user_roles
             )
+            overdue_obligations = [
+                obligation.obligation_number
+                for obligation in queryset
+                if is_obligation_overdue(obligation)
+            ]
+            if not overdue_obligations:
+                context["error"] = "No overdue obligations found for your role"
+                return context
+            queryset = queryset.filter(obligation_number__in=overdue_obligations)
+        else:
+            context["error"] = "No overdue obligations found."
+            return context
 
-        except Exception as exc:
-            logger.error("Error in ObligationSummaryView: %s", str(exc))
-            context["error"] = f"Error loading obligations: {exc!s}"
-
+        context.update(
+            {
+                "obligations": queryset,
+                "total_count": len(queryset),
+                "filters": {"status": ["overdue"]},
+                "show_overdue_only": True,
+            }
+        )
+        # Fix for user permission check
+        user = cast(AbstractUser, self.request.user)
+        context["user_can_edit"] = user.has_perm("obligations.change_obligation")
         return context
 
 
 class TotalOverdueObligationsView(LoginRequiredMixin, View):
     """View to get the count of overdue obligations for a project."""
 
-    def get(self, request, *args, **kwargs):
+    @beartype
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
         """Handle GET request to count overdue obligations.
 
         Args:
-            request: HTTP request with project_id parameter
+            request: HTTP request with project_id parameter.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
-            JsonResponse with count or error
+            JsonResponse with count or error.
         """
         project_id = request.GET.get("project_id")
 
         if not project_id:
             return JsonResponse({"error": "Project ID is required"}, status=400)
 
-        obligations = Obligation.objects.filter(project_id=project_id)
+        # Fix for attr-defined error
+        obligations = Obligation.objects.filter(
+            project_id=project_id
+        )
         overdue_count = sum(
             1 for obligation in obligations if is_obligation_overdue(obligation)
         )
@@ -414,7 +428,16 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
     form_class = ObligationForm
     template_name = "obligations/form/new_obligation.html"
 
-    def get_form_kwargs(self):
+    @beartype
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """Return the keyword arguments for instantiating the form.
+
+        Adds the project to the form kwargs if a project_id is present
+        in the request's GET parameters.
+
+        Returns:
+            A dictionary of keyword arguments.
+        """
         kwargs = super().get_form_kwargs()
         project_id = self.request.GET.get("project_id")
         if project_id:
@@ -425,21 +448,31 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
                 pass
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    @beartype
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """Insert the project_id into the context dict.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         project_id = self.request.GET.get("project_id")
         if project_id:
             context["project_id"] = project_id
         return context
 
-    def form_valid(self, form):
+    @beartype
+    def form_valid(self, form: ObligationForm) -> HttpResponse:
         """Process valid form submission with error handling.
 
         Args:
-            form: The validated form
+            form: The validated form.
 
         Returns:
-            Redirect to appropriate page on success
+            Redirect to appropriate page on success.
         """
         try:
             # Save the form
@@ -460,14 +493,29 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         except ValidationError as exc:
             logger.error("Validation error in ObligationCreateView: %s", str(exc))
             messages.error(self.request, f"Validation failed: {exc}")
-            return self.form_invalid(form)
+            # Rely on type inference from get_context_data's return type
+            context = self.get_context_data(form=form)
+            return self.render_to_response(context)
 
         except Exception as exc:
             logger.exception("Error creating obligation: %s", str(exc))
             messages.error(self.request, f"Failed to create obligation: {exc!s}")
-            return self.form_invalid(form)
+            # Rely on type inference from get_context_data's return type
+            context = self.get_context_data(form=form)
+            return self.render_to_response(context)
 
-    def form_invalid(self, form):
+    @beartype
+    def form_invalid(self, form: ObligationForm) -> HttpResponse:
+        """Handle invalid form submissions.
+
+        Adds an error message and re-renders the form with errors.
+
+        Args:
+            form: The invalid form.
+
+        Returns:
+            An HttpResponse rendering the form with errors.
+        """
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
@@ -480,11 +528,133 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "obligation"
     pk_url_kwarg = "obligation_number"
 
-    def get_context_data(self, **kwargs):
+    @beartype
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the view with object attribute to avoid mypy errors.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+        super().__init__(*args, **kwargs)
+        self.object = None  # Keep mypy happy
+
+    @beartype
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """Insert the project_id into the context dict.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         # Add project_id to context for back navigation
-        context["project_id"] = self.object.project_id
+        if self.object:
+            context["project_id"] = self.object.project_id
         return context
+
+    @beartype
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle GET requests for obligation details.
+
+        Args:
+            request: The HTTP request.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Response with rendered template or JSON data.
+        """
+        self.object = self.get_object()
+
+        # Check if this is an AJAX request for modal content
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            # Get available mechanisms for the form
+            available_mechanisms = EnvironmentalMechanism.objects.all()
+
+            # Render the editable modal content template
+            modal_content = render_to_string(
+                "obligations/components/_obligation_editable_modal_content.html",
+                {
+                    "obligation": self.object,
+                    "available_mechanisms": available_mechanisms,
+                },
+                request=request,
+            )
+
+            # Format long values for obligation dates to avoid line length issues
+            obl_number = self.object.obligation_number
+            proj_name = self.object.project.name
+            status_disp = self.object.get_status_display()
+
+            return JsonResponse(
+                {
+                    "obligation_number": obl_number,
+                    "project_name": proj_name,
+                    "status_display": status_disp,
+                    "content": modal_content,
+                }
+            )
+
+        # Regular request - return the full page
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    @beartype
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle POST requests for updating obligations via AJAX.
+
+        Args:
+            request: The HTTP request.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            JsonResponse with success/error data or standard response.
+        """
+        self.object = self.get_object()
+
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            form = ObligationForm(request.POST, instance=self.object)
+
+            if form.is_valid():
+                obligation = form.save()
+
+                # Extract and format values to avoid long lines
+                action_date = None
+                if obligation.action_due_date:
+                    action_date = obligation.action_due_date.isoformat()
+
+                close_date = None
+                if obligation.close_out_date:
+                    close_date = obligation.close_out_date.isoformat()
+
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "message": "Obligation updated successfully",
+                        "obligation": {
+                            "obligation_number": obligation.obligation_number,
+                            "environmental_aspect": obligation.environmental_aspect,
+                            "obligation": obligation.obligation,
+                            "procedure": obligation.procedure,
+                            "responsibility": obligation.responsibility,
+                            "action_due_date": action_date,
+                            "close_out_date": close_date,
+                            "general_comments": obligation.general_comments,
+                            "supporting_information": obligation.supporting_information,
+                            "compliance_comments": obligation.compliance_comments,
+                            "status_display": obligation.get_status_display(),
+                        },
+                    }
+                )
+            else:
+                return JsonResponse({"success": False, "errors": form.errors})
+
+        # Fall back to regular form handling for non-AJAX requests
+        return self.render_to_response(self.get_context_data())
 
 
 class ObligationUpdateView(LoginRequiredMixin, UpdateView):
@@ -496,54 +666,108 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
     slug_field = "obligation_number"
     slug_url_kwarg = "obligation_number"
 
-    def get_template_names(self):
-        if self.request.htmx:
+    @beartype
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the view with object attribute to avoid mypy errors.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+        super().__init__(*args, **kwargs)
+        self.object = None  # Keep mypy happy
+
+    @beartype
+    def get_template_names(self) -> list[str]:
+        """Return a list of template names to be used for the request.
+
+        Uses a partial template if the request is an HTMX request.
+
+        Returns:
+            A list of template names.
+        """
+        if hasattr(self.request, "htmx") and self.request.htmx:
             return ["obligations/form/partial_update_obligation.html"]
         return [self.template_name]
 
-    def get_form_kwargs(self):
+    @beartype
+    def get_form_kwargs(self) -> dict[str, Any]:
+        """Return the keyword arguments for instantiating the form.
+
+        Adds the project associated with the obligation to the form kwargs.
+
+        Returns:
+            A dictionary of keyword arguments.
+        """
         kwargs = super().get_form_kwargs()
-        kwargs["project"] = self.object.project
+        if self.object:
+            kwargs["project"] = self.object.project
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    @beartype
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        """Insert the project_id into the context dict.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
-        context["project_id"] = self.object.project_id
+        if self.object:
+            context["project_id"] = self.object.project_id
         return context
 
+    @beartype
     def _update_mechanism_counts(
-        self, old_mechanism: EnvironmentalMechanism, updated_obligation: Obligation
-    ):
+        self,
+        old_mechanism: EnvironmentalMechanism | None,
+        updated_obligation: Obligation,
+    ) -> None:
         """Update obligation counts for mechanisms.
 
         Args:
-            old_mechanism: Previous mechanism (if any)
-            updated_obligation: The updated obligation
+            old_mechanism: Previous mechanism (if any).
+            updated_obligation: The updated obligation.
         """
-        if (
-            old_mechanism
-            and old_mechanism != updated_obligation.primary_environmental_mechanism
-        ):
-            old_mechanism.update_obligation_counts()
-            if updated_obligation.primary_environmental_mechanism:
-                mech = updated_obligation.primary_environmental_mechanism
-                mech.update_obligation_counts()
-        elif updated_obligation.primary_environmental_mechanism:
-            updated_obligation.primary_environmental_mechanism.update_obligation_counts()
+        # Get the new mechanism from the updated obligation
+        new_mech = getattr(updated_obligation, "primary_environmental_mechanism", None)
+        updated_new_mech_flag = False
 
-    def form_valid(self, form):
+        # If there was an old mechanism and it's different from the new one
+        if old_mechanism and old_mechanism != new_mech:
+            # Update old mechanism counts first
+            if hasattr(old_mechanism, "update_obligation_counts"):
+                old_mechanism.update_obligation_counts()
+            # Then update new mechanism if it exists
+            if new_mech and hasattr(new_mech, "update_obligation_counts"):
+                new_mech.update_obligation_counts()
+                updated_new_mech_flag = True
+
+        # If new_mech hasn't been updated yet, and it's valid, update it.
+        # This covers cases where old_mechanism was None or same as new_mech.
+        if (
+            not updated_new_mech_flag
+            and new_mech
+            and hasattr(new_mech, "update_obligation_counts")
+        ):
+            new_mech.update_obligation_counts()
+
+    @beartype
+    def form_valid(self, form: ObligationForm) -> HttpResponse:
         """Process the form submission with HTMX support.
 
         Args:
-            form: The validated form
+            form: The validated form.
 
         Returns:
-            Appropriate response based on request type
+            Appropriate response based on request type.
         """
         try:
             old_mechanism = None
-            if self.object.primary_environmental_mechanism:
-                old_mechanism = self.object.primary_environmental_mechanism
+            if self.object and hasattr(self.object, "primary_environmental_mechanism"):
+                old_mechanism = getattr(self.object, "primary_environmental_mechanism")
 
             # Save the updated obligation
             obligation = form.save()
@@ -555,7 +779,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
             )
 
             # If this is an HTMX request, return appropriate headers
-            if self.request.htmx:
+            if hasattr(self.request, "htmx") and self.request.htmx:
                 response = HttpResponse("Obligation updated successfully")
                 # Explicitly trigger a refresh for dependent components
                 trigger_client_event(
@@ -573,14 +797,27 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         except ValidationError as exc:
             logger.error("Validation error updating obligation: %s", str(exc))
             messages.error(self.request, f"Validation failed: {exc}")
-            return self.form_invalid(form)
+            error_response: HttpResponse = self.form_invalid(form)
+            return error_response
 
         except Exception as exc:
             logger.exception("Error updating obligation: %s", str(exc))
             messages.error(self.request, f"Failed to update obligation: {exc!s}")
-            return self.form_invalid(form)
+            exception_response: HttpResponse = self.form_invalid(form)
+            return exception_response
 
-    def form_invalid(self, form):
+    @beartype
+    def form_invalid(self, form: ObligationForm) -> HttpResponse:
+        """Handle invalid form submissions.
+
+        Adds an error message and re-renders the form with errors.
+
+        Args:
+            form: The invalid form.
+
+        Returns:
+            An HttpResponse rendering the form with errors.
+        """
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
@@ -591,23 +828,26 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
     model = Obligation
     pk_url_kwarg = "obligation_number"
 
-    def post(self, request, *args, **kwargs):
+    @beartype
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
         """Handle POST request for obligation deletion.
 
         Args:
-            request: The HTTP request
+            request: The HTTP request.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments containing 'obligation_number'.
 
         Returns:
-            JsonResponse with success or error status
+            JsonResponse with success or error status.
         """
         try:
-            self.object = self.get_object()
-            project_id = self.object.project_id
-            mechanism = self.object.primary_environmental_mechanism
+            obj = self.get_object()
+            project_id = obj.project_id
+            mechanism = getattr(obj, "primary_environmental_mechanism", None)
             obl_number = kwargs.get("obligation_number")
 
             # Delete the obligation
-            self.object.delete()
+            obj.delete()
             logger.info("Obligation %s deleted successfully", obl_number)
 
             # Update mechanism counts
@@ -638,14 +878,15 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
 class ToggleCustomAspectView(View):
     """View for toggling custom aspect field visibility."""
 
-    def get(self, request):
+    @beartype
+    def get(self, request: HttpRequest) -> HttpResponse:
         """Handle GET request for toggling custom aspect field.
 
         Args:
-            request: HTTP request with environmental_aspect parameter
+            request: HTTP request with environmental_aspect parameter.
 
         Returns:
-            Rendered partial template
+            Rendered partial template.
         """
         aspect = request.GET.get("environmental_aspect")
         show_field = aspect == "Other"
@@ -663,27 +904,38 @@ class ObligationListView(LoginRequiredMixin, ListView):
     template_name = "obligations/obligations_list.html"
     context_object_name = "obligations"
 
-    def get_queryset(self):
+    @beartype
+    def get_queryset(self) -> QuerySet[Obligation]:
+        """Return the queryset for listing obligations.
+
+        Returns:
+            A queryset of all Obligation objects.
+        """
         return Obligation.objects.all()
 
 
-def upload_evidence(request, obligation_id):
+@beartype
+def upload_evidence(request: HttpRequest, obligation_id: int) -> HttpResponse:
     """Handle evidence file uploads for an obligation.
 
     Args:
-        request: HTTP request
-        obligation_id: ID of the obligation to attach evidence to
+        request: HTTP request.
+        obligation_id: ID of the obligation to attach evidence to.
 
     Returns:
-        Redirect to appropriate page
+        Redirect to appropriate page.
     """
     obligation = get_object_or_404(Obligation, pk=obligation_id)
+
+    # Check how many evidence files already exist
     evidence_count = ObligationEvidence.objects.filter(obligation=obligation).count()
 
-    # Check if obligation already has 5 files
-    if evidence_count >= 5:
+    # Check if obligation already has MAX_EVIDENCE_FILES files
+    if evidence_count >= MAX_EVIDENCE_FILES:
         messages.error(
-            request, "This obligation already has the maximum of 5 evidence files"
+            request,
+            f"This obligation already has the maximum of {MAX_EVIDENCE_FILES} "
+            f"evidence files",
         )
         return redirect("obligation_detail", obligation_id=obligation_id)
 
@@ -705,3 +957,5 @@ def upload_evidence(request, obligation_id):
             "form": form,
         },
     )
+
+# API classes have been moved to api_views.py

@@ -25,29 +25,12 @@ Procedure Analysis
     </h2>
   </header>
   {% if error %}
-
     <div class="notice error" role="alert">
       <p>
 {{ error }}
       </p>
     </div>
   {% elif procedure_charts %}
-
-    <!-- New Responsibility Distribution Section -->
-    <section aria-labelledby="responsibility-heading" class="charts-section">
-      <h2 id="responsibility-heading">
-Responsibility Distribution
-      </h2>
-      <article class="overall-chart">
-        <figure>
-          <figcaption>
-Obligations by Responsibility
-          </figcaption>
-          {{ responsibility_chart|safe }}
-
-        </figure>
-      </article>
-    </section>
     <section aria-labelledby="charts-heading" class="charts-section">
       <h2 id="charts-heading">
 Procedures by Status
@@ -76,7 +59,6 @@ Procedures by Status
         {% for proc in procedure_charts %}
 {% procedure_chart_card proc %}
         {% endfor %}
-
       </div>
       <!-- Data Table -->
       <article class="data-table">
@@ -111,7 +93,6 @@ Total
             </thead>
             <tbody>
               {% for item in table_data %}
-
                 <tr>
                   <td>
 {{ item.name|format_procedure_name }}
@@ -133,14 +114,12 @@ Total
                   </td>
                 </tr>
               {% endfor %}
-
             </tbody>
           </table>
         </div>
       </article>
     </section>
   {% else %}
-
     <div class="notice" role="status">
       <p>
 No procedure data available for this mechanism.

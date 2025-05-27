@@ -1,3 +1,11 @@
+"""
+Forms for the chatbot app.
+
+This module defines forms for creating conversations and training data in the
+chatbot application.
+"""
+from typing import ClassVar
+
 from django import forms
 
 from .models import Conversation, TrainingData
@@ -5,20 +13,39 @@ from .models import Conversation, TrainingData
 
 class ConversationForm(forms.ModelForm):
     """Form for creating a new conversation."""
+
     class Meta:
+        """Meta options for ConversationForm.
+
+        Specifies the model and fields for the form.
+        """
         model = Conversation
-        fields = ['title']
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Conversation Title'})
+        fields: ClassVar[list[str]] = ["title"]
+        widgets: ClassVar[dict[str, forms.Widget]] = {
+            "title": forms.TextInput(
+                attrs={"class": "input", "placeholder": "Conversation Title"}
+            )
         }
+
 
 class TrainingDataForm(forms.ModelForm):
     """Form for adding new training data."""
+
     class Meta:
+        """Meta options for TrainingDataForm.
+
+        Specifies the model and fields for the form.
+        """
         model = TrainingData
-        fields = ['question', 'answer', 'category']
-        widgets = {
-            'question': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Enter question'}),
-            'answer': forms.Textarea(attrs={'rows': 5, 'placeholder': 'Enter answer'}),
-            'category': forms.TextInput(attrs={'placeholder': 'Category (optional)'})
+        fields: ClassVar[list[str]] = ["question", "answer", "category"]
+        widgets: ClassVar[dict[str, forms.Widget]] = {
+            "question": forms.Textarea(
+                attrs={"rows": 3, "placeholder": "Enter question"}
+            ),
+            "answer": forms.Textarea(
+                attrs={"rows": 5, "placeholder": "Enter answer"}
+            ),
+            "category": forms.TextInput(
+                attrs={"placeholder": "Category (optional)"}
+            ),
         }

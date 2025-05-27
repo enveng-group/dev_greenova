@@ -1,5 +1,6 @@
 # Core Django dependencies
 # Django # Let this be managed by constraints.txt
+django-allauth
 django-appconf
 django-browser-reload
 django-cors-headers
@@ -8,13 +9,13 @@ django-debug-toolbar
 django-htmx
 django-hyperscript
 django-matplotlib
+django-pandas
 django-pb-model
 django-pdb
 django-select2
 django-silk
 django-tailwind
 django-template-partials
-django-pandas
 
 # Authentication and Security
 # authlib # Let this be managed by constraints.txt

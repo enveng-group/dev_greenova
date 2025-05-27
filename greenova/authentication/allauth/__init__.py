@@ -1,3 +1,1 @@
-"""
-Authentication allauth integration package.
-"""
+"""Authentication allauth integration package."""

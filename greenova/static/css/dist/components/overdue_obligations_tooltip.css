@@ -1,0 +1,146 @@
+/* Refactored: All hardcoded values replaced with project variables, redundant styles removed, PicoCSS classless conventions enforced. */
+
+/* Overdue Obligations Tooltip/Overlay */
+
+.overdue-obligations-trigger {
+  position: absolute;
+  top: var(--greenova-spacing);
+  right: var(--greenova-spacing);
+  background: transparent;
+  border: none;
+  color: var(--greenova-text-primary-dark);
+  cursor: pointer;
+  padding: var(--greenova-spacing-small);
+  border-radius: var(--greenova-border-radius-small);
+  transition: all var(--greenova-transition-normal, 0.3s)
+    var(--greenova-transition-function, ease);
+  opacity: 0.7;
+}
+
+.overdue-obligations-trigger:hover,
+.overdue-obligations-trigger:focus {
+  opacity: 1;
+  background: var(--greenova-text-tertiary-dark);
+  color: var(--greenova-background-secondary);
+  outline: 2px solid var(--color-blue-primary);
+  outline-offset: 2px;
+}
+
+.overdue-obligations-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--greenova-z-modal, 1000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--greenova-transition-normal, 0.3s)
+    var(--greenova-transition-function, ease);
+}
+
+.overdue-obligations-container.expanded {
+  opacity: 1;
+  visibility: visible;
+}
+
+.overdue-obligations-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(
+    0 0 0 / 50%
+  ); /* Consider adding --greenova-modal-backdrop if used elsewhere */
+  cursor: pointer;
+}
+
+.overdue-obligations-content {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: var(--greenova-background-secondary);
+  color: var(--greenova-text-primary-dark);
+  border-radius: var(--greenova-border-radius);
+  box-shadow: var(--greenova-shadow-large);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.9);
+  transition: transform var(--greenova-transition-normal, 0.3s)
+    var(--greenova-transition-function, ease);
+}
+
+.overdue-obligations-container.expanded .overdue-obligations-content {
+  transform: scale(1);
+}
+
+.overdue-obligations-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--greenova-padding-large);
+  border-bottom: 1px solid var(--greenova-border-color);
+  background: var(--greenova-background-primary);
+}
+
+.overdue-obligations-title {
+  margin: 0;
+  font-size: var(--greenova-font-size-xl);
+  font-weight: var(--greenova-font-weight-semibold, 600);
+  color: var(--greenova-text-primary-dark);
+}
+
+.overdue-obligations-close {
+  background: transparent;
+  border: none;
+  color: var(--greenova-text-tertiary-dark);
+  cursor: pointer;
+  padding: var(--greenova-spacing-small);
+  border-radius: var(--greenova-border-radius-small);
+  transition: all var(--greenova-transition-fast, 0.2s)
+    var(--greenova-transition-function, ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overdue-obligations-close:hover,
+.overdue-obligations-close:focus {
+  background: var(--greenova-text-tertiary-dark);
+  color: var(--greenova-background-secondary);
+  outline: 2px solid var(--color-blue-primary);
+  outline-offset: 2px;
+}
+
+.overdue-obligations-body {
+  flex: 1;
+  padding: var(--greenova-padding-large);
+  overflow-y: auto;
+  min-height: 200px;
+}
+
+@media (max-width: 768px) {
+  .overdue-obligations-content {
+    width: 95%;
+    max-height: 90vh;
+    margin: var(--greenova-spacing);
+  }
+
+  .overdue-obligations-header {
+    padding: var(--greenova-padding);
+  }
+
+  .overdue-obligations-body {
+    padding: var(--greenova-padding);
+  }
+
+  .overdue-obligations-title {
+    font-size: var(--greenova-font-size-lg);
+  }
+}

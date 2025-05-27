@@ -35,14 +35,18 @@ select = [
     "PL",   # pylint
     "RUF",  # Ruff-specific
 ]
+fix = true
+unsafe-fixes = true
 ```
 
-### Black Configuration
-
-- Line length: 88 characters
-- Python target version: 3.12
-- Use single quotes for strings
-- Include trailing commas
+- Ruff-format is the only accepted Python formatter. All code must pass
+  `ruff check` and `ruff format`.
+- All public Python functions and classes must use @beartype decorators for
+  runtime type checking.
+- All Python modules must have up-to-date .pyi stub files (stubgen) and pass
+  stubtest.
+- All public modules, functions, classes, and methods must have Google style
+  docstrings.
 
 ### isort Configuration
 
@@ -53,6 +57,9 @@ line_length = 88
 include_trailing_comma = True
 use_parentheses = True
 ensure_newline_before_comments = True
+multi_line_output = 3
+combine_as_imports = True
+force_sort_within_sections = True
 ```
 
 ## Type Checking
@@ -65,12 +72,27 @@ python_version = 3.12
 plugins = ["mypy_django_plugin.main"]
 strict = true
 disallow_untyped_defs = true
-check_untyped_defs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_return_any = true
-strict_optional = true
+disallow_incomplete_defs = true
+ignore_missing_imports = true
+explicit_package_bases = true
+namespace_packages = true
 ```
+
+- All code must pass mypy with no errors.
+- All type stubs must be kept in sync and validated with stubtest.
+
+## Shell Script Tools
+
+### Shellcheck
+
+- All shell scripts must pass shellcheck with no warnings
+- Enable all optional checks
+- Use POSIX compatibility mode
+
+### shfmt
+
+- All shell scripts must be formatted with shfmt
+- Use 2-space indentation and POSIX compatibility
 
 ## Django Settings
 
@@ -95,9 +117,9 @@ strict_optional = true
 
 ```bash
 DJANGO_SETTINGS_MODULE="greenova.settings"
-DJANGO_SECRET_KEY=<secret>
+DJANGO_SECRET_KEY=your-secret-key
 DJANGO_DEBUG="True/False"
-DJANGO_ALLOWED_HOSTS=<hosts>
+DJANGO_ALLOWED_HOSTS=your.hosts.example.com
 ```
 
 ### Optional Variables
@@ -112,7 +134,6 @@ NODE_ENV
 
 ### Hooks
 
-- Black for Python formatting
 - Ruff for linting and import sorting
 - MyPy for type checking
 - ESLint for JavaScript

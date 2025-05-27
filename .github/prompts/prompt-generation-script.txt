@@ -1,4 +1,11 @@
-using prompt-generation.prompt.md for instructions and formatting, please create a new prompt in gpt-4-1.prompt.md to resolve the below issue:
+using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
 
 
 i have added the following files in the landing app that may assist with solving the logic probnlem: commons.py constants.py context_processors.py middleware.py mixins.py permissions.py serializers.py signals.py tasks.py validators.py and templatetags/landing_tags.py
+
+
+this prompt gpt-4.1.prompt.md has a lot of tasks for agent to do, therefore, still maintaining the strict layout of the prompt template using prompt-generation.prompt.md as guidance, would it be possible to break down this macro prompt into smaller micro prompts so i can pass to copilot agent sequentially after the previous step and aceeptance criteria is completed and implemented, please generate all the micro templates one by one in sequential order i need to run in the file batch-prompts.prompt.md.
+
+run git add . && pre-commit run --files greenova/mechanism/figures.py and iterate until resolved with no errors, use semantic-thinking mcp server to think and use Context7 mcp server to fetch documentation references for context and use filesystem mcp server to read and write files
+
+iterate `pre-commit --run-file greenova/obligations/views.py` until everything passes and no errors, remember we can also use `stubgen` and `stubtest` to assist with mypy strict type checking. Stub files can be found in `greenova/stubs/greenova/obligations/views.pyi`, please use these stub files to assist with the type checking and ensure that all functions and methods are properly typed and documented.

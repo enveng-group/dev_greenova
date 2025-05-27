@@ -1,12 +1,7 @@
+from collections.abc import Callable
 from typing import (
     Any,
-    Callable,
-    List,
-    Optional,
-    Tuple,
-    Type,
     TypeVar,
-    Union,
 )
 
 # Type variables
@@ -16,10 +11,10 @@ _T = TypeVar("_T")
 # Core pytest functions and decorators
 def fixture(
     scope: str = "function",
-    params: Optional[List[Any]] = None,
+    params: list[Any] | None = None,
     autouse: bool = False,
-    ids: Optional[List[str]] = None,
-    name: Optional[str] = None,
+    ids: list[str] | None = None,
+    name: str | None = None,
 ) -> Callable[[_F], _F]: ...
 
 class MarkDecorator:
@@ -41,21 +36,21 @@ class MarkGenerator:
 # Export the mark instance - make sure there's only one definition
 mark: MarkGenerator
 
-class raises:
+class RAISES:
     def __init__(
         self,
-        expected_exception: Union[Type[BaseException], Tuple[Type[BaseException], ...]],
-        match: Optional[str] = None,
+        expected_exception: type[BaseException] | tuple[type[BaseException], ...],
+        match: str | None = None,
         *,
-        message: Optional[str] = None,
+        message: str | None = None,
     ) -> None: ...
     def __enter__(self) -> None: ...
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> bool: ...
 
 class LineMatcher:
     def __init__(self) -> None: ...
-    def fnmatch_lines(self, lines: List[str]) -> None: ...
-    def re_match_lines(self, lines: List[str]) -> None: ...
+    def fnmatch_lines(self, lines: list[str]) -> None: ...
+    def re_match_lines(self, lines: list[str]) -> None: ...
     def str(self) -> str: ...  # Simple method definition
 
 # Magic assert

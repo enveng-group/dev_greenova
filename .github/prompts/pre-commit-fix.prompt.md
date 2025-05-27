@@ -1,5 +1,6 @@
 ---
-description: Fix errors found with pre-commit and ensure code quality for Greenova.
+description:
+  Fix errors found with pre-commit and ensure code quality for Greenova.
 mode: agent
 
 tools:
@@ -83,32 +84,51 @@ for the Greenova project. Address issues identified in the pre-commit checks.
 
 9. Iterate until resolved.
 
+- All Python code must use ruff-format for formatting (do not use black).
+- All public Python functions and classes must use @beartype decorators for
+  runtime type checking.
+- All Python modules must have up-to-date .pyi stub files (stubgen) and pass
+  stubtest.
+- All public modules, functions, classes, and methods must have Google style
+  docstrings.
+- All code must pass ruff, mypy, and all configured linters and type checkers.
+- All shell scripts must be formatted with shfmt and pass shellcheck with no
+  warnings.
+- All code must be formatted and linted according to the strictest settings of
+  the configured tools.
+- All lines must not exceed 88 characters for Python, and must follow the line
+  length rules for other file types as per .editorconfig and tool configs.
+- Use pydoc to automate documentation generation where possible.
+- Use context7 to look up project-specific configuration and standards.
+- Use fetch/context7 for external library documentation as needed.
+- Iterate until all acceptance criteria are met.
+
 ## Pre-commit Fixes for Common Issues
 
 Fixing Double Quotes (Q000)
 
-- Use black or autopep8 to automatically fix string quotes.
+- Use ruff-format to automatically fix string quotes.
 - Example command:
 
-      autopep8 --in-place --aggressive --aggressive <file>
+      ruff --fix [file]
 
 Adding Missing Docstrings (D100, D104, D200, D205)
 
 - Use pydocstyle to identify missing or improper docstrings.
 - Example command:
 
-      pydocstyle <file>
+      pydocstyle [file]
 
 Resolving Line Too Long (E501)
 
-- Use black to reformat code to adhere to line length limits.
+- Use ruff-format to reformat code to adhere to line length limits.
 - Example command:
 
-      black --line-length 88 <file>
+      ruff --fix [file]
 
 Removing Unused Variables or Imports (F401, F841)
 
 - Use autoflake to automatically remove unused imports and variables.
 - Example command:
 
-      autoflake --in-place --remove-unused-variables --remove-all-unused-imports <file>
+      autoflake --in-place --remove-unused-variables --remove-all-unused-imports [file]

@@ -12,8 +12,9 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 from mechanisms.models import EnvironmentalMechanism
+from obligations.constants import STATUS_IN_PROGRESS, STATUS_NOT_STARTED
 from obligations.models import Obligation
-from projects.models import Project
+from stubs.projects.models import Project
 
 HTTP_OK = 200
 
@@ -29,21 +30,21 @@ def test_obligation_summary_view(authenticated_client: Client):
     obligation1 = Obligation.objects.create(
         obligation_number="OBL001",
         obligation="Test Obligation 1",
-        status="not_started",
+        status=STATUS_NOT_STARTED,
         primary_environmental_mechanism=mechanism,
         project=project,
     )
     obligation2 = Obligation.objects.create(
         obligation_number="OBL002",
         obligation="Test Obligation 2",
-        status="in_progress",
+        status=STATUS_IN_PROGRESS,
         primary_environmental_mechanism=mechanism,
         project=project,
     )
 
     # Test filtering by status
     url = reverse("obligations:summary") + (
-        f"?status=not_started&mechanism_id={mechanism.id}"
+        f"?status=not started&mechanism_id={mechanism.id}"
     )
     response = authenticated_client.get(url)
     assert response.status_code == HTTP_OK

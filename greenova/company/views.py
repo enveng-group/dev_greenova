@@ -1,16 +1,22 @@
+"""
+Views for the company app in Greenova.
+
+This module defines Django views for the company app.
+"""
+
 import logging
 from typing import Any
 
+from beartype import beartype
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import models
 from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from .forms import (
@@ -28,16 +34,20 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-def is_company_admin(user: User) -> bool:
-    """Check if user is a company admin or superuser."""
-    if not user.is_authenticated:
+@beartype
+def is_company_admin(user: object) -> bool:
+    """Check if user is a company admin or superuser.
+
+    Args:
+        user: The user to check.
+
+    Returns:
+        True if the user is a company admin or superuser, False otherwise.
+    """
+    if not hasattr(user, "is_authenticated") or not user.is_authenticated:
         return False
-
-    # Superusers can manage all companies
-    if user.is_superuser:
+    if getattr(user, "is_superuser", False):
         return True
-
-    # Check if user is an admin in any company
     return CompanyMembership.objects.filter(
         user=user, role__in=["owner", "admin"]
     ).exists()
@@ -56,53 +66,45 @@ class CompanyListView(LoginRequiredMixin, CompanyAccessMixin, ListView):
     context_object_name = "companies"
     paginate_by = 10
 
-    def get_queryset(self):
+    def get_queryset(self) -> models.QuerySet:
         """Return filtered companies the user has access to."""
-        # Start with the base queryset of companies the user has access to
+        # User.companies is a ManyToManyField added dynamically
         queryset = self.request.user.companies.all()
-
-        # Get filter parameters from GET
         form = CompanySearchForm(self.request.GET)
         if form.is_valid():
             search = form.cleaned_data.get("search")
             company_type = form.cleaned_data.get("company_type")
             industry = form.cleaned_data.get("industry")
             is_active = form.cleaned_data.get("is_active")
-
-            # Apply filters
             if search:
                 queryset = queryset.filter(
                     Q(name__icontains=search) | Q(description__icontains=search)
                 )
-
             if company_type:
                 queryset = queryset.filter(company_type=company_type)
-
             if industry:
                 queryset = queryset.filter(industry=industry)
-
             if is_active:
                 queryset = queryset.filter(is_active=True)
-
-        # Add member count annotation
         return queryset.annotate(member_count=Count("users"))
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Add search form and can_create flag to context."""
         context = super().get_context_data(**kwargs)
         context["search_form"] = CompanySearchForm(self.request.GET)
         context["can_create"] = is_company_admin(self.request.user)
         return context
 
-    def get(self, request, *args, **kwargs):
+    def get(
+            self,
+            request: HttpRequest,
+            *args: object,
+            **kwargs: object) -> HttpResponse:
         """Handle GET requests, including HTMX requests."""
-        self.object_list = self.get_queryset()
-        context = self.get_context_data()
-
-        # For HTMX requests, return only the partial list
-        if hasattr(request, "htmx") and request.htmx:
+        object_list = self.get_queryset()
+        context = self.get_context_data(object_list=object_list)
+        if hasattr(request, "htmx") and getattr(request, "htmx", False):
             return render(request, "company/partials/company_list.html", context)
-
         return super().get(request, *args, **kwargs)
 
 
@@ -118,14 +120,18 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
     template_name = "company/company_form.html"
     success_url = reverse_lazy("company:list")
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(
+            self,
+            request: HttpRequest,
+            *args: object,
+            **kwargs: object) -> HttpResponse:
         """Check if user has permission to create a company."""
         if not is_company_admin(self.request.user):
             messages.error(request, "You don't have permission to create companies.")
             return redirect("company:list")
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object) -> dict[str, object]:
         """Add action to context."""
         context = super().get_context_data(**kwargs)
         context["action"] = "Create"
@@ -133,7 +139,7 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
         context["legend"] = "Company Information"
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: CompanyForm) -> HttpResponse:
         """Save form and add the user as an owner."""
         logger.info("Form validation successful")
         response = super().form_valid(form)
@@ -149,7 +155,7 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
         )
         return response
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: CompanyForm) -> HttpResponse:
         """Log form validation errors."""
         logger.error("Form validation failed: %s", form.errors)
         return super().form_invalid(form)
@@ -168,11 +174,13 @@ class CompanyUpdateView(LoginRequiredMixin, CompanyAccessMixin, UpdateView):
     context_object_name = "company"
     pk_url_kwarg = "company_id"
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         """Return URL to redirect after successful update."""
-        return reverse_lazy("company:detail", kwargs={"company_id": self.object.id})
+        return str(
+            reverse_lazy("company:detail", kwargs={"company_id": self.object.id})
+        )
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: object) -> dict[str, object]:
         """Add action to context."""
         context = super().get_context_data(**kwargs)
         context["action"] = "Update"
@@ -180,7 +188,7 @@ class CompanyUpdateView(LoginRequiredMixin, CompanyAccessMixin, UpdateView):
         context["legend"] = "Edit Company Information"
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: CompanyForm) -> HttpResponse:
         """Save form with success message."""
         logger.info("Form validation successful for company update")
         response = super().form_valid(form)
@@ -189,7 +197,7 @@ class CompanyUpdateView(LoginRequiredMixin, CompanyAccessMixin, UpdateView):
         )
         return response
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: CompanyForm) -> HttpResponse:
         """Log form validation errors."""
         logger.error("Company update form validation failed: %s", form.errors)
         return super().form_invalid(form)
@@ -208,55 +216,59 @@ class CompanyDeleteView(LoginRequiredMixin, CompanyAccessMixin, DeleteView):
     success_url = reverse_lazy("company:list")
     pk_url_kwarg = "company_id"
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(
+            self,
+            request: HttpRequest,
+            *args: object,
+            **kwargs: object) -> HttpResponse:
         """Check if user has permission to delete the company."""
         company = self.get_object()
-
-        # Superusers can delete any company
-        if request.user.is_superuser:
+        if getattr(request.user, "is_superuser", False):
             return super().dispatch(request, *args, **kwargs)
-
-        # Check if user is owner
         try:
             membership = CompanyMembership.objects.get(
                 company=company, user=request.user
             )
             if membership.role != "owner":
                 messages.error(request, "Only the owner can delete this company.")
-                return redirect("company:detail", company_id=company.id)
+                return redirect(
+                    "company:detail",
+                    company_id=getattr(company, "id", None),
+                )
         except CompanyMembership.DoesNotExist:
             messages.error(request, "You don't have permission to delete this company.")
             return redirect("company:list")
-
         return super().dispatch(request, *args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
+    def delete(
+        self, request: HttpRequest, *args: object, **kwargs: object
+    ) -> HttpResponse:
         """Delete object and provide success message."""
         company = self.get_object()
-        company_name = company.name
+        company_name = getattr(company, "name", "")
         response = super().delete(request, *args, **kwargs)
         messages.success(request, f"Company '{company_name}' deleted successfully!")
         return response
 
 
-@login_required
+@beartype
 def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for viewing company details."""
     company = get_object_or_404(Company, id=company_id)
 
     # Get projects related to this company
-    projects = company.projects.all()
+    projects = getattr(company, "projects", None)
 
     # Get members with their roles
     members = CompanyMembership.objects.filter(company=company).select_related("user")
 
     # Get documents
-    documents = company.documents.all()
+    documents = getattr(company, "documents", None)
 
     # Check user permissions
     can_edit = False
     can_manage_members = False
-    if request.user.is_superuser:
+    if getattr(request.user, "is_superuser", False):
         can_edit = True
         can_manage_members = True
     else:
@@ -286,14 +298,14 @@ def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
     return render(request, "company/company_detail.html", context)
 
 
-@login_required
+@beartype
 def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for managing company members."""
     company = get_object_or_404(Company, id=company_id)
 
     # Check if user has permission to manage members
     can_manage = False
-    if request.user.is_superuser:
+    if getattr(request.user, "is_superuser", False):
         can_manage = True
     else:
         try:
@@ -327,15 +339,14 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
     return render(request, "company/company_members.html", context)
 
 
-@login_required
-@require_http_methods(["POST"])
+@beartype
 def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for adding a member to a company."""
     company = get_object_or_404(Company, id=company_id)
 
     # Check permissions
     can_manage = False
-    if request.user.is_superuser:
+    if getattr(request.user, "is_superuser", False):
         can_manage = True
     else:
         try:
@@ -372,7 +383,7 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
             )
 
         # Create membership
-        membership = CompanyMembership.objects.create(
+        CompanyMembership.objects.create(
             company=company,
             user=user,
             role=role,
@@ -396,8 +407,7 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
     return JsonResponse({"status": "error", "errors": form.errors}, status=400)
 
 
-@login_required
-@require_http_methods(["POST"])
+@beartype
 def remove_member(
     request: HttpRequest, company_id: int, member_id: int
 ) -> HttpResponse:
@@ -407,7 +417,7 @@ def remove_member(
 
     # Check permissions
     can_manage = False
-    if request.user.is_superuser:
+    if getattr(request.user, "is_superuser", False):
         can_manage = True
     else:
         try:
@@ -427,7 +437,7 @@ def remove_member(
         )
 
     # Can't remove the owner
-    if membership.role == "owner" and not request.user.is_superuser:
+    if membership.role == "owner" and not getattr(request.user, "is_superuser", False):
         return JsonResponse(
             {"status": "error", "message": "Company owner cannot be removed"},
             status=400,
@@ -447,7 +457,7 @@ def remove_member(
     return HttpResponse(html)
 
 
-@login_required
+@beartype
 def update_member_role(
     request: HttpRequest, company_id: int, member_id: int
 ) -> HttpResponse:
@@ -457,7 +467,7 @@ def update_member_role(
 
     # Check permissions
     can_manage = False
-    if request.user.is_superuser:
+    if getattr(request.user, "is_superuser", False):
         can_manage = True
     else:
         try:
@@ -492,14 +502,14 @@ def update_member_role(
     return render(request, "company/partials/member_role_form.html", context)
 
 
-@login_required
+@beartype
 def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for uploading a document to a company."""
     company = get_object_or_404(Company, id=company_id)
 
     # Check permissions
     can_edit = False
-    if request.user.is_superuser:
+    if getattr(request.user, "is_superuser", False):
         can_edit = True
     try:
         membership = CompanyMembership.objects.get(company=company, user=request.user)
@@ -525,7 +535,7 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
             )
 
             if hasattr(request, "htmx") and request.htmx:
-                documents = company.documents.all()
+                documents = getattr(company, "documents", None)
                 html = render_to_string(
                     "company/partials/document_list.html",
                     {"documents": documents, "company": company, "can_edit": can_edit},
@@ -546,7 +556,7 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
     return render(request, "company/document_form.html", context)
 
 
-@login_required
+@beartype
 def delete_document(
     request: HttpRequest, company_id: int, document_id: int
 ) -> HttpResponse:
@@ -556,7 +566,7 @@ def delete_document(
 
     # Check permissions
     can_edit = False
-    if request.user.is_superuser:
+    if getattr(request.user, "is_superuser", False):
         can_edit = True
     else:
         try:
@@ -578,7 +588,7 @@ def delete_document(
         messages.success(request, f"Document '{document.name}' deleted successfully!")
 
         if hasattr(request, "htmx") and request.htmx:
-            documents = company.documents.all()
+            documents = getattr(company, "documents", None)
             html = render_to_string(
                 "company/partials/document_list.html",
                 {"documents": documents, "company": company, "can_edit": can_edit},
