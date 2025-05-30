@@ -281,18 +281,18 @@ Recurring Details
                 {% endif %}
               </div>
 
-              <!-- Recurring Forcasted Date Field -->
+              <!-- Recurring Forecasted Date Field -->
               <div class="form-group recurring-fields"
                    style="{% if not form.instance.recurring_obligation %}display: none;
                           {% endif %}">
-                        {{ form.recurring_forcasted_date.label_tag }}
-                        {{ form.recurring_forcasted_date }}
-                {% if form.recurring_forcasted_date.help_text %}
-                  <small>{{ form.recurring_forcasted_date.help_text }}</small>
+                        {{ form.recurring_forecasted_date.label_tag }}
+                        {{ form.recurring_forecasted_date }}
+                {% if form.recurring_forecasted_date.help_text %}
+                  <small>{{ form.recurring_forecasted_date.help_text }}</small>
                 {% endif %}
-                {% if form.recurring_forcasted_date.errors %}
+                {% if form.recurring_forecasted_date.errors %}
                   <div class="invalid-feedback">
-                    {% for error in form.recurring_forcasted_date.errors %}
+                    {% for error in form.recurring_forecasted_date.errors %}
 {{ error }}
                     {% endfor %}
                   </div>

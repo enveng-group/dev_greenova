@@ -1,13 +1,31 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
-Role definitions and utilities for the Greenova core app.
+
+"""Role definitions and utilities for the Greenova core app.
 
 This module defines project roles, display names, and helpers for role management.
 """
 
-from enum import Enum
 
-
-class ProjectRole(str, Enum):
+from enum import StrEnum
+class ProjectRole(StrEnum):
     """Define valid project roles."""
 
     PERDAMAN_MANAGEMENT = "perdaman_management"
@@ -99,69 +117,69 @@ def get_role_color(role_value: str) -> str:
 
 
 def get_role_choices() -> list[tuple[str, str]]:
-    """
-    Get choices for model field with human-readable display names.
+    """Get choices for model field with human-readable display names.
 
     Returns:
         List[Tuple[str, str]]: List of tuples (role_value, display_name)
+
     """
     return [(role.value, ROLE_DISPLAY_NAMES[role.value]) for role in ProjectRole]
 
 
 def get_responsibility_choices() -> list[tuple[str, str]]:
-    """
-    Get choices for the responsibility field in Obligation model.
+    """Get choices for the responsibility field in Obligation model.
 
     Uses display names as values for backward compatibility.
 
     Returns:
         List[Tuple[str, str]]: List of tuples (display_name, display_name)
+
     """
     # For the responsibility field, both the key and value are the display name
     # This maintains compatibility with existing data
     return [
         (display_name, display_name)
         for _, display_name in get_role_choices()
-        if display_name not in ["Owner", "Manager", "Member", "Viewer"]
+        if display_name not in {"Owner", "Manager", "Member", "Viewer"}
     ]
 
 
 def get_role_from_responsibility(responsibility: str) -> str | None:
-    """
-    Convert a responsibility display name to its corresponding role value.
+    """Convert a responsibility display name to its corresponding role value.
 
     Args:
         responsibility (str): The display name of the responsibility
 
     Returns:
         str | None: The corresponding role value or None if not found
+
     """
     inverse_map = {display: value for value, display in get_role_choices()}
     return inverse_map.get(responsibility)
 
 
 def get_responsibility_from_role(role: str) -> str | None:
-    """
-    Convert a role value to its corresponding responsibility display name.
+    """Convert a role value to its corresponding responsibility display name.
 
     Args:
         role (str): The role value
 
     Returns:
         str | None: The corresponding responsibility display name or None if not found
+
     """
     return ROLE_DISPLAY_NAMES.get(role)
 
 
 def get_responsibility_display_name(responsibility: str) -> str:
-    """
-    Get the display name for a responsibility value.
+    """Get the display name for a responsibility value.
 
     Args:
         responsibility (str): The responsibility value or display name
 
     Returns:
         str: The display name for the responsibility
+
     """
     # If the responsibility is already a display name, return it
     if responsibility in [display for _, display in get_role_choices()]:

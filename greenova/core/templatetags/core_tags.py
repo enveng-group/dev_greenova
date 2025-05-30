@@ -1,13 +1,32 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
-Custom template tags for the Greenova core app.
+
+"""Custom template tags for the Greenova core app.
 
 This module defines reusable Django template tags for navigation, theming,
 and user display.
 """
 
-import logging
 
 from commons import get_active_namespace, get_user_display_name
+import logging
 from constants import (
     AUTH_NAVIGATION,
     MAIN_NAVIGATION,
@@ -15,15 +34,15 @@ from constants import (
     USER_NAVIGATION,
 )
 from django import template
-from django.conf import settings
 from django.urls import NoReverseMatch, reverse
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context, url_name, css_class="active"):
+def active_link(context: Any, url_name: Any, css_class: str = "active") -> str:
     """Return css_class if the current URL matches the given URL name."""
     request = context.get("request")
     if not request:
@@ -40,7 +59,7 @@ def active_link(context, url_name, css_class="active"):
 
 
 @register.inclusion_tag("core/components/breadcrumbs.html", takes_context=True)
-def breadcrumb_navigation(context):
+def breadcrumb_navigation(context: Any) -> dict:
     """Render breadcrumb navigation based on request path."""
     request = context.get("request")
     if not request:
@@ -55,7 +74,7 @@ def breadcrumb_navigation(context):
             "title": "Home",
             "url": reverse("home"),
             "active": request.path == reverse("home"),
-        }
+        },
     )
 
     # Add namespace-based breadcrumb if applicable
@@ -68,7 +87,7 @@ def breadcrumb_navigation(context):
                     "title": namespace.title(),
                     "url": url,
                     "active": request.path == url,
-                }
+                },
             )
         except NoReverseMatch:
             # Try with just the namespace
@@ -79,7 +98,7 @@ def breadcrumb_navigation(context):
                         "title": namespace.title(),
                         "url": url,
                         "active": request.path == url,
-                    }
+                    },
                 )
             except NoReverseMatch:
                 # Just add the namespace as text
@@ -88,14 +107,14 @@ def breadcrumb_navigation(context):
                         "title": namespace.title(),
                         "url": None,
                         "active": True,
-                    }
+                    },
                 )
 
     return {"crumbs": crumbs}
 
 
 @register.inclusion_tag("core/components/auth_menu.html", takes_context=True)
-def auth_menu(context):
+def auth_menu(context: Any) -> dict:
     """Render authentication menu based on user status."""
     request = context.get("request")
     user = request.user if request else None
@@ -112,7 +131,7 @@ def auth_menu(context):
 
 
 @register.inclusion_tag("core/components/theme_switcher.html")
-def theme_switcher():
+def theme_switcher() -> dict:
     """Render theme switcher component."""
     return {
         "theme_options": THEME_OPTIONS,
@@ -120,13 +139,13 @@ def theme_switcher():
 
 
 @register.simple_tag
-def site_version():
+def site_version() -> str:
     """Return the current site version."""
     return getattr(settings, "APP_VERSION", "dev")
 
 
 @register.inclusion_tag("core/components/main_navigation.html", takes_context=True)
-def main_navigation(context):
+def main_navigation(context: Any) -> dict:
     """Render the main navigation menu."""
     request = context.get("request")
     current_namespace = get_active_namespace(request) if request else ""
@@ -138,7 +157,7 @@ def main_navigation(context):
 
 
 @register.filter
-def user_role_in_project(project, user):
+def user_role_in_project(project: Any, user: Any) -> str:
     """Get user's role in a project."""
     if hasattr(project, "get_user_role"):
         return project.get_user_role(user)
@@ -146,7 +165,7 @@ def user_role_in_project(project, user):
 
 
 @register.simple_tag(takes_context=True)
-def base_url(context):
+def base_url(context: Any) -> str:
     """Get the base URL from the request."""
     request = context.get("request")
     if request:
@@ -155,7 +174,7 @@ def base_url(context):
 
 
 @register.filter(name="format_date")
-def format_date(date_value, format_string="%d %b %Y"):
+def format_date(date_value: Any, format_string: str = "%d %b %Y") -> str:
     """Format a date with a specified format string."""
     if date_value is None:
         return ""

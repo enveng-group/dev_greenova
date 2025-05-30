@@ -1,0 +1,507 @@
+#!/bin/sh
+#
+# merge-conflict-detector - Main entry point for the merge conflict detection system
+#
+# This script coordinates all components of the merge conflict detection and analysis
+# tool, providing a unified interface for users and integration with other tools.
+
+set -e
+
+# Script configuration
+readonly SCRIPT_NAME="merge-conflict-detector"
+readonly VERSION="1.0.0"
+readonly PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+# Component paths
+readonly SRC_DIR="${PROJECT_ROOT}/src"
+readonly SCRIPTS_DIR="${PROJECT_ROOT}/scripts"
+readonly BUILD_DIR="${PROJECT_ROOT}/build"
+
+# Default settings
+OPERATION="analyze"
+OUTPUT_FORMAT="text"
+VERBOSE=0
+QUIET=0
+CONFIG_FILE=""
+MAINTENANCE_TYPE=""
+
+# Output and logging functions
+log_info() {
+  if [ "${QUIET}" -eq 0 ]; then
+    printf "[INFO] %s\n" "$1" >&2
+  fi
+}
+
+log_verbose() {
+  if [ "${VERBOSE}" -eq 1 ]; then
+    printf "[VERBOSE] %s\n" "$1" >&2
+  fi
+}
+
+log_error() {
+  printf "[ERROR] %s\n" "$1" >&2
+}
+
+# Help and usage functions
+print_usage() {
+  cat <<EOF
+Usage: ${SCRIPT_NAME} [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS]
+
+DESCRIPTION:
+    Comprehensive merge conflict detection and Git repository maintenance tool.
+    Provides analysis, prediction, and prevention of merge conflicts using
+    data-driven algorithms and POSIX-compliant implementations.
+
+GLOBAL OPTIONS:
+    -v, --verbose       Enable verbose output
+    -q, --quiet         Suppress non-essential output
+    -c, --config FILE   Use specific configuration file
+    -h, --help          Show this help message
+    -V, --version       Show version information
+
+COMMANDS:
+    analyze [OPTIONS]           Analyze repository for potential conflicts
+    maintenance [TYPE]          Perform repository maintenance operations
+    report [OPTIONS]            Generate detailed conflict reports
+    test                        Run the test suite
+    install                     Install system components
+    uninstall                   Remove installed components
+
+ANALYSIS OPTIONS:
+    -f, --format FORMAT         Output format: text, json, csv (default: text)
+    -b, --branch BRANCH         Analyze specific branch
+    -t, --threshold THRESHOLD   Conflict probability threshold (0.0-1.0)
+    --all-branches              Analyze all branches
+    --output FILE               Write output to file
+
+MAINTENANCE OPTIONS:
+    -n, --dry-run              Show what would be done
+    -a, --aggressive           Use aggressive optimization
+    -p, --prune                Enable pruning operations
+    -f, --force                Force operations
+
+REPORT OPTIONS:
+    --detailed                 Generate detailed analysis report
+    --recommendations          Include strategic recommendations
+    --export FORMAT            Export report (html, pdf, markdown)
+
+EXAMPLES:
+    # Basic conflict analysis
+    ${SCRIPT_NAME} analyze
+
+    # JSON output for automation
+    ${SCRIPT_NAME} analyze --format=json --output=conflicts.json
+
+    # Analyze specific branch with detailed report
+    ${SCRIPT_NAME} analyze --branch=feature/new-api --verbose
+    ${SCRIPT_NAME} report --detailed --recommendations
+
+    # Repository maintenance
+    ${SCRIPT_NAME} maintenance cleanup
+    ${SCRIPT_NAME} maintenance --aggressive optimization
+
+    # Run tests
+    ${SCRIPT_NAME} test
+
+For detailed information, see the manual pages:
+    man merge_detector
+    man maintenance.sh
+EOF
+}
+
+print_version() {
+  cat <<EOF
+${SCRIPT_NAME} version ${VERSION}
+
+Components:
+  merge_detector (C implementation)
+  analyzer.awk (AWK analysis scripts)
+  maintenance.sh (Shell maintenance tools)
+  conflict_report.awk (Report generation)
+
+This is free software under the ISC license.
+EOF
+}
+
+# Component availability checks
+check_components() {
+  local missing_components=""
+
+  # Check for built C program
+  if [ ! -f "${BUILD_DIR}/merge_detector" ]; then
+    missing_components="${missing_components} merge_detector"
+  fi
+
+  # Check for AWK scripts
+  if [ ! -f "${SRC_DIR}/analyzer.awk" ]; then
+    missing_components="${missing_components} analyzer.awk"
+  fi
+
+  if [ ! -f "${SRC_DIR}/conflict_report.awk" ]; then
+    missing_components="${missing_components} conflict_report.awk"
+  fi
+
+  # Check for maintenance script
+  if [ ! -f "${SCRIPTS_DIR}/maintenance.sh" ]; then
+    missing_components="${missing_components} maintenance.sh"
+  fi
+
+  if [ -n "$missing_components" ]; then
+    log_error "Missing components:${missing_components}"
+    log_error "Run 'make build' to build missing components"
+    return 1
+  fi
+
+  return 0
+}
+
+# Git repository validation
+check_git_repository() {
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    log_error "Not a Git repository (or any parent directories)"
+    log_error "Run this command from within a Git repository"
+    return 1
+  fi
+  return 0
+}
+
+# Command implementations
+cmd_analyze() {
+  log_verbose "Starting conflict analysis..."
+
+  # Check prerequisites
+  if ! check_components; then
+    return 1
+  fi
+
+  if ! check_git_repository; then
+    return 1
+  fi
+
+  # Build command arguments
+  local args=""
+  local output_file=""
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    -f | --format)
+      OUTPUT_FORMAT="$2"
+      args="${args} --format=${OUTPUT_FORMAT}"
+      shift 2
+      ;;
+    -b | --branch)
+      args="${args} --branch=$2"
+      shift 2
+      ;;
+    -t | --threshold)
+      args="${args} --threshold=$2"
+      shift 2
+      ;;
+    --all-branches)
+      args="${args} --all-branches"
+      shift
+      ;;
+    --output)
+      output_file="$2"
+      shift 2
+      ;;
+    *)
+      log_error "Unknown analysis option: $1"
+      return 1
+      ;;
+    esac
+  done
+
+  if [ "${VERBOSE}" -eq 1 ]; then
+    args="${args} --verbose"
+  fi
+
+  if [ "${QUIET}" -eq 1 ]; then
+    args="${args} --quiet"
+  fi
+
+  # Execute analysis
+  log_verbose "Running: ${BUILD_DIR}/merge_detector${args}"
+
+  if [ -n "$output_file" ]; then
+    eval "${BUILD_DIR}/merge_detector${args}" >"$output_file"
+    log_info "Analysis results written to: $output_file"
+  else
+    eval "${BUILD_DIR}/merge_detector${args}"
+  fi
+}
+
+cmd_maintenance() {
+  log_verbose "Starting repository maintenance..."
+
+  # Check prerequisites
+  if ! check_git_repository; then
+    return 1
+  fi
+
+  if [ ! -f "${SCRIPTS_DIR}/maintenance.sh" ]; then
+    log_error "Maintenance script not found: ${SCRIPTS_DIR}/maintenance.sh"
+    return 1
+  fi
+
+  # Build command arguments
+  local args=""
+  local maintenance_type="${1:-full}"
+
+  if [ $# -gt 0 ]; then
+    shift # Remove maintenance type from arguments
+  fi
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    -n | --dry-run)
+      args="${args} --dry-run"
+      shift
+      ;;
+    -a | --aggressive)
+      args="${args} --aggressive"
+      shift
+      ;;
+    -p | --prune)
+      args="${args} --prune"
+      shift
+      ;;
+    -f | --force)
+      args="${args} --force"
+      shift
+      ;;
+    *)
+      log_error "Unknown maintenance option: $1"
+      return 1
+      ;;
+    esac
+  done
+
+  if [ "${VERBOSE}" -eq 1 ]; then
+    args="${args} --verbose"
+  fi
+
+  if [ "${QUIET}" -eq 1 ]; then
+    args="${args} --quiet"
+  fi
+
+  # Execute maintenance
+  log_verbose "Running: ${SCRIPTS_DIR}/maintenance.sh${args} ${maintenance_type}"
+  eval "${SCRIPTS_DIR}/maintenance.sh${args} ${maintenance_type}"
+}
+
+cmd_report() {
+  log_verbose "Generating conflict report..."
+
+  # Check prerequisites
+  if ! check_components; then
+    return 1
+  fi
+
+  if ! check_git_repository; then
+    return 1
+  fi
+
+  # Parse report options
+  local detailed=0
+  local recommendations=0
+  local export_format=""
+  local output_file=""
+
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    --detailed)
+      detailed=1
+      shift
+      ;;
+    --recommendations)
+      recommendations=1
+      shift
+      ;;
+    --export)
+      export_format="$2"
+      shift 2
+      ;;
+    --output)
+      output_file="$2"
+      shift 2
+      ;;
+    *)
+      log_error "Unknown report option: $1"
+      return 1
+      ;;
+    esac
+  done
+
+  # Generate base analysis data
+  log_verbose "Generating analysis data..."
+  local analysis_data
+  analysis_data=$("${BUILD_DIR}/merge_detector" --format=json)
+
+  # Process with report generator
+  log_verbose "Processing with conflict_report.awk..."
+  local report_args=""
+
+  if [ "$detailed" -eq 1 ]; then
+    report_args="${report_args} -v detailed=1"
+  fi
+
+  if [ "$recommendations" -eq 1 ]; then
+    report_args="${report_args} -v recommendations=1"
+  fi
+
+  if [ -n "$export_format" ]; then
+    report_args="${report_args} -v export_format=${export_format}"
+  fi
+
+  # Generate report
+  local report_output
+  report_output=$(printf "%s" "$analysis_data" | eval "awk${report_args} -f '${SRC_DIR}/conflict_report.awk'")
+
+  if [ -n "$output_file" ]; then
+    printf "%s\n" "$report_output" >"$output_file"
+    log_info "Report written to: $output_file"
+  else
+    printf "%s\n" "$report_output"
+  fi
+}
+
+cmd_test() {
+  log_verbose "Running test suite..."
+
+  local test_script="${PROJECT_ROOT}/tests/run_tests.sh"
+
+  if [ ! -f "$test_script" ]; then
+    log_error "Test script not found: $test_script"
+    return 1
+  fi
+
+  local test_args=""
+  if [ "${VERBOSE}" -eq 1 ]; then
+    test_args="${test_args} --verbose"
+  fi
+
+  log_verbose "Running: ${test_script}${test_args}"
+  eval "${test_script}${test_args}"
+}
+
+cmd_install() {
+  log_verbose "Installing system components..."
+
+  # Check if we're in the project directory
+  if [ ! -f "${PROJECT_ROOT}/Makefile" ]; then
+    log_error "Makefile not found. Run from project directory."
+    return 1
+  fi
+
+  # Use Makefile for installation
+  cd "$PROJECT_ROOT"
+  make install
+}
+
+cmd_uninstall() {
+  log_verbose "Uninstalling system components..."
+
+  if [ ! -f "${PROJECT_ROOT}/Makefile" ]; then
+    log_error "Makefile not found. Run from project directory."
+    return 1
+  fi
+
+  cd "$PROJECT_ROOT"
+  make uninstall
+}
+
+# Argument parsing
+parse_arguments() {
+  if [ $# -eq 0 ]; then
+    print_usage
+    exit 1
+  fi
+
+  # Parse global options first
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    -v | --verbose)
+      VERBOSE=1
+      shift
+      ;;
+    -q | --quiet)
+      QUIET=1
+      shift
+      ;;
+    -c | --config)
+      CONFIG_FILE="$2"
+      shift 2
+      ;;
+    -h | --help)
+      print_usage
+      exit 0
+      ;;
+    -V | --version)
+      print_version
+      exit 0
+      ;;
+    -*)
+      log_error "Unknown global option: $1"
+      print_usage
+      exit 1
+      ;;
+    *)
+      # First non-option argument is the command
+      OPERATION="$1"
+      shift
+      break
+      ;;
+    esac
+  done
+
+  # Execute the command with remaining arguments
+  case "$OPERATION" in
+  analyze)
+    cmd_analyze "$@"
+    ;;
+  maintenance)
+    cmd_maintenance "$@"
+    ;;
+  report)
+    cmd_report "$@"
+    ;;
+  test)
+    cmd_test "$@"
+    ;;
+  install)
+    cmd_install "$@"
+    ;;
+  uninstall)
+    cmd_uninstall "$@"
+    ;;
+  *)
+    log_error "Unknown command: $OPERATION"
+    print_usage
+    exit 1
+    ;;
+  esac
+}
+
+# Load configuration if specified
+load_configuration() {
+  if [ -n "$CONFIG_FILE" ] && [ -f "$CONFIG_FILE" ]; then
+    log_verbose "Loading configuration from: $CONFIG_FILE"
+    . "$CONFIG_FILE"
+  elif [ -f "${PROJECT_ROOT}/.merge_detector.conf" ]; then
+    log_verbose "Loading default configuration"
+    . "${PROJECT_ROOT}/.merge_detector.conf"
+  fi
+}
+
+# Main execution
+main() {
+  # Load configuration
+  load_configuration
+
+  # Parse and execute command
+  parse_arguments "$@"
+}
+
+# Script entry point
+main "$@"

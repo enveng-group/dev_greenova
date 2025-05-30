@@ -1,23 +1,45 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Module for generating figures and statistics for procedures."""
 
+from projects.models import Project
+from procedures.models import Procedure
+from obligations.models import Obligation
+from matplotlib.ticker import MaxNLocator
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.axes import Axes
+from django.db.models import Count, F, Q, QuerySet, Sum
+from core.utils.charts import create_pie_chart
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from typing import TYPE_CHECKING, Any, cast
 import io
 import logging
-from typing import Any, cast
 
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
-from core.utils.charts import create_pie_chart
-from django.db.models import Count, F, Q, QuerySet, Sum
-from matplotlib.axes import Axes
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.figure import Figure
-from matplotlib.ticker import MaxNLocator
-from obligations.models import Obligation
-from procedures.models import Procedure
-from projects.models import Project
 
-matplotlib.use("Agg")
+if TYPE_CHECKING:
+    import numpy as np
+
+mpl.use("Agg")
 
 logger = logging.getLogger(__name__)
 
@@ -54,22 +76,23 @@ def generate_procedure_statistics(
         facecolor=fig_config["facecolor"],
         edgecolor=fig_config["edgecolor"],
     )
-    axes_array = cast(np.ndarray, axes)
+    axes_array = cast("np.ndarray", axes)
 
     try:
         if len(axes_array) >= num_axes_required:
-            _plot_procedure_status_chart(cast(Axes, axes_array[0]), stats)
-            _plot_procedure_timeline_chart(cast(Axes, axes_array[1]), stats)
+            _plot_procedure_status_chart(cast("Axes", axes_array[0]), stats)
+            _plot_procedure_timeline_chart(cast("Axes", axes_array[1]), stats)
         else:
             logger.error("Not enough axes created for plotting charts")
             plt.close(fig)
-            raise ValueError("Failed to create required chart axes")
+            msg = "Failed to create required chart axes"
+            raise ValueError(msg)
     except (IndexError, ValueError) as e:
-        logger.error("Error plotting procedure charts: %s", str(e))
+        logger.exception("Error plotting procedure charts: %s", str(e))
         plt.close(fig)
         raise
     except Exception as e:
-        logger.error("Unexpected error in chart generation: %s", str(e))
+        logger.exception("Unexpected error in chart generation: %s", str(e))
         plt.close(fig)
         raise
 
@@ -152,14 +175,14 @@ def _plot_procedure_timeline_chart(ax: Axes, stats: dict[str, Any]) -> None:
 
 
 def get_procedure_charts(
-    mechanism_id: str | int, filtered_ids: list[int] | None = None
+    mechanism_id: str | int, filtered_ids: list[int] | None = None,
 ) -> dict[str, Figure]:
     """Generate charts for procedures related to an environmental mechanism."""
     procedure_charts: dict[str, Figure] = {}
 
     try:
         query = Obligation.objects.filter(
-            primary_environmental_mechanism_id=mechanism_id
+            primary_environmental_mechanism_id=mechanism_id,
         )
 
         if filtered_ids is not None:
@@ -184,7 +207,7 @@ def get_procedure_charts(
             procedure_charts[proc_name] = fig
 
     except (Obligation.DoesNotExist, ValueError, TypeError) as e:
-        logger.error("Error generating procedure charts: %s", str(e))
+        logger.exception("Error generating procedure charts: %s", str(e))
         fig = _create_error_chart(str(e))
         procedure_charts["Error"] = fig
 
@@ -209,6 +232,7 @@ def _create_pie_chart(title: str, status_counts: dict[str, int]) -> Figure:
 
     Returns:
         Matplotlib Figure object containing the pie chart.
+
     """
     labels = list(status_counts.keys())
     sizes = list(status_counts.values())
@@ -253,6 +277,7 @@ def get_all_procedure_charts() -> dict[str, bytes]:
 
     Returns:
         Dict[str, bytes]: Dictionary mapping chart names to PNG image data.
+
     """
     # Initialize dictionary to store charts
     charts = {}
@@ -283,6 +308,7 @@ def chart_to_png(fig: Figure) -> bytes:
 
     Returns:
         bytes: PNG image data
+
     """
     buf = io.BytesIO()
     canvas = FigureCanvasAgg(fig)
@@ -295,6 +321,7 @@ def get_procedure_status_chart() -> Figure:
 
     Returns:
         Figure: Matplotlib figure containing the chart
+
     """
     # Get status counts
     status_counts = (
@@ -320,6 +347,7 @@ def get_procedure_timeline() -> Figure:
 
     Returns:
         Figure: Matplotlib figure containing the chart
+
     """
     # Get procedures ordered by start date
     procedures = (
@@ -346,12 +374,13 @@ def get_completion_rate_chart() -> Figure:
 
     Returns:
         Figure: Matplotlib figure containing the chart
+
     """
     # Get completed vs total procedures by type
     procedures = (
         Procedure.objects.values("type")
         .annotate(
-            total=Count("id"), completed=Count("id", filter=Q(status="completed"))
+            total=Count("id"), completed=Count("id", filter=Q(status="completed")),
         )
         .order_by("type")
     )
@@ -360,7 +389,7 @@ def get_completion_rate_chart() -> Figure:
     types = [p["type"] for p in procedures]
     totals = [p["total"] for p in procedures]
     completed = [p["completed"] for p in procedures]
-    completion_rates = [c / t * 100 for c, t in zip(completed, totals)]
+    completion_rates = [c / t * 100 for c, t in zip(completed, totals, strict=False)]
 
     # Create figure
     fig, ax = plt.subplots(figsize=(8, 6))

@@ -1,20 +1,36 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
-Admin configuration for the mechanisms app.
+
+"""Admin configuration for the mechanisms app.
 
 This module registers the EnvironmentalMechanism model with the Django admin
 and customizes its display and behavior for environmental professionals.
 """
-# ...existing code...
+
+
 from __future__ import annotations
+from typing import TYPE_CHECKING, cast
 
-from typing import Any, cast
-
-from django.contrib import admin
-from django.forms import ModelForm
-from django.http import HttpRequest
-from django.utils import timezone
-
-from .models import EnvironmentalMechanism
+if TYPE_CHECKING:
+    from django.forms import ModelForm
+    from django.http import HttpRequest
 
 
 @admin.register(EnvironmentalMechanism)
@@ -60,15 +76,15 @@ class EnvironmentalMechanismAdmin(admin.ModelAdmin):
         "completed_count",
     )
 
-    def get_queryset(self, request: HttpRequest) -> Any:
+    def get_queryset(self, request: HttpRequest) -> models.QuerySet:
         """Optimize queryset by prefetching related data."""
         queryset = super().get_queryset(request)
-        return cast(Any, queryset.select_related("project"))
+        return queryset.select_related("project")
 
     @staticmethod
     def get_total_obligations(obj: EnvironmentalMechanism) -> int:
         """Get total obligations count."""
-        return cast(int, obj.total_obligations)
+        return cast("int", obj.total_obligations)
 
     # Add short description for admin list display
     get_total_obligations.short_description = "Total"  # type: ignore

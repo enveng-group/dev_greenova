@@ -1,8 +1,44 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Greenova](#greenova)
+  - [📋 Overview](#-overview)
+  - [🚀 Features](#-features)
+  - [🛠️ Technology Stack](#-technology-stack)
+    - [Frontend](#frontend)
+    - [DevOps](#devops)
+  - [🏛️ Architecture](#-architecture)
+  - [📥 Installation](#-installation)
+    - [Prerequisites](#prerequisites)
+    - [Setup](#setup)
+  - [Dependency Management](#dependency-management)
+    - [Requirements Directory](#requirements-directory)
+    - [Usage](#usage)
+    - [Devcontainer Setup](#devcontainer-setup)
+    - [Setup.py](#setuppy)
+    - [Benefits](#benefits)
+  - [Manual Installation of Microsoft Python Type Stubs](#manual-installation-of-microsoft-python-type-stubs)
+  - [Environment Variables](#environment-variables)
+    - [Required Variables](#required-variables)
+    - [Optional Variables](#optional-variables)
+    - [Creating the `.env` File](#creating-the-env-file)
+  - [🔧 Usage](#-usage)
+    - [Key workflows](#key-workflows)
+  - [🤝 Contributing](#-contributing)
+  - [📄 License](#-license)
+  - [📊 Project Status](#-project-status)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Greenova
 
-[![Python 3.12.9](https://img.shields.io/badge/python-3.12.9-blue.svg)](https://www.python.org/downloads/release/python-3921/)
+[![Python 3.12.10](https://img.shields.io/badge/python-3.12.10-blue.svg)](https://www.python.org/downloads/release/python-3921/)
 [![Django 5.2](https://img.shields.io/badge/django-5.2-green.svg)](https://www.djangoproject.com/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![build status](https://github.com/pre-commit/pre-commit-hooks/actions/workflows/main.yml/badge.svg)](https://github.com/pre-commit/pre-commit-hooks/actions/workflows/main.yml)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/pre-commit/pre-commit-hooks/main.svg)](https://results.pre-commit.ci/latest/github/pre-commit/pre-commit-hooks/main)
+[![Gitleaks Action][gitleaks-badge]][gitleaks-action]
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 ## 📋 Overview
 
@@ -61,8 +97,8 @@ The application follows a modular design with clear separation of concerns:
 
 ### Prerequisites
 
-- Python 3.12.9
-- Node.js 20.19.1
+- Python 3.12.10
+- Node.js 21.7.3
 - NPM 11.3.0
 
 ### Setup

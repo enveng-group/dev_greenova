@@ -1,24 +1,43 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
-Views for the projects app in Greenova.
+
+"""Views for the projects app in Greenova.
 
 Handles project listing, selection, and related utilities.
 """
 
-import logging
-from typing import Any, TypeVar, cast
-
-from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import AbstractUser
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_headers
-from django.views.generic import ListView, TemplateView
-from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
-from models import Project
 from obligations.models import Obligation
+from models import Project
+from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
+from django.views.generic import ListView, TemplateView
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_control
+from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import get_user_model
+import logging
+from typing import TypeVar, cast
+
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -33,7 +52,7 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
 
     template_name: str = "projects/projects_selector.html"
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Add user's projects to the context."""
         context = super().get_context_data(**kwargs)
         user_projects = Project.objects.filter(members=self.request.user)
@@ -46,7 +65,7 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
 
         return context
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
         """Handle GET requests for project selection."""
         response = super().get(request, *args, **kwargs)
 
@@ -58,7 +77,7 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             # If the user is selecting a project that requires special permissions
             project_id = request.GET.get("project_id")
             if project_id and self.requires_special_access(
-                project_id, cast(AbstractUser, request.user)
+                project_id, cast("AbstractUser", request.user),
             ):
                 return HttpResponseClientRedirect("/permissions-check/")
 
@@ -83,7 +102,7 @@ class ProjectListView(LoginRequiredMixin, ListView):
     template_name = "projects/projects_list.html"
     context_object_name = "projects"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         """Return projects for the current user."""
         return Project.objects.filter(members=self.request.user)
 
@@ -103,28 +122,28 @@ def project_obligations(_request: HttpRequest, project_id: str) -> JsonResponse:
 
 
 def get_user_role(project: Project, user: AbstractUser) -> str:
-    """
-    Get user's role in project.
+    """Get user's role in project.
 
     Args:
         project: The project to check
         user: The user to get role for
     Returns:
         str: User's role or 'viewer' if none found
+
     """
     try:
         return project.get_user_role(user)
     except Exception as e:  # pylint: disable=broad-exception-caught
-        logger.error("Error getting user role: %s", e)
+        logger.exception("Error getting user role: %s", e)
         return "viewer"
 
 
-def get_item(dictionary: dict, key: Any) -> Any:
+def get_item(dictionary: dict, key: object) -> object:
     """Get item from dictionary by key."""
     return dictionary.get(key)
 
 
-def apply_to_all(queryset: Any, method_name: str) -> list:
+def apply_to_all(queryset: object, method_name: str) -> list:
     """Call a method on each object in the queryset and return a list of results."""
     if method_name == "to_dict":
         return [{"id": str(obj.id), "name": obj.name} for obj in queryset]
@@ -164,7 +183,7 @@ def get_project(project_id: str) -> Project:
 
 def get_user(user_id: str) -> AbstractUser:
     """Get user by ID."""
-    return cast(AbstractUser, get_object_or_404(User, id=user_id))
+    return cast("AbstractUser", get_object_or_404(User, id=user_id))
 
 
 def get_role_display(role_value: str) -> str:
@@ -190,11 +209,11 @@ def get_role_color(role_value: str) -> str:
 
 
 def get_role_choices() -> list[tuple[str, str]]:
-    """
-    Get choices for model field with human-readable display names.
+    """Get choices for model field with human-readable display names.
 
     Returns:
         list[tuple[str, str]]: List of tuples (role_value, display_name)
+
     """
     role_display_names = {
         "owner": "Owner",
@@ -206,29 +225,29 @@ def get_role_choices() -> list[tuple[str, str]]:
 
 
 def get_responsibility_choices() -> list[tuple[str, str]]:
-    """
-    Get choices for the responsibility field in Obligation.
+    """Get choices for the responsibility field in Obligation.
 
     model. Uses display names as values for backward compatibility.
 
     Returns:
         list[tuple[str, str]]: List of tuples (display_name, display_name)
+
     """
     return [
         (display_name, display_name)
         for _, display_name in get_role_choices()
-        if display_name not in ["Owner", "Manager", "Member", "Viewer"]
+        if display_name not in {"Owner", "Manager", "Member", "Viewer"}
     ]
 
 
 def get_role_from_responsibility(responsibility: str) -> str:
-    """
-    Convert a responsibility display name to its corresponding role value.
+    """Convert a responsibility display name to its corresponding role value.
 
     Args:
         responsibility (str): The display name of the responsibility
     Returns:
         str: The corresponding role value or None if not found
+
     """
     role_display_names = {
         "owner": "Owner",
@@ -241,13 +260,13 @@ def get_role_from_responsibility(responsibility: str) -> str:
 
 
 def get_responsibility_from_role(role: str) -> str:
-    """
-    Convert a role value to its corresponding responsibility display name.
+    """Convert a role value to its corresponding responsibility display name.
 
     Args:
         role (str): The role value
     Returns:
         str: The corresponding responsibility display name or None if not found
+
     """
     role_display_names = {
         "owner": "Owner",
@@ -259,13 +278,13 @@ def get_responsibility_from_role(role: str) -> str:
 
 
 def get_responsibility_display_name(responsibility: str) -> str:
-    """
-    Get the display name for a responsibility value.
+    """Get the display name for a responsibility value.
 
     Args:
         responsibility (str): The responsibility value or display name
     Returns:
         str: The display name for the responsibility
+
     """
     if responsibility in [display for _, display in get_role_choices()]:
         return responsibility

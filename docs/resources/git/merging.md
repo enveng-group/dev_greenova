@@ -1,3 +1,35 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Git Merging Strategies for Greenova](#git-merging-strategies-for-greenova)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Greenova Git Workflow](#greenova-git-workflow)
+    - [Repository Structure](#repository-structure)
+    - [Branch Hierarchy](#branch-hierarchy)
+    - [Development Flow](#development-flow)
+  - [Merging Strategies](#merging-strategies)
+    - [Understanding Git Merge Options](#understanding-git-merge-options)
+    - [Squash Merging](#squash-merging)
+  - [Progressive Squash Approach](#progressive-squash-approach)
+    - [Step 1: Working with Feature Branches](#step-1-working-with-feature-branches)
+    - [Step 2: Squash into Team Integration Branch](#step-2-squash-into-team-integration-branch)
+    - [Step 3: Squash into Development Branch](#step-3-squash-into-development-branch)
+    - [Step 4: Final Production Merge](#step-4-final-production-merge)
+  - [Repository Maintenance](#repository-maintenance)
+    - [Weekly Maintenance](#weekly-maintenance)
+    - [Monthly Deep Cleaning](#monthly-deep-cleaning)
+    - [Fork Synchronization](#fork-synchronization)
+  - [Conflict Prevention Guidelines](#conflict-prevention-guidelines)
+  - [Common Operations](#common-operations)
+    - [Creating a Feature Branch](#creating-a-feature-branch)
+    - [Rebasing a Feature Branch](#rebasing-a-feature-branch)
+    - [Squash Merging to Development](#squash-merging-to-development)
+    - [Emergency Hotfix Process](#emergency-hotfix-process)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Git Merging Strategies for Greenova
 
 **Last Updated**: 2025-04-12 **Maintainer**: enveng-group

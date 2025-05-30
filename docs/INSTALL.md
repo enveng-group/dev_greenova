@@ -1,8 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Installation Guide (Updated for pip-tools and constraints)](#installation-guide-updated-for-pip-tools-and-constraints)
+  - [System Requirements](#system-requirements)
+  - [Development Setup](#development-setup)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Installation Guide (Updated for pip-tools and constraints)
 
 ## System Requirements
 
-- Python 3.12.9
+- Python 3.12.10
 - SQLite3
 - pip package manager
 

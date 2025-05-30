@@ -1,8 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""
-View mixins for the dashboard application.
+"""View mixins for the dashboard application.
 
 This module provides mixins that can be used with Django views to add
 dashboard-specific functionality and context data.
@@ -35,8 +34,7 @@ class ProjectAwareDashboardMixin:
 
 @beartype
 class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin):
-    """
-    Mixin for dashboard views that provides common context data.
+    """Mixin for dashboard views that provides common context data.
 
     This mixin handles project selection persistence and provides chart data
     for the dashboard views.
@@ -46,17 +44,17 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
     breadcrumbs: ClassVar[list[tuple[str, None]]] = [("Dashboard", None)]
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """
-        Add dashboard-specific context data.
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
+        """Add dashboard-specific context data.
 
         Args:
             **kwargs: Additional keyword arguments.
 
         Returns:
             A dictionary containing context data for the view.
+
         """
-        context: dict[str, Any] = super().get_context_data(**kwargs)
+        context: dict[str, object] = super().get_context_data(**kwargs)
 
         # Get the current user
 
@@ -75,8 +73,7 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
 
     @beartype
     def _get_current_project_id(self) -> int | None:
-        """
-        Get the currently selected project ID.
+        """Get the currently selected project ID.
 
         The ID comes from:
         1. Request query parameter (highest priority)
@@ -85,6 +82,7 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
 
         Returns:
             The current project ID as an integer, or None if not found.
+
         """
         # First check if we have a project_id in the query string
         project_id_str = self.request.GET.get("project_id")
@@ -104,11 +102,11 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
 
     @beartype
     def _get_user_projects(self) -> QuerySet[Project]:
-        """
-        Get projects associated with the current user.
+        """Get projects associated with the current user.
 
         Returns:
             A QuerySet of Project objects.
+
         """
         user = self.request.user
         # Filter projects where the user is a member or owner.
@@ -118,16 +116,16 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
             .distinct()
             .order_by("name")
         )
-        return cast(QuerySet[Project], qs)
+        return cast("QuerySet[Project]", qs)
 
     @beartype
     def _add_statistics(self, context: dict[str, Any], project_id: int | None) -> None:
-        """
-        Add dashboard statistics to the context.
+        """Add dashboard statistics to the context.
 
         Args:
             context: The context dictionary to update.
             project_id: The current project ID (if any).
+
         """
         filters: dict[str, Any] = {}
         if project_id:
@@ -148,7 +146,7 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
         # Count overdue obligations
         now = timezone.now().date()
         overdue_count = Obligation.objects.filter(
-            action_due_date__lt=now, status__in=["pending", "in_progress"], **filters
+            action_due_date__lt=now, status__in=["pending", "in_progress"], **filters,
         ).count()
 
         # Calculate percentages
@@ -156,7 +154,7 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
         overdue_pct = 0
         if total_obligations > 0:
             completed_pct = round(
-                (status_counts.get("completed", 0) / total_obligations) * 100
+                (status_counts.get("completed", 0) / total_obligations) * 100,
             )
             overdue_pct = round((overdue_count / total_obligations) * 100)
 
@@ -170,5 +168,5 @@ class DashboardContextMixin(LoginRequiredMixin, BreadcrumbMixin, PageTitleMixin)
                 "overdue_count": overdue_count,
                 "completed_pct": completed_pct,
                 "overdue_pct": overdue_pct,
-            }
+            },
         )

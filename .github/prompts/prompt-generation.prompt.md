@@ -1,17 +1,35 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [GitHub Copilot Prompt Template for Automated Issue Resolution](#github-copilot-prompt-template-for-automated-issue-resolution)
+  - [Goal](#goal)
+  - [Context](#context)
+  - [Objectives](#objectives)
+  - [Sources](#sources)
+  - [Expectations](#expectations)
+  - [Acceptance Criteria](#acceptance-criteria)
+  - [Instructions](#instructions)
+  - [Additional Guidelines](#additional-guidelines)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ---
+
 description:
-  Template for generating automated issue resolution prompts for Copilot,
-  including context, objectives, and acceptance criteria.
+Template for generating automated issue resolution prompts for Copilot,
+including context, objectives, and acceptance criteria.
 mode: agent
 
 tools:
-  - filesystem
-  - dbcode
-  - context7
-  - json
-  - git
-  - sequential-thinking
-  - github
+
+- context7 # REQUIRED: Use for all context and background information
+- json
+- git
+- fetch # REQUIRED: Use for all web content retrieval (e.g., documentation, reports)
+- filesystem # REQUIRED: Use for all file reading, writing, and editing
+- sequential-thinking # REQUIRED: Use for all planning, reasoning, and stepwise logic
+- github
+
 ---
 
 <!-- filepath: /workspaces/greenova/.github/prompts/promp-generation.prompt.md -->

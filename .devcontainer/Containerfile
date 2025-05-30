@@ -1,0 +1,34 @@
+ARG VARIANT=3.12-alpine3.21
+FROM python:${VARIANT}
+
+# Install essential packages
+RUN apk update && apk add --no-cache \
+    bash \
+    curl \
+    build-base \
+    linux-headers \
+    libffi-dev \
+    openssl-dev \
+    sudo \
+    shadow \
+    util-linux \
+    && rm -rf /var/cache/apk/*
+
+# Create vscode user with sudo privileges
+RUN adduser -D -s /bin/bash vscode && \
+    echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode && \
+    chmod 0440 /etc/sudoers.d/vscode
+
+# Create SSH directory for vscode user
+RUN mkdir -p /home/vscode/.ssh && \
+    chown vscode:vscode /home/vscode/.ssh && \
+    chmod 700 /home/vscode/.ssh
+
+# Set working directory
+WORKDIR /workspaces/greenova
+
+# Switch to vscode user
+USER vscode
+
+# Set default shell to bash
+SHELL ["/bin/bash", "-c"]

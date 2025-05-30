@@ -1,35 +1,19 @@
 [MASTER]
+ignore=migrations,venv,.venv,tests,test_,__init__.py,static,media,stubs
+jobs=0
 persistent=yes
-suggestion-mode=yes
-unsafe-load-any-extension=no
-ignore=migrations,venv,.venv,tests,tests/*,test_*,__init__.py,*_pb2.py
-
-[FORMAT]
-max-line-length=88
 
 [MESSAGES CONTROL]
 disable=
-    C0111, # missing-docstring
-    C0103, # invalid-name
-    W0613, # unused-argument
-    W0703, # broad-except
-    R0903, # too-few-public-methods
-    R0901, # too-many-ancestors
-    W0212, # protected-access
-    W0221, # arguments-differ
-    E0401, # import-error
-    R1705, # no-else-return
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
 
-[SIMILARITIES]
-ignore-comments=yes
-ignore-docstrings=yes
-ignore-imports=yes
+[REPORTS]
+output-format=colorized
+reports=y
+score=y
 
-[BASIC]
-good-names=i,j,k,ex,Run,_,id,pk,setUp,tearDown
-
-[DESIGN]
-max-parents=13
-
-[TYPECHECK]
-ignored-classes=WSGIRequest,HttpRequest,HttpResponse,QuerySet,ManyToManyField
+[FORMAT]
+max-line-length=88
+indent-string='    '

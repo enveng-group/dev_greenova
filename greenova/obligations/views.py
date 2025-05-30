@@ -1,3 +1,23 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Views for managing environmental obligations.
 
 This module provides views for creating, reading, updating, deleting,
@@ -5,35 +25,37 @@ and listing environmental obligations. It also includes views for
 handling related functionalities like evidence uploads.
 """
 
+from utils import is_obligation_overdue
+from projects.models import Project, ProjectMembership
+from obligations.models import Obligation, ObligationEvidence
+from mechanisms.models import EnvironmentalMechanism
+from forms import EvidenceUploadForm, ObligationForm
+from django_htmx.http import trigger_client_event
+from django.views.generic.edit import DeleteView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_control
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.utils import timezone
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.db.models import Q, QuerySet
+from django.core.exceptions import ValidationError
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from company.models import CompanyMembership
+from beartype import beartype
+from typing import TYPE_CHECKING, Any, TypeVar, cast
+from datetime import date, timedelta
 import logging
 import os
-from datetime import date, timedelta
-from typing import Any, TypeVar, cast
 
-from beartype import beartype
-from company.models import CompanyMembership
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
-from django.db.models import Q, QuerySet
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import render_to_string
-from django.urls import reverse
-from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views import View
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_headers
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
-from django.views.generic.edit import DeleteView
-from django_htmx.http import trigger_client_event
-from forms import EvidenceUploadForm, ObligationForm
-from mechanisms.models import EnvironmentalMechanism
-from obligations.models import Obligation, ObligationEvidence
-from projects.models import Project, ProjectMembership
-from utils import is_obligation_overdue
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractUser
 
 # Ensure the Django settings module is correctly configured.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "greenova.settings")
@@ -43,7 +65,7 @@ logger = logging.getLogger(__name__)
 MAX_EVIDENCE_FILES = 5
 
 # Type variable for models
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 @method_decorator(cache_control(max_age=300), name="dispatch")
@@ -56,7 +78,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
     """
 
     @beartype
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
         """Handle GET requests for obligation summary.
 
         When accessed via HTMX from procedure charts, this returns filtered obligations.
@@ -69,6 +91,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         Returns:
             Rendered template with appropriate context.
+
         """
         # Check if this is a filtered request from procedure charts
         status = request.GET.get("status")
@@ -79,16 +102,13 @@ class ObligationSummaryView(LoginRequiredMixin, View):
             try:
                 # Fix for attr-defined error
                 obligations = Obligation.objects.filter(
-                    project_id=project_id
+                    project_id=project_id,
                 )
 
                 # Apply status filter (handle overdue special case)
                 if status:
                     # Always treat status as a list
-                    if isinstance(status, str):
-                        status_list = [status]
-                    else:
-                        status_list = list(status)
+                    status_list = [status] if isinstance(status, str) else list(status)
                     # Map normalized status to canonical model value
                     status_map = {
                         "not_started": "not started",
@@ -106,7 +126,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
                         for s in status_list
                     ]
                     obligations = self._filter_by_status(
-                        obligations, canonical_statuses
+                        obligations, canonical_statuses,
                     )
 
                 # Apply procedure filter (adjusted for TextField)
@@ -119,7 +139,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
                     {"obligations": obligations},
                 )
             except Exception as exc:
-                logger.error("Error filtering obligations: %s", str(exc))
+                logger.exception("Error filtering obligations: %s", str(exc))
                 return render(
                     request,
                     "obligations/partials/obligation_list.html",
@@ -134,16 +154,16 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         if self.request.htmx:  # type: ignore[attr-defined]
             return render(
-                request, "obligations/components/_obligations_summary.html", context
+                request, "obligations/components/_obligations_summary.html", context,
             )
 
         return render(
-            request, "obligations/components/_obligations_summary.html", context
+            request, "obligations/components/_obligations_summary.html", context,
         )
 
     @beartype
     def _filter_by_status(
-        self, queryset: QuerySet[Obligation], status_values: list[str]
+        self, queryset: QuerySet[Obligation], status_values: list[str],
     ) -> QuerySet[Obligation]:
         """Filter obligations by status, handling 'overdue' as a special case.
 
@@ -153,6 +173,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         Returns:
             Filtered queryset.
+
         """
         # Normalize all status values to canonical model values
         status_map = {
@@ -181,7 +202,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
             # Find overdue obligations: action_due_date < today and status != completed
             today = timezone.now().date()
             overdue_queryset = queryset.filter(action_due_date__lt=today).exclude(
-                status="completed"
+                status="completed",
             )
 
             # Combine with standard status filter
@@ -196,7 +217,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
     @beartype
     def apply_filters(
-        self, queryset: QuerySet[Obligation], filters: dict[str, Any]
+        self, queryset: QuerySet[Obligation], filters: dict[str, Any],
     ) -> QuerySet[Obligation]:
         """Apply all filters to the queryset.
 
@@ -206,6 +227,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         Returns:
             Filtered queryset.
+
         """
         if not queryset:
             return queryset
@@ -217,24 +239,24 @@ class ObligationSummaryView(LoginRequiredMixin, View):
             search_term = filters["search"]
             queryset = queryset.filter(
                 Q(obligation_number__icontains=search_term)
-                | Q(obligation__icontains=search_term)
+                | Q(obligation__icontains=search_term),
             )
         if filters.get("date_filter"):
             date_filter = filters["date_filter"]
             today = date.today()
             if date_filter == "past_due":
                 queryset = queryset.filter(
-                    action_due_date__lt=today, status__ne="completed"
+                    action_due_date__lt=today, status__ne="completed",
                 )
             elif date_filter == "14days":
                 future_date = today + timedelta(days=14)
                 queryset = queryset.filter(
-                    action_due_date__gte=today, action_due_date__lte=future_date
+                    action_due_date__gte=today, action_due_date__lte=future_date,
                 )
             elif date_filter == "30days":
                 future_date = today + timedelta(days=30)
                 queryset = queryset.filter(
-                    action_due_date__gte=today, action_due_date__lte=future_date
+                    action_due_date__gte=today, action_due_date__lte=future_date,
                 )
         return queryset
 
@@ -244,12 +266,13 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         Returns:
             Dictionary of filter parameters.
+
         """
         filters: dict[str, Any] = {}
 
         # Get query parameters
         status = self.request.GET.getlist("status") or self.request.GET.getlist(
-            "status[]"
+            "status[]",
         )
         phase = self.request.GET.getlist("phase") or self.request.GET.getlist("phase[]")
         search = self.request.GET.get("search", "")
@@ -276,7 +299,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
         return filters
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Get context data for the template.
 
         Args:
@@ -284,6 +307,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         Returns:
             Context dictionary for rendering template.
+
         """
         context: dict[str, Any] = {}
         mechanism_id = self.request.GET.get("mechanism_id")
@@ -296,7 +320,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
             mechanism = EnvironmentalMechanism.objects.get(id=mechanism_id)
             # Fix for attr-defined error
             obligations = Obligation.objects.filter(
-                primary_environmental_mechanism=mechanism
+                primary_environmental_mechanism=mechanism,
             )
 
             context.update(
@@ -305,11 +329,11 @@ class ObligationSummaryView(LoginRequiredMixin, View):
                     "total_count": obligations.count(),
                     "mechanism": mechanism,
                     "filters": {"mechanism_id": mechanism_id},
-                }
+                },
             )
 
             # Add edit permission - fix for union-attr error
-            user = cast(AbstractUser, self.request.user)
+            user = cast("AbstractUser", self.request.user)
             context["user_can_edit"] = user.has_perm("obligations.change_obligation")
             return context
 
@@ -325,6 +349,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
 
         Returns:
             Updated context dictionary.
+
         """
         user = self.request.user
 
@@ -344,7 +369,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
         # If user has project memberships, show overdue obligations for those projects
         if project_ids:
             queryset = Obligation.objects.filter(
-                project_id__in=project_ids
+                project_id__in=project_ids,
             )
             # Optionally filter by responsibility if user_roles exist
             if user_roles:
@@ -361,7 +386,7 @@ class ObligationSummaryView(LoginRequiredMixin, View):
         # If only company roles, show overdue obligations for those roles
         elif user_roles:
             queryset = Obligation.objects.filter(
-                responsibility__in=user_roles
+                responsibility__in=user_roles,
             )
             overdue_obligations = [
                 obligation.obligation_number
@@ -382,10 +407,10 @@ class ObligationSummaryView(LoginRequiredMixin, View):
                 "total_count": len(queryset),
                 "filters": {"status": ["overdue"]},
                 "show_overdue_only": True,
-            }
+            },
         )
         # Fix for user permission check
-        user = cast(AbstractUser, self.request.user)
+        user = cast("AbstractUser", self.request.user)
         context["user_can_edit"] = user.has_perm("obligations.change_obligation")
         return context
 
@@ -394,7 +419,7 @@ class TotalOverdueObligationsView(LoginRequiredMixin, View):
     """View to get the count of overdue obligations for a project."""
 
     @beartype
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> JsonResponse:
         """Handle GET request to count overdue obligations.
 
         Args:
@@ -404,6 +429,7 @@ class TotalOverdueObligationsView(LoginRequiredMixin, View):
 
         Returns:
             JsonResponse with count or error.
+
         """
         project_id = request.GET.get("project_id")
 
@@ -412,7 +438,7 @@ class TotalOverdueObligationsView(LoginRequiredMixin, View):
 
         # Fix for attr-defined error
         obligations = Obligation.objects.filter(
-            project_id=project_id
+            project_id=project_id,
         )
         overdue_count = sum(
             1 for obligation in obligations if is_obligation_overdue(obligation)
@@ -437,6 +463,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
 
         Returns:
             A dictionary of keyword arguments.
+
         """
         kwargs = super().get_form_kwargs()
         project_id = self.request.GET.get("project_id")
@@ -449,7 +476,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Insert the project_id into the context dict.
 
         Args:
@@ -457,6 +484,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
 
         Returns:
             A dictionary containing the context data.
+
         """
         context = super().get_context_data(**kwargs)
         project_id = self.request.GET.get("project_id")
@@ -473,6 +501,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
 
         Returns:
             Redirect to appropriate page on success.
+
         """
         try:
             # Save the form
@@ -491,7 +520,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
             return redirect("dashboard:home")
 
         except ValidationError as exc:
-            logger.error("Validation error in ObligationCreateView: %s", str(exc))
+            logger.exception("Validation error in ObligationCreateView: %s", str(exc))
             messages.error(self.request, f"Validation failed: {exc}")
             # Rely on type inference from get_context_data's return type
             context = self.get_context_data(form=form)
@@ -515,6 +544,7 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
 
         Returns:
             An HttpResponse rendering the form with errors.
+
         """
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
@@ -529,18 +559,19 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
     pk_url_kwarg = "obligation_number"
 
     @beartype
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: tuple, **kwargs: dict) -> None:
         """Initialize the view with object attribute to avoid mypy errors.
 
         Args:
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
+
         """
         super().__init__(*args, **kwargs)
         self.object = None  # Keep mypy happy
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Insert the project_id into the context dict.
 
         Args:
@@ -548,6 +579,7 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
 
         Returns:
             A dictionary containing the context data.
+
         """
         context = super().get_context_data(**kwargs)
         # Add project_id to context for back navigation
@@ -556,7 +588,7 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
         return context
 
     @beartype
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
         """Handle GET requests for obligation details.
 
         Args:
@@ -566,6 +598,7 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
 
         Returns:
             Response with rendered template or JSON data.
+
         """
         self.object = self.get_object()
 
@@ -595,7 +628,7 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
                     "project_name": proj_name,
                     "status_display": status_disp,
                     "content": modal_content,
-                }
+                },
             )
 
         # Regular request - return the full page
@@ -603,7 +636,7 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
         return self.render_to_response(context)
 
     @beartype
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def post(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
         """Handle POST requests for updating obligations via AJAX.
 
         Args:
@@ -613,6 +646,7 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
 
         Returns:
             JsonResponse with success/error data or standard response.
+
         """
         self.object = self.get_object()
 
@@ -648,10 +682,9 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
                             "compliance_comments": obligation.compliance_comments,
                             "status_display": obligation.get_status_display(),
                         },
-                    }
+                    },
                 )
-            else:
-                return JsonResponse({"success": False, "errors": form.errors})
+            return JsonResponse({"success": False, "errors": form.errors})
 
         # Fall back to regular form handling for non-AJAX requests
         return self.render_to_response(self.get_context_data())
@@ -667,12 +700,13 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
     slug_url_kwarg = "obligation_number"
 
     @beartype
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: tuple, **kwargs: dict) -> None:
         """Initialize the view with object attribute to avoid mypy errors.
 
         Args:
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
+
         """
         super().__init__(*args, **kwargs)
         self.object = None  # Keep mypy happy
@@ -685,6 +719,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
 
         Returns:
             A list of template names.
+
         """
         if hasattr(self.request, "htmx") and self.request.htmx:
             return ["obligations/form/partial_update_obligation.html"]
@@ -698,6 +733,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
 
         Returns:
             A dictionary of keyword arguments.
+
         """
         kwargs = super().get_form_kwargs()
         if self.object:
@@ -705,7 +741,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Insert the project_id into the context dict.
 
         Args:
@@ -713,6 +749,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
 
         Returns:
             A dictionary containing the context data.
+
         """
         context = super().get_context_data(**kwargs)
         if self.object:
@@ -730,6 +767,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         Args:
             old_mechanism: Previous mechanism (if any).
             updated_obligation: The updated obligation.
+
         """
         # Get the new mechanism from the updated obligation
         new_mech = getattr(updated_obligation, "primary_environmental_mechanism", None)
@@ -763,11 +801,12 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
 
         Returns:
             Appropriate response based on request type.
+
         """
         try:
             old_mechanism = None
             if self.object and hasattr(self.object, "primary_environmental_mechanism"):
-                old_mechanism = getattr(self.object, "primary_environmental_mechanism")
+                old_mechanism = self.object.primary_environmental_mechanism
 
             # Save the updated obligation
             obligation = form.save()
@@ -783,7 +822,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
                 response = HttpResponse("Obligation updated successfully")
                 # Explicitly trigger a refresh for dependent components
                 trigger_client_event(
-                    response, "path-deps-refresh", {"path": "/obligations/"}
+                    response, "path-deps-refresh", {"path": "/obligations/"},
                 )
                 return response
 
@@ -795,7 +834,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
             return redirect("dashboard:home")
 
         except ValidationError as exc:
-            logger.error("Validation error updating obligation: %s", str(exc))
+            logger.exception("Validation error updating obligation: %s", str(exc))
             messages.error(self.request, f"Validation failed: {exc}")
             error_response: HttpResponse = self.form_invalid(form)
             return error_response
@@ -817,6 +856,7 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
 
         Returns:
             An HttpResponse rendering the form with errors.
+
         """
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
@@ -829,7 +869,7 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
     pk_url_kwarg = "obligation_number"
 
     @beartype
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> JsonResponse:
+    def post(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> JsonResponse:
         """Handle POST request for obligation deletion.
 
         Args:
@@ -839,6 +879,7 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
 
         Returns:
             JsonResponse with success or error status.
+
         """
         try:
             obj = self.get_object()
@@ -860,11 +901,11 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
                     "status": "success",
                     "message": f"Obligation {obl_number} deleted successfully",
                     "redirect_url": f"{base_url}?project_id={project_id}",
-                }
+                },
             )
 
         except Exception as exc:
-            logger.error("Error deleting obligation: %s", str(exc))
+            logger.exception("Error deleting obligation: %s", str(exc))
             return JsonResponse(
                 {
                     "status": "error",
@@ -887,6 +928,7 @@ class ToggleCustomAspectView(View):
 
         Returns:
             Rendered partial template.
+
         """
         aspect = request.GET.get("environmental_aspect")
         show_field = aspect == "Other"
@@ -910,6 +952,7 @@ class ObligationListView(LoginRequiredMixin, ListView):
 
         Returns:
             A queryset of all Obligation objects.
+
         """
         return Obligation.objects.all()
 
@@ -924,6 +967,7 @@ def upload_evidence(request: HttpRequest, obligation_id: int) -> HttpResponse:
 
     Returns:
         Redirect to appropriate page.
+
     """
     obligation = get_object_or_404(Obligation, pk=obligation_id)
 

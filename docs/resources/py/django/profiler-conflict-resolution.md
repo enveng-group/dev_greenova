@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Silk and Django Debug Toolbar Profiler Conflict Resolution](#silk-and-django-debug-toolbar-profiler-conflict-resolution)
+  - [Issue Overview](#issue-overview)
+  - [Root Cause](#root-cause)
+  - [Resolution](#resolution)
+    - [Implementation](#implementation)
+    - [Rationale](#rationale)
+  - [Alternative Solutions Considered](#alternative-solutions-considered)
+    - [1. Disable Silk's Profiler](#1-disable-silks-profiler)
+    - [2. Implement Context-Based Middleware](#2-implement-context-based-middleware)
+  - [Usage Guide](#usage-guide)
+    - [Performance Profiling with Silk](#performance-profiling-with-silk)
+    - [Using Django Debug Toolbar](#using-django-debug-toolbar)
+  - [Maintenance Considerations](#maintenance-considerations)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Silk and Django Debug Toolbar Profiler Conflict Resolution
 
 ## Issue Overview

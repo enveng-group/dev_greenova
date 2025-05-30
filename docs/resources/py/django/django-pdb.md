@@ -1,3 +1,31 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Debugging Django Applications](#debugging-django-applications)
+  - [Overview of Debugging Tools](#overview-of-debugging-tools)
+  - [Python's Built-in Debugger (pdb)](#pythons-built-in-debugger-pdb)
+    - [Basic pdb Commands](#basic-pdb-commands)
+  - [Django-PDB](#django-pdb)
+    - [Installation](#installation)
+    - [Configuration](#configuration)
+    - [Usage Scenarios](#usage-scenarios)
+      - [Debugging Views](#debugging-views)
+      - [Debugging Tests](#debugging-tests)
+      - [Post-mortem Debugging](#post-mortem-debugging)
+      - [Template Debugging](#template-debugging)
+  - [VS Code Debugging with debugpy](#vs-code-debugging-with-debugpy)
+    - [Setup](#setup)
+    - [Launch Configuration](#launch-configuration)
+    - [Debugging Features](#debugging-features)
+    - [Conditional Breakpoints](#conditional-breakpoints)
+  - [Advanced Debugging Techniques](#advanced-debugging-techniques)
+    - [Remote Debugging](#remote-debugging)
+    - [Debugging Management Commands](#debugging-management-commands)
+    - [Performance Optimization](#performance-optimization)
+  - [Best Practices](#best-practices)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Debugging Django Applications
 
 This guide covers multiple debugging techniques for Django applications in the

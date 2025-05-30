@@ -1,8 +1,28 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Views for the feedback app in Greenova."""
 
-import logging
 
 from django.contrib import messages
+import logging
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse
@@ -10,17 +30,16 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
-
 from .forms import BugReportForm
-from .models import BugReport
 from .proto_utils import deserialize_bug_report, serialize_bug_report
+from .models import BugReport
+
 
 logger = logging.getLogger(__name__)
 
 
 def get_plaintext_template(template_path: str) -> str:
-    """
-    Load and return the contents of a plaintext template file.
+    """Load and return the contents of a plaintext template file.
 
     Args:
         template_path: The relative path to the template file from the templates
@@ -28,23 +47,24 @@ def get_plaintext_template(template_path: str) -> str:
 
     Returns:
         The contents of the plaintext template file
+
     """
     try:
         return render_to_string(template_path)
     except (FileNotFoundError, OSError, ValueError) as e:
-        logger.error("Failed to load template %s: %s", template_path, str(e))
+        logger.exception("Failed to load template %s: %s", template_path, str(e))
         return ""
 
 
 def get_status_description(status: str) -> str:
-    """
-    Get the description for a bug report status from the plaintext template.
+    """Get the description for a bug report status from the plaintext template.
 
     Args:
         status: The status key (open, in_progress, resolved, closed, rejected)
 
     Returns:
         The description for the given status
+
     """
     status_messages = get_plaintext_template("feedback/status/status_messages.txt")
     if not status_messages:
@@ -60,21 +80,21 @@ def get_status_description(status: str) -> str:
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    """
-    Display the main feedback page showing bug reports and submission form.
+    """Display the main feedback page showing bug reports and submission form.
 
     Args:
         request: The HTTP request
 
     Returns:
         HTTP response with rendered template
+
     """
     # Get all bug reports if user is staff, otherwise only show the user's reports
     if request.user.is_authenticated and request.user.is_staff:
         bug_reports = BugReport.objects.all().order_by("-created_at")
     elif request.user.is_authenticated:
         bug_reports = BugReport.objects.filter(created_by=request.user).order_by(
-            "-created_at"
+            "-created_at",
         )
     else:
         bug_reports = []
@@ -89,14 +109,14 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def submit_bug_report(request: HttpRequest) -> HttpResponse:
-    """
-    Handle bug report submission form.
+    """Handle bug report submission form.
 
     Args:
         request: The HTTP request
 
     Returns:
         HTTP response with form or redirect to index
+
     """
     if request.method == "POST":
         form = BugReportForm(request.POST)
@@ -139,7 +159,7 @@ def submit_bug_report(request: HttpRequest) -> HttpResponse:
                 OSError,
                 ImportError,
             ) as e:
-                logger.error("Failed to send admin notification: %s", str(e))
+                logger.exception("Failed to send admin notification: %s", str(e))
 
             return redirect("feedback:index")
     else:
@@ -162,8 +182,7 @@ def submit_bug_report(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def export_report(request: HttpRequest, report_id: int) -> HttpResponse:
-    """
-    Export a bug report as Protocol Buffer binary data.
+    """Export a bug report as Protocol Buffer binary data.
 
     Args:
         request: The HTTP request
@@ -171,6 +190,7 @@ def export_report(request: HttpRequest, report_id: int) -> HttpResponse:
 
     Returns:
         HTTP response with binary data or redirect
+
     """
     # Get the bug report, ensuring the user has access
     if request.user.is_staff:
@@ -196,14 +216,14 @@ def export_report(request: HttpRequest, report_id: int) -> HttpResponse:
 @login_required
 @require_http_methods(["GET", "POST"])
 def import_report(request: HttpRequest) -> HttpResponse:
-    """
-    Import a bug report from Protocol Buffer binary data.
+    """Import a bug report from Protocol Buffer binary data.
 
     Args:
         request: The HTTP request
 
     Returns:
         HTTP response with success/error message or form
+
     """
     if request.method == "POST":
         if "file" not in request.FILES:
@@ -219,7 +239,7 @@ def import_report(request: HttpRequest) -> HttpResponse:
 
             if not bug_report:
                 messages.error(
-                    request, _("Could not deserialize the file. Invalid format.")
+                    request, _("Could not deserialize the file. Invalid format."),
                 )
                 return redirect("feedback:import_report")
 
@@ -232,9 +252,9 @@ def import_report(request: HttpRequest) -> HttpResponse:
             return redirect("feedback:index")
 
         except (ValueError, OSError, AttributeError, TypeError) as e:
-            logger.error("Error importing bug report: %s", str(e))
+            logger.exception("Error importing bug report: %s", str(e))
             messages.error(
-                request, _("An error occurred while importing the bug report.")
+                request, _("An error occurred while importing the bug report."),
             )
             return redirect("feedback:import_report")
 

@@ -1,3 +1,44 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [System Architecture](#system-architecture)
+  - [Overview](#overview)
+  - [Software Components](#software-components)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+  - [Data Flow](#data-flow)
+  - [Infrastructure Architecture](#infrastructure-architecture)
+    - [Name](#name)
+      - [Tags](#tags)
+    - [Cloud Provider](#cloud-provider)
+    - [Compute Resources](#compute-resources)
+    - [Storage](#storage)
+    - [Database](#database)
+    - [Networking](#networking)
+    - [DNS Configuration](#dns-configuration)
+  - [Infrastructure as Code](#infrastructure-as-code)
+    - [AWS CLI Commands](#aws-cli-commands)
+  - [Deployment Environment](#deployment-environment)
+    - [Operating System](#operating-system)
+  - [Security Architecture](#security-architecture)
+    - [Authentication](#authentication)
+    - [Authorization](#authorization)
+    - [Data Protection](#data-protection)
+    - [Security Concerns](#security-concerns)
+  - [Backup and Disaster Recovery](#backup-and-disaster-recovery)
+    - [Backup Strategy](#backup-strategy)
+    - [Disaster Recovery](#disaster-recovery)
+  - [Scaling Strategy](#scaling-strategy)
+    - [Vertical Scaling](#vertical-scaling)
+    - [Horizontal Scaling](#horizontal-scaling)
+  - [Network Paths and Data Flow](#network-paths-and-data-flow)
+    - [External Request Flow](#external-request-flow)
+    - [Internal Service Communication](#internal-service-communication)
+  - [Database Schema](#database-schema)
+  - [Future Enhancements](#future-enhancements)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # System Architecture
 
 ## Overview
@@ -123,7 +164,7 @@ aws ec2 run-instances --image-id "ami-0b87a8055f0211d32" \
     }
   }' \
     --network-interfaces '{
-      "SubnetId":"subnet-01344c7dbe4c656f8",
+      "SubnetId":"subnet-01344c7be4c656f8",
       "DeleteOnTermination":true,
       "Description":"Primary network interface for Enssol environmental \
   obligations application - Production environment",
@@ -211,7 +252,7 @@ aws ec2 run-instances --image-id "ami-0b87a8055f0211d32" \
 ### Disaster Recovery
 
 - Documented disaster recovery procedures
-- RTO (Recovery Time Objective): 4 hours
+- TO (Recovery Time Objective): 4 hours
 - RPO (Recovery Point Objective): 24 hours
 
 ## Scaling Strategy

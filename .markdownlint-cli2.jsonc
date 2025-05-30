@@ -1,44 +1,12 @@
-/*
- * An example .markdownlint-cli2.jsonc file
- */
 {
-  // Disable some built-in rules
-  "config": {
-    "line-length": false, // MD013
-    "no-duplicate-heading": {
-      // MD024
-      "siblings_only": true,
-    },
-    "no-trailing-spaces": false,
-    "no-multiple-blanks": false,
-  },
-
-  // Fix any fixable errors
-  "fix": true,
-
-  // Define a custom front matter pattern
-  "frontMatter": "<head>[^]*<\/head>",
-
-  // Ignore files referenced by .gitignore (only valid at root)
-  "gitignore": true,
-
-  // Disable banner message on stdout (only valid at root)
-  "noBanner": true,
-
-  // Disable inline config comments
-  "noInlineConfig": true,
-
-  // Disable progress on stdout (only valid at root)
-  "noProgress": true,
-
-  // Use a specific formatter (only valid at root)
-  "outputFormatters": [["markdownlint-cli2-formatter-default"]],
-
-  // Show found files on stdout (only valid at root)
-  "showFound": true,
-
-  // Ignore all Markdown files in the .github directory
-  "ignores": [
-    ".github/**/*.md"
-  ]
+	"fix": true,
+	"gitignore": true,
+	"globs": ["**/*.md", "!node_modules"],
+	"config": {
+		"default": true,
+		"MD013": { "line_length": 80, "strict": true },
+		"MD024": { "allow_different_nesting": false },
+		"MD029": { "style": "ordered" },
+		"MD041": true
+	}
 }

@@ -1,5 +1,4 @@
-"""
-core.management package for Greenova.
+"""core.management package for Greenova.
 
 This package contains management utilities and command modules for the core app.
 """

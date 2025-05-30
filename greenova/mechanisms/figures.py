@@ -1,26 +1,44 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Mechanism chart generation using plotly for interactive charts.
 
 This module provides functions to generate interactive pie charts for environmental
 mechanisms using Plotly, for integration into the Greenova dashboard.
 """
 
-import io
 import logging
+import io
 from dataclasses import dataclass
 from typing import Any, cast
-
-import matplotlib
-import matplotlib.figure
+import matplotlib as mpl
 import plotly.graph_objects as go
 from beartype import beartype
 from core.utils.charts import create_pie_chart
 from plotly.offline import plot
-
-from . import proto_utils
 from .models import EnvironmentalMechanism
+from . import proto_utils
+
 
 # For type annotations
-Figure = matplotlib.figure.Figure
+Figure = mpl.figure.Figure
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +62,7 @@ def generate_plotly_pie_chart(
 
     Returns:
         HTML string containing the interactive plotly chart.
+
     """
     fig = go.Figure()
 
@@ -58,7 +77,7 @@ def generate_plotly_pie_chart(
                 "mechanism_id": mechanism_id,
                 "status_key": status_key,
                 "color": colors[i],
-            }
+            },
         )
 
     fig.add_trace(
@@ -76,7 +95,7 @@ def generate_plotly_pie_chart(
                 "Percentage: %{percent:.1%}<br>"
                 "<extra></extra>"
             ),
-        )
+        ),
     )
 
     fig.update_layout(
@@ -113,6 +132,7 @@ def encode_figure_to_svg(fig: Figure) -> str:
 
     Returns:
         SVG image as a string with data attributes preserved for interactivity.
+
     """
     buf = io.StringIO()
     fig.savefig(buf, format="svg", bbox_inches="tight")
@@ -166,7 +186,7 @@ class PieChartParams:
 
 
 def get_mechanism_chart(
-    mechanism_id: int, fig_width: int = 320, fig_height: int = 280
+    mechanism_id: int, fig_width: int = 320, fig_height: int = 280,
 ) -> tuple[Figure, str]:
     """Get pie chart for a specific mechanism as SVG.
 
@@ -177,6 +197,7 @@ def get_mechanism_chart(
 
     Returns:
         Tuple of (matplotlib Figure, SVG image as string).
+
     """
     try:
         mechanism = EnvironmentalMechanism.objects.get(id=mechanism_id)
@@ -201,7 +222,7 @@ def get_mechanism_chart(
         svg_image = encode_figure_to_svg(fig)
         return fig, svg_image
     except EnvironmentalMechanism.DoesNotExist:
-        logger.error("Mechanism with ID %s does not exist.", mechanism_id)
+        logger.exception("Mechanism with ID %s does not exist.", mechanism_id)
         params = PieChartParams(
             data=[0, 0, 0, 0],
             labels=["None", "None", "None", "None"],
@@ -216,7 +237,7 @@ def get_mechanism_chart(
 
 
 def get_overall_chart(
-    project_id: int, fig_width: int = 320, fig_height: int = 280
+    project_id: int, fig_width: int = 320, fig_height: int = 280,
 ) -> tuple[Figure, str]:
     """Get overall pie chart for all mechanisms in a project as SVG.
 
@@ -229,6 +250,7 @@ def get_overall_chart(
 
     Returns:
         Tuple of (matplotlib Figure, SVG image as string).
+
     """
     try:
         mechanisms = EnvironmentalMechanism.objects.filter(project_id=project_id)
@@ -255,7 +277,7 @@ def get_overall_chart(
         svg_image = encode_figure_to_svg(fig)
         return fig, svg_image
     except Exception as e:
-        logger.error("Error generating overall chart: %s", str(e))
+        logger.exception("Error generating overall chart: %s", str(e))
         params = PieChartParams(
             data=[0, 0, 0, 0],
             labels=["None", "None", "None", "None"],
@@ -278,7 +300,7 @@ def get_mechanism_plotly_chart(
         mechanism = EnvironmentalMechanism.objects.get(id=mechanism_id)
         chart_data_pb = proto_utils.serialize_mechanism_chart_data(mechanism)
 
-        segments = cast(list[Any], getattr(chart_data_pb, "segments", []))
+        segments = cast("list[Any]", getattr(chart_data_pb, "segments", []))
         labels: list[str] = [str(getattr(segment, "label", "")) for segment in segments]
         data: list[int] = [int(getattr(segment, "value", 0)) for segment in segments]
         colors: list[str] = [str(getattr(segment, "color", "")) for segment in segments]
@@ -291,7 +313,7 @@ def get_mechanism_plotly_chart(
         )
         return str(chart_html)
     except EnvironmentalMechanism.DoesNotExist:
-        logger.error("Mechanism with ID %s does not exist.", mechanism_id)
+        logger.exception("Mechanism with ID %s does not exist.", mechanism_id)
         return None
 
 
@@ -315,7 +337,7 @@ def get_overall_plotly_chart(
         )
         return str(chart_html)
     except Exception as e:
-        logger.error("Error generating overall chart: %s", str(e))
+        logger.exception("Error generating overall chart: %s", str(e))
         return None
 
 
@@ -330,6 +352,7 @@ def generate_pie_chart(
 
     Returns:
         Matplotlib Figure object containing the pie chart.
+
     """
     # Prepare custom data attributes for wedges (optional, for SVG interactivity)
     data_attrs: list[dict[str, object]] = []
@@ -345,7 +368,7 @@ def generate_pie_chart(
                 if i < len(params.labels)
                 else "",
                 "_data_color": params.colors[i] if i < len(params.colors) else "",
-            }
+            },
         )
     return create_pie_chart(
         data=params.data,

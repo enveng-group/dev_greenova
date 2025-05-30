@@ -1,23 +1,43 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Views for the landing page of the Greenova application.
 
 This module contains the main landing page view and related utilities, such as
 handling newsletter signups.
 """
 
+from django.views.generic import TemplateView
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.cache import cache_control
+from django.utils.decorators import method_decorator
+from django.shortcuts import redirect, render
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.conf import settings
+from typing import TypedDict
+from smtplib import SMTPException
 import logging
 import smtplib
-from smtplib import SMTPException
-from typing import Any, TypedDict
 
-from django.conf import settings
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_POST
-from django.views.decorators.vary import vary_on_headers
-from django.views.generic import TemplateView
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +65,7 @@ class HomeView(TemplateView):
 
     template_name = "landing/index.html"
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
         """Handle GET requests for the landing page."""
         logger.debug(
             "Landing page - User authenticated: %s, Post-logout: %s",
@@ -55,7 +75,7 @@ class HomeView(TemplateView):
 
         # If user is authenticated, redirect to dashboard unless post-logout
         if request.user.is_authenticated and not getattr(
-            request, "is_post_logout", False
+            request, "is_post_logout", False,
         ):
             logger.debug("Redirecting authenticated user to dashboard")
             return redirect("/dashboard/")
@@ -82,7 +102,7 @@ class HomeView(TemplateView):
 
         return response
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Add landing page context data."""
         context = super().get_context_data(**kwargs)
         context.update(
@@ -91,7 +111,7 @@ class HomeView(TemplateView):
                 "show_landing_content": True,
                 "show_dashboard_link": self.request.user.is_authenticated,
                 "is_post_logout": getattr(self.request, "is_post_logout", False),
-            }
+            },
         )
         return context
 
@@ -106,6 +126,7 @@ def newsletter_signup(request: HttpRequest) -> HttpResponse:
 
     Returns:
         JSON response with success/error message
+
     """
     email = request.POST.get("email")
 
@@ -129,5 +150,5 @@ def newsletter_signup(request: HttpRequest) -> HttpResponse:
             },
         )
     except SMTPException as e:
-        logger.error("SMTP error during newsletter signup: %s", str(e))
+        logger.exception("SMTP error during newsletter signup: %s", str(e))
         return render(request, "landing/partials/newsletter_error.html")

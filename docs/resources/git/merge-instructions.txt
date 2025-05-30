@@ -124,7 +124,7 @@ git stash    # if needed
 git fetch --all --prune
 
 # Create integration branch from a clean state
-git checkout -b integration/v0.0.6 origin/staging
+git checkout -b integration/v0.0.7 origin/staging
 ```
 
 ### Phase 1.5: Integrate cherry-picked updates first

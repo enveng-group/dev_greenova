@@ -1,14 +1,34 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Greenova project URL configuration."""
 
-import logging
 
 from django.conf import settings
+import logging
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
-from django.urls import include, path
 from django.urls.resolvers import URLPattern, URLResolver
+from django.urls import include, path
 
 logger = logging.getLogger(__name__)
 
@@ -73,9 +93,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     # Sentry error page to verify Sentry is working
     path("sentry-debug/", trigger_error),
 ]
-# + debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-#    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]

@@ -1,12 +1,31 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Forms for submitting and validating bug reports in the feedback app."""
 
-from typing import Any, ClassVar
 
 from django import forms
+from typing import ClassVar
 from django.template.loader import render_to_string
-from django.utils.html import escape
-
 from .models import BugReport
+from django.utils.html import escape
 
 
 class BugReportForm(forms.ModelForm):
@@ -54,7 +73,7 @@ class BugReportForm(forms.ModelForm):
         "additional_comments": forms.Textarea(attrs={"rows": 3, "cols": 80}),
     }
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: tuple, **kwargs: dict) -> None:
         """Initialize BugReportForm and set required fields and help text."""
         super().__init__(*args, **kwargs)
 
@@ -75,7 +94,7 @@ class BugReportForm(forms.ModelForm):
 
         # Load the mandatory field message
         mandatory_message = escape(
-            render_to_string("feedback/form/messages/mandatory_item.txt")
+            render_to_string("feedback/form/messages/mandatory_item.txt"),
         )
 
         # Define field help text

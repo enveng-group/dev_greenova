@@ -1,3 +1,22 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Comparing Changes Between `origin` and `upstream`](#comparing-changes-between-origin-and-upstream)
+  - [Overview](#overview)
+  - [Use Case](#use-case)
+  - [Command Syntax](#command-syntax)
+    - [Explanation](#explanation)
+    - [Example Output](#example-output)
+  - [Listing Only Commit Hashes](#listing-only-commit-hashes)
+    - [Example Output](#example-output-1)
+  - [Practical Scenarios](#practical-scenarios)
+    - [Reviewing Changes Before a Pull Request](#reviewing-changes-before-a-pull-request)
+    - [Synchronizing Your Fork](#synchronizing-your-fork)
+  - [Additional Tips](#additional-tips)
+  - [Conclusion](#conclusion)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 <!--
  Copyright 2025 Enveng Group.
  SPDX-License-Identifier: 	AGPL-3.0-or-later

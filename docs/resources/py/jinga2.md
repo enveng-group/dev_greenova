@@ -1,3 +1,36 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django Project Template Structure with Jinja2](#django-project-template-structure-with-jinja2)
+  - [Top-Level Organization](#top-level-organization)
+  - [Detailed Structure Breakdown](#detailed-structure-breakdown)
+    - [1. Project-Level Templates](#1-project-level-templates)
+    - [2. App-Level Templates](#2-app-level-templates)
+  - [Configuration for Jinja2](#configuration-for-jinja2)
+  - [Benefits of This Structure](#benefits-of-this-structure)
+  - [Setting Up Jinja2 Environment](#setting-up-jinja2-environment)
+  - [Jinja2 Syntax vs Django Template Language](#jinja2-syntax-vs-django-template-language)
+    - [Variables](#variables)
+    - [Control Structures](#control-structures)
+    - [Filters](#filters)
+    - [Comments](#comments)
+    - [Template Inheritance](#template-inheritance)
+  - [Jinja2 Advanced Features](#jinja2-advanced-features)
+    - [Macros (Not Available in Django Templates)](#macros-not-available-in-django-templates)
+    - [Template Loading from String](#template-loading-from-string)
+    - [Whitespace Control](#whitespace-control)
+  - [Best Practices for Django with Jinja2](#best-practices-for-django-with-jinja2)
+    - [1. Keep Templates DRY (Don't Repeat Yourself)](#1-keep-templates-dry-dont-repeat-yourself)
+- [{% block page_title %}Default Title{% endblock page_title %}](#%25-block-page_title-%25default-title%25-endblock-page_title-%25)
+  - [Common Pitfalls and Solutions](#common-pitfalls-and-solutions)
+    - [1. Static Files and URL Handling](#1-static-files-and-url-handling)
+    - [2. CSRF Protection](#2-csrf-protection)
+    - [3. Template Discovery](#3-template-discovery)
+  - [Performance Considerations](#performance-considerations)
+  - [Conclusion](#conclusion)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django Project Template Structure with Jinja2
 
 When migrating a Django project to use Jinja2 templates, it's important to

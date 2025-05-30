@@ -1,0 +1,39 @@
+linters:
+  BorderZero:
+    enabled: true
+  ColorKeyword:
+    enabled: true
+  DuplicateProperty:
+    enabled: true
+  EmptyRule:
+    enabled: true
+  FinalNewline:
+    enabled: true
+  HexLength:
+    enabled: true
+  HexNotation:
+    enabled: true
+  IdSelector:
+    enabled: false
+  ImportantRule:
+    enabled: true
+  Indentation:
+    enabled: true
+  PropertySortOrder:
+    enabled: false
+  QualifyingElement:
+    enabled: false
+  SelectorDepth:
+    enabled: true
+  SingleLinePerSelector:
+    enabled: true
+  SpaceAfterComma:
+    enabled: true
+  SpaceAfterPropertyColon:
+    enabled: true
+  SpaceAfterPropertyName:
+    enabled: true
+  SpaceBeforeBrace:
+    enabled: true
+  TrailingSemicolon:
+    enabled: true

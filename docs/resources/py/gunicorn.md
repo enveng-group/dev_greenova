@@ -1,3 +1,26 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Gunicorn WSGI Server](#gunicorn-wsgi-server)
+  - [What is Gunicorn?](#what-is-gunicorn)
+  - [Why Use Gunicorn in Greenova?](#why-use-gunicorn-in-greenova)
+  - [Installation](#installation)
+  - [Running Gunicorn with Greenova](#running-gunicorn-with-greenova)
+    - [Basic Command](#basic-command)
+    - [Using Configuration File](#using-configuration-file)
+  - [Greenova's Gunicorn Configuration](#greenovas-gunicorn-configuration)
+  - [Environment Variables](#environment-variables)
+  - [Production Deployment](#production-deployment)
+    - [Recommended Architecture](#recommended-architecture)
+    - [Nginx Configuration Example](#nginx-configuration-example)
+  - [Memory Optimization](#memory-optimization)
+  - [Systemd Service Example](#systemd-service-example)
+  - [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+  - [Additional Resources](#additional-resources)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Gunicorn WSGI Server
 
 ## What is Gunicorn?

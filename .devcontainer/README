@@ -1,0 +1,101 @@
+Greenova Devcontainer
+=====================
+
+Overview
+--------
+
+This directory contains the configuration and scripts for the Greenova
+development container. The devcontainer provides a reproducible, isolated
+environment for developing, testing, and maintaining the Greenova Django
+application.
+
+Features
+--------
+
+- **Python 3.12.10** (exact version)
+- **Django 5.2** (exact version)
+- **Node.js 22.16.0** and **npm 11.3.0**
+- **Alpine Linux v3.21** base image
+- Pre-configured Python virtual environment
+- Automated pre-commit hook installation
+- SSH key and Git signing configuration
+- POSIX-compliant shell scripts
+- Linting, formatting, and type-checking tools
+
+Directory Structure
+-------------------
+
+::
+
+  .devcontainer/
+    ├── Containerfile
+    ├── devcontainer.json
+    ├── README
+    ├── py.typed
+    ├── scripts/
+    │   ├── on_create.sh
+    │   ├── post_create.sh
+    │   ├── on_create/
+    │   │   ├── apk_update_upgrade.py
+    │   │   └── py.typed
+    │   └── post_create/
+    │       ├── add_bashrc.py
+    │       ├── pre_commit_setup.py
+    │       ├── python_venv_setup.py
+    │       ├── setup_ssh.py
+    │       └── py.typed
+    └── local-features/
+        └── ... (custom devcontainer features)
+
+Usage
+-----
+
+1. **Open in VS Code**: Use "Remote - Containers: Open Folder in Container".
+2. **Automatic Setup**: The container will automatically:
+   - Update system packages
+   - Set up a Python virtual environment
+   - Install dependencies from ``requirements.txt``
+   - Configure pre-commit hooks
+   - Set up SSH and Git signing (if keys are present)
+   - Copy project ``.bashrc`` to the home directory
+
+3. **Activate Environment**: The Python virtual environment is automatically
+   activated in the integrated terminal.
+
+4. **Run Django**: Use standard Django management commands, e.g.::
+
+      python manage.py runserver
+
+Scripts
+-------
+
+- **on_create.sh**: Runs on container creation, updates system packages.
+- **post_create.sh**: Runs after container is built, sets up Python, pre-commit,
+  bashrc, and SSH.
+- **Python scripts**: Each setup step is implemented as a Python script for
+  reliability and maintainability.
+
+Conventions
+-----------
+
+- All scripts are POSIX-compliant and linted with ShellCheck.
+- Python scripts use strict type annotations and ``beartype`` for runtime checks.
+- All files use UTF-8 encoding.
+- Environment variables are managed via ``.env`` files.
+- All code and scripts must pass pre-commit checks before committing.
+
+Troubleshooting
+---------------
+
+- If you encounter issues with dependencies, re-run the post-create script::
+
+    .devcontainer/scripts/post_create.sh
+
+- For SSH/Git signing issues, ensure your SSH keys are present in
+  ``/home/vscode/.ssh`` and have correct permissions.
+
+Author & License
+----------------
+
+- Author: Adrian Gallo <agallo@enveng-group.com.au>
+- License: AGPL-3.0

@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Snyk Dev Container Fix (May 2025)](#snyk-dev-container-fix-may-2025)
+  - [Key Changes](#key-changes)
+  - [Why?](#why)
+  - [References](#references)
+  - [Next Steps](#next-steps)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Snyk Dev Container Fix (May 2025)
 
 This project configures the Snyk VS Code extension and CLI to work reliably in

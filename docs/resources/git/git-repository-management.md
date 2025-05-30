@@ -1,3 +1,30 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Git Repository Management Guide](#git-repository-management-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Current Issues](#current-issues)
+  - [Resolution Plan](#resolution-plan)
+    - [Immediate Actions](#immediate-actions)
+      - [Repository Audit](#repository-audit)
+      - [Synchronize All Forks with Upstream](#synchronize-all-forks-with-upstream)
+      - [Resolve Critical Path Branches](#resolve-critical-path-branches)
+    - [Repository Cleanup](#repository-cleanup)
+      - [Clean Local Repositories](#clean-local-repositories)
+      - [Remove Obsolete Branches](#remove-obsolete-branches)
+      - [Fork Cleanup](#fork-cleanup)
+    - [Maintenance Schedule](#maintenance-schedule)
+      - [Weekly Maintenance](#weekly-maintenance)
+      - [Monthly Deep Cleaning](#monthly-deep-cleaning)
+      - [Quarterly Audit](#quarterly-audit)
+    - [Monitoring](#monitoring)
+      - [Automated Tools](#automated-tools)
+  - [Git Commands Reference](#git-commands-reference)
+  - [Team Guidelines](#team-guidelines)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Git Repository Management Guide
 
 **Last Updated**: 2025-03-07

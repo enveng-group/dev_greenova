@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Greenova Python Requirements and Environment Workflow](#greenova-python-requirements-and-environment-workflow)
+  - [File Structure](#file-structure)
+  - [How to Add or Update Dependencies](#how-to-add-or-update-dependencies)
+  - [Best Practices](#best-practices)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Greenova Python Requirements and Environment Workflow
 
 ## File Structure

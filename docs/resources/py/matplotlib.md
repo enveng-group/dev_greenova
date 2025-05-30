@@ -1,3 +1,31 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django-Matplotlib Learning Resources](#django-matplotlib-learning-resources)
+  - [Introduction](#introduction)
+  - [Installation and Setup](#installation-and-setup)
+    - [Basic Installation](#basic-installation)
+    - [Django Configuration](#django-configuration)
+  - [Basic Usage](#basic-usage)
+    - [Creating Charts in Views](#creating-charts-in-views)
+  - [Matplotlib Chart Example](#matplotlib-chart-example)
+  - [Alternative Integration Methods](#alternative-integration-methods)
+    - [Direct Image Generation](#direct-image-generation)
+    - [Using BytesIO for Template Context](#using-bytesio-for-template-context)
+  - [Chart Types and Examples](#chart-types-and-examples)
+  - [Official Documentation](#official-documentation)
+    - [Django-Matplotlib](#django-matplotlib)
+    - [Matplotlib](#matplotlib)
+  - [Tutorials and Guides](#tutorials-and-guides)
+    - [General Matplotlib Tutorials](#general-matplotlib-tutorials)
+    - [Django Integration Tutorials](#django-integration-tutorials)
+  - [Best Practices](#best-practices)
+  - [Project-Specific Examples](#project-specific-examples)
+    - [14-Day Lookahead Chart](#14-day-lookahead-chart)
+    - [Obligations Progress Chart](#obligations-progress-chart)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django-Matplotlib Learning Resources
 
 This guide provides resources for using Matplotlib in Django applications, with a

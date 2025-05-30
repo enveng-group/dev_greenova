@@ -1,5 +1,4 @@
-"""
-company.templatetags package for Greenova.
+"""company.templatetags package for Greenova.
 
 This package contains custom template tags for the company app.
 """

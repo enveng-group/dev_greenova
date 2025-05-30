@@ -1,3 +1,42 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Contributing to Greenova](#contributing-to-greenova)
+  - [Table of Contents](#table-of-contents)
+  - [Code of Conduct](#code-of-conduct)
+  - [Getting Started](#getting-started)
+    - [Development Environment Setup](#development-environment-setup)
+  - [How to Contribute](#how-to-contribute)
+    - [Reporting Issues](#reporting-issues)
+    - [Feature Requests](#feature-requests)
+    - [Documentation Updates](#documentation-updates)
+    - [Code Contributions](#code-contributions)
+  - [Development Workflow](#development-workflow)
+    - [Fork-Based Contribution](#fork-based-contribution)
+    - [Git Workflow for Direct Contributors](#git-workflow-for-direct-contributors)
+    - [Branch Strategy](#branch-strategy)
+    - [Merge, Release, and Tagging Process](#merge-release-and-tagging-process)
+    - [Commit Message Guidelines](#commit-message-guidelines)
+  - [Pull Request Process](#pull-request-process)
+    - [Pull Request Checklist](#pull-request-checklist)
+    - [Code Review Process](#code-review-process)
+  - [Coding Standards](#coding-standards)
+    - [Python Code Style](#python-code-style)
+    - [HTML/CSS Guidelines](#htmlcss-guidelines)
+    - [JavaScript Standards](#javascript-standards)
+    - [Testing Requirements](#testing-requirements)
+    - [Documentation Requirements](#documentation-requirements)
+  - [Project Structure](#project-structure)
+  - [Community](#community)
+    - [Getting Help](#getting-help)
+  - [Secret Scanning and Gitleaks Workflow](#secret-scanning-and-gitleaks-workflow)
+    - [How Gitleaks Works](#how-gitleaks-works)
+    - [Workflow for Contributors](#workflow-for-contributors)
+    - [Example: Redacting Secrets Automatically](#example-redacting-secrets-automatically)
+    - [Configuration](#configuration)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Contributing to Greenova
 
 Thank you for your interest in contributing to Greenova! This document provides
@@ -48,9 +87,9 @@ feels welcome to contribute.
 
 1. **Prerequisites**:
 
-   - Python 3.12.9
-   - Node.js 20.19.1
-   - NPM 11.3.0
+   - Python 3.12.10
+   - Node.js 21.7.3
+   - NPM 10.9.1
    - Git
 
 2. **Clone the repository** (if you're a direct contributor) or fork it first
@@ -373,3 +412,50 @@ If you need help:
 - Join our Slack channel (link available in the repository)
 
 Thank you for contributing to Greenova!
+
+## Secret Scanning and Gitleaks Workflow
+
+Greenova uses [Gitleaks](https://github.com/gitleaks/gitleaks) to detect and prevent accidental commits of secrets (API keys, passwords, tokens, etc.).
+
+### How Gitleaks Works
+
+- Gitleaks runs automatically as a pre-commit hook.
+- It scans for secrets using a custom configuration in `.gitleaks.toml` and ignores known fingerprints in `.gitleaksignore`.
+- Reports are generated in SARIF format as `gitleaks-report.json`.
+- If secrets are detected, the commit will be blocked. You must remove or redact the secrets before committing.
+
+### Workflow for Contributors
+
+1. **Before committing:**
+   - Run `pre-commit run gitleaks --all-files` to scan for secrets.
+   - If secrets are found, review `gitleaks-report.json` and remove/redact any secrets.
+   - If a finding is a false positive, add its fingerprint to `.gitleaksignore`.
+2. **Baseline:**
+   - If you need to update the baseline, run Gitleaks with `--report-path gitleaks-report.json` and use the report as a baseline for future scans.
+3. **Redaction/Removal:**
+   - Use the provided script in `scripts/gitleaks.py` or manually remove secrets if detected.
+
+### Example: Redacting Secrets Automatically
+
+A sample script (`scripts/gitleaks.py`) can be used to check for secrets in the report and block the commit if any are found:
+
+```python
+import sys
+import json
+
+with open("gitleaks-report.json", encoding="utf-8") as f:
+    data = json.load(f)
+
+if data:
+    print("\n[ERROR] Gitleaks detected secrets! Please remove or redact them before committing.\n")
+    sys.exit(1)
+```
+
+Add this script as a post-Gitleaks hook if you want to enforce blocking on secret detection.
+
+### Configuration
+
+- `.gitleaks.toml`: Custom rules and allowlists for the project.
+- `.gitleaksignore`: Ignore specific fingerprints (one per line).
+
+For more details, see the [Gitleaks documentation](https://github.com/gitleaks/gitleaks).

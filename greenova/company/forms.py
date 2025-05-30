@@ -1,16 +1,34 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
-Forms for the company app.
+
+"""Forms for the company app.
 
 This module defines forms for managing companies, memberships, documents, and search.
 """
-import logging
 from typing import ClassVar
-
+import logging
 from django import forms
 from django.contrib.auth import get_user_model
+from .models import Company, CompanyDocument, CompanyMembership
 from django.utils.translation import gettext_lazy as _
 
-from .models import Company, CompanyDocument, CompanyMembership
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -23,8 +41,13 @@ class CompanyForm(forms.ModelForm):
     widgets for better user experience.
     """
 
-    def clean(self):
-        """Validate form data."""
+    def clean(self) -> dict:
+        """Validate form data.
+
+        Returns:
+            The cleaned form data as a dictionary.
+
+        """
         cleaned_data = super().clean()
         logger.info("Cleaning company form data: %s", cleaned_data)
         return cleaned_data
@@ -34,6 +57,7 @@ class CompanyForm(forms.ModelForm):
 
         Specifies the model, fields, widgets, labels, and help_texts for the form.
         """
+
         model = Company
         fields: ClassVar[list[str]] = [
             "name",
@@ -82,6 +106,7 @@ class CompanyMembershipForm(forms.ModelForm):
 
         Specifies the model, fields, labels, and help_texts for the form.
         """
+
         model = CompanyMembership
         fields: ClassVar[list[str]] = [
             "user",
@@ -112,6 +137,7 @@ class CompanyDocumentForm(forms.ModelForm):
 
         Specifies the model, fields, widgets, labels, and help_texts for the form.
         """
+
         model = CompanyDocument
         fields: ClassVar[list[str]] = ["name", "description", "file", "document_type"]
         widgets: ClassVar[dict[str, forms.Widget]] = {
@@ -139,7 +165,7 @@ class CompanySearchForm(forms.Form):
             attrs={
                 "placeholder": _("Search by name or description"),
                 "class": "form-input",
-            }
+            },
         ),
         label=_("Search"),
     )

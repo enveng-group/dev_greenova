@@ -11,13 +11,13 @@ from typing import Any
 from django import template
 from django.db.models import QuerySet
 
-from ..models import EnvironmentalMechanism
+from greenova.mechanisms.models import EnvironmentalMechanism
 
 register = template.Library()
 
 
 @register.filter
-def get_item(dictionary: dict[str, Any], key: Any) -> Any:
+def get_item(dictionary: dict[str, object], key: object) -> object:
     """Get item from dictionary by key."""
     return dictionary.get(key)
 

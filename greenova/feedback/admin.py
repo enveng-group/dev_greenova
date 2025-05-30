@@ -1,14 +1,33 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Admin configuration for the feedback app in Greenova."""
 
-from typing import Any, ClassVar
 
 from django import forms
+from typing import ClassVar
 from django.contrib import admin
 from django.forms import ModelForm
 from django.http import HttpRequest
-from django.utils.translation import gettext_lazy as _
-
 from .models import BugReport
+from django.utils.translation import gettext_lazy as _
 
 
 class BugReportAdminForm(forms.ModelForm):
@@ -16,6 +35,7 @@ class BugReportAdminForm(forms.ModelForm):
 
     class Meta:
         """Meta options for BugReportAdminForm."""
+
         model = BugReport
         fields = "__all__"
 
@@ -49,7 +69,7 @@ class BugReportAdmin(admin.ModelAdmin[BugReport]):
                     "operating_system",
                     "browser",
                     "device_type",
-                )
+                ),
             },
         ),
         (
@@ -79,114 +99,114 @@ class BugReportAdmin(admin.ModelAdmin[BugReport]):
     def get_form(
         self,
         request: HttpRequest,
-        obj: Any = None,
+        obj: object = None,
         change: bool = False,
-        **kwargs: Any
+        **kwargs: dict,
     ) -> type[ModelForm]:
         """Return the form class to use in the admin, adding help text to fields."""
         form = super().get_form(request, obj, **kwargs)
         self._add_help_text_to_fields(form)
         return form
 
-    def _add_help_text_to_fields(self, form: Any) -> None:
+    def _add_help_text_to_fields(self, form: object) -> None:
         """Add helper text to form fields in the admin form."""
         field_help = {
             "title": _(
                 "A brief, descriptive title of the issue. Example: 'Dashboard "
-                "fails to load environmental metrics when filtering by project'"
+                "fails to load environmental metrics when filtering by project'",
             ),
             "description": _(
                 "A concise summary of the problem. Focus on what happened, "
-                "when it happened, and the context."
+                "when it happened, and the context.",
             ),
             "application_version": _(
                 "The version of Greenova where the bug was encountered. Check "
                 "the footer of any Greenova page or look at the 'About' section "
-                "in settings."
+                "in settings.",
             ),
             "operating_system": _(
                 "Your operating system and version (e.g., Windows 10, macOS 11.2, "
-                "Ubuntu 20.04)."
+                "Ubuntu 20.04).",
             ),
             "browser": _(
                 "Browser name and version (e.g., Chrome 89.0, Firefox 86.0). "
-                "Leave blank if not applicable."
+                "Leave blank if not applicable.",
             ),
             "device_type": _(
                 "Type of device (e.g., desktop, laptop, smartphone). Include "
-                "device model if on mobile."
+                "device model if on mobile.",
             ),
             "steps_to_reproduce": _(
                 "Detailed numbered steps to reproduce the issue. Start from a "
                 "known state and be specific about what you clicked, typed, or "
-                "selected."
+                "selected.",
             ),
             "expected_behavior": _(
-                "What you expected to happen when following the steps above."
+                "What you expected to happen when following the steps above.",
             ),
             "actual_behavior": _(
                 "What actually happened instead. Be specific about error messages, "
-                "unexpected behavior, or missing functionality."
+                "unexpected behavior, or missing functionality.",
             ),
             "error_messages": _(
                 "Copy and paste the exact error text rather than paraphrasing. "
-                "Include any error codes or numbers."
+                "Include any error codes or numbers.",
             ),
             "trace_report": _(
                 "If available, include the Django traceback or browser console logs. "
                 "For Django errors: look for the section labeled 'Traceback', click "
-                "on 'Switch to copy-and-paste view', and copy the entire trace report."
+                "on 'Switch to copy-and-paste view', and copy the entire trace report.",
             ),
             "frequency": _(
                 "How often the issue occurs. Select the option that best matches "
-                "your experience."
+                "your experience.",
             ),
             "impact_severity": _(
                 "How severe the issue is: Minor (causes inconvenience), Major "
                 "(prevents completing specific tasks), Critical (prevents core "
-                "functionality, data loss, security risks)."
+                "functionality, data loss, security risks).",
             ),
             "user_impact": _(
                 "How the issue affects user experience. Mention any deadlines or "
-                "business processes affected."
+                "business processes affected.",
             ),
             "workarounds": _(
-                "Any temporary solutions you've found to work around the issue."
+                "Any temporary solutions you've found to work around the issue.",
             ),
             "additional_comments": _(
                 "Any other relevant information, patterns you've noticed, or when "
-                "the issue started occurring."
+                "the issue started occurring.",
             ),
             "github_issue_url": _(
-                "URL to the associated GitHub issue if one has been created."
+                "URL to the associated GitHub issue if one has been created.",
             ),
             "severity": _("Administrator's assessment of bug severity."),
             "status": _("Current status of the bug report."),
             "admin_comment": _(
-                "Internal notes about this bug report (not visible to users)."
+                "Internal notes about this bug report (not visible to users).",
             ),
         }
 
         for field_name, help_text in field_help.items():
-            if field_name in form.base_fields:
+            if hasattr(form, "base_fields") and field_name in form.base_fields:
                 form.base_fields[field_name].help_text = help_text
 
     @admin.action(description="Mark selected reports as rejected")
-    def mark_as_rejected(self, queryset: Any) -> None:
+    def mark_as_rejected(self, queryset: object) -> None:
         """Mark selected bug reports as rejected in the admin action."""
         queryset.update(status="rejected")
 
     @admin.action(description="Mark selected reports as in progress")
-    def mark_as_in_progress(self, queryset: Any) -> None:
+    def mark_as_in_progress(self, queryset: object) -> None:
         """Mark selected bug reports as in progress in the admin action."""
         queryset.update(status="in_progress")
 
     @admin.action(description="Mark selected reports as resolved")
-    def mark_as_resolved(self, queryset: Any) -> None:
+    def mark_as_resolved(self, queryset: object) -> None:
         """Mark selected bug reports as resolved in the admin action."""
         queryset.update(status="resolved")
 
     @admin.action(description="Mark selected reports as closed")
-    def mark_as_closed(self, queryset: Any) -> None:
+    def mark_as_closed(self, queryset: object) -> None:
         """Mark selected bug reports as closed in the admin action."""
         queryset.update(status="closed")

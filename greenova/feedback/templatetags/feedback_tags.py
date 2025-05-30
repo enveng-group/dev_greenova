@@ -1,8 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-"""
-Django template tags and filters for the feedback app.
+"""Django template tags and filters for the feedback app.
 
 This module provides template tags and filters that can be used in Django templates.
 """
@@ -12,7 +11,7 @@ from django.db.models import QuerySet
 from django.template.loader import render_to_string
 from feedback.views import get_status_description as get_desc
 
-from ..models import BugReport
+from greenova.feedback.models import BugReport
 
 register = template.Library()
 
@@ -26,6 +25,7 @@ def severity_color(severity: str) -> str:
 
     Returns:
         A corresponding CSS color class
+
     """
     colors = {
         "low": "success",
@@ -45,6 +45,7 @@ def status_color(status: str) -> str:
 
     Returns:
         A corresponding CSS color class
+
     """
     colors = {
         "open": "secondary",
@@ -62,8 +63,10 @@ def get_open_bug_count() -> int:
 
     Returns:
         The number of bug reports with status 'open' or 'in_progress'
+
     """
     return BugReport.objects.filter(status__in=["open", "in_progress"]).count()
+
 
 @register.filter(name="get_status_description")
 def get_status_description(status: str) -> str:
@@ -74,8 +77,10 @@ def get_status_description(status: str) -> str:
 
     Returns:
         A description of the status from the plaintext template
+
     """
     return get_desc(status)
+
 
 @register.inclusion_tag("feedback/components/bug_tracker_mini.html")
 def show_bug_tracker_mini() -> dict[str, QuerySet[BugReport] | int | str]:
@@ -83,6 +88,7 @@ def show_bug_tracker_mini() -> dict[str, QuerySet[BugReport] | int | str]:
 
     Returns:
         Dictionary containing bug reports, count, and help text
+
     """
     bug_reports = BugReport.objects.filter(status__in=["open", "in_progress"])[:5]
 

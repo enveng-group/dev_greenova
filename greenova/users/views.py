@@ -1,3 +1,23 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Views for managing user profiles and admin user actions.
 
 This module includes:
@@ -6,9 +26,9 @@ This module includes:
 - Admin user management views
 """
 
-from typing import Any
 
 from company.models import CompanyMembership
+from typing import TYPE_CHECKING, Any
 from django.contrib import messages
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -22,9 +42,11 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django_htmx.http import trigger_client_event
 from forms import AdminUserForm, ProfileImageForm, UserProfileForm
-from models import Profile
-from obligations.models import Obligation
 from projects.models import Project
+from obligations.models import Obligation
+
+if TYPE_CHECKING:
+    from models import Profile
 
 User = get_user_model()
 
@@ -41,11 +63,11 @@ class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = "users/users_list.html"
     context_object_name = "users"
 
-    def test_func(self):
+    def test_func(self) -> bool:
         """Check if the current user is staff or superuser for access control."""
         return self.request.user.is_staff or self.request.user.is_superuser
 
-    def get_queryset(self):
+    def get_queryset(self) -> "QuerySet[User]":
         """Return a queryset of all users ordered by date joined descending."""
         return User.objects.all().order_by("-date_joined")
 
@@ -62,6 +84,7 @@ def profile_view(request: HttpRequest) -> HttpResponse:
 
     Returns:
         Rendered HTML response with profile context.
+
     """
     profile: Profile = request.user.profile
 
@@ -75,13 +98,13 @@ def profile_view(request: HttpRequest) -> HttpResponse:
 
         # Find obligations that match any of the user's roles
         project_ids = Project.objects.filter(members=request.user.id).values_list(
-            "id", flat=True
+            "id", flat=True,
         )
 
         # Find obligations that match any of the user's roles and are in their projects
         obligations = (
             Obligation.objects.filter(
-                responsibility__in=user_roles, project_id__in=project_ids
+                responsibility__in=user_roles, project_id__in=project_ids,
             )
             .select_related("project")
             .distinct()
@@ -115,7 +138,7 @@ def profile_edit(request: HttpRequest) -> HttpResponse:
 
             if request.htmx:
                 response = render(
-                    request, "users/partials/profile_detail.html", {"profile": profile}
+                    request, "users/partials/profile_detail.html", {"profile": profile},
                 )
                 return trigger_client_event(response, "profileUpdated", {})
             return redirect("users:profile")
@@ -143,7 +166,7 @@ def profile_edit(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def change_password(request):
+def change_password(request: HttpRequest) -> HttpResponse:
     """View for changing password."""
     if request.method == "POST":
         form = PasswordChangeForm(request.user, request.POST)
@@ -170,19 +193,19 @@ def change_password(request):
 
 @login_required
 @require_http_methods(["POST"])
-def upload_profile_image(request):
+def upload_profile_image(request: HttpRequest) -> HttpResponse:
     """AJAX view for uploading profile image."""
     form = ProfileImageForm(request.POST, request.FILES, instance=request.user.profile)
     if form.is_valid():
         form.save()
         return JsonResponse(
-            {"status": "success", "image_url": request.user.profile.profile_image.url}
+            {"status": "success", "image_url": request.user.profile.profile_image.url},
         )
     return JsonResponse({"status": "error", "errors": form.errors})
 
 
 @user_passes_test(is_admin)
-def admin_user_list(request):
+def admin_user_list(request: HttpRequest) -> HttpResponse:
     """Admin view for listing all users."""
     users = User.objects.all().order_by("-date_joined")
 
@@ -194,7 +217,7 @@ def admin_user_list(request):
 
 
 @user_passes_test(is_admin)
-def admin_user_create(request):
+def admin_user_create(request: HttpRequest) -> HttpResponse:
     """Admin view for creating a new user."""
     if request.method == "POST":
         form = AdminUserForm(request.POST)
@@ -219,14 +242,14 @@ def admin_user_create(request):
 
 
 @user_passes_test(is_admin)
-def admin_user_edit(request, user_id):
+def admin_user_edit(request: HttpRequest, user_id: int) -> HttpResponse:
     """Admin view for editing a user."""
     user_obj = get_object_or_404(User, id=user_id)
 
     if request.method == "POST":
         form = AdminUserForm(request.POST, instance=user_obj)
         profile_form = UserProfileForm(
-            request.POST, request.FILES, instance=user_obj.profile
+            request.POST, request.FILES, instance=user_obj.profile,
         )
 
         if form.is_valid() and profile_form.is_valid():
@@ -257,7 +280,7 @@ def admin_user_edit(request, user_id):
 
 
 @user_passes_test(is_admin)
-def admin_user_delete(request, user_id):
+def admin_user_delete(request: HttpRequest, user_id: int) -> HttpResponse:
     """Admin view for deleting a user."""
     user_obj = get_object_or_404(User, id=user_id)
 
@@ -274,7 +297,7 @@ def admin_user_delete(request, user_id):
         if request.htmx:
             users = User.objects.all().order_by("-date_joined")
             html = render_to_string(
-                "users/partials/admin_user_list.html", {"users": users}
+                "users/partials/admin_user_list.html", {"users": users},
             )
             return HttpResponse(html)
         return redirect("users:admin_user_list")

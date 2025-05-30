@@ -1,0 +1,37 @@
+extends: default
+
+rules:
+  line-length:
+    max: 80
+    level: error
+    allow-non-breakable-words: true
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+    check-multi-line-strings: true
+  trailing-spaces: enable
+  new-line-at-end-of-file: enable
+  document-start:
+    present: true
+    level: error
+  document-end:
+    present: false
+  key-duplicates: enable
+  key-ordering: disable
+  truthy:
+    allowed-values: ['true', 'false']
+    level: error
+  comments:
+    require-starting-space: true
+    min-spaces-from-content: 2
+    level: warning
+  empty-lines:
+    max: 1
+    max-start: 0
+    max-end: 0
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0

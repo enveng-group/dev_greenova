@@ -1,5 +1,0 @@
-# Ignore MD041 for the prompt file
-overrides:
-  - files: '.github/prompts/gpt-4-1.prompt.md'
-    rules:
-      MD041: false

@@ -12,8 +12,8 @@
  */
 
 // Memory layout constants
-const THEME_OFFSET: i32 = 0;         // 1 byte for theme (0=light, 1=dark, 2=auto)
-const ERROR_BUFFER_OFFSET: i32 = 8;  // Start of error buffer (64 bytes)
+const THEME_OFFSET: i32 = 0; // 1 byte for theme (0=light, 1=dark, 2=auto)
+const ERROR_BUFFER_OFFSET: i32 = 8; // Start of error buffer (64 bytes)
 const ANIMATION_DATA_OFFSET: i32 = 72; // Start of animation data
 
 // Error codes
@@ -34,11 +34,11 @@ export const THEME_AUTO: u8 = 2;
  * @param theme Theme value (0=light, 1=dark, 2=auto)
  */
 export function setTheme(theme: u8): void {
-  if (theme > 2) {
-    recordError(ERROR_THEME, 0);
-    return;
-  }
-  store<u8>(THEME_OFFSET, theme);
+	if (theme > 2) {
+		recordError(ERROR_THEME, 0);
+		return;
+	}
+	store<u8>(THEME_OFFSET, theme);
 }
 
 /**
@@ -46,7 +46,7 @@ export function setTheme(theme: u8): void {
  * @returns Theme value (0=light, 1=dark, 2=auto)
  */
 export function getTheme(): u8 {
-  return load<u8>(THEME_OFFSET);
+	return load<u8>(THEME_OFFSET);
 }
 
 /**
@@ -56,11 +56,11 @@ export function getTheme(): u8 {
  * @returns Resolved theme (0=light, 1=dark)
  */
 export function resolveTheme(systemPrefersDark: i32): u8 {
-  const theme = getTheme();
-  if (theme === THEME_AUTO) {
-    return systemPrefersDark ? THEME_DARK : THEME_LIGHT;
-  }
-  return theme;
+	const theme = getTheme();
+	if (theme === THEME_AUTO) {
+		return systemPrefersDark ? THEME_DARK : THEME_LIGHT;
+	}
+	return theme;
 }
 
 /**
@@ -69,8 +69,8 @@ export function resolveTheme(systemPrefersDark: i32): u8 {
  * @param details Additional error details
  */
 export function recordError(code: u8, details: u32): void {
-  store<u8>(ERROR_BUFFER_OFFSET, code);
-  store<u32>(ERROR_BUFFER_OFFSET + 1, details);
+	store<u8>(ERROR_BUFFER_OFFSET, code);
+	store<u32>(ERROR_BUFFER_OFFSET + 1, details);
 }
 
 /**
@@ -78,7 +78,7 @@ export function recordError(code: u8, details: u32): void {
  * @returns Error code
  */
 export function getLastErrorCode(): u8 {
-  return load<u8>(ERROR_BUFFER_OFFSET);
+	return load<u8>(ERROR_BUFFER_OFFSET);
 }
 
 /**
@@ -86,15 +86,15 @@ export function getLastErrorCode(): u8 {
  * @returns Error details
  */
 export function getLastErrorDetails(): u32 {
-  return load<u32>(ERROR_BUFFER_OFFSET + 1);
+	return load<u32>(ERROR_BUFFER_OFFSET + 1);
 }
 
 /**
  * Clear the last error
  */
 export function clearError(): void {
-  store<u8>(ERROR_BUFFER_OFFSET, ERROR_NONE);
-  store<u32>(ERROR_BUFFER_OFFSET + 1, 0);
+	store<u8>(ERROR_BUFFER_OFFSET, ERROR_NONE);
+	store<u32>(ERROR_BUFFER_OFFSET + 1, 0);
 }
 
 /**
@@ -108,9 +108,9 @@ export function clearError(): void {
  * @returns Progress value from 0 to 1
  */
 export function linearEasing(current: f32, duration: f32): f32 {
-  if (current >= duration) return 1.0;
-  if (current <= 0) return 0.0;
-  return current / duration;
+	if (current >= duration) return 1.0;
+	if (current <= 0) return 0.0;
+	return current / duration;
 }
 
 /**
@@ -120,16 +120,16 @@ export function linearEasing(current: f32, duration: f32): f32 {
  * @returns Progress value from 0 to 1
  */
 export function easeInOutEasing(current: f32, duration: f32): f32 {
-  if (current >= duration) return 1.0;
-  if (current <= 0) return 0.0;
+	if (current >= duration) return 1.0;
+	if (current <= 0) return 0.0;
 
-  const progress = current / duration;
+	const progress = current / duration;
 
-  if (progress < 0.5) {
-    return 2.0 * progress * progress;
-  } else {
-    return 1.0 - f32(Math.pow(-2.0 * progress + 2.0, 2)) / 2.0;
-  }
+	if (progress < 0.5) {
+		return 2.0 * progress * progress;
+	} else {
+		return 1.0 - f32((-2.0 * progress + 2.0) ** 2) / 2.0;
+	}
 }
 
 /**
@@ -141,18 +141,18 @@ export function easeInOutEasing(current: f32, duration: f32): f32 {
  * @returns Current height value
  */
 export function calculateAnimationHeight(
-  isExpanding: boolean,
-  progress: f32,
-  startHeight: f32,
-  endHeight: f32
+	isExpanding: boolean,
+	progress: f32,
+	startHeight: f32,
+	endHeight: f32,
 ): f32 {
-  if (progress >= 1.0) return endHeight;
-  if (progress <= 0.0) return startHeight;
+	if (progress >= 1.0) return endHeight;
+	if (progress <= 0.0) return startHeight;
 
-  const heightDiff = endHeight - startHeight;
-  const currentDiff = heightDiff * progress;
+	const heightDiff = endHeight - startHeight;
+	const currentDiff = heightDiff * progress;
 
-  return startHeight + currentDiff;
+	return startHeight + currentDiff;
 }
 
 /**
@@ -166,7 +166,7 @@ export function calculateAnimationHeight(
  * @returns Sum of a and b
  */
 export function add(a: i32, b: i32): i32 {
-    return a + b;
+	return a + b;
 }
 
 /**
@@ -176,5 +176,5 @@ export function add(a: i32, b: i32): i32 {
  * @returns Difference of a and b
  */
 export function subtract(a: i32, b: i32): i32 {
-    return a - b;
+	return a - b;
 }

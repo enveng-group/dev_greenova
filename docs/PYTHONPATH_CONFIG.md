@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [PYTHONPATH Configuration for Greenova](#pythonpath-configuration-for-greenova)
+  - [Overview](#overview)
+  - [Correct Configuration](#correct-configuration)
+  - [Common Issues](#common-issues)
+    - [Duplicate Module Discovery in mypy](#duplicate-module-discovery-in-mypy)
+    - [Configuration Files to Check](#configuration-files-to-check)
+  - [Best Practices](#best-practices)
+  - [Related Configuration](#related-configuration)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # PYTHONPATH Configuration for Greenova
 
 ## Overview

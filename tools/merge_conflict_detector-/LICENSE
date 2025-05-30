@@ -1,0 +1,110 @@
+===============================================================================
+LICENSE - ISC License for merge_conflict_detector
+===============================================================================
+
+COPYRIGHT
+---------
+Copyright (c) 2025, 2MuchC0ff33
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+DESCRIPTION
+-----------
+The merge_conflict_detector project is licensed under the ISC License,
+a permissive free software license that is functionally equivalent to
+the MIT License and the simplified BSD License.
+
+LICENSE TERMS
+-------------
+Permissions:
+  * Commercial use
+  * Distribution
+  * Modification
+  * Private use
+
+Conditions:
+  * Include copyright notice
+  * Include license text
+
+Limitations:
+  * No liability protection for contributors
+  * No warranty of any kind
+
+RATIONALE
+---------
+The ISC License was chosen for this project because:
+  * It is simple and easy to understand
+  * It places minimal restrictions on use
+  * It is compatible with most other licenses
+  * It encourages wide adoption and contribution
+  * It is recognized by the Open Source Initiative (OSI)
+
+COMPATIBILITY
+-------------
+The ISC License is compatible with:
+  * GNU General Public License (GPL) versions 2 and 3
+  * MIT License
+  * BSD Licenses (2-clause and 3-clause)
+  * Apache License 2.0
+  * Most other open source licenses
+
+THIRD-PARTY COMPONENTS
+----------------------
+This software may include components with different licenses:
+  * POSIX system libraries (various licenses)
+  * Standard C library (system-dependent)
+  * Git command-line tool (GPL v2)
+
+Users must comply with all applicable licenses when redistributing
+the software.
+
+ATTRIBUTION
+-----------
+When redistributing this software, you must include:
+  * The complete license text
+  * The copyright notice
+  * Attribution to original authors
+
+Recommended Attribution Format:
+    This software includes merge_conflict_detector
+    Copyright (c) 2025, 2MuchC0ff33
+    Licensed under the ISC License
+
+DISCLAIMER
+----------
+This software is provided "as is" without warranty of any kind.
+The authors and contributors are not liable for any damages arising
+from the use of this software.
+
+CONTRIBUTING
+------------
+By contributing to this project, you agree that your contributions
+will be licensed under the same ISC License terms.
+
+LICENSE TEXT
+------------
+The complete ISC License text is reproduced above in the COPYRIGHT
+section and must be included with all copies or substantial portions
+of the software.
+
+CONTACT
+-------
+For licensing questions, contact the project maintainers through
+the project repository.
+
+Repository: https://github.com/2MuchC0ff33/merge-conflict-detector
+
+SEE ALSO
+--------
+  README.txt, CONTRIBUTING.txt, Open Source Initiative: https://opensource.org/licenses/ISC
+===============================================================================

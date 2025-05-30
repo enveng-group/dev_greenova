@@ -1,16 +1,32 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
-Views for the mechanisms app.
+
+"""Views for the mechanisms app.
 
 This module provides views for handling environmental mechanism data
 and related visualizations.
 """
 
-import logging
-from typing import (  # Keep Dict if used, ensure Optional is imported if str
-    Any,
-)
 
-import matplotlib
+import matplotlib as mpl
+import logging
 from beartype import beartype
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
@@ -27,10 +43,10 @@ from obligations.constants import (
     STATUS_NOT_STARTED,
     STATUS_OVERDUE,
 )
-from obligations.models import Obligation
 from projects.models import Project
+from obligations.models import Obligation
 
-matplotlib.use("Agg")  # Use Agg backend for non-interactive plotting
+mpl.use("Agg")  # Use Agg backend for non-interactive plotting
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +65,7 @@ class ObligationInsightView(LoginRequiredMixin, TemplateView):
 
     @beartype  # type: ignore[misc]
     def get(
-        self, request: HttpRequest, *args: Any, **kwargs: Any
+        self, request: HttpRequest, *args: tuple, **kwargs: dict,
     ) -> JsonResponse | HttpResponse:
         """Handle GET requests and return appropriate format (HTML or JSON).
 
@@ -62,6 +78,7 @@ class ObligationInsightView(LoginRequiredMixin, TemplateView):
 
         Returns:
             Either a JSON response or standard HTML template response
+
         """
         response_format = request.GET.get("format", "html").lower()
 
@@ -76,23 +93,19 @@ class ObligationInsightView(LoginRequiredMixin, TemplateView):
 
             # Format obligations for JSON response
             if "obligations" in context:
-                obligations_data = []
-                for obligation in context["obligations"]:
-                    obligations_data.append(
-                        {
-                            "number": obligation.obligation_number,
-                            "due_date": (
-                                obligation.action_due_date.strftime("%Y-%m-%d")
-                                if obligation.action_due_date
-                                else None
-                            ),
-                            "close_out_date": (
-                                obligation.close_out_date.strftime("%Y-%m-%d")
-                                if obligation.close_out_date
-                                else None
-                            ),
-                        }
-                    )
+                obligations_data = [{
+                    "number": obligation.obligation_number,
+                    "due_date": (
+                        obligation.action_due_date.strftime("%Y-%m-%d")
+                        if obligation.action_due_date
+                        else None
+                    ),
+                    "close_out_date": (
+                        obligation.close_out_date.strftime("%Y-%m-%d")
+                        if obligation.close_out_date
+                        else None
+                    ),
+                } for obligation in context["obligations"]]
                 context["obligations"] = obligations_data
 
             return JsonResponse(context)
@@ -101,7 +114,7 @@ class ObligationInsightView(LoginRequiredMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
     @beartype  # type: ignore[misc]
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Get context data for the obligation insight template.
 
         Retrieves obligation data for a specific mechanism and status combination to
@@ -112,6 +125,7 @@ class ObligationInsightView(LoginRequiredMixin, TemplateView):
 
         Returns:
             Context dictionary with obligation data.
+
         """
         context = super().get_context_data(**kwargs)
 
@@ -142,7 +156,7 @@ class ObligationInsightView(LoginRequiredMixin, TemplateView):
 
             # Query obligations based on mechanism ID and status
             obligations = Obligation.objects.filter(
-                primary_environmental_mechanism_id=mechanism_id, status=status_value
+                primary_environmental_mechanism_id=mechanism_id, status=status_value,
             ).order_by("action_due_date")
 
             # Count total obligations matching criteria
@@ -159,14 +173,14 @@ class ObligationInsightView(LoginRequiredMixin, TemplateView):
                     "count": total_count,
                     "total_count": total_count,
                     "obligations": obligations_preview,
-                }
+                },
             )
 
         except (ValueError, TypeError) as e:
             logger.warning("Invalid parameters for obligation insights: %s", str(e))
             context["error"] = f"Invalid parameters: {e!s}"
         except Exception as e:
-            logger.error("Error fetching obligation insights: %s", str(e))
+            logger.exception("Error fetching obligation insights: %s", str(e))
             context["error"] = "An error occurred while fetching obligation insights"
 
         return context
@@ -184,7 +198,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
     template_name = "mechanisms/mechanism_charts.html"
 
     @beartype  # type: ignore[misc]
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
         """Get context data for rendering mechanism charts.
 
         Retrieves the project, mechanisms, and generates chart HTML for both the overall
@@ -195,6 +209,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
 
         Returns:
             Context dictionary with chart data and project information.
+
         """
         context = super().get_context_data(**kwargs)
         project_id_str: str | None = self.request.GET.get("project_id")
@@ -224,7 +239,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                 {
                     "name": "Overall Status",
                     "chart_html": overall_chart_html,
-                }
+                },
             )
 
             # Generate charts for individual mechanisms (plotly)
@@ -235,7 +250,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                         "id": mechanism.id,
                         "name": mechanism.name,
                         "chart_html": chart_html,
-                    }
+                    },
                 )
 
             context["mechanism_charts"] = mechanism_charts
@@ -258,7 +273,7 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             context["error"] = "Project not found"
             return context
         except Exception as e:
-            logger.error("Error generating mechanism charts: %s", str(e))
+            logger.exception("Error generating mechanism charts: %s", str(e))
             context["error"] = "An error occurred while generating charts"
             return context
 
@@ -279,5 +294,6 @@ class MechanismListView(LoginRequiredMixin, ListView):
 
         Returns:
             Queryset of EnvironmentalMechanism objects.
+
         """
         return EnvironmentalMechanism.objects.all()

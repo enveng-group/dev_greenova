@@ -1,8 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""
-Centralized Protocol Buffer utilities for the Greenova project.
+"""Centralized Protocol Buffer utilities for the Greenova project.
 
 This module provides common functionality for Protocol Buffer operations
 across all apps in the Greenova project.
@@ -27,8 +26,7 @@ _message_type_cache: dict[str, type[proto_message.Message]] = {}
 
 
 def get_proto_message_type(full_name: str) -> type[proto_message.Message] | None:
-    """
-    Get a Protocol Buffer message type by its fully qualified name.
+    """Get a Protocol Buffer message type by its fully qualified name.
 
     This function checks the cache first, then falls back to the symbol database.
     If the message type isn't found, it attempts to load appropriate modules
@@ -39,6 +37,7 @@ def get_proto_message_type(full_name: str) -> type[proto_message.Message] | None
 
     Returns:
         The message class if found, otherwise None
+
     """
     # Check cache first
     if full_name in _message_type_cache:
@@ -72,7 +71,9 @@ def get_proto_message_type(full_name: str) -> type[proto_message.Message] | None
             _message_type_cache[full_name] = message_type
             return message_type
         except KeyError:
-            logger.error("Could not find Protocol Buffer message type: %s", full_name)
+            logger.exception(
+                "Could not find Protocol Buffer message type: %s",
+                full_name)
             return None
 
 
@@ -89,19 +90,18 @@ def _find_pb2_files(directory: str) -> list[str]:
 
 
 def _get_module_name(file_path: str) -> str:
-    """
-    Convert a file path to a module name.
+    """Convert a file path to a module name.
 
     Args:
         file_path: The path to the file
 
     Returns:
         The module name for import
+
     """
     base_dir = os.path.dirname(settings.BASE_DIR)
     relative_path = os.path.relpath(file_path, base_dir)
     # Remove the .py extension
     module_path = os.path.splitext(relative_path)[0]
     # Replace directory separators with dots
-    module_name = module_path.replace(os.path.sep, ".")
-    return module_name
+    return module_path.replace(os.path.sep, ".")

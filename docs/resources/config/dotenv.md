@@ -1,3 +1,22 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Environment Variables Management with dotenv](#environment-variables-management-with-dotenv)
+  - [Introduction](#introduction)
+  - [Documentation](#documentation)
+  - [Benefits of Using dotenv](#benefits-of-using-dotenv)
+  - [Best Practices](#best-practices)
+  - [Language Support](#language-support)
+  - [Python Implementation](#python-implementation)
+    - [Basic Usage](#basic-usage)
+    - [Advanced Options](#advanced-options)
+  - [Django Integration](#django-integration)
+    - [Adding to Django Settings](#adding-to-django-settings)
+  - [Production Environment](#production-environment)
+  - [Multiple Environments](#multiple-environments)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Environment Variables Management with dotenv
 
 ## Introduction

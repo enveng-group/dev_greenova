@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Makefile Learning Resources](#makefile-learning-resources)
+  - [Official Documentation](#official-documentation)
+  - [Video Tutorials](#video-tutorials)
+    - [Makefile Fundamentals](#makefile-fundamentals)
+    - [Advanced Topics](#advanced-topics)
+  - [IDE Integration](#ide-integration)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Makefile Learning Resources
 
 ## Official Documentation

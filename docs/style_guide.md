@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Style Guide](#style-guide)
+  - [Colour Guide](#colour-guide)
+    - [Colour Scheme](#colour-scheme)
+  - [HTMX Indicator Requirements](#htmx-indicator-requirements)
+    - [Persistent Indicator Element](#persistent-indicator-element)
+      - [Example](#example)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Style Guide
 
 ## Colour Guide

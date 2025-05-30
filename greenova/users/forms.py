@@ -1,16 +1,37 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Forms for user and profile management in the Greenova users app.
 
 This module defines forms for updating user profiles, creating and updating users
 in the admin, and uploading profile images.
 """
-from typing import Any, ClassVar, TypeVar
 
-from django import forms
-from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
-from django.db.models import Model
+
 from models import Profile
+from django.db.models import Model
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import get_user_model
+from typing import Any, ClassVar, TypeVar
+from django import forms
 
 User = get_user_model()
 T = TypeVar("T", bound=Model)
@@ -25,6 +46,7 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         """Metadata for UserProfileForm."""
+
         model = Profile
         fields: ClassVar[list[str]] = [
             "bio",
@@ -37,7 +59,7 @@ class UserProfileForm(forms.ModelForm):
             "bio": forms.Textarea(attrs={"rows": 4}),
         }
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: tuple, **kwargs: dict) -> None:
         """Initialize the UserProfileForm and set initial values for user fields."""
         super().__init__(*args, **kwargs)
         if self.instance and hasattr(self.instance, "pk") and self.instance.pk:
@@ -51,11 +73,11 @@ class UserProfileForm(forms.ModelForm):
         profile: Profile = super().save(commit=False)
         user = profile.user
         if hasattr(user, "first_name"):
-            setattr(user, "first_name", self.cleaned_data["first_name"])
+            user.first_name = self.cleaned_data["first_name"]
         if hasattr(user, "last_name"):
-            setattr(user, "last_name", self.cleaned_data["last_name"])
+            user.last_name = self.cleaned_data["last_name"]
         if hasattr(user, "email"):
-            setattr(user, "email", self.cleaned_data["email"])
+            user.email = self.cleaned_data["email"]
 
         if commit:
             user.save()
@@ -73,11 +95,12 @@ class AdminUserForm(forms.ModelForm):
         help_text="Leave blank if you don't want to change the password.",
     )
     password2 = forms.CharField(
-        label="Confirm Password", widget=forms.PasswordInput, required=False
+        label="Confirm Password", widget=forms.PasswordInput, required=False,
     )
 
     class Meta:
         """Metadata for AdminUserForm."""
+
         model = User
         fields: ClassVar[list[str]] = [
             "username",
@@ -110,13 +133,12 @@ class AdminUserForm(forms.ModelForm):
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
 
-        if password1 or password2:
-            if password1 != password2:
-                self.add_error("password2", "The two password fields didn't match.")
+        if (password1 or password2) and password1 != password2:
+            self.add_error("password2", "The two password fields didn't match.")
 
         return cleaned_data
 
-    def save(self, commit: bool = True) -> Any:
+    def save(self, commit: bool = True) -> object:
         """Save the user instance, setting the password if provided."""
         user = super().save(commit=False)
         password = self.cleaned_data.get("password1")
@@ -138,10 +160,11 @@ class ProfileImageForm(forms.ModelForm):
 
     class Meta:
         """Metadata for ProfileImageForm."""
+
         model = Profile
         fields: ClassVar[list[str]] = ["profile_image"]
         widgets: ClassVar[dict[str, Any]] = {
             "profile_image": forms.FileInput(
-                attrs={"accept": "image/*"}
-            )
+                attrs={"accept": "image/*"},
+            ),
         }

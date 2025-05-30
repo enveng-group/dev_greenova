@@ -1,3 +1,52 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [GitHub Copilot Instructions for Django Development with Python](#github-copilot-instructions-for-django-development-with-python)
+  - [Project Domain and Context](#project-domain-and-context)
+  - [Technical Stack and Version Requirements](#technical-stack-and-version-requirements)
+  - [Frontend Technologies](#frontend-technologies)
+  - [Expectations](#expectations)
+  - [Development Tools and Standards](#development-tools-and-standards)
+    - [Testing Tools](#testing-tools)
+    - [Linting Tools](#linting-tools)
+    - [Type Checking](#type-checking)
+    - [Formatting](#formatting)
+    - [Runtime Type Checking](#runtime-type-checking)
+    - [Stub Generation and Validation](#stub-generation-and-validation)
+    - [Documentation](#documentation)
+    - [Python Type Annotations](#python-type-annotations)
+    - [Import Structure](#import-structure)
+    - [Docstring Format (Google Style)](#docstring-format-google-style)
+    - [Logging Practices](#logging-practices)
+  - [Architecture and Design Patterns](#architecture-and-design-patterns)
+    - [Django Project Structure](#django-project-structure)
+    - [Authentication](#authentication)
+  - [Shell Script Standards](#shell-script-standards)
+    - [POSIX Compatibility](#posix-compatibility)
+    - [Formatting and Linting](#formatting-and-linting)
+    - [Example shell script](#example-shell-script)
+  - [HTML and Template Guidelines](#html-and-template-guidelines)
+    - [Template Structure](#template-structure)
+    - [HTML Structure](#html-structure)
+    - [HTMX Integration](#htmx-integration)
+    - [Example Template Structure](#example-template-structure)
+  - [JavaScript/TypeScript Standards](#javascripttypescript-standards)
+    - [TypeScript Configuration](#typescript-configuration)
+    - [ESLint Configuration](#eslint-configuration)
+  - [Environment Variable Management](#environment-variable-management)
+  - [File Operations and Encoding](#file-operations-and-encoding)
+  - [Testing Requirements](#testing-requirements)
+  - [Common Issues to Avoid](#common-issues-to-avoid)
+    - [Python](#python)
+    - [Django/HTML](#djangohtml)
+    - [Shell Scripts](#shell-scripts)
+  - [Handling Long Lines in Code](#handling-long-lines-in-code)
+    - [Guidelines for Long Lines](#guidelines-for-long-lines)
+  - [Author Information](#author-information)
+  - [Context7 Documentation Lookup](#context7-documentation-lookup)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # GitHub Copilot Instructions for Django Development with Python
 
 ## Project Domain and Context
@@ -9,9 +58,9 @@ and manage obligations related to environmental regulations.
 
 ## Technical Stack and Version Requirements
 
-- **Python**: 3.12.9 (exact version required)
+- **Python**: 3.12.10 (exact version required)
 - **Django**: 5.2 (exact version required)
-- **Node.js**: 20.19.1 (exact version required)
+- **Node.js**: 22.16.0 (exact version required)
 - **npm**: 11.3.0 (exact version required)
 - **Database**: SQLite3 for development and production
 
@@ -76,22 +125,23 @@ and manage obligations related to environmental regulations.
 
 7. Ensure that the code is well-documented, with clear explanations of
    functions, classes, and modules. Use docstrings and comments to clarify
-   complex logic or important decisions made during development.
+   complex logic or important decisions made during development. Adhere to
+   technical documentation standards, prioritizing Restructured Text (RST) and
+   IEEE styling as outlined in the "Technical Documentation Standards" section.
 
 8. Test the code thoroughly to ensure it works as intended and meets the
    project's requirements. Write unit tests and integration tests as needed,
    and ensure that all tests pass before finalizing the changes.
 
-9. Iterate until resolved.
+9. Iterate until resolved. Utilize the `sequential-thinking` MCP server to
+   continuously improve and optimize perspectives in generating code,
+   refactoring, writing technical documents, debugging, and problem-solving.
 
 ## Development Tools and Standards
 
 ### Testing Tools
 
-- **pytest & pytest-django**: Primary testing frameworks
-- **pytest-cov**: For test coverage reporting
-- **pytest-stub**: For stub-based testing
-- **pytest-xdist**: For parallel test execution
+- **unittest**: Primary testing frameworks
 
 ### Linting Tools
 
@@ -128,7 +178,6 @@ and manage obligations related to environmental regulations.
   - matplotlib-stubs
   - pandas-stubs
   - types-pytz
-  - pytest-stub
   - types-jinja2
   - types-setuptools
   - types-cryptography
@@ -157,11 +206,7 @@ and manage obligations related to environmental regulations.
 - **pydoc**: Generate API documentation
 - **Google style docstrings**: Required for all public modules, functions,
   classes, and methods
-
-## Code Style and Organization
-
-### Python Code Style
-
+- **Technical Documentation Standards**:
 - Follow PEP 8 with strict maximum line length of 88 characters
 - Use 4 spaces per indentation level (no tabs)
 - Use `snake_case` for function and variable names
@@ -412,7 +457,6 @@ block content %}
 
 - Write unit tests for all views, models, and forms
 - Use Django's TestCase for database-related tests
-- Use pytest fixtures for test setup
 - Mock external dependencies for isolated tests
 - Test on multiple POSIX systems (Linux, macOS)
 - Enforce test coverage requirements:
@@ -510,7 +554,7 @@ block content %}
 ## Author Information
 
 - Author: Adrian Gallo
-- Email: agallo@enveng-group.com.au
+- Email: <agallo@enveng-group.com.au>
 - License: AGPL-3.0
 
 ## Context7 Documentation Lookup
@@ -522,11 +566,11 @@ This provides access to all project-specific configuration files and standards.
 or frameworks, use the `fetch` or `context7` MCP server to retrieve and
 reference their official documentation as needed:
 
-- GSAP Animation, PicoCSS Classless, Hyperscript, HTMX, django-hyperscript,
+- GSAP Animation, PicoCSS Classless, Hyperscript, TypeScript, HTMX, django-hyperscript,
   django-htmx, AssemblyScript, Django, Protobuf3, SQLite, django-pb-model,
   Matplotlib, django_matplotlib, Plotly, Pandas, NumPy, django-csp,
   django-template-partials, dj-all-auth, python-dotenv-vault.
 
-**Additional Resources**: The github, filesystem, JSON, context7, sqlite, git,
+**Additional Resources**: The github, filesystem, JSON, context7, git,
 fetch, sequential-thinking and docker MCP servers have been switched on and
 started for agents, including GitHub Copilot.

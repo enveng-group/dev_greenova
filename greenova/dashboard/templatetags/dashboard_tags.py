@@ -1,8 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-"""
-Django template tags and filters for the dashboard app.
+"""Django template tags and filters for the dashboard app.
 
 This module provides template tags and filters that can be used in Django templates.
 """
@@ -15,8 +14,8 @@ from users.utils import calculate_overdue_obligations
 register = template.Library()
 
 
-@register.filter(name='display_name')
-def display_name(user: Any) -> str:
+@register.filter(name="display_name")
+def display_name(user: object) -> str:
     """Return the best display name for a user.
 
     Args:
@@ -24,18 +23,19 @@ def display_name(user: Any) -> str:
 
     Returns:
         The full name if available, otherwise username or string representation.
+
     """
-    if hasattr(user, 'get_full_name'):
+    if hasattr(user, "get_full_name"):
         full_name = user.get_full_name()
         if full_name:
             return str(full_name)
-    if hasattr(user, 'username'):
+    if hasattr(user, "username"):
         return str(user.username)
     return str(user)
 
 
-@register.filter(name='format_date')
-def format_date(date_value: Any, format_string: str = '%d %b %Y') -> str:
+@register.filter(name="format_date")
+def format_date(date_value: object, format_string: str = "%d %b %Y") -> str:
     """Format a date with a specified format string.
 
     Args:
@@ -44,9 +44,10 @@ def format_date(date_value: Any, format_string: str = '%d %b %Y') -> str:
 
     Returns:
         Formatted date string or empty string if date is None.
+
     """
     if date_value is None:
-        return ''
+        return ""
     try:
         return str(date_value.strftime(format_string))
     except (AttributeError, ValueError):
@@ -64,8 +65,9 @@ def get_overdue_obligations_for_user(context: dict[str, Any]) -> list[Any]:
     Returns:
         A list or queryset of overdue obligations for the authenticated user,
         or an empty list if the user is not authenticated.
+
     """
-    user = context['request'].user
+    user = context["request"].user
     if not user.is_authenticated:
         return []
     return list(calculate_overdue_obligations(user.id))

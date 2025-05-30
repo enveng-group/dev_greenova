@@ -1,5 +1,4 @@
-"""
-Middleware for project selection in Greenova.
+"""Middleware for project selection in Greenova.
 
 This module provides middleware to manage the selected project context in the
 session and request.
@@ -17,8 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectSelectionMiddleware(MiddlewareMixin):
-    """
-    Middleware to manage selected_project_id in session and request.
+    """Middleware to manage selected_project_id in session and request.
 
     Ensures project selection is consistent for all views, including HTMX.
     """
@@ -28,6 +26,7 @@ class ProjectSelectionMiddleware(MiddlewareMixin):
 
         Args:
             request: The HTTP request object.
+
         """
         project_ids = request.GET.getlist("project_id")
         project_id = next((pid for pid in reversed(project_ids) if pid), None)

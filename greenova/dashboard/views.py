@@ -1,3 +1,23 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Dashboard views for Greenova environmental management application.
 
 This module provides the main dashboard, chart, and HTMX views for
@@ -5,10 +25,9 @@ environmental obligation tracking and compliance monitoring.
 
 """
 
-import logging
 from datetime import datetime, timedelta  # Use timedelta from datetime
+import logging
 from typing import Any, TypedDict, cast  # Ensure cast is imported
-
 from beartype import beartype  # Import beartype
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -19,13 +38,14 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import ListView, TemplateView
-
-# Import our new components
 from obligations.constants import STATUS_IN_PROGRESS, STATUS_NOT_STARTED
 from obligations.models import Obligation
+from .mixins import ChartMixin, ProjectAwareDashboardMixin
 from projects.models import Project
 
-from .mixins import ChartMixin, ProjectAwareDashboardMixin
+
+# Import our new components
+
 
 # Constants for system information
 SYSTEM_STATUS = "operational"  # or fetch from settings/environment
@@ -58,10 +78,11 @@ def get_selected_project_id(request: HttpRequest) -> str | None:
 
     Returns:
         The selected project ID as a string, or None if not found.
+
     """
     project_ids: list[str] = request.GET.getlist("project_id")
     project_id_str: str | None = next(
-        (pid for pid in reversed(project_ids) if pid), None
+        (pid for pid in reversed(project_ids) if pid), None,
     )
     if project_id_str:
         request.session["selected_project_id"] = project_id_str
@@ -95,7 +116,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
     @beartype
     def selected_project_id(self) -> str | None:
         """Return the selected project ID from the request/session."""
-        return cast(str | None, get_selected_project_id(self.request))
+        return cast("str | None", get_selected_project_id(self.request))
 
     @beartype
     def get_template_names(self) -> list[str]:
@@ -103,6 +124,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             A list of template names.
+
         """
         # For any HTMX request with a target, always return the partial
         if getattr(self.request, "htmx", False):
@@ -118,7 +140,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         return [self.template_name]
 
     @beartype
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
         """Handle GET requests with enhanced HTMX support.
 
         Args:
@@ -128,13 +150,13 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             An HttpResponse object.
+
         """
         # Let the ProjectAwareDashboardMixin handle most of the logic
-        response = super().get(request, *args, **kwargs)
-        return response
+        return super().get(request, *args, **kwargs)
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, object]:
         """Get the context data for template rendering.
 
         Args:
@@ -142,12 +164,13 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             A dictionary containing the context data.
+
         """
         # Let the mixin handle project selection
         context = super().get_context_data(**kwargs)
 
         try:
-            user = cast(AbstractUser, self.request.user)
+            user = cast("AbstractUser", self.request.user)
 
             # Get projects for the current user with prefetch_related
             projects = self.get_projects().prefetch_related("memberships")
@@ -180,10 +203,10 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
                     "active_projects_count": projects.count(),
                     "active_mechanisms_count": self.get_active_mechanisms_count(),
                     "selected_project_id": self.selected_project_id,
-                }
+                },
             )
         except Exception as e:
-            logger.error("Error in get_context_data: %s", e)
+            logger.exception("Error in get_context_data: %s", e)
             context["error"] = str(e)
             context["projects"] = Project.objects.none()  # Ensure projects is empty
 
@@ -195,6 +218,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             QuerySet of overdue Obligation objects.
+
         """
         project_id_str: str | None = self.selected_project_id
         query_filter: dict[str, Any] = {}
@@ -202,11 +226,11 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             try:
                 query_filter["project_id"] = int(project_id_str)
             except ValueError:
-                logger.error(
+                logger.exception(
                     "Invalid project_id format '%s' for overdue obligations.",
                     project_id_str,
                 )
-                return cast(QuerySet[Obligation], Obligation.objects.none())
+                return cast("QuerySet[Obligation]", Obligation.objects.none())
 
         today = timezone.now().date()
         queryset: QuerySet[Obligation] = Obligation.objects.filter(
@@ -224,22 +248,23 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         Returns:
             QuerySet[Project]: Projects for authenticated user, or empty queryset
                 for anonymous users.
+
         """
         user = self.request.user
         # Robustly handle anonymous users (SimpleLazyObject or AnonymousUser)
         if not getattr(user, "is_authenticated", False):
-            return cast(QuerySet[Project], Project.objects.none())
+            return cast("QuerySet[Project]", Project.objects.none())
         try:
             # Ensure user is not AnonymousUser before filtering
             if hasattr(user, "pk"):  # Check if user has a primary key
                 return cast(
-                    QuerySet[Project],
+                    "QuerySet[Project]",
                     Project.objects.filter(members=user).order_by("-created_at"),
                 )
-            return cast(QuerySet[Project], Project.objects.none())
+            return cast("QuerySet[Project]", Project.objects.none())
         except Exception as e:  # pylint: disable=broad-except
-            logger.error("Error fetching projects for user %s: %s", user, e)
-            return cast(QuerySet[Project], Project.objects.none())
+            logger.exception("Error fetching projects for user %s: %s", user, e)
+            return cast("QuerySet[Project]", Project.objects.none())
 
     @beartype
     def get_active_obligations_count(self) -> int:
@@ -250,14 +275,14 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             try:
                 query_filter["project_id"] = int(project_id_str)
             except ValueError:
-                logger.error(
+                logger.exception(
                     "Invalid project_id format '%s' for active obligations count.",
                     project_id_str,
                 )
                 return 0  # No project selected or invalid ID
 
         count: int = Obligation.objects.filter(
-            status__in=[STATUS_NOT_STARTED, STATUS_IN_PROGRESS], **query_filter
+            status__in=[STATUS_NOT_STARTED, STATUS_IN_PROGRESS], **query_filter,
         ).count()
         return count
 
@@ -270,7 +295,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             try:
                 query_filter["project_id"] = int(project_id_str)
             except ValueError:
-                logger.error(
+                logger.exception(
                     "Invalid project_id format '%s' for overdue obligations count.",
                     project_id_str,
                 )
@@ -289,6 +314,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             An integer representing the trend percentage.
+
         """
         # This would typically involve more complex time-based calculations
         # Simplified implementation for demonstration
@@ -303,7 +329,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             try:
                 query_filter["project_id"] = int(project_id_str)
             except ValueError:
-                logger.error(
+                logger.exception(
                     "Invalid project_id format '%s' for upcoming deadlines count.",
                     project_id_str,
                 )
@@ -325,6 +351,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             An integer representing the count of active mechanisms.
+
         """
         # Would normally query the mechanisms model
         # Simplified placeholder implementation
@@ -343,8 +370,9 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             The selected project ID as a string, or None.
+
         """
-        return cast(str | None, get_selected_project_id(self.request))
+        return cast("str | None", get_selected_project_id(self.request))
 
     @beartype
     def get_queryset(self) -> QuerySet[Project]:
@@ -352,6 +380,7 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             A QuerySet of Project objects.
+
         """
         now = timezone.now()
         queryset: QuerySet[Project] = Project.objects.filter(
@@ -361,7 +390,7 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
         return queryset
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, object]:
         """Add projects_with_stats to the context for at-risk projects.
 
         Args:
@@ -369,6 +398,7 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
 
         Returns:
             A dictionary containing the context data.
+
         """
         context = super().get_context_data(**kwargs)
         now = timezone.now()
@@ -381,7 +411,7 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
                     STATUS_NOT_STARTED, STATUS_IN_PROGRESS])
             overdue_count = overdue_obligations.count()
             last_due_obligation = overdue_obligations.order_by(
-                "-action_due_date"
+                "-action_due_date",
             ).first()
             projects_with_stats.append(
                 {
@@ -390,7 +420,7 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
                     "last_due_date": last_due_obligation.action_due_date
                     if last_due_obligation
                     else None,
-                }
+                },
             )
         context["projects_with_stats"] = projects_with_stats
         return context
@@ -409,6 +439,7 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
 
         Returns:
             A QuerySet of Project objects, limited to 10.
+
         """
         now = timezone.now()
         queryset: QuerySet[Project] = Project.objects.filter(
@@ -418,7 +449,7 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
         return queryset[:10]
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, object]:
         """Add projects_with_stats to the context.
 
         Args:
@@ -426,13 +457,14 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
 
         Returns:
             A dictionary containing the context data.
+
         """
         context = super().get_context_data(**kwargs)
         now = timezone.now()
         projects_with_stats = []
         # Ensure context["projects"] is iterable and contains Project instances
         projects_qs: QuerySet[Project] = context.get(
-            self.context_object_name, Project.objects.none()
+            self.context_object_name, Project.objects.none(),
         )
         for project in projects_qs:  # Iterate over the resolved queryset
             overdue_obligations = project.obligations.filter(
@@ -440,7 +472,7 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
                     STATUS_NOT_STARTED, STATUS_IN_PROGRESS])
             overdue_count = overdue_obligations.count()
             last_due_obligation = overdue_obligations.order_by(
-                "-action_due_date"
+                "-action_due_date",
             ).first()
             projects_with_stats.append(
                 {
@@ -449,7 +481,7 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
                     "last_due_date": last_due_obligation.action_due_date
                     if last_due_obligation
                     else None,
-                }
+                },
             )
         context["projects_with_stats"] = projects_with_stats
         return context
@@ -469,19 +501,20 @@ class UpcomingObligationsView(ProjectAwareDashboardMixin, ListView):
 
         Returns:
             A QuerySet of Obligation objects, limited to 10.
+
         """
         project_id_str = get_selected_project_id(self.request)
         if not project_id_str:
-            return cast(QuerySet[Obligation], Obligation.objects.none())
+            return cast("QuerySet[Obligation]", Obligation.objects.none())
 
         try:
             project_id_int = int(project_id_str)
         except ValueError:
-            logger.error(
+            logger.exception(
                 "Invalid project_id format '%s' for upcoming obligations query.",
                 project_id_str,
             )
-            return cast(QuerySet[Obligation], Obligation.objects.none())
+            return cast("QuerySet[Obligation]", Obligation.objects.none())
 
         today = timezone.now().date()
         future_date = today + timedelta(days=14)  # Next 14 days
@@ -495,7 +528,7 @@ class UpcomingObligationsView(ProjectAwareDashboardMixin, ListView):
         return queryset[:10]
 
     @beartype
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs) -> dict[str, object]:
         """Add additional context for upcoming obligations.
 
         Args:
@@ -503,6 +536,7 @@ class UpcomingObligationsView(ProjectAwareDashboardMixin, ListView):
 
         Returns:
             A dictionary containing the context data.
+
         """
         context = super().get_context_data(**kwargs)
         context["selected_project_id"] = get_selected_project_id(self.request)

@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Support](#support)
+  - [Getting Help](#getting-help)
+    - [Technical Support](#technical-support)
+    - [Documentation](#documentation)
+  - [Reporting Issues](#reporting-issues)
+  - [Community](#community)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Support
 
 ## Getting Help
