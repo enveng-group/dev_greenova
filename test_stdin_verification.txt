@@ -1,0 +1,1 @@
+Test updated verification with stdin support
