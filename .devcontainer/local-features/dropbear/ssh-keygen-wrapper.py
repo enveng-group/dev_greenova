@@ -495,6 +495,11 @@ def handle_check_novalidate(args: List[str]) -> int:
     Returns:
         Exit code (0 for success, non-zero for failure).
     """
+    # Debug logging
+    log_file = '/workspaces/greenova/ssh-keygen-debug.log'
+    with open(log_file, 'a', encoding='utf-8') as f:
+        f.write(f"handle_check_novalidate called with: {args}\n")
+    
     # Extract arguments
     namespace = None
     signature_file = None
@@ -522,19 +527,66 @@ def handle_check_novalidate(args: List[str]) -> int:
                 message_file = args[i]
             i += 1
     
+    # Debug logging
+    with open(log_file, 'a', encoding='utf-8') as f:
+        f.write(f"  namespace: {namespace}, signature_file: {signature_file}, message_file: {message_file}\n")
+    
     if not signature_file:
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write("  ERROR: Missing signature file\n")
         return 1
     
-    # For check-novalidate, we verify the signature file exists and is readable
+    # For check-novalidate, we verify the signature file exists and parse it
     try:
         with open(signature_file, 'r', encoding='utf-8') as f:
             content = f.read().strip()
-            if content.startswith('-----BEGIN SSH SIGNATURE-----') and content.endswith('-----END SSH SIGNATURE-----'):
-                # Signature file exists and has proper format - return success
-                return 0
-            else:
-                return 1
-    except (FileNotFoundError, Exception):
+        
+        # Check signature format
+        if not (content.startswith('-----BEGIN SSH SIGNATURE-----') and content.endswith('-----END SSH SIGNATURE-----')):
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write("  ERROR: Invalid signature format\n")
+            return 1
+        
+        # Extract and validate base64 data
+        lines = content.split('\n')
+        b64_data = ''.join(line for line in lines if not line.startswith('-----'))
+        
+        try:
+            signature_blob = base64.b64decode(b64_data)
+        except Exception as e:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"  ERROR: Invalid base64 data: {e}\n")
+            return 1
+        
+        # Parse signature blob
+        parsed = parse_ssh_signature_blob(signature_blob)
+        if not parsed:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write("  ERROR: Failed to parse signature blob\n")
+            return 1
+        
+        pubkey_data, sig_namespace, hash_algorithm, ssh_signature_data = parsed
+        
+        # Check namespace if provided
+        if namespace and sig_namespace != namespace:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"  ERROR: Namespace mismatch. Expected: {namespace}, Got: {sig_namespace}\n")
+            return 1
+        
+        # Parse SSH signature data
+        sig_parsed = parse_ssh_signature_data(ssh_signature_data)
+        if not sig_parsed:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write("  ERROR: Failed to parse SSH signature data\n")
+            return 1
+        
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write("  check-novalidate SUCCESS (signature format validated)\n")
+        return 0
+        
+    except (FileNotFoundError, Exception) as e:
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write(f"  check-novalidate ERROR: {e}\n")
         return 1
 
 
@@ -595,6 +647,190 @@ def handle_signing_operation(args: argparse.Namespace, remaining_args: List[str]
         return 1
 
 
+def parse_ssh_signature_blob(signature_blob: bytes) -> Optional[Tuple[bytes, str, str, bytes]]:
+    """Parse SSH signature blob according to PROTOCOL.sshsig format.
+    
+    Args:
+        signature_blob: SSH signature blob data.
+        
+    Returns:
+        Tuple of (public_key_data, namespace, hash_algorithm, signature_data) or None if failed.
+    """
+    try:
+        offset = 0
+        
+        # Check magic preamble
+        if not signature_blob.startswith(b'SSHSIG'):
+            return None
+        offset += 6
+        
+        # Read version
+        if len(signature_blob) < offset + 4:
+            return None
+        version = struct.unpack('>I', signature_blob[offset:offset+4])[0]
+        if version != 1:
+            return None
+        offset += 4
+        
+        # Read public key
+        if len(signature_blob) < offset + 4:
+            return None
+        pubkey_len = struct.unpack('>I', signature_blob[offset:offset+4])[0]
+        offset += 4
+        if len(signature_blob) < offset + pubkey_len:
+            return None
+        pubkey_data = signature_blob[offset:offset+pubkey_len]
+        offset += pubkey_len
+        
+        # Read namespace
+        if len(signature_blob) < offset + 4:
+            return None
+        namespace_len = struct.unpack('>I', signature_blob[offset:offset+4])[0]
+        offset += 4
+        if len(signature_blob) < offset + namespace_len:
+            return None
+        namespace = signature_blob[offset:offset+namespace_len].decode('utf-8')
+        offset += namespace_len
+        
+        # Read reserved (skip)
+        if len(signature_blob) < offset + 4:
+            return None
+        reserved_len = struct.unpack('>I', signature_blob[offset:offset+4])[0]
+        offset += 4 + reserved_len
+        
+        # Read hash algorithm
+        if len(signature_blob) < offset + 4:
+            return None
+        hash_alg_len = struct.unpack('>I', signature_blob[offset:offset+4])[0]
+        offset += 4
+        if len(signature_blob) < offset + hash_alg_len:
+            return None
+        hash_algorithm = signature_blob[offset:offset+hash_alg_len].decode('utf-8')
+        offset += hash_alg_len
+        
+        # Read signature
+        if len(signature_blob) < offset + 4:
+            return None
+        sig_len = struct.unpack('>I', signature_blob[offset:offset+4])[0]
+        offset += 4
+        if len(signature_blob) < offset + sig_len:
+            return None
+        signature_data = signature_blob[offset:offset+sig_len]
+        
+        return pubkey_data, namespace, hash_algorithm, signature_data
+        
+    except Exception:
+        return None
+
+
+def parse_ssh_signature_data(signature_data: bytes) -> Optional[Tuple[str, bytes]]:
+    """Parse SSH signature data to extract algorithm and signature bytes.
+    
+    Args:
+        signature_data: SSH signature data.
+        
+    Returns:
+        Tuple of (algorithm, signature_bytes) or None if failed.
+    """
+    try:
+        offset = 0
+        
+        # Read algorithm name
+        if len(signature_data) < 4:
+            return None
+        alg_len = struct.unpack('>I', signature_data[offset:offset+4])[0]
+        offset += 4
+        if len(signature_data) < offset + alg_len:
+            return None
+        algorithm = signature_data[offset:offset+alg_len].decode('utf-8')
+        offset += alg_len
+        
+        # Read signature bytes
+        if len(signature_data) < offset + 4:
+            return None
+        sig_len = struct.unpack('>I', signature_data[offset:offset+4])[0]
+        offset += 4
+        if len(signature_data) < offset + sig_len:
+            return None
+        signature_bytes = signature_data[offset:offset+sig_len]
+        
+        return algorithm, signature_bytes
+        
+    except Exception:
+        return None
+
+
+def convert_ssh_pubkey_to_line(pubkey_data: bytes) -> Optional[str]:
+    """Convert SSH public key data to public key line format.
+    
+    Args:
+        pubkey_data: SSH public key data.
+        
+    Returns:
+        Public key line or None if failed.
+    """
+    try:
+        offset = 0
+        
+        # Read key type
+        if len(pubkey_data) < 4:
+            return None
+        type_len = struct.unpack('>I', pubkey_data[offset:offset+4])[0]
+        offset += 4
+        if len(pubkey_data) < offset + type_len:
+            return None
+        key_type = pubkey_data[offset:offset+type_len].decode('utf-8')
+        
+        # Encode the entire public key data as base64
+        pubkey_b64 = base64.b64encode(pubkey_data).decode()
+        
+        return f"{key_type} {pubkey_b64}"
+        
+    except Exception:
+        return None
+
+
+def find_public_key_in_allowed_signers(allowed_signers_file: str, pubkey_line: str) -> Optional[str]:
+    """Find the identity/principal for a public key in allowed signers file.
+    
+    Args:
+        allowed_signers_file: Path to allowed signers file.
+        pubkey_line: Public key line to search for.
+        
+    Returns:
+        Principal/identity or None if not found.
+    """
+    try:
+        if not os.path.exists(allowed_signers_file):
+            return None
+            
+        # Extract just the key type and data for comparison
+        pubkey_parts = pubkey_line.strip().split(' ')
+        if len(pubkey_parts) < 2:
+            return None
+        target_key_type = pubkey_parts[0]
+        target_key_data = pubkey_parts[1]
+        
+        with open(allowed_signers_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    # Format: principal key-type key-data [comment]
+                    parts = line.split(' ')
+                    if len(parts) >= 3:
+                        principal = parts[0]
+                        key_type = parts[1] 
+                        key_data = parts[2]
+                        
+                        if key_type == target_key_type and key_data == target_key_data:
+                            return principal
+        
+        return None
+        
+    except Exception:
+        return None
+
+
 def handle_verify_operation(args: List[str]) -> int:
     """Handle -Y verify operation for signature verification.
     
@@ -649,9 +885,9 @@ def handle_verify_operation(args: List[str]) -> int:
         f.write(f"  namespace: {namespace}, signature_file: {signature_file}, identity: {identity}, message_file: {message_file}\n")
     
     # Verify signature
-    if not signature_file or not message_file:
+    if not signature_file:
         with open(log_file, 'a', encoding='utf-8') as f:
-            f.write("  ERROR: Missing signature file or message file\n")
+            f.write("  ERROR: Missing signature file\n")
         return 1
     
     try:
@@ -671,20 +907,88 @@ def handle_verify_operation(args: List[str]) -> int:
         signature_blob = base64.b64decode(b64_data)
         
         # Parse SSH signature blob
-        if not signature_blob.startswith(b'SSHSIG'):
+        parsed = parse_ssh_signature_blob(signature_blob)
+        if not parsed:
             with open(log_file, 'a', encoding='utf-8') as f:
-                f.write("  ERROR: Invalid signature blob format\n")
+                f.write("  ERROR: Failed to parse signature blob\n")
             return 1
         
-        # Read message file
-        with open(message_file, 'rb') as f:
-            message_data = f.read()
+        pubkey_data, sig_namespace, hash_algorithm, ssh_signature_data = parsed
         
-        # For now, perform basic format validation
-        # Real implementation would parse the signature blob and verify cryptographically
-        with open(log_file, 'a', encoding='utf-8') as debug_f:
-            debug_f.write("  Signature verification SUCCESS (format validation passed)\n")
-        return 0
+        # Convert public key data to public key line
+        pubkey_line = convert_ssh_pubkey_to_line(pubkey_data)
+        if not pubkey_line:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write("  ERROR: Failed to convert public key data\n")
+            return 1
+        
+        # Check namespace matches
+        if namespace and sig_namespace != namespace:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"  ERROR: Namespace mismatch. Expected: {namespace}, Got: {sig_namespace}\n")
+            return 1
+        
+        # Find public key in allowed signers
+        if allowed_signers_file:
+            found_identity = find_public_key_in_allowed_signers(allowed_signers_file, pubkey_line)
+            if not found_identity:
+                with open(log_file, 'a', encoding='utf-8') as f:
+                    f.write("  ERROR: Public key not found in allowed signers\n")
+                return 1
+            
+            # Check identity matches if specified
+            if identity and found_identity != identity:
+                with open(log_file, 'a', encoding='utf-8') as f:
+                    f.write(f"  ERROR: Identity mismatch. Expected: {identity}, Found: {found_identity}\n")
+                return 1
+        
+        # Parse SSH signature data
+        sig_parsed = parse_ssh_signature_data(ssh_signature_data)
+        if not sig_parsed:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write("  ERROR: Failed to parse SSH signature data\n")
+            return 1
+        
+        sig_algorithm, signature_bytes = sig_parsed
+        
+        # Read message data - either from file or stdin
+        if message_file and os.path.exists(message_file):
+            with open(message_file, 'rb') as f:
+                message_data = f.read()
+        else:
+            # Read from stdin if no message file is provided (Git's typical behavior)
+            message_data = sys.stdin.buffer.read()
+        
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write(f"  Message data length: {len(message_data)} bytes\n")
+        
+        # Recreate the signed data for verification
+        if hash_algorithm == "sha512":
+            message_hash = hashlib.sha512(message_data).digest()
+        elif hash_algorithm == "sha256":
+            message_hash = hashlib.sha256(message_data).digest()
+        else:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"  ERROR: Unsupported hash algorithm: {hash_algorithm}\n")
+            return 1
+        
+        signed_data = create_signed_data(sig_namespace, hash_algorithm, message_hash)
+        
+        # Verify the signature cryptographically
+        if sig_algorithm == "ssh-ed25519":
+            verification_result = verify_real_ed25519_signature(pubkey_line, signature_bytes, signed_data)
+            if verification_result:
+                with open(log_file, 'a', encoding='utf-8') as debug_f:
+                    debug_f.write("  Signature verification SUCCESS (cryptographic verification passed)\n")
+                return 0
+            else:
+                with open(log_file, 'a', encoding='utf-8') as debug_f:
+                    debug_f.write("  Signature verification FAILED (cryptographic verification failed)\n")
+                return 1
+        else:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"  ERROR: Unsupported signature algorithm: {sig_algorithm}\n")
+            return 1
         
     except (FileNotFoundError, Exception) as e:
         with open(log_file, 'a', encoding='utf-8') as debug_f:
