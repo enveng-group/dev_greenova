@@ -396,12 +396,6 @@ def handle_signing_operation(args: argparse.Namespace, remaining_args: List[str]
 
 def main() -> int:
     """Main entry point for ssh-keygen wrapper."""
-    # Debug: log the command being called (disabled for production)
-    # try:
-    #     with open('/tmp/ssh-keygen-debug.log', 'a', encoding='utf-8') as f:
-    #         f.write(f"ssh-keygen called with: {' '.join(sys.argv)}\n")
-    # except Exception:
-    #     pass  # Ignore debug logging errors
     
     # Handle special operations first (find-principals, check-novalidate)
     if len(sys.argv) > 1:
