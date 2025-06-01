@@ -72,7 +72,7 @@
     "stylelint-config-recommended": "16.0.0",
     "stylelint-config-standard": "38.0.0",
     "stylelint-config-tailwindcss": "1.0.0",
-    "tailwind-scrollbar-hide": "^2.0.0",
+    "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-fluid-type": "^2.0.7",
     "tailwindcss-logical": "^4.0.0",
