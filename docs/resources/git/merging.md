@@ -21,11 +21,9 @@
     - [Monthly Deep Cleaning](#monthly-deep-cleaning)
     - [Fork Synchronization](#fork-synchronization)
   - [Conflict Prevention Guidelines](#conflict-prevention-guidelines)
+  - [Automated Merge Conflict Analysis](#automated-merge-conflict-analysis)
+  - [Interpreting Tool Output and Next Steps](#interpreting-tool-output-and-next-steps)
   - [Common Operations](#common-operations)
-    - [Creating a Feature Branch](#creating-a-feature-branch)
-    - [Rebasing a Feature Branch](#rebasing-a-feature-branch)
-    - [Squash Merging to Development](#squash-merging-to-development)
-    - [Emergency Hotfix Process](#emergency-hotfix-process)
   - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -42,6 +40,8 @@
 - [Progressive Squash Approach](#progressive-squash-approach)
 - [Repository Maintenance](#repository-maintenance)
 - [Conflict Prevention Guidelines](#conflict-prevention-guidelines)
+- [Automated Merge Conflict Analysis](#automated-merge-conflict-analysis)
+- [Interpreting Tool Output and Next Steps](#interpreting-tool-output-and-next-steps)
 - [Common Operations](#common-operations)
 - [References](#references)
 
@@ -53,51 +53,20 @@ project. Our approach prioritizes:
 - Maintaining a clean, linear commit history
 - Progressive squashing of commits as they move up the branch hierarchy
 - Preserving meaningful work units in commit messages
-- Minimizing repository size through aggressive optimization
-- Strict workflow procedures to prevent merge conflicts
+- **Automated conflict analysis using the `merge-conflict-detector` tool**
 
 ## Greenova Git Workflow
 
-### Repository Structure
-
-Greenova uses a dual-repository approach:
-
-1. **Development Repository**: `https://github.com/enveng-group/dev_greenova`
-
-   - All feature development and integration happens here
-   - Contains feature branches, development, and staging branches
-
-2. **Production Repository**: `https://github.com/enssol/greenova`
-   - Contains only production-ready code
-   - Receives squashed, tested changes from the development repository
-
-### Branch Hierarchy
-
-```
-Individual Feature Branches
-       ↓ (squash merge)
-Team Integration Branches
-       ↓ (squash merge)
-Development Branch
-       ↓ (squash merge)
-Staging Branch
-       ↓ (squash merge)
-Main Branch (dev repo)
-       ↓ (squash merge)
-Main Branch (production repo)
-```
-
-### Development Flow
-
-1. Create feature branches from the latest development branch
-2. Implement features with frequent small commits
-3. Squash merge feature branches into team integration branches
-4. Squash merge team branches into development
-5. After testing, squash merge development into staging
-6. After validation, squash merge staging into main (dev repo)
-7. Mirror the main branch to production repository with a final squash
+- All feature branches must be rebased onto the latest main branch before merging.
+- Use squash merges to combine related commits and maintain a linear history.
+- Run `merge-conflict-detector` before every merge to identify and resolve potential conflicts.
+- Reference project prompt files for commit messages, PRs, and code reviews.
 
 ## Merging Strategies
+
+- Prefer rebasing and squashing over merge commits.
+- Use the output of `merge-conflict-detector` to guide conflict resolution.
+- Document all manual interventions and resolutions in the merge commit message.
 
 ### Understanding Git Merge Options
 
@@ -305,81 +274,33 @@ git push origin main
    - Verify code quality with linters
    - Check for migration conflicts
 
+## Automated Merge Conflict Analysis
+
+The `merge-conflict-detector` tool is required for all pre-merge and maintenance operations. It provides:
+- Risk scores for files and branches
+- Detailed reports on potential conflicts
+- Recommendations for resolution and prevention
+
+**Usage Example:**
+```sh
+merge-conflict-detector main feature-branch
+```
+
+## Interpreting Tool Output and Next Steps
+
+- Review the generated report for high-risk files, risk scores, and recommendations.
+- Address flagged issues before proceeding with the merge.
+- Re-run the tool after resolving conflicts to ensure no new issues were introduced.
+- Document any manual interventions in the merge commit message.
+
 ## Common Operations
 
-### Creating a Feature Branch
-
-```bash
-git checkout development
-git pull
-git checkout -b feature/descriptive-name
-```
-
-### Rebasing a Feature Branch
-
-```bash
-git checkout development
-git pull
-git checkout feature/descriptive-name
-git rebase development
-# If conflicts occur:
-# 1. Fix conflicts
-# 2. git add <resolved-files>
-# 3. git rebase --continue
-```
-
-### Squash Merging to Development
-
-```bash
-# Prepare PR in GitHub with:
-# - Complete description following PR template
-# - All tests passing
-# - Required approvals
-# Then select "Squash and merge" option in GitHub UI
-```
-
-### Emergency Hotfix Process
-
-```bash
-# Create hotfix branch from main
-git checkout main
-git checkout -b hotfix/critical-issue
-
-# Fix the issue with minimal changes
-# Test thoroughly
-
-# Squash merge to main
-git checkout main
-git merge --squash hotfix/critical-issue
-git commit -m "fix(component): resolve critical issue X
-
-- Fixed specific problem
-- Added regression test
-
-Fixes #999
-Signed-off-by: enveng-group <164126503+enveng-group@users.noreply.github.com>"
-
-# Apply same fix to development
-git checkout development
-git cherry-pick main
-```
+- `git fetch --all --tags`: Update all remotes and tags
+- `git log upstream/main..origin/main --oneline`: Compare commits between remotes
+- `merge-conflict-detector main feature-branch`: Analyze potential merge conflicts
 
 ## References
 
-[1] Git Documentation, "Git Merge Strategies," Git SCM, 2023. [Online].
-Available: <https://git-scm.com/docs/merge-strategies> [Accessed: Apr. 10,
-2025].
-
-[2] GitHub Docs, "About merge methods on GitHub," GitHub, 2023. [Online].
-Available:
-<https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github>
-[Accessed: Apr. 10, 2025].
-
-[3] Atlassian, "Merging vs. Rebasing," Atlassian Git Tutorial, 2023. [Online].
-Available: <https://www.atlassian.com/git/tutorials/merging-vs-rebasing>
-[Accessed: Apr. 10, 2025].
-
-[4] Microsoft, "Merging with squash," Microsoft Azure DevOps
-Documentation, 2023. [Online]. Available:
-<https://learn.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash>
-[Accessed: Apr. 10, 2025].
+- `.github/prompts/merge-strategy.prompt.md`
+- `docs/resources/git/merge-instructions.txt`
+- `docs/resources/git/git-repository-management.md`

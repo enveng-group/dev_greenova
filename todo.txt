@@ -1,12 +1,14 @@
 # TODO List for Open Pull Requests (enveng-group/dev_greenova)
 #
 # Merge order below is optimal for safety and efficiency.
-# - Critical migrations, authentication, and bugfixes are prioritized.
-# - Dependency and environment fixes precede features and UI/UX.
-# - Lower-priority PRs are merged last.
+# - Migrations and authentication PRs are merged first to ensure database and security stability.
+# - Bugfixes follow to address correctness and prevent regressions.
+# - Dependency and environment/tooling updates are merged next to avoid breaking changes.
+# - Features, UI/UX, and refactors are merged after stability is ensured.
+# - The major refactor PR is merged last to minimize merge conflicts and ensure all prior changes are integrated.
 # If you suspect hidden dependencies, review PRs or request a dependency graph.
-
-# Prioritized squash merge order (as of 2025-05-30):
+#
+# Prioritized squash merge order (as of 2025-06-02):
 # 1. PR 145: feat(auditing): extract compliance and non-conformance comments into standalone app
 # 2. PR 166: feat: implement user authentication flow
 # 3. PR 131: The authentication namespace has been successfully registered in the …
@@ -16,12 +18,16 @@
 # 7. PR 148: Updated Scrollables to properly scroll correctly
 # 8. PR 157: fix(deps): remove optional 'toml' extra from coverage to fix install error
 # 9. PR 153: Bump eslint-config-prettier from 10.1.3 to 10.1.5
-# 10. PR 152: Bump protolint from 0.54.0 to 0.55.1
-# 11. PR 155: Update .env.vault
-# 12. PR 154: Enhancements/139-graph Added Mechanism Charts
-# 13. PR 151: Issue/issue-31 - Revising Procedure View
-# 14. PR 149: Issue/issue 124 enhancement headerbar
-# 15. PR 103: feat(core): add IPython autoreload, syntax checking, and bash aliases file
+# 10. PR 170: Bump protolint from 0.54.0 to 0.55.6
+# 11. PR 169: Bump eslint-plugin-prettier from 5.4.0 to 5.4.1
+# 12. PR 168: Bump @eslint/js from 9.26.0 to 9.28.0
+# 13. PR 167: Bump tailwind-scrollbar-hide from 2.0.0 to 4.0.0
+# 14. PR 155: Update .env.vault
+# 15. PR 154: Enhancements/139-graph Added Mechanism Charts
+# 16. PR 151: Issue/issue-31 - Revising Procedure View
+# 17. PR 149: Issue/issue 124 enhancement headerbar
+# 18. PR 103: feat(core): add IPython autoreload, syntax checking, and bash aliases file
+# 19. PR 171: Selective merge from b6f5328e: refactor dashboard, templates, and docs
 
 Review and merge all open PRs (resolve conflicts as needed).
 Run linting, formatting, type checking, and security scans on the merged codebase.
@@ -30,3 +36,5 @@ Refactor and improve code as needed.
 Run unittest, coverage, and selenium tests to verify code correctness and coverage.
 Enforce pre-commit hooks and CI checks to prevent regressions.
 Run the app in the browser to perform manual verification and exploratory testing.
+
+

@@ -7,21 +7,11 @@
   - [Current Issues](#current-issues)
   - [Resolution Plan](#resolution-plan)
     - [Immediate Actions](#immediate-actions)
-      - [Repository Audit](#repository-audit)
-      - [Synchronize All Forks with Upstream](#synchronize-all-forks-with-upstream)
-      - [Resolve Critical Path Branches](#resolve-critical-path-branches)
-    - [Repository Cleanup](#repository-cleanup)
-      - [Clean Local Repositories](#clean-local-repositories)
-      - [Remove Obsolete Branches](#remove-obsolete-branches)
-      - [Fork Cleanup](#fork-cleanup)
-    - [Maintenance Schedule](#maintenance-schedule)
-      - [Weekly Maintenance](#weekly-maintenance)
-      - [Monthly Deep Cleaning](#monthly-deep-cleaning)
-      - [Quarterly Audit](#quarterly-audit)
     - [Monitoring](#monitoring)
-      - [Automated Tools](#automated-tools)
   - [Git Commands Reference](#git-commands-reference)
   - [Team Guidelines](#team-guidelines)
+  - [Automated Merge Conflict Analysis](#automated-merge-conflict-analysis)
+  - [Troubleshooting Merge Issues](#troubleshooting-merge-issues)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -36,11 +26,11 @@
 - [Current Issues](#current-issues)
 - [Resolution Plan](#resolution-plan)
   - [Immediate Actions](#immediate-actions)
-  - [Repository Cleanup](#repository-cleanup)
-  - [Maintenance Schedule](#maintenance-schedule)
   - [Monitoring](#monitoring)
 - [Git Commands Reference](#git-commands-reference)
 - [Team Guidelines](#team-guidelines)
+- [Automated Merge Conflict Analysis](#automated-merge-conflict-analysis)
+- [Troubleshooting Merge Issues](#troubleshooting-merge-issues)
 
 ## Overview
 
@@ -53,165 +43,60 @@ collaborative development.
 
 - Divergent branches between forks and upstream repository
 - Frequent merge conflicts during pull requests and merges
-- Inconsistent branch states across developer forks
-- Time wasted on rebasing and resolving avoidable conflicts
+- Inconsistent commit history and lack of linearity
+- Manual conflict resolution without automated analysis
 
 ## Resolution Plan
 
 ### Immediate Actions
 
-#### Repository Audit
-
-1. Inventory all team forks
-2. Document current branch states
-3. Identify most divergent branches
-
-#### Synchronize All Forks with Upstream
-
-For your fork:
-
-```bash
-# Add upstream if not already done
-git remote add upstream git@github.com:enveng-group/dev_greenova.git
-git fetch upstream
-
-# For each branch that needs fixing
-git checkout your-branch
-git reset --hard upstream/main
-git push --force origin your-branch
-```
-
-For team members' forks:
-
-- Schedule a "repository alignment day" where all team members:
-  - Add the upstream remote
-  - Fetch latest upstream changes
-  - Reset their working branches to match upstream
-  - Force push their updated branches
-
-#### Resolve Critical Path Branches
-
-For each essential divergent branch:
-
-```bash
-git checkout divergent-branch
-git fetch upstream
-git rebase upstream/main
-# Resolve conflicts as they arise
-git push --force origin divergent-branch
-```
-
-### Repository Cleanup
-
-#### Clean Local Repositories
-
-```bash
-# Run on each working repository
-git reflog expire --expire=now --all
-git gc --prune=now --aggressive
-git clean -fd
-```
-
-#### Remove Obsolete Branches
-
-1. Identify abandoned/stale branches across forks
-2. Delete obsolete local and remote branches:
-
-```bash
-# Local deletion
-git branch -D obsolete-branch
-
-# Remote deletion
-git push origin --delete obsolete-branch
-```
-
-#### Fork Cleanup
-
-For severely diverged forks:
-
-1. Backup any unique work
-2. Delete the fork on GitHub
-3. Re-fork from the upstream repository
-4. Restore any unique work as new branches
-
-### Maintenance Schedule
-
-#### Weekly Maintenance
-
-```bash
-# Synchronize with upstream
-git fetch upstream
-git checkout main
-git reset --hard upstream/main
-git push origin main
-
-# Basic optimization
-git gc
-git prune
-```
-
-#### Monthly Deep Cleaning
-
-```bash
-# More thorough cleaning
-git reflog expire --expire=30.days --all
-git gc --aggressive --prune=now
-git repack -Ad
-git fsck
-```
-
-#### Quarterly Audit
-
-- Review all branches across forks for divergence
-- Delete or rebase long-lived feature branches
-- Ensure all forks remain well-synchronized with upstream
+- Enforce a progressive squash merge workflow for all branches
+- Require pre-merge analysis using the `merge-conflict-detector` tool
+- Reference project prompt files for all merges and pull requests
+- Document all manual interventions and resolutions
 
 ### Monitoring
 
-#### Automated Tools
-
-- Set up GitHub Actions to monitor branch divergence
-- Configure alerts when branches fall too far behind (>10 commits)
-- Create a dashboard for visualizing branch health
+- Schedule regular repository health checks using `merge-conflict-detector` and maintenance scripts
+- Monitor for high-risk files and branches as flagged by the tool's reports
+- Update risk rules and conflict patterns databases as new issues are discovered
 
 ## Git Commands Reference
 
-| Command                    | Purpose                    | When to Use         |
-| -------------------------- | -------------------------- | ------------------- |
-| `git pull --rebase`        | Update branch              | Daily when starting |
-| `git rebase upstream/main` | Sync with upstream         | Before PRs          |
-| `git merge --squash`       | Combine into single commit | For feature merges  |
-| `git gc`                   | Garbage collection         | Weekly              |
-| `git fsck`                 | File system check          | When issues occur   |
-| `git repack`               | Optimize storage           | Monthly             |
-| `git reflog`               | View ref logs              | Track lost commits  |
-| `git clean`                | Remove untracked files     | Workspace cleanup   |
-| `git prune`                | Remove orphaned objects    | Monthly             |
+- `git fetch --all --tags`: Update all remotes and tags
+- `git log upstream/main..origin/main --oneline`: Compare commits between remotes
+- `merge-conflict-detector main feature-branch`: Analyze potential merge conflicts
+- See `docs/resources/git/merge-instructions.txt` for full workflow
 
 ## Team Guidelines
 
-1. **Daily Practices**:
+- Always run automated analysis before merging or rebasing
+- Follow the recommendations in the tool's report for conflict resolution
+- Use prompt files for commit messages, PR descriptions, and code reviews
+- Maintain a clean, linear history by rebasing and squashing as needed
 
-   - Always `git pull --rebase` before starting work
-   - Commit frequently with meaningful messages
-   - Keep feature branches short-lived (<2 weeks)
+## Automated Merge Conflict Analysis
 
-2. **Before Creating Pull Requests**:
+The `merge-conflict-detector` tool is required for all pre-merge and maintenance operations. It provides:
+- Risk scores for files and branches
+- Detailed reports on potential conflicts
+- Recommendations for resolution and prevention
 
-   - Rebase branch on latest upstream main
-   - Run tests locally
-   - Squash related commits
+**Usage Example:**
+```sh
+merge-conflict-detector main feature-branch
+```
 
-3. **Fork Management**:
+## Troubleshooting Merge Issues
 
-   - Sync fork with upstream weekly
-   - Don't let branches diverge more than 10 commits
-
-4. **Conflict Resolution**:
-   - Address conflicts immediately when detected
-   - When in doubt, consult team lead
-   - Document complex conflict resolutions
+- If a merge conflict is detected, consult the tool's report for high-risk files
+- Reference the following for best practices and standards:
+  - `.github/prompts/merge-strategy.prompt.md`
+  - `docs/resources/git/merging.md`
+  - `docs/resources/git/merge-instructions.txt`
+- For persistent or complex issues, update the conflict pattern and risk rules databases
+- Document all steps taken and resolutions applied
 
 ---
 
-_This document is a living guide and should be updated as our practices evolve._
+*For more information, see the official merging and maintenance guides in the docs/resources/git directory.*

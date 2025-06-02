@@ -20,36 +20,3 @@ pre-commit run check-merge-conflict && pre-commit run detect-private-key && pre-
 ruff check --select=DOC201 . > ruff.log || true
 
 iterate with filesystem mcp server to resolve ruff DOC201 errors in the workspace:
-
-ruff
-
-Add missing copyright notices (CPY001) to all Python files.
-Remove commented-out code (ERA001).
-Add missing type annotations for all function arguments and return types (ANN003, ANN202, F821).
-Replace Any with more specific types where possible, or import Any from typing if required.
-Fix unused arguments (ARG001, ARG002).
-Fix boolean positional argument warnings (FBT001, FBT002, FBT003).
-Fix undefined names and missing imports.
-Fix Django model/class ordering (DJ012).
-Remove null=True from string-based fields (DJ001).
-Replace __all__ with explicit fields in ModelForm (DJ007).
-Fix method/function placement (PLR6301).
-Use static/class methods where appropriate.
-Replace all os.path/os.makedirs/os.listdir/os.path.exists/os.path.join/os.path.abspath/os.path.splitext/os.path.isdir/os.path.isfile with pathlib.Path equivalents (PTH*).
-Replace string path manipulations with Path methods.
-Remove redundant exception objects in logging (TRY401).
-Move return statements to else blocks after try (TRY300).
-Avoid bare excepts (E722, BLE001).
-Use TypeError for invalid type exceptions (TRY004).
-Inline negated conditions (SIM103).
-Combine nested ifs (SIM102).
-Add Google style docstrings to all public functions/classes.
-Add missing "Returns" and "Raises" sections (DOC201, DOC501, D401).
-Ensure imperative mood for first line of docstrings (D401).
-Break all lines >88 characters (E501).
-Use implicit line continuation for long lines.
-Break long strings and comments.
-Fix private member access (SLF001).
-Use specific rule codes for type: ignore (PGH003).
-Fix class/field ordering and other Django style issues.
-Add missing stub files and py.typed markers as needed.
