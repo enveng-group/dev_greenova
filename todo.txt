@@ -37,4 +37,21 @@ Run unittest, coverage, and selenium tests to verify code correctness and covera
 Enforce pre-commit hooks and CI checks to prevent regressions.
 Run the app in the browser to perform manual verification and exploratory testing.
 
+tools/merge_conflict_detector/merge-conflict-detector maintenance --aggressive --prune
 
+git fetch origin pull/145/head:pr-145
+
+tools/merge_conflict_detector/merge-conflict-detector analyze -b integration/v0.0.7 -b pr-145 -f text > logs/merge-detector.log
+
+git checkout integration/v0.0.7
+git merge --squash pr-145
+git commit -m "feat(auditing): extract compliance and non-conformance comments into standalone app
+
+- See PR #145 for details.
+- [Include summary of changes and conflict resolutions here.]
+"
+
+tools/merge_conflict_detector/scripts/maintenance.sh --verbose --prune
+
+git push origin integration/v0.0.7
+git remote prune origin

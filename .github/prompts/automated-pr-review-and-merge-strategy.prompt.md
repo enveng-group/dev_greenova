@@ -10,6 +10,9 @@
   - [Acceptance Criteria](#acceptance-criteria)
   - [Instructions](#instructions)
   - [Additional Guidelines](#additional-guidelines)
+  - [GitHub Comment and Merge Commit Generation](#github-comment-and-merge-commit-generation)
+  - [Auto-closing PR and Issues](#auto-closing-pr-and-issues)
+  - [Essential Directory Preservation](#essential-directory-preservation)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -36,7 +39,7 @@ tools:
 
 ## Goal
 
-Review PR 145 (`feat(auditing): extract compliance and non-conformance comments into standalone app`) for the dev_greenova project, analyze for merge conflicts and integration risks, and determine the most optimal, conflict-free merge strategy into the `integration/v0.0.7` branch using all available MCP servers and the `merge-conflict-detector` tool.
+Review PR 145 (`feat(auditing): extract compliance and non-conformance comments into standalone app`) for the dev_greenova project, perform a code review focused on Django project files, analyze for merge conflicts and integration risks, and determine the most optimal, conflict-free merge strategy into the `integration/v0.0.7` branch using all available MCP servers and the `merge-conflict-detector` tool.
 
 ## Context
 
@@ -45,11 +48,14 @@ Review PR 145 (`feat(auditing): extract compliance and non-conformance comments 
 - The project enforces strict merge, code quality, and documentation standards.
 - Merge conflicts and integration issues must be proactively detected and resolved.
 - The `merge-conflict-detector` tool is required for pre-merge analysis and recommendations.
+- Code review should focus on the Django files in the `greenova/` directory that address PR requirements.
+- Essential tooling and configuration must be preserved during branch operations.
 
 ## Objectives
 
 - Fetch and review all details, diffs, and metadata for PR 145 using the github MCP server.
 - Use the json MCP server to parse PR data, file changes, and metadata as needed.
+- **Conduct a detailed code review of Django project files within the `greenova/` directory that implement the feature extraction.**
 - Use the git MCP server to inspect the state of `integration/v0.0.7`, local changes, and branch history.
 - Use the filesystem MCP server to read, write, or modify files if any manual intervention is required.
 - Use the sequential-thinking MCP server to:
@@ -65,34 +71,63 @@ Review PR 145 (`feat(auditing): extract compliance and non-conformance comments 
 - Local and remote git branches, especially `integration/v0.0.7`
 - Project documentation and standards from context7
 - Output from the merge-conflict-detector tool
+- Code review guidelines in `.github/instructions/.copilot-review-instructions.md`
 
 ## Expectations
 
 - All relevant PR details and diffs are reviewed and parsed.
+- **Code changes in the `greenova/` Django project directory are thoroughly reviewed against project standards.**
+- **Only review code changes that implement the extraction of compliance and non-conformance comments into a standalone app.**
 - The merge-conflict-detector tool is run to analyze for conflicts and risks.
 - The sequential-thinking MCP server is used to plan and iterate on the merge strategy.
+- **For files under the `greenova/` Django project directory (`/workspaces/greenova/greenova` or relative `greenova/`):**
+  - **Use a squash merge strategy—combine all changes to these files into a single commit during the merge.**
+- **For all other files outside `greenova/`:**
+  - **Use the squash merge strategy as per project policy.**
 - If file or branch modifications are needed, the filesystem and git MCP servers are used.
 - The final merge plan is documented, including any manual steps or resolutions.
 - All actions are standards-compliant and documented for auditability.
+- Essential development environment directories are preserved during all branch operations.
 
 ## Acceptance Criteria
 
 - PR 145 is reviewed and analyzed for merge conflicts and integration risks.
+- **Code review of Django project files is completed with feedback on quality, security, and adherence to project standards.**
 - The merge-conflict-detector tool is used and its output informs the merge plan.
 - The most optimal, conflict-free merge strategy into `integration/v0.0.7` is determined and documented.
 - Any required file or branch modifications are performed using the appropriate MCP servers.
 - The process is repeatable and clearly documented for future similar tasks.
+- Essential directories (`.devcontainer`, `tools`) are preserved throughout the process.
 
 ## Instructions
 
 1. Use the github MCP server to fetch all details and diffs for PR 145.
 2. Use the json MCP server to parse PR metadata and file changes as needed.
-3. Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
-4. Use the merge-conflict-detector tool to analyze PR 145 against `integration/v0.0.7`.
-5. Use the sequential-thinking MCP server to plan and iterate on the merge strategy, resolving any conflicts or complications.
-6. If any files or branches need to be modified, use the filesystem and git MCP servers.
-7. Document the final merge plan, including any manual steps, resolutions, or recommendations.
-8. Ensure all actions comply with project standards and are clearly documented.
+3. **Before any branch checkout operations, preserve essential directories:**
+   - **Backup `.devcontainer/` directory and its contents from `integration/v0.0.7`**
+   - **Backup `tools/` directory and its contents from `integration/v0.0.7`**
+   - **These contain the merge-conflict-detector tool and Dropbear SSH configuration essential for automation**
+4. **Conduct a detailed code review of changed files in the `greenova/` directory that implement the feature extraction:**
+   - **Focus only on files that address the extraction of compliance and non-conformance comments**
+   - **Follow the code review guidelines in `.github/instructions/.copilot-review-instructions.md`**
+   - **Check for Django best practices, security issues, and adherence to project standards**
+   - **Provide specific feedback on code quality, documentation, and test coverage**
+5. Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
+6. Use the merge-conflict-detector tool to analyze PR 145 against `integration/v0.0.7`.
+7. Use the sequential-thinking MCP server to plan and iterate on the merge strategy, resolving any conflicts or complications.
+8. **When merging:**
+   - **Squash all changes to files under the `greenova/` directory into a single commit.**
+   - **Merge all other files using the standard merge strategy.**
+9. **After any branch operations, restore essential directories if they were modified:**
+   - **Restore `.devcontainer/` from backup if needed**
+   - **Restore `tools/` from backup if needed**
+   - **Verify merge-conflict-detector tool functionality**
+10. If any files or branches need to be modified, use the filesystem and git MCP servers.
+11. Document the final merge plan, including any manual steps, resolutions, or recommendations.
+12. Ensure all actions comply with project standards and are clearly documented.
+13. Generate GitHub-flavored markdown comments for the PR review.
+14. Create a properly formatted squash merge commit message.
+15. Ensure the commit message includes appropriate keywords to auto-close the PR and related issues.
 
 ## Additional Guidelines
 
@@ -100,3 +135,94 @@ Review PR 145 (`feat(auditing): extract compliance and non-conformance comments 
 - If merge conflicts or complications arise, iterate using the sequential-thinking MCP server until resolved.
 - Clearly document the rationale for all merge decisions and actions.
 - Ensure the process is auditable and repeatable for future PR reviews and merges.
+- **For code review feedback, prioritize issues that could impact functionality, security, or maintainability.**
+
+## GitHub Comment and Merge Commit Generation
+
+- **PR Review Comments:**
+  - Generate GitHub-flavored markdown comments for providing feedback to contributors.
+  - Structure comments with clear headings, code blocks, and formatting.
+  - Use markdown checkboxes (`- [ ]` and `- [x]`) to track items requiring attention.
+  - Include code snippets with syntax highlighting where relevant:
+    ```python
+    # Example code snippet with syntax highlighting
+    def function():
+        return True
+    ```
+  - Use quote blocks (>) for emphasizing important feedback.
+  - Organize feedback by file or component for clarity.
+
+- **Squash Merge Commit:**
+  - Generate a comprehensive squash merge commit message following this structure:
+    ```
+    feat(auditing): extract compliance and non-conformance comments into standalone app
+    
+    <Brief description of the changes and their purpose>
+    
+    - <Key change 1>
+    - <Key change 2>
+    - <Additional changes...>
+    
+    PR: #145
+    ```
+
+## Auto-closing PR and Issues
+
+- Include appropriate GitHub keywords in the squash merge commit message to automatically close the PR and any associated issues.
+- Use one of the following keywords followed by the issue/PR number:
+  - `closes #X`
+  - `fixes #X`
+  - `resolves #X`
+- For multiple issues:
+  ```
+  feat(auditing): extract compliance and non-conformance comments into standalone app
+  
+  <Description>
+  
+  closes #145
+  fixes #100
+  resolves #101
+  ```
+- When using the git or github MCP server to push or merge changes:
+  - Ensure these keywords are included in the commit message.
+  - Verify that the correct issue numbers are referenced.
+  - Format as `Closes #<issue-number>` at the end of the commit message.
+
+## Essential Directory Preservation
+
+- **Critical Directories to Preserve:**
+  - `.devcontainer/` - Contains devcontainer configuration and Dropbear SSH setup
+  - `tools/` - Contains merge-conflict-detector and other automation tools
+  
+- **Preservation Strategy:**
+  - Before any `git checkout` or branch switching operations:
+    ```bash
+    # Backup essential directories
+    cp -r .devcontainer/ /tmp/backup_devcontainer/
+    cp -r tools/ /tmp/backup_tools/
+    ```
+  
+  - After branch operations, if directories are missing or modified:
+    ```bash
+    # Restore from backup
+    cp -r /tmp/backup_devcontainer/ .devcontainer/
+    cp -r /tmp/backup_tools/ tools/
+    ```
+  
+  - **Always verify** that the merge-conflict-detector tool is functional after any branch operations:
+    ```bash
+    # Test merge-conflict-detector
+    tools/merge-conflict-detector --help
+    ```
+
+- **Files of Critical Importance:**
+  - `.devcontainer/devcontainer.json` - Contains Dropbear SSH configuration
+  - `tools/merge-conflict-detector` - Required for conflict analysis
+  - Any configuration files in these directories that enable automation
+
+- **When to Apply Preservation:**
+  - Before checking out PR branch
+  - Before checking out remote issue branch  
+  - Before any git operations that might modify working directory
+  - During merge conflict resolution
+  - When switching between branches during analysis
