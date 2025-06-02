@@ -1,40 +1,18 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
 """Module for generating figures and statistics for procedures."""
-
-from projects.models import Project
-from procedures.models import Procedure
-from obligations.models import Obligation
-from matplotlib.ticker import MaxNLocator
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.axes import Axes
-from django.db.models import Count, F, Q, QuerySet, Sum
-from core.utils.charts import create_pie_chart
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from typing import TYPE_CHECKING, Any, cast
 import io
 import logging
+from typing import TYPE_CHECKING, Any, cast
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from django.db.models import Count, F, Q, QuerySet, Sum
+from matplotlib.axes import Axes
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.figure import Figure
+from matplotlib.ticker import MaxNLocator
+from obligations.models import Obligation
+from procedures.models import Procedure
+from projects.models import Project
 
 if TYPE_CHECKING:
     import numpy as np
@@ -66,9 +44,8 @@ def generate_procedure_statistics(
         "edgecolor": "#eeeeee",
     }
 
-    num_axes_required = 2
     fig, axes = plt.subplots(
-        nrows=num_axes_required,
+        nrows=2,
         ncols=1,
         squeeze=True,
         figsize=fig_config["figsize"],
@@ -79,7 +56,7 @@ def generate_procedure_statistics(
     axes_array = cast("np.ndarray", axes)
 
     try:
-        if len(axes_array) >= num_axes_required:
+        if len(axes_array) >= 2:
             _plot_procedure_status_chart(cast("Axes", axes_array[0]), stats)
             _plot_procedure_timeline_chart(cast("Axes", axes_array[1]), stats)
         else:
@@ -102,17 +79,14 @@ def generate_procedure_statistics(
 
 def _calculate_procedure_statistics(procedures: QuerySet) -> dict[str, Any]:
     """Calculate statistics from procedures queryset."""
-    status_counts = (
-        procedures.values("status")
-        .annotate(count=Sum("id", distinct=True))
-        .order_by("status")
-    )
+    status_counts = procedures.values("status").annotate(
+        count=Sum("id", distinct=True),
+    ).order_by("status")
 
-    timeline_data = (
-        procedures.values("created_at__month")
-        .annotate(count=Sum("id", distinct=True), month=F("created_at__month"))
-        .order_by("created_at__month")
-    )
+    timeline_data = procedures.values("created_at__month").annotate(
+        count=Sum("id", distinct=True),
+        month=F("created_at__month"),
+    ).order_by("created_at__month")
 
     return {
         "total_count": procedures.count(),
@@ -139,34 +113,15 @@ def _plot_procedure_status_chart(ax: Axes, stats: dict[str, Any]) -> None:
 
 def _plot_procedure_timeline_chart(ax: Axes, stats: dict[str, Any]) -> None:
     """Plot procedure timeline chart."""
-    month_names = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-    ]
+    month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-    timeline_months = [
-        month_names[item["month"] - 1] for item in stats["timeline_data"]
-    ]
+    timeline_months = [month_names[item["month"] - 1]
+                       for item in stats["timeline_data"]]
     timeline_counts = [item["count"] for item in stats["timeline_data"]]
 
-    ax.plot(
-        timeline_months,
-        timeline_counts,
-        marker="o",
-        linestyle="-",
-        color="#3498db",
-        linewidth=2,
-    )
+    ax.plot(timeline_months, timeline_counts, marker="o",
+            linestyle="-", color="#3498db", linewidth=2)
     ax.set_title("Procedures Created Over Time")
     ax.set_xlabel("Month")
     ax.set_ylabel("Count")
@@ -175,7 +130,8 @@ def _plot_procedure_timeline_chart(ax: Axes, stats: dict[str, Any]) -> None:
 
 
 def get_procedure_charts(
-    mechanism_id: str | int, filtered_ids: list[int] | None = None,
+    mechanism_id: str | int,
+    filtered_ids: list[int] | None = None,
 ) -> dict[str, Figure]:
     """Generate charts for procedures related to an environmental mechanism."""
     procedure_charts: dict[str, Figure] = {}
@@ -188,8 +144,8 @@ def get_procedure_charts(
         if filtered_ids is not None:
             query = query.filter(id__in=filtered_ids)
 
-        proc_names = (
-            query.values_list("procedure", flat=True).distinct().order_by("procedure")
+        proc_names = query.values_list("procedure", flat=True).distinct().order_by(
+            "procedure",
         )
 
         for proc_name in proc_names:
@@ -224,33 +180,38 @@ def _get_status_counts(obligations: QuerySet) -> dict[str, int]:
 
 
 def _create_pie_chart(title: str, status_counts: dict[str, int]) -> Figure:
-    """Create a pie chart for procedure status distribution using shared utility.
+    """Create a pie chart for procedure status distribution."""
+    fig, ax = plt.subplots(figsize=(6, 5))
 
-    Args:
-        title: The title for the chart.
-        status_counts: Dictionary of status labels to counts.
-
-    Returns:
-        Matplotlib Figure object containing the pie chart.
-
-    """
     labels = list(status_counts.keys())
     sizes = list(status_counts.values())
     colors = ["#f39c12", "#3498db", "#2ecc71"]
-    fig_size = (6, 5)
-    return create_pie_chart(
-        data=sizes,
+
+    ax.pie(
+        sizes,
         labels=labels,
         colors=colors,
-        title=f"{title} Status",
-        fig_size=fig_size,
+        autopct="%1.1f%%",
+        startangle=90,
+        wedgeprops={"edgecolor": "w", "linewidth": 1},
+        textprops={"fontsize": 10},
     )
+
+    ax.axis("equal")
+    ax.set_title(f"{title} Status", fontsize=12)
+    return fig
 
 
 def _create_empty_chart(title: str) -> Figure:
     """Create an empty chart with a message."""
     fig, ax = plt.subplots(figsize=(6, 5))
-    ax.text(0.5, 0.5, "No obligations found", ha="center", va="center", fontsize=12)
+    ax.text(
+        0.5, 0.5,
+        "No obligations found",
+        ha="center",
+        va="center",
+        fontsize=12,
+    )
     ax.axis("off")
     ax.set_title(title, fontsize=12)
     return fig
@@ -260,8 +221,7 @@ def _create_error_chart(error_message: str) -> Figure:
     """Create an error chart with the error message."""
     fig, ax = plt.subplots(figsize=(6, 5))
     ax.text(
-        0.5,
-        0.5,
+        0.5, 0.5,
         f"Error generating charts: {error_message}",
         ha="center",
         va="center",
@@ -324,11 +284,9 @@ def get_procedure_status_chart() -> Figure:
 
     """
     # Get status counts
-    status_counts = (
-        Procedure.objects.values("status")
-        .annotate(count=Count("id"))
-        .order_by("status")
-    )
+    status_counts = (Procedure.objects.values("status")
+                     .annotate(count=Count("id"))
+                     .order_by("status"))
 
     # Extract data
     statuses = [s["status"] for s in status_counts]
@@ -350,11 +308,9 @@ def get_procedure_timeline() -> Figure:
 
     """
     # Get procedures ordered by start date
-    procedures = (
-        Procedure.objects.all()
-        .order_by("start_date")
-        .values("start_date", "end_date", "title")
-    )
+    procedures = (Procedure.objects.all()
+                  .order_by("start_date")
+                  .values("start_date", "end_date", "title"))
 
     # Extract data
     titles = [p["title"] for p in procedures]
@@ -377,13 +333,10 @@ def get_completion_rate_chart() -> Figure:
 
     """
     # Get completed vs total procedures by type
-    procedures = (
-        Procedure.objects.values("type")
-        .annotate(
-            total=Count("id"), completed=Count("id", filter=Q(status="completed")),
-        )
-        .order_by("type")
-    )
+    procedures = (Procedure.objects.values("type")
+                  .annotate(total=Count("id"),
+                            completed=Count("id", filter=Q(status="completed")))
+                  .order_by("type"))
 
     # Extract data
     types = [p["type"] for p in procedures]

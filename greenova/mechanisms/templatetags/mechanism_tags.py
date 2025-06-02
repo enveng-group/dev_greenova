@@ -1,11 +1,3 @@
-# Copyright 2025 Enveng Group.
-# SPDX-License-Identifier: 	AGPL-3.0-or-later
-
-"""Custom template tags for the mechanisms app.
-
-This module defines template tags for use in the mechanisms app templates.
-"""
-
 from typing import Any
 
 from django import template
@@ -17,7 +9,7 @@ register = template.Library()
 
 
 @register.filter
-def get_item(dictionary: dict[str, object], key: object) -> object:
+def get_item(dictionary: dict[str, Any], key: Any) -> Any:
     """Get item from dictionary by key."""
     return dictionary.get(key)
 

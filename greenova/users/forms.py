@@ -1,37 +1,12 @@
-"""Copyright (C) 2025 Adrian Gallo.
+from typing import Any, TypeVar
 
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Forms for user and profile management in the Greenova users app.
-
-This module defines forms for updating user profiles, creating and updating users
-in the admin, and uploading profile images.
-"""
-
-
-from models import Profile
-from django.db.models import Model
-from django.core.exceptions import ValidationError
-from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth import get_user_model
-from typing import Any, ClassVar, TypeVar
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.db.models import Model
+
+from .models import Profile
 
 User = get_user_model()
 T = TypeVar("T", bound=Model)
@@ -45,42 +20,35 @@ class UserProfileForm(forms.ModelForm):
     email = forms.EmailField(required=True)
 
     class Meta:
-        """Metadata for UserProfileForm."""
-
         model = Profile
-        fields: ClassVar[list[str]] = [
-            "bio",
-            "position",
-            "department",
-            "phone_number",
-            "profile_image",
-        ]
-        widgets: ClassVar[dict[str, Any]] = {
+        fields = ["bio", "position", "department", "phone_number", "profile_image"]
+        widgets = {
             "bio": forms.Textarea(attrs={"rows": 4}),
         }
 
-    def __init__(self, *args: tuple, **kwargs: dict) -> None:
-        """Initialize the UserProfileForm and set initial values for user fields."""
+    def __init__(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
         if self.instance and hasattr(self.instance, "pk") and self.instance.pk:
-            user = self.instance.user
-            self.fields["first_name"].initial = getattr(user, "first_name", "")
-            self.fields["last_name"].initial = getattr(user, "last_name", "")
-            self.fields["email"].initial = getattr(user, "email", "")
+            # Type ignore comments prevent type checker errors for user attributes
+            # type: ignore
+            self.fields["first_name"].initial = self.instance.user.first_name
+            # type: ignore
+            self.fields["last_name"].initial = self.instance.user.last_name
+            self.fields["email"].initial = self.instance.user.email  # type: ignore
 
     def save(self, commit: bool = True) -> Profile:
-        """Save the profile and update related user fields."""
-        profile: Profile = super().save(commit=False)
-        user = profile.user
-        if hasattr(user, "first_name"):
-            user.first_name = self.cleaned_data["first_name"]
-        if hasattr(user, "last_name"):
-            user.last_name = self.cleaned_data["last_name"]
-        if hasattr(user, "email"):
-            user.email = self.cleaned_data["email"]
+        profile = super().save(commit=False)
+        user = profile.user  # type: ignore
+        user.first_name = self.cleaned_data["first_name"]
+        user.last_name = self.cleaned_data["last_name"]
+        user.email = self.cleaned_data["email"]
 
         if commit:
-            user.save()
+            user.save()  # type: ignore
             profile.save()
         return profile
 
@@ -95,25 +63,19 @@ class AdminUserForm(forms.ModelForm):
         help_text="Leave blank if you don't want to change the password.",
     )
     password2 = forms.CharField(
-        label="Confirm Password", widget=forms.PasswordInput, required=False,
+        label="Confirm Password",
+        widget=forms.PasswordInput,
+        required=False,
     )
 
     class Meta:
-        """Metadata for AdminUserForm."""
-
         model = User
-        fields: ClassVar[list[str]] = [
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "is_active",
-            "is_staff",
-            "is_superuser",
+        fields = [
+            "username", "email", "first_name", "last_name",
+            "is_active", "is_staff", "is_superuser",
         ]
 
     def clean_password1(self) -> str | None:
-        """Validate the first password field using Django's password validation."""
         password = self.cleaned_data.get("password1")
         if password:
             # Validate password against Django's password validation rules
@@ -125,7 +87,6 @@ class AdminUserForm(forms.ModelForm):
         return password
 
     def clean(self) -> dict[str, Any]:
-        """Clean and validate the form data, ensuring password fields match."""
         cleaned_data = super().clean()
         if not cleaned_data:
             return {}
@@ -138,20 +99,19 @@ class AdminUserForm(forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit: bool = True) -> object:
-        """Save the user instance, setting the password if provided."""
+    def save(self, commit: bool = True) -> Any:  # Return type as Any instead of User
         user = super().save(commit=False)
         password = self.cleaned_data.get("password1")
 
         if password:
             try:
-                validate_password(password, user)
-                user.set_password(password)
+                validate_password(password, user)  # type: ignore
+                user.set_password(password)  # type: ignore
             except ValidationError:
                 pass
 
         if commit:
-            user.save()
+            user.save()  # type: ignore
         return user
 
 
@@ -159,12 +119,8 @@ class ProfileImageForm(forms.ModelForm):
     """Form for uploading profile image."""
 
     class Meta:
-        """Metadata for ProfileImageForm."""
-
         model = Profile
-        fields: ClassVar[list[str]] = ["profile_image"]
-        widgets: ClassVar[dict[str, Any]] = {
-            "profile_image": forms.FileInput(
-                attrs={"accept": "image/*"},
-            ),
+        fields = ["profile_image"]
+        widgets = {
+            "profile_image": forms.FileInput(attrs={"accept": "image/*"}),
         }

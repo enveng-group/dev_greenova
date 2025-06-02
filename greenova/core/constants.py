@@ -1,28 +1,6 @@
-"""Copyright (C) 2025 Adrian Gallo.
 
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Constants for the Greenova core app.
-
-This module defines core constants used throughout the Greenova project.
-"""
-
+# Main navigation structure
+# Format: (name, url_name, icon_class)
 MAIN_NAVIGATION: list[tuple[str, str, str]] = [
     ("Dashboard", "dashboard:home", "dashboard-icon"),
     ("Projects", "projects:select", "projects-icon"),
@@ -31,24 +9,37 @@ MAIN_NAVIGATION: list[tuple[str, str, str]] = [
     ("Procedures", "procedures:list", "procedures-icon"),
 ]
 
+# User account navigation
 USER_NAVIGATION: list[tuple[str, str, str]] = [
     ("Profile", "users:profile", "user-icon"),
     ("Change Password", "account_change_password", "key-icon"),
     ("Logout", "account_logout", "logout-icon"),
 ]
 
+# Authentication navigation for anonymous users
 AUTH_NAVIGATION: list[tuple[str, str, str]] = [
     ("Register", "account_signup", "register-icon"),
     ("Login", "account_login", "login-icon"),
 ]
 
-THEME_OPTIONS: list[tuple[str, str]] = [
+# Theme options
+THEME_OPTIONS = [
     ("Auto", "auto"),
     ("Light", "light"),
     ("Dark", "dark"),
 ]
 
+# Footer links
 FOOTER_LINKS: list[tuple[str, str, bool]] = [
     ("Enveng Group", "https://www.enveng-group.com.au/", True),
     ("GNU AGPL v3.0", "https://www.gnu.org/licenses/agpl-3.0.html", True),
-]
+    ("Privacy Policy", "https://www.example.com/privacy", True),
+    ("Terms of Service", "https://www.example.com/terms", True),
+    ("Contact Us", "https://www.example.com/contact", True),
+    ("Support", "https://www.example.com/support", True),
+    ("Documentation", "https://www.example.com/docs", True),
+    ("API Documentation", "https://www.example.com/api-docs", True),
+    ("Feedback", "https://www.example.com/feedback", True),
+    ("Blog", "https://www.example.com/blog", True),
+    ("Careers", "https://www.example.com/careers", True),
+    ("Community", "https://www.example.com/community", True)]

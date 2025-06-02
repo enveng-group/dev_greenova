@@ -1,28 +1,6 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Views for the feedback app in Greenova."""
-
+import logging
 
 from django.contrib import messages
-import logging
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse
@@ -30,10 +8,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
-from .forms import BugReportForm
-from .proto_utils import deserialize_bug_report, serialize_bug_report
-from .models import BugReport
 
+from .forms import BugReportForm
+from .models import BugReport
+from .proto_utils import deserialize_bug_report, serialize_bug_report
 
 logger = logging.getLogger(__name__)
 
@@ -93,9 +71,9 @@ def index(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated and request.user.is_staff:
         bug_reports = BugReport.objects.all().order_by("-created_at")
     elif request.user.is_authenticated:
-        bug_reports = BugReport.objects.filter(created_by=request.user).order_by(
-            "-created_at",
-        )
+        bug_reports = (BugReport.objects
+                       .filter(created_by=request.user)
+                       .order_by("-created_at"))
     else:
         bug_reports = []
 
@@ -138,13 +116,10 @@ def submit_bug_report(request: HttpRequest) -> HttpResponse:
                 admin_emails = []  # Replace with actual admin emails logic
                 if admin_emails:
                     subject = f"New Bug Report: {bug_report.title}"
-                    message = render_to_string(
-                        "feedback/email/new_bug_report.txt",
-                        {
-                            "bug_report": bug_report,
-                            "user": request.user,
-                        },
-                    )
+                    message = render_to_string("feedback/email/new_bug_report.txt", {
+                        "bug_report": bug_report,
+                        "user": request.user,
+                    })
                     send_mail(
                         subject,
                         message,
@@ -254,15 +229,12 @@ def import_report(request: HttpRequest) -> HttpResponse:
         except (ValueError, OSError, AttributeError, TypeError) as e:
             logger.exception("Error importing bug report: %s", str(e))
             messages.error(
-                request, _("An error occurred while importing the bug report."),
+                request,
+                _("An error occurred while importing the bug report."),
             )
             return redirect("feedback:import_report")
 
     # GET request - show import form
-    return render(
-        request,
-        "feedback/import_report.html",
-        {
-            "page_title": _("Import Bug Report"),
-        },
-    )
+    return render(request, "feedback/import_report.html", {
+        "page_title": _("Import Bug Report"),
+    })

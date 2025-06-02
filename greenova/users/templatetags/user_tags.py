@@ -1,29 +1,3 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Template tags for user display and authentication in Greenova users app.
-
-Provides filters and tags for displaying user information, roles, authentication status,
-and verified email status in Django templates.
-"""
-
 from allauth.account.models import EmailAddress
 from allauth.account.utils import user_display
 from django import template
@@ -33,48 +7,24 @@ register = template.Library()
 
 
 @register.filter
-def full_name_or_username(user: Any) -> str:
-    """Return user's full name or username if full name is not set.
-
-    Args:
-        user: The user object to display.
-
-    Returns:
-        The user's full name if available, otherwise the username.
-
-    """
+def full_name_or_username(user):
+    """Return user's full name or username if full name is not set."""
     if hasattr(user, "get_full_name") and user.get_full_name():
         return user.get_full_name()
     return user.username
 
 
 @register.filter
-def profile_image_url(user: Any) -> str:
-    """Return profile image URL or empty string if no image.
-
-    Args:
-        user: The user object whose profile image is requested.
-
-    Returns:
-        The URL of the user's profile image, or an empty string if not set.
-
-    """
+def profile_image_url(user):
+    """Return profile image URL or empty string if no image."""
     if hasattr(user, "profile") and user.profile.profile_image:
         return user.profile.profile_image.url
     return ""
 
 
 @register.simple_tag
-def user_role(user: Any) -> str:
-    """Return human-readable role for user.
-
-    Args:
-        user: The user object whose role is to be determined.
-
-    Returns:
-        A string representing the user's role: 'Admin', 'Staff', or 'User'.
-
-    """
+def user_role(user) -> str:
+    """Return human-readable role for user."""
     if user.is_superuser:
         return "Admin"
     if user.is_staff:
@@ -83,30 +33,16 @@ def user_role(user: Any) -> str:
 
 
 @register.filter
-def auth_user_display(user: Any) -> str:
+def auth_user_display(user):
     """Return a display name for the user using allauth's user_display function.
-
-    Args:
-        user: The user object to display.
-
-    Returns:
-        The display name for the user, as determined by allauth's user_display.
-
+    This is more robust than manually checking for full_name.
     """
     return user_display(user)
 
 
 @register.simple_tag
-def auth_status_badge(user: Any) -> str:
-    """Return an HTML badge showing the authentication status of a user.
-
-    Args:
-        user: The user object whose authentication status is to be displayed.
-
-    Returns:
-        An HTML string representing the user's authentication status badge.
-
-    """
+def auth_status_badge(user):
+    """Return an HTML badge showing the authentication status of a user."""
     if not user.is_authenticated:
         return format_html('<span class="auth-badge auth-badge-guest">Guest</span>')
 
@@ -118,32 +54,16 @@ def auth_status_badge(user: Any) -> str:
 
 
 @register.filter
-def has_verified_email(user: Any) -> bool:
-    """Check if the user has at least one verified email address.
-
-    Args:
-        user: The user object to check for verified email addresses.
-
-    Returns:
-        True if the user has at least one verified email address, False otherwise.
-
-    """
+def has_verified_email(user):
+    """Check if the user has at least one verified email address."""
     if not user.is_authenticated:
         return False
     return EmailAddress.objects.filter(user=user, verified=True).exists()
 
 
 @register.simple_tag(takes_context=True)
-def login_url_with_next(context: Any) -> str:
-    """Generate login URL with the current path as next parameter.
-
-    Args:
-        context: The template context, expected to contain the request object.
-
-    Returns:
-        A login URL with the current path as the 'next' parameter.
-
-    """
+def login_url_with_next(context) -> str:
+    """Generate login URL with the current path as next parameter."""
     request = context.get("request")
     if not request:
         return "/authentication/login/"

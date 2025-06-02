@@ -6,7 +6,6 @@
 This module provides template tags and filters that can be used in Django templates
 for procedure-related functionality.
 """
-
 from typing import Any
 
 from django import template
@@ -71,9 +70,8 @@ def procedure_status_badge(status: str) -> str:
     formatted_status = format_procedure_status(status)
     color_class = status_colors.get(status.lower(), "secondary")
 
-    return format_html(
-        '<span class="status-badge {}">{}</span>', color_class, formatted_status,
-    )
+    return format_html('<span class="status-badge {}">{}</span>',
+                       color_class, formatted_status)
 
 
 @register.inclusion_tag("procedures/components/procedure_stats.html")

@@ -1,49 +1,57 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Admin configuration for the company app.
-
-This module defines admin classes for managing company-related models in the
-Django admin interface.
-"""
-
-
+# Standard library imports
 from __future__ import annotations
-import logging
 
+import logging
+from typing import TYPE_CHECKING, Any
+
+# Third-party imports
+# Third-party imports
+from django.contrib import admin
+from django.core.exceptions import PermissionDenied
+
+if TYPE_CHECKING:
+    from django.db.models import Model
+    from django.http import HttpRequest
+
+# Configure logger
 logger = logging.getLogger(__name__)
 
 
 class BaseModelAdmin(admin.ModelAdmin):
     """Base admin class with type safety."""
-    # ...existing code...
 
+    def dispatch(
+        self,
+        request: HttpRequest,
+        object_id: Any,
+        from_field: str | None = None,
+    ) -> Model | None:
+        """Get object with type safety and permission checking."""
+        obj = super().get_object(
+            request,
+            object_id,
+            from_field,
+        )
 
-@admin.register(Company)
-class CompanyAdmin(BaseModelAdmin):
-    """Admin interface for the Company model.
+        # Implement permission check
+        if obj is not None and not self.has_view_permission(
+            request,
+            obj,
+        ):
+            logger.warning(
+                (
+                    "Permission denied: User %s attempted to access %s "
+                    "without sufficient permissions."
+                ),
+                request.user,
+                obj,
+            )
+            msg = (
+                "You do not have permission to view this object. "
+                "Please contact the administrator if you believe this is an error."
+            )
+            raise PermissionDenied(
+                msg,
+            )
 
-    Provides list display, filtering, and search for company records in the admin site.
-    """
-
-    list_display = ("name", "company_type", "industry", "is_active", "created_at")
-    list_filter = ("company_type", "is_active")
-    search_fields = ("name",)
-# ...existing code...
+        return obj

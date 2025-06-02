@@ -1,44 +1,67 @@
-"""Copyright (C) 2025 Adrian Gallo.
+import logging
 
-This file is part of Greenova.
+from core.utils.roles import get_responsibility_choices, get_responsibility_display_name
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.http import require_GET
+from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView
+from obligations.models import Obligation
 
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+from .figures import generate_responsibility_chart
 
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Views for the responsibility app.
-
-Handles responsibility home, assignment list, and role list views for users.
-"""
-from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest
+logger = logging.getLogger(__name__)
 
 
-@login_required
-def responsibility_home(request: HttpRequest) -> None:
-    """Home view for responsibility app."""
-    # ...existing code...
+@method_decorator(cache_control(max_age=300), name="dispatch")
+@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
+class ResponsibilityChartView(LoginRequiredMixin, TemplateView):
+    """View for displaying responsibility charts."""
+
+    template_name = "responsibility/responsibility_chart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project_id = self.request.GET.get("project_id")
+
+        if not project_id:
+            context["error"] = "No project selected"
+            return context
+
+        try:
+            # Get all obligations for this project
+            obligations = Obligation.objects.filter(project_id=project_id)
+
+            # Count obligations by responsibility
+            responsibility_counts = {}
+
+            for obligation in obligations:
+                # Get proper display name for responsibility
+                resp_display = get_responsibility_display_name(
+                    obligation.responsibility)
+
+                if resp_display not in responsibility_counts:
+                    responsibility_counts[resp_display] = 0
+                responsibility_counts[resp_display] += 1
+
+            # Generate chart
+            chart_data = generate_responsibility_chart(responsibility_counts)
+            context["responsibility_data"] = responsibility_counts
+            context["chart_data"] = chart_data
+            context["project_id"] = project_id
+
+        except Exception as e:
+            logger.exception(f"Error generating responsibility chart: {e!s}")
+            context["error"] = f"Error generating chart: {e!s}"
+
+        return context
 
 
-@login_required
-def assignment_list(request: HttpRequest) -> None:
-    """List view for responsibility assignments."""
-    # ...existing code...
-
-
-@login_required
-def role_list(request: HttpRequest) -> None:
-    """List view for responsibility roles."""
-    # ...existing code...
+@require_GET
+def get_responsibility_options(request):
+    """API endpoint to get responsibility options."""
+    choices = get_responsibility_choices()
+    options = [{"value": value, "display": display} for value, display in choices]
+    return JsonResponse({"options": options})

@@ -1,40 +1,29 @@
-<form method="post"
-      enctype="multipart/form-data"
+<form method="post" enctype="multipart/form-data"
       action="{% if company %}{% url 'company:edit' company.id %}{% else %}{% url 'company:create' %}{% endif %}"
       hx-boost="true">
-{% csrf_token %}
+  {% csrf_token %}
 
   {% if form.errors %}
-    <div class="alert error" role="alert">
-      <h4>
-Please correct the following errors:
-      </h4>
-      <ul>
-        {% for field in form %}
-          {% for error in field.errors %}
-            <li>
-              <strong>{{ field.label }}:</strong> {{ error }}
-            </li>
-          {% endfor %}
+  <div class="alert error" role="alert">
+    <h4>Please correct the following errors:</h4>
+    <ul>
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
         {% endfor %}
-        {% for error in form.non_field_errors %}
-          <li>
-{{ error }}
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
   {% endif %}
 
   <section aria-labelledby="basic-info">
-    <h2 id="basic-info">
-Basic Information
-    </h2>
+    <h2 id="basic-info">Basic Information</h2>
 
     <div class="form-group">
-      <label for="{{ form.name.id_for_label }}">
-Company Name
-      </label>
+      <label for="{{ form.name.id_for_label }}">Company Name</label>
       {{ form.name }}
       {% if form.name.help_text %}
         <small>{{ form.name.help_text }}</small>
@@ -42,29 +31,21 @@ Company Name
     </div>
 
     <div class="form-group">
-      <label for="{{ form.logo.id_for_label }}">
-Company Logo
-      </label>
+      <label for="{{ form.logo.id_for_label }}">Company Logo</label>
       {{ form.logo }}
       {% if form.logo.help_text %}
         <small>{{ form.logo.help_text }}</small>
       {% endif %}
       {% if company and company.logo %}
         <div class="current-logo">
-          <p>
-Current logo:
-          </p>
-          <img src="{{ company.logo.url }}"
-               alt="{{ company.name }} logo"
-               width="100">
+          <p>Current logo:</p>
+          <img src="{{ company.logo.url }}" alt="{{ company.name }} logo" width="100">
         </div>
       {% endif %}
     </div>
 
     <div class="form-group">
-      <label for="{{ form.description.id_for_label }}">
-Description
-      </label>
+      <label for="{{ form.description.id_for_label }}">Description</label>
       {{ form.description }}
       {% if form.description.help_text %}
         <small>{{ form.description.help_text }}</small>
@@ -73,15 +54,11 @@ Description
   </section>
 
   <section aria-labelledby="contact-info">
-    <h2 id="contact-info">
-Contact Information
-    </h2>
+    <h2 id="contact-info">Contact Information</h2>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ form.website.id_for_label }}">
-Website
-        </label>
+        <label for="{{ form.website.id_for_label }}">Website</label>
         {{ form.website }}
         {% if form.website.help_text %}
           <small>{{ form.website.help_text }}</small>
@@ -89,9 +66,7 @@ Website
       </div>
 
       <div class="form-group">
-        <label for="{{ form.email.id_for_label }}">
-Email
-        </label>
+        <label for="{{ form.email.id_for_label }}">Email</label>
         {{ form.email }}
         {% if form.email.help_text %}
           <small>{{ form.email.help_text }}</small>
@@ -100,9 +75,7 @@ Email
     </div>
 
     <div class="form-group">
-      <label for="{{ form.phone.id_for_label }}">
-Phone Number
-      </label>
+      <label for="{{ form.phone.id_for_label }}">Phone Number</label>
       {{ form.phone }}
       {% if form.phone.help_text %}
         <small>{{ form.phone.help_text }}</small>
@@ -110,9 +83,7 @@ Phone Number
     </div>
 
     <div class="form-group">
-      <label for="{{ form.address.id_for_label }}">
-Address
-      </label>
+      <label for="{{ form.address.id_for_label }}">Address</label>
       {{ form.address }}
       {% if form.address.help_text %}
         <small>{{ form.address.help_text }}</small>
@@ -121,15 +92,11 @@ Address
   </section>
 
   <section aria-labelledby="classification">
-    <h2 id="classification">
-Classification
-    </h2>
+    <h2 id="classification">Classification</h2>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ form.company_type.id_for_label }}">
-Company Type
-        </label>
+        <label for="{{ form.company_type.id_for_label }}">Company Type</label>
         {{ form.company_type }}
         {% if form.company_type.help_text %}
           <small>{{ form.company_type.help_text }}</small>
@@ -137,9 +104,7 @@ Company Type
       </div>
 
       <div class="form-group">
-        <label for="{{ form.industry.id_for_label }}">
-Industry
-        </label>
+        <label for="{{ form.industry.id_for_label }}">Industry</label>
         {{ form.industry }}
         {% if form.industry.help_text %}
           <small>{{ form.industry.help_text }}</small>
@@ -149,9 +114,7 @@ Industry
 
     <div class="form-row">
       <div class="form-group">
-        <label for="{{ form.size.id_for_label }}">
-Company Size
-        </label>
+        <label for="{{ form.size.id_for_label }}">Company Size</label>
         {{ form.size }}
         {% if form.size.help_text %}
           <small>{{ form.size.help_text }}</small>
@@ -171,12 +134,9 @@ Company Size
   </section>
 
   <div class="form-actions">
-    <button type="submit" class="btn-primary">
-{{ action }} Company
-    </button>
+    <button type="submit" class="btn-primary">{{ action }} Company</button>
     <a href="{% if company %}{% url 'company:detail' company.id %}{% else %}{% url 'company:list' %}{% endif %}"
-       class="btn-secondary"
-       role="button">
+       class="btn-secondary" role="button">
       Cancel
     </a>
   </div>

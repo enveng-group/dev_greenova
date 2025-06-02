@@ -1,43 +1,13 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Views for the landing page of the Greenova application.
-
-This module contains the main landing page view and related utilities, such as
-handling newsletter signups.
-"""
-
-from django.views.generic import TemplateView
-from django.views.decorators.vary import vary_on_headers
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.cache import cache_control
-from django.utils.decorators import method_decorator
-from django.shortcuts import redirect, render
-from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.conf import settings
-from typing import TypedDict
-from smtplib import SMTPException
 import logging
-import smtplib
+from typing import Any, TypedDict, cast
 
+from django.conf import settings
+from django.http import HttpRequest, HttpResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView
+from django_htmx.http import HttpResponseClientRedirect, push_url, trigger_client_event
 
 logger = logging.getLogger(__name__)
 
@@ -55,100 +25,45 @@ class HtmxDetails(TypedDict, total=False):
     trigger_name: str
 
 
-@method_decorator(
-    cache_control(private=True, no_cache=True, no_store=True, must_revalidate=True),
-    name="dispatch",
-)
+@method_decorator(cache_control(max_age=300), name="dispatch")
 @method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class HomeView(TemplateView):
-    """Landing page view that handles both regular and HTMX requests."""
+    """Landing page view."""
 
     template_name = "landing/index.html"
 
-    def get(self, request: HttpRequest, *args: tuple, **kwargs: dict) -> HttpResponse:
-        """Handle GET requests for the landing page."""
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Handle GET requests."""
         logger.debug(
-            "Landing page - User authenticated: %s, Post-logout: %s",
-            request.user.is_authenticated,
-            getattr(request, "is_post_logout", False),
-        )
+            "Landing page - User authenticated: %s", request.user.is_authenticated)
 
-        # If user is authenticated, redirect to dashboard unless post-logout
-        if request.user.is_authenticated and not getattr(
-            request, "is_post_logout", False,
-        ):
-            logger.debug("Redirecting authenticated user to dashboard")
-            return redirect("/dashboard/")
-
-        # Get standard response
         response = super().get(request, *args, **kwargs)
 
-        # Ensure proper cache control
-        response["Cache-Control"] = "no-cache, no-store, must-revalidate"
-        response["Pragma"] = "no-cache"
-        response["Expires"] = "0"
+        # If htmx request, handle proper URL management
+        if hasattr(request, "htmx"):
+            # Cast request.htmx to our type definition for mypy
+            htmx = cast("HtmxDetails", request.htmx)
 
-        # Handle HTMX-specific behavior
-        if getattr(request, "htmx", None):
-            # Set HX-Push-Url header directly
-            response["HX-Push-Url"] = request.path
+            # Push the URL to the browser history to ensure proper navigation
+            push_url(response, request.path)
 
-            # Check for forced refresh after logout
-            if request.session.pop("_force_refresh", False):
-                # Return a response with HX-Refresh header
-                refresh_response = HttpResponse()
-                refresh_response["HX-Refresh"] = "true"
-                return refresh_response
+            # Trigger animations or other client-side effects if needed
+            trigger_client_event(response, "landingLoaded")
+
+            # If user is authenticated and accessing the landing page directly,
+            # we might want to redirect them to the dashboard
+            if request.user.is_authenticated and htmx.get("boosted", False):
+                return HttpResponseClientRedirect("/dashboard/")
 
         return response
 
-    def get_context_data(self, **kwargs: dict) -> dict[str, object]:
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
         """Add landing page context data."""
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "app_version": getattr(settings, "APP_VERSION", "0.1.0"),
-                "show_landing_content": True,
-                "show_dashboard_link": self.request.user.is_authenticated,
-                "is_post_logout": getattr(self.request, "is_post_logout", False),
-            },
-        )
+        # Add basic context data that was previously in utils
+        context.update({
+            "app_version": getattr(settings, "APP_VERSION", "0.1.0"),
+            "show_landing_content": True,
+            "show_dashboard_link": self.request.user.is_authenticated,
+        })
         return context
-
-
-@require_POST
-@csrf_protect
-def newsletter_signup(request: HttpRequest) -> HttpResponse:
-    """Handle newsletter signup form submissions from the landing page.
-
-    Args:
-        request: The HTTP request containing email data
-
-    Returns:
-        JSON response with success/error message
-
-    """
-    email = request.POST.get("email")
-
-    # Validate email
-    if not email:
-        logger.warning("Newsletter signup attempt with empty email")
-        return JsonResponse({"success": False, "message": "Email address is required."})
-
-    try:
-        # Simulate sending an email as a placeholder for newsletter integration
-        smtp = smtplib.SMTP("localhost")
-        smtp.sendmail("no-reply@greenova.com", email, "Welcome to Greenova!")
-        smtp.quit()
-
-        # Return success response for HTMX to update the DOM
-        return render(
-            request,
-            "landing/partials/newsletter_success.html",
-            {
-                "email": email,
-            },
-        )
-    except SMTPException as e:
-        logger.exception("SMTP error during newsletter signup: %s", str(e))
-        return render(request, "landing/partials/newsletter_error.html")

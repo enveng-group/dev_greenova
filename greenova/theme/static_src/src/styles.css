@@ -1,59 +1,36 @@
 /**
- * Greenova CSS Architecture
+ * Greenova Tailwind CSS Integration
  *
- * This file implements a progressive enhancement approach:
- * 1. PicoCSS (primary framework) provides classless styling
- * 2. Tailwind (secondary framework) adds targeted utilities
- * 3. Custom utilities for specific Greenova requirements
- *
- * Critical CSS is marked explicitly to be extracted during build.
+ * This file configures Tailwind CSS as a secondary framework to PicoCSS.
+ * Following Greenova's HTML-first approach with progressive enhancement.
+ * Tailwind is only used for specialized UI components when PicoCSS cannot
+ * handle the requirements.
  */
 
-/* critical:start */
-/* Core Tailwind layers needed for initial render */
+/* Only include Tailwind base for reset normalization that doesn't conflict with PicoCSS */
 @tailwind base;
+
+/* Only include components absolutely necessary - PicoCSS handles most UI components */
 @tailwind components;
 
-/* Critical accessibility utilities */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* Critical layout utilities */
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* HTMX loading indicator - critical for UX */
-.htmx-indicator {
-  opacity: 0;
-  transition: opacity 200ms ease-in;
-}
-
-.htmx-request .htmx-indicator {
-  opacity: 1;
-}
-
-.htmx-request.htmx-indicator {
-  opacity: 1;
-}
-/* critical:end */
-
-/* Non-critical utilities */
+/* Utilities are the main benefit of Tailwind in our architecture */
 @tailwind utilities;
 
 /* Custom Tailwind utilities for Greenova specialized components */
 @layer utilities {
+  /* Accessibility utilities */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
   /* Text balance utilities for headings */
   .text-balance {
     text-wrap: balance;
@@ -71,12 +48,20 @@
     );
   }
 
+  /* Specialized flex patterns */
+  .flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   /* Accessibility focus indicators that match Greenova's design system */
-  /* stylelint-disable property-no-unknown */
-  focus: ring-2;
-  focus-visible: ring-offset-2;
-  focus-visible: ring-blue-500;
-  /* stylelint-enable property-no-unknown */
+  .focus-greenova {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+
+    --tw-ring-color: var(--greenova-green-primary);
+    --tw-ring-offset-width: 2px;
+  }
 
   /* Chat UI utilities */
   .chat-user-bubble {
@@ -93,16 +78,30 @@
 
   /* Advanced animation utilities */
   .animate-fade-in {
-    animation: fade-in 0.3s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
   }
 
   .animate-slide-in {
-    animation: slide-in 0.3s ease-in-out;
+    animation: slideIn 0.3s ease-in-out;
+  }
+
+  /* HTMX loading indicator utilities */
+  .htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+  }
+
+  .htmx-request .htmx-indicator {
+    opacity: 1;
+  }
+
+  .htmx-request.htmx-indicator {
+    opacity: 1;
   }
 }
 
 /* Animation keyframes */
-@keyframes fade-in {
+@keyframes fadeIn {
   from {
     opacity: 0;
   }
@@ -112,12 +111,14 @@
   }
 }
 
-@keyframes slide-in {
+@keyframes slideIn {
   from {
-    transform: translateX(-100%);
+    transform: translateY(10px);
+    opacity: 0;
   }
 
   to {
-    transform: translateX(0);
+    transform: translateY(0);
+    opacity: 1;
   }
 }

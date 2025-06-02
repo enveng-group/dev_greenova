@@ -1,0 +1,40 @@
+/* Summary Cards Layout */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--greenova-spacing);
+  margin-bottom: var(--greenova-spacing);
+}
+
+.summary-cards article {
+  padding: var(--greenova-spacing);
+  border-radius: var(--greenova-border-radius);
+  background: var(--greenova-beige-primary);
+}
+
+.summary-cards .count {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Card colors */
+.overdue,
+.upcoming {
+  border-left: 4px solid var(--greenova-primary-background);
+}
+
+.overdue {
+  border-left-color: var(--greenova-warning-background);
+}
+
+.upcoming {
+  border-left-color: var(--greenova-info-background);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+}

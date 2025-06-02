@@ -7,8 +7,8 @@ This module provides serialization and deserialization functions for
 converting between Django models and Protocol Buffer messages in the
 feedback application.
 """
-
 import logging
+import os
 import sys
 
 from django.contrib.auth import get_user_model
@@ -21,57 +21,32 @@ logger = logging.getLogger(__name__)
 # Import generated protobuf modules with improved error handling
 try:
     from .proto import feedback_pb2
-
     logger.info("Successfully imported feedback_pb2 from proto subdirectory")
 except ImportError:
     logger.exception(
         "feedback_pb2 module not found. Ensure to compile the protobuf files.")
+    feedback_pb2 = None
+
+    # Check if the proto file exists
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    proto_file = os.path.join(current_dir, "proto", "feedback.proto")
+
+    if os.path.exists(proto_file):
+        logger.info(
+            "feedback.proto exists but feedback_pb2.py not found. "
+            "Run 'python manage.py compile_protos --app=feedback' to generate it.",
+        )
+    else:
+        logger.exception("feedback.proto file not found in the proto directory.")
 
     # Create a minimal stub for the module to allow Django to continue loading
     from types import ModuleType
-
-    feedback_pb2: ModuleType = ModuleType("feedback_pb2")
+    feedback_pb2 = ModuleType("feedback_pb2")
     sys.modules["feedback.proto.feedback_pb2"] = feedback_pb2
 
     # Define minimal classes needed for type hinting
     class BugReportProto:
-        """Stub class for BugReport protocol buffer message."""
-
-        # pylint: disable=too-many-instance-attributes
-        def __init__(self) -> None:
-            """Initialize BugReportProto stub with default values."""
-            # Core fields that must be instance attributes
-            self.id = 0
-            self.title = ""
-            self.description = ""
-            # Environment fields
-            self.application_version = ""
-            self.operating_system = ""
-            self.browser = ""
-            self.device_type = ""
-            # Problem details
-            self.steps_to_reproduce = ""
-            self.expected_behavior = ""
-            self.actual_behavior = ""
-            # Additional properties
-            self.environment = ""
-            self.error_messages = ""
-            self.trace_report = ""
-            self.frequency = 0
-            self.impact_severity = ""
-            self.user_impact = ""
-            self.workarounds = ""
-            self.additional_comments = ""
-            self.github_issue_url = ""
-            self.severity = ""
-            self.status = ""
-            self.admin_comment = ""
-            self.reports = []
-
-        # Define enum-like classes for consistency
         class Frequency:
-            """Enum-like class for bug report frequency values."""
-
             FREQUENCY_UNKNOWN_UNSPECIFIED = 0
             FREQUENCY_ALWAYS = 1
             FREQUENCY_FREQUENTLY = 2
@@ -79,8 +54,6 @@ except ImportError:
             FREQUENCY_RARELY = 4
 
         class Severity:
-            """Enum-like class for bug report severity values."""
-
             SEVERITY_UNDEFINED_UNSPECIFIED = 0
             SEVERITY_LOW = 1
             SEVERITY_MEDIUM = 2
@@ -88,8 +61,6 @@ except ImportError:
             SEVERITY_CRITICAL = 4
 
         class Status:
-            """Enum-like class for bug report status values."""
-
             STATUS_UNSPECIFIED = 0
             STATUS_OPEN = 1
             STATUS_IN_PROGRESS = 2
@@ -97,34 +68,21 @@ except ImportError:
             STATUS_CLOSED = 4
             STATUS_REJECTED = 5
 
-        def serialize_to_string(self) -> bytes:
-            """Serialize the BugReportProto to bytes (stub)."""
+        def SerializeToString(self) -> bytes:
             return b""
 
-        def parse_from_string(self, data: bytes) -> None:
-            """Parse bytes into the BugReportProto (stub)."""
-            # No-op for stub
+        def ParseFromString(self, data) -> None:
+            pass
 
     class BugReportCollection:
-        """Stub class for a collection of BugReport protocol buffer messages."""
+        reports = []
 
-        def __init__(self) -> None:
-            """Initialize BugReportCollection stub with empty report list."""
-            self.reports = []
-
-        def serialize_to_string(self) -> bytes:
-            """Serialize the BugReportCollection to bytes (stub)."""
+        def SerializeToString(self) -> bytes:
             return b""
 
-        def parse_from_string(self, data: bytes) -> None:
-            """Parse bytes into the BugReportCollection (stub)."""
-            # No-op for stub
+        def ParseFromString(self, data) -> None:
+            pass
 
-        def append(self, item: object) -> None:
-            """Append a BugReportProto to the collection (stub)."""
-            self.reports.append(item)
-
-    # Add the classes to the module
     feedback_pb2.BugReportProto = BugReportProto
     feedback_pb2.BugReportCollection = BugReportCollection
 
@@ -167,10 +125,11 @@ def serialize_bug_report(bug_report: BugReport) -> bytes | None:
             proto.actual_behavior = bug_report.actual_behavior
 
         # Serialize to bytes
-        return proto.serialize_to_string()
+        return proto.SerializeToString()
     except (AttributeError, TypeError) as e:
         logger.exception(
-            "Failed to serialize bug report due to attribute or type error: %s", str(e),
+            "Failed to serialize bug report due to attribute or type error: %s",
+            str(e),
         )
         return None
     except ValueError as e:
@@ -193,7 +152,7 @@ def deserialize_bug_report(data: bytes) -> BugReport | None:
     try:
         # Parse the binary data into a BugReportProto
         proto = feedback_pb2.BugReportProto()
-        proto.parse_from_string(data)
+        proto.ParseFromString(data)
 
         # Create a BugReport instance
         bug_report = BugReport()
@@ -229,7 +188,8 @@ def deserialize_bug_report(data: bytes) -> BugReport | None:
         return None
     except ValueError as e:
         logger.exception(
-            "Failed to deserialize bug report due to invalid value: %s", str(e),
+            "Failed to deserialize bug report due to invalid value: %s",
+            str(e),
         )
         return None
     except (OSError, SystemError, OverflowError) as e:
@@ -256,11 +216,11 @@ def serialize_bug_reports(bug_reports: list[BugReport]) -> bytes | None:
             report_proto_data = serialize_bug_report(bug_report)
             if report_proto_data:
                 report_proto = feedback_pb2.BugReportProto()
-                report_proto.parse_from_string(report_proto_data)
-                collection.append(report_proto)
+                report_proto.ParseFromString(report_proto_data)
+                collection.reports.append(report_proto)
 
         # Serialize the collection to bytes
-        return collection.serialize_to_string()
+        return collection.SerializeToString()
     except (AttributeError, TypeError) as e:
         logger.exception(
             "Failed to serialize bug report collection due to attribute "
@@ -292,13 +252,13 @@ def deserialize_bug_reports(data: bytes) -> list[BugReport]:
     try:
         # Parse the binary data into a BugReportCollection
         collection = feedback_pb2.BugReportCollection()
-        collection.parse_from_string(data)
+        collection.ParseFromString(data)
 
         # Convert each protocol buffer message to a BugReport
         bug_reports = []
         for report_proto in collection.reports:
             # Serialize and deserialize each report
-            report_data = report_proto.serialize_to_string()
+            report_data = report_proto.SerializeToString()
             bug_report = deserialize_bug_report(report_data)
             if bug_report:
                 bug_reports.append(bug_report)

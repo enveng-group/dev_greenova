@@ -1,34 +1,11 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Admin configuration for the projects app.
-
-This module registers the Project and ProjectMembership models and customizes
-their admin interface.
-"""
-from django.http import HttpRequest
-from django.core.exceptions import PermissionDenied
-from django.contrib import admin
 from logging import getLogger
 from typing import TypeVar
 
+from django.contrib import admin
+from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
+
+from .models import Project, ProjectMembership
 
 logger = getLogger(__name__)
 
@@ -41,7 +18,6 @@ class BaseModelAdmin[T](admin.ModelAdmin):
     def dispatch(
         self, request: HttpRequest, object_id: str, from_field: None = None,
     ) -> T | None:
-        """Dispatch method with permission check for admin objects."""
         obj = super().get_object(request, object_id, from_field)
         if obj and not self.has_view_or_change_permission(request, obj):
             logger.warning(
@@ -54,3 +30,80 @@ class BaseModelAdmin[T](admin.ModelAdmin):
                 msg,
             )
         return obj
+
+
+class ProjectMembershipInline(admin.TabularInline):
+    """Inline admin for project memberships."""
+
+    model = ProjectMembership
+    extra = 1
+    raw_id_fields = ("user",)
+
+
+@admin.register(Project)
+class ProjectAdmin(BaseModelAdmin[Project]):
+    """Admin configuration for Project model."""
+
+    list_display = ("id", "name", "member_count", "created_at")
+    search_fields = ("name",)
+    inlines = [ProjectMembershipInline]
+    list_filter = ("created_at",)
+    date_hierarchy = "created_at"
+
+    @admin.display(description="Members")
+    def member_count(self, obj: Project) -> int:
+        """Get number of project members."""
+        return obj.get_member_count()
+
+
+@admin.register(ProjectMembership)
+class ProjectMembershipAdmin(BaseModelAdmin[ProjectMembership]):
+    """Admin configuration for ProjectMembership model."""
+
+    list_display = ("id", "get_project", "get_user", "get_role", "get_created")
+    list_filter = ("project", "role", "created_at")
+    search_fields = ("user__username", "project__name")
+    raw_id_fields = ("user",)
+    date_hierarchy = "created_at"
+    ordering = ("-created_at",)
+
+    @admin.display(
+        description="Project",
+        ordering="project__name",
+    )
+    def get_project(self, obj: ProjectMembership) -> str:
+        """Get project name."""
+        return str(obj.project.name)
+
+    @admin.display(
+        description="User",
+        ordering="user__username",
+    )
+    def get_user(self, obj: ProjectMembership) -> str:
+        """Get username."""
+        return str(obj.user.username)
+
+    @admin.display(
+        description="Role",
+        ordering="role",
+    )
+    def get_role(self, obj: ProjectMembership) -> str:
+        """Get role."""
+        return str(obj.role)
+
+    @admin.display(
+        description="Created",
+        ordering="created_at",
+    )
+    def get_created(self, obj: ProjectMembership) -> str:
+        """Get creation date."""
+        return obj.created_at.strftime("%Y-%m-%d %H:%M")
+
+    def save_model(self, request, obj, form, change) -> None:
+        """Log changes when saving model."""
+        action = "updated" if change else "created"
+        logger.info(
+            "ProjectMembership %s %s by %s",
+            obj.id, action, request.user.get_username(),
+        )
+        super().save_model(request, obj, form, change)

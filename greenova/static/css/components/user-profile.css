@@ -1,0 +1,175 @@
+/* User Profile Styling */
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Profile details layout */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--greenova-spacing);
+}
+
+/* Profile header with image and name */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--greenova-spacing-large);
+  margin-bottom: var(--greenova-spacing);
+}
+
+/* Profile image container */
+.profile-image-container {
+  position: relative;
+}
+
+/* Profile image */
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Profile image container with border */
+.profile-image-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--greenova-green-primary);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Placeholder for missing profile image */
+.profile-image.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--greenova-beige-secondary);
+  color: var(--greenova-text-primary-dark);
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+/* Image upload interface */
+.image-upload {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.image-upload input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.image-upload label {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  background-color: var(--greenova-green-primary);
+  color: var(--greenova-text-primary-light);
+  border-radius: var(--greenova-border-radius-small);
+  cursor: pointer;
+  font-size: var(--greenova-button-size);
+}
+
+.image-upload.dragover {
+  outline: 2px dashed var(--greenova-green-primary);
+  outline-offset: 3px;
+}
+
+/* Profile name section */
+.profile-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.profile-name p {
+  margin: 0;
+  color: var(--greenova-text-secondary-dark);
+}
+
+/* Profile body with details */
+.profile-body {
+  background-color: var(--greenova-background-secondary);
+  padding: var(--greenova-padding);
+  border-radius: var(--greenova-border-radius);
+}
+
+.profile-body dl {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--greenova-spacing);
+}
+
+.profile-body dt {
+  font-weight: bold;
+}
+
+.profile-body dd {
+  margin: 0;
+}
+
+/* Profile action buttons */
+.profile-actions {
+  display: flex;
+  gap: var(--greenova-spacing);
+  margin-top: var(--greenova-spacing);
+}
+
+/* Admin user list styling */
+.users-container {
+  margin-top: var(--greenova-spacing);
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--greenova-spacing);
+}
+
+/* User deletion confirmation */
+.delete-confirmation {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.user-info {
+  background-color: var(--greenova-background-secondary);
+  padding: var(--greenova-padding);
+  border-radius: var(--greenova-border-radius);
+  margin: var(--greenova-spacing) 0;
+}
+
+/* Admin user form */
+.admin-user-form h2 {
+  margin-top: var(--greenova-spacing-large);
+  margin-bottom: var(--greenova-spacing);
+  font-size: 1.2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-body dl {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,65 +1,160 @@
-"""Copyright (C) 2025 Adrian Gallo.
+import logging
+from datetime import date, timedelta
+from typing import Any, Union
 
-This file is part of Greenova.
+from core.utils.roles import get_role_display
+from django.utils import timezone
 
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+from .constants import (
+    FREQUENCY_ALIASES,
+    FREQUENCY_ANNUAL,
+    FREQUENCY_BIANNUAL,
+    FREQUENCY_DAILY,
+    FREQUENCY_FORTNIGHTLY,
+    FREQUENCY_MONTHLY,
+    FREQUENCY_QUARTERLY,
+    FREQUENCY_WEEKLY,
+    STATUS_COMPLETED,
+    STATUS_OVERDUE,
+    STATUS_UPCOMING,
+)
 
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Utility functions for the obligations app.
-
-Provides helpers for status, frequency normalization, and responsibility display.
-"""
-
-from typing import cast
-from datetime import date
-from beartype import beartype
-from models import Obligation
-from constants import FREQUENCY_ALIASES
+logger = logging.getLogger(__name__)
 
 
-@beartype
+def is_obligation_overdue(
+        obligation: Union["Obligation", dict[str, Any]], reference_date: date | None = None) -> bool:
+    """Determine if an obligation is overdue based on its status and due date.
+
+    This is the canonical implementation for determining overdue status that should
+    be used throughout the application to ensure consistency.
+
+    Args:
+        obligation: An Obligation model instance or a dictionary with obligation attributes
+        reference_date: Optional date to compare against (defaults to today)
+
+    Returns:
+        bool: True if the obligation is overdue, False otherwise
+
+    """
+    # Use today as reference date if none provided
+    if reference_date is None:
+        reference_date = timezone.now().date()
+
+    # Get status - handle both model instances and dictionaries
+    if isinstance(obligation, dict):
+        status = obligation.get("status")
+        due_date = obligation.get("action_due_date")
+    else:
+        status = obligation.status
+        due_date = obligation.action_due_date
+
+    # Rule 1: Completed obligations are never overdue
+    if status == STATUS_COMPLETED:
+        return False
+
+    # Rule 2: Obligations without a due date cannot be overdue
+    if not due_date:
+        return False
+
+    # Rule 3: If the due date is in the past and not completed, it's overdue
+    return due_date < reference_date
+
+
+def get_obligation_status(obligation):
+    """Determine the real status of an obligation based on its due date and current status.
+
+    Returns one of: 'overdue', 'upcoming', 'completed', or the original status.
+    """
+    status = getattr(obligation, "status", "").lower()
+    due_date = getattr(obligation, "action_due_date", None)
+    today = timezone.now().date()
+
+    # Completed obligations keep their status
+    if status == STATUS_COMPLETED:
+        return STATUS_COMPLETED
+
+    # Check for overdue obligations
+    if due_date and due_date < today:
+        return STATUS_OVERDUE
+
+    # Check for upcoming obligations (due within 14 days)
+    if due_date and today <= due_date <= today + timedelta(days=14):
+        return STATUS_UPCOMING
+
+    # Return original status if not overdue or upcoming
+    return status
+
+
 def normalize_frequency(frequency: str) -> str:
-    """Normalize frequency string to canonical value used in the system.
+    """Normalize a frequency string to its canonical form.
+
+    This handles variations in terminology and ensures consistency
+    across the application.
 
     Args:
-        frequency: The frequency string to normalize.
+        frequency: A string representing the frequency
 
     Returns:
-        The canonical frequency string.
+        str: The normalized frequency string
 
     """
-    freq = frequency.strip().lower().replace(" ", "-")
-    # Explicitly cast to str to satisfy type checker
-    return cast("str", FREQUENCY_ALIASES.get(freq, freq))
+    if not frequency:
+        return ""
+
+    # Convert to lowercase for case-insensitive matching
+    frequency_lower = frequency.lower().strip()
+
+    # Check if it's one of our canonical values
+    if frequency_lower in {
+        FREQUENCY_DAILY, FREQUENCY_WEEKLY, FREQUENCY_FORTNIGHTLY,
+        FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL, FREQUENCY_ANNUAL,
+    }:
+        return frequency_lower
+
+    # Check aliases
+    for alias, canonical in FREQUENCY_ALIASES.items():
+        if alias in frequency_lower:
+            return canonical
+
+    # Handle common variations
+    if "day" in frequency_lower or "daily" in frequency_lower:
+        return FREQUENCY_DAILY
+    if "week" in frequency_lower:
+        return FREQUENCY_WEEKLY
+    if "fortnight" in frequency_lower or "bi-week" in frequency_lower or "biweek" in frequency_lower:
+        return FREQUENCY_FORTNIGHTLY
+    if "month" in frequency_lower:
+        return FREQUENCY_MONTHLY
+    if "quarter" in frequency_lower or "3 month" in frequency_lower or "three month" in frequency_lower:
+        return FREQUENCY_QUARTERLY
+    if "biannual" in frequency_lower or "bi annual" in frequency_lower or "semi" in frequency_lower or "twice a year" in frequency_lower or "6 month" in frequency_lower:
+        return FREQUENCY_BIANNUAL
+    if "annual" in frequency_lower or "year" in frequency_lower or "12 month" in frequency_lower or "twelve month" in frequency_lower:
+        return FREQUENCY_ANNUAL
+
+    # If we can't normalize it, return as-is
+    return frequency_lower
 
 
-@beartype
-def is_obligation_overdue(obligation: Obligation) -> bool:
-    """Check if an obligation is overdue.
+def get_responsibility_display_name(responsibility_value: str) -> str:
+    """Get the display name for a responsibility value.
 
     Args:
-        obligation: The Obligation instance to check.
+        responsibility_value: The responsibility value to get display name for
 
     Returns:
-        True if the obligation is overdue, False otherwise.
+        str: The display name for the responsibility
 
     """
-    if not obligation.action_due_date:
-        return False
-    if obligation.status == "completed":
-        return False
-    # Ensure the comparison returns a bool
-    return bool(obligation.action_due_date < date.today())
+    # First check if this is already a display name (as stored in older records)
+    if "Perdaman" in responsibility_value or "SCJV" in responsibility_value:
+        return responsibility_value
+
+    # Try to get role display from the role utilities
+    role_display = get_role_display(responsibility_value)
+    if role_display != responsibility_value:  # If we got a match
+        return role_display
+
+    # Fallback: just return the input with title casing for readability
+    return responsibility_value.replace("_", " ").title()

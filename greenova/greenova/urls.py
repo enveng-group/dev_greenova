@@ -1,51 +1,27 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Greenova project URL configuration."""
-
-
-from django.conf import settings
 import logging
+
+from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
-from django.urls.resolvers import URLPattern, URLResolver
+from django.http import HttpRequest, HttpResponsePermanentRedirect, HttpResponseRedirect
+from django.shortcuts import redirect
 from django.urls import include, path
+from django.urls.resolvers import URLPattern, URLResolver
 
 logger = logging.getLogger(__name__)
 
 
-def home_router(request: HttpRequest) -> HttpResponse:
+def home_router(
+    request: HttpRequest,
+) -> HttpResponseRedirect | HttpResponsePermanentRedirect:
     """Route to appropriate home page based on auth status."""
-    logger.debug("Home router - User authenticated: %s", request.user.is_authenticated)
+    logger.debug(f"Home router - User authenticated: {request.user.is_authenticated}")
 
     # If user is not authenticated, always go to landing page
     if not request.user.is_authenticated:
-        logger.info("Unauthenticated user - rendering landing page directly")
-        # Add additional context data that may be needed for correct rendering
-        context = {
-            "show_landing_content": True,
-            "user_authenticated": request.user.is_authenticated,
-        }
-        return render(request, "landing/index.html", context)
+        logger.info("Unauthenticated user - redirecting to landing page")
+        return redirect("landing:home")
 
     # Only redirect to dashboard if authenticated
     logger.info("Authenticated user - redirecting to dashboard")
@@ -68,6 +44,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("", home_router, name="home"),
     path("landing/", include("landing.urls")),
     path("admin/", admin.site.urls),
+
     # Authentication URLs
     path("authentication/", include("allauth.urls")),
     path("accounts/", include("allauth.urls")),
@@ -86,14 +63,11 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("responsibility/", include("responsibility.urls")),
     # Add feedback URLs
     path("feedback/", include("feedback.urls", namespace="feedback")),
-    # Include reports URLs
-    path("reports/", include("reports.urls", namespace="reports")),
-    # Include settings URLs
-    path("settings/", include("settings.urls", namespace="settings")),
     # Sentry error page to verify Sentry is working
     path("sentry-debug/", trigger_error),
-]
+] + debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]

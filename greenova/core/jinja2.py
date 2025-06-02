@@ -1,28 +1,3 @@
-"""Copyright (C) 2025 Adrian Gallo.
-
-This file is part of Greenova.
-
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
-
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
-
-"""Jinja2 environment configuration for Greenova.
-
-This module customizes the Jinja2 environment for Django templates in Greenova.
-"""
-
 # Import your custom filters and globals
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.middleware.csrf import get_token
@@ -33,10 +8,11 @@ from django_hyperscript.templatetags.hyperscript import hs_dump
 from jinja2 import Environment
 
 
-def environment(**options: object) -> Environment:
+def environment(**options):
     """Create a custom Jinja2 environment with Django-specific filters and globals."""
     # Filter out Django-specific options that Jinja2 doesn't understand
-    jinja2_options = {k: v for k, v in options.items() if k != "debug"}
+    jinja2_options = {k: v for k, v in options.items()
+                      if k != "debug"}
 
     # Set autoescape=True if it's not already specified in options
     if "autoescape" not in jinja2_options:

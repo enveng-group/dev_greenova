@@ -1,21 +1,38 @@
-"""Copyright (C) 2025 Adrian Gallo.
+from django import template
+from django.utils.html import format_html
 
-This file is part of Greenova.
+register = template.Library()
 
-Greenova is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
 
-Greenova is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
+@register.filter
+def user_has_responsibility(user, obligation) -> bool:
+    """Check if a user has any responsibility for an obligation."""
+    # Simplified implementation without ResponsibilityAssignment
+    return False
 
-You should have received a copy of the GNU Affero General Public License
-along with Greenova. If not, see <https://www.gnu.org/licenses/>.
 
-Author: Adrian Gallo <agallo@enveng-group.com.au>
-"""
+@register.simple_tag
+def user_responsibility_roles(user, obligation):
+    """Get responsibility roles for a user and obligation."""
+    # Simplified implementation without ResponsibilityAssignment
+    return []
 
-"""Custom template tags for responsibility app."""
+
+@register.simple_tag
+def get_responsible_users(obligation):
+    """Get all users responsible for an obligation."""
+    # Simplified implementation without ResponsibilityAssignment
+    return []
+
+
+@register.simple_tag
+def format_responsibility_roles(roles):
+    """Format a list of responsibility roles as HTML."""
+    if not roles:
+        return ""
+
+    html = ""
+    for role in roles:
+        html += format_html('<mark class="responsibility-role">{}</mark> ', role.name)
+
+    return html

@@ -1,29 +1,46 @@
 {% load project_tags static hyperscript %}
 
-<section aria-labelledby="project-selection-heading" class="project-selection">
+<section aria-labelledby="project-selection-heading"
+         class="project-selection"
+         hx-ext="class-tools path-deps">
   <h2 id="project-selection-heading">
-    Select Project
+Select Project
   </h2>
   {% if projects %}
+    {% with project_list=projects|transform_queryset:"to_dict"|to_list %}
+{% hs_dump project_list 'projectsData' %}
+    {% endwith %}
     <div class="selector-container">
-      <form id="project-selector" class="project-selector-form" hx-target="#dashboard-content-container">
+      <form id="project-form"
+            hx-trigger="change from:#project-selector"
+            hx-swap="none">
         <div class="form-group">
-          <label for="project_id">Select Project:</label>
-          <select name="project_id" id="project_id" hx-get="{% url 'dashboard:home' %}" hx-trigger="change">
-            <option value="">-- Select a Project --</option>
+          <label for="project-selector">
+Project:
+          </label>
+          <select id="project-selector"
+                  name="project_id"
+                  class="form-select"
+                  _="on change set projectId to my.value if projectId != '' call history.replaceState(null, '', `?project_id=${projectId}`) trigger projectSelected(id:projectId) on body end">
+            <option value="">
+Select a project
+            </option>
             {% for project in projects %}
-              <option value="{{ project.id }}" {% if project.id|stringformat:"s" == selected_project_id %}selected{% endif %}>
-                {{ project.name }}
+              <option value="{{ project.id }}"
+                      {% if project.id|stringformat:"s" == selected_project_id|default:request.get.project_id|default:"" %} selected {% endif %}>
+{{ project.name }}
               </option>
             {% endfor %}
+
           </select>
         </div>
       </form>
     </div>
   {% else %}
+
     <div class="notice warning" role="alert">
       <p>
-        No projects available. Please contact your administrator to be added to a project.
+      No projects available. Please contact your administrator to be added to a project.
       </p>
     </div>
   {% endif %}

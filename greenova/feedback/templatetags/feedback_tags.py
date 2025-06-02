@@ -9,7 +9,6 @@ This module provides template tags and filters that can be used in Django templa
 from django import template
 from django.db.models import QuerySet
 from django.template.loader import render_to_string
-from feedback.views import get_status_description as get_desc
 
 from greenova.feedback.models import BugReport
 
@@ -79,6 +78,7 @@ def get_status_description(status: str) -> str:
         A description of the status from the plaintext template
 
     """
+    from feedback.views import get_status_description as get_desc
     return get_desc(status)
 
 
