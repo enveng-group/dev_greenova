@@ -51,7 +51,7 @@ git commit -m "feat(auditing): extract compliance and non-conformance comments i
 - [Include summary of changes and conflict resolutions here.]
 "
 
-tools/merge_conflict_detector/scripts/maintenance.sh --verbose --prune
+tools/merge_conflict_detector/merge-conflict-detector maintenance --prune
 
 git push origin integration/v0.0.7
 git remote prune origin

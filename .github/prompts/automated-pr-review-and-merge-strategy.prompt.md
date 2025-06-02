@@ -39,7 +39,7 @@ tools:
 
 ## Goal
 
-Review PR 145 (`feat(auditing): extract compliance and non-conformance comments into standalone app`) for the dev_greenova project, perform a code review focused on Django project files, analyze for merge conflicts and integration risks, and determine the most optimal, conflict-free merge strategy into the `integration/v0.0.7` branch using all available MCP servers and the `merge-conflict-detector` tool.
+Review PR 145 (`feat(auditing): extract compliance and non-conformance comments into a standalone app`) for the dev_greenova project, perform a code review focused on Django project files, analyze for merge conflicts and integration risks, and determine the most optimal, conflict-free merge strategy into the `integration/v0.0.7` branch using all available MCP servers and the `merge-conflict-detector` tool.
 
 ## Context
 
@@ -55,15 +55,16 @@ Review PR 145 (`feat(auditing): extract compliance and non-conformance comments 
 
 - Fetch and review all details, diffs, and metadata for PR 145 using the github MCP server.
 - Use the json MCP server to parse PR data, file changes, and metadata as needed.
-- **Conduct a detailed code review of Django project files within the `greenova/` directory that implement the feature extraction.**
-- Use the git MCP server to inspect the state of `integration/v0.0.7`, local changes, and branch history.
-- Use the filesystem MCP server to read, write, or modify files if any manual intervention is required.
-- Use the sequential-thinking MCP server to:
-  - Analyze potential merge conflicts and integration risks.
-  - Plan the most optimal merge strategy (rebase, squash, manual conflict resolution, etc.).
-  - Iterate through possible resolutions if complications arise.
-- Use the merge-conflict-detector tool to analyze the PR against the target branch and inform the merge plan.
-- Ensure all steps comply with project standards and documentation (use context7 and fetch as needed).
+- **Conduct a detailed code review and squash merge ONLY for files within the `greenova/` directory.**
+- **Exclude all files outside `greenova/` from the squash merge and code review.**
+- **Ensure the new `auditing` app is created under `greenova/`, with models for "Compliance Comments" and "Non-Conformance Comments" linked to obligations, and that the obligations module references the new app.**
+- Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
+- Use the merge-conflict-detector tool to analyze PR 145 against `integration/v0.0.7`.
+- Use the sequential-thinking MCP server to plan and iterate on the merge strategy, resolving any conflicts or complications.
+- **When merging:**
+  - **Squash all changes to files under the `greenova/` directory into a single commit.**
+  - **Do not include or review files outside `greenova/` in the squash merge.**
+- **Ensure all requirements and acceptance criteria for issue #53 are met.**
 
 ## Sources
 
@@ -92,7 +93,12 @@ Review PR 145 (`feat(auditing): extract compliance and non-conformance comments 
 ## Acceptance Criteria
 
 - PR 145 is reviewed and analyzed for merge conflicts and integration risks.
-- **Code review of Django project files is completed with feedback on quality, security, and adherence to project standards.**
+- **Code review and squash merge are performed ONLY for files in the `greenova/` directory.**
+- **All requirements for issue #53 are satisfied:**
+  - A new auditing app exists under `greenova/` with models for "Compliance Comments" and "Non-Conformance Comments."
+  - These models are linked to the obligations table.
+  - The obligations module references the new auditing app for comments.
+  - Unit tests for the new models and relationships are present and passing.
 - The merge-conflict-detector tool is used and its output informs the merge plan.
 - The most optimal, conflict-free merge strategy into `integration/v0.0.7` is determined and documented.
 - Any required file or branch modifications are performed using the appropriate MCP servers.
@@ -107,27 +113,35 @@ Review PR 145 (`feat(auditing): extract compliance and non-conformance comments 
    - **Backup `.devcontainer/` directory and its contents from `integration/v0.0.7`**
    - **Backup `tools/` directory and its contents from `integration/v0.0.7`**
    - **These contain the merge-conflict-detector tool and Dropbear SSH configuration essential for automation**
-4. **Conduct a detailed code review of changed files in the `greenova/` directory that implement the feature extraction:**
+4. **Before merging, run the following maintenance command to aggressively prune and optimize the merge-conflict-detector state:**
+   ```bash
+   tools/merge_conflict_detector/merge-conflict-detector maintenance --aggressive --prune
+   ```
+5. **Conduct a detailed code review of changed files in the `greenova/` directory that implement the feature extraction:**
    - **Focus only on files that address the extraction of compliance and non-conformance comments**
    - **Follow the code review guidelines in `.github/instructions/.copilot-review-instructions.md`**
    - **Check for Django best practices, security issues, and adherence to project standards**
    - **Provide specific feedback on code quality, documentation, and test coverage**
-5. Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
-6. Use the merge-conflict-detector tool to analyze PR 145 against `integration/v0.0.7`.
-7. Use the sequential-thinking MCP server to plan and iterate on the merge strategy, resolving any conflicts or complications.
-8. **When merging:**
+6. Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
+7. Use the merge-conflict-detector tool to analyze PR 145 against `integration/v0.0.7`.
+8. Use the sequential-thinking MCP server to plan and iterate on the merge strategy, resolving any conflicts or complications.
+9. **When merging:**
    - **Squash all changes to files under the `greenova/` directory into a single commit.**
    - **Merge all other files using the standard merge strategy.**
-9. **After any branch operations, restore essential directories if they were modified:**
-   - **Restore `.devcontainer/` from backup if needed**
-   - **Restore `tools/` from backup if needed**
-   - **Verify merge-conflict-detector tool functionality**
-10. If any files or branches need to be modified, use the filesystem and git MCP servers.
-11. Document the final merge plan, including any manual steps, resolutions, or recommendations.
-12. Ensure all actions comply with project standards and are clearly documented.
-13. Generate GitHub-flavored markdown comments for the PR review.
-14. Create a properly formatted squash merge commit message.
-15. Ensure the commit message includes appropriate keywords to auto-close the PR and related issues.
+10. **After merging, but before pushing changes to `integration/v0.0.7`, run the following maintenance command to prune the merge-conflict-detector state:**
+    ```bash
+    tools/merge_conflict_detector/merge-conflict-detector maintenance --prune
+    ```
+11. **After any branch operations, restore essential directories if they were modified:**
+    - **Restore `.devcontainer/` from backup if needed**
+    - **Restore `tools/` from backup if needed**
+    - **Verify merge-conflict-detector tool functionality**
+12. If any files or branches need to be modified, use the filesystem and git MCP servers.
+13. Document the final merge plan, including any manual steps, resolutions, or recommendations.
+14. Ensure all actions comply with project standards and are clearly documented.
+15. Generate GitHub-flavored markdown comments for the PR review.
+16. Create a properly formatted squash merge commit message.
+17. Ensure the commit message includes appropriate keywords to auto-close the PR and related issues.
 
 ## Additional Guidelines
 
@@ -156,14 +170,14 @@ Review PR 145 (`feat(auditing): extract compliance and non-conformance comments 
   - Generate a comprehensive squash merge commit message following this structure:
     ```
     feat(auditing): extract compliance and non-conformance comments into standalone app
-    
-    <Brief description of the changes and their purpose>
-    
-    - <Key change 1>
-    - <Key change 2>
-    - <Additional changes...>
-    
-    PR: #145
+
+    - Create new `auditing` app under `greenova/`
+    - Add models for "Compliance Comments" and "Non-Conformance Comments" linked to obligations
+    - Update obligations module to reference new auditing app for comments
+    - Add unit tests for new models and relationships
+
+    closes #145
+    resolves #53
     ```
 
 ## Auto-closing PR and Issues
