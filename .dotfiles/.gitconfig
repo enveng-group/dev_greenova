@@ -4,6 +4,7 @@
     signingkey = ~/.ssh/id_ed25519
 
 [core]
+    editor=vi
     compression = 9
     whitespace = trailing-space
     autocrlf = input
@@ -13,6 +14,7 @@
     preloadIndex = true
     fscache = true
     fileMode = false
+	sshCommand = /workspaces/greenova/.devcontainer/scripts/post_create/git_ssh_dropbear.py
 
 [color]
     ui = auto
@@ -23,7 +25,7 @@
     maxRequests = 100
 
 [ssh]
-    variant = ssh
+	variant = simple
     program = /usr/bin/ssh
 
 [gpg]
@@ -35,10 +37,8 @@
 
 [pull]
     rebase = true
-    ff = only
 
 [merge]
-    ff = false
     conflictstyle = zdiff3
 
 [rebase]
@@ -78,7 +78,7 @@
     task = gc,commit-graph,loose-objects,incremental-repack,pack-refs
 
 [pack]
-    threads = 0
+    threads = 1
     deltaCacheSize = 512m
     windowMemory = 512m
     compression = 9
@@ -107,6 +107,7 @@
     autoSetupRebase = always
 
 [repack]
+    threads = 1
     usedeltabaseoffset = true
 
 [index]
@@ -121,3 +122,5 @@
   
 [status]
     showUntrackedFiles = all
+[credential]
+	helper = "!f() { /home/vscode/.vscode-server/bin/848b80aeb52026648a8ff9f7c45a9b0a80641e2e/node /tmp/vscode-remote-containers-1d183020-d8f6-4b49-b9ce-cd75166725e8.js git-credential-helper $*; }; f"

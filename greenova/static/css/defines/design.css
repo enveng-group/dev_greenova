@@ -40,3 +40,59 @@
   --greenova-chat-user-border-radius: var(--greenova-chat-border-radius)
     var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
 }
+
+/* Greenova Design Tokens and Responsive Variables */
+
+/* --- Breakpoints --- */
+:root {
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+ 
+/* --- Responsive Typography --- */
+:root {
+  --font-size-base: clamp(1rem, 2.5vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 3vw, 1.25rem);
+  --font-size-sm: clamp(0.95rem, 2vw, 1rem);
+}
+
+/* --- Touch Target Accessibility --- */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="checkbox"],
+input[type="radio"],
+label,
+a,
+select {
+  min-width: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+/* --- Example Spacing Tokens (adjust as needed) --- */
+:root {
+  --greenova-spacing: 1rem;
+  --greenova-spacing-small: 0.5rem;
+  --greenova-spacing-large: 2rem;
+  --greenova-padding: 1rem;
+  --greenova-padding-small: 0.5rem;
+  --greenova-border-radius: 0.5rem;
+}
+
+/* --- Example Color Tokens (adjust as needed) --- */
+:root {
+  --greenova-background-primary: #f6f8f9;
+  --greenova-background-secondary: #e3e8ea;
+  --greenova-tertiary-dark: #2d3a3a;
+}
+
+/* --- Responsive Utility Classes (optional) --- */
+@media (max-width: 480px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
