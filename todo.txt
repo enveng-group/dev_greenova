@@ -9,7 +9,6 @@
 # If you suspect hidden dependencies, review PRs or request a dependency graph.
 #
 # Prioritized squash merge order (as of 2025-06-02):
-# 15. PR 154: Enhancements/139-graph Added Mechanism Charts
 # 16. PR 151: Issue/issue-31 - Revising Procedure View
 # 17. PR 149: Issue/issue 124 enhancement headerbar
 # 18. PR 103: feat(core): add IPython autoreload, syntax checking, and bash aliases file
@@ -25,9 +24,9 @@ Run the app in the browser to perform manual verification and exploratory testin
 
 tools/merge_conflict_detector/merge-conflict-detector maintenance --aggressive --prune
 
-git fetch origin pull/145/head:pr-145
+git fetch origin pull/151/head:pr-151
 
-tools/merge_conflict_detector/merge-conflict-detector analyze -b integration/v0.0.7 -b pr-145 -f text > logs/merge-detector.log
+tools/merge_conflict_detector/merge-conflict-detector analyze -b integration/v0.0.7 -b pr-151 -f text > logs/merge-detector.log
 
 git checkout -b cherry-pick-pr-148-files
 

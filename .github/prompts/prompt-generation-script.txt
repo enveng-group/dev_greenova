@@ -27,11 +27,11 @@ iterate with filesystem mcp server to resolve ruff DOC201 errors in the workspac
 
 using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
 
-use github mcp server and git mcp server to review the following files changed in commit 774eed9401f052c3a0440ab379d9317abbfca17f at https://github.com/enveng-group/dev_greenova/pull/128/commits/774eed9401f052c3a0440ab379d9317abbfca17f for the local branch integration/v0.0.7 which is associated with https://github.com/enveng-group/dev_greenova/pull/128 against the local and remote branch integration/v0.0.7
+use github mcp server and git mcp server to review the following files changed in commit a9f9cc0c92f1b303e58361404dcdef56de5e5600 at https://github.com/enveng-group/dev_greenova/pull/151/commits/774eed9401f052c3a0440ab379d9317abbfca17f for the local branch integration/v0.0.7 which is associated with https://github.com/enveng-group/dev_greenova/pull/151 against the local and remote branch integration/v0.0.7
 
 i have also run my own merge detector tool so use filesystem mcp server to read merge-detector.log
-then use github mcp server to read https://github.com/enveng-group/dev_greenova/issues/129
+then use github mcp server to read https://github.com/enveng-group/dev_greenova/issues/31
 and then use sequential_thinking mcp server to analayse investigate decide recommend and
-provide guidance instructions on whether the files changed in https://github.com/enveng-group/dev_greenova/pull/128
-resolves https://github.com/enveng-group/dev_greenova/issues/129 and it is safe to merge the changes into integration/v0.0.7
-and close both https://github.com/enveng-group/dev_greenova/pull/128 and https://github.com/enveng-group/dev_greenova/issues/129
+provide guidance instructions on whether the files changed in https://github.com/enveng-group/dev_greenova/pull/151
+resolves https://github.com/enveng-group/dev_greenova/issues/31 and it is safe to merge the changes into integration/v0.0.7
+and close both https://github.com/enveng-group/dev_greenova/pull/151 and https://github.com/enveng-group/dev_greenova/issues/31
