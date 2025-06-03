@@ -20,6 +20,20 @@ from .utils import normalize_frequency
 logger = logging.getLogger(__name__)
 
 
+class FilterForm(forms.Form):
+    """Base form for filtering with GET method."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["formmethod"] = "get"  # Ensure GET method is used
+
+    def clean(self):
+        """Override clean to handle cleaned data appropriately."""
+        return super().clean()
+        # Add any additional validation or transformation logic here
+
+
 class ObligationForm(forms.ModelForm):
     """Form for creating and updating obligations."""
 
@@ -298,6 +312,14 @@ class ObligationForm(forms.ModelForm):
         required=False, widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
     )
 
+    compliance_comments = forms.CharField(
+        required=False, widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
+    )
+
+    non_conformance_comments = forms.CharField(
+        required=False, widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
+    )
+
     evidence_notes = forms.CharField(
         required=False,
         widget=forms.Textarea(
@@ -521,7 +543,7 @@ class ObligationForm(forms.ModelForm):
                     self.add_error(
                         field, f'{
                             field.replace(
-                                "_", " ").title()} is required for recurring obligations')
+                                "_", " ").title()} is required for recurring obligations', )
 
         # Validate inspection fields
         inspection = cleaned_data.get("inspection")
@@ -531,7 +553,7 @@ class ObligationForm(forms.ModelForm):
                     self.add_error(
                         field, f'{
                             field.replace(
-                                "_", " ").title()} is required when inspection is enabled')
+                                "_", " ").title()} is required when inspection is enabled', )
 
         # Validate gap analysis notes
         gap_analysis = cleaned_data.get("gap_analysis")
@@ -577,6 +599,8 @@ class ObligationForm(forms.ModelForm):
             "obligation": forms.Textarea(attrs={"rows": 4}),
             "supporting_information": forms.Textarea(attrs={"rows": 3}),
             "general_comments": forms.Textarea(attrs={"rows": 3}),
+            "compliance_comments": forms.Textarea(attrs={"rows": 3}),
+            "non_conformance_comments": forms.Textarea(attrs={"rows": 3}),
             "evidence_notes": forms.Textarea(attrs={"rows": 2}),
             "notes_for_gap_analysis": forms.Textarea(attrs={"rows": 3}),
             "action_due_date": forms.DateInput(attrs={"type": "date"}),
@@ -676,3 +700,32 @@ class EvidenceUploadForm(forms.ModelForm):
                 attrs={
                     "placeholder": "Brief description of the file"}),
         }
+
+
+# Ensure forms are defined for filtering if needed
+class ObligationFilterForm(forms.Form):
+    search = forms.CharField(
+        required=False, max_length=100, label="Search",
+        widget=forms.TextInput(attrs={
+            "placeholder": "Search...",
+            "class": "form-input",
+        }),
+    )
+    status = forms.ChoiceField(
+        required=False,
+        choices=[("", "All"), ("open", "Open"), ("closed", "Closed")],
+        label="Status",
+        widget=forms.Select(attrs={"class": "form-input"}),
+    )
+    phase = forms.ChoiceField(
+        required=False,
+        choices=[("", "All"), ("planning", "Planning"), ("execution", "Execution")],
+        label="Phase",
+        widget=forms.Select(attrs={"class": "form-input"}),
+    )
+    sort = forms.ChoiceField(
+        required=False,
+        choices=[("", "Default"), ("name", "Name"), ("status", "Status")],
+        label="Sort By",
+        widget=forms.Select(attrs={"class": "form-input"}),
+    )
