@@ -38,6 +38,32 @@ git fetch origin pull/145/head:pr-145
 
 tools/merge_conflict_detector/merge-conflict-detector analyze -b integration/v0.0.7 -b pr-145 -f text > logs/merge-detector.log
 
+git checkout -b cherry-pick-pr-148-files
+
+git checkout 774eed9401f052c3a0440ab379d9317abbfca17f -- \
+  greenova/greenova/settings.py \
+  greenova/greenova/urls.py \
+  greenova/mechanisms/templates/mechanisms/mechanism_charts.html \
+  greenova/procedures/templates/procedures/procedure_charts.html \
+  greenova/static/js/app.js \
+  greenova/templates/base.html
+
+
+git add greenova/greenova/settings.py \
+        greenova/greenova/urls.py \
+        greenova/mechanisms/templates/mechanisms/mechanism_charts.html \
+        greenova/procedures/templates/procedures/procedure_charts.html \
+        greenova/static/js/app.js \
+        greenova/templates/base.html
+
+git commit -m "Cherry-pick: Apply PR #148 (commit 774eed94) for issue #110 (selected files only)"
+
+
+git push origin cherry-pick-pr-148-files
+# or merge to integration/v0.0.7 and push
+git merge cherry-pick-pr-148-files
+git push origin integration/v0.0.7
+
 git checkout integration/v0.0.7
 git merge --squash pr-145
 git commit -m "feat(auditing): extract compliance and non-conformance comments into standalone app
