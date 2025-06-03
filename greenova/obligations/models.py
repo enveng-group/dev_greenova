@@ -133,8 +133,7 @@ class Obligation(models.Model):
     )
     supporting_information: str | None = models.TextField(blank=True, null=True)
     general_comments: str | None = models.TextField(blank=True, null=True)
-# Removed commented-out code for compliance_comments and
-# non_conformance_comments to reduce clutter.
+# Removed compliance_comments and non_conformance_comments fields per issue #51
     evidence_notes = models.TextField(blank=True, null=True,
                                       help_text="Notes about the uploaded evidence")
     recurring_obligation = models.BooleanField(default=False)
@@ -367,7 +366,7 @@ def update_mechanism_counts_on_save(sender, instance, **kwargs) -> None:
             instance.primary_environmental_mechanism.update_obligation_counts()
             logger.info(
                 f"Updated counts for mechanism {
-                    instance.primary_environmental_mechanism.name}", )
+                    instance.primary_environmental_mechanism.name}")
     except Exception as e:
         logger.exception(f"Error updating mechanism counts on save: {e!s}")
 

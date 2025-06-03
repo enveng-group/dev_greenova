@@ -34,8 +34,6 @@ class ObligationData(TypedDict, total=False):
     status: str
     supporting_information: str
     general_comments: str
-    compliance_comments: str
-    non_conformance_comments: str
     evidence_notes: str
     recurring_obligation: bool
     recurring_frequency: str
@@ -62,7 +60,6 @@ class Command(BaseCommand):
 
     # Add mapping for obligation number prefixes
     OBLIGATION_PREFIX_MAPPING: dict[str, str] = {
-        "Condition": "MS1180-",
         "Condition": "MS1180-",
         "PCEMP": "PCEMP-",
     }
@@ -217,8 +214,6 @@ class Command(BaseCommand):
             "status": row.get("status", "not started"),
             "supporting_information": row.get("supporting__information", ""),
             "general_comments": row.get("general__comments", ""),
-            "compliance_comments": row.get("compliance__comments", ""),
-            "non_conformance_comments": row.get("non_conformance__comments", ""),
             "evidence_notes": row.get("evidence", ""),
             "recurring_obligation": self.clean_boolean(
                 row.get("recurring__obligation", False),
@@ -314,7 +309,7 @@ class Command(BaseCommand):
                         project_name = row.get("project__name", "")
                         if not project_name and not default_project:
                             errors.append(
-                                f"Row {row_num}: Missing project name and no default project specified", )
+                                f"Row {row_num}: Missing project name and no default project specified")
                             skipped += 1
                             continue
 
@@ -361,7 +356,7 @@ class Command(BaseCommand):
                     if not options.get("continue_on_error"):
                         # Break the loop if not continuing on errors
                         errors.append(
-                            "Import halted due to error. Use --continue-on-error to process all rows.", )
+                            "Import halted due to error. Use --continue-on-error to process all rows.")
                         break
 
         return created, updated, skipped, errors

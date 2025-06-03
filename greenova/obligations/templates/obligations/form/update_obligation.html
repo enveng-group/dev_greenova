@@ -288,28 +288,6 @@
         {% endif %}
       </div>
       <div class="form-group">
-        {{ form.compliance_comments.label_tag }}
-        {{ form.compliance_comments }}
-        {% if form.compliance_comments.help_text %}<small>{{ form.compliance_comments.help_text }}</small>{% endif %}
-        {% if form.compliance_comments.errors %}
-          <div class="invalid-feedback">
-            {% for error in form.compliance_comments.errors %}{{ error }}{% endfor %}
-          </div>
-        {% endif %}
-      </div>
-      <div class="form-group">
-        {{ form.non_conformance_comments.label_tag }}
-        {{ form.non_conformance_comments }}
-        {% if form.non_conformance_comments.help_text %}
-          <small>{{ form.non_conformance_comments.help_text }}</small>
-        {% endif %}
-        {% if form.non_conformance_comments.errors %}
-          <div class="invalid-feedback">
-            {% for error in form.non_conformance_comments.errors %}{{ error }}{% endfor %}
-          </div>
-        {% endif %}
-      </div>
-      <div class="form-group">
         {{ form.evidence_notes.label_tag }}
         {{ form.evidence_notes }}
         {% if form.evidence_notes.help_text %}<small>{{ form.evidence_notes.help_text }}</small>{% endif %}

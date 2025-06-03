@@ -298,14 +298,6 @@ class ObligationForm(forms.ModelForm):
         required=False, widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
     )
 
-    compliance_comments = forms.CharField(
-        required=False, widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
-    )
-
-    non_conformance_comments = forms.CharField(
-        required=False, widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
-    )
-
     evidence_notes = forms.CharField(
         required=False,
         widget=forms.Textarea(
@@ -529,7 +521,7 @@ class ObligationForm(forms.ModelForm):
                     self.add_error(
                         field, f'{
                             field.replace(
-                                "_", " ").title()} is required for recurring obligations', )
+                                "_", " ").title()} is required for recurring obligations')
 
         # Validate inspection fields
         inspection = cleaned_data.get("inspection")
@@ -539,7 +531,7 @@ class ObligationForm(forms.ModelForm):
                     self.add_error(
                         field, f'{
                             field.replace(
-                                "_", " ").title()} is required when inspection is enabled', )
+                                "_", " ").title()} is required when inspection is enabled')
 
         # Validate gap analysis notes
         gap_analysis = cleaned_data.get("gap_analysis")
@@ -585,8 +577,6 @@ class ObligationForm(forms.ModelForm):
             "obligation": forms.Textarea(attrs={"rows": 4}),
             "supporting_information": forms.Textarea(attrs={"rows": 3}),
             "general_comments": forms.Textarea(attrs={"rows": 3}),
-            "compliance_comments": forms.Textarea(attrs={"rows": 3}),
-            "non_conformance_comments": forms.Textarea(attrs={"rows": 3}),
             "evidence_notes": forms.Textarea(attrs={"rows": 2}),
             "notes_for_gap_analysis": forms.Textarea(attrs={"rows": 3}),
             "action_due_date": forms.DateInput(attrs={"type": "date"}),

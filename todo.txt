@@ -9,9 +9,6 @@
 # If you suspect hidden dependencies, review PRs or request a dependency graph.
 #
 # Prioritized squash merge order (as of 2025-06-02):
-# 1. PR 145: feat(auditing): extract compliance and non-conformance comments into standalone app
-# 2. PR 166: feat: implement user authentication flow
-# 3. PR 131: The authentication namespace has been successfully registered in the …
 # 4. PR 164: fix: resolve issue with file upload limit
 # 5. PR 128: fix(obligations): improve import_obligations command functionality
 # 6. PR 150: views.py : (Obligation filtering/sorting bugfix)

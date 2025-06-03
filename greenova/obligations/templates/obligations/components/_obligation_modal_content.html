@@ -91,7 +91,7 @@ Timeline & Dates
   </div>
 </div>
 
-{% if obligation.general_comments or obligation.supporting_information or obligation.compliance_comments %}
+{% if obligation.general_comments or obligation.supporting_information %}
   <div class="detail-section">
     <h3 class="detail-section-title">
 Comments & Additional Information
@@ -110,14 +110,6 @@ Comments & Additional Information
           <span class="detail-label">Supporting Information</span>
           <div class="detail-value textarea">
 {{ obligation.supporting_information|linebreaks }}
-          </div>
-        </div>
-      {% endif %}
-      {% if obligation.compliance_comments %}
-        <div class="detail-field full-width">
-          <span class="detail-label">Compliance Comments</span>
-          <div class="detail-value textarea">
-{{ obligation.compliance_comments|linebreaks }}
           </div>
         </div>
       {% endif %}
