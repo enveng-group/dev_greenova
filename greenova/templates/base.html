@@ -102,18 +102,14 @@
                       <li>
                         <a href="{% url 'dashboard:home' %}"
                            role="menuitem"
-                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
-                                           page
-                                         {% endif %}"
+                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}page{% endif %}"
                            _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
                       </li>
                     {% else %}
                       <li>
                         <a href="{% url 'dashboard:home' %}"
                            role="menuitem"
-                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}
-                                           page
-                                         {% endif %}"
+                           aria-current="{% if request.resolver_match.namespace == 'dashboard' %}page{% endif %}"
                            _="on load if location.pathname is '{% url 'dashboard:home' %}' then hide me">Dashboard</a>
                       </li>
                     {% endif %}

@@ -3,10 +3,8 @@ import logging
 from core.utils.roles import get_responsibility_choices
 from django import forms
 from django.core.exceptions import ValidationError
-from django_select2.forms import Select2MultipleWidget
 from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project
-from responsibility.models import Responsibility
 
 from .constants import (
     FREQUENCY_CHOICES,  # Import RESPONSIBILITY_ROLES
@@ -354,34 +352,14 @@ class ObligationForm(forms.ModelForm):
         ),
     )
 
-    responsibilities = forms.ModelMultipleChoiceField(
-        queryset=Responsibility.objects.all(),
-        widget=Select2MultipleWidget(
-            attrs={"class": "form-input", "aria-describedby": "responsibilities-help"},
-        ),
-        required=True,  # Make this required to ensure at least one responsibility is assigned
-        label="Assign Responsibilities",
-        help_text="Select one or more responsibilities for this obligation",
-    )
-
     def __init__(self, *args, **kwargs) -> None:
         self.project = kwargs.pop("project", None)
         self.user = kwargs.pop("user", None)  # Add user context
-
-        # Get responsibilities from kwargs if provided
-        responsibilities = kwargs.pop("responsibilities", None)
 
         super().__init__(*args, **kwargs)
 
         # Initialize the responsibility queryset
         self.fields["responsibility"].choices = get_responsibility_choices()
-
-        # Use responsibilities from the responsibility app
-        if responsibilities is not None:
-            self.fields["responsibilities"].queryset = responsibilities
-        else:
-            # Default behavior: get all responsibility roles
-            self.fields["responsibilities"].queryset = Responsibility.objects.all()
 
         # Handle initial project
         if self.project:
@@ -417,8 +395,6 @@ class ObligationForm(forms.ModelForm):
                 self.fields["custom_environmental_aspect"].initial = (
                     instance.custom_environmental_aspect
                 )
-
-            self.fields["responsibilities"].initial = instance.responsibilities.all()
         else:
             self.fields["obligation_number"].help_text = (
                 "Unique identifier (PCEMP-XXX format). Leave blank to auto-generate."
@@ -507,14 +483,6 @@ class ObligationForm(forms.ModelForm):
 
         return custom_aspect
 
-    def clean_responsibilities(self):
-        """Validate at least one responsibility is selected."""
-        responsibilities = self.cleaned_data.get("responsibilities")
-        if not responsibilities or len(responsibilities) == 0:
-            msg = "Please select at least one responsibility."
-            raise forms.ValidationError(msg)
-        return responsibilities
-
     def clean(self):
         """Cross-field validation to enforce business rules."""
         cleaned_data = super().clean()
@@ -543,7 +511,7 @@ class ObligationForm(forms.ModelForm):
                     self.add_error(
                         field, f'{
                             field.replace(
-                                "_", " ").title()} is required for recurring obligations', )
+                                "_", " ").title()} is required for recurring obligations')
 
         # Validate inspection fields
         inspection = cleaned_data.get("inspection")
@@ -553,7 +521,7 @@ class ObligationForm(forms.ModelForm):
                     self.add_error(
                         field, f'{
                             field.replace(
-                                "_", " ").title()} is required when inspection is enabled', )
+                                "_", " ").title()} is required when inspection is enabled')
 
         # Validate gap analysis notes
         gap_analysis = cleaned_data.get("gap_analysis")

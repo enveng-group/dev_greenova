@@ -265,8 +265,10 @@ class ObligationAdmin(admin.ModelAdmin):
 
             action = "Updated" if change else "Created"
             logger.info(
-                f"{action} obligation {obj.obligation_number} "
-                f"for project {obj.project.name}",
+                "%s obligation %s for project %s",
+                action,
+                obj.obligation_number,
+                obj.project.name,
             )
             super().save_model(request, obj, form, change)
 
@@ -274,7 +276,7 @@ class ObligationAdmin(admin.ModelAdmin):
             if obj.primary_environmental_mechanism:
                 obj.primary_environmental_mechanism.update_obligation_counts()
         except Exception as e:
-            logger.exception(f"Error saving obligation: {e!s}")
+            logger.exception("Error saving obligation: %s", e)
             raise
 
     actions = ["update_recurring_dates"]
@@ -289,7 +291,7 @@ class ObligationAdmin(admin.ModelAdmin):
                 count += 1
 
         self.message_user(
-            request, f"Successfully updated {count} recurring forecasted dates",
+            request, "Successfully updated %d recurring forecasted dates", count,
         )
 
     def get_inlines(self, request, obj=None):

@@ -333,6 +333,8 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # Ensure static files are handled simply
 STORAGES = {
     "default": {
@@ -365,12 +367,16 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Simplify cache to basic memory cache
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache",  # No caching
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "greenova-cache",
+        "TIMEOUT": 300,  # 5 minutes default timeout
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,  # Maximum number of entries before garbage collection
+        },
     },
 }
 
 # Create logs directory if it doesn't exist
-LOGS_DIR = os.path.join(str(BASE_DIR).replace(" ", "_").replace(":", "_"), "logs")
 LOGS_DIR = os.path.join(str(BASE_DIR).replace(" ", "_").replace(":", "_"), "logs")
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
