@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Style Guide](#style-guide)
+  - [Colour Guide](#colour-guide)
+    - [Colour Scheme](#colour-scheme)
+  - [HTMX Indicator Requirements](#htmx-indicator-requirements)
+    - [Persistent Indicator Element](#persistent-indicator-element)
+      - [Example](#example)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Style Guide
 
 ## Colour Guide
@@ -33,3 +45,35 @@ as little custom classes as possible.
 
 Please go to "static/css/dist/utils/colours.css",
 "static/css/dist/abstracts/variables.css" and "static/css/dist/variables.css".
+
+## HTMX Indicator Requirements
+
+### Persistent Indicator Element
+
+- The `#htmx-indicator` element is provided by `base.html` and must remain
+  outside any htmx swap targets.
+- Do **not** include or remove `#htmx-indicator` in any content that may be
+  swapped by htmx.
+- All `hx-indicator` attributes must reference an element that is always
+  present in the DOM.
+- If you add new htmx-enhanced forms or components, ensure the indicator is not
+  inside a swap target.
+
+#### Example
+
+```html
+<!-- Correct: indicator outside swap target -->
+<div id="htmx-indicator"></div>
+<div id="main-content" hx-target="this">
+  <!-- Swapped content here -->
+</div>
+
+<!-- Incorrect: indicator inside swap target -->
+<div id="main-content" hx-target="this">
+  <div id="htmx-indicator"></div>
+  <!-- This will be removed on swap! -->
+</div>
+```
+
+See also: `docs/resources/js/htmx.md` and `base.html` for implementation
+details.

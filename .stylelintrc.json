@@ -1,0 +1,21 @@
+{
+	"extends": [
+		"stylelint-config-standard",
+		"stylelint-config-recommended",
+		"stylelint-config-prettier"
+	],
+	"plugins": [],
+	"rules": {
+		"indentation": 2,
+		"max-line-length": 80,
+		"color-no-invalid-hex": true,
+		"block-no-empty": true,
+		"selector-max-id": 0,
+		"string-quotes": "double"
+	},
+	"fix": true,
+	"reportNeedlessDisables": true,
+	"reportInvalidScopeDisables": true,
+	"reportDescriptionlessDisables": true,
+	"reportUnscopedDisables": true
+}

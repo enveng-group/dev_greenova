@@ -62,10 +62,7 @@ Project Phase
 All Phases
               </option>
               {% for phase in available_phases %}
-                <option value="{{ phase }}"
-                        {% if filter_phase == phase %}
-                          selected
-                        {% endif %}>
+                <option value="{{ phase }}" {% if filter_phase == phase %}selected{% endif %}>
                   {{ phase }}
 
                 </option>
@@ -145,10 +142,16 @@ Apply Filters
       </section>
       <!-- New Responsibility Distribution Section -->
       <section aria-labelledby="responsibility-heading" class="charts-section">
-        <h2 id="responsibility-heading">
+        <header>
+          <h2 id="responsibility-heading">
 Responsibility Distribution
-        </h2>
-        <article class="overall-chart">
+          </h2>
+          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
+                  class="btn-fold">
++
+          </button>
+        </header>
+        <article class="overall-chart" style="display: none;">
           <figure>
             <figcaption>
 Obligations by Responsibility
@@ -159,28 +162,36 @@ Obligations by Responsibility
         </article>
       </section>
       <section aria-labelledby="charts-heading" class="charts-section">
-        <h2 id="charts-heading">
+        <header>
+          <h2 id="charts-heading">
 Procedures by Status
-        </h2>
-        <!-- Chart Navigation -->
-        <nav role="navigation"
-             aria-label="Procedure charts navigation"
-             class="chart-nav">
-          <button type="button"
-                  onclick="scrollCharts('chartScroll', 'left')"
-                  aria-label="Scroll left">
-←
+          </h2>
+          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
+                  class="btn-fold">
++
           </button>
-          <button type="button"
-                  onclick="scrollCharts('chartScroll', 'right')"
-                  aria-label="Scroll right">
-→
-          </button>
-        </nav>
-        <div id="chartScroll" class="chart-scroll-container">
-          {% for proc in procedure_charts %}
+        </header>
+        <span style="display: none;">
+          <!-- Chart Navigation -->
+          <nav role="navigation"
+               aria-label="Procedure charts navigation"
+               class="chart-nav">
+            <button type="button"
+                    onclick="scrollCharts('chartScroll', 'left')"
+                    aria-label="Scroll left">
+  ←
+            </button>
+            <button type="button"
+                    onclick="scrollCharts('chartScroll', 'right')"
+                    aria-label="Scroll right">
+  →
+            </button>
+          </nav>
+          <div id="chartScroll" class="chart-scroll-container">
+            {% for proc in procedure_charts %}
 {% procedure_chart_card proc %}
-          {% endfor %}
+            {% endfor %}
+          </span>
 
         </div>
       </section>
@@ -192,10 +203,10 @@ Detailed Statistics
           </h3>
           <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
                   class="btn-fold">
--
++
           </button>
         </header>
-        <div class="table-container">
+        <div class="table-container" style="display: none;">
           <table role="grid">
             <thead>
               <tr>
@@ -230,48 +241,16 @@ Total
                     <span class="status">{{ item.status|format_procedure_status }}</span>
                   </td>
                   <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=not_started&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Not Started obligations for {{ item.name }}'">
-                        {{ item.not_started }}
-                    </a>
+{{ item.not_started }}
                   </td>
                   <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=in_progress&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'In Progress obligations for {{ item.name }}'">
-                        {{ item.in_progress }}
-                    </a>
+{{ item.in_progress }}
                   </td>
                   <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=completed&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Completed obligations for {{ item.name }}'">
-                        {{ item.completed }}
-                    </a>
+{{ item.completed }}
                   </td>
                   <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=overdue&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Overdue obligations for {{ item.name }}'">
-                        {{ item.overdue }}
-                    </a>
+{{ item.overdue }}
                   </td>
                   <td>
 {{ item.total }}
@@ -281,7 +260,16 @@ Total
             </tbody>
           </table>
         </div>
-        <div id="data-containers" data-hx-ext="class-tools">
+        <header>
+          <h2 id="obligations-heading">
+        Obligations Overview
+          </h2>
+          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
+                  class="btn-fold">
+        +
+          </button>
+        </header>
+        <div id="data-containers" data-hx-ext="class-tools" style="display: none;">
           <!-- Obligations Container -->
           <div id="obligations-container"
                hx-get="{% url 'obligations:summary' %}"
@@ -292,45 +280,7 @@ Total
             <!-- Obligations will be loaded here -->
           </div>
         </div>
-        <div id="current-filter" class="filter-label">
-          <!-- Will be set dynamically -->
-        </div>
-
-        <div id="obligation-list-container"
-             aria-live="polite"
-             class="obligations-container">
-          <!-- Filtered obligations will be loaded here via HTMX -->
-        </div>
       </article>
     {% endif %}
   </article>
-  <script>
-  // Add the chart scrolling function
-  function scrollCharts(containerId, direction) {
-    const container = document.getElementById(containerId);
-    const scrollAmount = 350; // Adjust as needed
-
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
-
- else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  }
-
-  // Add folding function
-  function foldElement(el, display) {
-    if (el.style.display === 'none') {
-      el.style.display = display;
-      el.previousElementSibling.querySelector('.btn-fold').textContent = '-';
-    }
-
- else {
-      el.style.display = 'none';
-      el.previousElementSibling.querySelector('.btn-fold').textContent = '+';
-    }
-  }
-
-  </script>
 {% endblock body %}

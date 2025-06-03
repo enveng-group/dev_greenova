@@ -1,17 +1,17 @@
 {
-  "name": "typescript-project",
-  "version": "1.0.0",
-  "description": "A basic TypeScript project structure.",
-  "main": "src/index.ts",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "watch": "tsc --watch"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "author": "",
-  "license": "ISC"
+	"name": "typescript-project",
+	"version": "1.0.0",
+	"description": "A basic TypeScript project structure.",
+	"main": "src/index.ts",
+	"scripts": {
+		"build": "tsc",
+		"start": "node dist/index.js",
+		"watch": "tsc --watch"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"author": "",
+	"license": "ISC"
 }

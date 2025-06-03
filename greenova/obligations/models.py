@@ -33,22 +33,24 @@ logger = logging.getLogger(__name__)
 class Obligation(models.Model):
     """Represents an environmental obligation."""
 
-    obligation_number: Any = models.CharField(
+    obligation_number = models.CharField(
         max_length=20,
         primary_key=True,
         help_text="Format: PCEMP-XXX where XXX is a number",
     )
-    project: Any = models.ForeignKey(
-        Project, on_delete=models.CASCADE, related_name="obligations"
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="obligations",
     )
-    primary_environmental_mechanism: Any = models.ForeignKey(
+    primary_environmental_mechanism = models.ForeignKey(
         "mechanisms.EnvironmentalMechanism",
         on_delete=models.PROTECT,
         related_name="obligations",
         null=True,
         verbose_name="Environmental Mechanism",
     )
-    procedure: Any = models.TextField(
+    procedure: str | None = models.TextField(
         default="Missing procedure",
         help_text="Procedure to follow for this obligation",
         choices=[
@@ -62,7 +64,7 @@ class Obligation(models.Model):
             ("Other", "Other"),
         ],
     )
-    environmental_aspect: Any = models.CharField(
+    environmental_aspect: str = models.CharField(
         max_length=255,
         choices=[
             ("Air", "Air"),
@@ -80,33 +82,24 @@ class Obligation(models.Model):
             ("Dust Management", "Dust Management"),
             ("Reporting", "Reporting"),
             ("Noise Management", "Noise Management"),
-            (
-                "Erosion And Sedimentation Management",
-                "Erosion And Sedimentation Management",
-            ),
-            (
-                "Hazardous Substances And Hydrocarbon Management",
-                "Hazardous Substances And Hydrocarbon Management",
-            ),
+            ("Erosion And Sedimentation Management", "Erosion And Sedimentation Management"),
+            ("Hazardous Substances And Hydrocarbon Management", "Hazardous Substances And Hydrocarbon Management"),
             ("Waste Management", "Waste Management"),
             ("Artificial Light Management", "Artificial Light Management"),
             ("Audits And Inspections", "Audits And Inspections"),
-            (
-                "Design And Construction Requirements",
-                "Design And Construction Requirements",
-            ),
+            ("Design And Construction Requirements", "Design And Construction Requirements"),
             ("Regulatory Compliance Reporting", "Regulatory Compliance Reporting"),
             ("Other", "Other"),
         ],
     )
-    custom_environmental_aspect: Any = models.CharField(
+    custom_environmental_aspect: str | None = models.CharField(
         max_length=255,
         blank=True,
         null=True,
         help_text="If 'Other' is selected for Environmental Aspect, please specify the custom aspect here",
     )
-    obligation: Any = models.TextField()
-    accountability: Any = models.CharField(
+    obligation: str = models.TextField()
+    accountability: str = models.CharField(
         max_length=255,
         choices=[
             ("Perdaman", "Perdaman"),
@@ -115,11 +108,11 @@ class Obligation(models.Model):
             ("Perdaman-during operations", "Perdaman-during operations"),
         ],
     )
-    responsibility: Any = models.CharField(
+    responsibility: str = models.CharField(
         max_length=255,
         choices=get_responsibility_choices(),
     )
-    project_phase: Any = models.CharField(
+    project_phase: str | None = models.CharField(
         max_length=255,
         null=True,
         choices=[
@@ -131,20 +124,20 @@ class Obligation(models.Model):
             ("Other", "Other"),
         ],
     )
-    action_due_date: Any = models.DateField(null=True)
-    close_out_date: Any = models.DateField(null=True, blank=True)
-    status: Any = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default=STATUS_NOT_STARTED
+    action_due_date: models.DateField | None = models.DateField(null=True)
+    close_out_date: models.DateField | None = models.DateField(null=True, blank=True)
+    status: str = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_NOT_STARTED,
     )
-    supporting_information: Any = models.TextField(blank=True, null=True)
-    general_comments: Any = models.TextField(blank=True, null=True)
-    compliance_comments: Any = models.TextField(blank=True, null=True)
-    non_conformance_comments: Any = models.TextField(blank=True, null=True)
-    evidence_notes: Any = models.TextField(
-        blank=True, null=True, help_text="Notes about the uploaded evidence"
-    )
-    recurring_obligation: Any = models.BooleanField(default=False)
-    recurring_frequency: Any = models.CharField(
+    supporting_information: str | None = models.TextField(blank=True, null=True)
+    general_comments: str | None = models.TextField(blank=True, null=True)
+# Removed compliance_comments and non_conformance_comments fields per issue #51
+    evidence_notes = models.TextField(blank=True, null=True,
+                                      help_text="Notes about the uploaded evidence")
+    recurring_obligation = models.BooleanField(default=False)
+    recurring_frequency: str | None = models.CharField(
         max_length=50,
         null=True,
         choices=[
@@ -161,7 +154,7 @@ class Obligation(models.Model):
             ("Extreme Weather", "Extreme Weather"),
         ],
     )
-    recurring_status: Any = models.CharField(
+    recurring_status: str | None = models.CharField(
         max_length=50,
         default="not started",
         null=True,
@@ -172,9 +165,10 @@ class Obligation(models.Model):
             ("overdue", "Overdue"),
         ],
     )
-    recurring_forcasted_date: Any = models.DateField(blank=True, null=True)
-    inspection: Any = models.BooleanField(default=False)
-    inspection_frequency: Any = models.CharField(
+    recurring_forecasted_date: models.DateField | None = models.DateField(
+        blank=True, null=True)
+    inspection = models.BooleanField(default=False)
+    inspection_frequency: str | None = models.CharField(
         max_length=50,
         null=True,
         choices=[
@@ -186,11 +180,13 @@ class Obligation(models.Model):
             ("Annually", "Annually"),
         ],
     )
-    site_or_desktop: Any = models.CharField(
-        max_length=10, choices=[("Site", "Site"), ("Desktop", "Desktop")], null=True
+    site_or_desktop: str | None = models.CharField(
+        max_length=10,
+        choices=[("Site", "Site"), ("Desktop", "Desktop")],
+        null=True,
     )
-    new_control_action_required: Any = models.BooleanField(default=False)
-    obligation_type: Any = models.CharField(
+    new_control_action_required: bool = models.BooleanField(default=False)
+    obligation_type: str | None = models.CharField(
         max_length=50,
         null=True,
         choices=[
@@ -206,10 +202,10 @@ class Obligation(models.Model):
             ("Safety", "Safety"),
         ],
     )
-    gap_analysis: Any = models.BooleanField(default=False)
-    notes_for_gap_analysis: Any = models.TextField(blank=True, null=True)
-    created_at: Any = models.DateTimeField(auto_now_add=True)
-    updated_at: Any = models.DateTimeField(auto_now=True)
+    gap_analysis: bool | None = models.BooleanField(default=False)
+    notes_for_gap_analysis: str | None = models.TextField(blank=True, null=True)
+    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Obligation"
@@ -220,28 +216,23 @@ class Obligation(models.Model):
             models.Index(fields=["action_due_date"]),
             models.Index(fields=["project"]),
         ]
-        app_label = "obligations"
 
     def __str__(self) -> str:
         return f"{self.obligation_number} - {self.project.name}"
 
     def calculate_next_recurring_date(self) -> date | None:
-        """
-        Calculate the next recurring date based on frequency and current/last date.
+        """Calculate the next recurring date based on frequency and current/last date.
 
         Returns:
             date: The next forecasted date or None if not applicable
+
         """
         # If not recurring or no frequency, don't calculate
         if not self.recurring_obligation or not self.recurring_frequency:
             return None
 
         # Start from last forecasted date, due date, or today
-        base_date = (
-            self.recurring_forcasted_date
-            or self.action_due_date
-            or timezone.now().date()
-        )
+        base_date = self.recurring_forecasted_date or self.action_due_date or timezone.now().date()
 
         # If base date is in the past, start from today
         today = timezone.now().date()
@@ -253,31 +244,30 @@ class Obligation(models.Model):
         # Calculate next date based on frequency
         if normalized_frequency == FREQUENCY_DAILY:
             return base_date + relativedelta(days=1)
-        elif normalized_frequency == FREQUENCY_WEEKLY:
+        if normalized_frequency == FREQUENCY_WEEKLY:
             return base_date + relativedelta(weeks=1)
-        elif normalized_frequency == FREQUENCY_FORTNIGHTLY:
+        if normalized_frequency == FREQUENCY_FORTNIGHTLY:
             return base_date + relativedelta(weeks=2)
-        elif normalized_frequency == FREQUENCY_MONTHLY:
+        if normalized_frequency == FREQUENCY_MONTHLY:
             return base_date + relativedelta(months=1)
-        elif normalized_frequency == FREQUENCY_QUARTERLY:
+        if normalized_frequency == FREQUENCY_QUARTERLY:
             return base_date + relativedelta(months=3)
-        elif normalized_frequency == FREQUENCY_BIANNUAL:
+        if normalized_frequency == FREQUENCY_BIANNUAL:
             return base_date + relativedelta(months=6)
-        elif normalized_frequency == FREQUENCY_ANNUAL:
+        if normalized_frequency == FREQUENCY_ANNUAL:
             return base_date + relativedelta(years=1)
         # Default to monthly if we don't recognize the frequency
         logger.warning(
-            "Unrecognized frequency '%s' - defaulting to monthly",
-            self.recurring_frequency,
-        )
+            f"Unrecognized frequency '{
+                self.recurring_frequency}' - defaulting to monthly")
         return base_date + relativedelta(months=1)
 
     def update_recurring_forecasted_date(self) -> bool:
-        """
-        Update the recurring forecasted date based on frequency and current status.
+        """Update the recurring forecasted date based on frequency and current status.
 
         Returns:
             bool: True if the date was updated, False otherwise
+
         """
         # Skip if not recurring
         if not self.recurring_obligation:
@@ -286,19 +276,19 @@ class Obligation(models.Model):
         next_date = self.calculate_next_recurring_date()
 
         # Check if the date changed
-        if next_date != self.recurring_forcasted_date:
-            self.recurring_forcasted_date = next_date
+        if next_date != self.recurring_forecasted_date:
+            self.recurring_forecasted_date = next_date
             return True
 
         return False
 
     @classmethod
     def get_next_obligation_number(cls) -> str:
-        """
-        Generate the next sequential obligation number in the format PCEMP-XXX.
+        """Generate the next sequential obligation number in the format PCEMP-XXX.
 
         Returns:
             str: The next obligation number (e.g., PCEMP-101)
+
         """
         prefix = "PCEMP-"
 
@@ -310,11 +300,10 @@ class Obligation(models.Model):
 
         for obligation in all_obligations:
             if obligation.obligation_number and obligation.obligation_number.startswith(
-                prefix
-            ):
+                    prefix):
                 try:
                     # Extract numeric part after the prefix
-                    number_part = obligation.obligation_number[len(prefix) :]
+                    number_part = obligation.obligation_number[len(prefix):]
                     current_number = int(number_part)
 
                     # Update highest if we found a larger number
@@ -337,11 +326,9 @@ class Obligation(models.Model):
         # This allows new records to pass validation before the number is generated
         if self.obligation_number and self.obligation_number.strip():
             if not re.match(r"^PCEMP-\d+$", self.obligation_number):
-                raise ValidationError(
-                    {
-                        "obligation_number": "Obligation number must be in the format PCEMP-XXX where XXX is a number"
-                    }
-                )
+                raise ValidationError({
+                    "obligation_number": "Obligation number must be in the format PCEMP-XXX where XXX is a number",
+                })
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         """Override save to update mechanism counts and ensure proper obligation number format."""
@@ -351,20 +338,20 @@ class Obligation(models.Model):
 
         # Ensure the format is correct (prefix + number)
         if not self.obligation_number.startswith("PCEMP-"):
-            self.obligation_number = f"PCEMP-{self.obligation_number.split('-')[-1] if '-' in self.obligation_number else self.obligation_number}"
+            self.obligation_number = f"PCEMP-{
+                self.obligation_number.split('-')[
+                    -1] if '-' in self.obligation_number else self.obligation_number}"
 
-        try:
-            super().save(*args, **kwargs)
-        except Exception as exc:
-            logger.error("Error saving obligation: %s", str(exc))
+        super().save(*args, **kwargs)
 
         # Update mechanism counts
         if self.primary_environmental_mechanism:
             self.primary_environmental_mechanism.update_obligation_counts()
 
     @property
-    def is_overdue(self) -> bool:
+    def is_overdue(self):
         """Check if obligation is overdue."""
+        from django.utils import timezone
         if self.status != "completed" and self.action_due_date:
             return self.action_due_date < timezone.now().date()
         return False
@@ -372,21 +359,20 @@ class Obligation(models.Model):
 
 # Signal handlers to update mechanism counts
 @receiver(post_save, sender=Obligation)
-def update_mechanism_counts_on_save(sender, instance, **kwargs):
+def update_mechanism_counts_on_save(sender, instance, **kwargs) -> None:
     """Update mechanism counts when an obligation is saved."""
     try:
         if instance.primary_environmental_mechanism:
             instance.primary_environmental_mechanism.update_obligation_counts()
             logger.info(
-                "Updated counts for mechanism %s",
-                instance.primary_environmental_mechanism.name,
-            )
+                f"Updated counts for mechanism {
+                    instance.primary_environmental_mechanism.name}")
     except Exception as e:
-        logger.error("Error updating mechanism counts on save: %s", str(e))
+        logger.exception(f"Error updating mechanism counts on save: {e!s}")
 
 
 @receiver(post_delete, sender=Obligation)
-def update_mechanism_counts_on_delete(sender, instance, **kwargs):
+def update_mechanism_counts_on_delete(sender, instance, **kwargs) -> None:
     """Update mechanism counts when an obligation is deleted."""
     if instance.primary_environmental_mechanism:
         instance.primary_environmental_mechanism.update_obligation_counts()
@@ -395,10 +381,11 @@ def update_mechanism_counts_on_delete(sender, instance, **kwargs):
 class ObligationEvidence(models.Model):
     """Model to store multiple evidence files for an obligation."""
 
-    obligation: Any = models.ForeignKey(
-        "Obligation", on_delete=models.CASCADE, related_name="evidences"
-    )
-    file: Any = models.FileField(
+    obligation = models.ForeignKey(
+        "Obligation",
+        on_delete=models.CASCADE,
+        related_name="evidences")
+    file = models.FileField(
         upload_to="evidence_files/%Y/%m/%d/",
         validators=[
             FileExtensionValidator(
@@ -413,15 +400,14 @@ class ObligationEvidence(models.Model):
                     "jpeg",
                     "gif",
                     "txt",
-                    "csv",
-                ]
-            )
+                    "csv"],
+            ),
         ],
         max_length=255,
         help_text="Upload evidence documents (25MB max)",
     )
-    uploaded_at: Any = models.DateTimeField(auto_now_add=True)
-    description: Any = models.CharField(max_length=255, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ["-uploaded_at"]
@@ -436,14 +422,13 @@ class ObligationEvidence(models.Model):
         size = self.file.size
         if size < 1024:
             return f"{size} bytes"
-        elif size < 1024 * 1024:
+        if size < 1024 * 1024:
             return f"{size / 1024:.1f} KB"
-        else:
-            return f"{size / (1024 * 1024):.1f} MB"
+        return f"{size / (1024 * 1024):.1f} MB"
 
 
 @receiver(pre_save, sender="obligations.Obligation")
-def update_forecasted_date_on_change(sender, instance, **kwargs):
+def update_forecasted_date_on_change(sender, instance, **kwargs) -> None:
     """Signal handler to update forecasted date when relevant fields change."""
     # If this is a new instance, skip this check
     if not instance.pk:
@@ -456,21 +441,18 @@ def update_forecasted_date_on_change(sender, instance, **kwargs):
         old_instance = sender.objects.get(pk=instance.pk)
 
         # Check if relevant fields changed
-        if (
-            instance.recurring_obligation != old_instance.recurring_obligation
-            or instance.recurring_frequency != old_instance.recurring_frequency
-            or instance.status != old_instance.status
-            or instance.action_due_date != old_instance.action_due_date
-        ):
+        if (instance.recurring_obligation != old_instance.recurring_obligation or
+                instance.recurring_frequency != old_instance.recurring_frequency or
+                instance.status != old_instance.status or
+                instance.action_due_date != old_instance.action_due_date):
+
             instance.update_recurring_forecasted_date()
 
         # If status changed to completed, handle recurring logic
-        if (
-            instance.status == STATUS_COMPLETED
-            and old_instance.status != STATUS_COMPLETED
-            and instance.recurring_obligation
-        ):
-            # When a recurring obligation is completed, reset status and calculate next date
+        if (instance.status == STATUS_COMPLETED and old_instance.status !=
+                STATUS_COMPLETED and instance.recurring_obligation):
+            # When a recurring obligation is completed, reset status and calculate
+            # next date
             instance.status = STATUS_NOT_STARTED
             instance.update_recurring_forecasted_date()
 
@@ -480,12 +462,10 @@ def update_forecasted_date_on_change(sender, instance, **kwargs):
 
 
 @receiver(pre_save, sender="obligations.Obligation")
-def ensure_obligation_number(sender, instance, **kwargs):
-    """
-    Ensure obligation has a valid number before saving.
+def ensure_obligation_number(sender, instance, **kwargs) -> None:
+    """Ensure obligation has a valid number before saving.
     If it's a new record without a number, generate one.
     """
     if not instance.pk and (
-        not instance.obligation_number or instance.obligation_number.strip() == ""
-    ):
+            not instance.obligation_number or instance.obligation_number.strip() == ""):
         instance.obligation_number = Obligation.get_next_obligation_number()

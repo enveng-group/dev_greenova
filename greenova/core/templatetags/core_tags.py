@@ -1,12 +1,7 @@
 import logging
 
 from core.commons import get_active_namespace, get_user_display_name
-from core.constants import (
-    AUTH_NAVIGATION,
-    MAIN_NAVIGATION,
-    THEME_OPTIONS,
-    USER_NAVIGATION,
-)
+from core.constants import AUTH_NAVIGATION, MAIN_NAVIGATION, USER_NAVIGATION
 from django import template
 from django.conf import settings
 from django.urls import NoReverseMatch, reverse
@@ -28,7 +23,7 @@ def active_link(context, url_name, css_class="active"):
         if current_url.startswith(target_url):
             return css_class
     except NoReverseMatch:
-        logger.debug("No reverse match for %s", url_name)
+        logger.debug("No reverse match for %s", url_name)  # Fixed lazy formatting
     return ""
 
 
@@ -48,7 +43,7 @@ def breadcrumb_navigation(context):
             "title": "Home",
             "url": reverse("home"),
             "active": request.path == reverse("home"),
-        }
+        },
     )
 
     # Add namespace-based breadcrumb if applicable
@@ -61,7 +56,7 @@ def breadcrumb_navigation(context):
                     "title": namespace.title(),
                     "url": url,
                     "active": request.path == url,
-                }
+                },
             )
         except NoReverseMatch:
             # Try with just the namespace
@@ -72,7 +67,7 @@ def breadcrumb_navigation(context):
                         "title": namespace.title(),
                         "url": url,
                         "active": request.path == url,
-                    }
+                    },
                 )
             except NoReverseMatch:
                 # Just add the namespace as text
@@ -81,7 +76,7 @@ def breadcrumb_navigation(context):
                         "title": namespace.title(),
                         "url": None,
                         "active": True,
-                    }
+                    },
                 )
 
     return {"crumbs": crumbs}
@@ -94,22 +89,24 @@ def auth_menu(context):
     user = request.user if request else None
 
     return {
-        "user": user,
         "is_authenticated": user.is_authenticated if user else False,
+        "user_display_name": (
+            get_user_display_name(user) if user and user.is_authenticated else ""
+        ),
         "user_navigation": USER_NAVIGATION,
         "auth_navigation": AUTH_NAVIGATION,
-        "user_display_name": get_user_display_name(user)
-        if user and user.is_authenticated
-        else None,
     }
 
 
 @register.inclusion_tag("core/components/theme_switcher.html")
 def theme_switcher():
-    """Render theme switcher component."""
-    return {
-        "theme_options": THEME_OPTIONS,
-    }
+    """Renders theme switcher with available theme options."""
+    theme_options = [
+        ("Auto", "auto"),
+        ("Light", "light"),
+        ("Dark", "dark"),
+    ]
+    return {"theme_options": theme_options}
 
 
 @register.simple_tag
@@ -139,20 +136,9 @@ def user_role_in_project(project, user):
 
 
 @register.simple_tag(takes_context=True)
-def base_url(context):
+def base_url(context) -> str:
     """Get the base URL from the request."""
     request = context.get("request")
     if request:
         return f"{request.scheme}://{request.get_host()}"
     return ""
-
-
-@register.filter(name="format_date")
-def format_date(date_value, format_string="%d %b %Y"):
-    """Format a date with a specified format string."""
-    if date_value is None:
-        return ""
-    try:
-        return date_value.strftime(format_string)
-    except (AttributeError, ValueError):
-        return str(date_value)

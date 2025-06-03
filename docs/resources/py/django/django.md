@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django Learning Resource](#django-learning-resource)
+  - [Introduction](#introduction)
+  - [Key Features](#key-features)
+  - [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [Django Project Structure](#django-project-structure)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django Learning Resource
 
 ## Introduction

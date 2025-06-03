@@ -1,8 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""
-Dashboard middleware for maintaining state between requests.
+"""Dashboard middleware for maintaining state between requests.
 
 This middleware ensures project selection persists across requests and
 handles the injection of necessary context for dashboard rendering.
@@ -18,8 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class DashboardPersistenceMiddleware:
-    """
-    Middleware for maintaining dashboard state across requests.
+    """Middleware for maintaining dashboard state across requests.
 
     This middleware:
     1. Preserves project selection across requests
@@ -28,23 +26,23 @@ class DashboardPersistenceMiddleware:
     """
 
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
-        """
-        Initialize the middleware.
+        """Initialize the middleware.
 
         Args:
             get_response: The callable that processes the request and returns the response
+
         """
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
-        """
-        Process the request through the middleware.
+        """Process the request through the middleware.
 
         Args:
             request: The HTTP request object
 
         Returns:
             The HTTP response object
+
         """
         # Before the view is called
         self.process_request(request)
@@ -58,11 +56,11 @@ class DashboardPersistenceMiddleware:
         return response
 
     def process_request(self, request: HttpRequest) -> None:
-        """
-        Process the request before it reaches the view.
+        """Process the request before it reaches the view.
 
         Args:
             request: The HTTP request object
+
         """
         try:
             # Only process for dashboard-related views
@@ -90,27 +88,27 @@ class DashboardPersistenceMiddleware:
             logger.exception("Error in DashboardPersistenceMiddleware: %s", str(e))
 
     def process_response(self, request: HttpRequest, response: HttpResponse) -> None:
-        """
-        Process the response after the view has been called.
+        """Process the response after the view has been called.
 
         Args:
             request: The HTTP request object
             response: The HTTP response object
+
         """
         # This method could be used to modify the response if needed
 
     def _is_dashboard_view(self, request: HttpRequest) -> bool:
-        """
-        Check if the current request is for a dashboard view.
+        """Check if the current request is for a dashboard view.
 
         Args:
             request: The HTTP request object
 
         Returns:
             True if the request is for a dashboard view, False otherwise
+
         """
         try:
             resolver_match = resolve(request.path)
             return resolver_match.app_name == "dashboard"
-        except:
+        except BaseException:
             return False

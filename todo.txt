@@ -1,7 +1,115 @@
-remove mechanism overview card
-when hovering over the overdue obligation card, it will pop up iframe view on same page of overdue obligations utilising existing obligation record filter logic and view list
-design is good
-just needs cleaning up
-after selecting project, dynamically load the mechanism overview card with the selected project and
-display the mechanism charts
-when hovering over the active obligations card, it will pop up iframe view on same page of active obligations utilising existing obligation record filter logic and view list sorting by action due date oldest date most urgent first to latest date
+# TODO List for Open Pull Requests (enveng-group/dev_greenova)
+#
+# Merge order below is optimal for safety and efficiency.
+# - Migrations and authentication PRs are merged first to ensure database and security stability.
+# - Bugfixes follow to address correctness and prevent regressions.
+# - Dependency and environment/tooling updates are merged next to avoid breaking changes.
+# - Features, UI/UX, and refactors are merged after stability is ensured.
+# - The major refactor PR is merged last to minimize merge conflicts and ensure all prior changes are integrated.
+# If you suspect hidden dependencies, review PRs or request a dependency graph.
+#
+# Prioritized squash merge order (as of 2025-06-02):
+# 18. PR 103: feat(core): add IPython autoreload, syntax checking, and bash aliases file
+# 19. PR 171: Selective merge from b6f5328e: refactor dashboard, templates, and docs
+
+Review and merge all open PRs (resolve conflicts as needed).
+Run linting, formatting, type checking, and security scans on the merged codebase.
+Fix all issues flagged by automated tools.
+Refactor and improve code as needed.
+Run unittest, coverage, and selenium tests to verify code correctness and coverage.
+Enforce pre-commit hooks and CI checks to prevent regressions.
+Run the app in the browser to perform manual verification and exploratory testing.
+
+tools/merge_conflict_detector/merge-conflict-detector maintenance --aggressive --prune
+
+git fetch origin pull/151/head:pr-151
+
+tools/merge_conflict_detector/merge-conflict-detector analyze -b integration/v0.0.7 -b pr-151 -f text > logs/merge-detector.log
+
+git checkout -b cherry-pick-pr-148-files
+
+git checkout 774eed9401f052c3a0440ab379d9317abbfca17f -- \
+  greenova/greenova/settings.py \
+  greenova/greenova/urls.py \
+  greenova/mechanisms/templates/mechanisms/mechanism_charts.html \
+  greenova/procedures/templates/procedures/procedure_charts.html \
+  greenova/static/js/app.js \
+  greenova/templates/base.html
+
+
+git add greenova/greenova/settings.py \
+        greenova/greenova/urls.py \
+        greenova/mechanisms/templates/mechanisms/mechanism_charts.html \
+        greenova/procedures/templates/procedures/procedure_charts.html \
+        greenova/static/js/app.js \
+        greenova/templates/base.html
+
+git commit -m "Cherry-pick: Apply PR #148 (commit 774eed94) for issue #110 (selected files only)"
+
+
+git push origin cherry-pick-pr-148-files
+# or merge to integration/v0.0.7 and push
+git merge cherry-pick-pr-148-files
+git push origin integration/v0.0.7
+
+git checkout integration/v0.0.7
+git merge --squash pr-145
+git commit -m "feat(auditing): extract compliance and non-conformance comments into standalone app
+
+- See PR #145 for details.
+- [Include summary of changes and conflict resolutions here.]
+"
+
+tools/merge_conflict_detector/merge-conflict-detector maintenance --prune
+
+git push origin integration/v0.0.7
+git remote prune origin
+
+
+ compare changes below with existing design.css, please generate new file
+
+```python
+/* Root Variables */
+:root {
+  --greenova-main-spacing: 5rem;
+  --greenova-head-spacing: 5rem;
+  --greenova-charts-width: 320px;
+  --greenova-font-family: 'Arial';
+  /*"Ubuntu"*/
+  --greenova-font-weight: normal;
+  --greenova-line-height: 1.125;
+  --greenova-letter-spacing: 0.0625rem;
+  /* 1px */
+
+  --pico-font-family: var(--greenova-font-family);
+  --pico-font-weight: var(--greenova-font-weight);
+  --pico-line-height: var(--greenova-line-height);
+  --greenova-border-radius: 0.5rem;
+  --greenova-border-radius-small: 0.25rem;
+  --greenova-spacing-large: 0.75rem;
+  --greenova-spacing: 0.46875rem;
+  --greenova-spacing-small: 0.3125rem;
+  --greenova-padding-large: 1.25rem;
+  --greenova-padding: 0.625rem;
+  --greenova-padding-small: 0.3125rem;
+  --greenova-shadow: 0 0.125rem 0.125rem rgb(0 0 0 / 10%);
+  --greenova-theme-icon-size: 1.1rem;
+  --greenova-title-size: 1.2rem;
+  --greenova-subtitle-size: 0.9rem;
+  --greenova-text-size: 0.8rem;
+  --greenova-input-label: 0.8rem;
+  --greenova-input-size: 0.75rem;
+  --greenova-table-size: 0.7rem;
+  --greenova-button-size: 0.8rem;
+
+  /* For visual clarity */
+  --greenova-table-border: 0.05rem solid #000;
+
+  /* Chat Radius Box */
+  --greenova-chat-border-radius: 1rem;
+  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
+  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
+}
+```

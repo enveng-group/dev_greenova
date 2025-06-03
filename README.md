@@ -1,264 +1,259 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Greenova](#greenova)
+  - [Technical Stack](#technical-stack)
+  - [Requirements Files](#requirements-files)
+    - [Development Container Requirements](#development-container-requirements)
+    - [Project Requirements](#project-requirements)
+  - [Installation](#installation)
+    - [Using Development Container (Recommended)](#using-development-container-recommended)
+    - [Manual Installation](#manual-installation)
+  - [IPython Integration](#ipython-integration)
+    - [Features](#features)
+    - [Usage](#usage)
+      - [Using shell_plus (Recommended)](#using-shell_plus-recommended)
+      - [Standard Python with Django](#standard-python-with-django)
+      - [VS Code Launch Configurations](#vs-code-launch-configurations)
+    - [Development Helpers](#development-helpers)
+    - [IPython Magic Commands](#ipython-magic-commands)
+    - [Configuration](#configuration)
+  - [Development Tools](#development-tools)
+  - [Quick Start](#quick-start)
+  - [Project Structure](#project-structure)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Author](#author)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Greenova
 
-[![Python 3.12.9](https://img.shields.io/badge/python-3.12.9-blue.svg)](https://www.python.org/downloads/release/python-3921/)
-[![Django 5.2](https://img.shields.io/badge/django-5.2-green.svg)](https://www.djangoproject.com/)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+Greenova is a Django web application for environmental management, focusing on tracking environmental obligations and compliance requirements. This application is used by environmental professionals to monitor compliance status and manage obligations related to environmental regulations.
 
-## 📋 Overview
+## Technical Stack
 
-Greenova is a Django web application designed for environmental management,
-focusing on tracking environmental obligations and compliance requirements.
-Built with accessibility and simplicity in mind, it helps organizations manage
-their environmental responsibilities efficiently.
+- **Python**: 3.12.10 (exact version required)
+- **Django**: 5.2 (exact version required)
+- **Node.js**: 22.16.0 (exact version required)
+- **npm**: 11.3.0 (exact version required)
+- **Database**: SQLite3 for development and production
 
-## 🚀 Features
+## Requirements Files
 
-- Environmental obligation tracking
-- Compliance requirement management
-- Project-based organization
-- Mechanism and procedure documentation
-- User responsibility assignment
-- Accessible, HTML-first interface
+This project uses two separate requirements files:
 
-## 🛠️ Technology Stack
+### Development Container Requirements
 
-Greenova is a Django web application that prioritizes semantic HTML structure,
-progressive enhancement, and accessibility. The project follows data-oriented
-programming principles and provides a modular framework for building robust web
-applications.
+- **File**: `.devcontainer/local-features/python/requirements.txt`
+- **Purpose**: Contains development tools and utilities needed for the development container
+- **Includes**: pre-commit hooks, linting tools, formatters, and other development dependencies
+- **Usage**: Automatically installed when the dev container is built
 
-- Django-Hyperscript 1.0.2
-- Django-Tailwind 3.6.0
-- Django-Allauth 65.4.1
+### Project Requirements
 
-### Frontend
+- **File**: `requirements.txt` (root level)
+- **Purpose**: Contains core project dependencies needed to run the application
+- **Includes**: Django, production libraries, and runtime dependencies
+- **Usage**: Install manually or in production environments
 
-- HTML5
-- PicoCSS (classless framework)
-- Django-Tailwind (for utility classes)
-- Modern-Normalize
+## Installation
 
-### DevOps
+### Using Development Container (Recommended)
 
-- Docker
-- GitHub CI/CD
-- venv (virtual environment)
+1. Open the project in VS Code with the Dev Containers extension
+2. Select "Reopen in Container" when prompted
+3. The development container will automatically install all development tools from `.devcontainer/local-features/python/requirements.txt`
+4. Install project dependencies:
 
-## 🏛️ Architecture
+   ```bash
+   # Using uv (preferred)
+   uv pip install -r requirements.txt
 
-The application follows a modular design with clear separation of concerns:
-
-1. **Data Definition Layer**: Immutable data structures with validation
-2. **Data Processing Layer**: Functional transformations using map, filter, and
-   reduce
-3. **Data Flow Layer**: Pipelines for managing workflow
-4. **Exception Handling Layer**: Business rule and system exception management
-5. **Data Storage Layer**: Immutable data storage with optimized queries
-6. **Automation Layer**: Task execution and monitoring
-7. **Security Layer**: Role-based access control and data encryption
-
-## 📥 Installation
-
-### Prerequisites
-
-- Python 3.12.9
-- Node.js 20.19.1
-- NPM 11.3.0
-
-### Setup
-
-1. Clone the repository:
-
-   ```fish
-   git clone https://github.com/enssol/greenova.git
-   cd greenova
+   # Alternative: Using pip
+   pip install -r requirements.txt
    ```
 
-2. Create and activate a virtual environment:
+### Manual Installation
 
-   ```fish
-   python3 -m venv .venv
-   source .venv/bin/activate.fish
+1. Ensure you have Python 3.12.10 installed
+2. Create a virtual environment:
+
+   ```bash
+   # Using uv (preferred - faster and more reliable)
+   uv venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+   # Alternative: Using traditional venv
+   python -m venv venv
+   source venv/bin/activate
    ```
 
-3. Install pip-tools and compile requirements:
+3. Install project dependencies:
 
-   ```fish
-   pip install --upgrade pip pip-tools
-   pip-compile requirements/requirements.in
-   pip-compile requirements/requirements-dev.in
-   pip-compile requirements/requirements-prod.in
-   pip-compile --all-build-deps --all-extras --output-file=requirements/constraints.txt --strip-extras requirements/requirements.in
+   ```bash
+   # Using uv (preferred)
+   uv pip install -r requirements.txt
+
+   # Alternative: Using pip
+   pip install -r requirements.txt
    ```
 
-4. Install Python dependencies with pip-sync:
+4. For development, also install development tools:
 
-   ```fish
-   pip-sync requirements/requirements.txt requirements/requirements-dev.txt -c requirements/constraints.txt
+   ```bash
+   # Using uv (preferred)
+   uv pip install -r .devcontainer/local-features/python/requirements.txt
+
+   # Alternative: Using pip
+   pip install -r .devcontainer/local-features/python/requirements.txt
    ```
 
-5. Install Node.js dependencies:
+## IPython Integration
 
-   ```fish
-   npm install
-   ```
+This project includes enhanced IPython integration for improved Django development experience.
 
-6. Apply migrations:
+### Features
 
-   ```fish
+- **Enhanced Django Shell**: Use `python manage.py shell_plus` for an IPython-powered Django shell with auto-imports
+- **Interactive Development**: The `python_startup.py` script provides useful imports and helper functions
+- **VS Code Integration**: Pre-configured launch configurations for IPython sessions
+- **Auto-reload**: Automatic code reloading when files change during development
+
+### Usage
+
+#### Using shell_plus (Recommended)
+
+The enhanced Django shell with IPython and automatic model imports:
+
+```bash
+cd greenova
+python manage.py shell_plus
+```
+
+This will start an IPython session with:
+
+- All Django models automatically imported
+- Common Django utilities pre-loaded
+- SQL query printing enabled (in DEBUG mode)
+- Auto-reload functionality
+
+#### Standard Python with Django
+
+For a standard Python session with Django configured:
+
+```bash
+cd greenova
+python  # This will automatically load python_startup.py
+```
+
+#### VS Code Launch Configurations
+
+Use VS Code's Run and Debug panel to access:
+
+- **Django: Shell Plus (IPython)** - Enhanced Django shell
+- **IPython: Interactive Session** - Pure IPython with Django environment
+- **Django: Standard Shell** - Standard Django shell
+- **Django: Runserver** - Development server
+- **Python: Unit Tests** - Test runner
+
+### Development Helpers
+
+The `python_startup.py` script provides several helper functions:
+
+```python
+# Create a test user
+user = create_test_user("admin", "admin@example.com", "password123")
+
+# Show all available Django models
+show_models()
+
+# Reset database (DEBUG mode only)
+reset_db()
+
+# Access common imports
+User.objects.all()  # User model
+tz.now()           # timezone utilities
+dt.now()           # datetime utilities
+```
+
+### IPython Magic Commands
+
+When using IPython, you can use these magic commands:
+
+```python
+%autoreload 2      # Auto-reload changed modules
+%time some_code    # Time execution
+%debug             # Enter debugger on exception
+%who               # List variables
+%whos              # Detailed variable list
+```
+
+### Configuration
+
+IPython behavior is configured in `greenova/settings.py`:
+
+- `SHELL_PLUS = "ipython"` - Use IPython as default shell
+- `SHELL_PLUS_PRINT_SQL = DEBUG` - Print SQL in development
+- `IPYTHON_ARGUMENTS` - Custom IPython startup arguments
+- `SHELL_PLUS_IMPORTS` - Additional imports for shell sessions
+
+## Development Tools
+
+The development container includes pre-configured tools for:
+
+- **Testing**: unittest
+- **Linting**: ruff, pylint, djlint, markdownlint, stylelint, eslint, shellcheck
+- **Type Checking**: mypy with Django stubs
+- **Formatting**: ruff-format, prettier, shfmt
+- **Runtime Type Checking**: beartype
+- **Documentation**: pydoc with Google style docstrings
+
+## Quick Start
+
+1. Set up the development environment (see Installation above)
+2. Run database migrations:
+
+   ```bash
    python manage.py migrate
    ```
 
-> **Note:** All dependencies are managed with pip-tools and constraints.txt for
-> reproducibility. See requirements/README.md for details.
-
-7. Create a superuser:
+3. Create a superuser:
 
    ```bash
    python manage.py createsuperuser
    ```
 
-8. Run the development server:
+4. Start the development server:
 
    ```bash
    python manage.py runserver
    ```
 
-## Dependency Management
+## Project Structure
 
-The Greenova project uses a structured approach to manage Python dependencies,
-ensuring consistency across development, testing, and production environments.
-The dependencies are organized as follows:
-
-### Requirements Directory
-
-- **`requirements/requirements.in`**: Contains essential runtime dependencies
-  required for the application to function.
-- **`requirements/requirements-dev.in`**: References `requirements.in` and
-  includes additional dependencies for development, such as testing and linting
-  tools.
-- **`requirements/requirements-prod.in`**: References `requirements.in` and
-  includes production-specific dependencies, such as WSGI servers.
-- **`requirements/constraints.txt`**: Pins versions for all dependencies (both
-  direct and indirect) to ensure reproducible builds.
-
-### Usage
-
-- **Development Environment**:
-
-  - Install dependencies using:
-
-    ```bash
-    pip-sync requirements/requirements.txt requirements/requirements-dev.txt -c requirements/constraints.txt
-    ```
-
-- **Production Environment**:
-
-  - Install dependencies using:
-
-    ```bash
-    pip-sync requirements/requirements.txt requirements/requirements-prod.txt -c requirements/constraints.txt
-    ```
-
-### Devcontainer Setup
-
-The `.devcontainer` configuration automatically installs the development
-dependencies (`requirements/requirements-dev.in`) when the container is built
-or started. This ensures a consistent development environment.
-
-### Setup.py
-
-The `setup.py` file includes only the minimal core dependencies required for
-runtime, with flexible version specifications. Additional development
-dependencies are specified under `extras_require`.
-
-### Benefits
-
-- **No Duplication**: Dependencies are defined in a single location, avoiding
-  inconsistencies.
-- **Reproducibility**: Pinned versions in `constraints.txt` ensure consistent
-  builds across environments.
-- **Modularity**: Separate files for runtime, development, and production
-  dependencies make it easy to manage and update.
-
-Refer to the `requirements/` directory for detailed dependency specifications.
-
-## Manual Installation of Microsoft Python Type Stubs
-
-To enable type checking for certain libraries, you need to manually install the
-`microsoft-python-type-stubs` package. This package is not available on PyPI
-and must be installed directly from GitHub:
-
-```bash
-pip install git+https://github.com/microsoft/python-type-stubs.git
+```
+greenova/
+├── .devcontainer/
+│   └── local-features/
+│       └── python/
+│           └── requirements.txt  # Development container dependencies
+├── requirements.txt              # Core project dependencies
+├── manage.py
+└── ...
 ```
 
-Ensure this is done in your development environment before running `mypy` or
-other type-checking tools.
+## Contributing
 
-## Environment Variables
+1. Ensure all pre-commit hooks pass
+2. Follow the coding standards defined in the project instructions
+3. Write tests for new functionality
+4. Update documentation as needed
 
-Greenova requires a `.env` file to store sensitive configuration values. Below
-are the required and optional environment variables:
+## License
 
-### Required Variables
+AGPL-3.0
 
-- `DJANGO_SECRET_KEY`: The secret key for Django. Must be set to a secure
-  value.
-- `DJANGO_DEBUG`: Set to `True` for development or `False` for production.
-- `DJANGO_ALLOWED_HOSTS`: A comma-separated list of allowed hostnames (e.g.,
-  `localhost,127.0.0.1`).
+## Author
 
-### Optional Variables
-
-- `GITHUB_CLIENT_ID`: GitHub OAuth client ID for social authentication.
-- `GITHUB_CLIENT_SECRET`: GitHub OAuth client secret for social authentication.
-
-### Creating the `.env` File
-
-1. Create a `.env` file in the project root:
-
-   ```bash
-   touch .env
-   ```
-
-2. Populate the file with the required variables:
-
-   ```env
-   DJANGO_SECRET_KEY="your-secure-secret-key"
-   DJANGO_DEBUG=True
-   DJANGO_ALLOWED_HOSTS="localhost,127.0.0.1"
-   ```
-
-3. Add any optional variables as needed.
-
-Ensure the `.env` file is not committed to version control by verifying it is
-listed in `.gitignore`.
-
-## 🔧 Usage
-
-Access the application at [http://localhost:8000](http://localhost:8000) after
-starting the development server.
-
-### Key workflows
-
-1. Log in using the credentials created during setup
-2. Create projects and define environmental mechanisms
-3. Add obligations related to your projects
-4. Assign responsibilities to users
-5. Monitor compliance status
-
-## 🤝 Contributing
-
-We welcome contributions to Greenova! Please check our contributing guidelines
-in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
-
-## 📄 License
-
-This project is licensed under the GNU Affero General Public License v3.0 - see
-the [LICENSE](LICENSE) file for details.
-
-## 📊 Project Status
-
-Greenova is under active development. Check our [roadmap](docs/ROADMAP.md) for
-upcoming features and improvements.
+Adrian Gallo - <agallo@enveng-group.com.au>

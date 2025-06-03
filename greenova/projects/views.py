@@ -1,8 +1,3 @@
-"""
-Views for the projects app in Greenova.
-Handles project listing, selection, and related utilities.
-"""
-
 import logging
 from typing import Any, TypeVar, cast
 
@@ -14,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import ListView, TemplateView
+from django.views.generic import TemplateView
 from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
 from obligations.models import Obligation
 
@@ -58,7 +53,7 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             # If the user is selecting a project that requires special permissions
             project_id = request.GET.get("project_id")
             if project_id and self.requires_special_access(
-                project_id, cast(AbstractUser, request.user)
+                project_id, cast("AbstractUser", request.user),
             ):
                 return HttpResponseClientRedirect("/permissions-check/")
 
@@ -76,18 +71,6 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             return False
 
 
-class ProjectListView(LoginRequiredMixin, ListView):
-    """List all projects the user is a member of."""
-
-    model = Project
-    template_name = "projects/projects_list.html"
-    context_object_name = "projects"
-
-    def get_queryset(self):
-        """Return projects for the current user."""
-        return Project.objects.filter(members=self.request.user)
-
-
 def project_obligations(_request: HttpRequest, project_id: str) -> JsonResponse:
     """Retrieve obligations associated with a specific project."""
     project = get_object_or_404(Project, id=project_id)
@@ -103,19 +86,19 @@ def project_obligations(_request: HttpRequest, project_id: str) -> JsonResponse:
 
 
 def get_user_role(project: Project, user: AbstractUser) -> str:
-    """
-    Get user's role in project.
+    """Get user's role in project.
 
     Args:
         project: The project to check
         user: The user to get role for
     Returns:
         str: User's role or 'viewer' if none found
+
     """
     try:
         return project.get_user_role(user)
     except Exception as e:  # pylint: disable=broad-exception-caught
-        logger.error("Error getting user role: %s", e)
+        logger.exception("Error getting user role: %s", e)
         return "viewer"
 
 
@@ -144,7 +127,12 @@ def role_badge(role: str) -> dict:
         "member": "info",
         "viewer": "secondary",
     }
-    badge_icon = {"owner": "star", "manager": "cog", "member": "user", "viewer": "eye"}
+    badge_icon = {
+        "owner": "star",
+        "manager": "cog",
+        "member": "user",
+        "viewer": "eye",
+    }
     return {
         "role": role,
         "color": colors.get(role, "secondary"),
@@ -164,108 +152,110 @@ def get_project(project_id: str) -> Project:
 
 def get_user(user_id: str) -> AbstractUser:
     """Get user by ID."""
-    return cast(AbstractUser, get_object_or_404(User, id=user_id))
+    return cast("AbstractUser", get_object_or_404(User, id=user_id))
 
 
 def get_role_display(role_value: str) -> str:
     """Get the display name for a role value."""
-    role_display_names = {
+    ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
         "manager": "Manager",
         "member": "Member",
         "viewer": "Viewer",
     }
-    return role_display_names.get(role_value, role_value.title())
+    return ROLE_DISPLAY_NAMES.get(role_value, role_value.title())
 
 
 def get_role_color(role_value: str) -> str:
     """Get the display color for a role value."""
-    role_colors = {
+    ROLE_COLORS = {
         "owner": "success",
         "manager": "primary",
         "member": "info",
         "viewer": "default",
     }
-    return role_colors.get(role_value, "default")
+    return ROLE_COLORS.get(role_value, "default")
 
 
 def get_role_choices() -> list[tuple[str, str]]:
-    """
-    Get choices for model field with human-readable display names.
+    """Get choices for model field with human-readable display names.
 
     Returns:
-        list[tuple[str, str]]: List of tuples (role_value, display_name)
+        List[Tuple[str, str]]: List of tuples (role_value, display_name)
+
     """
-    role_display_names = {
+    ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
         "manager": "Manager",
         "member": "Member",
         "viewer": "Viewer",
     }
-    return list(role_display_names.items())
+    return list(ROLE_DISPLAY_NAMES.items())
 
 
 def get_responsibility_choices() -> list[tuple[str, str]]:
-    """
-    Get choices for the responsibility field in Obligation
+    """Get choices for the responsibility field in Obligation
     model. Uses display names as values for backward compatibility.
 
     Returns:
-        list[tuple[str, str]]: List of tuples (display_name, display_name)
+        List[Tuple[str, str]]: List of tuples (display_name, display_name)
+
     """
-    return [
-        (display_name, display_name)
-        for _, display_name in get_role_choices()
-        if display_name not in ["Owner", "Manager", "Member", "Viewer"]
-    ]
+    # For the responsibility field, both the key and value are the display name
+    # This maintains compatibility with existing data
+    return [(display_name, display_name) for _, display_name in get_role_choices()
+            if display_name not in {"Owner", "Manager", "Member", "Viewer"}]
 
 
 def get_role_from_responsibility(responsibility: str) -> str:
-    """
-    Convert a responsibility display name to its corresponding role value.
+    """Convert a responsibility display name to its corresponding role value.
 
     Args:
         responsibility (str): The display name of the responsibility
     Returns:
         str: The corresponding role value or None if not found
+
     """
-    role_display_names = {
+    ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
         "manager": "Manager",
         "member": "Member",
         "viewer": "Viewer",
     }
-    inverse_map = {display: value for value, display in role_display_names.items()}
+    inverse_map = {display: value for value, display in ROLE_DISPLAY_NAMES.items()}
     return inverse_map.get(responsibility)
 
 
 def get_responsibility_from_role(role: str) -> str:
-    """
-    Convert a role value to its corresponding responsibility display name.
+    """Convert a role value to its corresponding responsibility display name.
 
     Args:
         role (str): The role value
     Returns:
         str: The corresponding responsibility display name or None if not found
+
     """
-    role_display_names = {
+    ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
         "manager": "Manager",
         "member": "Member",
         "viewer": "Viewer",
     }
-    return role_display_names.get(role)
+    return ROLE_DISPLAY_NAMES.get(role)
 
 
 def get_responsibility_display_name(responsibility: str) -> str:
-    """
-    Get the display name for a responsibility value.
+    """Get the display name for a responsibility value.
 
     Args:
         responsibility (str): The responsibility value or display name
     Returns:
         str: The display name for the responsibility
+
     """
+    # If the responsibility is already a display name, return it
     if responsibility in [display for _, display in get_role_choices()]:
         return responsibility
+
+    # Otherwise, convert to display name using the role mapping
     return get_responsibility_from_role(responsibility)

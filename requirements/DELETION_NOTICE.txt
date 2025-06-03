@@ -1,1 +1,0 @@
-All legacy requirements files (base.in, base.txt, dev.in, dev.txt, prod.in, prod.txt) are now deprecated and will be deleted in a future release. Please migrate to the new pip-tools workflow as documented in requirements/README.md and docs/REQUIREMENTS_WORKFLOW.md.

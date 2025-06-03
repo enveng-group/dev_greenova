@@ -1,17 +1,21 @@
 import logging
 
-import matplotlib
+import matplotlib as mpl
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
-from django.views.generic import ListView, TemplateView
+from django.views.generic import TemplateView
 from projects.models import Project
+
+# Optional: Only include these if you want Plotly interactive charts
+import plotly.graph_objects as go
+from plotly.offline import plot
 
 from .figures import get_mechanism_chart, get_overall_chart
 from .models import EnvironmentalMechanism
 
-matplotlib.use("Agg")  # Use Agg backend for non-interactive plotting
+mpl.use("Agg")  # Use Agg backend for non-interactive plotting
 
 logger = logging.getLogger(__name__)
 
@@ -39,38 +43,30 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             return context
 
         try:
-            # Check if project exists
             project = Project.objects.get(id=project_id)
-
-            # Get mechanisms for this project
             mechanisms = EnvironmentalMechanism.objects.filter(project_id=project_id)
-
-            # Generate charts for each mechanism
             mechanism_charts = []
 
             # Add overall chart first
-            _, overall_chart_data = get_overall_chart(project_id)
-
-            mechanism_charts.append(
-                {"name": "Overall Status", "image_data": overall_chart_data}
-            )
+            overall_fig, overall_chart_data = get_overall_chart(project_id)
+            mechanism_charts.append({
+                "name": "Overall Status",
+                "image_data": overall_chart_data,
+                "figure": plot(overall_fig, output_type="div"),
+            })
 
             # Generate charts for individual mechanisms
             for mechanism in mechanisms:
-                _, chart_data = get_mechanism_chart(mechanism.id)
-
-                mechanism_charts.append(
-                    {
-                        "id": mechanism.id,
-                        "name": mechanism.name,
-                        "image_data": chart_data,
-                    }
-                )
+                fig, chart_data = get_mechanism_chart(mechanism.id)
+                mechanism_charts.append({
+                    "id": mechanism.id,
+                    "name": mechanism.name,
+                    "image_data": chart_data,
+                    "figure": plot(fig, output_type="div"),
+                })
 
             context["mechanism_charts"] = mechanism_charts
             context["project"] = project
-
-            # Add table data with mechanism ID
             context["table_data"] = [
                 {
                     "id": m.id,
@@ -80,37 +76,18 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                     "completed": m.completed_count,
                     "overdue": m.overdue_count,
                     "total": (
-                        m.not_started_count
-                        + m.in_progress_count
-                        + m.completed_count
-                        + m.overdue_count
+                        m.not_started_count +
+                        m.in_progress_count +
+                        m.completed_count +
+                        m.overdue_count
                     ),
-                }
-                for m in mechanisms
+                } for m in mechanisms
             ]
 
         except Project.DoesNotExist:
             context["error"] = f"Project with ID {project_id} not found"
-        except Project.DoesNotExist:
-            context["error"] = f"Project with ID {project_id} not found"
-        except EnvironmentalMechanism.DoesNotExist:
-            context["error"] = "No mechanisms found for the selected project"
-        except ValueError as e:
-            logger.error("Value error while generating mechanism charts: %s", str(e))
-            context["error"] = f"Invalid data encountered: {e!s}"
-        except RuntimeError as e:
-            logger.error("Runtime error generating mechanism charts: %s", str(e))
-            context["error"] = "A runtime error occurred. Please try again later."
+        except Exception as e:
+            logger.exception("Error generating mechanism charts: %s", e)
+            context["error"] = f"Error generating charts: {e!s}"
 
         return context
-
-
-class MechanismListView(LoginRequiredMixin, ListView):
-    """List all environmental mechanisms."""
-
-    model = EnvironmentalMechanism
-    template_name = "mechanisms/mechanisms_list.html"
-    context_object_name = "mechanisms"
-
-    def get_queryset(self):
-        return EnvironmentalMechanism.objects.all()

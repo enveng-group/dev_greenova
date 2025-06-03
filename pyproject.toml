@@ -1,121 +1,126 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools", "wheel", "uvenv"]
 build-backend = "setuptools.build_meta"
-
-# Dependency management is handled via pip-tools and requirements/*.in files.
-# See requirements/README.rst and docs/REQUIREMENTS_WORKFLOW.md for workflow.
-# Do not add dependencies here; use requirements/requirements.in and pip-compile.
-
-[tool.autopep8]
-max_line_length = 88
-ignore = ["E501", "E302", "E305"]
-in-place = true
-recursive = true
-aggressive = 3
-single_quotes = true
-
-[tool.djlint]
-profile = "django"
-indent = 2
-max_line_length = 88
-use_gitignore = true
-format_css = false
-format_js = false
-ignore = "H014,H015,T002"
-include = "**/*.html,**/*.jinja,**/*.djhtml"
-exclude = "**/node_modules/**,**/bower_components/**,**/vendors/**,**/static/**,**/media/**,**/migrations/**,**/__pycache__/**,**/.git/**,**/.venv/**,**/.env/**,**/.pytest_cache/**,**/.mypy_cache/**,**/build/**,**/dist/**,**/.eggs/**,**/docs/conf.py/**,**/requirements/**"
-extension = "django-html,html,jinja"
-preserve_blank_lines = true
-preserve_leading_space = true
-require_pragma = false
-
-[tool.mypy]
-python_version = "3.12"
-plugins = ["mypy_django_plugin.main"]
-exclude = ['^migrations/.*\.py$', '^tests/.*\.py$']
-mypy_path = "greenova/stubs"
-explicit_package_bases = true
-namespace_packages = true
-strict = true
-packages = ["greenova"]
-ignore_missing_imports = true
-
-[tool.django-stubs]
-django_settings_module = "greenova.greenova.settings"
-
-[tool.bandit]
-context_lines = 3
-exclude = [
-    "/tests",
-    "/env",
-    "/venv",
-    "/.git",
-    "*.pyc",
-    "**/test_*.py",
-    "**/*_test.py",
-    "**/mock_*.py",
-]
-skips = ["B311"]
-hardcoded_password_string = ["password", "passwd", "pwd", "secret"]
-severity = "LOW"
-confidence = "LOW"
-format = "txt"
-output = "bandit-results.txt"
-processes = 4
-exit_zero = false
-recursive = true
-verbose = true
-exclude_dirs = ["tests", "migrations", "docs"]
 
 [tool.ruff]
 line-length = 88
+indent-width = 4
 target-version = "py312"
-fix = true
-unsafe-fixes = true
-extend-exclude = [
-    "migrations",
-    "__pycache__",
-    ".pytest_cache",
-    ".mypy_cache",
+exclude = [
+    ".git",
     ".venv",
+    "venv",
+    "migrations",
     "node_modules",
-    "docs/conf.py",
-    "old",
-    "build",
-    "dist",
-    ".eggs",
+    "static",
+    "staticfiles",
+    "media",
+    "stubs",
+    "tests",
+    "db.sqlite3",
+    "db.sqlite3.bak"
 ]
 
 [tool.ruff.lint]
-select = [
-    "E",   # pycodestyle
-    "F",   # pyflakes
-    "D",   # pydocstyle
-    "I",   # isort
-    "N",   # pep8-naming
-    "UP",  # pyupgrade
-    "PLC", # pylint
-    "PLE", # pylint
-    "PLR", # pylint
-    "PLW", # pylint
-    "RUF", # Ruff-specific rules
-]
-ignore = ["E501", "D203", "D212"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.pylint]
-max-args = 8
-max-branches = 12
-max-statements = 50
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401", "F403"]
-"tests/*" = ["S101", "S105", "S106", "S107"]
+select = ["ALL"]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+preview = true
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
-line-ending = "lf"
 skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.isort]
+profile = "black"
+line_length = 88
+atomic = true
+force_single_line = true
+known_first_party = "greenova"
+skip_gitignore = true
+
+[tool.autopep8]
+max_line_length = 88
+in-place = true
+recursive = true
+aggressive = 3
+
+[tool.djlint]
+profile = "django"
+indent = 4
+max_line_length = 88
+format_css = true
+format_js = true
+close_void_tags = true
+blank_line_after_tag = "load,extends,include"
+blank_line_before_tag = "load,extends,include"
+format_attribute_template_tags = true
+preserve_blank_lines = false
+preserve_leading_space = false
+use_gitignore = true
+require_pragma = false
+
+[tool.vulture]
+# Configuration for vulture: https://github.com/jendrikseipp/vulture
+# Install in your virtual environment and run:
+# python -m vulture | tail -r | less
+# The below configuration tries to remove some false positives, but there are
+# still many, for example for model properties used only in templates.
+# See also:
+# https://adamj.eu/tech/2023/07/12/django-clean-up-unused-code-vulture/
+exclude = [
+  "*/settings.py",
+  "*/settings/*.py",
+  "*/migrations/*.py",
+]
+ignore_decorators = [
+  # Django
+  "@receiver",
+  "@register.filter",
+  "@register.inclusion_tag",
+  "@register.simple_tag",
+  # django.contrib.admin
+  "@admin.action",
+  "@admin.display",
+  "@admin.register",
+  # pytest
+  "@pytest.fixture",
+]
+ignore_names = [
+  # Django
+  "*Config",  # AppConfig subclasses
+  "*Middleware",
+  "clean_*",
+  "Meta",
+  "urlpatterns",
+  # django.contrib.admin
+  "get_extra",
+  "get_fieldsets",
+  "has_add_permission",
+  "has_change_permission",
+  "has_delete_permission",
+  "has_view_permission",
+  "lookups",
+]
+paths = [
+  "greenova",
+]
+sort_by_size = true
+min_confidence = 95
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+django_settings_module = "greenova.settings"
+
+[tool.django-stubs]
+django_settings_module = "greenova.settings"
+
+# IPython Configuration
+[tool.ipython]
+# IPython configuration can go here if needed
+# Most IPython config is handled in the startup script and Django settings

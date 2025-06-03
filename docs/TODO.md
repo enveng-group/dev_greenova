@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Greenova Project TODO](#greenova-project-todo)
+  - [Completed Tasks](#completed-tasks)
+  - [Technology Integration Tasks](#technology-integration-tasks)
+    - [Frontend Tools & Libraries](#frontend-tools--libraries)
+    - [Authentication & User Management](#authentication--user-management)
+    - [DevOps & Infrastructure](#devops--infrastructure)
+    - [Code Quality & CI/CD](#code-quality--cicd)
+    - [Documentation & Architecture](#documentation--architecture)
+    - [Migrate Templates from DTL to Jinja2](#migrate-templates-from-dtl-to-jinja2)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Greenova Project TODO
 
 This document tracks tasks and action items for the Greenova environmental

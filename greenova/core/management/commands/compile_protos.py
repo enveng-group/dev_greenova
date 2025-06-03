@@ -1,9 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""
-Management command to compile Protocol Buffer definition files for the project.
-"""
+"""Management command to compile Protocol Buffer definition files for the project."""
 
 import logging
 import os
@@ -13,7 +11,6 @@ import shutil
 import subprocess  # nosec B404
 from shlex import quote
 from subprocess import (  # nosec B404
-    PIPE,
     CalledProcessError,
     CompletedProcess,
     TimeoutExpired,
@@ -27,24 +24,24 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Compile protocol buffer definition files for the project'
+    help = "Compile protocol buffer definition files for the project"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument(
-            '--force',
-            action='store_true',
-            help='Force recompilation of existing files'
+            "--force",
+            action="store_true",
+            help="Force recompilation of existing files",
         )
         parser.add_argument(
-            '--app',
+            "--app",
             type=str,
-            help='Compile protobuf files for specific app'
+            help="Compile protobuf files for specific app",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         """Compile protobuf definitions to Python classes."""
-        app_name = options.get('app')
-        force = options.get('force', False)
+        app_name = options.get("app")
+        force = options.get("force", False)
 
         # Process all apps if no specific app is provided
         if app_name:
@@ -53,7 +50,7 @@ class Command(BaseCommand):
                 self.process_app(app_config, force)
             except LookupError:
                 self.stdout.write(
-                    self.style.ERROR(f"Unknown app: {app_name}")
+                    self.style.ERROR(f"Unknown app: {app_name}"),
                 )
                 return
         else:
@@ -69,19 +66,19 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Protocol buffer compilation completed successfully"
-            )
+                "Protocol buffer compilation completed successfully",
+            ),
         )
 
-    def process_app(self, app_config, force=False):
+    def process_app(self, app_config, force=False) -> None:
         """Process protocol buffer files for a single app."""
         app_dir = app_config.path
         app_name = app_config.name
 
         # Check if this app has proto directories
         proto_dirs = [
-            os.path.join(app_dir, 'proto'),
-            os.path.join(app_dir, 'data')
+            os.path.join(app_dir, "proto"),
+            os.path.join(app_dir, "data"),
         ]
 
         proto_files_found = False
@@ -90,7 +87,7 @@ class Command(BaseCommand):
                 continue
 
             self.stdout.write(
-                self.style.NOTICE(f"Processing {app_name} app...")
+                self.style.NOTICE(f"Processing {app_name} app..."),
             )
 
             proto_files = self._get_proto_files(proto_dir)
@@ -111,12 +108,12 @@ class Command(BaseCommand):
 
         if proto_files_found:
             self.stdout.write(
-                self.style.SUCCESS(f"Finished processing {app_name} app")
+                self.style.SUCCESS(f"Finished processing {app_name} app"),
             )
 
     def _get_protoc_path(self):
         """Get the absolute path to the protoc executable."""
-        protoc_path = shutil.which('protoc')
+        protoc_path = shutil.which("protoc")
         if not protoc_path:
             self.stdout.write(self.style.ERROR("protoc executable not found in PATH"))
             self._show_installation_instructions()
@@ -128,16 +125,16 @@ class Command(BaseCommand):
         if not os.path.exists(proto_dir):
             return []
 
-        proto_files = [f for f in os.listdir(proto_dir) if f.endswith('.proto')]
+        proto_files = [f for f in os.listdir(proto_dir) if f.endswith(".proto")]
         if not proto_files:
             self.stdout.write(
                 self.style.WARNING(
-                    f"No .proto files found in {proto_dir}, skipping"
-                )
+                    f"No .proto files found in {proto_dir}, skipping",
+                ),
             )
         return proto_files
 
-    def _process_proto_files(self, proto_files, paths, force=False):
+    def _process_proto_files(self, proto_files, paths, force=False) -> None:
         """Process a list of proto files."""
         proto_dir = paths["proto_dir"]
         output_dir = paths["output_dir"]
@@ -151,16 +148,16 @@ class Command(BaseCommand):
                     "output_dir": output_dir,
                     "protoc_path": protoc_path,
                 },
-                force=force
+                force=force,
             )
 
-    def _compile_proto_file(self, proto_file, paths, force):
+    def _compile_proto_file(self, proto_file, paths, force) -> None:
         """Compile a single proto file securely."""
         try:
             proto_path = os.path.join(paths["proto_dir"], proto_file)
             base_name = os.path.splitext(proto_file)[0]
             expected_output = os.path.join(
-                paths["output_dir"], f"{base_name}_pb2.py"
+                paths["output_dir"], f"{base_name}_pb2.py",
             )
 
             # Skip if output file exists and force is not set
@@ -178,7 +175,7 @@ class Command(BaseCommand):
                 "proto_path": os.path.abspath(proto_path),
                 "proto_dir": os.path.abspath(paths["proto_dir"]),
                 "output_dir": os.path.abspath(paths["output_dir"]),
-                "protoc_path": os.path.abspath(paths["protoc_path"])
+                "protoc_path": os.path.abspath(paths["protoc_path"]),
             }
 
             self._run_protoc_command(safe_paths)
@@ -187,27 +184,33 @@ class Command(BaseCommand):
         except (subprocess.CalledProcessError, ValueError) as e:
             self._handle_compilation_error(proto_file, e)
 
-    def _validate_paths(self, paths, proto_path):
+    def _validate_paths(self, paths, proto_path) -> None:
         """Validate all paths for security and existence."""
         if not os.path.isfile(paths["protoc_path"]):
-            raise ValueError(f"Invalid protoc path: {paths['protoc_path']}")
+            msg = f"Invalid protoc path: {paths['protoc_path']}"
+            raise ValueError(msg)
         if not os.path.isdir(paths["output_dir"]):
-            raise ValueError(f"Invalid output directory: {paths['output_dir']}")
+            msg = f"Invalid output directory: {paths['output_dir']}"
+            raise ValueError(msg)
         if not os.path.isdir(paths["proto_dir"]):
-            raise ValueError(f"Invalid proto directory: {paths['proto_dir']}")
+            msg = f"Invalid proto directory: {paths['proto_dir']}"
+            raise ValueError(msg)
         if not os.path.isfile(proto_path):
-            raise ValueError(f"Invalid proto file: {proto_path}")
+            msg = f"Invalid proto file: {proto_path}"
+            raise ValueError(msg)
 
         # Ensure no path traversal is possible
-        for _, path in paths.items():
-            if '..' in path or not os.path.normpath(path) == path:
-                raise ValueError(f"Potentially unsafe path detected: {path}")
+        for path in paths.values():
+            if ".." in path or os.path.normpath(path) != path:
+                msg = f"Potentially unsafe path detected: {path}"
+                raise ValueError(msg)
 
         # Ensure proto file is within proto_dir
         if not os.path.dirname(os.path.abspath(proto_path)).startswith(
-            os.path.abspath(paths["proto_dir"])
+            os.path.abspath(paths["proto_dir"]),
         ):
-            raise ValueError(f"Proto file {proto_path} is outside of proto directory")
+            msg = f"Proto file {proto_path} is outside of proto directory"
+            raise ValueError(msg)
 
     def _run_protoc_command(self, paths):
         """Execute protoc command with proper arguments."""
@@ -221,7 +224,7 @@ class Command(BaseCommand):
             # Log command being executed for audit trail
             logger.info(
                 "Executing protoc: %s --python_out=%s --proto_path=%s %s",
-                paths["protoc_path"], safe_output_dir, safe_proto_dir, safe_proto_path
+                paths["protoc_path"], safe_output_dir, safe_proto_dir, safe_proto_path,
             )
 
             # Build command with arguments as a list for safety
@@ -229,13 +232,13 @@ class Command(BaseCommand):
                 paths["protoc_path"],
                 f'--python_out={paths["output_dir"]}',
                 f'--proto_path={paths["proto_dir"]}',
-                paths["proto_path"]
+                paths["proto_path"],
             ]
 
             # Use a secure execution pattern with explicit parameters
             result = self._secure_command_exec(
                 cmd=cmd,
-                timeout=30
+                timeout=30,
             )
 
             # Log successful execution
@@ -243,26 +246,27 @@ class Command(BaseCommand):
             return result
 
         except TimeoutExpired as exc:
-            logger.error("protoc execution timed out")
-            raise ValueError("Protocol buffer compilation timed out") from exc
+            logger.exception("protoc execution timed out")
+            msg = "Protocol buffer compilation timed out"
+            raise ValueError(msg) from exc
 
     def _secure_command_exec(self, cmd, timeout=30) -> CompletedProcess:
         """Execute a command securely with proper parameters and validation."""
         if not isinstance(cmd, list):
-            raise ValueError("Command must be a list, not a string")
+            msg = "Command must be a list, not a string"
+            raise ValueError(msg)
 
         # Verify no shell=True is used and capture all output
         # nosec B603 - We're explicitly using shell=False for security and validation
         return subprocess.run(
             cmd,
             check=True,
-            stdout=PIPE,
-            stderr=PIPE,
+            capture_output=True,
             shell=False,  # nosec B603
-            timeout=timeout
+            timeout=timeout,
         )
 
-    def _verify_generated_file(self, proto_file, output_dir):
+    def _verify_generated_file(self, proto_file, output_dir) -> bool:
         """Verify that the compiled protobuf file was generated successfully."""
         base_name = os.path.splitext(proto_file)[0]
         expected_output = os.path.join(output_dir, f"{base_name}_pb2.py")
@@ -270,34 +274,34 @@ class Command(BaseCommand):
         if not os.path.exists(expected_output):
             self.stdout.write(
                 self.style.ERROR(
-                    f"Expected output file {expected_output} was not generated"
-                )
+                    f"Expected output file {expected_output} was not generated",
+                ),
             )
             return False
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully compiled {proto_file}")
+            self.style.SUCCESS(f"Successfully compiled {proto_file}"),
         )
         return True
 
-    def _handle_compilation_error(self, proto_file, error):
+    def _handle_compilation_error(self, proto_file, error) -> None:
         """Handle errors during proto file compilation."""
         if isinstance(error, CalledProcessError):
-            stderr = error.stderr.decode() if error.stderr else 'No output'
+            stderr = error.stderr.decode() if error.stderr else "No output"
             self.stdout.write(
                 self.style.ERROR(
-                    f"Failed to compile {proto_file}: {stderr}"
-                )
+                    f"Failed to compile {proto_file}: {stderr}",
+                ),
             )
         else:
             self.stdout.write(
                 self.style.ERROR(
-                    f"Failed to compile {proto_file}: {str(error)}"
-                )
+                    f"Failed to compile {proto_file}: {error!s}",
+                ),
             )
 
-    def _show_installation_instructions(self):
-        """Show instructions for installing the protoc compiler"""
+    def _show_installation_instructions(self) -> None:
+        """Show instructions for installing the protoc compiler."""
         err_msg = (
             "protoc command not found. "
             "Please install Protocol Buffers compiler."

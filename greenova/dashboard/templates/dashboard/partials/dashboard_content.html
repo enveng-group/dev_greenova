@@ -2,245 +2,39 @@
 {% load user_tags %}
 {% load core_tags %}
 {% load dashboard_tags %}
-{% load custom_filters %}
 
-<!-- Dashboard content that will be swapped when a project is selected -->
-<!-- This contains ONLY the charts and data tables, not structural elements -->
+<!-- Partial content for HTMX dashboard refreshes -->
+<header data-hx-ext="class-tools" data-classes="add slide-in-from-top:0.3s">
+  <hgroup>
+    <h1>Hi {{ request.user|display_name }}</h1>
+    <h2>
+      Welcome to Enveng Groups ECMS where we make managing and tracking complex environmental commitments and obligations a whole lot easier for you.
+    </h2>
+  </hgroup>
+</header>
 
-<!-- Dashboard Summary Cards -->
-<section class="dashboard-metrics"
-         aria-label="Dashboard Summary"
-         id="dashboard-metrics-container"
-         data-hx-preserve="true">
-  <div class="card metric-card card-status-danger">
-    <div class="card-body">
-      <h3 class="metric-card-label">
-Overdue Obligations
-      </h3>
-      <div class="metric-card-value">
-{{ overdue_obligations_count|default:"0" }}
-      </div>
-      <div class="metric-card-trend">
-        <span class="trend-indicator"></span>
-        <span class="trend-down">Overdue</span>
-      </div>
-    </div>
-  </div>
+<!-- Project Selection -->
+{% include "projects/projects_selector.html" %}
 
-  <div class="card metric-card card-status-primary">
-    <div class="card-body">
-      <h3 class="metric-card-label">
-Active Obligations
-      </h3>
-      <div class="metric-card-value">
-{{ active_obligations_count|default:"120" }}
-      </div>
-      <div class="metric-card-trend">
-        <span class="trend-indicator"></span>
-        {% if active_obligations_trend > 0 %}
-          <span class="trend-up">↑ {{ active_obligations_trend }}% from last month</span>
-        {% elif active_obligations_trend < 0 %}
-          <span class="trend-down">↓ {{ active_obligations_trend|abs_value }} % from last month</span>
-        {% else %}
-          <span class="trend-neutral">No change from last month</span>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  <div class="card metric-card card-status-warning">
-    <div class="card-body">
-      <h3 class="metric-card-label">
-Upcoming Deadlines
-      </h3>
-      <div class="metric-card-value">
-{{ upcoming_deadlines_count|default:"15" }}
-      </div>
-      <div class="metric-card-trend">
-within 7 days
-      </div>
-    </div>
-  </div>
-
-  <div class="card metric-card card-status-success">
-    <div class="card-body">
-      <h3 class="metric-card-label">
-Projects Overview
-      </h3>
-      <div class="metric-card-value">
-{{ active_projects_count|default:"1" }}
-      </div>
-      <div class="metric-card-trend">
-Active Projects
-      </div>
-    </div>
-  </div>
-
-  <div class="card metric-card card-status-secondary">
-    <div class="card-body">
-      <h3 class="metric-card-label">
-Mechanisms Overview
-      </h3>
-      <div class="metric-card-value">
-{{ active_mechanisms_count|default:"10" }}
-      </div>
-      <div class="metric-card-trend">
-Active Mechanisms
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Data Container for Charts -->
-<div id="data-containers"
-     data-hx-ext="class-tools"
-     class="dashboard-charts">
-  <!-- Obligation Compliance Chart -->
-  <div class="card chart-container">
-    <div class="card-header">
-      <h3 class="card-header-title">
-Obligation Compliance
-      </h3>
-      <div class="card-header-actions">
-        <button class="btn-icon" aria-label="Refresh chart">
-          <span class="icon-refresh" aria-hidden="true"></span>
-        </button>
-        <button class="btn-icon" aria-label="Download chart data">
-          <span class="icon-download" aria-hidden="true"></span>
-        </button>
-      </div>
-    </div>
-    <div class="card-body chart-content"
-         id="obligation-compliance-chart"
-         hx-get="{% url 'mechanisms:mechanism_charts' %}"
-         hx-trigger="load"
-         {% if project_selector_exists %}
-           hx-include="#project-selector"
-         {% endif %}
-         hx-target="#obligation-compliance-chart"
-         hx-swap="innerHTML">
-      <div class="loading-indicator">
-        <p>
-        Loading chart data...
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mechanisms Chart -->
+<!-- Data Container -->
+<div id="data-containers" data-hx-ext="class-tools">
   <div id="mechanism-data-container"
-       class="card chart-container"
        hx-get="{% url 'mechanisms:mechanism_charts' %}"
-       hx-trigger="load"
+       hx-trigger="projectSelected from:body"
        hx-include="#project-selector"
        hx-target="#mechanism-data-container"
        hx-swap="innerHTML">
-    <div class="loading-indicator">
-      <span class="loading-spinner"></span>
-      <p>
-Loading chart data...
-      </p>
-    </div>
-  </div>
+    {% if not request.GET.project_id %}
 
-  <!-- Procedures Chart -->
-  <div id="procedures-data-container"
-       class="card chart-container"
-       hx-get="{% url 'procedures:procedure_charts' %}"
-       hx-trigger="load"
-       hx-include="#project-selector"
-       hx-target="#procedures-data-container"
-       hx-swap="innerHTML">
-    <div class="loading-indicator">
-      <span class="loading-spinner"></span>
-      <p>
-Loading chart data...
-      </p>
-    </div>
-  </div>
-</div>
+      <div class="notice info" role="status">
+        <p>Please select a project to view mechanism charts.</p>
+      </div>
+    {% else %}
 
-<!-- Upcoming Obligations Table -->
-<section class="card data-table-container"
-         data-hx-ext="class-tools"
-         data-classes="add fade-in:0.8s">
-  <div class="card-header">
-    <h3 class="card-header-title">
-Upcoming Obligations
-    </h3>
-    <div class="card-header-actions">
-      <button class="btn-sm btn-outline"
-              hx-get="{% url 'obligations:obligation_list' %}"
-              hx-push-url="true">
-        View All
-      </button>
-    </div>
-  </div>
-  <div class="card-body">
-    <div class="table-container"
-         id="upcoming-obligations-table"
-         hx-get="{% url 'dashboard:upcoming_obligations' %}"
-         hx-trigger="load"
-         hx-include="#project-selector"
-         hx-target="#upcoming-obligations-table"
-         hx-swap="innerHTML">
-      {% if not selected_project_id %}
-        <div class="notice info" role="status">
-          <p>
-Please select a project to view upcoming obligations.
-          </p>
-        </div>
-      {% else %}
-        <div class="loading-indicator">
-          <span class="loading-spinner"></span>
-          <p>
-Loading obligations data...
-          </p>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-</section>
-
-<!-- Projects at Risk -->
-<section class="card data-table-container"
-         data-hx-ext="class-tools"
-         data-classes="add fade-in:1s">
-  <div class="card-header">
-    <h3 class="card-header-title">
-Projects at Risk of Missing Deadlines
-    </h3>
-    <div class="card-header-actions">
-      <button class="btn-sm btn-outline"
-              hx-get="{% url 'projects:project_list' %}"
-              hx-push-url="true">
-        View All Projects
-      </button>
-    </div>
-  </div>
-  <div class="card-body">
-    <div class="table-container"
-         id="projects-at-risk-table"
-         hx-get="{% url 'dashboard:projects_at_risk' %}"
-         hx-trigger="load"
-         hx-target="#projects-at-risk-table"
-         hx-swap="innerHTML">
       <div class="loading-indicator">
         <span class="loading-spinner"></span>
-        <p>
-Loading projects data...
-        </p>
+        <p>Loading charts...</p>
       </div>
-    </div>
+    {% endif %}
   </div>
-</section>
-
-<!-- Add Obligation Floating Button -->
-<div class="floating-action-button" id="add-obligation-button">
-  <a href="{% url 'obligations:create' %}"
-     class="fab-button"
-     aria-label="Add new obligation">
-    <span class="icon-plus" aria-hidden="true"></span>
-  </a>
-  <span class="fab-tooltip">Add Obligation</span>
 </div>

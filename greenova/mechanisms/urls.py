@@ -5,8 +5,5 @@ from . import views
 app_name = "mechanisms"
 
 urlpatterns = [
-    path(
-        "", views.MechanismListView.as_view(), name="list"
-    ),  # Fixed class name from MechanismsListView to MechanismListView
     path("charts/", views.MechanismChartView.as_view(), name="mechanism_charts"),
 ]

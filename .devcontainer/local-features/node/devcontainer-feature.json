@@ -1,0 +1,6 @@
+{
+	"id": "node",
+	"version": "1.0.0",
+	"name": "Node.js and npm",
+	"description": "Installs Node.js and npm using Alpine package manager."
+}

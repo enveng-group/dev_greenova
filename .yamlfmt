@@ -1,0 +1,35 @@
+# yamlfmt configuration for strict, readable YAML
+
+formatter:
+  type: basic
+  line_ending: "\n"
+  indent: 2
+  max_line_length: 80
+  explicit_start: true
+  explicit_end: false
+  preserve_key_order: true
+  sequence_style: block
+  mapping_style: block
+  flow_sequence_line_length: 80
+  pad_sequences: false
+  pad_mappings: false
+  trailing_spaces: false
+  sort_keys: false
+  retain_line_breaks: true
+  quote_minimal: true
+  double_quote_minimal: true
+  allow_single_quotes: true
+  allow_double_quotes: true
+  force_quotes: false
+  force_double_quotes: false
+  force_single_quotes: false
+  align_colons: false
+  space_before_colon: false
+  space_after_colon: true
+  space_before_comment: true
+  comment_indent: 2
+  blank_lines_before_comment: 0
+  blank_lines_after_comment: 0
+  blank_lines_between_mappings: 0
+  blank_lines_between_sequences: 0
+  blank_lines_between_top_level: 1

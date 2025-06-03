@@ -1,3 +1,26 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Schema for the OR(2) Worksheet](#schema-for-the-or2-worksheet)
+  - [Structure of the Form](#structure-of-the-form)
+  - [Components](#components)
+  - [UI/UX Layout Suggestions](#uiux-layout-suggestions)
+  - [Types of Charts and Visualizations](#types-of-charts-and-visualizations)
+  - [Interactive Elements](#interactive-elements)
+  - [UI/UX Layout Suggestions](#uiux-layout-suggestions-1)
+  - [Interactive Dashboard Layout](#interactive-dashboard-layout)
+    - [1. Header](#1-header)
+    - [2. Overview Section](#2-overview-section)
+    - [3. Filters and Sorting Options](#3-filters-and-sorting-options)
+    - [4. Visualizations](#4-visualizations)
+    - [5. Interactive Elements](#5-interactive-elements)
+    - [6. Notifications and Alerts](#6-notifications-and-alerts)
+    - [7. Actionable Elements](#7-actionable-elements)
+    - [8. Detailed Analysis Section](#8-detailed-analysis-section)
+    - [9. Footer](#9-footer)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Schema for the OR(2) Worksheet
 
 Here is a schema for the table in the worksheet labeled OR(2):
@@ -826,7 +849,7 @@ AND Status != 'Completed';
      following content:
 
      ```sh
-     #!/bin/bash
+     #!/bin/ash
      sqlite3 /path/to/your/database.db < /path/to/your/script.sql
      ```
 

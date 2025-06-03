@@ -4,14 +4,15 @@ from django.contrib import admin
 
 
 class CoreConfig(AppConfig):
+    """Configuration for the Core app."""
+
     default_auto_field = "django.db.models.BigAutoField"
     name = "core"
     verbose_name = "Core System"
 
-    def ready(self):
-        """
-        Initialize core components when Django is ready.
-        """
+    def ready(self) -> None:
+        """Initialize core components when Django is ready."""
+        # Import signals to register handlers
 
         # Customize admin site
         admin.site.site_header = "Environmental Obligations Management"

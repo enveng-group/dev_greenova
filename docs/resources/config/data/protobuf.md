@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Compiling Protocol Buffers for Greenova](#compiling-protocol-buffers-for-greenova)
+  - [Prerequisites](#prerequisites)
+  - [Compilation Steps](#compilation-steps)
+  - [Notes](#notes)
+  - [Troubleshooting](#troubleshooting)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Compiling Protocol Buffers for Greenova
 
 To compile your Protocol Buffer files into Python modules for use in the
@@ -7,7 +18,7 @@ Greenova project, follow these steps:
 
 Ensure you have the following installed and configured:
 
-1. **Python 3.12.9**: The version used in the Greenova project.
+1. **Python 3.12.10**: The version used in the Greenova project.
 2. **Django 5.2**: Ensure your Django environment is set up.
 3. **Protobuf Compiler**: Install the Protocol Buffer compiler (`protoc`).
 

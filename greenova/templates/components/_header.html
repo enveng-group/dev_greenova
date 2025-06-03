@@ -1,4 +1,9 @@
+{% load static %}
 {% load core_tags %}
+<!-- CSRF token for htmx global use (logout link) -->
+<form id="htmx-csrf-token-form" class="visually-hidden">
+  {% csrf_token %}
+</form>
 <nav class="navbar">
 
   <ul class="navbar-nav">

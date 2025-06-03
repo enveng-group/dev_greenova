@@ -1,3 +1,17 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Docker Learning Resources](#docker-learning-resources)
+  - [Official Documentation](#official-documentation)
+  - [Video Tutorials](#video-tutorials)
+    - [Docker Fundamentals](#docker-fundamentals)
+    - [Advanced Topics](#advanced-topics)
+  - [Development Containers](#development-containers)
+    - [Python Development Containers](#python-development-containers)
+  - [Deployment](#deployment)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Docker Learning Resources
 
 ## Official Documentation

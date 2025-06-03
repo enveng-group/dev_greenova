@@ -1,3 +1,70 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [HTMX with Django Guide](#htmx-with-django-guide)
+  - [Introduction](#introduction)
+  - [Benefits of HTMX with Django](#benefits-of-htmx-with-django)
+  - [Installation and Setup](#installation-and-setup)
+    - [1. Install django-htmx](#1-install-django-htmx)
+    - [2. Add the Middleware](#2-add-the-middleware)
+    - [3. Include HTMX in Templates](#3-include-htmx-in-templates)
+  - [Core Concepts](#core-concepts)
+    - [Checking for HTMX Requests](#checking-for-htmx-requests)
+    - [Basic HTMX Attributes](#basic-htmx-attributes)
+  - [Practical Examples](#practical-examples)
+    - [Simple Click-to-Load Example](#simple-click-to-load-example)
+    - [Form Submission Without Page Reload](#form-submission-without-page-reload)
+    - [Live Search](#live-search)
+    - [CRUD Operations Inside a Table](#crud-operations-inside-a-table)
+      - [List View with Delete Button](#list-view-with-delete-button)
+      - [Inline Edit Form](#inline-edit-form)
+  - [Working with Django Messages](#working-with-django-messages)
+  - [Advanced Techniques](#advanced-techniques)
+    - [Indicators for Loading States](#indicators-for-loading-states)
+    - [Browser History Management](#browser-history-management)
+    - [Triggering Events](#triggering-events)
+  - [Partial Rendering](#partial-rendering)
+    - [Using django-template-partials](#using-django-template-partials)
+    - [Leveraging django-template-partials for Reusability](#leveraging-django-template-partials-for-reusability)
+      - [1. Installation](#1-installation)
+      - [2. Define Partials in Your Templates](#2-define-partials-in-your-templates)
+      - [3. Render Only the Partial in Your View](#3-render-only-the-partial-in-your-view)
+    - [Swapping the Base Template](#swapping-the-base-template)
+      - [1. In Your View](#1-in-your-view)
+      - [2. Template Structure](#2-template-structure)
+      - [Partial template (\_partial.html)](#partial-template-%5C_partialhtml)
+  - [Common Use Cases](#common-use-cases)
+    - [Pagination](#pagination)
+    - [Form Validation](#form-validation)
+  - [Best Practices](#best-practices)
+  - [Troubleshooting](#troubleshooting)
+    - [Request Not Working](#request-not-working)
+    - [Swap Issues](#swap-issues)
+    - [Event Handling Problems](#event-handling-problems)
+  - [HTMX Extensions](#htmx-extensions)
+  - [Additional Resources](#additional-resources)
+  - [Extensions Overview](#extensions-overview)
+    - [Head Support Extension Overview](#head-support-extension-overview)
+    - [Head Support Extension](#head-support-extension)
+    - [Using Head Support](#using-head-support)
+      - [Typical Use Cases](#typical-use-cases)
+      - [Path Dependencies Example with Django](#path-dependencies-example-with-django)
+  - [Loading States Extension](#loading-states-extension)
+    - [Loading States Extension Overview](#loading-states-extension-overview)
+      - [Features](#features)
+      - [Django Comments Example](#django-comments-example)
+    - [Class Tools Extension Overview](#class-tools-extension-overview)
+      - [Key Features](#key-features)
+      - [Example with Django](#example-with-django)
+    - [Path Dependencies Overview](#path-dependencies-overview)
+  - [Conclusion](#conclusion)
+  - [Troubleshooting: Indicator and CSRF Errors](#troubleshooting-indicator-and-csrf-errors)
+    - [HTMX Indicator Error](#htmx-indicator-error)
+    - [CSRF Token Error](#csrf-token-error)
+      - [Example (Django)](#example-django)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # HTMX with Django Guide
 
 ## Introduction
@@ -21,6 +88,10 @@ provides integration between Django and HTMX.
 ### 1. Install django-htmx
 
 ```bash
+# Using uv (preferred)
+uv pip install django-htmx
+
+# Alternative: Using pip
 pip install django-htmx
 ```
 
@@ -327,9 +398,9 @@ and maintainability.
 ### Using django-template-partials
 
 The `django-template-partials` package extends Django's Template Language with
-reusable sections called "partials" that can be rendered independently.
-When working with HTMX, you often only need to render part of a page since only
-a specific section is being updated. This optimization can improve performance
+reusable sections called "partials" that can be rendered independently. When
+working with HTMX, you often only need to render part of a page since only a
+specific section is being updated. This optimization can improve performance
 and maintainability.
 
 ### Leveraging django-template-partials for Reusability
@@ -340,6 +411,10 @@ reusable sections called "partials" that can be rendered independently.
 #### 1. Installation
 
 ```bash
+# Using uv (preferred)
+uv pip install django-template-partials
+
+# Alternative: Using pip
 pip install django-template-partials
 ```
 
@@ -491,8 +566,8 @@ payload size and improving performance.
 </div>
 ```
 
-This technique ensures HTMX requests receive only the necessary HTML,
-reducing payload size and improving performance.
+This technique ensures HTMX requests receive only the necessary HTML, reducing
+payload size and improving performance.
 
 ## Common Use Cases
 
@@ -533,8 +608,7 @@ reducing payload size and improving performance.
     hx-post="/check-username/"
     hx-target="#username-error"
     hx-trigger="change"
-1. **Use Request.HTMX**: Check `request.htmx` to determine if a request came
-   from HTMX.
+  />
   <div id="username-error"></div>
 
   <!-- More fields -->
@@ -546,13 +620,13 @@ reducing payload size and improving performance.
 
 ## Best Practices
 
-1. **Use Request.HTMX**: Check `request.htmx` to determine
-   if a request came from HTMX.
+1. **Use Request.HTMX**: Check `request.htmx` to determine if a request came
+   from HTMX.
 
 2. **Keep Templates DRY**: Use template partials for HTMX responses.
 
-3. **Proper Error Handling**: Return appropriate HTTP status codes
-   for HTMX requests.
+3. **Proper Error Handling**: Return appropriate HTTP status codes for HTMX
+   requests.
 
 4. **Accessibility**: Ensure your UI remains accessible when using HTMX.
 
@@ -597,8 +671,8 @@ Django applications.
 
 ## Extensions Overview
 
-HTMX provides extensions that add functionality beyond its core features.
-These extensions can enhance your Django applications in various ways.
+HTMX provides extensions that add functionality beyond its core features. These
+extensions can enhance your Django applications in various ways.
 
 ### Head Support Extension Overview
 
@@ -617,8 +691,8 @@ First, include the extension script:
 
 ### Using Head Support
 
-The Head Support Extension enables dynamic updates to document metadata
-through HTMX responses.
+The Head Support Extension enables dynamic updates to document metadata through
+HTMX responses.
 
 #### Typical Use Cases
 
@@ -686,8 +760,8 @@ provides sophisticated loading states for HTMX requests.
 
 ### Class Tools Extension Overview
 
-The Class Tools Extension enables advanced class manipulation for HTML elements.
-[View documentation](https://htmx.org/extensions/class-tools/)
+The Class Tools Extension enables advanced class manipulation for HTML
+elements. [View documentation](https://htmx.org/extensions/class-tools/)
 
 #### Key Features
 
@@ -699,8 +773,8 @@ The Class Tools Extension enables advanced class manipulation for HTML elements.
 
 ### Path Dependencies Overview
 
-The Path Dependencies Extension helps manage relationships between HTMX requests.
-[View documentation](https://htmx.org/extensions/path-deps/)
+The Path Dependencies Extension helps manage relationships between HTMX
+requests. [View documentation](https://htmx.org/extensions/path-deps/)
 
 ```html
 <div hx-ext="class-tools">
@@ -736,3 +810,35 @@ applications with minimal JavaScript. By leveraging Django's templating system
 alongside HTMX's declarative approach to AJAX, you can build modern user
 experiences while maintaining the simplicity and robustness of server-rendered
 HTML.
+
+## Troubleshooting: Indicator and CSRF Errors
+
+### HTMX Indicator Error
+
+- If you see
+  `The selector "#htmx-indicator" on hx-indicator returned no matches!`,
+  ensure:
+  - The `#htmx-indicator` element is present in the DOM and outside any htmx
+    swap targets.
+  - See the "HTMX Indicator Requirements" section in the style guide for
+    details.
+
+### CSRF Token Error
+
+- If you see
+  `The selector "[name='csrfmiddlewaretoken']" on hx-include returned no matches!`,
+  ensure:
+  - All forms (including those loaded via htmx) include `{% csrf_token %}`.
+  - If using `hx-include`, ensure the selector matches an element present in
+    the DOM at the time of the request.
+
+#### Example (Django)
+
+```html
+<form hx-post="/some-url/" hx-target="#result">
+  {% csrf_token %}
+  <!-- form fields -->
+</form>
+```
+
+See also: `docs/style_guide.md` and `base.html` for implementation details.

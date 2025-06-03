@@ -1,6 +1,0 @@
-# Stub file for mechanisms.models
-from django.db import models
-
-class EnvironmentalMechanism(models.Model): ...
-
-def update_all_mechanism_counts() -> int: ...

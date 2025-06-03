@@ -1,18 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-{{ action|default:"Create" }} Company
-{% endblock title %}
+{% block title %}{{ action }} Company{% endblock title %}
 
 {% block content %}
-  <article>
-    <header>
-      <h1>
-{{ action|default:"Create" }} Company
-      </h1>
-    </header>
+<article>
+  <header>
+    <h1>{{ action }} Company</h1>
+  </header>
 
-{% include "company/company_form_base.html" with button_text=action|default:"Create" %}
-  </article>
+  <div class="form-container">
+    {% include "company/partials/company_form.html" %}
+  </div>
+</article>
 {% endblock content %}

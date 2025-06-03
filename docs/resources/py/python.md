@@ -1,3 +1,45 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Python Learning Resource](#python-learning-resource)
+  - [Introduction to Python](#introduction-to-python)
+    - [Key Features](#key-features)
+  - [Installation and Setup](#installation-and-setup)
+    - [Installing Python](#installing-python)
+      - [Quick Installation Commands](#quick-installation-commands)
+    - [Virtual Environments](#virtual-environments)
+  - [Python Basics](#python-basics)
+    - [Hello World](#hello-world)
+    - [Variables and Data Types](#variables-and-data-types)
+    - [Control Flow](#control-flow)
+    - [Functions](#functions)
+  - [Object-Oriented Programming](#object-oriented-programming)
+  - [Advanced Python Features](#advanced-python-features)
+    - [List Comprehensions](#list-comprehensions)
+    - [Generators](#generators)
+    - [Decorators](#decorators)
+    - [Context Managers](#context-managers)
+    - [Type Hints (Python 3.5+)](#type-hints-python-35)
+  - [Python in Practice](#python-in-practice)
+    - [Best Practices](#best-practices)
+    - [Common Design Patterns](#common-design-patterns)
+    - [Working with Files](#working-with-files)
+    - [Working with JSON](#working-with-json)
+  - [Testing with pytest](#testing-with-pytest)
+    - [Basic pytest Example](#basic-pytest-example)
+    - [pytest Fixtures](#pytest-fixtures)
+    - [Django Testing with pytest](#django-testing-with-pytest)
+    - [Web UI Testing with Selenium](#web-ui-testing-with-selenium)
+    - [Testing Packages](#testing-packages)
+  - [Python Standard Library Highlights](#python-standard-library-highlights)
+  - [Additional Resources](#additional-resources)
+    - [Official Documentation](#official-documentation)
+    - [Testing Resources](#testing-resources)
+    - [Interactive Learning](#interactive-learning)
+    - [Books](#books)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Python Learning Resource
 
 ## Introduction to Python
@@ -21,7 +63,7 @@ programming.
 
 Official installation guides for various platforms are available at:
 
-- [Python Installation Guide](https://docs.python.org/release/3.12.9/installing/index.html)
+- [Python Installation Guide](https://docs.python.org/release/3.12.10/installing/index.html)
 
 #### Quick Installation Commands
 
@@ -443,16 +485,16 @@ tasks:
 ### Official Documentation
 
 - [Python Official Website](https://www.python.org/)
-- [Python 3.10 Documentation](https://docs.python.org/release/3.12.9/)
-- [What's New in Python 3.10](https://docs.python.org/release/3.12.9/whatsnew/3.10.html)
-- [Python Tutorial](https://docs.python.org/release/3.12.9/tutorial/index.html)
-- [Python Standard Library](https://docs.python.org/release/3.12.9/library/index.html)
-- [Python Language Reference](https://docs.python.org/release/3.12.9/reference/index.html)
-- [Python Setup and Usage](https://docs.python.org/release/3.12.9/using/index.html)
-- [Installing Python Modules](https://docs.python.org/release/3.12.9/installing/index.html)
-- [Distributing Python Modules](https://docs.python.org/release/3.12.9/distributing/index.html)
-- [Extending Python](https://docs.python.org/release/3.12.9/extending/index.html)
-- [Python/C API Reference](https://docs.python.org/release/3.12.9/c-api/index.html)
+- [Python 3.10 Documentation](https://docs.python.org/release/3.12.10/)
+- [What's New in Python 3.10](https://docs.python.org/release/3.12.10/whatsnew/3.10.html)
+- [Python Tutorial](https://docs.python.org/release/3.12.10/tutorial/index.html)
+- [Python Standard Library](https://docs.python.org/release/3.12.10/library/index.html)
+- [Python Language Reference](https://docs.python.org/release/3.12.10/reference/index.html)
+- [Python Setup and Usage](https://docs.python.org/release/3.12.10/using/index.html)
+- [Installing Python Modules](https://docs.python.org/release/3.12.10/installing/index.html)
+- [Distributing Python Modules](https://docs.python.org/release/3.12.10/distributing/index.html)
+- [Extending Python](https://docs.python.org/release/3.12.10/extending/index.html)
+- [Python/C API Reference](https://docs.python.org/release/3.12.10/c-api/index.html)
 
 ### Testing Resources
 

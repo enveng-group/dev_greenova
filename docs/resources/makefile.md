@@ -1,3 +1,36 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Makefile Guide for Greenova Project](#makefile-guide-for-greenova-project)
+  - [Introduction to Make](#introduction-to-make)
+  - [Makefile Fundamentals](#makefile-fundamentals)
+    - [Basic Structure](#basic-structure)
+    - [Example of a Simple Rule](#example-of-a-simple-rule)
+    - [Variables](#variables)
+    - [Phony Targets](#phony-targets)
+  - [Makefiles in the Python Ecosystem](#makefiles-in-the-python-ecosystem)
+    - [Example Python Project Makefile Structure](#example-python-project-makefile-structure)
+  - [Makefile.am and Makefile.in](#makefileam-and-makefilein)
+    - [When to Use Autotools](#when-to-use-autotools)
+  - [Updated Greenova Project Makefile](#updated-greenova-project-makefile)
+    - [Key Variables](#key-variables)
+    - [Common Commands](#common-commands)
+    - [Example Usage](#example-usage)
+    - [Targets](#targets)
+      - [Environment Setup](#environment-setup)
+      - [Dependency Management](#dependency-management)
+      - [Application Management](#application-management)
+      - [Tailwind CSS](#tailwind-css)
+      - [Cleaning](#cleaning)
+      - [Template Management](#template-management)
+      - [Help](#help)
+    - [Notes](#notes)
+    - [Best Practices](#best-practices)
+  - [Debugging Makefiles](#debugging-makefiles)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Makefile Guide for Greenova Project
 
 ## Introduction to Make

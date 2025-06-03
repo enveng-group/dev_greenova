@@ -1,0 +1,70 @@
+===============================================================================
+MERGE_CONFLICT_DETECTOR - Git merge conflict analysis and prevention tool
+===============================================================================
+
+SYNOPSIS
+--------
+    merge_conflict_detector [OPTIONS] BASE_BRANCH MERGE_BRANCH
+
+DESCRIPTION
+-----------
+The merge_conflict_detector is a comprehensive tool designed to assist Git
+repository maintainers in analyzing potential merge conflicts before they
+occur and providing actionable recommendations for conflict resolution and
+repository maintenance.
+
+This tool follows a data-driven programming paradigm, analyzing Git
+repository data structures to provide intelligent recommendations for merge
+conflict prevention and resolution.
+
+FEATURES
+--------
+  * Pre-merge conflict analysis and detection
+  * Intelligent merge strategy recommendations
+  * Repository health assessment and maintenance
+  * Data-driven conflict probability scoring using whitespace-delimited databases
+  * Automated repository cleanup and optimization
+  * Configurable patterns and risk assessment rules
+  * Historical analysis tracking and trend identification
+  * POSIX-compliant implementation for universal compatibility
+
+DATA STORAGE
+------------
+The tool uses a data-driven programming approach with whitespace-delimited
+plain text databases for configuration and analysis:
+
+  * data/conflict_patterns.dat      - File type conflict probability patterns
+  * data/repository_config.dat      - Repository-specific configuration settings
+  * data/analysis_history.dat       - Historical analysis results and trends
+  * data/risk_rules.dat             - Risk assessment rules and multipliers
+
+COMPONENTS
+----------
+  * merge_detector.c        - Core C implementation for performance-critical analysis
+  * analyzer.awk            - AWK scripts for data processing and pattern matching
+  * maintenance.sh          - Shell scripts for repository maintenance operations
+  * conflict_report.awk     - Conflict analysis and reporting module
+
+INSTALLATION
+------------
+See INSTALL.txt for detailed installation instructions.
+
+USAGE
+-----
+See USAGE.txt for comprehensive usage examples and options.
+
+AUTHORS
+-------
+Author: 2MuchC0ff33
+
+Repository: https://github.com/2MuchC0ff33/merge-conflict-detector
+
+COPYRIGHT
+---------
+Copyright (c) 2025. Released under ISC License.
+See LICENSE.txt for license details.
+
+SEE ALSO
+--------
+  git(1), USAGE.txt, INSTALL.txt, merge_conflict_detector(1)
+===============================================================================

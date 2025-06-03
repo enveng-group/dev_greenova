@@ -1,0 +1,6 @@
+{
+	"id": "python",
+	"version": "1.0.0",
+	"name": "Python Development Tools",
+	"description": "Installs Python development tools including pre-commit, ruff, uv, virtualenv, uvenv, wheel, and setuptools. Python 3.12.10 is provided by the base image."
+}

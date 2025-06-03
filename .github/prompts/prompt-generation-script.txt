@@ -1,4 +1,37 @@
-using prompt-generation.prompt.md for instructions and formatting, please create a new prompt in gpt-4-1.prompt.md to resolve the below issue:
+using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
 
 
 i have added the following files in the landing app that may assist with solving the logic probnlem: commons.py constants.py context_processors.py middleware.py mixins.py permissions.py serializers.py signals.py tasks.py validators.py and templatetags/landing_tags.py
+
+
+this prompt gpt-4.1.prompt.md has a lot of tasks for agent to do, therefore, still maintaining the strict layout of the prompt template using prompt-generation.prompt.md as guidance, would it be possible to break down this macro prompt into smaller micro prompts so i can pass to copilot agent sequentially after the previous step and aceeptance criteria is completed and implemented, please generate all the micro templates one by one in sequential order i need to run in the file batch-prompts.prompt.md.
+
+run git add . && pre-commit run --files greenova/mechanism/figures.py and iterate until resolved with no errors, use semantic-thinking mcp server to think and use Context7 mcp server to fetch documentation references for context and use filesystem mcp server to read and write files
+
+iterate `pre-commit --run-file greenova/obligations/views.py` until everything passes and no errors, remember we can also use `stubgen` and `stubtest` to assist with mypy strict type checking. Stub files can be found in `greenova/stubs/greenova/obligations/views.pyi`, please use these stub files to assist with the type checking and ensure that all functions and methods are properly typed and documented.
+
+firstly run source .venv/bin/activate and then using filesystem mcp server and iterate git add . && pre-commit run check-merge-conflict && pre-commit run detect-private-key && pre-commit run check-added-large-files && pre-commit run check-yaml && pre-commit run check-json && pre-commit run check-toml && pre-commit run end-of-file-fixer && pre-commit run trailing-whitespace && pre-commit run mixed-line-ending && pre-commit run requirements-txt-fixer && pre-commit run debug-statements && pre-commit run check-case-conflict && pre-commit run check-symlinks && pre-commit run check-illegal-windows-names && pre-commit run check-executables-have-shebangs && pre-commit run check-vcs-permalinks && pre-commit run gitleaks && pre-commit run autoflake && pre-commit run vulture && pre-commit run isort && pre-commit run ruff-check && pre-commit run ruff-format && pre-commit run autopep8 && pre-commit run pylint && pre-commit run mypy && pre-commit run python-no-eval && pre-commit run python-no-log-warn && pre-commit run python-use-type-annotations && pre-commit run rst-backticks && pre-commit run rst-directive-colons && pre-commit run rst-inline-touching-normal && pre-commit run text-unicode-replacement-char && pre-commit run django-upgrade && pre-commit run codespell && pre-commit run typos && pre-commit run markdownlint && pre-commit run proselint && pre-commit run yamllint && pre-commit run yamlfmt && pre-commit run doctoc && pre-commit run check-github-workflows && pre-commit run actionlint && pre-commit run prettier && pre-commit run eslint && pre-commit run biome-check && pre-commit run standard && pre-commit run jshint && pre-commit run fixmyjs && pre-commit run csslint && pre-commit run shfmt && pre-commit run shellcheck && pre-commit run pyupgrade && pre-commit run bandit && pre-commit run talisman-commit && pre-commit run checkmake && pre-commit run sync-pre-commit-deps until all tests pass
+
+firstly run `source .venv/bin/activate` and then iterate `git add . && pre-commit run ruff-check` until all fix and the hook passes
+
+pre-commit run check-merge-conflict && pre-commit run detect-private-key && pre-commit run check-added-large-files && pre-commit run check-yaml && pre-commit run check-json && pre-commit run check-toml && pre-commit run end-of-file-fixer && pre-commit run trailing-whitespace && pre-commit run mixed-line-ending && pre-commit run requirements-txt-fixer && pre-commit run debug-statements && pre-commit run check-case-conflict && pre-commit run check-symlinks && pre-commit run check-illegal-windows-names && pre-commit run check-executables-have-shebangs && pre-commit run check-vcs-permalinks && pre-commit run gitleaks && pre-commit run autoflake && pre-commit run vulture && pre-commit run isort && pre-commit run ruff-check
+
+
+ruff check --select=DOC201 . > ruff.log || true
+
+iterate with filesystem mcp server to resolve ruff DOC201 errors in the workspace:
+
+
+
+
+
+using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
+
+use github mcp server and git mcp server to review the following files changed in commit a9f9cc0c92f1b303e58361404dcdef56de5e5600 at https://github.com/enveng-group/dev_greenova/pull/151/commits/774eed9401f052c3a0440ab379d9317abbfca17f for the local branch integration/v0.0.7 which is associated with https://github.com/enveng-group/dev_greenova/pull/151 against the local and remote branch integration/v0.0.7
+
+i have also run my own merge detector tool so use filesystem mcp server to read merge-detector.log
+then use github mcp server to read https://github.com/enveng-group/dev_greenova/issues/31
+and then use sequential_thinking mcp server to analayse investigate decide recommend and
+provide guidance instructions on whether the files changed in https://github.com/enveng-group/dev_greenova/pull/151
+resolves https://github.com/enveng-group/dev_greenova/issues/31 and it is safe to merge the changes into integration/v0.0.7
+and close both https://github.com/enveng-group/dev_greenova/pull/151 and https://github.com/enveng-group/dev_greenova/issues/31

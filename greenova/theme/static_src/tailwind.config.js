@@ -21,18 +21,6 @@ module.exports = {
   corePlugins: {
     preflight: false, // PicoCSS handles normalization
     container: false, // PicoCSS handles containers
-
-    // Additional core plugins to disable to avoid conflicts
-    fontSize: false, // Use PicoCSS typography
-    fontFamily: false, // Use PicoCSS fonts
-  },
-
-  // Enable experimental features for modern CSS
-  future: {
-    hoverOnlyWhenSupported: true,
-    respectDefaultRingColorOpacity: true,
-    disableColorOpacityUtilitiesByDefault: true,
-    relativeContentPathsByDefault: true,
   },
 
   theme: {
@@ -66,7 +54,7 @@ module.exports = {
         },
       },
 
-      // Enhanced spacing system with CSS logical properties
+      // Match spacing to Greenova design system
       spacing: {
         small: 'var(--greenova-spacing-small)',
         base: 'var(--greenova-spacing)',
@@ -74,12 +62,6 @@ module.exports = {
         'padding-small': 'var(--greenova-padding-small)',
         padding: 'var(--greenova-padding)',
         'padding-large': 'var(--greenova-padding-large)',
-
-        // Logical properties for RTL support
-        'inline-start': 'var(--greenova-spacing-inline-start)',
-        'inline-end': 'var(--greenova-spacing-inline-end)',
-        'block-start': 'var(--greenova-spacing-block-start)',
-        'block-end': 'var(--greenova-spacing-block-end)',
       },
 
       // Match border radius to Greenova design system
@@ -92,8 +74,10 @@ module.exports = {
       },
 
       // Match typography to Greenova design system
-      // Only extend what PicoCSS doesn't cover
       fontSize: {
+        title: 'var(--greenova-title-size)',
+        subtitle: 'var(--greenova-subtitle-size)',
+        text: 'var(--greenova-text-size)',
         'input-label': 'var(--greenova-input-label)',
         input: 'var(--greenova-input-size)',
         table: 'var(--greenova-table-size)',
@@ -109,54 +93,11 @@ module.exports = {
       boxShadow: {
         greenova: 'var(--greenova-shadow)',
       },
-
-      // Enhanced container queries support
-      containers: {
-        xs: '20rem',
-        sm: '24rem',
-        md: '28rem',
-        lg: '32rem',
-        xl: '36rem',
-        '2xl': '42rem',
-        '3xl': '48rem',
-      },
-
-      // Screen reader and accessibility utilities
-      aria: {
-        invalid: 'invalid="true"',
-        disabled: 'disabled="true"',
-        checked: 'checked="true"',
-        expanded: 'expanded="true"',
-        hidden: 'hidden="true"',
-      },
-
-      // Motion-safe animations
-      animation: {
-        'safe-spin': 'spin 1s linear infinite',
-        'safe-ping': 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
-        'safe-pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-      },
     },
   },
 
+  // Define custom plugins for Greenova-specific needs
   plugins: [
-    // Official Tailwind plugins
-    require('@tailwindcss/typography')({
-      className: 'tw-prose', // Prefix typography classes to avoid conflicts
-    }),
-    require('@tailwindcss/forms')({
-      strategy: 'class', // Only generate classes when explicitly used
-    }),
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/container-queries'),
-
-    // Additional plugins for enhanced features
-    require('tailwindcss-animate'),
-    require('tailwindcss-logical'),
-    require('tailwindcss-fluid-type'),
-    require('tailwindcss-opentype'),
-    require('tailwind-scrollbar-hide'),
-
     // Plugin to generate WCAG-compliant focus styles
     function ({ addUtilities }) {
       const accessibilityUtilities = {
@@ -168,62 +109,16 @@ module.exports = {
       addUtilities(accessibilityUtilities);
     },
 
-    // Enhanced chart components
+    // Plugin for responsive data visualization
     function ({ addComponents }) {
       const chartComponents = {
         '.responsive-chart': {
           width: '100%',
           height: 'auto',
           'min-height': '300px',
-          '@container (min-width: 640px)': {
-            'min-height': '400px',
-          },
         },
       };
       addComponents(chartComponents, { respectImportant: true });
     },
-
-    // Add motion-safe utilities
-    function ({ addUtilities }) {
-      addUtilities({
-        '.motion-safe': {
-          '@media (prefers-reduced-motion: no-preference)': {
-            'transition-property': 'all',
-            'transition-timing-function': 'cubic-bezier(0.4, 0, 0.2, 1)',
-            'transition-duration': '150ms',
-          },
-        },
-        '.motion-reduce': {
-          '@media (prefers-reduced-motion: reduce)': {
-            'transition-property': 'none',
-            animation: 'none',
-          },
-        },
-      });
-    },
-
-    // Add print utilities
-    function ({ addUtilities }) {
-      addUtilities({
-        '.print-only': {
-          '@media screen': {
-            display: 'none',
-          },
-        },
-        '.no-print': {
-          '@media print': {
-            display: 'none',
-          },
-        },
-      });
-    },
   ],
-
-  // Layer configuration for proper cascade
-  layers: {
-    base: 'base',
-    components: 'components',
-    utilities: 'utilities',
-    'greenova-custom': 'greenova-custom',
-  },
 };

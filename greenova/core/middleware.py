@@ -1,3 +1,9 @@
+"""Middleware for project selection in Greenova.
+
+This module provides middleware to manage the selected project context in the
+session and request.
+"""
+
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: 	AGPL-3.0-or-later
 
@@ -10,12 +16,18 @@ logger = logging.getLogger(__name__)
 
 
 class ProjectSelectionMiddleware(MiddlewareMixin):
-    """
-    Middleware to manage selected_project_id in session and request.
+    """Middleware to manage selected_project_id in session and request.
+
     Ensures project selection is consistent for all views, including HTMX.
     """
 
-    def process_request(self, request: HttpRequest):
+    def process_request(self, request: HttpRequest) -> None:
+        """Attach the selected project ID to the request and session if present.
+
+        Args:
+            request: The HTTP request object.
+
+        """
         project_ids = request.GET.getlist("project_id")
         project_id = next((pid for pid in reversed(project_ids) if pid), None)
         if project_id:

@@ -1,0 +1,154 @@
+===============================================================================
+INSTALL - Installation Instructions for merge_conflict_detector
+===============================================================================
+
+DESCRIPTION
+-----------
+This document provides step-by-step installation instructions for the
+merge_conflict_detector tool on POSIX-compliant systems.
+
+REQUIREMENTS
+------------
+System Requirements:
+  * POSIX-compliant operating system (Linux, Unix, macOS, BSD variants)
+  * POSIX shell (/bin/sh)
+  * POSIX C compiler (c99 compliant)
+  * POSIX make utility
+  * POSIX AWK implementation
+  * Git version control system (>= 2.0)
+
+POSIX Utilities Required:
+  awk, basename, cat, chmod, cp, cut, date, diff, dirname,
+  echo, expr, find, grep, head, mkdir, mv, printf, rm,
+  sed, sh, sort, tail, test, touch, tr, wc, xargs
+
+INSTALLATION METHODS
+--------------------
+Method 1: From Source (Recommended)
+  1. Extract the source archive:
+         tar -xzf merge_conflict_detector-1.0.tar.gz
+         cd merge_conflict_detector-1.0
+  2. Configure the build:
+         make configure
+  3. Compile the software:
+         make
+  4. Run tests (optional but recommended):
+         make test
+  5. Install to system:
+         make install
+  6. Install manual pages:
+         make install-man
+
+Method 2: User Installation (no root required)
+         make PREFIX=$HOME/.local install
+         export PATH=$HOME/.local/bin:$PATH
+
+Method 3: Custom Installation Path
+         make PREFIX=/opt/merge_detector install
+
+BUILD CONFIGURATION
+-------------------
+Standard Configuration:
+         make configure
+
+Custom Compiler:
+         make CC=gcc configure
+         make
+
+Custom Installation Paths:
+  PREFIX   Installation prefix (default: /usr/local)
+  BINDIR   Binary directory (default: $PREFIX/bin)
+  MANDIR   Manual page directory (default: $PREFIX/share/man)
+  LIBDIR   Library directory (default: $PREFIX/lib)
+
+Example:
+         make PREFIX=/usr BINDIR=/usr/bin MANDIR=/usr/share/man install
+
+VERIFICATION
+------------
+Test Installation:
+         merge_conflict_detector --help
+
+Check Version:
+         merge_conflict_detector --version
+
+Run System Test:
+         merge_conflict_detector --test-system
+
+UNINSTALLATION
+--------------
+To remove the installed software:
+         make uninstall
+
+For custom installation paths:
+         make PREFIX=/custom/path uninstall
+
+TROUBLESHOOTING
+---------------
+"Command not found":
+         export PATH=/usr/local/bin:$PATH
+
+"Permission denied during installation":
+         sudo make install
+    Or install to user directory:
+         make PREFIX=$HOME/.local install
+
+"Compiler not found":
+    # On Debian/Ubuntu
+         apt-get install build-essential
+    # On RHEL/CentOS
+         yum groupinstall "Development Tools"
+    # On Alpine Linux
+         apk add build-base
+
+"Make not found":
+    # On Debian/Ubuntu
+         apt-get install make
+    # On RHEL/CentOS
+         yum install make
+    # On Alpine Linux
+         apk add make
+
+Build Errors:
+  1. Check POSIX compliance of your system
+  2. Verify all required utilities are installed
+  3. Try using a different C compiler:
+         make clean
+         make CC=clang
+
+Git Not Found:
+    # On Debian/Ubuntu
+         apt-get install git
+    # On RHEL/CentOS
+         yum install git
+    # On Alpine Linux
+         apk add git
+
+PLATFORM-SPECIFIC NOTES
+-----------------------
+Linux:      Most distributions should work out of the box.
+macOS:      Install Xcode command line tools: xcode-select --install
+FreeBSD:    pkg install git gmake; make MAKE=gmake
+Solaris:    make CC=/opt/SUNWspro/bin/cc
+
+DEVELOPMENT INSTALLATION
+------------------------
+For development and contributing:
+         git clone https://github.com/2MuchC0ff33/merge-conflict-detector.git
+         cd merge_conflict_detector
+         make configure
+         make debug
+         make test
+
+FILES
+-----
+  Makefile         Main build configuration
+  configure.sh     POSIX configuration script
+  src/             Source code directory
+  tests/           Test suite directory
+  man/             Manual pages
+
+SEE ALSO
+--------
+  make(1), git(1), README.txt, USAGE.txt, CONTRIBUTING.txt, https://github.com/2MuchC0ff33/merge-conflict-detector
+===============================================================================

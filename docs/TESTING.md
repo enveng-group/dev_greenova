@@ -1,3 +1,21 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Testing Strategy for Greenova](#testing-strategy-for-greenova)
+  - [🧪 Types of Tests](#%F0%9F%A7%AA-types-of-tests)
+    - [Unit Tests](#unit-tests)
+    - [Integration Tests](#integration-tests)
+    - [End-to-End (E2E) Tests](#end-to-end-e2e-tests)
+  - [🛠️ Testing Tools and Frameworks](#-testing-tools-and-frameworks)
+  - [🏗️ Test Structure](#-test-structure)
+    - [Test Structure Example](#test-structure-example)
+  - [🏁 Running Tests](#-running-tests)
+  - [📈 Test Coverage](#-test-coverage)
+  - [🧹 Cleaning Up](#%F0%9F%A7%B9-cleaning-up)
+  - [📚 Further Reading](#-further-reading)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Testing Strategy for Greenova
 
 At Greenova, we follow a comprehensive testing strategy to ensure the quality
@@ -14,7 +32,7 @@ We categorize our tests into three main types:
 Unit tests are designed to test individual components or functions in
 isolation. They ensure that each part of the application behaves as expected.
 We write unit tests for models, forms, views, and other components. We use
-Python's `unittest` framework and `pytest` for running tests.
+Python's `unittest` framework for writing and running tests.
 
 ### Integration Tests
 
@@ -39,8 +57,6 @@ We use a combination of built-in and third-party tools for testing in Django:
 - **Django's Test Framework**: For writing and running unit and integration
   tests.
 - **Selenium**: For automating browser interactions in E2E tests.
-- **pytest**: As an alternative test runner with powerful features like
-  fixtures and plugins.
 - **Factory_boy**: For creating test data and objects.
 - **Mock**: For mocking external services and APIs.
 
@@ -50,8 +66,8 @@ We follow a consistent structure for organizing our tests:
 
 1. **Test File Naming**: Test files should be named `test_<module_name>.py`.
 2. **Test Case Naming**: Test functions or methods should start with `test_`.
-3. **Fixtures**: Use `pytest` fixtures for setting up test data and resources.
-   Fixtures should be defined in `conftest.py` files.
+3. **Fixtures**: Use setUp methods or helper functions for setting up test data
+   and resources.
 
 ### Test Structure Example
 
@@ -127,7 +143,6 @@ the project root.
 ## 📚 Further Reading
 
 - [Django Testing Documentation](https://docs.djangoproject.com/en/stable/topics/testing/)
-- [pytest Documentation](https://docs.pytest.org/en/stable/)
 - [Factory_boy Documentation](https://factoryboy.readthedocs.io/en/stable/)
 - [Selenium Documentation](https://www.selenium.dev/documentation/en/)
 - [Playwright Documentation](https://playwright.dev/docs/intro)

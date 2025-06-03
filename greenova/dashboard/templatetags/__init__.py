@@ -1,1 +1,2 @@
-# This file marks the templatetags directory as a Python package.
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: 	AGPL-3.0-or-later

@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [GitHub Copilot Learning Resource](#github-copilot-learning-resource)
+  - [Overview](#overview)
+  - [AI Models and Their Use Cases](#ai-models-and-their-use-cases)
+    - [1. General-Purpose Code Generation](#1-general-purpose-code-generation)
+    - [2. Cost-Effective Code Generation](#2-cost-effective-code-generation)
+    - [3. Visual Context and Image-Based Tasks](#3-visual-context-and-image-based-tasks)
+    - [4. Large or Multi-File Code Generation](#4-large-or-multi-file-code-generation)
+    - [5. Refactoring](#5-refactoring)
+    - [6. Code Reviews](#6-code-reviews)
+    - [7. Writing Technical Documentation](#7-writing-technical-documentation)
+    - [8. Debugging](#8-debugging)
+    - [9. Everyday Coding and Test Generation](#9-everyday-coding-and-test-generation)
+  - [Additional Resources](#additional-resources)
+  - [Best Practices](#best-practices)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # GitHub Copilot Learning Resource
 
 ## Overview

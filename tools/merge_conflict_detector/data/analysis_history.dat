@@ -1,0 +1,15 @@
+# Analysis History Database - Whitespace-Delimited Plain Text Format
+# Fields: timestamp repo_path branch_name conflict_score files_analyzed conflicts_found status report_file
+# Timestamp: Unix timestamp of analysis
+# Repo Path: Repository path analyzed
+# Branch Name: Branch being analyzed
+# Conflict Score: Calculated risk score (0.0-1.0)
+# Files Analyzed: Number of files processed
+# Conflicts Found: Number of potential conflicts detected
+# Status: SUCCESS, WARNING, ERROR, or CRITICAL
+# Report File: Path to detailed report (optional)
+
+1735398000 /workspaces/merge_conflict_detector main 0.65 15 3 WARNING /tmp/conflict_report_20250528_120000.txt
+1735390800 /home/user/projects/webapp develop 0.82 42 8 CRITICAL /tmp/conflict_report_20250528_100000.txt
+1735383600 /opt/repositories/backend master 0.35 28 1 SUCCESS /tmp/conflict_report_20250528_080000.txt
+1735376400 /var/projects/frontend main 0.50 35 2 WARNING /tmp/conflict_report_20250528_060000.txt

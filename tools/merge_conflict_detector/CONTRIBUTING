@@ -1,0 +1,339 @@
+===============================================================================
+CONTRIBUTING - How to contribute to merge_conflict_detector
+===============================================================================
+
+DESCRIPTION
+-----------
+This document outlines the guidelines and procedures for contributing
+to the merge_conflict_detector project.
+
+PROJECT PHILOSOPHY
+------------------
+POSIX Compliance:
+  * All code must be strictly POSIX-compliant.
+  * Only POSIX-defined utilities and functions may be used.
+
+Data-Driven Design:
+  * Analyze Git repository data structures systematically
+  * Make decisions based on empirical data analysis
+  * Provide quantifiable metrics and recommendations
+  * Minimize assumptions, maximize data-based insights
+
+Portability First:
+  * Code must work on any POSIX-compliant system without modification.
+
+DEVELOPMENT SETUP
+-----------------
+Prerequisites:
+  * POSIX-compliant development environment
+  * Git version control system
+  * POSIX C compiler (c99)
+  * Text editor that preserves POSIX formatting
+
+Getting Started:
+  1. Fork the repository on GitHub
+  2. Clone your fork:
+         git clone https://github.com/2MuchC0ff33/merge-conflict-detector.git
+         cd merge_conflict_detector
+  3. Set up development environment:
+         make configure
+         make debug
+         make test
+
+CODING STANDARDS
+----------------
+C Programming Standards:
+  * Follow ISO C99 standard strictly
+  * Use only POSIX-defined functions and headers
+  * No compiler-specific extensions
+  * Function names use snake_case
+  * Constants use UPPER_CASE
+  * Variables use descriptive lowercase names
+
+Example C Code Style:
+-------------------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_PATH_LENGTH 4096
+#define SUCCESS 0
+#define ERROR_INVALID_ARG 2
+
+static int
+analyze_conflict_data(const char *base_branch, const char *merge_branch)
+{
+    char command_buffer[MAX_PATH_LENGTH];
+    FILE *git_output;
+
+    if (base_branch == NULL || merge_branch == NULL) {
+        return ERROR_INVALID_ARG;
+    }
+
+    snprintf(command_buffer, sizeof(command_buffer),
+        "git diff --name-only %s..%s", base_branch, merge_branch);
+
+    git_output = popen(command_buffer, "r");
+    if (git_output == NULL) {
+        return ERROR_INVALID_ARG;
+    }
+
+    /* Process output data */
+    pclose(git_output);
+    return SUCCESS;
+}
+-------------------------------------------------------------------------------
+
+Shell Script Standards:
+  * Use #!/bin/sh (POSIX shell only)
+  * Avoid bash-specific features
+  * Use only POSIX utilities
+  * Quote all variables properly
+  * Check return codes
+
+Example Shell Code Style:
+-------------------------------------------------------------------------------
+#!/bin/sh
+# POSIX shell script example
+
+set -e  # Exit on error
+
+readonly SCRIPT_NAME="maintenance.sh"
+readonly LOG_PREFIX="[${SCRIPT_NAME}]"
+
+log_info() {
+    printf "%s INFO: %s\n" "${LOG_PREFIX}" "$1" >&2
+}
+
+log_error() {
+    printf "%s ERROR: %s\n" "${LOG_PREFIX}" "$1" >&2
+}
+
+cleanup_repository() {
+    local git_dir
+
+    git_dir="$(git rev-parse --git-dir 2>/dev/null)" || {
+        log_error "Not a git repository"
+        return 1
+    }
+
+    log_info "Starting repository cleanup"
+    git fetch --all --prune || return 1
+    git gc --aggressive --prune=now || return 1
+    log_info "Cleanup completed"
+}
+-------------------------------------------------------------------------------
+
+AWK Programming Standards:
+  * Use POSIX AWK features only
+  * Avoid gawk or mawk-specific extensions
+  * Use descriptive variable names
+  * Comment complex patterns
+
+Example AWK Code Style:
+-------------------------------------------------------------------------------
+#!/usr/bin/awk -f
+# POSIX AWK script for conflict analysis
+
+BEGIN {
+    total_conflicts = 0
+    high_risk_files = 0
+    FS = ":"  # Field separator
+}
+
+/^@@/ {
+    # Extract line numbers from diff hunk header
+    if (match($0, /\+([0-9]+)/, line_info)) {
+        conflict_lines[NR] = line_info[1]
+        total_conflicts++
+    }
+}
+
+/\.(c|h|cpp|java|py)$/ {
+    high_risk_files++
+}
+
+END {
+    printf "Total conflicts: %d\n", total_conflicts
+    printf "High-risk files: %d\n", high_risk_files
+
+    if (total_conflicts > 10) {
+        printf "RECOMMENDATION: Consider breaking into smaller merges\n"
+    }
+}
+-------------------------------------------------------------------------------
+
+Makefile Standards:
+  * Use POSIX make features only
+  * Avoid GNU make extensions
+  * Use portable commands
+  * Support standard targets
+
+TESTING REQUIREMENTS
+--------------------
+Test Coverage:
+  * Unit tests for individual functions
+  * Integration tests for complete workflows
+  * POSIX compliance verification
+  * Cross-platform compatibility tests
+
+Running Tests:
+    make test
+    make test-posix
+    make test-integration
+    make test-performance
+    make test VERBOSE=1
+
+Writing Tests:
+-------------------------------------------------------------------------------
+#!/bin/sh
+# Test script example
+
+test_conflict_detection() {
+    local test_repo_dir
+    local result
+
+    test_repo_dir="$(mktemp -d)"
+
+    # Setup test repository
+    cd "${test_repo_dir}"
+    git init --quiet
+
+    # Create test scenario
+    echo "original content" > test_file.txt
+    git add test_file.txt
+    git commit -m "Initial commit" --quiet
+
+    # Test the tool
+    result="$(merge_conflict_detector main test-branch 2>&1)"
+
+    # Verify results
+    if echo "${result}" | grep -q "No conflicts detected"; then
+        printf "PASS: test_conflict_detection\n"
+        return 0
+    else
+        printf "FAIL: test_conflict_detection\n"
+        return 1
+    fi
+
+    # Cleanup
+    rm -rf "${test_repo_dir}"
+}
+-------------------------------------------------------------------------------
+
+DOCUMENTATION STANDARDS
+-----------------------
+Manual Pages:
+  * Use standard roff macros only
+  * Follow consistent formatting
+  * Include comprehensive examples
+  * Document all options and behaviors
+
+Code Comments:
+  * Document complex algorithms
+  * Explain non-obvious design decisions
+  * Use clear, concise language
+  * Update comments when code changes
+
+SUBMISSION PROCESS
+------------------
+Before Submitting:
+  * Run full test suite: make test
+  * Verify POSIX compliance: make check-posix
+  * Update documentation if needed
+  * Ensure code follows style guidelines
+
+Pull Request Guidelines:
+  * Create descriptive pull request title
+  * Include detailed description of changes
+  * Reference related issues
+  * Include test results
+  * Update relevant documentation
+
+Commit Message Format:
+-------------------------------------------------------------------------------
+component: brief description of change
+
+Detailed explanation of what was changed and why.
+Include any breaking changes or special considerations.
+
+Fixes: #123
+-------------------------------------------------------------------------------
+
+Examples:
+-------------------------------------------------------------------------------
+core: improve conflict detection algorithm
+
+Enhanced the conflict probability calculation to better
+handle edge cases in binary file detection.
+
+analyzer: add support for custom threshold configuration
+
+Added command-line option to set conflict probability
+threshold, allowing users to customize sensitivity.
+
+Fixes: #45
+
+tests: add comprehensive AWK script validation
+
+Added test suite to verify POSIX AWK compliance across
+different implementations (gawk, mawk, nawk).
+-------------------------------------------------------------------------------
+
+CODE REVIEW PROCESS
+-------------------
+Review Criteria:
+  * POSIX compliance and portability
+  * Code quality and style adherence
+  * Test coverage and reliability
+  * Documentation completeness
+  * Performance impact
+  * Security considerations
+
+Review Timeline:
+  * Initial review within 48 hours
+  * Detailed feedback within 1 week
+  * Approval/merge within 2 weeks
+
+REPORTING ISSUES
+----------------
+Bug Reports:
+  * Operating system and version
+  * Shell and utility versions
+  * Git version
+  * Complete error output
+  * Steps to reproduce
+  * Expected vs actual behavior
+
+Feature Requests:
+  * Clear description of proposed feature
+  * Use cases and benefits
+  * Suggested implementation approach
+  * Compatibility considerations
+
+COMMUNICATION
+-------------
+Channels:
+  * GitHub Issues for bug reports and feature requests
+  * GitHub Discussions for general questions
+  * Pull Request comments for code review
+
+Repository: https://github.com/2MuchC0ff33/merge-conflict-detector
+
+Code of Conduct:
+  * Be respectful and professional
+  * Focus on technical merit
+  * Provide constructive feedback
+  * Help newcomers learn
+
+RECOGNITION
+-----------
+Contributors will be recognized in:
+  * CONTRIBUTORS file
+  * Release notes
+  * Manual page credits
+
+SEE ALSO
+--------
+  README.txt, INSTALL.txt, USAGE.txt, git(1)
+===============================================================================

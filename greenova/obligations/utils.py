@@ -1,13 +1,9 @@
 import logging
 from datetime import date, timedelta
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import Any, Union
 
 from core.utils.roles import get_role_display
 from django.utils import timezone
-
-# Import Obligation only for type checking to avoid circular imports
-if TYPE_CHECKING:
-    from .models import Obligation
 
 from .constants import (
     FREQUENCY_ALIASES,
@@ -27,29 +23,28 @@ logger = logging.getLogger(__name__)
 
 
 def is_obligation_overdue(
-    obligation: Union['Obligation', Dict[str, Any]],
-    reference_date: Optional[date] = None
-) -> bool:
-    """
-    Determine if an obligation is overdue based on its status and due date.
+        obligation: Union["Obligation", dict[str, Any]], reference_date: date | None = None) -> bool:
+    """Determine if an obligation is overdue based on its status and due date.
 
-    This is the canonical implementation for determining overdue status that should be
-    used throughout the application to ensure consistency.
+    This is the canonical implementation for determining overdue status that should
+    be used throughout the application to ensure consistency.
 
     Args:
-        obligation: An Obligation model instance or dict with obligation attributes
+        obligation: An Obligation model instance or a dictionary with obligation attributes
         reference_date: Optional date to compare against (defaults to today)
 
     Returns:
         bool: True if the obligation is overdue, False otherwise
+
     """
+    # Use today as reference date if none provided
     if reference_date is None:
         reference_date = timezone.now().date()
 
     # Get status - handle both model instances and dictionaries
     if isinstance(obligation, dict):
-        status = obligation.get('status')
-        due_date = obligation.get('action_due_date')
+        status = obligation.get("status")
+        due_date = obligation.get("action_due_date")
     else:
         status = obligation.status
         due_date = obligation.action_due_date
@@ -67,97 +62,99 @@ def is_obligation_overdue(
 
 
 def get_obligation_status(obligation):
-    """
-    Determine the real status of an obligation based on its due date and current status.
+    """Determine the real status of an obligation based on its due date and current status.
 
     Returns one of: 'overdue', 'upcoming', 'completed', or the original status.
     """
-    status = getattr(obligation, 'status', '').lower()
-    due_date = getattr(obligation, 'action_due_date', None)
+    status = getattr(obligation, "status", "").lower()
+    due_date = getattr(obligation, "action_due_date", None)
     today = timezone.now().date()
 
+    # Completed obligations keep their status
     if status == STATUS_COMPLETED:
         return STATUS_COMPLETED
 
+    # Check for overdue obligations
     if due_date and due_date < today:
         return STATUS_OVERDUE
 
+    # Check for upcoming obligations (due within 14 days)
     if due_date and today <= due_date <= today + timedelta(days=14):
         return STATUS_UPCOMING
 
+    # Return original status if not overdue or upcoming
     return status
 
 
-def _match_frequency_pattern(frequency_lower: str) -> Optional[str]:
-    """Helper function to match frequency patterns and return canonical form."""
-    # Daily/Weekly patterns
-    if any(term in frequency_lower for term in ['day', 'daily']):
-        return FREQUENCY_DAILY
-    if any(term in frequency_lower for term in ['fortnight', 'bi-week', 'biweek']):
-        return FREQUENCY_FORTNIGHTLY
-    if 'week' in frequency_lower:
-        return FREQUENCY_WEEKLY
-
-    # Monthly patterns
-    monthly_patterns = {
-        ('quarter', '3 month', 'three month'): FREQUENCY_QUARTERLY,
-        ('biannual', 'bi annual', 'semi', 'twice a year'): FREQUENCY_BIANNUAL,
-        ('annual', 'year', '12 month', 'twelve month'): FREQUENCY_ANNUAL
-    }
-
-    if 'month' in frequency_lower:
-        for terms, freq in monthly_patterns.items():
-            if any(term in frequency_lower for term in terms):
-                return freq
-        return FREQUENCY_MONTHLY
-
-    return None
-
-
 def normalize_frequency(frequency: str) -> str:
-    """
-    Normalize a frequency string to its canonical form.
+    """Normalize a frequency string to its canonical form.
+
+    This handles variations in terminology and ensures consistency
+    across the application.
 
     Args:
         frequency: A string representing the frequency
 
     Returns:
         str: The normalized frequency string
+
     """
     if not frequency:
-        return ''
+        return ""
 
+    # Convert to lowercase for case-insensitive matching
     frequency_lower = frequency.lower().strip()
 
-    # Check if it's already in canonical form
-    canonical_frequencies = {
+    # Check if it's one of our canonical values
+    if frequency_lower in {
         FREQUENCY_DAILY, FREQUENCY_WEEKLY, FREQUENCY_FORTNIGHTLY,
-        FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL,
-        FREQUENCY_ANNUAL
-    }
-    if frequency_lower in canonical_frequencies:
+        FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL, FREQUENCY_ANNUAL,
+    }:
         return frequency_lower
 
-    # Check aliases first
+    # Check aliases
     for alias, canonical in FREQUENCY_ALIASES.items():
         if alias in frequency_lower:
             return canonical
 
-    # Try pattern matching
-    matched_frequency = _match_frequency_pattern(frequency_lower)
-    if matched_frequency:
-        return matched_frequency
+    # Handle common variations
+    if "day" in frequency_lower or "daily" in frequency_lower:
+        return FREQUENCY_DAILY
+    if "week" in frequency_lower:
+        return FREQUENCY_WEEKLY
+    if "fortnight" in frequency_lower or "bi-week" in frequency_lower or "biweek" in frequency_lower:
+        return FREQUENCY_FORTNIGHTLY
+    if "month" in frequency_lower:
+        return FREQUENCY_MONTHLY
+    if "quarter" in frequency_lower or "3 month" in frequency_lower or "three month" in frequency_lower:
+        return FREQUENCY_QUARTERLY
+    if "biannual" in frequency_lower or "bi annual" in frequency_lower or "semi" in frequency_lower or "twice a year" in frequency_lower or "6 month" in frequency_lower:
+        return FREQUENCY_BIANNUAL
+    if "annual" in frequency_lower or "year" in frequency_lower or "12 month" in frequency_lower or "twelve month" in frequency_lower:
+        return FREQUENCY_ANNUAL
 
+    # If we can't normalize it, return as-is
     return frequency_lower
 
 
 def get_responsibility_display_name(responsibility_value: str) -> str:
-    """Get the display name for a responsibility value."""
-    if 'Perdaman' in responsibility_value or 'SCJV' in responsibility_value:
+    """Get the display name for a responsibility value.
+
+    Args:
+        responsibility_value: The responsibility value to get display name for
+
+    Returns:
+        str: The display name for the responsibility
+
+    """
+    # First check if this is already a display name (as stored in older records)
+    if "Perdaman" in responsibility_value or "SCJV" in responsibility_value:
         return responsibility_value
 
+    # Try to get role display from the role utilities
     role_display = get_role_display(responsibility_value)
-    if role_display != responsibility_value:
+    if role_display != responsibility_value:  # If we got a match
         return role_display
 
-    return responsibility_value.replace('_', ' ').title()
+    # Fallback: just return the input with title casing for readability
+    return responsibility_value.replace("_", " ").title()
