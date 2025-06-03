@@ -5,7 +5,7 @@
 			"name": "Django: Runserver",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/manage.py",
+			"program": "${workspaceFolder}/greenova/manage.py",
 			"args": ["runserver", "0.0.0.0:8000"],
 			"django": true,
 			"env": {
@@ -15,10 +15,49 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Django: Shell Plus (IPython)",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/greenova/manage.py",
+			"args": ["shell_plus"],
+			"django": true,
+			"env": {
+				"DJANGO_SETTINGS_MODULE": "greenova.settings"
+			},
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Django: Standard Shell",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/greenova/manage.py",
+			"args": ["shell"],
+			"django": true,
+			"env": {
+				"DJANGO_SETTINGS_MODULE": "greenova.settings"
+			},
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "IPython: Interactive Session",
+			"type": "python",
+			"request": "launch",
+			"module": "IPython",
+			"env": {
+				"DJANGO_SETTINGS_MODULE": "greenova.settings",
+				"PYTHONPATH": "${workspaceFolder}/greenova"
+			},
+			"console": "integratedTerminal",
+			"justMyCode": true,
+			"cwd": "${workspaceFolder}"
+		},
+		{
 			"name": "Python: Unit Tests",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/manage.py",
+			"program": "${workspaceFolder}/greenova/manage.py",
 			"args": ["test"],
 			"django": true,
 			"env": {

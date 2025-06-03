@@ -9,8 +9,6 @@
 # If you suspect hidden dependencies, review PRs or request a dependency graph.
 #
 # Prioritized squash merge order (as of 2025-06-02):
-# 16. PR 151: Issue/issue-31 - Revising Procedure View
-# 17. PR 149: Issue/issue 124 enhancement headerbar
 # 18. PR 103: feat(core): add IPython autoreload, syntax checking, and bash aliases file
 # 19. PR 171: Selective merge from b6f5328e: refactor dashboard, templates, and docs
 

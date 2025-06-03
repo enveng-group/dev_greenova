@@ -64,6 +64,10 @@ Django app that integrates Tailwind CSS into your Django project.
 ### 1. Install Django Tailwind package
 
 ```bash
+# Using uv (preferred)
+uv pip install django-tailwind==4.0.1
+
+# Alternative: Using pip
 pip install django-tailwind==4.0.1
 ```
 

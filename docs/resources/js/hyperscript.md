@@ -53,6 +53,10 @@ keeping the focus on semantic structure.
 Add django-hyperscript to your Django project:
 
 ```bash
+# Using uv (preferred)
+uv pip install django-hyperscript
+
+# Alternative: Using pip
 pip install django-hyperscript
 ```
 

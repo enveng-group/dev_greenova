@@ -88,6 +88,10 @@ provides integration between Django and HTMX.
 ### 1. Install django-htmx
 
 ```bash
+# Using uv (preferred)
+uv pip install django-htmx
+
+# Alternative: Using pip
 pip install django-htmx
 ```
 
@@ -407,6 +411,10 @@ reusable sections called "partials" that can be rendered independently.
 #### 1. Installation
 
 ```bash
+# Using uv (preferred)
+uv pip install django-template-partials
+
+# Alternative: Using pip
 pip install django-template-partials
 ```
 

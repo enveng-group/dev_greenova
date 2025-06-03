@@ -8,5 +8,46 @@
 	"extensions.experimental.deferredStartupFinishedActivation": true,
 	"extensions.experimental.issueQuickAccess": false,
 	"extensions.ignoreRecommendations": true,
-	"remote.downloadExtensionsLocally": false
+	"remote.downloadExtensionsLocally": false,
+	"python.languageServer": "Default",
+
+	// Python and IPython Configuration
+	"python.defaultInterpreterPath": "/usr/local/bin/python3",
+	"python.terminal.activateEnvironment": true,
+	"python.terminal.launchArgs": ["-X", "dev"],
+
+	// IPython as Default Interactive Shell
+	"python.terminal.executeInFileDir": false,
+	"python.pythonPath": "ipython",
+	"python.REPL.enableREPLSmartSend": true,
+	"python.REPL.sendToNativeREPL": true,
+
+	// IPython Integration
+	"jupyter.interactiveWindow.creationMode": "perFile",
+	"jupyter.askForKernelRestart": false,
+	"jupyter.enableCellCodeLens": true,
+	"jupyter.generateSVGPlots": true,
+	"jupyter.magicCommandsAsComments": true,
+
+	// Django Development
+	"python.analysis.extraPaths": ["${workspaceFolder}/greenova"],
+	"python.envFile": "${workspaceFolder}/.env",
+
+	// Terminal Configuration for IPython and uv
+	"terminal.integrated.env.linux": {
+		"DJANGO_SETTINGS_MODULE": "greenova.settings",
+		"PYTHONPATH": "${workspaceFolder}/greenova",
+		"PYTHONSTARTUP": "${workspaceFolder}/python_startup.py",
+		"UV_PYTHON_PREFERENCE": "system"
+	},
+
+	// Code Formatting
+	"python.formatting.provider": "none",
+	"[python]": {
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit"
+		},
+		"editor.defaultFormatter": "charliermarsh.ruff"
+	}
 }

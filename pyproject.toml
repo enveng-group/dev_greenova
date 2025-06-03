@@ -111,3 +111,16 @@ paths = [
 ]
 sort_by_size = true
 min_confidence = 95
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+django_settings_module = "greenova.settings"
+
+[tool.django-stubs]
+django_settings_module = "greenova.settings"
+
+# IPython Configuration
+[tool.ipython]
+# IPython configuration can go here if needed
+# Most IPython config is handled in the startup script and Django settings

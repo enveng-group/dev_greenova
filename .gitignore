@@ -224,3 +224,8 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

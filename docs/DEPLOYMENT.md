@@ -59,11 +59,23 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 
 ## Installation Steps
 
-1. Create virtual environment: python3 -m venv venv
+1. Create virtual environment:
+
+   ```bash
+   # Using uv (preferred)
+   uv venv venv
+
+   # Alternative: Using traditional venv
+   python3 -m venv venv
+   ```
 
 2. Install required packages:
 
    ```bash
+   # Using uv (preferred)
+   uv pip install Django==5.2 gunicorn==23.0.0 psycopg2-binary==2.9.9
+
+   # Alternative: Using pip
    pip install Django==5.2 gunicorn==23.0.0 psycopg2-binary==2.9.9
    ```
 
@@ -77,6 +89,10 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 4. Install project dependencies:
 
    ```bash
+   # Using uv (preferred)
+   uv pip install -r requirements.txt
+
+   # Alternative: Using pip
    pip install -r requirements.txt
    ```
 
@@ -396,6 +412,10 @@ Add the following configuration:
 3. Install any new dependencies:
 
    ```bash
+   # Using uv (preferred)
+   uv pip install -r requirements.txt
+
+   # Alternative: Using pip
    pip install -r requirements.txt
    ```
 

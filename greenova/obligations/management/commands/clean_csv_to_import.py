@@ -16,7 +16,7 @@ except ImportError:
     PANDAS_AVAILABLE = False
     logger.exception(
         "pandas and/or numpy modules not found. Please install them with: "
-        "pip install pandas numpy",
+        "uv pip install pandas numpy",
     )
 
 
@@ -51,7 +51,7 @@ class Command(BaseCommand):
             self.stderr.write(
                 self.style.ERROR(
                     "This command requires pandas and numpy. "
-                    "Please install them with: pip install pandas numpy",
+                    "Please install them with: uv pip install pandas numpy",
                 ),
             )
             return
@@ -320,7 +320,7 @@ class Command(BaseCommand):
             df["environmental__aspect"] = df["environmental__aspect"].astype(str).apply(
                 lambda x: x.title() if (
                     pd.notna(x) and x not in {
-                        "nan", "NULL", ""} and x.title() in valid_aspects) else "Other", )
+                        "nan", "NULL", ""} and x.title() in valid_aspects) else "Other")
         return df
 
     def _clean_site_desktop_values(self, df):

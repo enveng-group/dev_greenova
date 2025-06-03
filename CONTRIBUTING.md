@@ -103,13 +103,22 @@ feels welcome to contribute.
 3. **Set up a virtual environment**:
 
    ```bash
-   python -m venv .venv
+   # Using uv (preferred - faster and more reliable)
+   uv venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+   # Alternative: Using traditional venv
+   python -m venv .venv
+   source .venv/bin/activate
    ```
 
 4. **Install dependencies**:
 
    ```bash
+   # Using uv (preferred)
+   uv pip install -r requirements.txt
+
+   # Alternative: Using pip
    pip install -r requirements.txt
    npm install
    ```

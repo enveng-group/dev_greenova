@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Set up Python virtual environment for the project."""
+"""Set up Python virtual environment for the project using uv."""
 
 import os
 import subprocess
@@ -38,37 +38,56 @@ def run_command(command: list[str], cwd: str | None = None) -> bool:
 
 
 def main() -> NoReturn:
-    """Set up Python virtual environment."""
+    """Set up Python virtual environment using uv."""
     workspace_dir = "/workspaces/greenova"
     venv_dir = os.path.join(workspace_dir, ".venv")
 
     success = True
 
-    # Upgrade pip globally for the current Python interpreter
-    if not run_command([sys.executable, "-m", "pip", "install", "--upgrade", "pip"]):
-        success = False
-
-    # Create virtual environment
-    if success and not run_command(
-            ["python3", "-m", "venv", venv_dir], cwd=workspace_dir):
-        success = False
-
-    if success:
-        # Upgrade pip, wheel, setuptools in the venv
-        pip_path = os.path.join(venv_dir, "bin", "pip")
-        if not run_command(
-            [pip_path, "install", "--upgrade", "pip", "wheel", "setuptools"],
-            cwd=workspace_dir,
-        ):
+    # Check if uv is available
+    if not run_command(["uv", "--version"]):
+        # Fallback to pip if uv is not available
+        if not run_command([sys.executable, "-m", "pip",
+                           "install", "--upgrade", "pip"]):
             success = False
 
-    if success:
-        # Install dependencies from requirements.txt if it exists
-        requirements_file = os.path.join(workspace_dir, "requirements.txt")
-        if Path(requirements_file).exists() and not run_command(
-            [pip_path, "install", "-r", "requirements.txt"], cwd=workspace_dir,
-        ):
+        # Create virtual environment with venv
+        if success and not run_command(
+                ["python3", "-m", "venv", venv_dir], cwd=workspace_dir):
             success = False
+
+        if success:
+            # Install with pip
+            pip_path = os.path.join(venv_dir, "bin", "pip")
+            requirements_file = os.path.join(workspace_dir, "requirements.txt")
+            if Path(requirements_file).exists() and not run_command(
+                [pip_path, "install", "-r", "requirements.txt"], cwd=workspace_dir,
+            ):
+                success = False
+    else:
+        # Use uv for faster dependency installation
+
+        # Create virtual environment with uv
+        if not run_command(["uv", "venv", venv_dir], cwd=workspace_dir):
+            success = False
+
+        if success:
+            # Install dependencies with uv
+            requirements_file = os.path.join(workspace_dir, "requirements.txt")
+            if Path(requirements_file).exists():
+                # Use uv pip to install from requirements.txt
+                if not run_command(
+                    ["uv", "pip", "install", "-r", "requirements.txt"],
+                    cwd=workspace_dir,
+                ):
+                    success = False
+
+            # Ensure iPython is installed for interactive shell
+            if success and not run_command(
+                ["uv", "pip", "install", "ipython"],
+                cwd=workspace_dir,
+            ):
+                success = False
 
     sys.exit(0 if success else 1)
 

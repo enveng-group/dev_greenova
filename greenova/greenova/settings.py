@@ -148,6 +148,7 @@ INSTALLED_APPS = [
     "allauth.mfa",
 
     # Other third-party libraries
+    "django_extensions",  # Enhanced Django management commands and shell_plus
     "corsheaders",
     "django_htmx",
     "django_hyperscript",
@@ -175,7 +176,8 @@ INSTALLED_APPS = [
     "theme",  # UI Styling
     "chatbot",  # Standalone feature, placed last
     "feedback",  # Add the feedback app here
-    "django_plotly_dash.apps.DjangoPlotlyDashConfig",  # Django Plotly Dash, this plots everything...
+    "django_plotly_dash.apps.DjangoPlotlyDashConfig",
+    # Django Plotly Dash, this plots everything...
 ]
 
 
@@ -492,3 +494,34 @@ SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50  # Run GC check on 50% of request
 SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Limit request body size to 1KB
 SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # Limit response body size to 1KB
 SILKY_INTERCEPT_PERCENT = 25  # Only profile 25% of requests
+
+# Django Extensions (shell_plus) Configuration
+SHELL_PLUS = "ipython"  # Use IPython as the default shell
+SHELL_PLUS_PRINT_SQL = DEBUG  # Print SQL queries in development
+SHELL_PLUS_PRINT_SQL_TRUNCATE = 1000  # Truncate long SQL queries
+
+# IPython-specific arguments for shell_plus
+IPYTHON_ARGUMENTS = [
+    "--ext", "django_extensions.management.notebook_extension",
+    "--matplotlib=inline",  # Enable inline matplotlib plots
+]
+
+# Additional imports for shell_plus
+SHELL_PLUS_IMPORTS = [
+    "from django.contrib.auth.models import User",
+    "from django.utils import timezone",
+    "from django.conf import settings",
+    "import json",
+    "import os",
+    "from pathlib import Path",
+    "from datetime import datetime, timedelta",
+]
+
+# Enhanced shell_plus configuration
+SHELL_PLUS_SUBCLASSES_IMPORT = [
+    "django.db.models.Model",  # Import all model subclasses
+    "django.contrib.auth.models.AbstractUser",  # Import user models
+]
+
+# Exclude certain models from automatic loading if needed
+# SHELL_PLUS_DONT_LOAD = ['sites']  # Example: don't load Django sites framework
