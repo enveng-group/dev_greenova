@@ -74,13 +74,22 @@
         <nav>
           <ul class="theme-container">
             <li>
-              <a href="#" data-theme-switcher="auto">Auto</a>
+              <a href="#" data-theme-switcher="auto">
+{% include "core/components/theme_icon_dark.html" %}
+                Auto
+              </a>
             </li>
             <li>
-              <a href="#" data-theme-switcher="light">Light</a>
+              <a href="#" data-theme-switcher="light">
+{% include "core/components/theme_icon_light.html" %}
+                Light
+              </a>
             </li>
             <li>
-              <a href="#" data-theme-switcher="dark">Dark</a>
+              <a href="#" data-theme-switcher="dark">
+{% include "core/components/theme_icon_dark.html" %}
+                Dark
+              </a>
             </li>
           </ul>
           <ul role="menubar" aria-label="Primary navigation">

@@ -68,164 +68,50 @@ git push origin integration/v0.0.7
 git remote prune origin
 
 
- help Resolve conflicts between cameronsims:enhancements/139-graph and enveng-group:integration/v0.0.7 and committing changes  cameronsims:enhancements/139-graph and  suggest what to keep for figures.py
+ compare changes below with existing design.css, please generate new file
 
 ```python
-import logging
+/* Root Variables */
+:root {
+  --greenova-main-spacing: 5rem;
+  --greenova-head-spacing: 5rem;
+  --greenova-charts-width: 320px;
+  --greenova-font-family: 'Arial';
+  /*"Ubuntu"*/
+  --greenova-font-weight: normal;
+  --greenova-line-height: 1.125;
+  --greenova-letter-spacing: 0.0625rem;
+  /* 1px */
 
-<<<<<<< enhancements/139-graph
-import plotly.graph_objects as go
+  --pico-font-family: var(--greenova-font-family);
+  --pico-font-weight: var(--greenova-font-weight);
+  --pico-line-height: var(--greenova-line-height);
+  --greenova-border-radius: 0.5rem;
+  --greenova-border-radius-small: 0.25rem;
+  --greenova-spacing-large: 0.75rem;
+  --greenova-spacing: 0.46875rem;
+  --greenova-spacing-small: 0.3125rem;
+  --greenova-padding-large: 1.25rem;
+  --greenova-padding: 0.625rem;
+  --greenova-padding-small: 0.3125rem;
+  --greenova-shadow: 0 0.125rem 0.125rem rgb(0 0 0 / 10%);
+  --greenova-theme-icon-size: 1.1rem;
+  --greenova-title-size: 1.2rem;
+  --greenova-subtitle-size: 0.9rem;
+  --greenova-text-size: 0.8rem;
+  --greenova-input-label: 0.8rem;
+  --greenova-input-size: 0.75rem;
+  --greenova-table-size: 0.7rem;
+  --greenova-button-size: 0.8rem;
 
-import matplotlib
-import matplotlib.pyplot as plt
-=======
->>>>>>> integration/v0.0.7
-from django.db.models import Count
-from matplotlib.figure import Figure
-from obligations.models import Obligation
+  /* For visual clarity */
+  --greenova-table-border: 0.05rem solid #000;
 
-logger = logging.getLogger(__name__)
-
-
-def generate_responsibility_chart(
-        responsibility_counts: dict[str, int], fig_width: int = 600, fig_height: int = 300) -> Figure:
-    """Generate a horizontal bar chart showing obligation counts by responsibility.
-
-    Args:
-        responsibility_counts: Dictionary mapping responsibility names to counts
-        fig_width: Width of figure in pixels
-        fig_height: Height of figure in pixels
-
-    Returns:
-        A matplotlib Figure with the horizontal bar chart
-
-    """
-    try:
-        # Extract responsibility labels and counts
-        labels = list(responsibility_counts.keys())
-        counts = list(responsibility_counts.values())
-
-        # Create figure with appropriate size
-        fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
-        ax = fig.add_subplot(111)
-
-        # Only plot if we have data
-        if labels:
-            # Create horizontal bar chart
-            y_pos = range(len(labels))
-            ax.barh(y_pos, counts, align="center", color="#65a879")
-            ax.set_yticks(y_pos)
-            ax.set_yticklabels(labels)
-            ax.invert_yaxis()  # Labels read top-to-bottom
-            ax.set_xlabel("Number of Obligations")
-
-            # Add count labels to the right of each bar
-            for i, v in enumerate(counts):
-                ax.text(v + 0.1, i, str(v), va="center")
-
-            # Set title with accessible font size
-            ax.set_title("Obligations by Responsibility", fontsize=12)
-        else:
-            ax.text(0.5, 0.5, "No data available",
-                    horizontalalignment="center",
-                    verticalalignment="center")
-
-        # Ensure proper layout with enough room for labels
-        fig.tight_layout()
-        return fig
-
-    except Exception as e:
-        logger.exception(f"Error generating responsibility chart: {e!s}")
-        # Return a simple error figure
-        fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
-        ax = fig.add_subplot(111)
-        ax.text(
-            0.5,
-            0.5,
-            f"Error: {
-                e!s}",
-            horizontalalignment="center",
-            verticalalignment="center")
-        return fig
-
-
-# Keep the original function with correct implementation
-def get_responsibility_chart(
-        mechanism_id: int,
-        fig_width: int = 600,
-        fig_height: int = 300,
-        filtered_ids: list[int] | None = None) -> Figure:
-    """Generate a horizontal bar chart showing obligation counts by responsibility.
-
-    Args:
-        mechanism_id: ID of the environmental mechanism to filter by
-        fig_width: Width of figure in pixels
-        fig_height: Height of figure in pixels
-        filtered_ids: Optional list of obligation IDs to filter by
-
-    Returns:
-        A matplotlib Figure with the horizontal bar chart
-
-    """
-    try:
-        # Get obligations for this mechanism
-        obligations = Obligation.objects.filter(
-            primary_environmental_mechanism_id=mechanism_id)
-
-        # Apply additional filtering if provided
-        if filtered_ids is not None:
-            obligations = obligations.filter(id__in=filtered_ids)
-
-        # Count obligations by responsibility using the ORM
-        responsibility_data = obligations.values("responsibility").annotate(
-            count=Count("obligation_number"),
-        ).order_by("-count")
-
-        # Extract responsibility labels and counts
-        labels = [item["responsibility"] for item in responsibility_data]
-        counts = [item["count"] for item in responsibility_data]
-
-        # Create figure with appropriate size
-        fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
-        ax = fig.add_subplot(111)
-
-        # Only plot if we have data
-        if labels:
-            # Create horizontal bar chart
-            y_pos = range(len(labels))
-            ax.barh(y_pos, counts, align="center", color="#65a879")
-            ax.set_yticks(y_pos)
-            ax.set_yticklabels(labels)
-            ax.invert_yaxis()  # Labels read top-to-bottom
-            ax.set_xlabel("Number of Obligations")
-
-            # Add count labels to the right of each bar
-            for i, v in enumerate(counts):
-                ax.text(v + 0.1, i, str(v), va="center")
-
-            # Set title with accessible font size
-            ax.set_title("Obligations by Responsibility", fontsize=12)
-        else:
-            ax.text(0.5, 0.5, "No data available",
-                    horizontalalignment="center",
-                    verticalalignment="center")
-
-        # Ensure proper layout with enough room for labels
-        fig.tight_layout()
-        return fig
-
-    except Exception as e:
-        logger.exception(f"Error generating responsibility chart: {e!s}")
-        # Return a simple error figure
-        fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
-        ax = fig.add_subplot(111)
-        ax.text(
-            0.5,
-            0.5,
-            f"Error: {
-                e!s}",
-            horizontalalignment="center",
-            verticalalignment="center")
-        return fig
-
+  /* Chat Radius Box */
+  --greenova-chat-border-radius: 1rem;
+  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
+  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius)
+    var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
+}
 ```
