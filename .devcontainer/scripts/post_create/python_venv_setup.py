@@ -5,7 +5,6 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import NoReturn
 
 
 def run_command(command: list[str], cwd: str | None = None) -> bool:
@@ -34,10 +33,12 @@ def run_command(command: list[str], cwd: str | None = None) -> bool:
     except subprocess.CalledProcessError as e:
         if e.stderr:
             pass
+        if e.stdout:
+            pass
         return False
 
 
-def main() -> NoReturn:
+def main() -> None:
     """Set up Python virtual environment using uv."""
     workspace_dir = "/workspaces/greenova"
     venv_dir = os.path.join(workspace_dir, ".venv")
@@ -75,19 +76,22 @@ def main() -> NoReturn:
             # Install dependencies with uv
             requirements_file = os.path.join(workspace_dir, "requirements.txt")
             if Path(requirements_file).exists():
-                # Use uv pip to install from requirements.txt
+                # Use uv pip to install from requirements.txt with proper venv targeting
                 if not run_command(
-                    ["uv", "pip", "install", "-r", "requirements.txt"],
+                    ["uv", "pip", "install", "--python", venv_dir, "-r", "requirements.txt"],
                     cwd=workspace_dir,
                 ):
                     success = False
 
             # Ensure iPython is installed for interactive shell
             if success and not run_command(
-                ["uv", "pip", "install", "ipython"],
+                ["uv", "pip", "install", "--python", venv_dir, "ipython"],
                 cwd=workspace_dir,
             ):
                 success = False
+
+    if success:
+        pass
 
     sys.exit(0 if success else 1)
 
