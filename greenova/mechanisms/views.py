@@ -8,6 +8,10 @@ from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
 from projects.models import Project
 
+# Optional: Only include these if you want Plotly interactive charts
+import plotly.graph_objects as go
+from plotly.offline import plot
+
 from .figures import get_mechanism_chart, get_overall_chart
 from .models import EnvironmentalMechanism
 
@@ -39,37 +43,30 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
             return context
 
         try:
-            # Check if project exists
             project = Project.objects.get(id=project_id)
-
-            # Get mechanisms for this project
             mechanisms = EnvironmentalMechanism.objects.filter(project_id=project_id)
-
-            # Generate charts for each mechanism
             mechanism_charts = []
 
             # Add overall chart first
-            _, overall_chart_data = get_overall_chart(project_id)
-
+            overall_fig, overall_chart_data = get_overall_chart(project_id)
             mechanism_charts.append({
                 "name": "Overall Status",
                 "image_data": overall_chart_data,
+                "figure": plot(overall_fig, output_type="div"),
             })
 
             # Generate charts for individual mechanisms
             for mechanism in mechanisms:
-                _, chart_data = get_mechanism_chart(mechanism.id)
-
+                fig, chart_data = get_mechanism_chart(mechanism.id)
                 mechanism_charts.append({
                     "id": mechanism.id,
                     "name": mechanism.name,
                     "image_data": chart_data,
+                    "figure": plot(fig, output_type="div"),
                 })
 
             context["mechanism_charts"] = mechanism_charts
             context["project"] = project
-
-            # Add table data with mechanism ID
             context["table_data"] = [
                 {
                     "id": m.id,
@@ -78,16 +75,19 @@ class MechanismChartView(LoginRequiredMixin, TemplateView):
                     "in_progress": m.in_progress_count,
                     "completed": m.completed_count,
                     "overdue": m.overdue_count,
-                    "total": m.not_started_count +
-                    m.in_progress_count +
-                    m.completed_count +
-                    m.overdue_count,
-                } for m in mechanisms]
+                    "total": (
+                        m.not_started_count +
+                        m.in_progress_count +
+                        m.completed_count +
+                        m.overdue_count
+                    ),
+                } for m in mechanisms
+            ]
 
         except Project.DoesNotExist:
             context["error"] = f"Project with ID {project_id} not found"
         except Exception as e:
-            logger.exception(f"Error generating mechanism charts: {e!s}")
+            logger.exception("Error generating mechanism charts: %s", e)
             context["error"] = f"Error generating charts: {e!s}"
 
         return context

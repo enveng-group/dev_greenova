@@ -1,3 +1,4 @@
+import io
 import logging
 
 from django.db.models import Count
@@ -147,3 +148,19 @@ def get_responsibility_chart(
             horizontalalignment="center",
             verticalalignment="center")
         return fig
+
+
+def figure_to_svg(fig: Figure) -> str:
+    """Convert a matplotlib Figure to SVG string.
+
+    Args:
+        fig: Matplotlib Figure object.
+
+    Returns:
+        SVG image as a string.
+    """
+    buf = io.StringIO()
+    fig.savefig(buf, format="svg")
+    svg = buf.getvalue()
+    buf.close()
+    return svg
