@@ -1,98 +1,43 @@
 /* Root Variables */
 :root {
-  --greenova-main-spacing: 5rem;
-  --greenova-head-spacing: 5rem;
-  --greenova-charts-width: 320px;
-  --greenova-font-family: 'Arial';
-  /*"Ubuntu"*/
-  --greenova-font-weight: normal;
-  --greenova-line-height: 1.125;
-  --greenova-letter-spacing: 0.0625rem;
-  /* 1px */
+	--greenova-main-spacing: 5rem;
+	--greenova-head-spacing: 5rem;
+	--greenova-charts-width: 320px;
+	--greenova-font-family: "Arial";
+	/*"Ubuntu"*/
+	--greenova-font-weight: normal;
+	--greenova-line-height: 1.125;
+	--greenova-letter-spacing: 0.0625rem;
+	/* 1px */
 
-  --pico-font-family: var(--greenova-font-family);
-  --pico-font-weight: var(--greenova-font-weight);
-  --pico-line-height: var(--greenova-line-height);
-  --greenova-border-radius: 0.5rem;
-  --greenova-border-radius-small: 0.25rem;
-  --greenova-spacing-large: 0.75rem;
-  --greenova-spacing: 0.46875rem;
-  --greenova-spacing-small: 0.3125rem;
-  --greenova-padding-large: 1.25rem;
-  --greenova-padding: 0.625rem;
-  --greenova-padding-small: 0.3125rem;
-  --greenova-shadow: 0 0.125rem 0.125rem rgb(0 0 0 / 10%);
-  --greenova-title-size: 1.2rem;
-  --greenova-subtitle-size: 0.9rem;
-  --greenova-text-size: 0.8rem;
-  --greenova-input-label: 0.8rem;
-  --greenova-input-size: 0.75rem;
-  --greenova-table-size: 0.7rem;
-  --greenova-button-size: 0.8rem;
+	--pico-font-family: var(--greenova-font-family);
+	--pico-font-weight: var(--greenova-font-weight);
+	--pico-line-height: var(--greenova-line-height);
+	--greenova-border-radius: 0.5rem;
+	--greenova-border-radius-small: 0.25rem;
+	--greenova-spacing-large: 0.75rem;
+	--greenova-spacing: 0.46875rem;
+	--greenova-spacing-small: 0.3125rem;
+	--greenova-padding-large: 1.25rem;
+	--greenova-padding: 0.625rem;
+	--greenova-padding-small: 0.3125rem;
+	--greenova-shadow: 0 0.125rem 0.125rem rgb(0 0 0 / 10%);
+	--greenova-theme-icon-size: 1.1rem;
+	--greenova-title-size: 1.2rem;
+	--greenova-subtitle-size: 0.9rem;
+	--greenova-text-size: 0.8rem;
+	--greenova-input-label: 0.8rem;
+	--greenova-input-size: 0.75rem;
+	--greenova-table-size: 0.7rem;
+	--greenova-button-size: 0.8rem;
 
-  /* For visual clarity */
-  --greenova-table-border: 0.05rem solid #000;
+	/* For visual clarity */
+	--greenova-table-border: 0.05rem solid #000;
 
-  /* Chat Radius Box */
-  --greenova-chat-border-radius: 1rem;
-  --greenova-chat-bot-border-radius: var(--greenova-chat-border-radius)
-    var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
-  --greenova-chat-user-border-radius: var(--greenova-chat-border-radius)
-    var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
-}
-
-/* Greenova Design Tokens and Responsive Variables */
-
-/* --- Breakpoints --- */
-:root {
-  --breakpoint-xs: 320px;
-  --breakpoint-sm: 480px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-}
- 
-/* --- Responsive Typography --- */
-:root {
-  --font-size-base: clamp(1rem, 2.5vw, 1.125rem);
-  --font-size-lg: clamp(1.125rem, 3vw, 1.25rem);
-  --font-size-sm: clamp(0.95rem, 2vw, 1rem);
-}
-
-/* --- Touch Target Accessibility --- */
-button,
-input[type="button"],
-input[type="submit"],
-input[type="checkbox"],
-input[type="radio"],
-label,
-a,
-select {
-  min-width: 44px;
-  min-height: 44px;
-  box-sizing: border-box;
-}
-
-/* --- Example Spacing Tokens (adjust as needed) --- */
-:root {
-  --greenova-spacing: 1rem;
-  --greenova-spacing-small: 0.5rem;
-  --greenova-spacing-large: 2rem;
-  --greenova-padding: 1rem;
-  --greenova-padding-small: 0.5rem;
-  --greenova-border-radius: 0.5rem;
-}
-
-/* --- Example Color Tokens (adjust as needed) --- */
-:root {
-  --greenova-background-primary: #f6f8f9;
-  --greenova-background-secondary: #e3e8ea;
-  --greenova-tertiary-dark: #2d3a3a;
-}
-
-/* --- Responsive Utility Classes (optional) --- */
-@media (max-width: 480px) {
-  .hide-mobile {
-    display: none !important;
-  }
+	/* Chat Radius Box */
+	--greenova-chat-border-radius: 1rem;
+	--greenova-chat-bot-border-radius: var(--greenova-chat-border-radius)
+		var(--greenova-chat-border-radius) var(--greenova-chat-border-radius) 0rem;
+	--greenova-chat-user-border-radius: var(--greenova-chat-border-radius)
+		var(--greenova-chat-border-radius) 0rem var(--greenova-chat-border-radius);
 }
