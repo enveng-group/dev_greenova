@@ -8,6 +8,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
+import logging
 import mimetypes
 import os
 import sys
@@ -16,49 +18,121 @@ from pathlib import Path
 from shutil import which
 from typing import Any, TypedDict
 
-import sentry_sdk
-from dotenv_vault import load_dotenv
+# Handle optional dependencies gracefully
+try:
+    import sentry_sdk
+    SENTRY_AVAILABLE = True
+except ImportError:
+    SENTRY_AVAILABLE = False
+    sentry_sdk = None
 
-load_dotenv()
+# Use standard python-dotenv instead of dotenv-vault
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # Fallback if dotenv is not available
+    def load_dotenv() -> None:
+        """Fallback function when python-dotenv is not available."""
+    load_dotenv()
 
 
 class DatabaseConfig(TypedDict):
+    """A TypedDict for configuring database settings.
+
+    Attributes:
+        ENGINE: The database engine to use (e.g., 'django.db.backends.sqlite3').
+        NAME: The name or path of the database file.
+
+    """
+
     ENGINE: str
     NAME: str | Path
 
 
 class TemplateOptions(TypedDict, total=False):
+    """A TypedDict for configuring template options.
+
+    Attributes:
+        context_processors: A list of context processor paths to be used in templates.
+        debug: Indicates whether template debugging is enabled.
+        environment: The environment for Jinja2 templates, if applicable.
+
+    """
+
     context_processors: list[str]
-    debug: bool  # This was the missing required field
-    environment: str  # Add environment as an optional field with total=False
+    debug: bool
+    environment: str
 
 
 class TemplateConfig(TypedDict):
+    """A TypedDict for configuring template settings.
+
+    Attributes:
+        BACKEND: The backend engine to use for templates.
+        DIRS: A list of directories to search for templates.
+        APP_DIRS: Indicates whether to include app directories in template search.
+        OPTIONS: Additional options for configuring the template engine.
+
+    """
+
     BACKEND: str
-    DIRS: list[Path | str]  # Updated to accept both Path and str
+    DIRS: list[Path | str]
     APP_DIRS: bool
     OPTIONS: TemplateOptions
 
 
-# Update the LoggingHandlerConfig TypedDict to better match Django's expectations
 class LoggingHandlerConfig(TypedDict, total=False):
+    """A TypedDict for configuring logging handler settings.
+
+    Attributes:
+        level: The logging level (e.g., 'DEBUG', 'INFO').
+        class_: The handler class to use (e.g., 'logging.StreamHandler').
+        filename: The name of the file to log to, if applicable.
+        formatter: The formatter to use for log messages.
+
+    """
+
     level: str
-    class_: str  # Use class_ in typings to avoid Python keyword conflict
+    class_: str
     filename: str
     formatter: str
 
 
 class LoggingConfig(TypedDict):
+    """A TypedDict for configuring logging settings.
+
+    Attributes:
+        version: The version of the logging configuration schema.
+        disable_existing_loggers: Whether to disable existing loggers.
+        formatters: A dictionary of formatters for log messages.
+        handlers: A dictionary of logging handlers.
+        loggers: A dictionary of loggers and their configurations.
+        root: The root logger configuration.
+
+    """
+
     version: int
     disable_existing_loggers: bool
     formatters: dict[str, dict[str, str]]
     handlers: dict[str, LoggingHandlerConfig]
     loggers: dict[str, dict[str, str | list[str] | bool]]
-    root: dict[str, Any]  # Add root logger type
+    root: dict[str, Any]
 
 
-# Add TypedDict for matplotlib figure defaults
 class MatplotlibFigDefaults(TypedDict):
+    """A TypedDict for configuring default settings for Matplotlib figures.
+
+    Attributes:
+        silent: Whether to suppress output from Matplotlib.
+        fig_width: The width of the figure in pixels.
+        fig_height: The height of the figure in pixels.
+        output_type: The type of output to generate (e.g., 'string').
+        output_format: The format of the output (e.g., 'svg').
+        cleanup: Whether to clean up temporary files after rendering.
+
+    """
+
     silent: bool
     fig_width: int
     fig_height: int
@@ -71,14 +145,19 @@ class MatplotlibFigDefaults(TypedDict):
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Settings validation function
 def validate_settings() -> None:
     """Validate critical environment variables and provide proper defaults.
-    Raises ValueError for missing required settings.
+
+    Raises:
+        ValueError: For missing required settings.
+
     """
     # Check SECRET_KEY is set
-    if not os.environ.get("DJANGO_SECRET_KEY"):
-        msg = "DJANGO_SECRET_KEY environment variable is required"
+    if not SECRET_KEY:
+        msg = (
+            "DJANGO_SECRET_KEY environment variable is required. "
+            "Ensure it is set in the .env file."
+        )
         raise ValueError(msg)
 
     # Convert DEBUG to boolean and validate
@@ -90,11 +169,12 @@ def validate_settings() -> None:
 
     # Parse and validate ALLOWED_HOSTS
     allowed_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
-    if not allowed_hosts and DEBUG is False:
+    if not allowed_hosts and not DEBUG:
         msg = "DJANGO_ALLOWED_HOSTS must be set in production (DEBUG=False)"
         raise ValueError(msg)
+
     # Check for insecure default SECRET_KEY
-    if "django-insecure" in os.environ.get("DJANGO_SECRET_KEY", ""):
+    if "django-insecure" in os.environ.get("DJANGO_SECRET_KEY", "") and not DEBUG:
         warnings.warn(
             "Using an insecure SECRET_KEY! Please set a secure SECRET_KEY "
             "in production.",
@@ -103,7 +183,7 @@ def validate_settings() -> None:
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
@@ -112,14 +192,39 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in {"true", "1"}
 
 # Update allowed hosts for production
-ALLOWED_HOSTS = [host.strip()
-                 for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "")
-                 .replace('"', "")
-                 .split(",") if host.strip()
-                 ]
+allowed_hosts_env = os.environ.get("DJANGO_ALLOWED_HOSTS", "")
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in allowed_hosts_env.replace('"', "").split(",")
+    if host.strip()
+]
+
+# Always include local development hosts when DEBUG is True
+if DEBUG:
+    ALLOWED_HOSTS += ["localhost", "127.0.0.1"]
 
 # Run validation
 validate_settings()
+
+# Security Headers Configuration
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "'wasm-unsafe-eval'",
+    "'unsafe-inline'",
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    "'unsafe-inline'",
+    "fonts.googleapis.com",
+)
+CSP_FONT_SRC = ("'self'", "fonts.gstatic.com")
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_CONNECT_SRC = (
+    "'self'",
+    "ws://127.0.0.1:*",
+    "ws://localhost:*",
+)
 
 # Tailwind CSS configuration
 TAILWIND_APP_NAME = "theme"
@@ -128,8 +233,8 @@ INTERNAL_IPS = [
 ]
 
 # Application definition
-
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     # Core Django apps (must be first)
     "django.contrib.admin",
     "django.contrib.auth",
@@ -148,7 +253,7 @@ INSTALLED_APPS = [
     "allauth.mfa",
 
     # Other third-party libraries
-    "django_extensions",  # Enhanced Django management commands and shell_plus
+    "django_extensions",
     "corsheaders",
     "django_htmx",
     "django_hyperscript",
@@ -162,28 +267,26 @@ INSTALLED_APPS = [
     "silk",
 
     # Your local apps (ordered by dependency)
-    "authentication",
-    "core.apps.CoreConfig",  # Core logic, should be initialized early
-    "company",  # Base models (used in other apps, so placed first)
-    "projects",  # Likely depends on `company`
-    "users",  # User management, might depend on `company`
-    "mechanisms",  # Business logic modules
-    "responsibility",  # Likely domain-specific
-    "obligations",  # Related to `responsibility`
-    "procedures",  # Depends on `obligations`
-    "dashboard",  # UI and analytics
-    "landing",  # Landing page or homepage
-    "theme",  # UI Styling
-    "chatbot",  # Standalone feature, placed last
-    "feedback",  # Add the feedback app here
+    "authentication.apps.AuthenticationConfig",
+    "core.apps.CoreConfig",
+    "company.apps.CompanyConfig",
+    "projects.apps.ProjectsConfig",
+    "users.apps.UsersConfig",
+    "mechanisms.apps.MechanismsConfig",
+    "responsibility.apps.ResponsibilityConfig",
+    "obligations.apps.ObligationsConfig",
+    "procedures.apps.ProceduresConfig",
+    "dashboard.apps.DashboardConfig",
+    "landing.apps.LandingConfig",
+    "theme.apps.ThemeConfig",
+    "chatbot.apps.ChatbotConfig",
+    "feedback.apps.FeedbackConfig",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
-    # Django Plotly Dash, this plots everything...
 ]
-
 
 # Django-Matplotlib configuration
 DJANGO_MATPLOTLIB_TMP = "matplotlib_tmp"
-DJANGO_MATPLOTLIB_MODULE = "figures"  # Instead of figures.py
+DJANGO_MATPLOTLIB_MODULE = "figures"
 
 # Django-Matplotlib Field configurations
 DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
@@ -196,29 +299,24 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 }
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",  # First for security headers
-    "corsheaders.middleware.CorsMiddleware",  # CORS headers should be early
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",  # Keep CSRF for form handling
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "allauth.account.middleware.AccountMiddleware",  # Should follow auth middleware
-    "allauth.account.middleware.AccountMiddleware",  # Should follow auth middleware
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",  # Debug after core middleware
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
-    # 'django_pdb.middleware.PdbMiddleware',
-    "silk.middleware.SilkyMiddleware",  # Profiling middleware works best at the end
-    # 'allauth.usersessions.middleware.UserSessionMiddleware',
+    "silk.middleware.SilkyMiddleware",
 ]
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
-
-    # `allauth` specific authentication methods, such as login by email
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
@@ -244,15 +342,15 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ROOT_URLCONF = "greenova.urls"
 
-# Update TEMPLATES configuration to remove the conflict
+# Update TEMPLATES configuration
 TEMPLATES: list[TemplateConfig] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            BASE_DIR / "authentication",  # route to custom django-allauth template!
+            BASE_DIR / "authentication",
             BASE_DIR / "templates",
         ],
-        "APP_DIRS": True,  # Keep this for app template discovery
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -263,11 +361,10 @@ TEMPLATES: list[TemplateConfig] = [
             "debug": DEBUG,
         },
     },
-    # Add Jinja2 template engine
     {
         "BACKEND": "django.template.backends.jinja2.Jinja2",
         "DIRS": [
-            Path(os.path.join(BASE_DIR, "templates/jinja2")),  # Convert to Path
+            Path(os.path.join(BASE_DIR, "templates/jinja2")),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -278,14 +375,12 @@ TEMPLATES: list[TemplateConfig] = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "debug": DEBUG,  # Added the required 'debug' key
+            "debug": DEBUG,
         },
     },
 ]
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES: dict[str, DatabaseConfig] = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -294,84 +389,82 @@ DATABASES: dict[str, DatabaseConfig] = {
 }
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME":
-     "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-     "OPTIONS": {
-         "min_length": 9,
-     },
-     },
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"}]
+    {
+        "NAME": (
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+        ),
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 9,
+        },
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = "en-au"
-
 TIME_ZONE = "Australia/Perth"
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# Add these settings for static files
-# List of finder classes that know how to find static files in various locations
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Ensure static files are handled simply
+# Ensure static files are handled with WhiteNoise
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
 # Application version
-APP_VERSION = "0.0.5"
+APP_VERSION = "0.0.6"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Disable security features for development
-# SECURE_BROWSER_XSS_FILTER = False
-# SECURE_CONTENT_TYPE_NOSNIFF = False
-# X_FRAME_OPTIONS = 'SAMEORIGIN'  # Allow frames for development tools
-# CSRF_COOKIE_SECURE = False
-# SESSION_COOKIE_SECURE = False
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# SECURE_SSL_REDIRECT = True
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+CSRF_TRUSTED_ORIGINS = ["https://app.greenova.com.au"]
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SESSION_COOKIE_HTTPONLY = True
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+CORS_ALLOW_HEADERS = ["Content-Type", "Authorization"]
 
-# Simplify cache to basic memory cache
+# Cache configuration
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "greenova-cache",
-        "TIMEOUT": 300,  # 5 minutes default timeout
+        "TIMEOUT": 300,
         "OPTIONS": {
-            "MAX_ENTRIES": 1000,  # Maximum number of entries before garbage collection
+            "MAX_ENTRIES": 1000,
         },
     },
 }
@@ -381,8 +474,27 @@ LOGS_DIR = os.path.join(str(BASE_DIR).replace(" ", "_").replace(":", "_"), "logs
 if not os.path.exists(LOGS_DIR):
     os.makedirs(LOGS_DIR)
 
-# Update the LOGGING configuration with compliant Django format
-# We need to cast the dict to satisfy mypy while still using "class" key for Django
+
+class SuppressChromeDevtools404(logging.Filter):
+    """Custom logging filter to suppress 404 warnings for chrome.devtools.json requests."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Determine if the log record should be logged.
+
+        Args:
+            record: The log record to filter.
+
+        Returns:
+            False if the record is a Chrome DevTools 404 warning, True otherwise.
+
+        """
+        msg = str(record.getMessage())
+        return not (
+            record.levelno == logging.WARNING and "/appspecific/com.chrome.devtools.json" in msg and (
+                "Not Found" in msg or "404" in msg))
+
+
+# Logging configuration
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -398,15 +510,22 @@ LOGGING = {
     },
     "handlers": {
         "console": {
-            "class": "logging.StreamHandler",  # Django expects "class", not "class_"
+            "class": "logging.StreamHandler",
             "level": "WARNING",
             "formatter": "simple",
+            "filters": ["suppress_chrome_devtools_404"],
         },
         "file": {
-            "class": "logging.FileHandler",  # Django expects "class", not "class_"
+            "class": "logging.FileHandler",
             "level": "INFO",
             "filename": os.path.join(LOGS_DIR, "django.log"),
             "formatter": "verbose",
+            "filters": ["suppress_chrome_devtools_404"],
+        },
+    },
+    "filters": {
+        "suppress_chrome_devtools_404": {
+            "()": SuppressChromeDevtools404,
         },
     },
     "loggers": {
@@ -421,11 +540,11 @@ LOGGING = {
             "propagate": True,
         },
     },
-    "root": {  # Added root logger to catch all other logs
+    "root": {
         "handlers": ["console", "file"],
         "level": "INFO",
     },
-}  # type: ignore  # Tell mypy to ignore this typing issue
+}
 
 # Media settings
 MEDIA_URL = "/media/"
@@ -435,11 +554,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "greenova", "media")
 FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400  # 25MB in bytes
 
 # Modify runserver command to force HTTP
-
 if "runserver" in sys.argv:
-
     os.environ["PYTHONHTTPSVERIFY"] = "0"
-    os.environ.get("DJANGO_SETTINGS_MODULE")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "greenova.settings")
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_SSL_REDIRECT = False
+    SECURE_HSTS_SECONDS = 0
 
 # Configure NPM path for Django Tailwind
 NPM_BIN_PATH = which("npm")
@@ -462,31 +585,25 @@ mimetypes.add_type("image/tiff", ".tif", True)
 mimetypes.add_type("image/vnd.microsoft.icon", ".ico", True)
 mimetypes.add_type("text/html", ".html", True)
 mimetypes.add_type("text/plain", ".txt", True)
-
-# User sessions configuration
-# USERSESSIONS_TRACK_ACTIVITY = True
+mimetypes.add_type("application/wasm", ".wasm", True)
 
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 
-# Sentry.io configuration
-sentry_sdk.init(
-    dsn=(
-        "https://c6f88e890b90e554dcf731d6c4358341@"
-        "o4508301862371328.ingest.us.sentry.io/4509008399761408"
-    ),
-    # Add data like request headers and IP for users,
-    # info at https://docs.sentry.io/platforms/python/data-management/data-collected/
-    send_default_pii=True,
-)
+# Sentry.io configuration (only if available)
+if SENTRY_AVAILABLE and sentry_sdk:
+    sentry_sdk.init(
+        dsn=(
+            "https://c6f88e890b90e554dcf731d6c4358341@"
+            "o4508301862371328.ingest.us.sentry.io/4509008399761408"
+        ),
+        send_default_pii=True,
+    )
 
 # Silk configuration
-
-# Create profiles directory for Silk profiler results if it doesn't exist
 PROFILES_DIR = os.path.join(BASE_DIR, "greenova", "profiles")
 if not os.path.exists(PROFILES_DIR):
     os.makedirs(PROFILES_DIR)
 
-# Silk configuration
 SILKY_PYTHON_PROFILER = True
 SILKY_PYTHON_PROFILER_BINARY = False
 SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
@@ -495,24 +612,22 @@ SILKY_AUTHORISATION = True
 SILKY_META = True
 
 # Garbage collection settings for small server environment
-SILKY_MAX_RECORDED_REQUESTS = 500  # Store maximum of 500 requests
-SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50  # Run GC check on 50% of requests
-SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Limit request body size to 1KB
-SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # Limit response body size to 1KB
-SILKY_INTERCEPT_PERCENT = 25  # Only profile 25% of requests
+SILKY_MAX_RECORDED_REQUESTS = 500
+SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50
+SILKY_MAX_REQUEST_BODY_SIZE = 1024
+SILKY_MAX_RESPONSE_BODY_SIZE = 1024
+SILKY_INTERCEPT_PERCENT = 25
 
 # Django Extensions (shell_plus) Configuration
-SHELL_PLUS = "ipython"  # Use IPython as the default shell
-SHELL_PLUS_PRINT_SQL = DEBUG  # Print SQL queries in development
-SHELL_PLUS_PRINT_SQL_TRUNCATE = 1000  # Truncate long SQL queries
+SHELL_PLUS = "ipython"
+SHELL_PLUS_PRINT_SQL = DEBUG
+SHELL_PLUS_PRINT_SQL_TRUNCATE = 1000
 
-# IPython-specific arguments for shell_plus
 IPYTHON_ARGUMENTS = [
     "--ext", "django_extensions.management.notebook_extension",
-    "--matplotlib=inline",  # Enable inline matplotlib plots
+    "--matplotlib=inline",
 ]
 
-# Additional imports for shell_plus
 SHELL_PLUS_IMPORTS = [
     "from django.contrib.auth.models import User",
     "from django.utils import timezone",
@@ -523,11 +638,7 @@ SHELL_PLUS_IMPORTS = [
     "from datetime import datetime, timedelta",
 ]
 
-# Enhanced shell_plus configuration
 SHELL_PLUS_SUBCLASSES_IMPORT = [
-    "django.db.models.Model",  # Import all model subclasses
-    "django.contrib.auth.models.AbstractUser",  # Import user models
+    "django.db.models.Model",
+    "django.contrib.auth.models.AbstractUser",
 ]
-
-# Exclude certain models from automatic loading if needed
-# SHELL_PLUS_DONT_LOAD = ['sites']  # Example: don't load Django sites framework

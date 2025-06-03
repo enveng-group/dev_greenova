@@ -1,7 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Automated PR 151 Review, Issue #31 Resolution, and Merge Guidance - Micro Prompt](#automated-pr-151-review-issue-31-resolution-and-merge-guidance---micro-prompt)
+- [Automated PR 171 Review, Multi-Issue Resolution, and Merge Guidance - Micro Prompt](#automated-pr-171-review-multi-issue-resolution-and-merge-guidance---micro-prompt)
   - [Goal](#goal)
   - [Context](#context)
   - [Objectives](#objectives)
@@ -18,81 +18,82 @@
 ---
 
 description:
-Automated review and merge guidance for PR 151 (`commit 774eed9401f052c3a0440ab379d9317abbfca17f`) in the dev_greenova project, referencing merge-detector.log and issue #31, using all available MCP servers to ensure a safe, standards-compliant merge into `integration/v0.0.7` and closure of both the PR and the issue.
+Automated review and merge guidance for PR 171 in the dev_greenova project, referencing all files changed in PR 171 and issues #163, #160, #159, #158. Use all available MCP servers to ensure a safe, standards-compliant merge into `integration/v0.0.7` and closure of the PR and all referenced issues.
 
 mode: agent
 
 tools:
 
-- github # REQUIRED: Use to fetch PR 151 details, diffs, and metadata, and to read issue #31
+- github # REQUIRED: Use to fetch PR 171 details, diffs, and metadata, and to read issues #163, #160, #159, #158
 - json # REQUIRED: Use to parse PR data, file changes, and metadata as needed
 - git # REQUIRED: Use to inspect local and remote branches, diffs, and history
-- filesystem # REQUIRED: Use to read merge-detector.log and any other relevant files
+- filesystem # REQUIRED: Use to read and interpret all relevant files
 - sequential-thinking # REQUIRED: Use for stepwise reasoning, merge analysis, and decision-making
 - context7 # Use for project standards, merge policies, and documentation
 - fetch # Use for any additional documentation or web lookups
 
 ---
 
-# Automated PR 151 Review, Issue #31 Resolution, and Merge Guidance - Micro Prompt
+# Automated PR 171 Review, Multi-Issue Resolution, and Merge Guidance - Micro Prompt
 
 ## Goal
 
-Determine if PR 151 (`commit 774eed9401f052c3a0440ab379d9317abbfca17f`) safely and completely resolves issue #31, and if it is safe to merge into `integration/v0.0.7` and close both the PR and the issue.
+Determine if PR 171 safely and completely resolves issues #163, #160, #159, and #158, and if it is safe to merge into `integration/v0.0.7` and close both the PR and all referenced issues.
 
 ## Context
 
-- PR 151 introduces changes in commit 774eed9401f052c3a0440ab379d9317abbfca17f.
-- The merge-detector.log provides risk and conflict analysis for the affected files.
-- Issue #31 describes the problem or feature to be resolved by this PR.
+- PR 171 introduces changes to a set of files (list all files changed in PR 171).
+- The referenced issues describe problems or features to be resolved by this PR.
 - The project enforces strict merge, code quality, and documentation standards.
-- All merges must be conflict-free, standards-compliant, and resolve the relevant issue.
+- All merges must be conflict-free, standards-compliant, and resolve the relevant issues.
 
 ## Objectives
 
-- Use the github MCP server to fetch all details, diffs, and metadata for PR 151 and read issue #31.
-- Use the filesystem MCP server to read and interpret merge-detector.log.
+- Use the github MCP server to fetch all details, diffs, and metadata for PR 171 and read issues #163, #160, #159, #158.
+- Use the filesystem MCP server to read and interpret all files changed in PR 171.
 - Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
 - Use the sequential-thinking MCP server to:
-  - Analyze if PR 151 fully resolves issue #31.
-  - Assess merge risk and integration safety based on merge-detector.log.
-  - Decide if it is safe to merge PR 151 into `integration/v0.0.7` and close both the PR and the issue.
+  - Analyze if PR 171 fully resolves issues #163, #160, #159, #158.
+  - Assess merge risk and integration safety based on file diffs and project standards.
+  - Decide if it is safe to merge PR 171 into `integration/v0.0.7` and close all referenced issues.
   - Provide clear guidance and instructions for the merge and closure process.
 - Use context7 and fetch as needed for standards and documentation.
 
 ## Sources
 
-- <https://github.com/enveng-group/dev_greenova/pull/151/commits/774eed9401f052c3a0440ab379d9317abbfca17f>
-- <https://github.com/enveng-group/dev_greenova/pull/151>
-- <https://github.com/enveng-group/dev_greenova/issues/31>
-- merge-detector.log (local)
+- <https://github.com/enveng-group/dev_greenova/pull/171>
+- <https://github.com/enveng-group/dev_greenova/issues/163>
+- <https://github.com/enveng-group/dev_greenova/issues/160>
+- <https://github.com/enveng-group/dev_greenova/issues/159>
+- <https://github.com/enveng-group/dev_greenova/issues/158>
+- All files changed in PR 171 (list them explicitly)
 - Local and remote git branches, especially `integration/v0.0.7`
 - Project documentation and standards from context7
 
 ## Expectations
 
 - All relevant PR and issue details are reviewed and parsed.
-- merge-detector.log is analyzed for risk and conflict assessment.
+- All changed files are analyzed for risk and standards compliance.
 - sequential-thinking MCP server is used to analyze, decide, and recommend.
 - A clear, standards-compliant merge and closure plan is provided.
 - The process is documented for auditability and repeatability.
 
 ## Acceptance Criteria
 
-- PR 151 is reviewed and confirmed to resolve issue #31.
-- merge-detector.log is considered in the risk assessment.
-- A clear recommendation is made on whether to merge PR 151 and close issue #31.
+- PR 171 is reviewed and confirmed to resolve issues #163, #160, #159, #158.
+- All changed files are considered in the risk assessment.
+- A clear recommendation is made on whether to merge PR 171 and close all referenced issues.
 - Guidance is provided for any manual steps or post-merge actions.
 - All actions comply with project standards and are documented.
 
 ## Instructions
 
-1. Use the github MCP server to fetch all details and diffs for PR 151 and read issue #31.
-2. Use the filesystem MCP server to read merge-detector.log.
+1. Use the github MCP server to fetch all details and diffs for PR 171 and read issues #163, #160, #159, #158.
+2. Use the filesystem MCP server to read all files changed in PR 171.
 3. Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
 4. **Only include the following files in the analysis and merge process:**
-   - All files changed in commit 774eed9401f052c3a0440ab379d9317abbfca17f of PR 151.
-5. Use the sequential-thinking MCP server to analyze if PR 151 resolves issue #31 and is safe to merge.
+   - All files changed in PR 171 (list them explicitly).
+5. Use the sequential-thinking MCP server to analyze if PR 171 resolves all referenced issues and is safe to merge.
 6. Provide a clear, standards-compliant merge and closure recommendation, including any manual steps.
 7. Ensure all actions are documented and repeatable.
 
@@ -109,14 +110,14 @@ When patch application fails with errors like "patch does not apply" or "already
 
 1. **Analyze File Divergence:**
 
-   - Use `git diff integration/v0.0.7..pr-151 <file_path>` for each affected file to see exact changes
-   - Use `git log -p integration/v0.0.7..pr-151 -- <file_path>` to review commit history affecting each file
+   - Use `git diff integration/v0.0.7..pr-171 <file_path>` for each affected file to see exact changes
+   - Use `git log -p integration/v0.0.7..pr-171 -- <file_path>` to review commit history affecting each file
 
 2. **Manual Integration Strategy:**
 
    - For each file that failed to patch:
      a. Create a backup: `cp <file_path> <file_path>.bak`
-     b. Analyze changes with: `git diff integration/v0.0.7..pr-151 -- <file_path>`
+     b. Analyze changes with: `git diff integration/v0.0.7..pr-171 -- <file_path>`
      c. Implement changes manually, focusing on semantic changes rather than exact line matches
      d. Run project test suite after each file change
 
@@ -129,14 +130,14 @@ When patch application fails with errors like "patch does not apply" or "already
 4. **Verification Process:**
 
    - After manually implementing all changes, verify with:
-     a. `git diff pr-151` to ensure changes match PR intent
+     a. `git diff pr-171` to ensure changes match PR intent
      b. Run all tests: `python manage.py test`
      c. Manually test affected functionality
 
 5. **Documentation Requirements:**
    - Document all manually implemented changes
    - Note any deviations from original PR changes and the reasoning
-   - Update issue #31 with specific information about integration challenges
+   - Update all referenced issues with specific information about integration challenges
 
 ## MCP Server Usage
 
@@ -146,11 +147,11 @@ For this automated PR review and merge process, use the following MCP servers wi
 
    - Use ONLY for executing git commands
    - Commands include:
-     - `git diff integration/v0.0.7..pr-151 <file_path>`
-     - `git log -p integration/v0.0.7..pr-151 -- <file_path>`
-     - `git checkout -b manual-pr151-integration`
+     - `git diff integration/v0.0.7..pr-171 <file_path>`
+     - `git log -p integration/v0.0.7..pr-171 -- <file_path>`
+     - `git checkout -b manual-pr171-integration`
      - `git add <file_path>`
-     - `git commit -m "Manual integration of PR #151 changes"`
+     - `git commit -m "Manual integration of PR #171 changes"`
    - Do NOT use the git MCP server for analysis or decision-making
 
 2. **sequential_thinking MCP Server**:
