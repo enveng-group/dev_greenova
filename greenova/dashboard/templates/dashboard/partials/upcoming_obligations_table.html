@@ -1,0 +1,63 @@
+{% load obligation_tags %}
+<section aria-labelledby="upcoming-obligations-table-heading">
+  <h2 id="upcoming-obligations-table-heading" class="visually-hidden">
+    Upcoming Obligations
+  </h2>
+
+  {% if obligations %}
+    <div class="table-responsive">
+      <table role="grid" class="table">
+        <thead>
+          <tr>
+            <th scope="col">
+Number
+            </th>
+            <th scope="col">
+Description
+            </th>
+            <th scope="col">
+Due Date
+            </th>
+            <th scope="col">
+Status
+            </th>
+            <th scope="col">
+Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obligation in obligations %}
+            <tr>
+              <td>
+                <a href="{% url 'obligations:detail' obligation.obligation_number %}">
+                  {{ obligation.obligation_number }}
+                </a>
+              </td>
+              <td>
+{{ obligation.obligation|truncatechars:50 }}
+              </td>
+              <td>
+{{ obligation.action_due_date|format_due_date }}
+              </td>
+              <td>
+{{ obligation|display_status }}
+              </td>
+              <td class="actions-column">
+                <div class="action-buttons">
+                  <a href="{% url 'obligations:detail' obligation.obligation_number %}"
+                     class="action-btn view"
+                     aria-label="View obligation details">View</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>
+No upcoming obligations found for the selected project.
+    </p>
+  {% endif %}
+</section>

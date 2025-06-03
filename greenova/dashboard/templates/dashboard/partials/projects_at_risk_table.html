@@ -1,0 +1,52 @@
+{% comment %}
+Projects at Risk Table Partial
+Displays a list of projects at risk of missing deadlines.
+Follows Greenova's accessibility and semantic HTML guidelines.
+{% endcomment %}
+
+<section aria-labelledby="projects-at-risk-table-heading">
+  <h2 id="projects-at-risk-table-heading" class="visually-hidden">
+    Projects at Risk of Missing Deadlines
+  </h2>
+  {% if projects_with_stats %}
+    <table class="table table-striped"
+           aria-describedby="projects-at-risk-table-heading">
+      <thead>
+        <tr>
+          <th scope="col">
+Project Name
+          </th>
+          <th scope="col">
+Overdue Obligations
+          </th>
+          <th scope="col">
+Last Due Date
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in projects_with_stats %}
+          <tr>
+            <td>
+{{ item.project.name }}
+            </td>
+            <td>
+{{ item.overdue_count }}
+            </td>
+            <td>
+              {% if item.last_due_date %}
+                {{ item.last_due_date|date:'d M Y' }}
+              {% else %}
+                N/A
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>
+No projects at risk found.
+    </p>
+  {% endif %}
+</section>

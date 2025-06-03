@@ -176,3 +176,20 @@ input[type='search'] {
     display: none !important;
   }
 }
+
+/* --- Responsive: Filter controls stack and touch targets --- */
+@media (max-width: 480px) {
+  .filter-controls,
+  .controls-container {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    width: 100%;
+  }
+
+  .filter-tag,
+  .quick-filter-btn {
+    min-height: 44px;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+}

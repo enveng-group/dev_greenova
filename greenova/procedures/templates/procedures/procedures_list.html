@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+Procedures
+{% endblock %}
+{% block content %}
+  <main>
+    <h1>
+Procedures
+    </h1>
+    <section aria-labelledby="procedures-list-heading">
+      <h2 id="procedures-list-heading">
+All Procedures
+      </h2>
+      {% if procedures %}
+        <ul>
+          {% for procedure in procedures %}
+            <li>
+              <strong>{{ procedure.name }}</strong>
+              <span class="description">{{ procedure.description|default:"No description" }}</span>
+              <span class="status">Status: {{ procedure.get_status_display }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>
+No procedures found.
+        </p>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}

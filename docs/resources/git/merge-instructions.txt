@@ -1,0 +1,62 @@
+# Greenova Merge Instructions - Comprehensive Strategy
+
+## Reference Project Standards and Prompts
+
+Before starting any merge or conflict resolution, review the following project standards and prompt files for required conventions and best practices:
+
+- `.github/instructions/.copilot-commit-message-instructions.md`: Commit message guidelines
+- `.github/instructions/.copilot-pull-request-description-instructions.md`: Pull request description template
+- `.github/instructions/.copilot-review-instructions.md`: Code review checklist
+- `.github/prompts/code-style.prompt.md`: Code style and formatting standards
+- `.github/prompts/merge-strategy.prompt.md`: Merge conflict resolution strategies
+- `.github/prompts/pre-commit-fix.prompt.md`: Pre-commit and code quality enforcement
+- `.github/prompts/configuration.prompt.md`: Toolchain and configuration standards
+- `docs/resources/git/merging.md`: Official merging strategy
+- `docs/resources/git/git-repository-management.md`: Repository management guide
+
+**Always ensure your workflow, commit messages, PRs, and code changes comply with these documents.**
+
+---
+
+## 1. Repository Health Check and Preparation
+
+### Pre-Merge Analysis
+
+```sh
+# Create a detailed comparison report
+mkdir -p logs
+git fetch --all --tags
+
+# Repository status and commit history comparison
+# (Example: compare origin/main and upstream/main)
+git log upstream/main..origin/main --oneline > logs/commits_diff.txt
+
+# Run automated merge conflict analysis
+merge-conflict-detector main feature-branch > logs/merge_conflict_report.txt
+
+# Review the generated report for risk scores, file-specific issues, and recommendations.
+```
+
+- Address high-risk files and conflicts as flagged by the tool.
+- Document any manual interventions in the merge commit message.
+
+## 2. Merging Workflow
+
+- Always rebase feature branches onto the latest main branch before merging.
+- Use progressive squash merges to maintain a linear history.
+- Resolve all conflicts as per the recommendations in the merge-conflict-detector report.
+- After resolving, re-run the tool to verify no new issues were introduced.
+- Ensure all tests and pre-commit checks pass before finalizing the merge.
+
+## 3. Post-Merge Actions
+
+- Push changes to the remote repository.
+- Update documentation and prompt files if new patterns or issues were encountered.
+- Archive the merge-conflict-detector report for audit and review.
+
+---
+
+*For more details, see:*
+- `.github/prompts/merge-strategy.prompt.md`
+- `docs/resources/git/merging.md`
+- `docs/resources/git/git-repository-management.md`

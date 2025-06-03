@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+Mechanisms
+{% endblock %}
+{% block content %}
+  <main>
+    <h1>
+Mechanisms
+    </h1>
+    <section aria-labelledby="mechanisms-list-heading">
+      <h2 id="mechanisms-list-heading">
+All Environmental Mechanisms
+      </h2>
+      {% if mechanisms %}
+        <ul>
+          {% for mechanism in mechanisms %}
+            <li>
+              <strong>{{ mechanism.name }}</strong>
+              <span class="description">{{ mechanism.description|default:"No description" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>
+No mechanisms found.
+        </p>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}

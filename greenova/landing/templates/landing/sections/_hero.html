@@ -1,0 +1,99 @@
+{% load static %}
+
+<!-- Enhanced Hero Section -->
+<section class="hero-section"
+         data-scroll-section
+         aria-labelledby="hero-heading">
+  <div class="hero-background">
+    <div class="hero-shape hero-shape-1">
+    </div>
+    <div class="hero-shape hero-shape-2">
+    </div>
+    <div class="hero-shape hero-shape-3">
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <h1 id="hero-heading" class="hero-title reveal-text">
+                  Environmental Management <span class="accent-text">Made Simple</span>
+  </h1>
+
+  <div class="hero-visualization-container">
+    <figure class="hero-chart bi-bar-chart reveal-element"
+            data-delay="0.2"
+            aria-label="Business intelligence bar chart: Compliance by year">
+      <figcaption class="sr-only">
+        Animated bar chart showing Compliance metric for 2019-2023
+      </figcaption>
+      <div class="bi-bar-chart-axes">
+        <ul class="y-axis" aria-hidden="true">
+          <li>
+            <span>100</span>
+          </li>
+          <li>
+            <span>75</span>
+          </li>
+          <li>
+            <span>50</span>
+          </li>
+          <li>
+            <span>25</span>
+          </li>
+          <li>
+            <span>0</span>
+          </li>
+        </ul>
+        <div class="bars" aria-label="Bar chart">
+          <div class="bi-bar bi-bar-2019" aria-label="2019 Compliance" tabindex="0">
+            <span>88</span>
+          </div>
+          <div class="bi-bar bi-bar-2020" aria-label="2020 Compliance" tabindex="0">
+            <span>91</span>
+          </div>
+          <div class="bi-bar bi-bar-2021" aria-label="2021 Compliance" tabindex="0">
+            <span>94</span>
+          </div>
+          <div class="bi-bar bi-bar-2022" aria-label="2022 Compliance" tabindex="0">
+            <span>89</span>
+          </div>
+          <div class="bi-bar bi-bar-2023" aria-label="2023 Compliance" tabindex="0">
+            <span>92</span>
+          </div>
+        </div>
+        <ul class="x-axis" aria-hidden="true">
+          <li>
+            <span>2019</span>
+          </li>
+          <li>
+            <span>2020</span>
+          </li>
+          <li>
+            <span>2021</span>
+          </li>
+          <li>
+            <span>2022</span>
+          </li>
+          <li>
+            <span>2023</span>
+          </li>
+        </ul>
+      </div>
+    </figure>
+  </div>
+
+  <p class="hero-description reveal-element" data-delay="0.3">
+      Streamline your environmental compliance with Greenova's intuitive platform.
+      Track obligations, manage requirements, and stay ahead of regulatory changes.
+  </p>
+
+  <div class="hero-cta reveal-element" data-delay="0.5">
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard:home' %}"
+         class="btn btn-primary btn-animated">Go to Dashboard</a>
+    {% else %}
+      <a href="{% url 'account_login' %}" class="btn btn-primary btn-animated">Get Started</a>
+      <a href="#features" class="btn btn-outline btn-animated">Learn More</a>
+    {% endif %}
+  </div>
+</div>
+</section>

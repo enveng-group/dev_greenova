@@ -1,0 +1,41 @@
+{% load static %}
+
+{% block form_content %}
+  <form method="post" class="form" novalidate>
+{% csrf_token %}
+    <fieldset>
+      <legend>
+{{ legend|default:"Company Information" }}
+      </legend>
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">
+            {{ field.label }}
+            {% if field.field.required %}
+              <span class="required" aria-hidden="true">*</span>
+            {% endif %}
+          </label>
+          {{ field }}
+          {% if field.help_text %}
+            <small id="{{ field.id_for_label }}_helptext" class="help-text">{{ field.help_text }}</small>
+          {% endif %}
+          {% for error in field.errors %}
+            <div class="error" role="alert">
+              {{ error }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </fieldset>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        {{ button_text|default:"Save" }}
+      </button>
+      <a href="{% url 'company:list' %}"
+         class="btn btn-secondary"
+         aria-label="Cancel and return to company list">
+        Cancel
+      </a>
+    </div>
+  </form>
+{% endblock form_content %}

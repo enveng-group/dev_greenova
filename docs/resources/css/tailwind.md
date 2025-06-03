@@ -1,3 +1,41 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django Tailwind: The Utility-First CSS Framework for Django](#django-tailwind-the-utility-first-css-framework-for-django)
+  - [Introduction](#introduction)
+  - [Why Consider Tailwind CSS in Django?](#why-consider-tailwind-css-in-django)
+  - [Installation](#installation)
+    - [1. Install Django Tailwind package](#1-install-django-tailwind-package)
+    - [2. Add to INSTALLED_APPS](#2-add-to-installed_apps)
+    - [3. Create a Tailwind CSS application](#3-create-a-tailwind-css-application)
+    - [4. Add your tailwind app to INSTALLED_APPS](#4-add-your-tailwind-app-to-installed_apps)
+    - [5. Configure settings.py](#5-configure-settingspy)
+    - [6. Install Tailwind CSS dependencies](#6-install-tailwind-css-dependencies)
+  - [Development Workflow](#development-workflow)
+    - [1. Start the Tailwind CSS development server](#1-start-the-tailwind-css-development-server)
+    - [2. Include Tailwind CSS in your base template](#2-include-tailwind-css-in-your-base-template)
+    - [3. Build for production](#3-build-for-production)
+  - [Using Tailwind CSS Classes](#using-tailwind-css-classes)
+    - [Basic Typography](#basic-typography)
+    - [Layout and Spacing](#layout-and-spacing)
+    - [Responsive Design](#responsive-design)
+  - [Customizing Tailwind](#customizing-tailwind)
+    - [1. Modify the tailwind.config.js file](#1-modify-the-tailwindconfigjs-file)
+  - [Best Practices with Our HTML-First Approach](#best-practices-with-our-html-first-approach)
+  - [Integration with Django-HTMX](#integration-with-django-htmx)
+  - [Debugging and Troubleshooting](#debugging-and-troubleshooting)
+    - [Checking for Updates](#checking-for-updates)
+    - [Common Errors and Solutions](#common-errors-and-solutions)
+      - [Error: Cannot find module 'tailwindcss'](#error-cannot-find-module-tailwindcss)
+      - [Error: Node Sass does not yet support your current environment](#error-node-sass-does-not-yet-support-your-current-environment)
+      - [Tailwind CSS classes not applying](#tailwind-css-classes-not-applying)
+      - [Django can't find Tailwind CSS files](#django-cant-find-tailwind-css-files)
+    - [Setting Up a Makefile for Tailwind Commands](#setting-up-a-makefile-for-tailwind-commands)
+  - [Resources](#resources)
+  - [Conclusion](#conclusion)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django Tailwind: The Utility-First CSS Framework for Django
 
 ## Introduction
@@ -26,7 +64,7 @@ Django app that integrates Tailwind CSS into your Django project.
 ### 1. Install Django Tailwind package
 
 ```bash
-pip install django-tailwind==3.6.0
+pip install django-tailwind==4.0.1
 ```
 
 ### 2. Add to INSTALLED_APPS
@@ -186,23 +224,15 @@ module.exports = {
 };
 ```
 
-/_theme/static_src/src/input.css _/
-@tailwind base;
-@tailwind components;
+/_theme/static_src/src/input.css _/ @tailwind base; @tailwind components;
 @tailwind utilities;
 
-/_Custom component classes_/
-@layer components {
-.btn-primary {
-@apply py-2 px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90
-focus:outline-none focus:ring-2 focus:ring-brand-primary
-focus:ring-opacity-50;
-}
-}
-.btn-primary {
-@apply py-2 px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50;
-}
-}
+/_Custom component classes_/ @layer components { .btn-primary { @apply py-2
+px-4 bg-brand-primary text-white rounded-md hover:bg-opacity-90
+focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-opacity-50;
+} } .btn-primary { @apply py-2 px-4 bg-brand-primary text-white rounded-md
+hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary
+focus:ring-opacity-50; } }
 
 ```
 <nav
@@ -294,10 +324,10 @@ tailwindcss      3.4.17  3.4.17  4.0.15  node_modules/tailwindcss     static_src
 
 ```
 
-Package Current Wanted Latest Location Depended by
-postcss-import 15.1.0 15.1.0 16.1.0 node_modules/postcss-import static_src
-postcss-nested 6.2.0 6.2.0 7.0.2 node_modules/postcss-nested static_src
-tailwindcss 3.4.17 3.4.17 4.0.15 node_modules/tailwindcss static_src
+Package Current Wanted Latest Location Depended by postcss-import 15.1.0 15.1.0
+16.1.0 node_modules/postcss-import static_src postcss-nested 6.2.0 6.2.0 7.0.2
+node_modules/postcss-nested static_src tailwindcss 3.4.17 3.4.17 4.0.15
+node_modules/tailwindcss static_src
 
 ````
 

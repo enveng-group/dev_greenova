@@ -12,18 +12,18 @@ class Procedure(models.Model):
     """Model representing environmental procedures and workflows."""
 
     STATUS_CHOICES: ClassVar[list] = [
-        ('draft', 'Draft'),
-        ('review', 'In Review'),
-        ('active', 'Active'),
-        ('obsolete', 'Obsolete'),
-        ('archived', 'Archived')
+        ("draft", "Draft"),
+        ("review", "In Review"),
+        ("active", "Active"),
+        ("obsolete", "Obsolete"),
+        ("archived", "Archived"),
     ]
 
     COMPLIANCE_STATUSES: ClassVar[list] = [
-        ('compliant', 'Compliant'),
-        ('non_compliant', 'Non-Compliant'),
-        ('partially_compliant', 'Partially Compliant'),
-        ('not_assessed', 'Not Assessed')
+        ("compliant", "Compliant"),
+        ("non_compliant", "Non-Compliant"),
+        ("partially_compliant", "Partially Compliant"),
+        ("not_assessed", "Not Assessed"),
     ]
 
     # Basic information
@@ -31,26 +31,26 @@ class Procedure(models.Model):
     document_id: models.CharField = models.CharField(
         max_length=50,
         unique=True,
-        help_text="Unique procedure identifier (e.g., ENV-PROC-001)"
+        help_text="Unique procedure identifier (e.g., ENV-PROC-001)",
     )
     project: models.ForeignKey = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name='procedures'
+        related_name="procedures",
     )
-    version: models.CharField = models.CharField(max_length=10, default='1.0')
+    version: models.CharField = models.CharField(max_length=10, default="1.0")
     description: models.TextField = models.TextField(blank=True)
 
     # Status and dates
     status: models.CharField = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='draft'
+        default="draft",
     )
     compliance_status: models.CharField = models.CharField(
         max_length=20,
         choices=COMPLIANCE_STATUSES,
-        default='not_assessed'
+        default="not_assessed",
     )
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
@@ -60,9 +60,9 @@ class Procedure(models.Model):
 
     # Document management
     document_file: models.FileField = models.FileField(
-        upload_to='procedures/%Y/%m/',
+        upload_to="procedures/%Y/%m/",
         null=True,
-        blank=True
+        blank=True,
     )
 
     # Metadata
@@ -70,13 +70,13 @@ class Procedure(models.Model):
     tags: models.CharField = models.CharField(max_length=255, blank=True)
 
     class Meta:
-        ordering = ['-updated_at']
-        verbose_name = 'Procedure'
-        verbose_name_plural = 'Procedures'
+        ordering = ["-updated_at"]
+        verbose_name = "Procedure"
+        verbose_name_plural = "Procedures"
         indexes = [
-            models.Index(fields=['status']),
-            models.Index(fields=['compliance_status']),
-            models.Index(fields=['document_id'])
+            models.Index(fields=["status"]),
+            models.Index(fields=["compliance_status"]),
+            models.Index(fields=["document_id"]),
         ]
 
     def __str__(self) -> str:
@@ -85,18 +85,18 @@ class Procedure(models.Model):
     def mark_as_completed(self) -> None:
         """Mark the procedure as completed with current timestamp."""
         self.completed_at = timezone.now()
-        self.save(update_fields=['completed_at'])
+        self.save(update_fields=["completed_at"])
 
     def set_status(self, status: str) -> None:
         """Update the procedure status."""
         if status in dict(self.STATUS_CHOICES):
             self.status = status
-            self.save(update_fields=['status', 'updated_at'])
+            self.save(update_fields=["status", "updated_at"])
         else:
             logger.warning(
                 "Invalid status: %s for procedure %s",
                 status,
-                self.document_id
+                self.document_id,
             )
 
     def is_due_for_review(self) -> bool:

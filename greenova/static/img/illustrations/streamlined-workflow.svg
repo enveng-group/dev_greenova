@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="200" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#f1f8e9"/>
+  <rect x="60" y="80" width="280" height="40" rx="20" fill="#8bc34a"/>
+  <text x="200" y="105" text-anchor="middle" font-size="28" fill="#fff" font-family="Arial" dy=".3em">Workflow</text>
+</svg>

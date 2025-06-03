@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="200" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#fff3e0"/>
+  <polygon points="200,40 240,160 160,160" fill="#ff9800"/>
+  <text x="200" y="120" text-anchor="middle" font-size="24" fill="#fff" font-family="Arial" dy=".3em">Risk</text>
+</svg>

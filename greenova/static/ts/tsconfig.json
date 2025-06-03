@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "ES2015",
+		"module": "ES2015",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"strict": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"sourceMap": true,
+		"declaration": false,
+		"baseUrl": "./",
+		"paths": {
+			"@core/*": ["src/core/*"],
+			"@components/*": ["src/components/*"],
+			"@features/*": ["src/features/*"],
+			"@lib/*": ["src/lib/*"]
+		}
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules"]
+}

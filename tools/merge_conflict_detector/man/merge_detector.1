@@ -1,0 +1,205 @@
+.TH MERGE_DETECTOR 1 "May 2025" "merge_detector 1.0" "Git Tools"
+.SH NAME
+merge_detector \- detect and analyze potential merge conflicts in Git repositories
+.SH SYNOPSIS
+.B merge_detector
+[\fIOPTION\fR]...
+.SH DESCRIPTION
+.B merge_detector
+is a comprehensive tool for analyzing Git repositories to detect potential merge conflicts before they occur. It examines branch structures, file changes, and historical patterns to provide conflict probability assessments and strategic recommendations.
+
+The tool implements data-driven analysis using sophisticated algorithms to evaluate:
+.IP \(bu 2
+Branch divergence patterns
+.IP \(bu 2
+File modification overlap between branches
+.IP \(bu 2
+Historical conflict patterns
+.IP \(bu 2
+Code complexity and change density
+.IP \(bu 2
+File type-specific risk assessments
+
+.SH OPTIONS
+.TP
+.BR \-f ", " \-\-format =\fIFORMAT\fR
+Set output format. Valid formats are:
+.RS
+.IP \fBtext\fR 8
+Human-readable text format (default)
+.IP \fBjson\fR 8
+Machine-readable JSON format
+.IP \fBcsv\fR 8
+Comma-separated values format
+.RE
+
+.TP
+.BR \-b ", " \-\-branch =\fIBRANCH\fR
+Analyze specific branch instead of all branches
+
+.TP
+.BR \-t ", " \-\-threshold =\fINUMBER\fR
+Set conflict probability threshold (0.0-1.0, default: 0.5)
+
+.TP
+.BR \-v ", " \-\-verbose
+Enable verbose output with detailed analysis
+
+.TP
+.BR \-q ", " \-\-quiet
+Suppress non-essential output
+
+.TP
+.BR \-h ", " \-\-help
+Display help message and exit
+
+.TP
+.BR \-V ", " \-\-version
+Display version information and exit
+
+.SH OUTPUT FORMATS
+.SS Text Format
+The default text format provides human-readable analysis with:
+.IP \(bu 2
+Repository overview and branch summary
+.IP \(bu 2
+Conflict probability scores for each branch pair
+.IP \(bu 2
+File-level risk assessments
+.IP \(bu 2
+Strategic recommendations
+
+.SS JSON Format
+JSON output provides machine-readable data structure:
+.IP \(bu 2
+Repository metadata and statistics
+.IP \(bu 2
+Branch analysis results with numerical scores
+.IP \(bu 2
+File-level conflict predictions
+.IP \(bu 2
+Recommended actions and priorities
+
+.SS CSV Format
+CSV format enables spreadsheet analysis and reporting:
+.IP \(bu 2
+One row per potential conflict
+.IP \(bu 2
+Columns for branches, files, probability, and recommendations
+.IP \(bu 2
+Easy integration with data analysis tools
+
+.SH ANALYSIS ALGORITHMS
+.B merge_detector
+uses multiple analysis techniques:
+
+.SS Branch Divergence Analysis
+Evaluates how far branches have diverged by examining:
+.IP \(bu 2
+Number of commits since common ancestor
+.IP \(bu 2
+File modification overlap between branches
+.IP \(bu 2
+Change density and complexity metrics
+
+.SS File Risk Assessment
+Analyzes files using:
+.IP \(bu 2
+Historical conflict patterns
+.IP \(bu 2
+File type-specific risk factors
+.IP \(bu 2
+Change frequency and author diversity
+.IP \(bu 2
+Code complexity indicators
+
+.SS Pattern Recognition
+Identifies problematic patterns:
+.IP \(bu 2
+Simultaneous modifications to critical files
+.IP \(bu 2
+Large-scale refactoring conflicts
+.IP \(bu 2
+Configuration and build file changes
+.IP \(bu 2
+Documentation and comment conflicts
+
+.SH EXAMPLES
+.TP
+Basic analysis of current repository:
+.B merge_detector
+
+.TP
+Generate JSON report for automation:
+.B merge_detector \-\-format=json > conflicts.json
+
+.TP
+Analyze specific branch with verbose output:
+.B merge_detector \-\-branch=feature/new-api \-\-verbose
+
+.TP
+CSV export for spreadsheet analysis:
+.B merge_detector \-\-format=csv \-\-threshold=0.3
+
+.TP
+Quiet mode for scripting:
+.B merge_detector \-\-quiet \-\-format=json
+
+.SH EXIT STATUS
+.B merge_detector
+exits with the following status codes:
+.IP 0 4
+Successful analysis completed
+.IP 1 4
+General error or invalid arguments
+.IP 2 4
+High-risk conflicts detected (when using threshold)
+.IP 3 4
+Not a Git repository or repository access error
+
+.SH FILES
+.TP
+.I .git/
+Git repository directory (required)
+.TP
+.I .gitignore
+Considered for file analysis patterns
+.TP
+.I .merge_detector.conf
+Optional configuration file (if present)
+
+.SH ENVIRONMENT
+.TP
+.B GIT_DIR
+Override Git directory location
+.TP
+.B MERGE_DETECTOR_CONFIG
+Path to configuration file
+.TP
+.B MERGE_DETECTOR_THRESHOLD
+Default conflict threshold
+
+.SH SEE ALSO
+.BR git (1),
+.BR git-merge (1),
+.BR git-branch (1),
+.BR git-diff (1),
+.BR maintenance.sh (1)
+
+.SH BUGS
+Report bugs to the project issue tracker or maintainer.
+
+Known limitations:
+.IP \(bu 2
+Analysis accuracy depends on repository history quality
+.IP \(bu 2
+Large repositories may require significant processing time
+.IP \(bu 2
+Binary file analysis is limited
+
+.SH AUTHOR
+Written for comprehensive Git repository maintenance and conflict prevention.
+
+.SH COPYRIGHT
+This is free software under the ISC license. You are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.

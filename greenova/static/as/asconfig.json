@@ -1,0 +1,15 @@
+{
+	"compiler": {
+		"options": {
+			"outFile": "build/optimized.wat",
+			"sourceMap": true,
+			"optimize": true,
+			"target": "wasm32",
+			"module": "commonjs",
+			"lib": ["es6", "dom"],
+			"types": ["assemblyscript"]
+		}
+	},
+	"include": ["assembly/**/*.ts"],
+	"exclude": ["node_modules", "build"]
+}

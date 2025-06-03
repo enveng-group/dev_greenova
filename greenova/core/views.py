@@ -1,6 +1,6 @@
 """Core views for the Greenova application."""
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
@@ -12,17 +12,17 @@ from django_htmx.http import push_url
 logger = logging.getLogger(__name__)
 
 
-@method_decorator(cache_control(max_age=300), name='dispatch')
-@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
+@method_decorator(cache_control(max_age=300), name="dispatch")
+@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class HomeView(TemplateView):
     """Landing page view."""
 
-    template_name = 'landing/index.html'
+    template_name = "landing/index.html"
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests."""
         logger.debug(
-            f'Landing page access - User authenticated: {request.user.is_authenticated}'
+            f"Landing page access - User authenticated: {request.user.is_authenticated}",
         )
 
         response = super().get(request, *args, **kwargs)
@@ -33,9 +33,9 @@ class HomeView(TemplateView):
 
         return response
 
-    def get_context_data(self, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
         """Add landing page context data."""
         context = super().get_context_data(**kwargs)
         # Add basic context data
-        context['user_authenticated'] = self.request.user.is_authenticated
+        context["user_authenticated"] = self.request.user.is_authenticated
         return context

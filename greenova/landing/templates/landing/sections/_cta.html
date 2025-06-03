@@ -1,0 +1,58 @@
+{% load static %}
+
+<!-- CTA Section -->
+<section class="cta-section fade-in slide-up">
+  <div class="section-container">
+    <div class="cta-content cta-card reveal-element stagger-1">
+      <h2 class="cta-title fade-in stagger-1">
+        Ready to Transform Your Environmental Compliance?
+      </h2>
+      <p class="cta-description fade-in stagger-2">
+        Join thousands of environmental professionals who have simplified their
+        compliance management with Greenova.
+      </p>
+      <div class="cta-buttons fade-in stagger-3">
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard:home' %}" class="btn btn-primary btn-large btn-animated">Go to Dashboard</a>
+          <a href="{% url 'support:contact' %}" class="btn btn-outline btn-large btn-animated">Contact Support</a>
+        {% else %}
+          <a href="{% url 'account_signup' %}" class="btn btn-primary btn-large btn-animated">Start Free Trial</a>
+          <a href="{% url 'account_login' %}" class="btn btn-outline btn-large btn-animated">Sign In</a>
+        {% endif %}
+      </div>
+      <!-- Newsletter form with HTMX integration -->
+      <div class="newsletter-form fade-in stagger-4">
+        <h3 class="newsletter-title">Stay Updated</h3>
+        <p>Subscribe to our newsletter for compliance insights and platform updates</p>
+        <form hx-post="{% url 'landing:newsletter_signup' %}"
+              hx-target="#newsletter-response"
+              hx-swap="outerHTML transition:true"
+              hx-indicator=".newsletter-submit">
+          {% csrf_token %}
+          <div class="newsletter-form-group">
+            <label for="email" class="visually-hidden">Email address</label>
+            <input type="email"
+                   id="email"
+                   name="email"
+                   class="newsletter-input"
+                   placeholder="Enter your email for updates"
+                   aria-label="Email address for newsletter"
+                   required />
+            <button type="submit" class="newsletter-submit btn btn-primary btn-animated">
+              <span class="label">Subscribe</span>
+              <span class="htmx-indicator">
+                <svg class="spinner" viewBox="0 0 50 50">
+                  <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </form>
+        <div id="newsletter-response" class="privacy-note">
+          We respect your privacy. Your information is safe and will never be shared.
+        </div>
+      </div>
+      <div class="cta-bg-decor" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>

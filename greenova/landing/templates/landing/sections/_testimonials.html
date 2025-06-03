@@ -1,0 +1,123 @@
+{% load static %}
+
+<!-- Testimonials Section -->
+<section class="testimonials-section fade-in slide-up"
+         aria-labelledby="testimonials-heading">
+  <div class="section-container">
+    <header class="section-header">
+      <h2 id="testimonials-heading" class="fade-in stagger-1">
+        What Our Clients Say
+      </h2>
+      <p class="section-description fade-in stagger-2">
+        Trusted by environmental professionals across industries
+      </p>
+    </header>
+    <div class="testimonial-carousel"
+         role="region"
+         aria-live="polite"
+         aria-label="Testimonials">
+      <div class="testimonial-carousel-viewport">
+        <div class="testimonial-track">
+          <!-- Testimonial 1 -->
+          <div class="testimonial-card reveal-element stagger-1"
+               role="group"
+               aria-roledescription="slide"
+               aria-label="Testimonial 1 of 3">
+            <div class="testimonial-author">
+              <img class="author-avatar"
+                   src="{% static 'img/testimonials/testimonial-1.svg' %}"
+                   alt="Sarah Chen, Environmental Compliance Manager at EcoTech Industries"
+                   width="64"
+                   height="64"
+                   loading="lazy" />
+              <div class="author-info">
+                <div class="author-name">
+Sarah Chen
+                </div>
+                <div class="author-position">
+Environmental Compliance Manager
+                </div>
+                <div class="author-company">
+EcoTech Industries
+                </div>
+              </div>
+            </div>
+            <blockquote class="testimonial-text">
+              "Greenova has revolutionized how we manage our environmental compliance. What used to take days now takes minutes, and we've reduced our non-compliance incidents by 87% in the first six months."
+            </blockquote>
+          </div>
+          <!-- Testimonial 2 -->
+          <div class="testimonial-card reveal-element stagger-2"
+               role="group"
+               aria-roledescription="slide"
+               aria-label="Testimonial 2 of 3">
+            <div class="testimonial-author">
+              <img class="author-avatar"
+                   src="{% static 'img/testimonials/testimonial-2.svg' %}"
+                   alt="Marcus Johnson, Sustainability Director at GreenField Manufacturing"
+                   width="64"
+                   height="64"
+                   loading="lazy" />
+              <div class="author-info">
+                <div class="author-name">
+Marcus Johnson
+                </div>
+                <div class="author-position">
+Sustainability Director
+                </div>
+                <div class="author-company">
+GreenField Manufacturing
+                </div>
+              </div>
+            </div>
+            <blockquote class="testimonial-text">
+              "The analytics capabilities in Greenova have given us unprecedented insights into our environmental performance. We can now identify trends and address potential issues before they become problems."
+            </blockquote>
+          </div>
+          <!-- Testimonial 3 -->
+          <div class="testimonial-card reveal-element stagger-3"
+               role="group"
+               aria-roledescription="slide"
+               aria-label="Testimonial 3 of 3">
+            <div class="testimonial-author">
+              <img class="author-avatar"
+                   src="{% static 'img/testimonials/testimonial-3.svg' %}"
+                   alt="Elena Rodriguez, Environmental Health & Safety Officer at Westcoast Energy"
+                   width="64"
+                   height="64"
+                   loading="lazy" />
+              <div class="author-info">
+                <div class="author-name">
+Elena Rodriguez
+                </div>
+                <div class="author-position">
+Environmental Health & Safety Officer
+                </div>
+                <div class="author-company">
+Westcoast Energy
+                </div>
+              </div>
+            </div>
+            <blockquote class="testimonial-text">
+              "The regulatory updates feature in Greenova keeps us ahead of changing requirements. This alone has saved us countless hours of research and helped us maintain perfect compliance for the past year."
+            </blockquote>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-nav" aria-label="Testimonial navigation">
+        <button class="testimonial-dot"
+                aria-label="Go to testimonial 1"
+                aria-controls="testimonials-heading">
+        </button>
+        <button class="testimonial-dot"
+                aria-label="Go to testimonial 2"
+                aria-controls="testimonials-heading">
+        </button>
+        <button class="testimonial-dot"
+                aria-label="Go to testimonial 3"
+                aria-controls="testimonials-heading">
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

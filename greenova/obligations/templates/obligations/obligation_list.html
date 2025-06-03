@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Obligation List</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.6/dist/tailwind.min.css"
+          rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-4">
+Obligation List
+      </h1>
+      <form method="get" hx-get="." hx-target="#obligation-list" class="mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label for="search" class="block text-sm font-medium">
+Search
+            </label>
+            <input type="text"
+                   id="search"
+                   name="search"
+                   placeholder="Search..."
+                   value="{{ request.GET.search }}"
+                   class="mt-1 block w-full border-gray-300 rounded-md" />
+          </div>
+          <div>
+            <label for="status" class="block text-sm font-medium">
+Status
+            </label>
+            <select id="status"
+                    name="status"
+                    class="mt-1 block w-full border-gray-300 rounded-md">
+              <option value="">
+All Statuses
+              </option>
+              <option value="open" {% if request.GET.status == "open" %}selected{% endif %}>
+Open
+              </option>
+              <option value="closed"
+                      {% if request.GET.status == "closed" %}
+                        selected
+                      {% endif %}>
+Closed
+              </option>
+            </select>
+          </div>
+          <div>
+            <label for="phase" class="block text-sm font-medium">
+Phase
+            </label>
+            <select id="phase"
+                    name="phase"
+                    class="mt-1 block w-full border-gray-300 rounded-md">
+              <option value="">
+All Phases
+              </option>
+              <option value="planning"
+                      {% if request.GET.phase == "planning" %}
+                        selected
+                      {% endif %}>
+Planning
+              </option>
+              <option value="execution"
+                      {% if request.GET.phase == "execution" %}
+                        selected
+                      {% endif %}>
+Execution
+              </option>
+            </select>
+          </div>
+          <div>
+            <label for="sort" class="block text-sm font-medium">
+Sort
+            </label>
+            <select id="sort"
+                    name="sort"
+                    class="mt-1 block w-full border-gray-300 rounded-md">
+              <option value="">
+Default
+              </option>
+              <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>
+Name
+              </option>
+              <option value="date" {% if request.GET.sort == "date" %}selected{% endif %}>
+Date
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">
+                    Apply
+          </button>
+        </div>
+      </form>
+
+      <div id="obligation-list"
+           hx-get="/obligations/"
+           hx-trigger="load"
+           hx-target="#obligation-list">
+        {% for obligation in obligations %}
+          <div class="obligation-item">
+            <h3>
+{{ obligation.name }}
+            </h3>
+            <p>
+Status: {{ obligation.status }}
+            </p>
+            <p>
+Phase: {{ obligation.phase }}
+            </p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/hyperscript.org"></script>
+  </body>
+</html>

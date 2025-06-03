@@ -1,3 +1,36 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Makefile Guide for Greenova Project](#makefile-guide-for-greenova-project)
+  - [Introduction to Make](#introduction-to-make)
+  - [Makefile Fundamentals](#makefile-fundamentals)
+    - [Basic Structure](#basic-structure)
+    - [Example of a Simple Rule](#example-of-a-simple-rule)
+    - [Variables](#variables)
+    - [Phony Targets](#phony-targets)
+  - [Makefiles in the Python Ecosystem](#makefiles-in-the-python-ecosystem)
+    - [Example Python Project Makefile Structure](#example-python-project-makefile-structure)
+  - [Makefile.am and Makefile.in](#makefileam-and-makefilein)
+    - [When to Use Autotools](#when-to-use-autotools)
+  - [Updated Greenova Project Makefile](#updated-greenova-project-makefile)
+    - [Key Variables](#key-variables)
+    - [Common Commands](#common-commands)
+    - [Example Usage](#example-usage)
+    - [Targets](#targets)
+      - [Environment Setup](#environment-setup)
+      - [Dependency Management](#dependency-management)
+      - [Application Management](#application-management)
+      - [Tailwind CSS](#tailwind-css)
+      - [Cleaning](#cleaning)
+      - [Template Management](#template-management)
+      - [Help](#help)
+    - [Notes](#notes)
+    - [Best Practices](#best-practices)
+  - [Debugging Makefiles](#debugging-makefiles)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Makefile Guide for Greenova Project
 
 ## Introduction to Make
@@ -5,7 +38,7 @@
 Make is a build automation tool that automatically builds executable programs
 and libraries from source code by reading files called Makefiles. Make was
 originally created by Stuart Feldman in 1976 at Bell Labs and remains one of
-the most widely used build tools in software development [1].
+the most widely used build tools in software development.
 
 Make's primary purpose is to determine which pieces of a large program need to
 be recompiled and issue the commands to recompile them when necessary. However,
@@ -114,80 +147,177 @@ Autotools (including Makefile.am and Makefile.in) are most useful for:
 
 For Python projects like Greenova, standard Makefiles are usually sufficient.
 
-## Greenova Project Makefile
+## Updated Greenova Project Makefile
 
-The Greenova project uses a Makefile to streamline development workflows:
+The Greenova project uses a Makefile to streamline development workflows. Below
+is an updated guide based on the current Makefile and best practices.
 
 ### Key Variables
 
 ```makefile
+# Define the virtual environment path
 VENV = .venv
-PYTHON = $(VENV)/bin/python
+
+# Define the Python and pip paths
+PYTHON = $(VENV)/bin/python3
 PIP = $(VENV)/bin/pip
-REQUIREMENTS = requirements.txt
-CONSTRAINTS = constraints.txt
-DJANGO = $(PYTHON) manage.py
+
+# Define requirements and constraints files
+REQUIREMENTS = requirements/dev.txt
+CONSTRAINTS = requirements/constraints.txt
 ```
 
 ### Common Commands
 
-| Command        | Purpose                                         |
-| -------------- | ----------------------------------------------- |
-| `make venv`    | Creates a Python virtual environment            |
-| `make install` | Installs project dependencies                   |
-| `make migrate` | Runs Django migrations                          |
-| `make serve`   | Starts the development server                   |
-| `make test`    | Runs the test suite                             |
-| `make lint`    | Performs code quality checks                    |
-| `make clean`   | Removes temporary files and virtual environment |
+| Command                 | Purpose                                              |
+| ----------------------- | ---------------------------------------------------- |
+| `make venv`             | Creates a Python virtual environment                 |
+| `make install`          | Installs project dependencies                        |
+| `make freeze`           | Freezes installed dependencies into requirements.txt |
+| `make app name`         | Creates a new Django app                             |
+| `make run`              | Starts the Django server with pre-built Tailwind CSS |
+| `make run-django`       | Starts only the Django server                        |
+| `make run-tailwind`     | Starts the Tailwind CSS build process                |
+| `make tailwind-build`   | Builds Tailwind CSS                                  |
+| `make tailwind-install` | Installs Tailwind CSS dependencies                   |
+| `make update`           | Updates data from a CSV file                         |
+| `make clean`            | Removes the virtual environment and temporary files  |
+| `make lint-templates`   | Lints Django template files                          |
+| `make format-templates` | Formats Django template files                        |
+| `make help`             | Lists all available commands                         |
 
 ### Example Usage
 
 ```bash
 # Initial setup
+make venv
 make install
 
 # Development workflow
-make migrate
-make serve
+make run
 
 # Before committing code
-make lint
-make test
+make lint-templates
+make format-templates
 ```
 
-## Best Practices for Makefiles
+### Targets
 
-1. **Use variables**: Define paths, commands, and options as variables at the
-   top of the file
-2. **Declare phony targets**: Mark targets that don't represent files with
-   `.PHONY`
-3. **Create target dependencies**: Ensure prerequisites are built before
-   targets that need them
-4. **Document your Makefile**: Add comments explaining complex recipes or
-   variables
-5. **Keep it portable**: Use conditional logic for cross-platform compatibility
-6. **Modularize**: Split complex Makefiles using include directives
+#### Environment Setup
 
-## Extending the Greenova Makefile
+- **venv**: Creates a Python virtual environment.
 
-To add a new command to the Greenova Makefile:
+  ```bash
+  make venv
+  ```
 
-1. Define any necessary variables
-2. Create a new target with appropriate dependencies
-3. Write the recipe commands
-4. Document the command in comments
-5. Update this documentation
+  This command sets up a virtual environment in the `.venv` directory.
 
-Example addition for code formatting:
+- **install**: Installs project dependencies.
 
-```makefile
-.PHONY: format
+  ```bash
+  make install
+  ```
 
-format:
-    $(PYTHON) -m black .
-    $(PYTHON) -m isort .
-```
+  This command uses `pip` to install dependencies listed in
+  `requirements/dev.txt` with constraints from `requirements/constraints.txt`.
+
+#### Dependency Management
+
+- **freeze**: Freezes installed dependencies into `requirements.txt`.
+
+  ```bash
+  make freeze
+  ```
+
+#### Application Management
+
+- **app**: Creates a new Django app.
+
+  ```bash
+  make app name
+  ```
+
+- **run**: Starts the Django development server with pre-built Tailwind CSS.
+
+  ```bash
+  make run
+  ```
+
+- **run-django**: Starts only the Django server using Gunicorn.
+
+  ```bash
+  make run-django
+  ```
+
+- **run-tailwind**: Starts the Tailwind CSS build process.
+
+  ```bash
+  make run-tailwind
+  ```
+
+#### Tailwind CSS
+
+- **tailwind-build**: Builds Tailwind CSS.
+
+  ```bash
+  make tailwind-build
+  ```
+
+- **tailwind-install**: Installs Tailwind CSS dependencies.
+
+  ```bash
+  make tailwind-install
+  ```
+
+#### Cleaning
+
+- **clean**: Removes the virtual environment and temporary files.
+
+  ```bash
+  make clean
+  ```
+
+#### Template Management
+
+- **lint-templates**: Lints Django template files.
+
+  ```bash
+  make lint-templates
+  ```
+
+- **format-templates**: Formats Django template files.
+
+  ```bash
+  make format-templates
+  ```
+
+#### Help
+
+- **help**: Lists all available commands.
+
+  ```bash
+  make help
+  ```
+
+### Notes
+
+- Ensure the `.env` file is present before running commands that require
+  environment variables.
+- Use `make help` to view all available commands and their descriptions.
+
+### Best Practices
+
+1. **Use Variables**: Define paths, commands, and options as variables at the
+   top of the file.
+2. **Declare Phony Targets**: Mark targets that don't represent files with
+   `.PHONY`.
+3. **Document Your Makefile**: Add comments explaining complex recipes or
+   variables.
+4. **Keep It Modular**: Split complex Makefiles using include directives if
+   necessary.
+5. **Use Source Control**: Keep your Makefile under version control to track
+   changes.
 
 ## Debugging Makefiles
 
@@ -200,23 +330,16 @@ When Makefiles don't behave as expected:
 
 ## References
 
-[1] R. M. Stallman, R. McGrath, and P. D. Smith, "GNU Make Manual," Free
-Software Foundation, 2020. [Online]. Available:
-<https://www.gnu.org/software/make/manual/> [Accessed: Mar. 27, 2025].
+[1]: https://www.gnu.org/software/make/manual/ 'GNU Make Manual, Free Software Foundation, 2020'
+[2]: https://en.wikipedia.org/wiki/Make_(software) 'Make (software), Wikipedia'
+[3]: https://nostarch.com/gnu-make-book 'The GNU Make Book, No Starch Press, 2015'
+[4]: https://earthly.dev/blog/python-makefile/ 'Makefiles for Python Projects, Earthly Technologies, 2022'
+[5]: https://stackabuse.com/how-to-write-a-makefile-automating-python-setup-compilation-and-testing/ 'How to write a Makefile, Stack Abuse, 2021'
+[6]: https://www.evan-soil.io/blog/ode-to-gnu-make/ 'Ode to GNU Make, Evan Soil, 2022'
 
-[2] "Make (software)," Wikipedia. [Online]. Available:
-<https://en.wikipedia.org/wiki/Make_(software)> [Accessed: Mar. 27, 2025].
-
-[3] J. Graham-Cumming, "The GNU Make Book," No Starch Press, San Francisco,
-CA, 2015.
-
-[4] "Makefiles for Python Projects," Earthly Technologies, 2022. [Online].
-Available: <https://earthly.dev/blog/python-makefile/> [Accessed: Mar. 27, 2025].
-
-[5] "How to write a Makefile: Automating Python setup, compilation, and
-testing," Stack Abuse, 2021. [Online]. Available:
-<https://stackabuse.com/how-to-write-a-makefile-automating-python-setup-compilation-and-testing/>
-[Accessed: Mar. 27, 2025].
-
-[6] P. Ward, "Ode to GNU Make," Evan Soil, 2022. [Online]. Available:
-<https://www.evan-soil.io/blog/ode-to-gnu-make/> [Accessed: Mar. 27, 2025].
+1. [GNU Make Manual][1]
+2. [Make (software)][2]
+3. [The GNU Make Book][3]
+4. [Makefiles for Python Projects][4]
+5. [How to write a Makefile][5]
+6. [Ode to GNU Make][6]

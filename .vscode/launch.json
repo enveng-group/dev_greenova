@@ -1,107 +1,31 @@
 {
-  "compounds": [
-    {
-      "configurations": [
-        "Django: Run Server"
-      ],
-      "name": "Django: Full Stack"
-    }
-  ],
-  "configurations": [
-    {
-      "args": [
-        "runserver",
-        "--noreload"
-      ],
-      "cwd": "${workspaceFolder}/greenova",
-      "django": true,
-      "env": {
-        "DJANGO_SETTINGS_MODULE": "greenova.settings"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "justMyCode": false,
-      "name": "Django: Run Server",
-      "program": "${workspaceFolder}/greenova/manage.py",
-      "request": "launch",
-      "type": "debugpy"
-    },
-    {
-      "args": [
-        "-xvs",
-        "--no-header"
-      ],
-      "cwd": "${workspaceFolder}/greenova",
-      "env": {
-        "DJANGO_SETTINGS_MODULE": "greenova.settings"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "justMyCode": false,
-      "name": "Pytest: Run All Tests",
-      "program": "${workspaceFolder}/.venv/bin/pytest",
-      "request": "launch",
-      "type": "debugpy"
-    },
-    {
-      "args": [
-        "${file}",
-        "-xvs"
-      ],
-      "cwd": "${workspaceFolder}/greenova",
-      "env": {
-        "DJANGO_SETTINGS_MODULE": "greenova.settings"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "name": "Pytest: Current File",
-      "program": "${workspaceFolder}/.venv/bin/pytest",
-      "request": "launch",
-      "type": "debugpy"
-    },
-    {
-      "console": "integratedTerminal",
-      "cwd": "${fileDirname}",
-      "env": {
-        "DJANGO_SETTINGS_MODULE": "greenova.settings"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "justMyCode": false,
-      "name": "Python: Current File",
-      "program": "${file}",
-      "request": "launch",
-      "type": "debugpy"
-    },
-    {
-      "args": [
-        "import_obligations",
-        "dummy_data.csv"
-      ],
-      "cwd": "${workspaceFolder}/greenova",
-      "django": true,
-      "env": {
-        "DJANGO_SETTINGS_MODULE": "greenova.settings"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "justMyCode": false,
-      "name": "Django: Import Data",
-      "program": "${workspaceFolder}/greenova/manage.py",
-      "request": "launch",
-      "type": "debugpy"
-    },
-    {
-      "args": [
-        "shell"
-      ],
-      "cwd": "${workspaceFolder}/greenova",
-      "django": true,
-      "env": {
-        "DJANGO_SETTINGS_MODULE": "greenova.settings"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "justMyCode": false,
-      "name": "Django: Shell",
-      "program": "${workspaceFolder}/greenova/manage.py",
-      "request": "launch",
-      "type": "debugpy"
-    }
-  ],
-  "version": "0.2.0"
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Django: Runserver",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/manage.py",
+			"args": ["runserver", "0.0.0.0:8000"],
+			"django": true,
+			"env": {
+				"DJANGO_SETTINGS_MODULE": "greenova.settings"
+			},
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Python: Unit Tests",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/manage.py",
+			"args": ["test"],
+			"django": true,
+			"env": {
+				"DJANGO_SETTINGS_MODULE": "greenova.settings"
+			},
+			"console": "integratedTerminal",
+			"justMyCode": true
+		}
+	]
 }

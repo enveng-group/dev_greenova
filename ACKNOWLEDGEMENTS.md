@@ -1,3 +1,11 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Acknowledgements](#acknowledgements)
+  - [Pre-commit Hooks](#pre-commit-hooks)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Acknowledgements
 
 ## Pre-commit Hooks

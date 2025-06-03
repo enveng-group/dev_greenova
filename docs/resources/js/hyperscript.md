@@ -1,3 +1,37 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [\_hyperscript in Django](#%5C_hyperscript-in-django)
+  - [Introduction](#introduction)
+    - [Why Use \_hyperscript in Django?](#why-use-%5C_hyperscript-in-django)
+  - [Installation](#installation)
+  - [Basic Syntax and Concepts](#basic-syntax-and-concepts)
+    - [Event Handling](#event-handling)
+    - [Variables and Control Flow](#variables-and-control-flow)
+    - [Working with Elements](#working-with-elements)
+  - [Common Django Template Patterns](#common-django-template-patterns)
+    - [Form Interaction](#form-interaction)
+    - [Django Messages with \_hyperscript](#django-messages-with-%5C_hyperscript)
+  - [Integration with Django HTMX](#integration-with-django-htmx)
+    - [Enhanced HTMX Requests](#enhanced-htmx-requests)
+    - [Managing Loading States](#managing-loading-states)
+  - [Advanced Patterns](#advanced-patterns)
+    - [Custom Events](#custom-events)
+    - [Animations](#animations)
+    - [Local Storage Interaction](#local-storage-interaction)
+    - [Django Form Validation with \_hyperscript](#django-form-validation-with-%5C_hyperscript)
+  - [Best Practices](#best-practices)
+  - [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [Debug Commands](#debug-commands)
+  - [Examples Gallery](#examples-gallery)
+    - [Collapsible Sections](#collapsible-sections)
+  - [Resources and References](#resources-and-references)
+  - [Conclusion](#conclusion)
+  - [Conclusion](#conclusion-1)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # \_hyperscript in Django
 
 ## Introduction
@@ -283,9 +317,7 @@ INSTALLED_APPS = [
 ### Debug Commands
 
 ```html
-<button _="on click log 'Button clicked' log event log me">
-  Debug Button
-</button>
+<button _="on click log 'Button clicked' log event log me">Debug Button</button>
 ```
 
 ## Examples Gallery

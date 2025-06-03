@@ -1,4 +1,3 @@
-from typing import Optional
 
 from core.utils.roles import get_responsibility_choices
 from django.db import models
@@ -6,8 +5,7 @@ from django.db.models import CharField, TextField
 
 
 class Responsibility(models.Model):
-    """
-    Model representing a responsibility that can be assigned to obligations.
+    """Model representing a responsibility that can be assigned to obligations.
     These values match the responsibility choices in obligations.models.Obligation.
     """
 
@@ -16,12 +14,12 @@ class Responsibility(models.Model):
         unique=True,
         choices=get_responsibility_choices(),
     )
-    description: Optional[TextField] = models.TextField(blank=True)
+    description: TextField | None = models.TextField(blank=True)
 
     class Meta:
-        verbose_name = 'Responsibility'
-        verbose_name_plural = 'Responsibilities'
-        ordering = ['name']
+        verbose_name = "Responsibility"
+        verbose_name_plural = "Responsibilities"
+        ordering = ["name"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.name)

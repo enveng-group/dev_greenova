@@ -91,7 +91,7 @@
           </div>
           <div class="form-group">
             <label>Forecasted Date</label>
-            <div class="detail-value">{{ obligation.recurring_forcasted_date|format_due_date }}</div>
+            <div class="detail-value">{{ obligation.recurring_forecasted_date|format_due_date }}</div>
           </div>
         </div>
       </fieldset>
@@ -105,16 +105,6 @@
         <div class="form-group">
           <label>Supporting Information</label>
           <div class="detail-value">{{ obligation.supporting_information|default:"None provided"|linebreaks }}</div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Compliance Comments</label>
-            <div class="detail-value">{{ obligation.compliance_comments|default:"No comments"|linebreaks }}</div>
-          </div>
-          <div class="form-group">
-            <label>Non-Conformance Comments</label>
-            <div class="detail-value">{{ obligation.non_conformance_comments|default:"No comments"|linebreaks }}</div>
-          </div>
         </div>
       </fieldset>
     </div>

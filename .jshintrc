@@ -1,0 +1,11 @@
+{
+  "esversion": 11,
+  "node": true,
+  "browser": true,
+  "undef": true,
+  "unused": true,
+  "globals": {
+    "django": true,
+    "htmx": true
+  }
+}

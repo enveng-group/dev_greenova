@@ -1,0 +1,71 @@
+{% load static %}
+{% comment %}Refactored Key Performance Metrics section for animation and design consistency{% endcomment %}
+<section class="stats-section fade-in slide-up"
+         aria-labelledby="stats-heading">
+  <div class="section-container">
+    <header class="section-header">
+      <h2 id="stats-heading" class="fade-in stagger-1">
+        Key Performance Metrics
+      </h2>
+      <p class="section-description fade-in stagger-2">
+        Our impact in numbers: real-time compliance and industry leadership
+      </p>
+    </header>
+    <div class="hero-stats">
+      <div class="stat-card reveal-element stagger-1">
+        <span class="stat-icon float-animation">
+          <img src="{% static 'img/icons/compliance.svg' %}"
+               alt="Compliance Rate Icon"
+               width="36"
+               height="36"
+               loading="lazy" />
+        </span>
+        <span class="stat-number counter" data-target="93" aria-label="93 percent">0</span>
+        <span class="stat-label">Compliance Rate</span>
+        <span class="stat-suffix" aria-hidden="true">%</span>
+      </div>
+      <div class="stat-card reveal-element stagger-2">
+        <span class="stat-icon float-animation">
+          <img src="{% static 'img/icons/obligations.svg' %}"
+               alt="Obligations Tracked Icon"
+               width="36"
+               height="36"
+               loading="lazy" />
+        </span>
+        <span class="stat-number counter"
+              data-target="16500"
+              aria-label="16,500 plus">0</span>
+        <span class="stat-label">Obligations Tracked</span>
+        <span class="stat-suffix" aria-hidden="true">+</span>
+      </div>
+      <div class="stat-card reveal-element stagger-3">
+        <span class="stat-icon float-animation">
+          <img src="{% static 'img/icons/partners.svg' %}"
+               alt="Industry Partners Icon"
+               width="36"
+               height="36"
+               loading="lazy" />
+        </span>
+        <span class="stat-number counter" data-target="42" aria-label="42">0</span>
+        <span class="stat-label">Industry Partners</span>
+      </div>
+      <div class="stat-card reveal-element stagger-4">
+        <span class="stat-icon float-animation">
+          <img src="{% static 'img/icons/satisfaction.svg' %}"
+               alt="Client Satisfaction Icon"
+               width="36"
+               height="36"
+               loading="lazy" />
+        </span>
+        <span class="stat-number counter" data-target="98" aria-label="98 percent">0</span>
+        <span class="stat-label">Client Satisfaction</span>
+        <span class="stat-suffix" aria-hidden="true">%</span>
+      </div>
+    </div>
+    <div class="stats-note fade-in stagger-5" role="note">
+      <p>
+        Helping environmental professionals achieve compliance excellence since 2023
+      </p>
+    </div>
+  </div>
+</section>

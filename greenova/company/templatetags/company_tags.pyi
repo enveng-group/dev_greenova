@@ -1,0 +1,9 @@
+
+def get_user_companies(user_id: int) -> list[dict[str, object]]:
+    ...
+
+def get_user_primary_company(user_id: int) -> dict[str, object] | None:
+    ...
+
+def format_company_name(company: object) -> str:
+    ...

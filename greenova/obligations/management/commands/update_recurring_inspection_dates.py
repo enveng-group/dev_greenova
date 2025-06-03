@@ -5,10 +5,11 @@ from obligations.models import Obligation
 
 logger = logging.getLogger(__name__)
 
-class Command(BaseCommand):
-    help = 'Update all recurring forecasted dates'
 
-    def handle(self, *args, **options):
+class Command(BaseCommand):
+    help = "Update all recurring forecasted dates"
+
+    def handle(self, *args, **options) -> None:
         """Update forecasted dates for all recurring obligations."""
         self.stdout.write("Updating recurring forecasted dates...")
 
@@ -22,5 +23,5 @@ class Command(BaseCommand):
                 count += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f"Successfully updated {count} recurring forecasted dates"
+            f"Successfully updated {count} recurring forecasted dates",
         ))

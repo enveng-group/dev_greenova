@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36">
+  <title>Insights Icon</title>
+  <g fill="none" stroke="currentColor" stroke-width="8">
+    <path d="M20 70v-30q0-15 15-15h30q15 0 15 15v30"/>
+    <path d="M30 70h40"/>
+    <circle cx="50" cy="45" r="10"/>
+    <path d="M50 55v25m-10-10h20"/>
+  </g>
+</svg>

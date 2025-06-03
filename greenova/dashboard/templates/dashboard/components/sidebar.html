@@ -1,0 +1,130 @@
+{% load static %}
+
+<!-- Skinny floating sidebar navigation -->
+<aside class="sidebar sidebar-float"
+       data-hx-ext="class-tools"
+       data-classes="add slide-in-from-left:0.3s">
+  <nav aria-label="Main Navigation">
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item" data-tooltip="Dashboard">
+        <a href="{% url 'dashboard:home' %}"
+           class="sidebar-nav-link
+                  {% if request.resolver_match.url_name == 'home' %}
+                    active
+                  {% endif %}">
+          <span class="sidebar-nav-icon" aria-hidden="true">
+            <img src="{% static 'img/icons/dashboard.svg' %}"
+                 alt=""
+                 aria-hidden="true" />
+          </span>
+          <span class="sidebar-nav-text">Dashboard</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item" data-tooltip="Projects">
+        <a href="{% url 'projects:project_list' %}"
+           class="sidebar-nav-link
+                  {% if request.resolver_match.namespace == 'projects' %}
+                    active
+                  {% endif %}">
+          <span class="sidebar-nav-icon" aria-hidden="true">
+            <img src="{% static 'img/icons/projects.svg' %}" alt="" aria-hidden="true" />
+          </span>
+          <span class="sidebar-nav-text">Projects</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item" data-tooltip="Mechanisms">
+        <a href="{% url 'mechanisms:list' %}"
+           class="sidebar-nav-link
+                  {% if request.resolver_match.namespace == 'mechanisms' %}
+                    active
+                  {% endif %}">
+          <span class="sidebar-nav-icon" aria-hidden="true">
+            <img src="{% static 'img/icons/mechanisms.svg' %}"
+                 alt=""
+                 aria-hidden="true" />
+          </span>
+          <span class="sidebar-nav-text">Mechanisms</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item" data-tooltip="Procedures">
+        <a href="{% url 'procedures:procedure_list' %}"
+           class="sidebar-nav-link
+                  {% if request.resolver_match.namespace == 'procedures' %}
+                    active
+                  {% endif %}">
+          <span class="sidebar-nav-icon" aria-hidden="true">
+            <img src="{% static 'img/icons/procedures.svg' %}"
+                 alt=""
+                 aria-hidden="true" />
+          </span>
+          <span class="sidebar-nav-text">Procedures</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item" data-tooltip="Obligations">
+        <a href="{% url 'obligations:obligation_list' %}"
+           class="sidebar-nav-link
+                  {% if request.resolver_match.namespace == 'obligations' %}
+                    active
+                  {% endif %}">
+          <span class="sidebar-nav-icon" aria-hidden="true">
+            <img src="{% static 'img/icons/obligations.svg' %}"
+                 alt=""
+                 aria-hidden="true" />
+          </span>
+          <span class="sidebar-nav-text">Obligations</span>
+        </a>
+      </li>
+      <li class="sidebar-nav-item" data-tooltip="Reports">
+        <a href="{% url 'reports:report_list' %}"
+           class="sidebar-nav-link
+                  {% if request.resolver_match.namespace == 'reports' %}
+                    active
+                  {% endif %}">
+          <span class="sidebar-nav-icon" aria-hidden="true">
+            <img src="{% static 'img/icons/reports.svg' %}" alt="" aria-hidden="true" />
+          </span>
+          <span class="sidebar-nav-text">Reports</span>
+        </a>
+      </li>
+
+      {% if user.is_staff %}
+        <li class="sidebar-nav-item" data-tooltip="Admin Panel">
+          <a href="{% url 'admin:index' %}"
+             class="sidebar-nav-link
+                    {% if request.resolver_match.namespace == 'admin' %}
+                      active
+                    {% endif %}">
+            <span class="sidebar-nav-icon" aria-hidden="true">
+              <img src="{% static 'img/icons/admin.svg' %}" alt="" aria-hidden="true" />
+            </span>
+            <span class="sidebar-nav-text">Admin Panel</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item" data-tooltip="Users">
+          <a href="{% url 'users:user_list' %}"
+             class="sidebar-nav-link
+                    {% if request.resolver_match.namespace == 'users' %}
+                      active
+                    {% endif %}">
+            <span class="sidebar-nav-icon" aria-hidden="true">
+              <img src="{% static 'img/icons/users.svg' %}" alt="" aria-hidden="true" />
+            </span>
+            <span class="sidebar-nav-text">Users</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item" data-tooltip="Settings">
+          <a href="{% url 'settings:settings' %}"
+             class="sidebar-nav-link
+                    {% if request.resolver_match.namespace == 'settings' %}
+                      active
+                    {% endif %}">
+            <span class="sidebar-nav-icon" aria-hidden="true">
+              <img src="{% static 'img/icons/settings.svg' %}" alt="" aria-hidden="true" />
+            </span>
+            <span class="sidebar-nav-text">Settings</span>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+</aside>

@@ -14,18 +14,20 @@ from .figures import generate_responsibility_chart
 
 logger = logging.getLogger(__name__)
 
-@method_decorator(cache_control(max_age=300), name='dispatch')
-@method_decorator(vary_on_headers('HX-Request'), name='dispatch')
+
+@method_decorator(cache_control(max_age=300), name="dispatch")
+@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class ResponsibilityChartView(LoginRequiredMixin, TemplateView):
     """View for displaying responsibility charts."""
-    template_name = 'responsibility/responsibility_chart.html'
+
+    template_name = "responsibility/responsibility_chart.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        project_id = self.request.GET.get('project_id')
+        project_id = self.request.GET.get("project_id")
 
         if not project_id:
-            context['error'] = 'No project selected'
+            context["error"] = "No project selected"
             return context
 
         try:
@@ -37,7 +39,8 @@ class ResponsibilityChartView(LoginRequiredMixin, TemplateView):
 
             for obligation in obligations:
                 # Get proper display name for responsibility
-                resp_display = get_responsibility_display_name(obligation.responsibility)
+                resp_display = get_responsibility_display_name(
+                    obligation.responsibility)
 
                 if resp_display not in responsibility_counts:
                     responsibility_counts[resp_display] = 0
@@ -45,19 +48,20 @@ class ResponsibilityChartView(LoginRequiredMixin, TemplateView):
 
             # Generate chart
             chart_data = generate_responsibility_chart(responsibility_counts)
-            context['responsibility_data'] = responsibility_counts
-            context['chart_data'] = chart_data
-            context['project_id'] = project_id
+            context["responsibility_data"] = responsibility_counts
+            context["chart_data"] = chart_data
+            context["project_id"] = project_id
 
         except Exception as e:
-            logger.error(f'Error generating responsibility chart: {str(e)}')
-            context['error'] = f'Error generating chart: {str(e)}'
+            logger.exception(f"Error generating responsibility chart: {e!s}")
+            context["error"] = f"Error generating chart: {e!s}"
 
         return context
+
 
 @require_GET
 def get_responsibility_options(request):
     """API endpoint to get responsibility options."""
     choices = get_responsibility_choices()
-    options = [{'value': value, 'display': display} for value, display in choices]
-    return JsonResponse({'options': options})
+    options = [{"value": value, "display": display} for value, display in choices]
+    return JsonResponse({"options": options})

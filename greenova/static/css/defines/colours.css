@@ -25,9 +25,7 @@
   --pico-background-color: var(--greenova-background-primary) !important;
 
   /* Container Backgrounds */
-  --pico-card-background-color: var(
-    --greenova-background-secondary
-  ) !important;
+  --pico-card-background-color: var(--greenova-background-secondary) !important;
 
   /* Container Headers/Borders */
   --pico-card-border-color: var(--greenova-green-secondary) !important;

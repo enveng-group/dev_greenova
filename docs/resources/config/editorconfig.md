@@ -1,3 +1,27 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [EditorConfig](#editorconfig)
+  - [Overview](#overview)
+  - [Why EditorConfig Matters](#why-editorconfig-matters)
+  - [How EditorConfig Works](#how-editorconfig-works)
+  - [Greenova's EditorConfig Configuration](#greenovas-editorconfig-configuration)
+    - [Python Configuration](#python-configuration)
+    - [HTML/Django Templates](#htmldjango-templates)
+    - [JavaScript and CSS](#javascript-and-css)
+    - [Other Formats](#other-formats)
+  - [Using EditorConfig](#using-editorconfig)
+    - [Editor Support](#editor-support)
+    - [Installing the Python Package](#installing-the-python-package)
+    - [Using the Command Line Tool](#using-the-command-line-tool)
+  - [Troubleshooting](#troubleshooting)
+    - [EditorConfig Not Working](#editorconfig-not-working)
+    - [Conflicts with Other Formatting Tools](#conflicts-with-other-formatting-tools)
+  - [Further Reading](#further-reading)
+  - [Integration with Django Development](#integration-with-django-development)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # EditorConfig
 
 ## Overview

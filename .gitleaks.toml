@@ -1,0 +1,12 @@
+title = "Greenova Gitleaks Configuration"
+[extend]
+useDefault = true
+disabledRules = ["generic-api-key"]
+
+[[allowlists]]
+description = "Ignore test data and migrations"
+paths = [
+  '''migrations/.*''',
+  '''tests/.*''',
+  '''dummy_data\.csv''',
+]

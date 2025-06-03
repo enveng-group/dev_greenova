@@ -1,3 +1,40 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django-Silk: Profiling and Performance Analysis](#django-silk-profiling-and-performance-analysis)
+  - [Overview](#overview)
+  - [Installation and Setup](#installation-and-setup)
+    - [Installation](#installation)
+    - [Configuration](#configuration)
+  - [Core Features](#core-features)
+    - [Request Inspection](#request-inspection)
+    - [SQL Query Analysis](#sql-query-analysis)
+    - [Python Profiling](#python-profiling)
+      - [1. Automatic Request Profiling](#1-automatic-request-profiling)
+      - [2. Decorator-based Profiling](#2-decorator-based-profiling)
+      - [3. Context Manager Profiling](#3-context-manager-profiling)
+  - [Integration with Greenova](#integration-with-greenova)
+    - [Profiling Environmental Calculations](#profiling-environmental-calculations)
+    - [Monitoring API Performance](#monitoring-api-performance)
+    - [Identifying Database Bottlenecks](#identifying-database-bottlenecks)
+  - [Advanced Configuration](#advanced-configuration)
+    - [Security and Access Control](#security-and-access-control)
+    - [Controlling Data Collection](#controlling-data-collection)
+    - [Data Protection](#data-protection)
+  - [Maintenance](#maintenance)
+    - [Clearing Logged Data](#clearing-logged-data)
+    - [Database Considerations](#database-considerations)
+  - [Integration with Testing](#integration-with-testing)
+  - [Best Practices](#best-practices)
+  - [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [High Memory Usage](#high-memory-usage)
+    - [Slow Application Performance](#slow-application-performance)
+    - [Missing Database Queries](#missing-database-queries)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django-Silk: Profiling and Performance Analysis
 
 This guide covers django-silk, a powerful profiling and inspection tool for

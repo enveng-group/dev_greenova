@@ -1,38 +1,43 @@
 {
-  "dependencies": {
-    "@picocss/pico": "2.0.6",
-    "htmx-ext-class-tools": "2.0.2",
-    "htmx-ext-head-support": "2.0.4",
-    "htmx-ext-loading-states": "2.0.1",
-    "htmx-ext-path-deps": "2.0.1",
-    "htmx.org": "1.9.12",
-    "hyperscript.org": "0.9.14"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "3.3.0",
-    "@eslint/js": "9.22.0",
-    "eslint": "9.21.0",
-    "eslint-config-prettier": "10.1.1",
-    "eslint-config-stylelint": "24.0.0",
-    "eslint-plugin-prettier": "5.2.3",
-    "globals": "16.0.0",
-    "prettier": "3.5.3",
-    "protolint": "0.52.0",
-    "stylelint": "16.17.0",
-    "stylelint-config-recommended": "15.0.0",
-    "stylelint-config-standard": "37.0.0",
-    "stylelint-config-tailwindcss": "1.0.0"
-  },
-  "engines": {
-    "node": "18.20.7"
-  },
-  "name": "greenova",
-  "packageManager": "npm@10.8.2",
-  "private": true,
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  },
-  "type": "module",
-  "version": "0.0.2"
+	"name": "greenova",
+	"version": "0.0.7",
+	"description": "Greenova is a Django web application designed for environmental management, focusing on tracking environmental obligations and compliance requirements. Built with accessibility and simplicity in mind, it helps organizations manage their environmental responsibilities efficiently.",
+	"keywords": [
+		"django",
+		"environmental",
+		"compliance",
+		"obligation-tracking",
+		"greenova",
+		"pico-css",
+		"htmx",
+		"hyperscript",
+		"accessibility",
+		"semantic-html",
+		"webapp",
+		"python",
+		"sqlite",
+		"tailwind",
+		"allauth",
+		"modular",
+		"progressive-enhancement",
+		"environmental-management",
+		"open-source"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git@github:enveng-group/dev_greenova.git"
+	},
+	"license": "AGPL-3.0",
+	"author": "Adrian Gallo",
+	"type": "module",
+	"main": "greenova/static/ts/src/index.ts",
+	"directories": {
+		"doc": "docs"
+	},
+	"scripts": {
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"npm": "11.3.0"
+	}
 }

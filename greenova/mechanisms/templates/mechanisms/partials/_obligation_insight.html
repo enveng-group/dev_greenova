@@ -1,0 +1,40 @@
+{% if error %}
+  <div class="tooltip-error">
+    <p>
+{{ error }}
+    </p>
+  </div>
+{% else %}
+  <div class="obligation-insight-tooltip">
+    <div class="tooltip-header">
+      <h4>
+{{ status }} Obligations
+      </h4>
+      <span class="tooltip-count">{{ count }}</span>
+    </div>
+    {% if obligations %}
+      <div class="tooltip-content">
+        <div class="tooltip-items">
+          {% for obligation in obligations %}
+            <div class="tooltip-item">
+              <span class="item-title">{{ obligation.obligation_number }}</span>
+              <span class="item-date">
+                {% if obligation.action_due_date %}
+          Due: {{ obligation.action_due_date|date:"d M Y" }}
+                {% endif %}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+        {% if total_count > 5 %}
+          <div class="tooltip-footer">
+            <a href="{% url 'obligations:list' %}?status={{ status_key }}&mechanism_id={{ mechanism_id }}"
+               class="view-all">
+        View all {{ total_count }} obligations
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

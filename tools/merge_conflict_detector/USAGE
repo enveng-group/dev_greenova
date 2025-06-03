@@ -1,0 +1,197 @@
+===============================================================================
+MERGE_CONFLICT_DETECTOR - Analyze and prevent Git merge conflicts
+===============================================================================
+
+SYNOPSIS
+--------
+    merge_conflict_detector [OPTIONS] BASE_BRANCH MERGE_BRANCH
+    merge_conflict_detector --maintenance [MAINTENANCE_OPTIONS]
+    merge_conflict_detector --analyze REPOSITORY_PATH
+
+DESCRIPTION
+-----------
+Analyzes potential merge conflicts between two Git branches and provides
+data-driven recommendations for conflict resolution and prevention.
+
+OPTIONS
+-------
+  -h, --help                Display help information and exit.
+  -v, --verbose             Enable verbose output for detailed analysis.
+  -q, --quiet               Suppress non-essential output.
+  -o, --output FILE         Write analysis report to specified file.
+  -f, --format FORMAT       Output format: text, json, csv (default: text).
+  --dry-run                 Perform analysis without making any changes.
+  --score-threshold NUMBER  Set conflict probability threshold (0-100, default: 70).
+  --analyze                 Perform repository health analysis.
+  --maintenance             Run repository maintenance operations.
+  --aggressive              Enable aggressive optimization during maintenance.
+  --prune                   Prune orphaned branches and stale references.
+
+BASIC USAGE
+-----------
+Conflict Analysis:
+    merge_conflict_detector main feature-branch
+
+With Verbose Output:
+    merge_conflict_detector -v main feature-branch
+
+Save Report to File:
+    merge_conflict_detector -o report.txt main feature-branch
+
+JSON Output Format:
+    merge_conflict_detector -f json main feature-branch
+
+MAINTENANCE OPERATIONS
+----------------------
+Basic Maintenance:
+    merge_conflict_detector --maintenance
+
+Aggressive Maintenance:
+    merge_conflict_detector --maintenance --aggressive
+
+Prune Orphaned Branches:
+    merge_conflict_detector --maintenance --prune
+
+ANALYSIS FEATURES
+-----------------
+Conflict Detection:
+  - File modification overlaps between branches
+  - Line-level changes in shared files
+  - Directory structure conflicts
+  - Binary file conflicts
+  - Rename and move conflicts
+
+Probability Scoring:
+  - Proximity of changes within files
+  - Type of modifications (add, delete, modify)
+  - File type and structure
+  - Historical conflict patterns
+  - Branch divergence metrics
+
+Recommendations:
+  - Pre-merge preparation steps
+  - Suggested merge strategies
+  - File-specific resolution approaches
+  - Repository optimization suggestions
+
+OUTPUT FORMATS
+--------------
+Text Format (Default):
+    Human-readable analysis with recommendations.
+
+JSON Format:
+    {
+      "analysis": {
+        "conflictProbability": 0.75,
+        "conflictingFiles": [...],
+        "recommendations": [...],
+        "maintenanceActions": [...]
+      }
+    }
+
+CSV Format:
+    Tabular data suitable for spreadsheet analysis.
+
+CONFIGURATION
+-------------
+Configuration can be set via environment variables:
+  MERGE_DETECTOR_THRESHOLD      Default conflict probability threshold (0-100).
+  MERGE_DETECTOR_OUTPUT_FORMAT  Default output format (text, json, csv).
+  MERGE_DETECTOR_VERBOSE        Enable verbose output by default (0 or 1).
+
+EXAMPLES
+--------
+Example 1: Basic Conflict Analysis
+    $ merge_conflict_detector main feature-xyz
+    Analyzing merge: feature-xyz -> main
+    Conflict Probability: 85% (HIGH RISK)
+
+    Conflicting Files:
+      src/core.c (Lines 45-67, 89-102)
+      include/header.h (Lines 12-15)
+
+    Recommendations:
+      1. Rebase feature-xyz onto latest main
+      2. Review core.c modifications in detail
+      3. Consider splitting large changes
+
+    Maintenance Suggestions:
+      - Run git gc --aggressive
+      - Prune orphaned branches
+
+Example 2: JSON Output
+    $ merge_conflict_detector -f json main develop | jq .
+    {
+      "analysis": {
+        "conflictProbability": 0.42,
+        "risk": "MEDIUM",
+        "conflictingFiles": [
+          {
+            "path": "src/utils.c",
+            "conflictLines": [[23, 29], [67, 71]],
+            "severity": "HIGH"
+          }
+        ],
+        "recommendations": [
+          "Consider interactive rebase",
+          "Review utils.c changes manually"
+        ]
+      }
+    }
+
+Example 3: Maintenance with Pruning
+    $ merge_conflict_detector --maintenance --prune -v
+    Running repository maintenance...
+    Fetching from all remotes...
+    Pruning orphaned branches:
+      - Deleted branch 'origin/old-feature' (was 3a4b5c6)
+      - Deleted branch 'origin/temp-fix' (was 7d8e9f0)
+    Running garbage collection...
+    Repository optimized successfully.
+
+DATA-DRIVEN CONFLICT ANALYSIS FRAMEWORK
+---------------------------------------
+The tool follows data-driven programming principles using whitespace-delimited databases:
+
+  conflict_patterns.dat      Pattern matching for file types and conflict probability
+  repository_config.dat      Repository-specific settings and monitoring configuration
+  analysis_history.dat       Historical analysis data for trend identification
+  risk_rules.dat             Configurable risk assessment rules and scoring multipliers
+
+EXIT STATUS
+-----------
+  0  Success
+  1  General error
+  2  Invalid arguments
+  3  Git repository not found
+  4  Branch not found
+  5  Permission denied
+
+FILES
+-----
+  ~/.merge_detector.conf     User configuration file
+  .merge_detector.conf       Project-specific configuration
+
+ENVIRONMENT
+-----------
+  GIT_DIR   Git repository directory
+  TMPDIR    Temporary directory for analysis files
+
+BUGS
+----
+Report bugs to the project repository issue tracker.
+
+AUTHOR
+------
+Author: 2MuchC0ff33
+
+Repository: https://github.com/2MuchC0ff33/merge-conflict-detector
+
+COPYRIGHT
+---------
+Copyright (c) 2025. ISC License.
+
+SEE ALSO
+--------
+  git(1), git-merge(1), git-rebase(1), README.txt, https://github.com/2MuchC0ff33/merge-conflict-detector
+===============================================================================

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36">
+  <title>Streamlined Icon</title>
+  <g fill="none" stroke="currentColor" stroke-width="8">
+    <path d="M10 20h80L60 50l30 30H10"/>
+    <path d="M10 50h40"/>
+  </g>
+</svg>

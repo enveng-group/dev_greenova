@@ -3,10 +3,10 @@ import logging
 from django.db.models import Q
 
 from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
-from .proto_utils import (create_chat_response, deserialize_chat_message,
-                          parse_chat_response, serialize_chat_message)
+from .proto_utils import create_chat_response, parse_chat_response
 
 logger = logging.getLogger(__name__)
+
 
 class ChatbotService:
     """Service class for chatbot logic."""
@@ -15,11 +15,10 @@ class ChatbotService:
     def create_conversation(user, title=None):
         """Create a new conversation for a user."""
         title = title or "New Conversation"
-        conversation = Conversation.objects.create(
+        return Conversation.objects.create(
             user=user,
-            title=title
+            title=title,
         )
-        return conversation
 
     @staticmethod
     def add_message(conversation_id, content, is_bot=False, attachments=None):
@@ -30,7 +29,7 @@ class ChatbotService:
                 conversation=conversation,
                 content=content,
                 is_bot=is_bot,
-                attachments=attachments or []
+                attachments=attachments or [],
             )
 
             # Update conversation last updated timestamp
@@ -38,7 +37,7 @@ class ChatbotService:
 
             return message
         except Conversation.DoesNotExist:
-            logger.error("Conversation with ID %s does not exist", conversation_id)
+            logger.exception("Conversation with ID %s does not exist", conversation_id)
             return None
 
     @staticmethod
@@ -46,9 +45,9 @@ class ChatbotService:
         """Get all messages for a conversation."""
         try:
             query = ChatMessage.objects.filter(conversation_id=conversation_id)
-            return query.order_by('timestamp')
+            return query.order_by("timestamp")
         except (ChatMessage.DoesNotExist, Conversation.DoesNotExist) as e:
-            logger.error("Error retrieving messages: %s", str(e))
+            logger.exception("Error retrieving messages: %s", str(e))
             return []
 
     @staticmethod
@@ -67,7 +66,7 @@ class ChatbotService:
         ChatbotService.add_message(
             conversation_id=conversation_id,
             content=response_text,
-            is_bot=True
+            is_bot=True,
         )
 
         return response_text
@@ -78,8 +77,8 @@ class ChatbotService:
         # Search for exact or partial matches in trigger phrases
         predefined_responses = PredefinedResponse.objects.filter(
             Q(trigger_phrase__iexact=message_text) |
-            Q(trigger_phrase__icontains=message_text)
-        ).order_by('-priority')
+            Q(trigger_phrase__icontains=message_text),
+        ).order_by("-priority")
 
         return predefined_responses.first()
 
@@ -111,8 +110,7 @@ class ChatbotService:
 
     @staticmethod
     def serialize_message(message_id, content):
-        """
-        Serialize a message to protocol buffer format.
+        """Serialize a message to protocol buffer format.
 
         Args:
             message_id: ID of the message
@@ -120,18 +118,19 @@ class ChatbotService:
 
         Returns:
             Serialized message as bytes or None on error
+
         """
         return create_chat_response(message_id, content)
 
     @staticmethod
     def deserialize_message(data):
-        """
-        Deserialize a message from protocol buffer format.
+        """Deserialize a message from protocol buffer format.
 
         Args:
             data: Serialized protocol buffer data
 
         Returns:
             Deserialized message as dict or None on error
+
         """
         return parse_chat_response(data)

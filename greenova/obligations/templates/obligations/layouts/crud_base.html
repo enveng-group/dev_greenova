@@ -205,14 +205,14 @@
                         {% endif %}
                     </div>
 
-                    <!-- Recurring Forcasted Date Field -->
+                    <!-- Recurring Forecasted Date Field -->
                     <div class="form-group recurring-fields" style="{% if not form.instance.recurring_obligation %}display: none;{% endif %}">
-                        {{ form.recurring_forcasted_date.label_tag }}
-                        {{ form.recurring_forcasted_date }}
-                        {% if form.recurring_forcasted_date.help_text %}<small>{{ form.recurring_forcasted_date.help_text }}</small>{% endif %}
-                        {% if form.recurring_forcasted_date.errors %}
+                        {{ form.recurring_forecasted_date.label_tag }}
+                        {{ form.recurring_forecasted_date }}
+                        {% if form.recurring_forecasted_date.help_text %}<small>{{ form.recurring_forecasted_date.help_text }}</small>{% endif %}
+                        {% if form.recurring_forecasted_date.errors %}
                         <div class="invalid-feedback">
-                            {% for error in form.recurring_forcasted_date.errors %}{{ error }}{% endfor %}
+                            {% for error in form.recurring_forecasted_date.errors %}{{ error }}{% endfor %}
                         </div>
                         {% endif %}
                     </div>
@@ -319,30 +319,6 @@
                         {% if form.general_comments.errors %}
                         <div class="invalid-feedback">
                             {% for error in form.general_comments.errors %}{{ error }}{% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Compliance Comments Field -->
-                    <div class="form-group">
-                        {{ form.compliance_comments.label_tag }}
-                        {{ form.compliance_comments }}
-                        {% if form.compliance_comments.help_text %}<small>{{ form.compliance_comments.help_text }}</small>{% endif %}
-                        {% if form.compliance_comments.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.compliance_comments.errors %}{{ error }}{% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Non-Conformance Comments Field -->
-                    <div class="form-group">
-                        {{ form.non_conformance_comments.label_tag }}
-                        {{ form.non_conformance_comments }}
-                        {% if form.non_conformance_comments.help_text %}<small>{{ form.non_conformance_comments.help_text }}</small>{% endif %}
-                        {% if form.non_conformance_comments.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.non_conformance_comments.errors %}{{ error }}{% endfor %}
                         </div>
                         {% endif %}
                     </div>

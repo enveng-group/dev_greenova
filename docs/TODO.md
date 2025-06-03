@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Greenova Project TODO](#greenova-project-todo)
+  - [Completed Tasks](#completed-tasks)
+  - [Technology Integration Tasks](#technology-integration-tasks)
+    - [Frontend Tools & Libraries](#frontend-tools--libraries)
+    - [Authentication & User Management](#authentication--user-management)
+    - [DevOps & Infrastructure](#devops--infrastructure)
+    - [Code Quality & CI/CD](#code-quality--cicd)
+    - [Documentation & Architecture](#documentation--architecture)
+    - [Migrate Templates from DTL to Jinja2](#migrate-templates-from-dtl-to-jinja2)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Greenova Project TODO
 
 This document tracks tasks and action items for the Greenova environmental
@@ -99,4 +115,16 @@ The following tasks have been completed and moved to `done.txt`:
 - [eslint](https://eslint.org/)
 - [setuptools](https://setuptools.pypa.io/en/latest/index.html)
 - [pre-commit](https://pre-commit.com)
-- [pre-commit hooks](https://pre-commit.com/hooks.html)
+
+mysql caddy <https://pypi.org/project/doltpy/> django-channels web server:
+daphne websockets forward-proxy: mitmproxy reverse-proxy: proxy.py
+load-balancing- pyloadbalancer DDOD protection -
+<https://github.com/nky001/ddos> SSL termination - pyOpenSSL and certbot and
+certbot-django pythsonstartup fish.config devcontainer.json to use final base
+image for smallest possivle image assemblyscript dotfiles improve, put
+necessary config stuff in dotfiles and then let setup.sh apply to container gpg
+commit signing github projects github copilot prompts proper direnv setup
+proper gh-cli setup better use of git-crypt and git-lfs add
+`npx dotenv-vault@latest pull` to `post_create.sh` in `.devcontainer/`
+directory Modularise base.html combine and collate numerous commands into
+makefile to automate the setup development environment process

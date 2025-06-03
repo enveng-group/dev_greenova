@@ -1,0 +1,24 @@
+# Risk Assessment Rules Database - Whitespace-Delimited Plain Text Format
+# Fields: rule_id condition_type condition_value risk_multiplier severity description
+# Rule ID: Unique identifier for the rule
+# Condition Type: FILE_SIZE, CHANGE_FREQUENCY, AUTHOR_COUNT, LINE_COUNT, etc.
+# Condition Value: Threshold value or pattern to match
+# Risk Multiplier: Factor to multiply base risk (1.0 = no change)
+# Severity: LOW, MEDIUM, HIGH, CRITICAL
+# Description: Human-readable rule description
+
+R001 FILE_SIZE 1000000 1.5 HIGH Large files over 1MB increase conflict risk
+R002 CHANGE_FREQUENCY 10 1.3 MEDIUM Files changed more than 10 times recently
+R003 AUTHOR_COUNT 5 1.4 MEDIUM Files modified by many authors
+R004 LINE_COUNT 2000 1.2 MEDIUM Very long files are harder to merge
+R005 BINARY_FILE 1 2.0 CRITICAL Binary files cannot be auto-merged
+R006 RECENT_CHANGES 7 1.6 HIGH Files changed within last 7 days
+R007 MERGE_COMMITS 3 1.8 HIGH Files involved in recent merge commits
+R008 WHITESPACE_CHANGES 1 0.8 LOW Pure whitespace changes are lower risk
+R009 COMMENT_ONLY 1 0.6 LOW Comment-only changes are lower risk
+R010 DOCUMENTATION 1 0.7 LOW Documentation changes are typically safe
+R011 CONFIGURATION 1 1.3 MEDIUM Config files often have merge conflicts
+R012 BUILD_SCRIPT 1 1.4 MEDIUM Build scripts are critical for project
+R013 DEPENDENCY_FILE 1 1.7 HIGH Package/dependency files are high risk
+R014 SCHEMA_MIGRATION 1 2.5 CRITICAL Database migrations are very risky
+R015 SECURITY_FILE 1 3.0 CRITICAL Security-related files need special care

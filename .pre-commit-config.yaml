@@ -1,26 +1,174 @@
-# .pre-commit-config.yaml
 exclude: '^$'
 fail_fast: false # Add this line to continue running hooks even when some fail
 repos:
+  # 1. File integrity, merge, and security checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      - id: trailing-whitespace
-        exclude: '.*\.(html|djhtml|jinja)$'
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-        args: ['--maxkb=500']
-      - id: mixed-line-ending
-        args: ['--fix=lf']
       - id: check-merge-conflict
       - id: detect-private-key
-      - id: requirements-txt-fixer
-      - id: no-commit-to-branch
-        args: ['--branch', 'main', '--branch', 'master']
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+        exclude: '^greenova/static/js/vendors/plotly.*\.min\.js$'
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: end-of-file-fixer
       - id: trailing-whitespace
+        exclude: '.*\.(html|djhtml|jinja)$'
         args: ['--markdown-linebreak-ext=md']
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: requirements-txt-fixer
+      - id: debug-statements
+        exclude: '^greenova/chatbot/proto/.*_pb2\.py$'
+      - id: check-case-conflict
+      - id: check-symlinks
+      - id: check-illegal-windows-names
+      - id: check-executables-have-shebangs
+        exclude: '\.md$|\.txt$|\.rst$|\.html$|\.djhtml$|\.jinja$|\.yaml'
+      - id: check-vcs-permalinks
 
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.26.0
+    hooks:
+      - id: gitleaks
+        args:
+          - '--report-path'
+          - 'gitleaks-report.json'
+          - '--report-format'
+          - 'sarif'
+          - '--redact'
+          - '--no-banner'
+          - '--max-decode-depth=2'
+          - '--config'
+          - '.gitleaks.toml'
+        pass_filenames: false
+
+  # 2. Code cleanup
+  - repo: https://github.com/pycqa/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        language_version: python3.12
+        exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-unused-variables
+          - --ignore-init-module-imports
+
+  # 2a. Dead code detection (Vulture)
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: v2.14
+    hooks:
+      - id: vulture
+
+  # 3. Import sorting (isort, or use Ruff's import sorting if preferred)
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+        args:
+          - --profile=black
+          - --line-length=88
+          - --atomic
+          - --diff
+
+  # 4. Python formatting and linting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.11
+    hooks:
+      - id: ruff-check
+        types_or: [python, pyi]
+        args: [--fix, --unsafe-fixes, --exit-non-zero-on-fix]
+        exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+      - id: ruff-format
+        types_or: [python, pyi]
+        args: [--fix, --unsafe-fixes, --diff]
+        exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2
+    hooks:
+      - id: autopep8
+        exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+        args:
+          - --in-place
+          - --aggressive
+          - --max-line-length=88
+
+  # 5. Additional Python linting
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.3.7
+    hooks:
+      - id: pylint
+        name: pylint (python)
+        entry: pylint
+        types: [python]
+        exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|tests/|test_|__init__\.py|manage\.py|wsgi\.py|asgi\.py|settings/|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+        additional_dependencies:
+          - pylint_django
+          - pylint_pytest
+          - pylint_plugin_utils
+          - pylint_pydantic
+          - pylint_protobuf
+          - pylint_flask
+          - pylint_celery
+          - pylint_quotes
+        args:
+          - --output-format=colorized
+          - --reports=y
+          - --score=y
+
+  # 6. Type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        name: mypy
+        args:
+          [
+            '--config-file=mypy.ini',
+            '--namespace-packages',
+            '--strict',
+            '--ignore-missing-imports',
+          ]
+        exclude: 'migrations|venv|\.venv|tests/|test_|__init__\.py|.*_pb2\.py$|.*_pb2_grpc\.py$|manage\.py|wsgi\.py|asgi\.py|settings/|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+        additional_dependencies:
+          - 'django-stubs'
+          - 'django-stubs-ext'
+          - 'types-requests'
+          - 'types-Pillow'
+          - 'types-dataclasses-json'
+          - 'types-PyYAML'
+          - 'json-types'
+          - 'types-jsonschema'
+          - 'types-simplejson'
+          - 'django-types-extra'
+          - 'types-python-dateutil'
+          - 'types-protobuf'
+          - 'pandas-stubs'
+          - 'types-pytz'
+          - 'pytest-stub'
+          - 'types-jinja2'
+          - 'types-setuptools'
+          - 'types-cryptography'
+          - 'types-flake8'
+          - 'plotly-stubs'
+          - 'types-pytest-lazy-fixture'
+          - 'types-protobuf'
+          - 'types-sqlalchemy'
+          - 'types-toml'
+          - 'types-urllib3'
+          - 'types-docutils'
+          - 'types-psutil'
+          - 'types-redis'
+          - 'types-click'
+          - 'types-markdown'
+
+  # 7. Pattern-based checks
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
@@ -32,197 +180,202 @@ repos:
       - id: rst-inline-touching-normal
       - id: text-unicode-replacement-char
 
-  - repo: https://github.com/pre-commit/sync-pre-commit-deps
-    rev: v0.0.3
+  # 8. Framework-specific tools
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: 1.25.0
     hooks:
-      - id: sync-pre-commit-deps
+      - id: django-upgrade
+        args: ['--target-version', '5.2']
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+  # 9. Documentation and text tools
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
     hooks:
-      - id: pyupgrade
+      - id: codespell
+        args: ['--write-changes']
+        exclude: >
+          (?x)^(
+            requirements/.*\.txt|
+            requirements/.*\.in|
+            notebooks/pie_chart_gallery\.ipynb|
+            greenova/static/js/vendors/.*
+          )$
 
-  - repo: https://github.com/hhatto/autopep8
-    rev: v2.3.2
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.32.0
     hooks:
-      - id: autopep8
-        args:
-          [
-            '--max-line-length=88',
-            '--aggressive',
-            '--aggressive',
-            '--aggressive',
-            '--in-place',
-          ]
+      - id: typos
 
-  - repo: https://github.com/pycqa/isort
-    rev: 6.0.1
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
     hooks:
-      - id: isort
+      - id: markdownlint
+        args: ['--fix']
+        language_version: system
+        additional_dependencies: []
 
-  - repo: https://github.com/pycqa/pylint
-    rev: v3.3.7
+  - repo: https://github.com/amperser/proselint
+    rev: 0.14.0
     hooks:
-      - id: pylint
-        entry: tools/pre_commit/pre_commit_wrapper.py pylint
-        args:
-          [
-            '--rcfile=.pylintrc-django',
-            '--load-plugins=pylint_django',
-            '--disable=C0301,C0411,C0412,W0404,C0415,R0801',
-          ]
-        additional_dependencies: ['pylint-django~=2.6.1']
-        exclude: 'migrations/'
+      - id: proselint
+        files: \.(md|rst|txt)$
 
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.3
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.37.1
     hooks:
-      - id: bandit
-        args: ['-c', '.bandit', '-r', '--config', '.bandit']
-        exclude: 'tests/'
+      - id: yamllint
+        args: [--strict, -c=.yamllint]
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.17.0
     hooks:
-      - id: mypy
-        exclude: 'migrations/|settings.py|\.git/|\.mypy_cache/|\.pytest_cache/'
-        additional_dependencies:
-          [
-            'django-stubs~=5.1.3',
-            'django-stubs-ext~=5.1.3',
-            'types-python-dateutil~=2.9.0.20241206',
-            'types-PyYAML~=6.0.12.20241230',
-            'types-setuptools~=76.0.0.20250313',
-            'typing-extensions~=4.12.2',
-          ]
-        args: ['--config-file=mypy.ini']
+      - id: yamlfmt
 
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.18.0
+  - repo: https://github.com/thlorenz/doctoc
+    rev: v2.2.0
     hooks:
-      - id: markdownlint-cli2
-        args: ['--config', '.markdownlint-cli2.jsonc', '--fix']
+      - id: doctoc
+        language_version: system
 
-  #- repo: https://github.com/koalaman/shellcheck-precommit
-  #rev: v0.10.0
-  #hooks:
-  #- id: shellcheck
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.0
+    hooks:
+      - id: check-github-workflows
+        args: ['--verbose']
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint
+
+  # 10. Frontend formatting and linting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        language_version: system
+        types_or: [javascript, css, markdown, yaml, json]
+        exclude: ^greenova/static/js/vendors/.*$
 
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.26.0
+    rev: v9.27.0
     hooks:
       - id: eslint
+        language_version: system
         files: \.(js|ts|jsx|tsx)$
         types: [file]
-        args: ['--fix', '--max-warnings=9999']
+        args:
+          - '--fix'
+          - '--max-warnings=9999'
+          - '--config'
+          - 'eslint.config.js'
         additional_dependencies:
-          - eslint@8.56.0
+          - eslint@9.26.0
           - prettier@3.2.4
-          - eslint-config-prettier@9.1.0
-          - eslint-plugin-prettier@5.1.3
-
-  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-    rev: v16.19.1
-    hooks:
-      - id: stylelint
-        files: \.(css|scss|sass|less)$ # Remove html from stylelint
-        args: ['--fix', '--config', 'stylelint.config.js']
-        additional_dependencies:
+          - eslint-config-prettier@10.1.3
+          - eslint-plugin-prettier@5.4.0
+          - eslint-config-stylelint@24.0.0
           - stylelint@16.17.0
           - stylelint-config-recommended@15.0.0
           - stylelint-config-standard@37.0.0
           - stylelint-config-tailwindcss@1.0.0
           - postcss-html@1.6.0
 
-  - repo: https://github.com/djlint/djLint
-    rev: v1.36.4
+  # 10b. Biome formatting and linting
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v2.0.0-beta.5
     hooks:
-      - id: djlint-django
-        files: \.(html|djhtml|jinja)$
-        args:
-          - --reformat
-          - --quiet
-          - --indent=2
-          - --preserve-blank-lines
-          - --preserve-leading-space
-          - --profile=django
-          - --max-line-length=88
-          - --use-gitignore
-          - --ignore=H014,H015,T002
+      - id: biome-check
+        language_version: system
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+  # 10c. StandardJS formatting and linting
+  - repo: https://github.com/standard/standard
+    rev: v17.1.2
     hooks:
-      - id: prettier
-        types_or: [javascript, css, yaml, markdown]
-        exclude: '.*\.html$' # Exclude HTML files from prettier
-        args: ['--config', '${REPO_ROOT_DIR}/.prettierrc']
+      - id: standard
+        language_version: system
+        args: ['--fix']
 
-  - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.25.0
+  # 10d. JSHint linting
+  - repo: https://github.com/pre-commit/mirrors-jshint
+    rev: v2.13.6 # Use the latest stable tag
     hooks:
-      - id: django-upgrade
-        args: ['--target-version', '4.1']
+      - id: jshint
+        language_version: system
 
-  - repo: local
+  # 10e. FixMyJS autofix
+  - repo: https://github.com/pre-commit/mirrors-fixmyjs
+    rev: v2.0.0 # Use the legacy stable version
     hooks:
-      - id: safety-check
-        name: Safety dependency checker
-        entry: bash -c 'pip install safety && safety check --full-report --ignore=62044,75180'
+      - id: fixmyjs
+        language_version: system
+        args: ['-l', '-c', '.jshintrc']
+
+  # 10f. CSSLint linting
+  - repo: https://github.com/pre-commit/mirrors-csslint
+    rev: v1.0.5 # Use the latest stable tag
+    hooks:
+      - id: csslint
+        language_version: system
+
+  # 11. Shell and other tools
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.11.0-1
+    hooks:
+      - id: shfmt
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
+    hooks:
+      - id: shellcheck
+        args: ['--severity=warning']
+        entry: shellcheck
         language: system
-        types: [python]
-        pass_filenames: false
 
-      - id: autopep8-aggressive
-        name: autopep8 (aggressive)
-        entry: autopep8
-        language: system
-        types: [python]
-        args:
-          [
-            '--in-place',
-            '--aggressive',
-            '--aggressive',
-            '--aggressive',
-            '--max-line-length=88',
-          ]
-        exclude: 'migrations/'
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+      - id: pyupgrade
+        args: ['--py312-plus']
 
-      - id: eslint
-        name: eslint
-        entry: npx eslint --fix
-        language: system
-        types: [javascript]
-        args: ['--max-warnings=9999']
+  # 12. Security checks (that may take longer)
+  - repo: https://github.com/PyCQA/bandit
+    rev: '1.8.3'
+    hooks:
+      - id: bandit
+        exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|tests/|test_|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
+        args: ['--skip=B101,B601,B602,B603,B604,B605,B606,B607,B608,B609']
 
-      - id: mypy-check
-        name: mypy (script)
-        entry: tools/scripts/run_mypy.sh
-        language: script
-        types: [python]
-        exclude: 'migrations/|settings.py|\.git/|\.mypy_cache/|\.pytest_cache/'
+  # 12a. Talisman secrets scanning
+  - repo: https://github.com/thoughtworks/talisman
+    rev: 'v1.37.0'
+    hooks:
+      - id: talisman-commit
 
-      - id: mypy-django
-        name: mypy (with custom setup)
-        language: python
-        entry: python -m tools.scripts.run_mypy
-        types: [python]
-        exclude: 'migrations/|settings.py|\.git/|\.mypy_cache/|\.pytest_cache/'
-        additional_dependencies:
-          [
-            'mypy==1.15.0',
-            'django-stubs==5.1.3',
-            'django-stubs-ext==5.1.3',
-            'types-python-dateutil==2.9.0.20241206',
-            'types-PyYAML==6.0.12.20241230',
-            'types-setuptools==76.0.0.20250313',
-            'annotated-types==0.7.0',
-            'microsoft-python-type-stubs @ git+https://github.com/microsoft/python-type-stubs.git@dcb5c8c2a61a2e4653b4becc9f20f6c42858a701',
-            'mypy-extensions==1.0.0',
-            'pytest-stub==1.1.0',
-            'types-Pillow==10.2.0.20240822',
-            'types-python-dateutil==2.9.0.20241206',
-            'types-requests==2.32.0.20250328',
-            'types-stdlib-list==0.8.3.4',
-            'typing_extensions==4.13.1',
-          ]
+  # 12b. Makefile linting
+  - repo: https://github.com/mrtazz/checkmake.git
+    rev: 0.2.2
+    hooks:
+      - id: checkmake
+
+  # 13. Commit message linting
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.1
+    hooks:
+      - id: gitlint
+        stages: [commit-msg]
+        args: [--contrib=CT1, --msg-filename]
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.8.2 # Use the latest stable tag
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+      - id: commitizen-branch
+        stages: [pre-push]
+
+  # 14. Dependency management (should run last)
+  - repo: https://github.com/pre-commit/sync-pre-commit-deps
+    rev: v0.0.3
+    hooks:
+      - id: sync-pre-commit-deps

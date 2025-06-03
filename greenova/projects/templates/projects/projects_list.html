@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}
+Projects
+{% endblock %}
+{% block content %}
+  <main>
+    <h1>
+Projects
+    </h1>
+    <section aria-labelledby="projects-list-heading">
+      <h2 id="projects-list-heading">
+Your Projects
+      </h2>
+      {% if projects %}
+        <ul>
+          {% for project in projects %}
+            <li>
+              <a href="#">{{ project.name }}</a>
+              <span class="description">{{ project.description|default:"No description" }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>
+No projects found. Please contact your administrator to be added to a project.
+        </p>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}

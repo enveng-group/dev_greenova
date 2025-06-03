@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    name = 'users'
+    name = "users"
 
-    def ready(self):
-        import users.signals  # Ensure the signal is connected
+    def ready(self) -> None:
+        pass  # Ensure the signal is connected

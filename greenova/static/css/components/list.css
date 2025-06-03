@@ -173,3 +173,28 @@ mark[role='status'] {
 .action-btn.view:hover {
   color: var(--greenova-text-primary-dark);
 }
+
+/* --- Responsive: Table overflow and scroll indicator for mobile --- */
+@media (max-width: 480px) {
+  .table-container {
+    max-width: 100vw;
+    overflow-x: auto;
+  }
+
+  .horizontal-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-indicator,
+  .scroll-thumb {
+    height: 16px;
+    min-width: 44px;
+  }
+
+  table,
+  table thead,
+  table tbody {
+    font-size: 0.95rem !important;
+  }
+}

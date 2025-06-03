@@ -1,0 +1,76 @@
+{% load core_tags %}
+{% load static %}
+
+<div class="footer-container fade-in" data-scroll-section>
+  <footer role="contentinfo" class="site-footer">
+    <div class="footer-main">
+      <div class="footer-info">
+        <div class="footer-logo">
+          <img src="{% static 'img/favicon.svg' %}"
+               alt="Greenova Logo"
+               width="40"
+               height="40"
+               loading="lazy" />
+          <span>Greenova</span>
+        </div>
+        <div class="footer-tagline">
+          <p>
+Environmental Management Made Simple
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-nav">
+          <h3>
+Site Map
+          </h3>
+          <ul>
+            <li>
+              <a href="{% url 'landing:index' %}">Home</a>
+            </li>
+            {% if user.is_authenticated %}
+              <li>
+                <a href="{% url 'dashboard:home' %}">Dashboard</a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url 'account_login' %}">Login</a>
+              </li>
+            {% endif %}
+            <li>
+              <a href="#features">Features</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer-contact">
+          <h3>
+Get in Touch
+          </h3>
+          <ul>
+            {% if user.is_authenticated %}
+              <li>
+                <a href="{% url 'feedback:index' %}">Submit Feedback</a>
+              </li>
+            {% endif %}
+            <li>
+              <a href="mailto:support@enveng-group.com.au">support@enveng-group.com.au</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>
+        System Status: <mark>{{ system_status }}</mark> |
+        Version: {{ app_version }} |
+        Last Updated: {{ last_updated|format_date }}
+      </p>
+      <p>
+&copy; {% now "Y" %} Enveng Group. All rights reserved.
+      </p>
+    </div>
+  </footer>
+</div>

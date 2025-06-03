@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<main>
+  <h1>Users</h1>
+  <section aria-labelledby="users-list-heading">
+    <h2 id="users-list-heading">All Users</h2>
+    {% if users %}
+      <ul>
+        {% for user in users %}
+          <li>
+            <strong>{{ user.get_full_name|default:user.username }}</strong>
+            <span class="email">{{ user.email }}</span>
+            <span class="role">{% if user.is_superuser %}Superuser{% elif user.is_staff %}Staff{% else %}User{% endif %}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No users found.</p>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

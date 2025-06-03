@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django Learning Resource](#django-learning-resource)
+  - [Introduction](#introduction)
+  - [Key Features](#key-features)
+  - [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [Django Project Structure](#django-project-structure)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django Learning Resource
 
 ## Introduction
@@ -30,7 +42,7 @@ python -m venv env
 source env/bin/activate  # On Windows use `env\Scripts\activate`
 
 # Install Django
-pip install Django==4.2.20
+pip install Django==5.2
 
 # Create a project
 django-admin startproject myproject

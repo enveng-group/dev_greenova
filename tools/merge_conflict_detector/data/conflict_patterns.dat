@@ -1,0 +1,30 @@
+# Conflict Pattern Database - Whitespace-Delimited Plain Text Format
+# Fields: pattern_id file_extension conflict_probability base_score modifiers description
+# Pattern ID: Unique identifier for conflict pattern
+# File Extension: File type or pattern (use * for wildcard)
+# Conflict Probability: Base probability score (0.0-1.0)
+# Base Score: Numeric scoring weight (1-100)
+# Modifiers: Additional risk factors (comma-separated)
+# Description: Human-readable pattern description
+
+001 .c 0.75 75 function_signature,pointer_usage High-risk C source files with function conflicts
+002 .h 0.80 80 macro_definition,include_guards C header files with macro and include conflicts
+003 .cpp 0.72 72 class_definition,template_usage C++ source with class and template conflicts
+004 .java 0.68 68 import_statements,method_signature Java files with import and method conflicts
+005 .py 0.65 65 import_statements,function_definition Python files with import and function conflicts
+006 .js 0.70 70 function_definition,module_exports JavaScript files with function conflicts
+007 .ts 0.73 73 interface_definition,type_annotations TypeScript files with type conflicts
+008 .json 0.45 45 structure_changes,nested_objects JSON configuration file conflicts
+009 .xml 0.50 50 tag_structure,attribute_changes XML markup file conflicts
+010 .yaml 0.52 52 indentation_sensitive,key_value_pairs YAML configuration conflicts
+011 .yml 0.52 52 indentation_sensitive,key_value_pairs YAML configuration conflicts
+012 .makefile 0.85 85 target_definition,variable_assignment Makefile target and variable conflicts
+013 Makefile 0.85 85 target_definition,variable_assignment Makefile target and variable conflicts
+014 .sh 0.78 78 function_definition,variable_assignment Shell script function conflicts
+015 .awk 0.70 70 function_definition,pattern_rules AWK script pattern conflicts
+016 .sql 0.60 60 schema_changes,data_definition SQL schema modification conflicts
+017 .md 0.30 30 formatting_changes,link_references Markdown documentation conflicts
+018 .txt 0.25 25 content_changes,line_endings Plain text file conflicts
+019 .conf 0.65 65 configuration_keys,section_headers Configuration file conflicts
+020 .ini 0.60 60 section_headers,key_value_pairs INI configuration conflicts
+021 * 0.40 40 general_changes Default pattern for unknown file types

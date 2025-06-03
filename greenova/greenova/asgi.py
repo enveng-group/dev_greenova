@@ -1,5 +1,4 @@
-"""
-ASGI config for greenova project.
+"""ASGI config for greenova project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

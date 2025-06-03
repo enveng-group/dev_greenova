@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="200" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#ede7f6"/>
+  <rect x="80" y="120" width="40" height="40" fill="#7e57c2"/>
+  <rect x="160" y="80" width="40" height="80" fill="#7e57c2"/>
+  <rect x="240" y="60" width="40" height="100" fill="#7e57c2"/>
+  <text x="200" y="40" text-anchor="middle" font-size="22" fill="#5e35b1" font-family="Arial" dy=".3em">Insights</text>
+</svg>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+Obligations
+{% endblock %}
+{% block content %}
+  <main>
+    <h1>
+Obligations
+    </h1>
+    <section aria-labelledby="obligations-list-heading">
+      <h2 id="obligations-list-heading">
+All Obligations
+      </h2>
+      {% if obligations %}
+        <ul>
+          {% for obligation in obligations %}
+            <li>
+              <strong>{{ obligation.obligation_number }}</strong>
+              <span class="description">{{ obligation.obligation|default:"No description" }}</span>
+              <span class="status">Status: {{ obligation.get_status_display }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>
+No obligations found.
+        </p>
+      {% endif %}
+    </section>
+  </main>
+{% endblock %}

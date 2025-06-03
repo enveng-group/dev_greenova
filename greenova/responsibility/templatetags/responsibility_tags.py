@@ -5,7 +5,7 @@ register = template.Library()
 
 
 @register.filter
-def user_has_responsibility(user, obligation):
+def user_has_responsibility(user, obligation) -> bool:
     """Check if a user has any responsibility for an obligation."""
     # Simplified implementation without ResponsibilityAssignment
     return False
@@ -29,9 +29,9 @@ def get_responsible_users(obligation):
 def format_responsibility_roles(roles):
     """Format a list of responsibility roles as HTML."""
     if not roles:
-        return ''
+        return ""
 
-    html = ''
+    html = ""
     for role in roles:
         html += format_html('<mark class="responsibility-role">{}</mark> ', role.name)
 

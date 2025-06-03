@@ -14,20 +14,21 @@ User = get_user_model()
 
 class Project(models.Model):
     """Project model to group obligations."""
+
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     members = models.ManyToManyField(
         User,
-        through='ProjectMembership',
-        related_name='projects'
+        through="ProjectMembership",
+        related_name="projects",
     )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = 'Project'
-        verbose_name_plural = 'Projects'
-        ordering = ['-created_at']
+        verbose_name = "Project"
+        verbose_name_plural = "Projects"
+        ordering = ["-created_at"]
 
     def __str__(self) -> str:
         return self.name
@@ -37,26 +38,26 @@ class Project(models.Model):
         return self.members.count()
 
     def get_user_role(self, user: AbstractUser) -> str:
-        """
-        Get user's role in project.
+        """Get user's role in project.
 
         Args:
             user: The user to check role for
 
         Returns:
             str: Role name or 'viewer' if no explicit role found
+
         """
         try:
             membership = ProjectMembership.objects.get(project=self, user=user)
             logger.debug(
-                f'Found role {membership.role} for user {user} in project {self.name}'
+                f"Found role {membership.role} for user {user} in project {self.name}",
             )
             return membership.role
         except ProjectMembership.DoesNotExist:
-            logger.debug(f'No membership found for user {user} in project {self.name}')
+            logger.debug(f"No membership found for user {user} in project {self.name}")
             return ProjectRole.VIEWER.value
         except Exception as e:
-            logger.error(f'Error getting user role: {str(e)}')
+            logger.exception(f"Error getting user role: {e!s}")
             return ProjectRole.VIEWER.value
 
     def has_member(self, user: AbstractUser) -> bool:
@@ -72,23 +73,23 @@ class Project(models.Model):
             ProjectMembership.objects.create(
                 project=self,
                 user=user,
-                role=role
+                role=role,
             )
-            logger.info(f'Added user {user} to project {self.name} with role {role}')
+            logger.info(f"Added user {user} to project {self.name} with role {role}")
 
     def remove_member(self, user: AbstractUser) -> None:
         """Remove a user from the project."""
         ProjectMembership.objects.filter(
             project=self,
-            user=user
+            user=user,
         ).delete()
-        logger.info(f'Removed user {user} from project {self.name}')
+        logger.info(f"Removed user {user} from project {self.name}")
 
     def get_members_by_role(self, role: str) -> QuerySet[AbstractUser]:
         """Get all users with specified role."""
         return User.objects.filter(
             project_memberships__project=self,
-            project_memberships__role=role
+            project_memberships__role=role,
         )
 
     @property
@@ -101,55 +102,57 @@ class Project(models.Model):
 
 class ProjectMembership(models.Model):
     """Through model for project memberships."""
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='project_memberships'
+        related_name="project_memberships",
     )
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name='memberships'
+        related_name="memberships",
     )
     role = models.CharField(
         max_length=50,  # Increased length for compatibility
         choices=get_role_choices(),
-        default=ProjectRole.MEMBER.value
+        default=ProjectRole.MEMBER.value,
     )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['user', 'project']
-        ordering = ['project', 'user']
-        verbose_name = 'Project Membership'
-        verbose_name_plural = 'Project Memberships'
+        unique_together = ["user", "project"]
+        ordering = ["project", "user"]
+        verbose_name = "Project Membership"
+        verbose_name_plural = "Project Memberships"
 
     def __str__(self) -> str:
-        return f'{self.user.username} - {self.project.name} ({self.role})'
+        return f"{self.user.username} - {self.project.name} ({self.role})"
 
 
 class ProjectObligation(models.Model):
     """Through model for project obligations."""
+
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name='project_obligations'
+        related_name="project_obligations",
     )
     obligation = models.ForeignKey(
-        'obligations.Obligation',
+        "obligations.Obligation",
         on_delete=models.CASCADE,
-        related_name='project_obligations'
+        related_name="project_obligations",
     )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['project', 'obligation']
-        ordering = ['project', 'obligation']
-        verbose_name = 'Project Obligation'
-        verbose_name_plural = 'Project Obligations'
+        unique_together = ["project", "obligation"]
+        ordering = ["project", "obligation"]
+        verbose_name = "Project Obligation"
+        verbose_name_plural = "Project Obligations"
 
     def __str__(self) -> str:
         """Return string representation of ProjectObligation."""
-        return f'{self.project.name} - {self.obligation.obligation_number}'
+        return f"{self.project.name} - {self.obligation.obligation_number}"
