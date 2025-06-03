@@ -1,7 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Automated PR 164 Review, Issue #51 Resolution, and Merge Guidance - Micro Prompt](#automated-pr-164-review-issue-51-resolution-and-merge-guidance---micro-prompt)
+- [Automated PR 128 Review, Issue #129 Resolution, and Merge Guidance - Micro Prompt](#automated-pr-128-review-issue-129-resolution-and-merge-guidance---micro-prompt)
   - [Goal](#goal)
   - [Context](#context)
   - [Objectives](#objectives)
@@ -16,13 +16,13 @@
 ---
 
 description:
-Automated review and merge guidance for PR 164 (`remove compliance and non-conformance comments from obligations app`) in the dev_greenova project, referencing merge-detector.log and issue #51, using all available MCP servers to ensure a safe, standards-compliant merge into `integration/v0.0.7` and closure of both the PR and the issue.
+Automated review and merge guidance for PR 128 (`commit 774eed9401f052c3a0440ab379d9317abbfca17f`) in the dev_greenova project, referencing merge-detector.log and issue #129, using all available MCP servers to ensure a safe, standards-compliant merge into `integration/v0.0.7` and closure of both the PR and the issue.
 
 mode: agent
 
 tools:
 
-- github # REQUIRED: Use to fetch PR 164 details, diffs, and metadata, and to read issue #51
+- github # REQUIRED: Use to fetch PR 128 details, diffs, and metadata, and to read issue #129
 - json # REQUIRED: Use to parse PR data, file changes, and metadata as needed
 - git # REQUIRED: Use to inspect local and remote branches, diffs, and history
 - filesystem # REQUIRED: Use to read merge-detector.log and any other relevant files
@@ -32,38 +32,37 @@ tools:
 
 ---
 
-# Automated PR 164 Review, Issue #51 Resolution, and Merge Guidance - Micro Prompt
+# Automated PR 128 Review, Issue #129 Resolution, and Merge Guidance - Micro Prompt
 
 ## Goal
 
-Determine if PR 164 (`remove compliance and non-conformance comments from obligations app`) safely and completely resolves issue #51, and if it is safe to merge into `integration/v0.0.7` and close both the PR and the issue.
+Determine if PR 128 (`commit 774eed9401f052c3a0440ab379d9317abbfca17f`) safely and completely resolves issue #129, and if it is safe to merge into `integration/v0.0.7` and close both the PR and the issue.
 
 ## Context
 
-- PR 164 removes the `compliance_comments` and `non_conformance_comments` fields and related UI from the obligations app.
-- The merge-detector.log indicates a medium risk, with several files affected but no direct merge hunks.
-- Issue #51 requests the removal of compliance and non-conformance comments from the obligations model and UI.
+- PR 128 introduces changes in commit 774eed9401f052c3a0440ab379d9317abbfca17f.
+- The merge-detector.log provides risk and conflict analysis for the affected files.
+- Issue #129 describes the problem or feature to be resolved by this PR.
 - The project enforces strict merge, code quality, and documentation standards.
 - All merges must be conflict-free, standards-compliant, and resolve the relevant issue.
 
 ## Objectives
 
-- Use the github MCP server to fetch all details, diffs, and metadata for PR 164 and read issue #51.
+- Use the github MCP server to fetch all details, diffs, and metadata for PR 128 and read issue #129.
 - Use the filesystem MCP server to read and interpret merge-detector.log.
 - Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
 - Use the sequential-thinking MCP server to:
-  - Analyze if PR 164 fully resolves issue #51.
+  - Analyze if PR 128 fully resolves issue #129.
   - Assess merge risk and integration safety based on merge-detector.log.
-  - Decide if it is safe to merge PR 164 into `integration/v0.0.7` and close both the PR and the issue.
+  - Decide if it is safe to merge PR 128 into `integration/v0.0.7` and close both the PR and the issue.
   - Provide clear guidance and instructions for the merge and closure process.
 - Use context7 and fetch as needed for standards and documentation.
 
 ## Sources
 
-- <https://github.com/enveng-group/dev_greenova/pull/164>
-- <https://github.com/enveng-group/dev_greenova/issues/51>
-- <https://github.com/mhahmad0/dev_greenova/commit/4bf9dff0089981276edd5eda1597ed711c3ab947>
-- <https://github.com/enveng-group/dev_greenova/commit/f3c58e0d4c39a7fb0519efc96fa840884935feee>
+- <https://github.com/enveng-group/dev_greenova/pull/128/commits/774eed9401f052c3a0440ab379d9317abbfca17f>
+- <https://github.com/enveng-group/dev_greenova/pull/128>
+- <https://github.com/enveng-group/dev_greenova/issues/129>
 - merge-detector.log (local)
 - Local and remote git branches, especially `integration/v0.0.7`
 - Project documentation and standards from context7
@@ -78,20 +77,26 @@ Determine if PR 164 (`remove compliance and non-conformance comments from obliga
 
 ## Acceptance Criteria
 
-- PR 164 is reviewed and confirmed to resolve issue #51.
+- PR 128 is reviewed and confirmed to resolve issue #129.
 - merge-detector.log is considered in the risk assessment.
-- A clear recommendation is made on whether to merge PR 164 and close issue #51.
+- A clear recommendation is made on whether to merge PR 128 and close issue #129.
 - Guidance is provided for any manual steps or post-merge actions.
 - All actions comply with project standards and are documented.
 
 ## Instructions
 
-1. Use the github MCP server to fetch all details and diffs for PR 164 and read issue #51.
+1. Use the github MCP server to fetch all details and diffs for PR 128 and read issue #129.
 2. Use the filesystem MCP server to read merge-detector.log.
 3. Use the git MCP server to inspect the state of `integration/v0.0.7` and relevant branches.
-4. Use the sequential-thinking MCP server to analyze if PR 164 resolves issue #51 and is safe to merge.
-5. Provide a clear, standards-compliant merge and closure recommendation, including any manual steps.
-6. Ensure all actions are documented and repeatable.
+4. **Only include the following files in the analysis and merge process:**
+   - `greenova/greenova/settings.py`
+   - `greenova/greenova/urls.py`
+   - `greenova/obligatins/management/commands/import_obligations.py`
+   - `greenova/templates/base.html`
+     All other files must be ignored.
+5. Use the sequential-thinking MCP server to analyze if PR 128 resolves issue #129 and is safe to merge.
+6. Provide a clear, standards-compliant merge and closure recommendation, including any manual steps.
+7. Ensure all actions are documented and repeatable.
 
 ## Additional Guidelines
 
