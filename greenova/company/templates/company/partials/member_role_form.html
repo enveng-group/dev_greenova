@@ -1,13 +1,12 @@
+{% load hyperscript %}
 <div class="modal" aria-labelledby="update-role-heading" role="dialog" aria-modal="true">
   <div class="modal-content">
     <header>
       <h3 id="update-role-heading">Update Role for {{ membership.user.get_full_name|default:membership.user.username }}</h3>
-      <button class="close-modal" onclick="document.getElementById('role-form-container').innerHTML = ''">&times;</button>
+      <button class="close-modal" _="on click set #role-form-container.innerHTML to ''">&times;</button>
     </header>
 
-    <form hx-post="{% url 'company:update_role' company.id membership.id %}"
-          hx-target="#members-list-container"
-          hx-swap="innerHTML">
+    <form>
       {% csrf_token %}
 
       <div class="form-group">
@@ -34,8 +33,9 @@
 
       <div class="form-actions">
         <button type="submit" class="btn-primary">Update</button>
-        <button type="button" class="btn-secondary" onclick="document.getElementById('role-form-container').innerHTML = ''">Cancel</button>
+        <button type="button" class="btn-secondary" _="on click set #role-form-container.innerHTML to ''">Cancel</button>
       </div>
     </form>
   </div>
 </div>
+<!-- Use django-hyperscript for dynamic form logic if needed. -->

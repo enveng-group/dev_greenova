@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load company_tags %}
+{% load partials %}
 
 {% block title %}{{ company.name }}{% endblock title %}
 
@@ -20,8 +21,9 @@
     {% endif %}
   </header>
 
-  <div class="company-container" hx-target="this" hx-swap="innerHTML">
-    {% include "company/partials/company_detail.html" %}
+  <div class="company-container">
+    <!-- Use django-hyperscript for dynamic updates if needed. -->
+    {% include_partial "company/partials/company_detail.html" %}
   </div>
 </article>
 {% endblock content %}

@@ -2,6 +2,7 @@ import logging
 from builtins import property
 from typing import TYPE_CHECKING
 
+from beartype import beartype
 from core.types import StatusData
 from django.core.exceptions import FieldError, ObjectDoesNotExist
 from django.db import models
@@ -14,14 +15,54 @@ from obligations.constants import (
 )
 from obligations.utils import is_obligation_overdue
 
+try:
+    from pb_model.models import ProtoBufMixin
+except ImportError:
+    ProtoBufMixin = models.Model  # fallback for type checking
+
+try:
+    from .proto.mechanism_pb2 import (
+        ChartData,
+        ChartResponse,
+        ChartSegment,
+        ObligationInsight,
+        ObligationInsightResponse,
+    )
+except ImportError:
+    ObligationInsight = None
+    ObligationInsightResponse = None
+    ChartSegment = None
+    ChartData = None
+    ChartResponse = None
+
 if TYPE_CHECKING:
     from django.db.models.query import QuerySet
 
 logger = logging.getLogger(__name__)
 
 
-class EnvironmentalMechanism(models.Model):
-    """Represents an environmental mechanism that governs obligations."""
+@beartype
+class EnvironmentalMechanism(ProtoBufMixin):
+    """Represents an environmental mechanism that governs obligations.
+
+    Attributes:
+        name (models.CharField): Name of the mechanism.
+        project (models.ForeignKey): Associated project.
+        description (models.TextField): Description of the mechanism.
+        category (models.CharField): Category of the mechanism.
+        reference_number (models.CharField): Reference number for the mechanism.
+        effective_date (models.DateField): Effective date of the mechanism.
+        status (models.CharField): Current status of the mechanism.
+        not_started_count (models.IntegerField): Count of obligations not started.
+        in_progress_count (models.IntegerField): Count of obligations in progress.
+        completed_count (models.IntegerField): Count of completed obligations.
+        overdue_count (models.IntegerField): Count of overdue obligations.
+        primary_environmental_mechanism (models.CharField): Primary environmental mechanism.
+        created_at (models.DateTimeField): Timestamp of creation.
+        updated_at (models.DateTimeField): Timestamp of last update.
+        status_chart (MatplotlibFigureField): Chart representing status data.
+
+    """
 
     name: models.CharField = models.CharField(max_length=255)
     project: models.ForeignKey = models.ForeignKey(
@@ -75,10 +116,22 @@ class EnvironmentalMechanism(models.Model):
         silent=True,
     )
 
+    # Example usage for type/category/mode fields (if/when added):
+    # mechanism_type = models.CharField(max_length=20, choices=MECHANISM_TYPE_CHOICES, default=MECHANISM_TYPE_PHYSICAL)
+    # category = models.CharField(max_length=20, choices=MECHANISM_CATEGORY_CHOICES, default=MECHANISM_CATEGORY_PREVENTION)
+    # operational_mode = models.CharField(max_length=20, choices=OPERATIONAL_MODE_CHOICES, default=OPERATIONAL_MODE_AUTOMATIC)
+
     class Meta:
         verbose_name: str = "Environmental Mechanism"
         verbose_name_plural: str = "Environmental Mechanisms"
         ordering: list[str] = ["name"]
+        permissions = [
+            ("view_environmentalmechanism", "Can view environmental mechanism"),
+            ("change_environmentalmechanism", "Can change environmental mechanism"),
+            ("delete_environmentalmechanism", "Can delete environmental mechanism"),
+        ]
+        default_permissions = ("add", "change", "delete", "view")
+        # Enable object-level permissions for django-guardian
 
     def __str__(self) -> str:
         return self.name
@@ -123,21 +176,23 @@ class EnvironmentalMechanism(models.Model):
 
     def get_status_data(self) -> StatusData:
         """Return a dictionary of status counts for charting."""
-        return StatusData({
-            "Overdue": self.overdue_count,
-            "Not Started": max(0, self.not_started_count - self.overdue_count),
-            "In Progress": self.in_progress_count,
-            "Completed": self.completed_count,
-        })
+        return StatusData(
+            {
+                "Overdue": self.overdue_count,
+                "Not Started": max(0, self.not_started_count - self.overdue_count),
+                "In Progress": self.in_progress_count,
+                "Completed": self.completed_count,
+            },
+        )
 
 
 def update_all_mechanism_counts() -> int:
     """Update obligation counts for all mechanisms.
     Called after importing obligations to ensure counts are accurate.
     """
-    mechanisms: QuerySet = (EnvironmentalMechanism.objects
-                            .all()
-                            .select_related("project"))
+    mechanisms: QuerySet = EnvironmentalMechanism.objects.all().select_related(
+        "project",
+    )
     updated_count: int = 0
 
     for mechanism in mechanisms:
@@ -145,14 +200,15 @@ def update_all_mechanism_counts() -> int:
             mechanism.update_obligation_counts()
             updated_count += 1
         except (
-                ObjectDoesNotExist,  # Using imported exceptions
-                FieldError,
-                AttributeError,
-                ValueError,
+            ObjectDoesNotExist,  # Using imported exceptions
+            FieldError,
+            AttributeError,
+            ValueError,
         ) as e:
             logger.exception(
                 "Error updating counts for mechanism %s: %s",
-                mechanism.name, str(e),
+                mechanism.name,
+                str(e),
             )
 
     return updated_count

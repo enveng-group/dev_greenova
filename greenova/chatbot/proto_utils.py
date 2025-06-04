@@ -7,6 +7,7 @@ This module provides serialization and deserialization functions for
 converting between Django models and Protocol Buffer messages in the
 chatbot application.
 """
+
 import logging
 import os
 import time
@@ -33,15 +34,18 @@ class DummyMessage:
 try:
     # First try importing from the top-level module
     try:
-        import chatbot_pb2
+        from chatbot.proto import chatbot_pb2
+
         logger.info("Successfully imported chatbot_pb2 from top-level")
     except ImportError:
         # If that fails, try importing from the proto subdirectory
         from chatbot.proto import chatbot_pb2
+
         logger.info("Successfully imported chatbot_pb2 from proto package")
 except ImportError:
     logger.exception(
-        "Failed to import chatbot_pb2. Protocol buffer definition missing.")
+        "Failed to import chatbot_pb2. Protocol buffer definition missing.",
+    )
 
     # Check if the proto file exists
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -169,7 +173,8 @@ def deserialize_chat_message(data: bytes) -> dict | None:
         # Add timestamp if present
         if proto.timestamp:
             message_dict["timestamp"] = timezone.datetime.fromtimestamp(
-                proto.timestamp, tz=timezone.get_current_timezone(),
+                proto.timestamp,
+                tz=timezone.get_current_timezone(),
             )
 
         return message_dict
@@ -231,7 +236,8 @@ def parse_chat_response(data: bytes) -> dict | None:
         # Add timestamp if present
         if proto.timestamp:
             response_dict["timestamp"] = timezone.datetime.fromtimestamp(
-                proto.timestamp, tz=timezone.get_current_timezone(),
+                proto.timestamp,
+                tz=timezone.get_current_timezone(),
             )
 
         return response_dict

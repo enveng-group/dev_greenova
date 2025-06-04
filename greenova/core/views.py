@@ -1,13 +1,14 @@
 """Core views for the Greenova application."""
+
 import logging
 from typing import Any
 
+from beartype import beartype
 from django.http import HttpRequest, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
-from django_htmx.http import push_url
 
 logger = logging.getLogger(__name__)
 
@@ -19,20 +20,17 @@ class HomeView(TemplateView):
 
     template_name = "landing/index.html"
 
+    @beartype
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests."""
         logger.debug(
-            f"Landing page access - User authenticated: {request.user.is_authenticated}",
+            "Landing page access - User authenticated: %s",
+            request.user.is_authenticated,
         )
 
-        response = super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
-        # If htmx request, handle proper URL management
-        if request.htmx:
-            push_url(response, request.path)
-
-        return response
-
+    @beartype
     def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
         """Add landing page context data."""
         context = super().get_context_data(**kwargs)

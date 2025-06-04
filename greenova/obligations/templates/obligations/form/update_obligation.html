@@ -1,5 +1,6 @@
 {% extends "obligations/layouts/crud_base.html" %}
 {% load static %}
+{% load hyperscript %}
 {% block crud_title %}
   Edit Obligation
 {% endblock crud_title %}
@@ -13,7 +14,7 @@
         enctype="multipart/form-data"
         novalidate
         hx-ext="path-deps"
-        hx-on="htmx:afterRequest: if(event.detail.successful) PathDeps.refresh('/obligations/')">
+        _="on htmx:afterRequest if event.detail.successful then call PathDeps.refresh('/obligations/')">
     {% csrf_token %}
     <!-- Basic Information Fieldset -->
     <fieldset>
@@ -66,9 +67,11 @@
         {% endif %}
       </div>
       <!-- Custom Environmental Aspect Field (conditionally shown) -->
-      <div id="custom-aspect-container"
-           style="{% if form.instance.environmental_aspect != 'Other' %} display: none;
-                  {% endif %}">
+      {% if form.instance.environmental_aspect != 'Other' %}
+        <div id="custom-aspect-container" style="display: none;">
+      {% else %}
+        <div id="custom-aspect-container">
+      {% endif %}
         <div class="form-group">
           {{ form.custom_environmental_aspect.label_tag }}
           {{ form.custom_environmental_aspect }}
@@ -156,9 +159,11 @@
         {% endif %}
       </div>
       <!-- Recurring Fields -->
-      <div class="recurring-fields"
-           style="{% if not form.instance.recurring_obligation %} display: none;
-                  {% endif %}">
+      {% if not form.instance.recurring_obligation %}
+        <div class="recurring-fields" style="display: none;">
+      {% else %}
+        <div class="recurring-fields">
+      {% endif %}
         <div class="form-group">
           {{ form.recurring_frequency.label_tag }}
           {{ form.recurring_frequency }}
@@ -209,9 +214,11 @@
         {% endif %}
       </div>
       <!-- Inspection Fields -->
-      <div class="inspection-fields"
-           style="{% if not form.instance.inspection %} display: none;
-                  {% endif %}">
+      {% if not form.instance.inspection %}
+        <div class="inspection-fields" style="display: none;">
+      {% else %}
+        <div class="inspection-fields">
+      {% endif %}
         <div class="form-group">
           {{ form.inspection_frequency.label_tag }}
           {{ form.inspection_frequency }}
@@ -335,7 +342,7 @@
       </div>
       <!-- Responsibility Assignments -->
       <fieldset>
-        <legend>Assign Users and Responsibility Roles</legend>
+        <legend>Assignments</legend>
         {% if formset.non_form_errors %}
           <div class="invalid-feedback">
             {% for error in formset.non_form_errors %}{{ error }}{% endfor %}
@@ -345,7 +352,7 @@
           <thead>
             <tr>
               <th>User</th>
-              <th>Responsibility Role</th>
+              <th>Responsibility</th>
               <th>Remove</th>
             </tr>
           </thead>
@@ -359,7 +366,7 @@
             {% endfor %}
           </tbody>
         </table>
-        <button type="button" onclick="addFormRow()">Add Assignment</button>
+        <button type="button" class="btn-secondary" _="on click call addFormRow()">Add Assignment</button>
         {{ formset.management_form }}
       </fieldset>
       <script>
@@ -394,10 +401,11 @@
                 {% if form.instance.status != "completed" %}
                   <button type="button"
                           class="btn-delete"
-                          hx-delete="{% url 'obligations:delete_evidence' evidence.id %}"
-                          hx-confirm="Are you sure you want to delete this file?"
-                          hx-target="closest li"
-                          hx-swap="outerHTML">Delete</button>
+                          _="on click if confirm('Are you sure you want to delete this file?') \
+                              fetch {% url 'obligations:delete_evidence' evidence.id %} \
+                              then remove closest <li>">
+                    Delete
+                  </button>
                 {% endif %}
               </li>
             {% endfor %}

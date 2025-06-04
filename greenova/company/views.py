@@ -1,6 +1,7 @@
 import logging
 from typing import Any
 
+from beartype import beartype
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -10,9 +11,10 @@ from django.db.models import Count, Q, QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from guardian.shortcuts import assign_perm, get_objects_for_user
 
+from .commons import COMPANY_ROLE_ADMIN, is_company_admin
 from .forms import (
     AddUserToCompanyForm,
     CompanyDocumentForm,
@@ -21,33 +23,50 @@ from .forms import (
     CompanySearchForm,
 )
 from .models import Company, CompanyDocument, CompanyMembership
+from .serializers import (
+    CompanyCollectionProtoSerializer,
+    CompanyProtoSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
 
-def is_company_admin(user: User) -> bool:
-    """Check if user is a company admin or superuser."""
-    if not user.is_authenticated:
-        return False
+@beartype
+def create_company_with_permissions(user, form):
+    """Create a company and assign object-level permissions to the creator.
 
-    # Superusers can manage all companies
-    if user.is_superuser:
-        return True
+    Args:
+        user: The user creating the company.
+        form: The validated CompanyForm instance.
 
-    # Check if user is an admin in any company
-    return CompanyMembership.objects.filter(
-        user=user,
-        role__in=["owner", "admin"],
-    ).exists()
+    Returns:
+        The created Company instance.
+
+    """
+    company = form.save(commit=False)
+    company.save()
+    form.save_m2m()
+    # Assign object-level permissions to creator
+    assign_perm("view_company", user, company)
+    assign_perm("change_company", user, company)
+    assign_perm("delete_company", user, company)
+    assign_perm("manage_members", user, company)
+    return company
 
 
+@beartype
 @login_required
 def company_list(request: HttpRequest) -> HttpResponse:
-    """View for listing companies."""
+    """View for listing companies with object-level permission checks."""
     search_form = CompanySearchForm(request.GET)
-    companies_query: QuerySet[Company] = Company.objects.all()
+    # Only show companies the user has view permission for
+    companies_query: QuerySet[Company] = get_objects_for_user(
+        request.user,
+        "company.view_company",
+        Company.objects.all(),
+    )
 
     # Apply filters if form is submitted
     if search_form.is_valid():
@@ -58,8 +77,7 @@ def company_list(request: HttpRequest) -> HttpResponse:
 
         if search:
             companies_query = companies_query.filter(
-                Q(name__icontains=search) |
-                Q(description__icontains=search),
+                Q(name__icontains=search) | Q(description__icontains=search),
             )
 
         if company_type:
@@ -79,18 +97,11 @@ def company_list(request: HttpRequest) -> HttpResponse:
     page_number = int(request.GET.get("page", 1))
     companies: Page[Company] = paginator.get_page(page_number)
 
-    # Check user permissions for each company
-    user_permissions: dict[int, str | None] = {}
+    # Check user permissions for each company using guardian
+    user_permissions: dict[int, list[str]] = {}
     if not request.user.is_superuser:
         for company in companies:
-            try:
-                membership = CompanyMembership.objects.get(
-                    company=company,
-                    user=request.user,
-                )
-                user_permissions[company.id] = membership.role
-            except CompanyMembership.DoesNotExist:
-                user_permissions[company.id] = None
+            user_permissions[company.id] = request.user.get_all_permissions(company)
 
     context: dict[str, Any] = {
         "companies": companies,
@@ -100,11 +111,11 @@ def company_list(request: HttpRequest) -> HttpResponse:
         "can_create": is_company_admin(request.user),
     }
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/company_list.html", context)
+    # Always render full template
     return render(request, "company/company_list.html", context)
 
 
+@beartype
 @login_required
 def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for viewing company details."""
@@ -131,7 +142,7 @@ def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
                 company=company,
                 user=request.user,
             )
-            if membership.role in {"owner", "admin"}:
+            if membership.role in {COMPANY_ROLE_ADMIN, "owner"}:
                 can_edit = True
                 can_manage_members = True
             elif membership.role == "manager":
@@ -148,11 +159,11 @@ def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
         "can_manage_members": can_manage_members,
     }
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/company_detail.html", context)
+    # Always render full template
     return render(request, "company/company_detail.html", context)
 
 
+@beartype
 @login_required
 @user_passes_test(is_company_admin)
 def company_create(request: HttpRequest) -> HttpResponse:
@@ -160,7 +171,7 @@ def company_create(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = CompanyForm(request.POST, request.FILES)
         if form.is_valid():
-            company: Company = form.save()
+            company: Company = create_company_with_permissions(request.user, form)
 
             # Add the creator as an owner of the company
             CompanyMembership.objects.create(
@@ -171,25 +182,17 @@ def company_create(request: HttpRequest) -> HttpResponse:
             )
 
             messages.success(request, f"Company '{company.name}' created successfully!")
-
-            if hasattr(request, "htmx") and request.htmx:
-                return HttpResponse(
-                    status=200,
-                    headers={
-                        "HX-Redirect": reverse("company:detail", args=[company.id]),
-                    },
-                )
             return redirect("company:detail", company_id=company.id)
     else:
         form = CompanyForm()
 
     context: dict[str, Any] = {"form": form, "action": "Create"}
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/company_form.html", context)
+    # Always render full template
     return render(request, "company/company_form.html", context)
 
 
+@beartype
 @login_required
 def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for editing a company."""
@@ -203,7 +206,7 @@ def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
                 company=company,
                 user=request.user,
             )
-            has_permission = membership.role in {"owner", "admin"}
+            has_permission = membership.role in {COMPANY_ROLE_ADMIN, "owner"}
         except CompanyMembership.DoesNotExist:
             pass
 
@@ -216,25 +219,17 @@ def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
         if form.is_valid():
             company: Company = form.save()
             messages.success(request, f"Company '{company.name}' updated successfully!")
-
-            if hasattr(request, "htmx") and request.htmx:
-                return HttpResponse(
-                    status=200,
-                    headers={
-                        "HX-Redirect": reverse("company:detail", args=[company.id]),
-                    },
-                )
             return redirect("company:detail", company_id=company.id)
     else:
         form = CompanyForm(instance=company)
 
     context: dict[str, Any] = {"form": form, "company": company, "action": "Update"}
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/company_form.html", context)
+    # Always render full template
     return render(request, "company/company_form.html", context)
 
 
+@beartype
 @login_required
 @user_passes_test(is_company_admin)
 def company_delete(request: HttpRequest, company_id: int) -> HttpResponse:
@@ -259,21 +254,15 @@ def company_delete(request: HttpRequest, company_id: int) -> HttpResponse:
         company_name = company.name
         company.delete()
         messages.success(request, f"Company '{company_name}' deleted successfully!")
-
-        if hasattr(request, "htmx") and request.htmx:
-            return HttpResponse(
-                status=200,
-                headers={"HX-Redirect": reverse("company:list")},
-            )
         return redirect("company:list")
 
     context: dict[str, Any] = {"company": company}
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/company_delete_confirm.html", context)
+    # Always render full template
     return render(request, "company/company_delete.html", context)
 
 
+@beartype
 @login_required
 def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for managing company members."""
@@ -289,7 +278,7 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
                 company=company,
                 user=request.user,
             )
-            if membership.role in {"owner", "admin", "manager"}:
+            if membership.role in {"owner", COMPANY_ROLE_ADMIN, "manager"}:
                 can_manage = True
         except CompanyMembership.DoesNotExist:
             pass
@@ -311,11 +300,11 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
         "can_edit": can_manage,
     }
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/company_members.html", context)
+    # Always render full template
     return render(request, "company/company_members.html", context)
 
 
+@beartype
 @login_required
 @require_http_methods(["POST"])
 def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
@@ -332,14 +321,16 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
                 company=company,
                 user=request.user,
             )
-            if membership.role in {"owner", "admin", "manager"}:
+            if membership.role in {"owner", COMPANY_ROLE_ADMIN, "manager"}:
                 can_manage = True
         except CompanyMembership.DoesNotExist:
             pass
 
     if not can_manage:
-        return JsonResponse({"status": "error", "message": "Permission denied"},
-                            status=403)
+        return JsonResponse(
+            {"status": "error", "message": "Permission denied"},
+            status=403,
+        )
 
     # Process form
     form = AddUserToCompanyForm(request.POST)
@@ -352,10 +343,13 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
 
         # Check if user is already a member
         if CompanyMembership.objects.filter(company=company, user=user).exists():
-            return JsonResponse({
-                "status": "error",
-                "message": "User is already a member of this company",
-            }, status=400)
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "User is already a member of this company",
+                },
+                status=400,
+            )
 
         # Create membership
         membership = CompanyMembership.objects.create(
@@ -368,25 +362,32 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
         )
 
         # Return updated member list
-        members = CompanyMembership.objects.filter(
-            company=company).select_related("user")
-        html = render_to_string("company/partials/member_list.html", {
-            "members": members,
-            "company": company,
-            "can_edit": can_manage,
-        }, request=request)
+        members = CompanyMembership.objects.filter(company=company).select_related(
+            "user",
+        )
+        html = render_to_string(
+            "company/partials/member_list.html",
+            {
+                "members": members,
+                "company": company,
+                "can_edit": can_manage,
+            },
+            request=request,
+        )
 
         return HttpResponse(html)
 
     return JsonResponse({"status": "error", "errors": form.errors}, status=400)
 
 
+@beartype
 @login_required
 @require_http_methods(["POST"])
 def remove_member(
-        request: HttpRequest,
-        company_id: int,
-        member_id: int) -> HttpResponse:
+    request: HttpRequest,
+    company_id: int,
+    member_id: int,
+) -> HttpResponse:
     """View for removing a member from a company."""
     company = get_object_or_404(Company, id=company_id)
     membership = get_object_or_404(CompanyMembership, id=member_id, company=company)
@@ -403,41 +404,52 @@ def remove_member(
             )
 
             # Only owner and admin can remove members
-            if user_role.role in {"owner", "admin"}:
+            if user_role.role in {"owner", COMPANY_ROLE_ADMIN}:
                 can_manage = True
         except CompanyMembership.DoesNotExist:
             pass
 
     if not can_manage:
-        return JsonResponse({"status": "error", "message": "Permission denied"},
-                            status=403)
+        return JsonResponse(
+            {"status": "error", "message": "Permission denied"},
+            status=403,
+        )
 
     # Can't remove the owner
     if membership.role == "owner" and not request.user.is_superuser:
-        return JsonResponse({
-            "status": "error",
-            "message": "Company owner cannot be removed",
-        }, status=400)
+        return JsonResponse(
+            {
+                "status": "error",
+                "message": "Company owner cannot be removed",
+            },
+            status=400,
+        )
 
     # Remove membership
     membership.delete()
 
     # Return updated member list
     members = CompanyMembership.objects.filter(company=company).select_related("user")
-    html = render_to_string("company/partials/member_list.html", {
-        "members": members,
-        "company": company,
-        "can_edit": can_manage,
-    }, request=request)
+    html = render_to_string(
+        "company/partials/member_list.html",
+        {
+            "members": members,
+            "company": company,
+            "can_edit": can_manage,
+        },
+        request=request,
+    )
 
     return HttpResponse(html)
 
 
+@beartype
 @login_required
 def update_member_role(
-        request: HttpRequest,
-        company_id: int,
-        member_id: int) -> HttpResponse:
+    request: HttpRequest,
+    company_id: int,
+    member_id: int,
+) -> HttpResponse:
     """View for updating a member's role in a company."""
     company = get_object_or_404(Company, id=company_id)
     membership = get_object_or_404(CompanyMembership, id=member_id, company=company)
@@ -453,14 +465,16 @@ def update_member_role(
                 user=request.user,
             )
             # Only owner and admin can update roles
-            if user_membership.role in {"owner", "admin"}:
+            if user_membership.role in {"owner", COMPANY_ROLE_ADMIN}:
                 can_manage = True
         except CompanyMembership.DoesNotExist:
             pass
 
     if not can_manage:
-        return JsonResponse({"status": "error", "message": "Permission denied"},
-                            status=403)
+        return JsonResponse(
+            {"status": "error", "message": "Permission denied"},
+            status=403,
+        )
 
     if request.method == "POST":
         form = CompanyMembershipForm(request.POST, instance=membership)
@@ -480,6 +494,7 @@ def update_member_role(
     return render(request, "company/partials/member_role_form.html", context)
 
 
+@beartype
 @login_required
 def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
     """View for uploading a document to a company."""
@@ -494,7 +509,7 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
             company=company,
             user=request.user,
         )
-        if membership.role in {"owner", "admin", "manager"}:
+        if membership.role in {"owner", COMPANY_ROLE_ADMIN, "manager"}:
             can_edit = True
     except CompanyMembership.DoesNotExist:
         pass
@@ -511,17 +526,10 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
             document.uploaded_by = request.user
             document.save()
 
-            messages.success(request,
-                             f"Document '{document.name}' uploaded successfully!")
-
-            if hasattr(request, "htmx") and request.htmx:
-                documents = company.documents.all()
-                html = render_to_string("company/partials/document_list.html", {
-                    "documents": documents,
-                    "company": company,
-                    "can_edit": can_edit,
-                }, request=request)
-                return HttpResponse(html)
+            messages.success(
+                request,
+                f"Document '{document.name}' uploaded successfully!",
+            )
             return redirect("company:detail", company_id=company.id)
     else:
         form = CompanyDocumentForm()
@@ -531,16 +539,17 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
         "company": company,
     }
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/document_form.html", context)
+    # Always render full template
     return render(request, "company/document_form.html", context)
 
 
+@beartype
 @login_required
 def delete_document(
-        request: HttpRequest,
-        company_id: int,
-        document_id: int) -> HttpResponse:
+    request: HttpRequest,
+    company_id: int,
+    document_id: int,
+) -> HttpResponse:
     """View for deleting a document from a company."""
     company = get_object_or_404(Company, id=company_id)
     document = get_object_or_404(CompanyDocument, id=document_id, company=company)
@@ -555,27 +564,20 @@ def delete_document(
                 company=company,
                 user=request.user,
             )
-            if membership.role in {"owner", "admin"}:
+            if membership.role in {"owner", COMPANY_ROLE_ADMIN}:
                 can_edit = True
         except CompanyMembership.DoesNotExist:
             pass
 
     if not can_edit:
-        return JsonResponse({"status": "error", "message": "Permission denied"},
-                            status=403)
+        return JsonResponse(
+            {"status": "error", "message": "Permission denied"},
+            status=403,
+        )
 
     if request.method == "POST":
         document.delete()
         messages.success(request, f"Document '{document.name}' deleted successfully!")
-
-        if hasattr(request, "htmx") and request.htmx:
-            documents = company.documents.all()
-            html = render_to_string("company/partials/document_list.html", {
-                "documents": documents,
-                "company": company,
-                "can_edit": can_edit,
-            }, request=request)
-            return HttpResponse(html)
         return redirect("company:detail", company_id=company.id)
 
     context: dict[str, Any] = {
@@ -583,6 +585,83 @@ def delete_document(
         "company": company,
     }
 
-    if hasattr(request, "htmx") and request.htmx:
-        return render(request, "company/partials/document_delete_confirm.html", context)
+    # Always render full template
     return render(request, "company/document_delete.html", context)
+
+
+@beartype
+@login_required
+def export_company(request, company_id: int) -> HttpResponse:
+    """Export a single company as Protocol Buffer binary data."""
+    if request.user.is_superuser:
+        company = get_object_or_404(Company, id=company_id)
+    else:
+        company = get_object_or_404(
+            Company,
+            id=company_id,
+            companymembership__user=request.user,
+        )
+    serializer = CompanyProtoSerializer(instance=company)
+    data = serializer.data()
+    if not data:
+        messages.error(request, "Failed to export company.")
+        return redirect("company:company_list")
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = f'attachment; filename="company_{company_id}.pb"'
+    return response
+
+
+@beartype
+@login_required
+def export_all_companies(request) -> HttpResponse:
+    """Export all companies as a Protocol Buffer collection."""
+    if request.user.is_superuser:
+        companies = list(Company.objects.all())
+    else:
+        companies = list(Company.objects.filter(companymembership__user=request.user))
+    serializer = CompanyCollectionProtoSerializer(instances=companies)
+    data = serializer.data()
+    if not data:
+        messages.error(request, "Failed to export companies.")
+        return redirect("company:company_list")
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = 'attachment; filename="companies.pb"'
+    return response
+
+
+@beartype
+@login_required
+@require_http_methods(["GET", "POST"])
+def import_company(request) -> HttpResponse:
+    """Import a company from Protocol Buffer binary data."""
+    if request.method == "POST":
+        if "file" not in request.FILES:
+            messages.error(request, "No file was provided.")
+            return redirect("company:import_company")
+        uploaded_file = request.FILES["file"]
+        try:
+            data = uploaded_file.read()
+            serializer = CompanyProtoSerializer(data=data)
+            if not serializer.is_valid():
+                messages.error(
+                    request,
+                    "Could not deserialize the file. Invalid format.",
+                )
+                return redirect("company:import_company")
+            company = serializer.validated_data
+            company.id = None  # Ensure a new record is created
+            company.save()
+            messages.success(request, "Company imported successfully.")
+            return redirect("company:company_list")
+        except (ValueError, OSError, AttributeError, TypeError) as e:
+            logger.exception("Error importing company: %s", str(e))
+            messages.error(request, "An error occurred while importing the company.")
+            return redirect("company:import_company")
+    # GET request - show import form
+    return render(
+        request,
+        "company/import_company.html",
+        {
+            "page_title": "Import Company",
+        },
+    )

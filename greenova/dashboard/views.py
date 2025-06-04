@@ -1,31 +1,31 @@
 """Dashboard views for Greenova environmental management application.
 
-This module provides the main dashboard, chart, and HTMX views for
+This module provides the main dashboard, chart, and drilldown views for
 environmental obligation tracking and compliance monitoring.
 """
 
 import base64
 import logging
 from datetime import datetime, timedelta
-from typing import Any, TypedDict, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from beartype import beartype
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import AbstractUser
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_headers
 from django.views.generic import ListView, TemplateView
-from django_htmx.http import push_url, trigger_client_event
 from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
 from procedures.models import Procedure
 from projects.models import Project
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractUser
 
 # Import new components from PR171
 try:
@@ -38,24 +38,29 @@ try:
     from .mixins import ChartMixin, ProjectAwareDashboardMixin
 except ImportError:
     # Fallback if mixins don't exist yet
-    ChartMixin = object
+
+    class DummyMixin:
+        """Fallback dummy mixin to avoid MRO conflicts."""
+
+    ChartMixin = DummyMixin
     ProjectAwareDashboardMixin = LoginRequiredMixin
 
-    def create_obligations_status_chart_svg(project_id) -> str:
+    def create_obligations_status_chart_svg(_project_id) -> str:
         """Fallback chart function."""
         return "<svg></svg>"
 
-    def create_project_compliance_chart(projects):
+    def create_project_compliance_chart(_projects):
         """Fallback chart function."""
         return None, b""
 
-    def create_mechanism_pie_chart_svg(mechanism_id) -> str:
+    def create_mechanism_pie_chart_svg(_mechanism_id) -> str:
         """Fallback chart function."""
         return "<svg></svg>"
 
-    def create_procedure_pie_chart_svg(procedure_id, chart_data) -> str:
+    def create_procedure_pie_chart_svg(_procedure_id, _chart_data) -> str:
         """Fallback chart function."""
         return "<svg></svg>"
+
 
 # Constants for system information
 SYSTEM_STATUS = "operational"  # or fetch from settings/environment
@@ -63,20 +68,6 @@ APP_VERSION = "0.0.6"  # Updated version from PR171
 LAST_UPDATED = datetime.now().date()  # or fetch from settings/environment
 
 logger = logging.getLogger(__name__)
-
-
-class DashboardContext(TypedDict):
-    """Type definition for dashboard context data."""
-
-    projects: QuerySet[Project]
-    selected_project_id: str | None
-    system_status: str
-    app_version: str
-    last_updated: datetime
-    user: AbstractUser
-    debug: bool
-    error: str | None
-    user_roles: dict[str, str]
 
 
 @beartype
@@ -100,7 +91,6 @@ def get_selected_project_id(request: HttpRequest) -> str | None:
 
 
 @method_decorator(cache_control(max_age=60), name="dispatch")
-@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
     """Main dashboard view."""
 
@@ -128,20 +118,9 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         super().setup(request, *args, **kwargs)
         self.request = request
 
-    def get_template_names(self) -> list[str]:
-        """Return the template name based on request type.
-
-        Returns:
-            List of template names to use for rendering.
-
-        """
-        if getattr(self.request, "htmx", False):
-            return ["dashboard/partials/dashboard_content.html"]
-        return [self.template_name]
-
     @beartype
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle GET requests with enhanced HTMX support.
+        """Handle GET requests.
 
         Args:
             request: The HTTP request object.
@@ -149,27 +128,10 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-            HttpResponse with appropriate content and headers.
+            HttpResponse with appropriate content.
 
         """
-        response = super().get(request, *args, **kwargs)
-
-        # If this is an HTMX request, handle history and URL management
-        if getattr(request, "htmx", False):
-            # Push the URL to browser history for navigation
-            current_url = request.build_absolute_uri()
-            push_url(response, current_url)
-
-            # Trigger dashboard refresh events
-            trigger_client_event(response, "dashboardLoaded")
-
-            # Also trigger project selection if project_id is in the request
-            project_id = request.GET.get("project_id")
-            if project_id and project_id != "0":
-                logger.debug("Triggering projectSelected event with ID: %s", project_id)
-                trigger_client_event(response, "projectSelected", {"id": project_id})
-
-        return response
+        return super().get(request, *args, **kwargs)
 
     @beartype
     def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
@@ -198,28 +160,30 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             # Get selected project_id from query params
             selected_project_id = get_selected_project_id(self.request)
 
-            context.update({
-                "projects": projects,
-                "selected_project_id": selected_project_id,
-                "system_status": SYSTEM_STATUS,
-                "app_version": APP_VERSION,
-                "last_updated": LAST_UPDATED,
-                "user": user,
-                "debug": settings.DEBUG,
-                "error": None,
-                "user_roles": user_roles,
-                "show_feedback_link": True,
-                "overdue_obligations_count": self.get_overdue_obligations_count(),
-                "active_obligations_count": self.get_active_obligations_count(),
-                "active_obligations_trend": self.get_obligations_trend(),
-                "upcoming_deadlines_count": self.get_upcoming_deadlines_count(),
-                "active_projects_count": projects.count(),
-                "active_mechanisms_count": self.get_active_mechanisms_count(),
-                "upcoming_7_count": self.get_upcoming_count(7),
-                "upcoming_14_count": self.get_upcoming_count(14),
-                "upcoming_30_count": self.get_upcoming_count(30),
-                "upcoming_90_count": self.get_upcoming_count(90),
-            })
+            context.update(
+                {
+                    "projects": projects,
+                    "selected_project_id": selected_project_id,
+                    "system_status": SYSTEM_STATUS,
+                    "app_version": APP_VERSION,
+                    "last_updated": LAST_UPDATED,
+                    "user": user,
+                    "debug": settings.DEBUG,
+                    "error": None,
+                    "user_roles": user_roles,
+                    "show_feedback_link": True,
+                    "overdue_obligations_count": self.get_overdue_obligations_count(),
+                    "active_obligations_count": self.get_active_obligations_count(),
+                    "active_obligations_trend": self.get_obligations_trend(),
+                    "upcoming_deadlines_count": self.get_upcoming_deadlines_count(),
+                    "active_projects_count": projects.count(),
+                    "active_mechanisms_count": self.get_active_mechanisms_count(),
+                    "upcoming_7_count": self.get_upcoming_count(7),
+                    "upcoming_14_count": self.get_upcoming_count(14),
+                    "upcoming_30_count": self.get_upcoming_count(30),
+                    "upcoming_90_count": self.get_upcoming_count(90),
+                },
+            )
 
             # Add chart data
             self.add_specific_charts(context)
@@ -256,11 +220,11 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         return context
 
     @beartype
-    def add_specific_charts(self, context: dict[str, Any]) -> None:
+    def add_specific_charts(self, _context: dict[str, Any]) -> None:
         """Add view-specific chart data to the context.
 
         Args:
-            context: The context dictionary to update.
+            _context: The context dictionary to update.
 
         """
         # Add any dashboard-specific chart data here
@@ -300,7 +264,8 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             query_filter["project_id"] = project_id
 
         return Obligation.objects.filter(
-            status__in=["pending", "in_progress"], **query_filter,
+            status__in=["pending", "in_progress"],
+            **query_filter,
         ).count()
 
     @beartype
@@ -385,10 +350,10 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         ).count()
 
 
-class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
+class ChartView(ProjectAwareDashboardMixin, ChartMixin, TemplateView):
     """View for rendering charts."""
 
-    template_name = "dashboard/partials/charts.html"
+    template_name = "dashboard/charts.html"
 
     @property
     def selected_project_id(self) -> str | None:
@@ -424,7 +389,8 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
         projects_with_stats = []
         for project in context["projects"]:
             overdue_obligations = project.obligations.filter(
-                action_due_date__lt=now, status__in=["pending", "in_progress"],
+                action_due_date__lt=now,
+                status__in=["pending", "in_progress"],
             )
             overdue_count = overdue_obligations.count()
             last_due_date = overdue_obligations.order_by("-action_due_date").first()
@@ -442,10 +408,10 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
 
 
 class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
-    """HTMX view for projects at risk of missing deadlines."""
+    """View for projects at risk of missing deadlines."""
 
     model = Project
-    template_name = "dashboard/partials/projects_at_risk_table.html"
+    template_name = "dashboard/projects_at_risk_table.html"
     context_object_name = "projects"
 
     def get_queryset(self) -> QuerySet[Project]:
@@ -478,7 +444,8 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
         projects_with_stats = []
         for project in context["projects"]:
             overdue_obligations = project.obligations.filter(
-                action_due_date__lt=now, status__in=["pending", "in_progress"],
+                action_due_date__lt=now,
+                status__in=["pending", "in_progress"],
             )
             overdue_count = overdue_obligations.count()
             last_due_date = overdue_obligations.order_by("-action_due_date").first()
@@ -498,7 +465,7 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
 class UpcomingObligationsView(ProjectAwareDashboardMixin, ListView):
     """View for upcoming obligations with due dates in the near future."""
 
-    template_name = "dashboard/partials/upcoming_obligations_table.html"
+    template_name = "dashboard/upcoming_obligations_table.html"
     context_object_name = "obligations"
 
     def get_queryset(self) -> QuerySet[Obligation]:
@@ -540,11 +507,10 @@ class UpcomingObligationsView(ProjectAwareDashboardMixin, ListView):
 
 # Drilldown views for Issue #165
 @method_decorator(cache_control(max_age=300), name="dispatch")
-@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class MechanismDrilldownView(LoginRequiredMixin, TemplateView):
     """View for mechanism drilldown charts in the obligation workflow."""
 
-    template_name = "dashboard/partials/mechanism_drilldown.html"
+    template_name = "dashboard/mechanism_drilldown.html"
     login_url = "account_login"
 
     @beartype
@@ -574,25 +540,29 @@ class MechanismDrilldownView(LoginRequiredMixin, TemplateView):
             for mechanism in mechanisms:
                 # Create SVG chart for each mechanism
                 chart_svg = create_mechanism_pie_chart_svg(mechanism.id)
-                mechanism_charts.append({
-                    "id": mechanism.id,
-                    "name": mechanism.name,
-                    "chart_svg": chart_svg,
-                    "total_obligations": (
-                        mechanism.not_started_count +
-                        mechanism.in_progress_count +
-                        mechanism.completed_count +
-                        mechanism.overdue_count
-                    ),
-                    "overdue_count": mechanism.overdue_count,
-                })
+                mechanism_charts.append(
+                    {
+                        "id": mechanism.id,
+                        "name": mechanism.name,
+                        "chart_svg": chart_svg,
+                        "total_obligations": (
+                            mechanism.not_started_count
+                            + mechanism.in_progress_count
+                            + mechanism.completed_count
+                            + mechanism.overdue_count
+                        ),
+                        "overdue_count": mechanism.overdue_count,
+                    },
+                )
 
-            context.update({
-                "project": project,
-                "mechanisms": mechanisms,
-                "mechanism_charts": mechanism_charts,
-                "selected_project_id": project_id,
-            })
+            context.update(
+                {
+                    "project": project,
+                    "mechanisms": mechanisms,
+                    "mechanism_charts": mechanism_charts,
+                    "selected_project_id": project_id,
+                },
+            )
 
         except (Project.DoesNotExist, ValueError) as e:
             logger.exception("Error in mechanism drilldown: %s", e)
@@ -602,11 +572,10 @@ class MechanismDrilldownView(LoginRequiredMixin, TemplateView):
 
 
 @method_decorator(cache_control(max_age=300), name="dispatch")
-@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class ProcedureDrilldownView(LoginRequiredMixin, TemplateView):
     """View for procedure drilldown charts in the obligation workflow."""
 
-    template_name = "dashboard/partials/procedure_drilldown.html"
+    template_name = "dashboard/procedure_drilldown.html"
     login_url = "account_login"
 
     @beartype
@@ -655,22 +624,29 @@ class ProcedureDrilldownView(LoginRequiredMixin, TemplateView):
                 # Create SVG chart for this procedure
                 chart_svg = create_procedure_pie_chart_svg(procedure.id, chart_data)
 
-                procedure_charts.append({
-                    "id": procedure.id,
-                    "name": procedure.name,
-                    "chart_svg": chart_svg,
-                    "chart_data": chart_data,
-                    "total_obligations": not_started + in_progress + completed + overdue,
-                    "overdue_count": overdue,
-                })
+                procedure_charts.append(
+                    {
+                        "id": procedure.id,
+                        "name": procedure.name,
+                        "chart_svg": chart_svg,
+                        "chart_data": chart_data,
+                        "total_obligations": not_started
+                        + in_progress
+                        + completed
+                        + overdue,
+                        "overdue_count": overdue,
+                    },
+                )
 
-            context.update({
-                "mechanism": mechanism,
-                "procedures": procedures,
-                "procedure_charts": procedure_charts,
-                "selected_project_id": project_id,
-                "selected_mechanism_id": mechanism_id,
-            })
+            context.update(
+                {
+                    "mechanism": mechanism,
+                    "procedures": procedures,
+                    "procedure_charts": procedure_charts,
+                    "selected_project_id": project_id,
+                    "selected_mechanism_id": mechanism_id,
+                },
+            )
 
         except (EnvironmentalMechanism.DoesNotExist, ValueError) as e:
             logger.exception("Error in procedure drilldown: %s", e)
@@ -680,12 +656,11 @@ class ProcedureDrilldownView(LoginRequiredMixin, TemplateView):
 
 
 @method_decorator(cache_control(max_age=300), name="dispatch")
-@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class ObligationListDrilldownView(LoginRequiredMixin, ListView):
     """View for final obligation list in the drilldown workflow."""
 
     model = Obligation
-    template_name = "dashboard/partials/obligation_list_drilldown.html"
+    template_name = "dashboard/obligation_list_drilldown.html"
     context_object_name = "obligations"
     paginate_by = 20
     login_url = "account_login"
@@ -703,7 +678,9 @@ class ObligationListDrilldownView(LoginRequiredMixin, ListView):
         project_id = self.request.GET.get("project_id")
 
         queryset = Obligation.objects.select_related(
-            "project", "mechanism", "procedure",
+            "project",
+            "mechanism",
+            "procedure",
         ).prefetch_related("attachments")
 
         # Filter by procedure if provided
@@ -772,14 +749,16 @@ class ObligationListDrilldownView(LoginRequiredMixin, ListView):
         overdue_count = sum(1 for obj in obligations if obj.is_overdue)
         active_count = obligations.filter(status="in_progress").count()
 
-        context.update({
-            "breadcrumbs": breadcrumbs,
-            "selected_project_id": project_id,
-            "selected_mechanism_id": mechanism_id,
-            "selected_procedure_id": procedure_id,
-            "overdue_count": overdue_count,
-            "active_count": active_count,
-            "total_count": obligations.count(),
-        })
+        context.update(
+            {
+                "breadcrumbs": breadcrumbs,
+                "selected_project_id": project_id,
+                "selected_mechanism_id": mechanism_id,
+                "selected_procedure_id": procedure_id,
+                "overdue_count": overdue_count,
+                "active_count": active_count,
+                "total_count": obligations.count(),
+            },
+        )
 
         return context

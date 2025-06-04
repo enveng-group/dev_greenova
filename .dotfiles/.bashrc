@@ -12,6 +12,9 @@ esac
 # shellcheck source=/dev/null
 [ -f /etc/bashrc ] && . /etc/bashrc
 
+# Alias definitions
+alias django-run="/workspaces/greenova/.venv/bin/python greenova/manage.py runserver 0.0.0.0:8000"
+
 # Enhanced bash prompt with dynamic system usage
 __set_ps1() {
         local userpart gitbranch lightblue removecolor

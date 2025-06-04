@@ -7,8 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import QuerySet
 from django.utils.html import format_html
 from obligations.models import Obligation
-
-from greenova.projects.models import Project, ProjectRole
+from projects.models import Project, ProjectRole
 
 logger = logging.getLogger(__name__)
 

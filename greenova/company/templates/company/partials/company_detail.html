@@ -1,4 +1,5 @@
 {% load company_tags %}
+{% load partials %}
 
 <section class="company-profile" aria-labelledby="company-profile-heading">
   <h2 id="company-profile-heading">Company Profile</h2>
@@ -134,11 +135,8 @@
     <h2 id="documents-heading">Documents</h2>
     {% if can_edit %}
     <div class="header-actions">
-      <button
-        class="btn-secondary"
-        hx-get="{% url 'company:upload_document' company.id %}"
-        hx-target="#document-form-container"
-        hx-swap="innerHTML">
+      <button class="btn-secondary">
+        <!-- Use django-hyperscript for dynamic updates if needed. -->
         Upload Document
       </button>
     </div>
@@ -148,6 +146,6 @@
   <div id="document-form-container"></div>
 
   <div class="documents-container">
-    {% include "company/partials/document_list.html" %}
+    {% include_partial "company/partials/document_list.html" %}
   </div>
 </section>

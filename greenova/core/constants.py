@@ -1,3 +1,4 @@
+from typing import Final
 
 # Main navigation structure
 # Format: (name, url_name, icon_class)
@@ -42,4 +43,35 @@ FOOTER_LINKS: list[tuple[str, str, bool]] = [
     ("Feedback", "https://www.example.com/feedback", True),
     ("Blog", "https://www.example.com/blog", True),
     ("Careers", "https://www.example.com/careers", True),
-    ("Community", "https://www.example.com/community", True)]
+    ("Community", "https://www.example.com/community", True),
+]
+
+# General status values
+STATUS_ACTIVE: Final[str] = "active"
+STATUS_INACTIVE: Final[str] = "inactive"
+STATUS_PENDING: Final[str] = "pending"
+STATUS_ARCHIVED: Final[str] = "archived"
+STATUS_CHOICES: Final[list[tuple[str, str]]] = [
+    (STATUS_ACTIVE, "Active"),
+    (STATUS_INACTIVE, "Inactive"),
+    (STATUS_PENDING, "Pending"),
+    (STATUS_ARCHIVED, "Archived"),
+]
+
+# Yes/No choices
+YES: Final[str] = "yes"
+NO: Final[str] = "no"
+YES_NO_CHOICES: Final[list[tuple[str, str]]] = [
+    (YES, "Yes"),
+    (NO, "No"),
+]
+
+# Priority levels
+PRIORITY_LOW: Final[str] = "low"
+PRIORITY_MEDIUM: Final[str] = "medium"
+PRIORITY_HIGH: Final[str] = "high"
+PRIORITY_CHOICES: Final[list[tuple[str, str]]] = [
+    (PRIORITY_LOW, "Low"),
+    (PRIORITY_MEDIUM, "Medium"),
+    (PRIORITY_HIGH, "High"),
+]

@@ -2,7 +2,7 @@ exclude: '^$'
 fail_fast: false # Add this line to continue running hooks even when some fail
 repos:
   # 1. File integrity, merge, and security checks
-  - repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: git@github.com:pre-commit/pre-commit-hooks.git
     rev: v5.0.0
     hooks:
       - id: check-merge-conflict
@@ -29,8 +29,8 @@ repos:
         exclude: '\.md$|\.txt$|\.rst$|\.html$|\.djhtml$|\.jinja$|\.yaml'
       - id: check-vcs-permalinks
 
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.26.0
+  - repo: git@github.com:gitleaks/gitleaks.git
+    rev: v8.27.0
     hooks:
       - id: gitleaks
         args:
@@ -46,7 +46,7 @@ repos:
         pass_filenames: false
 
   # 2. Code cleanup
-  - repo: https://github.com/pycqa/autoflake
+  - repo: git@github.com:pycqa/autoflake.git
     rev: v2.3.1
     hooks:
       - id: autoflake
@@ -59,13 +59,13 @@ repos:
           - --ignore-init-module-imports
 
   # 2a. Dead code detection (Vulture)
-  - repo: https://github.com/jendrikseipp/vulture
+  - repo: git@github.com:jendrikseipp/vulture.git
     rev: v2.14
     hooks:
       - id: vulture
 
   # 3. Import sorting (isort, or use Ruff's import sorting if preferred)
-  - repo: https://github.com/pycqa/isort
+  - repo: git@github.com:pycqa/isort.git
     rev: 6.0.1
     hooks:
       - id: isort
@@ -77,8 +77,8 @@ repos:
           - --diff
 
   # 4. Python formatting and linting
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.11
+  - repo: git@github.com:astral-sh/ruff-pre-commit.git
+    rev: v0.11.12
     hooks:
       - id: ruff-check
         types_or: [python, pyi]
@@ -86,10 +86,10 @@ repos:
         exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
       - id: ruff-format
         types_or: [python, pyi]
-        args: [--fix, --unsafe-fixes, --diff]
+        args: []
         exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
 
-  - repo: https://github.com/hhatto/autopep8
+  - repo: git@github.com:hhatto/autopep8.git
     rev: v2.3.2
     hooks:
       - id: autopep8
@@ -100,7 +100,7 @@ repos:
           - --max-line-length=88
 
   # 5. Additional Python linting
-  - repo: https://github.com/pycqa/pylint
+  - repo: git@github.com:pycqa/pylint.git
     rev: v3.3.7
     hooks:
       - id: pylint
@@ -123,8 +123,8 @@ repos:
           - --score=y
 
   # 6. Type checking
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+  - repo: git@github.com:pre-commit/mirrors-mypy.git
+    rev: v1.16.0
     hooks:
       - id: mypy
         name: mypy
@@ -169,7 +169,7 @@ repos:
           - 'types-markdown'
 
   # 7. Pattern-based checks
-  - repo: https://github.com/pre-commit/pygrep-hooks
+  - repo: git@github.com:pre-commit/pygrep-hooks.git
     rev: v1.10.0
     hooks:
       - id: python-no-eval
@@ -181,32 +181,45 @@ repos:
       - id: text-unicode-replacement-char
 
   # 8. Framework-specific tools
-  - repo: https://github.com/adamchainz/django-upgrade
+  - repo: git@github.com:adamchainz/django-upgrade.git
     rev: 1.25.0
     hooks:
       - id: django-upgrade
         args: ['--target-version', '5.2']
 
   # 9. Documentation and text tools
-  - repo: https://github.com/codespell-project/codespell
+  - repo: git@github.com:codespell-project/codespell.git
     rev: v2.4.1
     hooks:
       - id: codespell
         args: ['--write-changes']
-        exclude: >
+        exclude: |
           (?x)^(
-            requirements/.*\.txt|
-            requirements/.*\.in|
-            notebooks/pie_chart_gallery\.ipynb|
-            greenova/static/js/vendors/.*
+            greenova/static/js/vendors/.*|
+            greenova/static/css/vendor/.*|
+            greenova/static/css/dist/.*|
+            greenova/static/as/generated/.*|
+            greenova/static/as/index\.js$|
+            greenova/static/dist/.*|
+            greenova/static/img/.*|
+            dist/.*|
+            build/.*|
+            .*\.wasm$|
+            .*\.wasm\.map$|
+            .*\.d\.ts$|
+            .*_pb2\.js$|
+            .*_pb2\.ts$|
+            .*_pb2_grpc\.js$|
+            .*_pb2_grpc\.ts$|
+            .*tailwind\.css$
           )$
 
-  - repo: https://github.com/crate-ci/typos
-    rev: v1.32.0
+  - repo: git@github.com:crate-ci/typos.git
+    rev: v1
     hooks:
       - id: typos
 
-  - repo: https://github.com/igorshubovych/markdownlint-cli
+  - repo: git@github.com:igorshubovych/markdownlint-cli.git
     rev: v0.45.0
     hooks:
       - id: markdownlint
@@ -214,51 +227,72 @@ repos:
         language_version: system
         additional_dependencies: []
 
-  - repo: https://github.com/amperser/proselint
+  - repo: git@github.com:amperser/proselint.git
     rev: 0.14.0
     hooks:
       - id: proselint
         files: \.(md|rst|txt)$
 
-  - repo: https://github.com/adrienverge/yamllint.git
+  - repo: git@github.com:adrienverge/yamllint.git
     rev: v1.37.1
     hooks:
       - id: yamllint
         args: [--strict, -c=.yamllint]
 
-  - repo: https://github.com/google/yamlfmt
+  - repo: git@github.com:google/yamlfmt.git
     rev: v0.17.0
     hooks:
       - id: yamlfmt
 
-  - repo: https://github.com/thlorenz/doctoc
+  - repo: git@github.com:thlorenz/doctoc.git
     rev: v2.2.0
     hooks:
       - id: doctoc
         language_version: system
 
-  - repo: https://github.com/python-jsonschema/check-jsonschema
+  - repo: git@github.com:python-jsonschema/check-jsonschema.git
     rev: 0.33.0
     hooks:
       - id: check-github-workflows
         args: ['--verbose']
 
-  - repo: https://github.com/rhysd/actionlint
+  - repo: git@github.com:rhysd/actionlint.git
     rev: v1.7.7
     hooks:
       - id: actionlint
 
   # 10. Frontend formatting and linting
-  - repo: https://github.com/pre-commit/mirrors-prettier
+  - repo: git@github.com:pre-commit/mirrors-prettier.git
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
         language_version: system
         types_or: [javascript, css, markdown, yaml, json]
-        exclude: ^greenova/static/js/vendors/.*$
+        exclude: |
+          (?x)^(
+            greenova/static/js/vendors/.*|
+            greenova/static/css/vendor/.*|
+            greenova/static/css/dist/.*|
+            greenova/static/as/generated/.*|
+            greenova/static/as/index\.js$|
+            greenova/static/dist/.*|
+            greenova/static/img/.*|
+            dist/.*|
+            build/.*|
+            .*\.wasm$|
+            .*\.wasm\.map$|
+            .*\.d\.ts$|
+            .*_pb2\.js$|
+            .*_pb2\.ts$|
+            .*_pb2_grpc\.js$|
+            .*_pb2_grpc\.ts$|
+            .*tailwind\.css$
+          )$
+        additional_dependencies: ['prettier@4.0.0-alpha.8']
+        files: \.(js|ts|css|scss|sass|json|md|yaml|yml)$
 
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.27.0
+  - repo: git@github.com:pre-commit/mirrors-eslint.git
+    rev: v9.28.0
     hooks:
       - id: eslint
         language_version: system
@@ -268,7 +302,27 @@ repos:
           - '--fix'
           - '--max-warnings=9999'
           - '--config'
-          - 'eslint.config.js'
+          - 'eslint.config.cjs'
+        exclude: |
+          (?x)^(
+            greenova/static/js/vendors/.*|
+            greenova/static/css/vendor/.*|
+            greenova/static/css/dist/.*|
+            greenova/static/as/generated/.*|
+            greenova/static/as/index\.js$|
+            greenova/static/dist/.*|
+            greenova/static/img/.*|
+            dist/.*|
+            build/.*|
+            .*\.wasm$|
+            .*\.wasm\.map$|
+            .*\.d\.ts$|
+            .*_pb2\.js$|
+            .*_pb2\.ts$|
+            .*_pb2_grpc\.js$|
+            .*_pb2_grpc\.ts$|
+            .*tailwind\.css$
+          )$
         additional_dependencies:
           - eslint@9.26.0
           - prettier@3.2.4
@@ -281,15 +335,21 @@ repos:
           - stylelint-config-tailwindcss@1.0.0
           - postcss-html@1.6.0
 
+  #- repo: git@github.com:pre-commit/mirrors-stylelint.git
+  #  rev: v15.10.3
+  #  hooks:
+  #    - id: stylelint
+  #      files: \.(css|scss|sass)$
+
   # 10b. Biome formatting and linting
-  - repo: https://github.com/biomejs/pre-commit
+  - repo: git@github.com:biomejs/pre-commit.git
     rev: v2.0.0-beta.5
     hooks:
       - id: biome-check
         language_version: system
 
   # 10c. StandardJS formatting and linting
-  - repo: https://github.com/standard/standard
+  - repo: git@github.com:standard/standard.git
     rev: v17.1.2
     hooks:
       - id: standard
@@ -297,14 +357,14 @@ repos:
         args: ['--fix']
 
   # 10d. JSHint linting
-  - repo: https://github.com/pre-commit/mirrors-jshint
+  - repo: git@github.com:pre-commit/mirrors-jshint.git
     rev: v2.13.6 # Use the latest stable tag
     hooks:
       - id: jshint
         language_version: system
 
   # 10e. FixMyJS autofix
-  - repo: https://github.com/pre-commit/mirrors-fixmyjs
+  - repo: git@github.com:pre-commit/mirrors-fixmyjs.git
     rev: v2.0.0 # Use the legacy stable version
     hooks:
       - id: fixmyjs
@@ -312,19 +372,19 @@ repos:
         args: ['-l', '-c', '.jshintrc']
 
   # 10f. CSSLint linting
-  - repo: https://github.com/pre-commit/mirrors-csslint
+  - repo: git@github.com:pre-commit/mirrors-csslint.git
     rev: v1.0.5 # Use the latest stable tag
     hooks:
       - id: csslint
         language_version: system
 
   # 11. Shell and other tools
-  - repo: https://github.com/scop/pre-commit-shfmt
+  - repo: git@github.com:scop/pre-commit-shfmt.git
     rev: v3.11.0-1
     hooks:
       - id: shfmt-src
 
-  - repo: https://github.com/koalaman/shellcheck-precommit
+  - repo: git@github.com:koalaman/shellcheck-precommit.git
     rev: v0.10.0
     hooks:
       - id: shellcheck
@@ -332,14 +392,14 @@ repos:
         entry: shellcheck
         language: system
 
-  - repo: https://github.com/asottile/pyupgrade
+  - repo: git@github.com:asottile/pyupgrade.git
     rev: v3.20.0
     hooks:
       - id: pyupgrade
         args: ['--py312-plus']
 
   # 12. Security checks (that may take longer)
-  - repo: https://github.com/PyCQA/bandit
+  - repo: git@github.com:PyCQA/bandit.git
     rev: '1.8.3'
     hooks:
       - id: bandit
@@ -347,26 +407,26 @@ repos:
         args: ['--skip=B101,B601,B602,B603,B604,B605,B606,B607,B608,B609']
 
   # 12a. Talisman secrets scanning
-  - repo: https://github.com/thoughtworks/talisman
+  - repo: git@github.com:thoughtworks/talisman.git
     rev: 'v1.37.0'
     hooks:
       - id: talisman-commit
 
   # 12b. Makefile linting
-  - repo: https://github.com/mrtazz/checkmake.git
+  - repo: git@github.com:mrtazz/checkmake.git
     rev: 0.2.2
     hooks:
       - id: checkmake
 
   # 13. Commit message linting
-  - repo: https://github.com/jorisroovers/gitlint
+  - repo: git@github.com:jorisroovers/gitlint.git
     rev: v0.19.1
     hooks:
       - id: gitlint
         stages: [commit-msg]
         args: [--contrib=CT1, --msg-filename]
 
-  - repo: https://github.com/commitizen-tools/commitizen
+  - repo: git@github.com:commitizen-tools/commitizen.git
     rev: v4.8.2 # Use the latest stable tag
     hooks:
       - id: commitizen
@@ -375,7 +435,7 @@ repos:
         stages: [pre-push]
 
   # 14. Dependency management (should run last)
-  - repo: https://github.com/pre-commit/sync-pre-commit-deps
+  - repo: git@github.com:pre-commit/sync-pre-commit-deps.git
     rev: v0.0.3
     hooks:
       - id: sync-pre-commit-deps

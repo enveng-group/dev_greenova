@@ -19,6 +19,8 @@
 {% load tailwind_tags %}
 {% load user_tags %}
 {% load core_tags %}
+{% load render_table from django_tables2 %}
+{% load partials %}
 
 {% block meta %}
   <meta charset="UTF-8" />
@@ -43,56 +45,37 @@
 {% endblock title %}
 
 {% block head_scripts %}
-  <!-- Core dependencies (with fallbacks) -->
-  <script src="{% static 'ts/dist/helper.bundle.js' %}" type="module" onerror="console.warn('TypeScript bundle not available')"></script>
-  <script src="{% static 'ts/dist/wasm-loader.bundle.js' %}" type="module" onerror="console.warn('WASM loader not available')"></script>
-  <script src="{% static 'ts/dist/error-handler.bundle.js' %}" type="module" onerror="console.warn('Error handler bundle not available')"></script>
-  <script src="{% static 'ts/dist/foldable.bundle.js' %}" type="module" onerror="console.warn('Foldable bundle not available')"></script>
-  <script src="{% static 'ts/dist/app-modules.bundle.js' %}" type="module" onerror="console.warn('App modules bundle not available')"></script>
+  <!-- WASM bundle -->
+  <script src="{% static 'dist/optimized.wasm' %}" type="module" onerror="console.warn('WASM bundle not available')"></script>
 
   <!-- GSAP Animation Framework (optional) -->
-  <script src="{% static 'js/vendors/gsap/gsap.min.js' %}" defer onerror="console.warn('GSAP not available')"></script>
-  <script src="{% static 'js/vendors/gsap/ScrollTrigger.min.js' %}" defer onerror="console.warn('ScrollTrigger not available')"></script>
-  <script src="{% static 'js/vendors/gsap/ScrollSmoother.min.js' %}" defer onerror="console.warn('ScrollSmoother not available')"></script>
-  <script src="{% static 'js/vendors/gsap/Flip.min.js' %}" defer onerror="console.warn('Flip not available')"></script>
-  <script src="{% static 'js/vendors/gsap/MorphSVGPlugin.min.js' %}" defer onerror="console.warn('MorphSVG not available')"></script>
-  <script src="{% static 'js/vendors/gsap/SplitText.min.js' %}" defer onerror="console.warn('SplitText not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/gsap.min.js' %}" defer onerror="console.warn('GSAP not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/ScrollTrigger.min.js' %}" defer onerror="console.warn('ScrollTrigger not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/ScrollSmoother.min.js' %}" defer onerror="console.warn('ScrollSmoother not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/Flip.min.js' %}" defer onerror="console.warn('Flip not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/MorphSVGPlugin.min.js' %}" defer onerror="console.warn('MorphSVG not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/SplitText.min.js' %}" defer onerror="console.warn('SplitText not available')"></script>
 
-  <!-- Theme initialization: must be before hyperscript -->
-  <script src="{% static 'js/modules/theme-init.js' %}" onerror="this.remove()"></script>
-
-  <!-- HTMX (with fallback paths) -->
-  <script src="{% static 'js/vendors/htmx/htmx.min.js' %}" defer 
-          onerror="this.src='{% static 'js/vendor/htmx/htmx.min.js' %}'; this.onerror=null;"></script>
+  <!-- HTMX -->
+  <script src="{% static 'dist/vendors/htmx/htmx.min.js' %}" defer></script>
   {% django_htmx_script %}
 
-  <!-- HTMX Extensions (with fallbacks) -->
-  <script src="{% static 'js/vendors/htmx/ext/head-support.min.js' %}" defer 
-          onerror="this.src='{% static 'js/vendor/htmx/ext/head-support.min.js' %}'; this.onerror=null;"></script>
-  <script src="{% static 'js/vendors/htmx/ext/loading-states.min.js' %}" defer 
-          onerror="this.src='{% static 'js/vendor/htmx/ext/loading-states.min.js' %}'; this.onerror=null;"></script>
-  <script src="{% static 'js/vendors/htmx/ext/class-tools.min.js' %}" defer 
-          onerror="this.src='{% static 'js/vendor/htmx/ext/class-tools.min.js' %}'; this.onerror=null;"></script>
-  <script src="{% static 'js/vendors/htmx/ext/path-deps.min.js' %}" defer 
-          onerror="this.src='{% static 'js/vendor/htmx/ext/path-deps.min.js' %}'; this.onerror=null;"></script>
+  <!-- HTMX Extensions -->
+  <script src="{% static 'dist/vendors/htmx/ext/head-support.min.js' %}" defer></script>
+  <script src="{% static 'dist/vendors/htmx/ext/loading-states.min.js' %}" defer></script>
+  <script src="{% static 'dist/vendors/htmx/ext/class-tools.min.js' %}" defer></script>
+  <script src="{% static 'dist/vendors/htmx/ext/path-deps.min.js' %}" defer></script>
 
-  <!-- Hyperscript for client-side interactivity -->
-  <script src="{% static 'js/vendors/_hyperscript.min.js' %}" defer 
-          onerror="this.src='{% static 'js/vendor/_hyperscript.min.js' %}'; this.onerror=null;"></script>
+  <!-- Hyperscript -->
+  <script src="{% static 'dist/vendors/_hyperscript.min.js' %}" defer></script>
 
-  <!-- Plotly.js for interactive charts -->
-  <script src="{% static 'js/vendors/plotly-strict.min.js' %}" defer onerror="console.warn('Plotly.js not available')"></script>
-
-  <!-- Dashboard drilldown functionality -->
-  <script src="{% static 'js/dashboard-drilldown.js' %}" defer></script>
+  <!-- Plotly.js -->
+  <script src="{% static 'dist/vendors/plotly-strict.min.js' %}" defer onerror="console.warn('Plotly.js not available')"></script>
 {% endblock head_scripts %}
 
 {% block extra_head %}
-  <!-- Dashboard drilldown styles -->
-  <link rel="stylesheet" href="{% static 'css/dashboard-drilldown.css' %}">
-  
-  <!-- Tailwind CSS -->
-  {% tailwind_css %}
+  <!-- Main CSS: only styles.css from dist -->
+  <link rel="stylesheet" href="{% static 'dist/styles.css' %}">
   {{ block.super }}
 {% endblock extra_head %}
 
@@ -120,19 +103,19 @@
             <ul class="theme-container">
               <li>
                 <a href="#" data-theme-switcher="auto">
-                  {% include "core/components/theme_icon_dark.html" %}
+                  {% include_partial "core/components/theme_icon_dark.html" %}
                   Auto
                 </a>
               </li>
               <li>
                 <a href="#" data-theme-switcher="light">
-                  {% include "core/components/theme_icon_light.html" %}
+                  {% include_partial "core/components/theme_icon_light.html" %}
                   Light
                 </a>
               </li>
               <li>
                 <a href="#" data-theme-switcher="dark">
-                  {% include "core/components/theme_icon_dark.html" %}
+                  {% include_partial "core/components/theme_icon_dark.html" %}
                   Dark
                 </a>
               </li>
@@ -215,14 +198,12 @@
       </header>
 
       <!-- Status messages -->
-      {% include "core/components/status_messages.html" %}
+      {% include_partial "core/components/status_messages.html" %}
 
       <!-- Main content area -->
       <main id="main-content" role="main" hx-history-elt>
-        {% block body %}
-          {% block content %}
-          {% endblock content %}
-        {% endblock body %}
+        {% block content %}
+        {% endblock content %}
       </main>
 
       <!-- Footer -->
@@ -246,34 +227,31 @@
     </div>
   </div>
 
-  <!-- Common scripts -->
-  <script src="{% static 'ts/dist/theme-manager.bundle.js' %}" defer 
-          onerror="console.warn('Theme manager bundle not available')"></script>
-  <script src="{% static 'js/app.js' %}" defer></script>
-  <script src="{% static 'js/components/foldable.js' %}" defer></script>
-  <script src="{% static 'js/components/scrollable.js' %}" defer></script>
-
   <!-- Initialize extensions -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       htmx.config.useTemplateFragments = true;
       // Extensions are already registered via the hx-ext attribute
-
-      {% comment %}Debug toolbar integration{% endcomment %}
-      {% if debug %}
-        if (typeof window.htmx !== "undefined") {
-          htmx.on("htmx:afterSettle", function(detail) {
-            if (
-              typeof window.djdt !== "undefined"
-              && detail.target instanceof HTMLBodyElement
-            ) {
-              djdt.show_toolbar();
-            }
-          });
-        }
-      {% endif %}
+      // Debug toolbar integration (moved outside script for template safety)
     });
   </script>
+
+  {% if debug %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof window.htmx !== "undefined") {
+        htmx.on("htmx:afterSettle", function(detail) {
+          if (
+            typeof window.djdt !== "undefined"
+            && detail.target instanceof HTMLBodyElement
+          ) {
+            djdt.show_toolbar();
+          }
+        });
+      }
+    });
+  </script>
+  {% endif %}
 
   {% block body_scripts %}
   {% endblock body_scripts %}
@@ -282,7 +260,7 @@
   {% endblock modal %}
 
   <!-- Include chatbot widget -->
-  {% include "chatbot/chat_widget.html" %}
+  {% include_partial "chatbot/chat_widget.html" %}
 
   {% block extra_js %}
   {% endblock extra_js %}

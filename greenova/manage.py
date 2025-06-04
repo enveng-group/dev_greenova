@@ -1,11 +1,12 @@
 #!/usr/bin/env python3.9
 """Django's command-line utility for administrative tasks."""
+
 import os
 import sys
 
 import django
 from django.core.management import execute_from_command_line
-from dotenv_vault import load_dotenv
+from dotenv import load_dotenv
 
 # Provide a default path or check if file exists first
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")

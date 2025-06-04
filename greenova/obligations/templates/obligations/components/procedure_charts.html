@@ -1,3 +1,4 @@
+{% load hyperscript %}
 {% extends "base.html" %}
 
 {% load static %}
@@ -17,7 +18,7 @@
               <a href="{% url 'dashboard:home' %}?project_id={{ mechanism.project.id }}">Dashboard</a>
             </li>
             <li>
-              <a href="#" hx-get="javascript:history.back()">Mechanisms</a>
+              <a href="#" _="on click go back">Mechanisms</a>
             </li>
             <li>
 {{ mechanism.name }}
@@ -146,12 +147,9 @@ Apply Filters
           <h2 id="responsibility-heading">
 Responsibility Distribution
           </h2>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
-                  +
-          </button>
+          <button class="btn-fold" _="on click toggle .hidden on the next <article/>">+</button>
         </header>
-        <article class="overall-chart" style="display: none;">
+        <article class="overall-chart hidden">
           <figure>
             <figcaption>
 Obligations by Responsibility
@@ -166,23 +164,20 @@ Obligations by Responsibility
           <h2 id="charts-heading">
 Procedures by Status
           </h2>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
-                  +
-          </button>
+          <button class="btn-fold" _="on click toggle .hidden on the next <span/>">+</button>
         </header>
-        <span style="display: none;">
+        <span class="hidden">
           <!-- Chart Navigation -->
           <nav role="navigation"
                aria-label="Procedure charts navigation"
                class="chart-nav">
             <button type="button"
-                    onclick="scrollCharts('chartScroll', 'left')"
+                    _="on click call scrollCharts('chartScroll', 'left')"
                     aria-label="Scroll left">
   ←
             </button>
             <button type="button"
-                    onclick="scrollCharts('chartScroll', 'right')"
+                    _="on click call scrollCharts('chartScroll', 'right')"
                     aria-label="Scroll right">
   →
             </button>
@@ -191,9 +186,8 @@ Procedures by Status
             {% for proc in procedure_charts %}
 {% procedure_chart_card proc %}
             {% endfor %}
-          </span>
-
-        </div>
+          </div>
+        </span>
       </section>
       <!-- Data Table -->
       <article class="data-table">
@@ -201,12 +195,9 @@ Procedures by Status
           <h3>
 Detailed Statistics
           </h3>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
-                  +
-          </button>
+          <button class="btn-fold" _="on click toggle .hidden on the next <div/>">+</button>
         </header>
-        <div class="table-container" style="display: none;">
+        <div class="table-container hidden">
           <table role="grid">
             <thead>
               <tr>
@@ -264,20 +255,13 @@ Total
           <h2 id="obligations-heading">
         Obligations Overview
           </h2>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
-        +
+          <button class="btn-fold" _="on click toggle .hidden on the next <div/>">+
           </button>
         </header>
-        <div id="header" data-hx-ext="class-tools" style="display: none;">
+        <div id="header" class="hidden">
           <!-- Obligations Container -->
-          <div id="obligations-container"
-               hx-get="{% url 'obligations:summary' %}"
-               hx-target="#obligations-container"
-               hx-swap="innerHTML"
-               hx-trigger="load"
-               hx-include="#mechanism_id">
-            <!-- Obligations will be loaded here -->
+          <div id="obligations-container">
+            <!-- Obligations will be loaded here. Use django-hyperscript for dynamic updates. htmx only if necessary. -->
           </div>
         </div>
       </article>

@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load procedure_tags %}
+{% load hyperscript %}
 
 {% block title %}
   procedure analysis for {{ mechanism.name }}
@@ -17,7 +18,7 @@
               <a href="{% url 'dashboard:home' %}?project_id={{ mechanism.project.id }}">Dashboard</a>
             </li>
             <li>
-              <a href="#" hx-get="javascript:history.back()">Mechanisms</a>
+              <a href="#" _="on click go back">Mechanisms</a>
             </li>
             <li>
 {{ mechanism.name }}
@@ -146,53 +147,45 @@ Apply Filters
           <h2 id="responsibility-heading">
 Responsibility Distribution
           </h2>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
+          <button class="btn-fold" _="on click toggle .hidden on the next <div/>">
 +
           </button>
         </header>
-        <article class="overall-chart" style="display: none;">
+        <div class="overall-chart hidden">
           <figure>
             <figcaption>
 Obligations by Responsibility
             </figcaption>
             {{ responsibility_chart|safe }}
-
           </figure>
-        </article>
+        </div>
       </section>
       <section aria-labelledby="charts-heading" class="charts-section">
         <header>
           <h2 id="charts-heading">
 Procedures by Status
           </h2>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
+          <button class="btn-fold" _="on click toggle .hidden on the next <div/>">
 +
           </button>
         </header>
-        <span style="display: none;">
+        <div class="hidden">
           <!-- Chart Navigation -->
           <nav role="navigation"
                aria-label="Procedure charts navigation"
                class="chart-nav">
-            <button type="button"
-                    onclick="scrollCharts('chartScroll', 'left')"
-                    aria-label="Scroll left">
+            <button type="button" _="on click call scrollCharts('chartScroll', 'left')" aria-label="Scroll left">
   ←
             </button>
-            <button type="button"
-                    onclick="scrollCharts('chartScroll', 'right')"
-                    aria-label="Scroll right">
+            <button type="button" _="on click call scrollCharts('chartScroll', 'right')" aria-label="Scroll right">
   →
             </button>
           </nav>
           <div id="chartScroll" class="chart-scroll-container">
             {% for proc in procedure_charts %}
-{% procedure_chart_card proc %}
+              {% procedure_chart_card proc %}
             {% endfor %}
-          </span>
-
+          </div>
         </div>
       </section>
       <!-- Data Table -->
@@ -201,12 +194,11 @@ Procedures by Status
           <h3>
 Detailed Statistics
           </h3>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
+          <button class="btn-fold" _="on click toggle .hidden on the next <div/>">
 +
           </button>
         </header>
-        <div class="table-container" style="display: none;">
+        <div class="table-container hidden">
           <table role="grid">
             <thead>
               <tr>
@@ -264,12 +256,11 @@ Total
           <h2 id="obligations-heading">
         Obligations Overview
           </h2>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
+          <button class="btn-fold" _="on click toggle .hidden on the next <div/>">
         +
           </button>
         </header>
-        <div id="data-containers" data-hx-ext="class-tools" style="display: none;">
+        <div id="data-containers" data-hx-ext="class-tools" class="hidden">
           <!-- Obligations Container -->
           <div id="obligations-container"
                hx-get="{% url 'obligations:summary' %}"
@@ -283,4 +274,13 @@ Total
       </article>
     {% endif %}
   </article>
+  <script type="text/hyperscript">
+    def scrollCharts(id, direction)
+      set el to document.getElementById(id)
+      if direction is 'left'
+        el.scrollLeft = el.scrollLeft - 320
+      else
+        el.scrollLeft = el.scrollLeft + 320
+    end
+  </script>
 {% endblock body %}

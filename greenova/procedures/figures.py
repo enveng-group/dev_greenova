@@ -1,10 +1,13 @@
 """Module for generating figures and statistics for procedures."""
+
 import io
 import logging
+import re
 from typing import TYPE_CHECKING, Any, cast
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from beartype import beartype
 from django.db.models import Count, F, Q, QuerySet, Sum
 from matplotlib.axes import Axes
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -79,14 +82,22 @@ def generate_procedure_statistics(
 
 def _calculate_procedure_statistics(procedures: QuerySet) -> dict[str, Any]:
     """Calculate statistics from procedures queryset."""
-    status_counts = procedures.values("status").annotate(
-        count=Sum("id", distinct=True),
-    ).order_by("status")
+    status_counts = (
+        procedures.values("status")
+        .annotate(
+            count=Sum("id", distinct=True),
+        )
+        .order_by("status")
+    )
 
-    timeline_data = procedures.values("created_at__month").annotate(
-        count=Sum("id", distinct=True),
-        month=F("created_at__month"),
-    ).order_by("created_at__month")
+    timeline_data = (
+        procedures.values("created_at__month")
+        .annotate(
+            count=Sum("id", distinct=True),
+            month=F("created_at__month"),
+        )
+        .order_by("created_at__month")
+    )
 
     return {
         "total_count": procedures.count(),
@@ -113,15 +124,34 @@ def _plot_procedure_status_chart(ax: Axes, stats: dict[str, Any]) -> None:
 
 def _plot_procedure_timeline_chart(ax: Axes, stats: dict[str, Any]) -> None:
     """Plot procedure timeline chart."""
-    month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    month_names = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ]
 
-    timeline_months = [month_names[item["month"] - 1]
-                       for item in stats["timeline_data"]]
+    timeline_months = [
+        month_names[item["month"] - 1] for item in stats["timeline_data"]
+    ]
     timeline_counts = [item["count"] for item in stats["timeline_data"]]
 
-    ax.plot(timeline_months, timeline_counts, marker="o",
-            linestyle="-", color="#3498db", linewidth=2)
+    ax.plot(
+        timeline_months,
+        timeline_counts,
+        marker="o",
+        linestyle="-",
+        color="#3498db",
+        linewidth=2,
+    )
     ax.set_title("Procedures Created Over Time")
     ax.set_xlabel("Month")
     ax.set_ylabel("Count")
@@ -144,8 +174,12 @@ def get_procedure_charts(
         if filtered_ids is not None:
             query = query.filter(id__in=filtered_ids)
 
-        proc_names = query.values_list("procedure", flat=True).distinct().order_by(
-            "procedure",
+        proc_names = (
+            query.values_list("procedure", flat=True)
+            .distinct()
+            .order_by(
+                "procedure",
+            )
         )
 
         for proc_name in proc_names:
@@ -206,7 +240,8 @@ def _create_empty_chart(title: str) -> Figure:
     """Create an empty chart with a message."""
     fig, ax = plt.subplots(figsize=(6, 5))
     ax.text(
-        0.5, 0.5,
+        0.5,
+        0.5,
         "No obligations found",
         ha="center",
         va="center",
@@ -221,7 +256,8 @@ def _create_error_chart(error_message: str) -> Figure:
     """Create an error chart with the error message."""
     fig, ax = plt.subplots(figsize=(6, 5))
     ax.text(
-        0.5, 0.5,
+        0.5,
+        0.5,
         f"Error generating charts: {error_message}",
         ha="center",
         va="center",
@@ -284,9 +320,11 @@ def get_procedure_status_chart() -> Figure:
 
     """
     # Get status counts
-    status_counts = (Procedure.objects.values("status")
-                     .annotate(count=Count("id"))
-                     .order_by("status"))
+    status_counts = (
+        Procedure.objects.values("status")
+        .annotate(count=Count("id"))
+        .order_by("status")
+    )
 
     # Extract data
     statuses = [s["status"] for s in status_counts]
@@ -308,9 +346,11 @@ def get_procedure_timeline() -> Figure:
 
     """
     # Get procedures ordered by start date
-    procedures = (Procedure.objects.all()
-                  .order_by("start_date")
-                  .values("start_date", "end_date", "title"))
+    procedures = (
+        Procedure.objects.all()
+        .order_by("start_date")
+        .values("start_date", "end_date", "title")
+    )
 
     # Extract data
     titles = [p["title"] for p in procedures]
@@ -333,10 +373,14 @@ def get_completion_rate_chart() -> Figure:
 
     """
     # Get completed vs total procedures by type
-    procedures = (Procedure.objects.values("type")
-                  .annotate(total=Count("id"),
-                            completed=Count("id", filter=Q(status="completed")))
-                  .order_by("type"))
+    procedures = (
+        Procedure.objects.values("type")
+        .annotate(
+            total=Count("id"),
+            completed=Count("id", filter=Q(status="completed")),
+        )
+        .order_by("type")
+    )
 
     # Extract data
     types = [p["type"] for p in procedures]
@@ -352,3 +396,180 @@ def get_completion_rate_chart() -> Figure:
     ax.set_ylim(0, 100)
 
     return fig
+
+
+@beartype
+def _figure_to_svg(fig: Figure) -> str:
+    """Convert matplotlib figure to SVG string with enhanced interactive elements.
+
+    This function converts matplotlib figures to SVG and adds CSS classes and
+    data attributes to enable JavaScript interactivity for the drilldown system.
+
+    Args:
+        fig: Matplotlib figure to convert to SVG.
+
+    Returns:
+        SVG string with interactive elements and accessibility features.
+
+    """
+    svg_buffer = io.StringIO()
+    fig.savefig(
+        svg_buffer,
+        format="svg",
+        bbox_inches="tight",
+        facecolor="white",
+        edgecolor="none",
+    )
+    svg_buffer.seek(0)
+    svg_string = svg_buffer.getvalue()
+    svg_buffer.close()
+
+    # Add interactive chart class to the main SVG element
+    svg_string = svg_string.replace(
+        "<svg",
+        '<svg class="interactive-chart procedure-chart"',
+    )
+
+    # Add CSS classes and data attributes to pie chart paths for interactivity
+    # This regex matches SVG path elements that are likely pie wedges
+    path_pattern = r'(<path[^>]*d="[^"]*L[^"]*A[^"]*Z"[^>]*>)'
+    paths = re.findall(path_pattern, svg_string)
+
+    for i, path in enumerate(paths):
+        # Add CSS classes and data attributes for JavaScript targeting
+        enhanced_path = path.replace(
+            "<path",
+            f'<path class="chart-wedge pie-segment" '
+            f'data-segment-index="{i}" '
+            f'data-chart-type="pie" '
+            f'tabindex="0" '
+            f'role="button" '
+            f'aria-label="Chart segment {i + 1}" ',
+        )
+        svg_string = svg_string.replace(path, enhanced_path)
+
+    # Add CSS classes to text elements for better styling
+    svg_string = re.sub(
+        r"(<text[^>]*>)",
+        r'<text class="chart-text">\1</text>'.replace(
+            '<text class="chart-text"><text',
+            '<text class="chart-text"',
+        ),
+        svg_string,
+    )
+
+    # Fix the text replacement to avoid double tags
+    svg_string = re.sub(
+        r'<text class="chart-text">(<text[^>]*>)',
+        r'<text class="chart-text" \1',
+        svg_string,
+    )
+
+    # Add a container group for better organization
+    svg_string = re.sub(
+        r'(<g id="figure_1">)',
+        r'<g id="chart-container" class="chart-container">\1',
+        svg_string,
+    )
+
+    # Close the container group
+    svg_string = re.sub(
+        r"(</g>\s*</svg>)$",
+        r"</g>\1",
+        svg_string,
+    )
+
+    # Add ARIA attributes for accessibility
+    return svg_string.replace(
+        'class="interactive-chart procedure-chart"',
+        'class="interactive-chart procedure-chart" '
+        'role="img" '
+        'aria-label="Interactive procedure chart" '
+        'tabindex="0"',
+    )
+
+
+@beartype
+def get_procedure_statistics_svg(project_slug: str | None = None) -> str:
+    """Generate SVG statistics chart for procedures.
+
+    Args:
+        project_slug: Optional project slug to filter procedures.
+
+    Returns:
+        SVG string representing the procedure statistics chart.
+
+    """
+    try:
+        fig, _ = generate_procedure_statistics(project_slug)
+        svg_string = _figure_to_svg(fig)
+        plt.close(fig)
+        return svg_string
+    except Exception as e:
+        logger.exception("Error generating procedure statistics SVG: %s", str(e))
+        # Return a fallback SVG with error message
+        return (
+            '<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">'
+            '<rect width="100%" height="100%" fill="#f8f9fa" stroke="#dee2e6"/>'
+            '<text x="50%" y="50%" text-anchor="middle" dy=".35em" '
+            'fill="#6c757d">Error generating chart</text>'
+            "</svg>"
+        )
+
+
+@beartype
+def get_procedure_charts_svg(
+    mechanism_id: str | int,
+    filtered_ids: list[int] | None = None,
+) -> dict[str, str]:
+    """Generate SVG charts for procedures related to an environmental mechanism.
+
+    Args:
+        mechanism_id: ID of the environmental mechanism.
+        filtered_ids: Optional list of obligation IDs to filter by.
+
+    Returns:
+        Dictionary mapping procedure names to SVG strings.
+
+    """
+    procedure_charts: dict[str, str] = {}
+    figures_dict = get_procedure_charts(mechanism_id, filtered_ids)
+
+    try:
+        for proc_name, fig in figures_dict.items():
+            svg_string = _figure_to_svg(fig)
+            procedure_charts[proc_name] = svg_string
+            plt.close(fig)
+    except Exception as e:
+        logger.exception("Error generating procedure charts SVG: %s", str(e))
+        # Return fallback SVG for error cases
+        error_svg = (
+            '<svg width="300" height="250" xmlns="http://www.w3.org/2000/svg">'
+            '<rect width="100%" height="100%" fill="#f8f9fa" stroke="#dee2e6"/>'
+            '<text x="50%" y="50%" text-anchor="middle" dy=".35em" '
+            'fill="#6c757d">Error generating chart</text>'
+            "</svg>"
+        )
+        procedure_charts["Error"] = error_svg
+
+    return procedure_charts
+
+
+@beartype
+def get_all_procedure_charts_svg(
+    mechanism_id: str | int,
+    filtered_ids: list[int] | None = None,
+) -> dict[str, str]:
+    """Generate all procedure charts and return them as SVG strings.
+
+    This function replaces get_all_procedure_charts() for SVG output.
+
+    Args:
+        mechanism_id: ID of the environmental mechanism.
+        filtered_ids: Optional list of obligation IDs to filter by.
+
+    Returns:
+        Dictionary mapping chart names to SVG strings.
+
+    """
+    return get_procedure_charts_svg(mechanism_id, filtered_ids)

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load partials %}
 
 {% block title %}Delete Company{% endblock title %}
 
@@ -9,8 +10,9 @@
     <h1>Delete Company</h1>
   </header>
 
-  <div class="delete-container" hx-target="this" hx-swap="outerHTML">
-    {% include "company/partials/company_delete_confirm.html" %}
+  <div class="delete-container">
+    <!-- Use django-hyperscript for dynamic updates if needed. -->
+    {% include_partial "company/partials/company_delete_confirm.html" %}
   </div>
 </article>
 {% endblock content %}

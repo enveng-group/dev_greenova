@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block form_content %}
   <form method="post" class="form" novalidate>
@@ -7,25 +8,7 @@
       <legend>
 {{ legend|default:"Company Information" }}
       </legend>
-      {% for field in form %}
-        <div class="form-group">
-          <label for="{{ field.id_for_label }}">
-            {{ field.label }}
-            {% if field.field.required %}
-              <span class="required" aria-hidden="true">*</span>
-            {% endif %}
-          </label>
-          {{ field }}
-          {% if field.help_text %}
-            <small id="{{ field.id_for_label }}_helptext" class="help-text">{{ field.help_text }}</small>
-          {% endif %}
-          {% for error in field.errors %}
-            <div class="error" role="alert">
-              {{ error }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endfor %}
+      {{ form|crispy }}
     </fieldset>
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">

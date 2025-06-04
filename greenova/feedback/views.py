@@ -1,5 +1,6 @@
 import logging
 
+from beartype import beartype
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -8,14 +9,20 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
+from guardian.shortcuts import get_objects_for_user
 
 from .forms import BugReportForm
 from .models import BugReport
-from .proto_utils import deserialize_bug_report, serialize_bug_report
+from .proto_utils import (
+    deserialize_bug_report,
+    serialize_bug_report,
+    serialize_bug_reports,
+)
 
 logger = logging.getLogger(__name__)
 
 
+@beartype
 def get_plaintext_template(template_path: str) -> str:
     """Load and return the contents of a plaintext template file.
 
@@ -34,6 +41,7 @@ def get_plaintext_template(template_path: str) -> str:
         return ""
 
 
+@beartype
 def get_status_description(status: str) -> str:
     """Get the description for a bug report status from the plaintext template.
 
@@ -57,23 +65,22 @@ def get_status_description(status: str) -> str:
     return ""
 
 
+@beartype
 def index(request: HttpRequest) -> HttpResponse:
-    """Display the main feedback page showing bug reports and submission form.
-
-    Args:
-        request: The HTTP request
-
-    Returns:
-        HTTP response with rendered template
-
-    """
+    """Display the main feedback page showing bug reports and submission form with object-level permission checks."""
     # Get all bug reports if user is staff, otherwise only show the user's reports
     if request.user.is_authenticated and request.user.is_staff:
-        bug_reports = BugReport.objects.all().order_by("-created_at")
+        bug_reports = get_objects_for_user(
+            request.user,
+            "feedback.view_bugreport",
+            BugReport.objects.all(),
+        ).order_by("-created_at")
     elif request.user.is_authenticated:
-        bug_reports = (BugReport.objects
-                       .filter(created_by=request.user)
-                       .order_by("-created_at"))
+        bug_reports = get_objects_for_user(
+            request.user,
+            "feedback.view_bugreport",
+            BugReport.objects.filter(created_by=request.user),
+        ).order_by("-created_at")
     else:
         bug_reports = []
 
@@ -86,6 +93,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+@beartype
 def submit_bug_report(request: HttpRequest) -> HttpResponse:
     """Handle bug report submission form.
 
@@ -116,10 +124,13 @@ def submit_bug_report(request: HttpRequest) -> HttpResponse:
                 admin_emails = []  # Replace with actual admin emails logic
                 if admin_emails:
                     subject = f"New Bug Report: {bug_report.title}"
-                    message = render_to_string("feedback/email/new_bug_report.txt", {
-                        "bug_report": bug_report,
-                        "user": request.user,
-                    })
+                    message = render_to_string(
+                        "feedback/email/new_bug_report.txt",
+                        {
+                            "bug_report": bug_report,
+                            "user": request.user,
+                        },
+                    )
                     send_mail(
                         subject,
                         message,
@@ -156,6 +167,7 @@ def submit_bug_report(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+@beartype
 def export_report(request: HttpRequest, report_id: int) -> HttpResponse:
     """Export a bug report as Protocol Buffer binary data.
 
@@ -189,7 +201,25 @@ def export_report(request: HttpRequest, report_id: int) -> HttpResponse:
 
 
 @login_required
+@beartype
+def export_all_reports(request: HttpRequest) -> HttpResponse:
+    """Export all bug reports as a Protocol Buffer collection."""
+    if request.user.is_staff:
+        bug_reports = list(BugReport.objects.all())
+    else:
+        bug_reports = list(BugReport.objects.filter(created_by=request.user))
+    serialized_data = serialize_bug_reports(bug_reports)
+    if not serialized_data:
+        messages.error(request, _("Failed to export bug reports."))
+        return redirect("feedback:index")
+    response = HttpResponse(serialized_data, content_type="application/octet-stream")
+    response["Content-Disposition"] = 'attachment; filename="bug_reports.pb"'
+    return response
+
+
+@login_required
 @require_http_methods(["GET", "POST"])
+@beartype
 def import_report(request: HttpRequest) -> HttpResponse:
     """Import a bug report from Protocol Buffer binary data.
 
@@ -214,7 +244,8 @@ def import_report(request: HttpRequest) -> HttpResponse:
 
             if not bug_report:
                 messages.error(
-                    request, _("Could not deserialize the file. Invalid format."),
+                    request,
+                    _("Could not deserialize the file. Invalid format."),
                 )
                 return redirect("feedback:import_report")
 
@@ -235,6 +266,10 @@ def import_report(request: HttpRequest) -> HttpResponse:
             return redirect("feedback:import_report")
 
     # GET request - show import form
-    return render(request, "feedback/import_report.html", {
-        "page_title": _("Import Bug Report"),
-    })
+    return render(
+        request,
+        "feedback/import_report.html",
+        {
+            "page_title": _("Import Bug Report"),
+        },
+    )

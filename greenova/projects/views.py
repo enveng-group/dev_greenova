@@ -1,19 +1,26 @@
 import logging
 from typing import Any, TypeVar, cast
 
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
-from django_htmx.http import HttpResponseClientRedirect, trigger_client_event
+from guardian.shortcuts import assign_perm, get_objects_for_user
 from obligations.models import Obligation
 
 from .models import Project
+from .serializers import (
+    ProjectCollectionProtoSerializer,
+    ProjectProtoSerializer,
+)
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -24,45 +31,31 @@ T = TypeVar("T")
 @method_decorator(cache_control(max_age=300), name="dispatch")
 @method_decorator(vary_on_headers("HX-Request"), name="dispatch")
 class ProjectSelectionView(LoginRequiredMixin, TemplateView):
-    """Handle project selection."""
+    """Handle project selection with object-level permission checks."""
 
     template_name: str = "projects/projects_selector.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """Add user's projects to the context."""
+        """Add user's projects to the context using guardian permissions."""
         context = super().get_context_data(**kwargs)
-        user_projects = Project.objects.filter(members=self.request.user)
-        context["object_list"] = user_projects  # Add projects under 'object_list'
-        context["user_projects"] = user_projects  # Add projects under 'user_projects'
-
-        # Add selected project ID to context if present in the request
+        user_projects = get_objects_for_user(
+            self.request.user,
+            "projects.view_project",
+            Project.objects.all(),
+        )
+        context["object_list"] = user_projects
+        context["user_projects"] = user_projects
         if self.request.GET.get("project_id"):
             context["selected_project_id"] = self.request.GET.get("project_id")
-
         return context
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests for project selection."""
-        response = super().get(request, *args, **kwargs)
-
-        # If htmx request, add appropriate triggers and handle client-side updates
-        if hasattr(request, "htmx") and request.htmx:
-            # Trigger a client event to refresh any project-dependent elements
-            trigger_client_event(response, "projectSelected")
-
-            # If the user is selecting a project that requires special permissions
-            project_id = request.GET.get("project_id")
-            if project_id and self.requires_special_access(
-                project_id, cast("AbstractUser", request.user),
-            ):
-                return HttpResponseClientRedirect("/permissions-check/")
-
-        return response
+        return super().get(request, *args, **kwargs)
 
     def requires_special_access(self, project_id: str, _user: AbstractUser) -> bool:
         """Check if a project requires special access permissions."""
         try:
-            # Removed unused variable to fix linting issue
             Project.objects.get(id=project_id)
             # Implement your permission logic here
             return False  # Return True if special access is required
@@ -203,8 +196,11 @@ def get_responsibility_choices() -> list[tuple[str, str]]:
     """
     # For the responsibility field, both the key and value are the display name
     # This maintains compatibility with existing data
-    return [(display_name, display_name) for _, display_name in get_role_choices()
-            if display_name not in {"Owner", "Manager", "Member", "Viewer"}]
+    return [
+        (display_name, display_name)
+        for _, display_name in get_role_choices()
+        if display_name not in {"Owner", "Manager", "Member", "Viewer"}
+    ]
 
 
 def get_role_from_responsibility(responsibility: str) -> str:
@@ -259,3 +255,85 @@ def get_responsibility_display_name(responsibility: str) -> str:
 
     # Otherwise, convert to display name using the role mapping
     return get_responsibility_from_role(responsibility)
+
+
+@login_required
+def export_project(request, project_id: int) -> HttpResponse:
+    """Export a single project as Protocol Buffer binary data."""
+    project = get_object_or_404(Project, id=project_id)
+    # Optionally restrict to user's projects
+    serializer = ProjectProtoSerializer(instance=project)
+    data = serializer.data()
+    if not data:
+        messages.error(request, "Failed to export project.")
+        return HttpResponse(status=400)
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = f'attachment; filename="project_{project_id}.pb"'
+    return response
+
+
+@login_required
+def export_all_projects(request) -> HttpResponse:
+    """Export all projects as a Protocol Buffer collection."""
+    projects = list(Project.objects.all())
+    # Optionally restrict to user's projects
+    serializer = ProjectCollectionProtoSerializer(instances=projects)
+    data = serializer.data()
+    if not data:
+        messages.error(request, "Failed to export projects.")
+        return HttpResponse(status=400)
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = 'attachment; filename="projects.pb"'
+    return response
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def import_project(request) -> HttpResponse:
+    """Import a project from Protocol Buffer binary data."""
+    if request.method == "POST":
+        if "file" not in request.FILES:
+            messages.error(request, "No file was provided.")
+            return HttpResponse(status=400)
+        uploaded_file = request.FILES["file"]
+        try:
+            data = uploaded_file.read()
+            serializer = ProjectProtoSerializer(data=data)
+            if not serializer.is_valid():
+                messages.error(
+                    request,
+                    "Could not deserialize the file. Invalid format.",
+                )
+                return HttpResponse(status=400)
+            project = serializer.validated_data
+            project.id = None  # Ensure a new record is created
+            project.save()
+            messages.success(request, "Project imported successfully.")
+            return HttpResponse(status=200)
+        except (ValueError, OSError, AttributeError, TypeError):
+            messages.error(request, "An error occurred while importing the project.")
+            return HttpResponse(status=400)
+    # GET request - show import form
+    return HttpResponse("Import Project Form")
+
+
+def create_project_with_permissions(user, form):
+    """Create a project and assign object-level permissions to the creator.
+
+    Args:
+        user: The user creating the project.
+        form: The validated ProjectForm instance.
+
+    Returns:
+        The created Project instance.
+
+    """
+    project = form.save(commit=False)
+    project.save()
+    form.save_m2m()
+    # Assign object-level permissions to creator
+    assign_perm("view_project", user, project)
+    assign_perm("change_project", user, project)
+    assign_perm("delete_project", user, project)
+    assign_perm("manage_members", user, project)
+    return project

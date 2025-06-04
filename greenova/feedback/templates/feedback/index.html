@@ -1,5 +1,6 @@
 {% extends "feedback/layouts/base.html" %}
 {% load feedback_tags %}
+{% load partials %}
 
 {% block feedback_content %}
   <section>
@@ -107,6 +108,6 @@ Fields marked with * are required.
       </p>
     </div>
 
-{% include "feedback/form/form.html" with form=form %}
+{% include_partial "feedback/form/form.html" with form=form %}
   </section>
 {% endblock %}

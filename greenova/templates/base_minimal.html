@@ -20,19 +20,13 @@
     <!-- Favicon -->
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
 
-    <!-- Critical CSS -->
+    <!-- Main CSS: only styles.css from dist -->
     <link rel="preload"
-          href="{% static 'css/dist/critical-styles.css' %}"
-          as="style" />
-    <link rel="stylesheet" href="{% static 'css/dist/critical-styles.css' %}" />
-
-    <!-- Non-critical CSS - deferred loading -->
-    <link rel="preload"
-          href="{% static 'css/dist/styles.css' %}"
+          href="{% static 'dist/styles.css' %}"
           as="style"
           onload="this.onload=null;this.rel='stylesheet'" />
     <noscript>
-      <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}" />
+      <link rel="stylesheet" href="{% static 'dist/styles.css' %}" />
     </noscript>
 
     {% block extra_css %}

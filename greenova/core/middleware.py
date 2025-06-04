@@ -9,6 +9,7 @@ session and request.
 
 import logging
 
+from beartype import beartype
 from django.http import HttpRequest
 from django.utils.deprecation import MiddlewareMixin
 
@@ -21,6 +22,7 @@ class ProjectSelectionMiddleware(MiddlewareMixin):
     Ensures project selection is consistent for all views, including HTMX.
     """
 
+    @beartype
     def process_request(self, request: HttpRequest) -> None:
         """Attach the selected project ID to the request and session if present.
 

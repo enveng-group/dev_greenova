@@ -35,9 +35,48 @@
 		"doc": "docs"
 	},
 	"scripts": {
-		"test": "vitest run"
+		"build:frontend": "npm run build:clean && npm run build:tailwind",
+		"build:clean": "rimraf greenova/static/css/dist",
+		"build:tailwind": "cross-env NODE_ENV=production tailwindcss --postcss -i styles.scss -o greenova/static/css/dist/styles.css --minify",
+		"dev:frontend": "cross-env NODE_ENV=development tailwindcss --postcss -i styles.scss -o greenova/static/css/dist/styles.css -w",
+		"start:frontend": "npm run dev:frontend",
+		"build:wasm": "npx asc greenova/static/as/assembly/index.ts --outFile greenova/static/dist/optimized.wasm --optimize --sourceMap --exportRuntime",
+		"build:vendors": "mkdir -p greenova/static/dist/vendors && cp -r greenova/static/js/vendors/* greenova/static/dist/vendors/ && cp greenova/static/css/vendor/pico-classless.min.css greenova/static/dist/vendors/",
+		"build:all": "npm run build:wasm && npm run build:frontend && npm run build:vendors",
+		"test": "vitest run",
+		"copy:vendor": "node -e \"const [,,src,dest]=process.argv;const fs=require('fs'),path=require('path');if(!src||!dest){console.error('Usage: npm run copy:vendor <module-path> <target-dir>');process.exit(1);}const srcPath=path.resolve('node_modules',src);const destPath=path.resolve(dest,src.split('/').pop());fs.cpSync(srcPath,destPath,{recursive:true});console.log('Copied',srcPath,'to',destPath);\""
 	},
 	"dependencies": {
-		"npm": "11.3.0"
+		"npm": "11.3.0",
+		"protobufjs": "^7.2.5"
+	},
+	"devDependencies": {
+		"@eslint/js": "9.28.0",
+		"@tailwindcss/aspect-ratio": "^0.4.2",
+		"@tailwindcss/forms": "^0.5.3",
+		"@tailwindcss/line-clamp": "^0.4.4",
+		"@tailwindcss/typography": "^0.5.9",
+		"@typescript-eslint/eslint-plugin": "8.33.1",
+		"@typescript-eslint/parser": "8.33.1",
+		"assemblyscript": "0.28.2",
+		"autoprefixer": "^10.4.21",
+		"critical": "7.2.1",
+		"cross-env": "^7.0.3",
+		"eslint": "^9.27.0",
+		"postcss": "^8.5.3",
+		"postcss-calc": "^8.2.4",
+		"postcss-import": "^16.1.0",
+		"postcss-nested": "^7.0.2",
+		"postcss-preset-env": "^9.3.0",
+		"postcss-reporter": "^7.0.2",
+		"postcss-simple-vars": "^7.0.1",
+		"prettier": "^4.0.0-alpha.8",
+		"protobufjs-cli": "1.1.3",
+		"rimraf": "^5.0.1",
+		"stylelint": "^15.10.3",
+		"tailwindcss": "^3.4.3",
+		"tailwindcss-accessibility": "^1.0.0",
+		"tailwindcss-animate": "^1.0.7",
+		"typescript": "5.8.3"
 	}
 }

@@ -1,3 +1,7 @@
+from beartype import beartype
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Column, Fieldset, Layout, Row, Submit
+from dal import autocomplete
 from django import forms
 from django.contrib.auth import get_user_model
 
@@ -12,14 +16,48 @@ class CompanyForm(forms.ModelForm):
     class Meta:
         model = Company
         fields = [
-            "name", "logo", "description", "website",
-            "address", "phone", "email", "company_type",
-            "size", "industry", "is_active",
+            "name",
+            "logo",
+            "description",
+            "website",
+            "address",
+            "phone",
+            "email",
+            "company_type",
+            "size",
+            "industry",
+            "is_active",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
             "address": forms.Textarea(attrs={"rows": 3}),
+            # Example: "company_type": forms.Select(choices=COMPANY_TYPE_CHOICES)
         }
+
+    @beartype
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Fieldset(
+                "Company Details",
+                Row(
+                    Column("name", css_class="form-group col-md-6 mb-0"),
+                    Column("logo", css_class="form-group col-md-6 mb-0"),
+                ),
+                "description",
+                "website",
+                "address",
+                "phone",
+                "email",
+                "company_type",
+                "size",
+                "industry",
+                "is_active",
+            ),
+            Submit("submit", "Save Company"),
+        )
 
 
 class CompanyMembershipForm(forms.ModelForm):
@@ -27,23 +65,68 @@ class CompanyMembershipForm(forms.ModelForm):
 
     user = forms.ModelChoiceField(
         queryset=User.objects.all(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=autocomplete.ModelSelect2(url="user-autocomplete"),
+    )
+    company = forms.ModelChoiceField(
+        queryset=Company.objects.all(),
+        widget=autocomplete.ModelSelect2(url="company-autocomplete"),
     )
 
     class Meta:
         model = CompanyMembership
-        fields = ["user", "role", "department", "position", "is_primary"]
+        fields = ["company", "user", "role", "department", "position", "is_primary"]
+        # Example: widgets = {"role": forms.Select(choices=COMPANY_ROLE_CHOICES)}
+
+    @beartype
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Fieldset(
+                "Membership Details",
+                "company",
+                "user",
+                "role",
+                "department",
+                "position",
+                "is_primary",
+            ),
+            Submit("submit", "Save Membership"),
+        )
 
 
 class CompanyDocumentForm(forms.ModelForm):
     """Form for uploading company documents."""
 
+    company = forms.ModelChoiceField(
+        queryset=Company.objects.all(),
+        widget=autocomplete.ModelSelect2(url="company-autocomplete"),
+    )
+
     class Meta:
         model = CompanyDocument
-        fields = ["name", "description", "file", "document_type"]
+        fields = ["company", "name", "description", "file", "document_type"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 3}),
         }
+
+    @beartype
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Fieldset(
+                "Document Details",
+                "company",
+                "name",
+                "description",
+                "file",
+                "document_type",
+            ),
+            Submit("submit", "Upload Document"),
+        )
 
 
 class CompanySearchForm(forms.Form):
@@ -51,42 +134,50 @@ class CompanySearchForm(forms.Form):
 
     search = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder": "Search by name or description",
-            "class": "form-input",
-            "hx-get": "/company/search/",
-            "hx-trigger": "keyup changed delay:500ms",
-            "hx-target": "#company-list-container",
-        }),
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Search by name or description",
+                "class": "form-input",
+                "hx-get": "/company/search/",
+                "hx-trigger": "keyup changed delay:500ms",
+                "hx-target": "#company-list-container",
+            },
+        ),
     )
     company_type = forms.ChoiceField(
         required=False,
         choices=[("", "All Types"), *Company.COMPANY_TYPES],
-        widget=forms.Select(attrs={
-            "class": "form-select",
-            "hx-get": "/company/search/",
-            "hx-trigger": "change",
-            "hx-target": "#company-list-container",
-        }),
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "hx-get": "/company/search/",
+                "hx-trigger": "change",
+                "hx-target": "#company-list-container",
+            },
+        ),
     )
     industry = forms.ChoiceField(
         required=False,
         choices=[("", "All Industries"), *Company.INDUSTRY_SECTORS],
-        widget=forms.Select(attrs={
-            "class": "form-select",
-            "hx-get": "/company/search/",
-            "hx-trigger": "change",
-            "hx-target": "#company-list-container",
-        }),
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "hx-get": "/company/search/",
+                "hx-trigger": "change",
+                "hx-target": "#company-list-container",
+            },
+        ),
     )
     is_active = forms.BooleanField(
         required=False,
         initial=True,
-        widget=forms.CheckboxInput(attrs={
-            "hx-get": "/company/search/",
-            "hx-trigger": "change",
-            "hx-target": "#company-list-container",
-        }),
+        widget=forms.CheckboxInput(
+            attrs={
+                "hx-get": "/company/search/",
+                "hx-trigger": "change",
+                "hx-target": "#company-list-container",
+            },
+        ),
     )
 
 
@@ -95,7 +186,7 @@ class AddUserToCompanyForm(forms.Form):
 
     user = forms.ModelChoiceField(
         queryset=User.objects.all().order_by("username"),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=autocomplete.ModelSelect2(url="user-autocomplete"),
     )
     role = forms.ChoiceField(
         choices=CompanyMembership.ROLE_CHOICES,

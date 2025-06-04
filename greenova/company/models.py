@@ -1,18 +1,46 @@
 import logging
 
+from beartype import beartype
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
+from django_lifecycle import BEFORE_SAVE, LifecycleModel, hook
+from slugify import slugify
+
+from .constants import (
+    COMPANY_TYPE_CHOICES,
+    COMPANY_TYPE_PRIVATE,
+)
 
 logger = logging.getLogger(__name__)
 
+try:
+    from pb_model.models import ProtoBufMixin
+except ImportError:
+    ProtoBufMixin = models.Model  # fallback for type checking
 
-class Company(models.Model):
+try:
+    from .proto.company_pb2 import (
+        CompanyDocumentProto,
+        CompanyMembershipProto,
+        CompanyProto,
+    )
+except ImportError:
+    CompanyProto = None
+    CompanyMembershipProto = None
+    CompanyDocumentProto = None
+
+
+@beartype
+class Company(LifecycleModel, ProtoBufMixin):
     """Model representing a company or organization."""
 
+    pb_model = CompanyProto
+
     name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     logo = models.ImageField(upload_to="company_logos/", blank=True, null=True)
     description = models.TextField(blank=True)
     website = models.URLField(blank=True)
@@ -21,18 +49,11 @@ class Company(models.Model):
     email = models.EmailField(blank=True)
 
     # Company type choices
-    COMPANY_TYPES = [
-        ("client", "Client"),
-        ("contractor", "Contractor"),
-        ("consultant", "Consultant"),
-        ("regulator", "Regulator"),
-        ("internal", "Internal Department"),
-        ("other", "Other"),
-    ]
     company_type = models.CharField(
         max_length=20,
-        choices=COMPANY_TYPES,
-        default="client")
+        choices=COMPANY_TYPE_CHOICES,
+        default=COMPANY_TYPE_PRIVATE,
+    )
 
     # Company size choices
     COMPANY_SIZES = [
@@ -80,9 +101,24 @@ class Company(models.Model):
         verbose_name = "Company"
         verbose_name_plural = "Companies"
         ordering = ["name"]
+        permissions = [
+            ("view_company", "Can view company"),
+            ("change_company", "Can change company"),
+            ("delete_company", "Can delete company"),
+            ("manage_members", "Can manage company members"),
+        ]
+        default_permissions = ("add", "change", "delete", "view")
+        # Enable object-level permissions for django-guardian
+        # (no explicit 'object_permissions' needed, but docstring updated)
 
     def __str__(self) -> str:
         return self.name
+
+    @hook(BEFORE_SAVE)
+    def set_slug(self) -> None:
+        """Set slug from name if not already set."""
+        if not self.slug:
+            self.slug = slugify(self.name)
 
     def get_member_count(self) -> int:
         """Get count of company members."""
@@ -128,9 +164,8 @@ class Company(models.Model):
                 role=role,
             )
             logger.info(
-                f"Added user {
-                    user.username} to company {
-                    self.name} with role {role}")
+                f"Added user {user.username} to company {self.name} with role {role}",
+            )
 
     def remove_member(self, user: User) -> None:
         """Remove a user from the company."""
@@ -138,8 +173,11 @@ class Company(models.Model):
         logger.info(f"Removed user {user.username} from company {self.name}")
 
 
-class CompanyMembership(models.Model):
+@beartype
+class CompanyMembership(LifecycleModel, ProtoBufMixin):
     """Through model for company memberships."""
+
+    pb_model = CompanyMembershipProto
 
     ROLE_CHOICES = [
         ("owner", "Owner"),
@@ -183,30 +221,48 @@ class CompanyMembership(models.Model):
     def __str__(self) -> str:
         return f"{self.user.username} - {self.company.name} ({self.role})"
 
-    def save(self, *args, **kwargs) -> None:
-        """Override save to ensure only one company is primary."""
+    @hook(BEFORE_SAVE)
+    def ensure_single_primary(self) -> None:
+        """Ensure only one primary company membership per user."""
         if self.is_primary:
             # Set all other memberships for this user as not primary
             CompanyMembership.objects.filter(
                 user=self.user,
                 is_primary=True,
             ).exclude(id=self.id or 0).update(is_primary=False)
-        super().save(*args, **kwargs)
 
     def clean(self) -> None:
         """Validate that a company can only have one owner."""
         if self.role == "owner":
-            existing_owner = CompanyMembership.objects.filter(
-                company=self.company,
-                role="owner",
-            ).exclude(id=self.id or 0).exists()
+            existing_owner = (
+                CompanyMembership.objects.filter(
+                    company=self.company,
+                    role="owner",
+                )
+                .exclude(id=self.id or 0)
+                .exists()
+            )
 
             if existing_owner:
                 raise ValidationError({"role": "A company can only have one owner."})
 
 
-class CompanyDocument(models.Model):
-    """Model for storing company documents."""
+@beartype
+class CompanyDocument(ProtoBufMixin):
+    """Model for storing company documents.
+
+    Attributes:
+        company (ForeignKey): The company associated with the document.
+        name (str): The name of the document.
+        description (str): A brief description of the document.
+        file (FileField): The file associated with the document.
+        document_type (str): The type of document.
+        uploaded_by (ForeignKey): The user who uploaded the document.
+        uploaded_at (DateTimeField): The timestamp when the document was uploaded.
+
+    """
+
+    pb_model = CompanyDocumentProto
 
     company = models.ForeignKey(
         Company,
@@ -231,4 +287,10 @@ class CompanyDocument(models.Model):
         verbose_name_plural = "Company Documents"
 
     def __str__(self) -> str:
+        """Return a string representation of the document.
+
+        Returns:
+            str: The name of the document and the associated company.
+
+        """
         return f"{self.name} ({self.company.name})"

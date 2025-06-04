@@ -86,15 +86,12 @@ and manage obligations related to environmental regulations.
 6. **django-htmx**: Secondary implementation for client-side interactions only
    to compliment django-hyperscript.
 
-7. **SASS/PostCSS**: Use for advanced styling needs when required.
+7. **SCSS/PostCSS**: Use for advanced styling needs when required.
 
-8. **TypeScript**: Introduce only when django-hyperscript and django-htmx
-   cannot meet the requirements. Use TypeScript for complex logic. Avoid using
-   TypeScript for simple interactions that can be handled by django-hyperscript
+8. **AssemblyScript**: Introduce only when django-hyperscript and django-htmx
+   cannot meet the requirements. Use AssemblyScript for complex logic. Avoid using
+   AssemblyScriptfor simple interactions that can be handled by django-hyperscript
    or django-htmx.
-
-9. **AssemblyScript**: Primary implementation for critical client-side
-   interactions and web assembly (WASM) implementations.
 
 ## Expectations
 
@@ -566,7 +563,7 @@ This provides access to all project-specific configuration files and standards.
 or frameworks, use the `fetch` or `context7` MCP server to retrieve and
 reference their official documentation as needed:
 
-- GSAP Animation, PicoCSS Classless, Hyperscript, TypeScript, HTMX, django-hyperscript,
+- GSAP Animation, PicoCSS Classless, Hyperscript, HTMX, django-hyperscript,
   django-htmx, AssemblyScript, Django, Protobuf3, SQLite, django-pb-model,
   Matplotlib, django_matplotlib, Plotly, Pandas, NumPy, django-csp,
   django-template-partials, dj-all-auth, python-dotenv-vault.

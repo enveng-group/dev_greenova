@@ -1,5 +1,6 @@
 {% load static %}
 {% load mechanism_tags %}
+{% load hyperscript %}
 
 {% if mechanism_charts %}
 
@@ -9,12 +10,10 @@ Environmental Mechanisms Analysis
     </h2>
     <!-- Chart Navigation -->
     <nav class="chart-nav" aria-label="Mechanism charts navigation">
-      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">
+      <button type="button" _="on click call scrollCharts('left')" aria-label="Scroll left">
         ←
       </button>
-      <button type="button"
-              onclick="scrollCharts('chartGallery', 'right')"
-              aria-label="Scroll right">
+      <button type="button" _="on click call scrollCharts('chartGallery', 'right')" aria-label="Scroll right">
 →
       </button>
     </nav>
@@ -62,12 +61,11 @@ Environmental Mechanisms Analysis
           <h3>
 Detailed Statistics
           </h3>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
+          <button class="btn-fold" _="on click toggle .hidden on the next <div/>">
 +
           </button>
         </header>
-        <div class="table-container" style="display: none;">
+        <div class="table-container hidden">
           <table role="grid">
             <thead>
               <tr>

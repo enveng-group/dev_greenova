@@ -1,12 +1,62 @@
+from beartype import beartype
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+try:
+    from pb_model.models import ProtoBufMixin
+except ImportError:
+    ProtoBufMixin = models.Model  # fallback for type checking
+
+try:
+    from .proto.feedback_pb2 import BugReportProto
+except ImportError:
+    BugReportProto = None
+
+from .constants import (
+    FEEDBACK_STATUS_CHOICES,
+)
+
 User = get_user_model()
 
 
-class BugReport(models.Model):
-    """Model for storing user-submitted bug reports."""
+@beartype
+class BugReport(ProtoBufMixin):
+    """Model for storing user-submitted bug reports, integrated with protobuf3.
+
+    Attributes:
+        pb_model: The protobuf model associated with this class.
+        SEVERITY_CHOICES: List of severity levels for bug reports.
+        STATUS_CHOICES: List of status options for bug reports.
+        FREQUENCY_CHOICES: List of frequency options for bug occurrence.
+        title: Title of the bug report.
+        description: Detailed description of the bug.
+        environment: Environment details where the bug occurred.
+        application_version: Version of the application where the bug occurred.
+        operating_system: Operating system details.
+        browser: Browser details, if applicable.
+        device_type: Type of device where the bug occurred.
+        steps_to_reproduce: Steps to reproduce the bug.
+        expected_behavior: Expected result of the application.
+        actual_behavior: Actual result of the application.
+        error_messages: Error messages encountered, if any.
+        trace_report: Trace report details, if any.
+        frequency: Frequency of the bug occurrence.
+        impact_severity: Severity of the bug's impact.
+        user_impact: Description of the user impact due to the bug.
+        workarounds: Workarounds for the bug, if any.
+        additional_comments: Additional comments about the bug.
+        created_by: User who created the bug report.
+        created_at: Timestamp when the bug report was created.
+        updated_at: Timestamp when the bug report was last updated.
+        github_issue_url: URL of the related GitHub issue, if any.
+        severity: Severity level of the bug.
+        status: Current status of the bug report.
+        admin_comment: Comments from the admin regarding the bug report.
+
+    """
+
+    pb_model = BugReportProto
 
     SEVERITY_CHOICES = [
         ("low", "Low"),
@@ -15,13 +65,7 @@ class BugReport(models.Model):
         ("critical", "Critical"),
     ]
 
-    STATUS_CHOICES = [
-        ("open", "Open"),
-        ("in_progress", "In Progress"),
-        ("resolved", "Resolved"),
-        ("closed", "Closed"),
-        ("rejected", "Rejected"),  # Added rejected status
-    ]
+    STATUS_CHOICES = FEEDBACK_STATUS_CHOICES
 
     FREQUENCY_CHOICES = [
         ("always", "Always (100% of attempts)"),
@@ -54,12 +98,14 @@ class BugReport(models.Model):
     frequency = models.CharField(
         _("Frequency"),
         max_length=20,
-        choices=FREQUENCY_CHOICES)
+        choices=FREQUENCY_CHOICES,
+    )
     impact_severity = models.CharField(
         _("Impact Severity"),
         max_length=10,
         choices=SEVERITY_CHOICES,
-        default="medium")
+        default="medium",
+    )
     user_impact = models.TextField(_("User Impact Description"))
 
     # Additional info
@@ -83,18 +129,27 @@ class BugReport(models.Model):
         _("Severity"),
         max_length=10,
         choices=SEVERITY_CHOICES,
-        default="medium")
+        default="medium",
+    )
     status = models.CharField(
         _("Status"),
         max_length=15,
         choices=STATUS_CHOICES,
-        default="open")
+        default="open",
+    )
     admin_comment = models.TextField(_("Admin Comment"), blank=True)
 
     class Meta:
         ordering = ["-created_at"]
         verbose_name = _("Bug Report")
         verbose_name_plural = _("Bug Reports")
+        permissions = [
+            ("view_bugreport", "Can view bug report"),
+            ("change_bugreport", "Can change bug report"),
+            ("delete_bugreport", "Can delete bug report"),
+        ]
+        default_permissions = ("add", "change", "delete", "view")
+        # Enable object-level permissions for django-guardian
 
     def __str__(self) -> str:
         return self.title

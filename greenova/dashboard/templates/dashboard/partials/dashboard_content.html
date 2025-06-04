@@ -2,6 +2,7 @@
 {% load user_tags %}
 {% load core_tags %}
 {% load dashboard_tags %}
+{% load partials %}
 
 <!-- Partial content for HTMX dashboard refreshes -->
 <header data-hx-ext="class-tools" data-classes="add slide-in-from-top:0.3s">
@@ -14,7 +15,7 @@
 </header>
 
 <!-- Project Selection -->
-{% include "projects/projects_selector.html" %}
+{% include_partial "projects/projects_selector.html" %}
 
 <!-- Obligation Summary Cards -->
 <section class="summary-cards" aria-label="Obligation Summary">
@@ -94,7 +95,7 @@
      aria-labelledby="obligation-modal-heading"
      hidden>
   <h2 id="obligation-modal-heading" class="visually-hidden">Obligation Details</h2>
-  <button type="button" class="modal-close-btn" aria-label="Close modal" onclick="this.parentElement.hidden=true;/* JS should restore focus to trigger */">&times;</button>
+  <button type="button" class="modal-close-btn" aria-label="Close modal" _="on click set closest <div[role=dialog]>.hidden to true">&times;</button>
   <div id="obligation-modal-content" aria-live="polite" tabindex="0">
     <!-- Modal content loaded here via HTMX -->
   </div>

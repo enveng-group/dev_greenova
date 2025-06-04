@@ -21,6 +21,7 @@ from typing import Any, TypedDict
 # Handle optional dependencies gracefully
 try:
     import sentry_sdk
+
     SENTRY_AVAILABLE = True
 except ImportError:
     SENTRY_AVAILABLE = False
@@ -29,11 +30,13 @@ except ImportError:
 # Use standard python-dotenv instead of dotenv-vault
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ImportError:
     # Fallback if dotenv is not available
     def load_dotenv() -> None:
         """Fallback function when python-dotenv is not available."""
+
     load_dotenv()
 
 
@@ -178,7 +181,8 @@ def validate_settings() -> None:
         warnings.warn(
             "Using an insecure SECRET_KEY! Please set a secure SECRET_KEY "
             "in production.",
-            UserWarning, stacklevel=2,
+            UserWarning,
+            stacklevel=2,
         )
 
 
@@ -206,17 +210,17 @@ if DEBUG:
 # Run validation
 validate_settings()
 
-# Security Headers Configuration
+# Content Security Policy (CSP) configuration for django-csp
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = (
     "'self'",
-    "'wasm-unsafe-eval'",
-    "'unsafe-inline'",
+    "'wasm-unsafe-eval'",  # Required for HTMX and Hyperscript (WebAssembly)
+    "'unsafe-inline'",  # Required for Hyperscript and PicoCSS (inline scripts)
 )
 CSP_STYLE_SRC = (
     "'self'",
-    "'unsafe-inline'",
-    "fonts.googleapis.com",
+    "'unsafe-inline'",  # Required for PicoCSS (inline styles)
+    "fonts.googleapis.com",  # Allow Google Fonts for PicoCSS
 )
 CSP_FONT_SRC = ("'self'", "fonts.gstatic.com")
 CSP_IMG_SRC = ("'self'", "data:")
@@ -225,6 +229,13 @@ CSP_CONNECT_SRC = (
     "ws://127.0.0.1:*",
     "ws://localhost:*",
 )
+# For development, allow websocket connections for browser reload and HTMX
+# For production, restrict as needed
+
+# Optionally, configure CSP_REPORT_ONLY = True for development to test policy
+CSP_REPORT_ONLY = DEBUG
+
+# See https://django-csp.readthedocs.io/en/latest/configuration.html for more options
 
 # Tailwind CSS configuration
 TAILWIND_APP_NAME = "theme"
@@ -235,6 +246,7 @@ INTERNAL_IPS = [
 # Application definition
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
+    "csp",  # django-csp for Content Security Policy
     # Core Django apps (must be first)
     "django.contrib.admin",
     "django.contrib.auth",
@@ -243,7 +255,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-
     # Third-party authentication (keep together)
     "allauth",
     "allauth.account",
@@ -251,9 +262,8 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.github",
     "allauth.usersessions",
     "allauth.mfa",
-
     # Other third-party libraries
-    "django_extensions",
+    # "django_extensions",  # Only include in development (see below)
     "corsheaders",
     "django_htmx",
     "django_hyperscript",
@@ -265,7 +275,13 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "pb_model",
     "silk",
-
+    "crispy_forms",
+    "crispy_bootstrap4",
+    "guardian",
+    "storages",
+    "django_lifecycle",
+    "dal",
+    "dal_select2",
     # Your local apps (ordered by dependency)
     "authentication.apps.AuthenticationConfig",
     "core.apps.CoreConfig",
@@ -282,7 +298,12 @@ INSTALLED_APPS = [
     "chatbot.apps.ChatbotConfig",
     "feedback.apps.FeedbackConfig",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
+    "auditing.apps.AuditingConfig",
 ]
+
+# Conditionally add django_extensions for development only
+if DEBUG:
+    INSTALLED_APPS.insert(0, "django_extensions")
 
 # Django-Matplotlib configuration
 DJANGO_MATPLOTLIB_TMP = "matplotlib_tmp"
@@ -300,6 +321,7 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "csp.middleware.CSPMiddleware",  # django-csp middleware for CSP enforcement
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -317,6 +339,7 @@ MIDDLEWARE = [
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
+    "guardian.backends.ObjectPermissionBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
@@ -341,6 +364,14 @@ SOCIALACCOUNT_PROVIDERS = {
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ROOT_URLCONF = "greenova.urls"
+
+# Crispy Forms configuration
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# django-guardian configuration
+ANONYMOUS_USER_NAME = "anonymous"
+GUARDIAN_MONKEY_PATCH = False
 
 # Update TEMPLATES configuration
 TEMPLATES: list[TemplateConfig] = [
@@ -420,6 +451,8 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
+    BASE_DIR / "static/css/",  # Ensure this path exists and contains your CSS files
+    os.path.join(BASE_DIR, "greenova/static/dist"),
 ]
 
 STATICFILES_FINDERS = [
@@ -437,8 +470,17 @@ STORAGES = {
     },
 }
 
+# Add debug logging for missing static files (optional)
+logger = logging.getLogger(__name__)
+css_files = [
+    BASE_DIR / "static/dist/styles.css",
+]
+for css_file in css_files:
+    if not css_file.exists():
+        logger.warning("Static CSS file missing: %s", css_file)
+
 # Application version
-APP_VERSION = "0.0.6"
+APP_VERSION = "0.0.7"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -490,8 +532,10 @@ class SuppressChromeDevtools404(logging.Filter):
         """
         msg = str(record.getMessage())
         return not (
-            record.levelno == logging.WARNING and "/appspecific/com.chrome.devtools.json" in msg and (
-                "Not Found" in msg or "404" in msg))
+            record.levelno == logging.WARNING
+            and "/appspecific/com.chrome.devtools.json" in msg
+            and ("Not Found" in msg or "404" in msg)
+        )
 
 
 # Logging configuration
@@ -624,7 +668,8 @@ SHELL_PLUS_PRINT_SQL = DEBUG
 SHELL_PLUS_PRINT_SQL_TRUNCATE = 1000
 
 IPYTHON_ARGUMENTS = [
-    "--ext", "django_extensions.management.notebook_extension",
+    "--ext",
+    "django_extensions.management.notebook_extension",
     "--matplotlib=inline",
 ]
 
@@ -641,4 +686,31 @@ SHELL_PLUS_IMPORTS = [
 SHELL_PLUS_SUBCLASSES_IMPORT = [
     "django.db.models.Model",
     "django.contrib.auth.models.AbstractUser",
+]
+
+# django-storages S3 configuration (for production)
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "ap-southeast-2")
+    AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN")
+    AWS_S3_OBJECT_PARAMETERS = {
+        "CacheControl": "max-age=86400",
+    }
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_LOCATION = "media"
+    MEDIA_URL = f"https://{
+        AWS_S3_CUSTOM_DOMAIN or AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com'
+    }/media/"
+
+# django-autocomplete-light configuration
+DAL_SELECT2_JS = [
+    "//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js",
+]
+DAL_SELECT2_CSS = [
+    "//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css",
 ]

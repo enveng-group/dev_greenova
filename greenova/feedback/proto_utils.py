@@ -7,6 +7,7 @@ This module provides serialization and deserialization functions for
 converting between Django models and Protocol Buffer messages in the
 feedback application.
 """
+
 import logging
 import os
 import sys
@@ -21,10 +22,12 @@ logger = logging.getLogger(__name__)
 # Import generated protobuf modules with improved error handling
 try:
     from .proto import feedback_pb2
+
     logger.info("Successfully imported feedback_pb2 from proto subdirectory")
 except ImportError:
     logger.exception(
-        "feedback_pb2 module not found. Ensure to compile the protobuf files.")
+        "feedback_pb2 module not found. Ensure to compile the protobuf files.",
+    )
     feedback_pb2 = None
 
     # Check if the proto file exists
@@ -41,6 +44,7 @@ except ImportError:
 
     # Create a minimal stub for the module to allow Django to continue loading
     from types import ModuleType
+
     feedback_pb2 = ModuleType("feedback_pb2")
     sys.modules["feedback.proto.feedback_pb2"] = feedback_pb2
 
@@ -98,44 +102,14 @@ def serialize_bug_report(bug_report: BugReport) -> bytes | None:
 
     """
     try:
-        # Create a new BugReportProto message
-        proto = feedback_pb2.BugReportProto()
-
-        # Set basic fields
-        proto.id = bug_report.id or 0
-        proto.title = bug_report.title
-        proto.description = bug_report.description
-
-        # Set environment fields if available
-        if hasattr(bug_report, "application_version"):
-            proto.application_version = bug_report.application_version
-        if hasattr(bug_report, "operating_system"):
-            proto.operating_system = bug_report.operating_system
-        if hasattr(bug_report, "browser"):
-            proto.browser = bug_report.browser or ""
-        if hasattr(bug_report, "device_type"):
-            proto.device_type = bug_report.device_type
-
-        # Set problem detail fields if available
-        if hasattr(bug_report, "steps_to_reproduce"):
-            proto.steps_to_reproduce = bug_report.steps_to_reproduce
-        if hasattr(bug_report, "expected_behavior"):
-            proto.expected_behavior = bug_report.expected_behavior
-        if hasattr(bug_report, "actual_behavior"):
-            proto.actual_behavior = bug_report.actual_behavior
-
-        # Serialize to bytes
+        # Use the model's to_pb method for serialization
+        proto = bug_report.to_pb()  # type: ignore[attr-defined]
         return proto.SerializeToString()
-    except (AttributeError, TypeError) as e:
+    except Exception as e:
         logger.exception(
-            "Failed to serialize bug report due to attribute or type error: %s",
+            "Failed to serialize bug report to protobuf: %s",
             str(e),
         )
-        return None
-    except ValueError as e:
-        logger.exception(
-            "Failed to serialize bug report due to invalid value: %s",
-            str(e))
         return None
 
 
@@ -153,47 +127,13 @@ def deserialize_bug_report(data: bytes) -> BugReport | None:
         # Parse the binary data into a BugReportProto
         proto = feedback_pb2.BugReportProto()
         proto.ParseFromString(data)
-
-        # Create a BugReport instance
-        bug_report = BugReport()
-
-        # Set basic fields
-        bug_report.title = proto.title
-        bug_report.description = proto.description
-
-        # Set environment fields
-        if hasattr(proto, "application_version"):
-            bug_report.application_version = proto.application_version
-        if hasattr(proto, "operating_system"):
-            bug_report.operating_system = proto.operating_system
-        if hasattr(proto, "browser"):
-            bug_report.browser = proto.browser
-        if hasattr(proto, "device_type"):
-            bug_report.device_type = proto.device_type
-
-        # Set problem detail fields
-        if hasattr(proto, "steps_to_reproduce"):
-            bug_report.steps_to_reproduce = proto.steps_to_reproduce
-        if hasattr(proto, "expected_behavior"):
-            bug_report.expected_behavior = proto.expected_behavior
-        if hasattr(proto, "actual_behavior"):
-            bug_report.actual_behavior = proto.actual_behavior
-
-        return bug_report
-    except (AttributeError, TypeError) as e:
+        # Use the model's from_pb method for deserialization
+        return BugReport().from_pb(proto)  # type: ignore[attr-defined]
+    except Exception as e:
         logger.exception(
-            "Failed to deserialize bug report due to attribute or type error: %s",
+            "Failed to deserialize bug report from protobuf: %s",
             str(e),
         )
-        return None
-    except ValueError as e:
-        logger.exception(
-            "Failed to deserialize bug report due to invalid value: %s",
-            str(e),
-        )
-        return None
-    except (OSError, SystemError, OverflowError) as e:
-        logger.exception("Failed to deserialize bug report: %s", str(e))
         return None
 
 
@@ -208,34 +148,16 @@ def serialize_bug_reports(bug_reports: list[BugReport]) -> bytes | None:
 
     """
     try:
-        # Create a new BugReportCollection message
         collection = feedback_pb2.BugReportCollection()
-
-        # Add each bug report to the collection
         for bug_report in bug_reports:
-            report_proto_data = serialize_bug_report(bug_report)
-            if report_proto_data:
-                report_proto = feedback_pb2.BugReportProto()
-                report_proto.ParseFromString(report_proto_data)
-                collection.reports.append(report_proto)
-
-        # Serialize the collection to bytes
+            proto = bug_report.to_pb()  # type: ignore[attr-defined]
+            collection.reports.append(proto)
         return collection.SerializeToString()
-    except (AttributeError, TypeError) as e:
+    except Exception as e:
         logger.exception(
-            "Failed to serialize bug report collection due to attribute "
-            "or type error: %s",
+            "Failed to serialize bug report collection to protobuf: %s",
             str(e),
         )
-        return None
-    except ValueError as e:
-        logger.exception(
-            "Failed to serialize bug report collection due to invalid value: %s",
-            str(e),
-        )
-        return None
-    except (OSError, SystemError) as e:
-        logger.exception("Failed to serialize bug report collection: %s", str(e))
         return None
 
 
@@ -250,36 +172,17 @@ def deserialize_bug_reports(data: bytes) -> list[BugReport]:
 
     """
     try:
-        # Parse the binary data into a BugReportCollection
         collection = feedback_pb2.BugReportCollection()
         collection.ParseFromString(data)
-
-        # Convert each protocol buffer message to a BugReport
         bug_reports = []
         for report_proto in collection.reports:
-            # Serialize and deserialize each report
-            report_data = report_proto.SerializeToString()
-            bug_report = deserialize_bug_report(report_data)
+            bug_report = BugReport().from_pb(report_proto)  # type: ignore[attr-defined]
             if bug_report:
                 bug_reports.append(bug_report)
-
         return bug_reports
-    except (AttributeError, TypeError) as e:
+    except Exception as e:
         logger.exception(
-            "Failed to deserialize bug report collection due to attribute "
-            "or type error: %s",
-            str(e),
-        )
-        return []
-    except ValueError as e:
-        logger.exception(
-            "Failed to deserialize bug report collection due to invalid value: %s",
-            str(e),
-        )
-        return []
-    except (OSError, SystemError) as e:
-        logger.exception(
-            "Failed to deserialize bug report collection due to system error: %s",
+            "Failed to deserialize bug report collection from protobuf: %s",
             str(e),
         )
         return []

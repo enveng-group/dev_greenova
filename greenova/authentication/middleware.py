@@ -22,6 +22,7 @@ Author: Adrian Gallo <agallo@enveng-group.com.au>
 
 from django_htmx.middleware import HtmxDetails
 from django.http import HttpRequest, HttpResponse
+from beartype import beartype
 import logging
 from collections.abc import Callable
 
@@ -38,6 +39,7 @@ class CustomHttpRequest(HttpRequest):
 class LogoutStateMiddleware:
     """Middleware to handle post-logout state and ensure proper page rendering."""
 
+    @beartype
     def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         """Initialize the middleware.
 
@@ -47,6 +49,7 @@ class LogoutStateMiddleware:
         """
         self.get_response = get_response
 
+    @beartype
     def __call__(self, request: CustomHttpRequest) -> HttpResponse:
         """Process the request through the middleware.
 

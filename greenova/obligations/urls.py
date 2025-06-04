@@ -1,5 +1,7 @@
+from dal import autocomplete
 from django.shortcuts import redirect
 from django.urls import path
+from projects.models import Project
 
 from . import views
 from .views import ToggleCustomAspectView
@@ -21,23 +23,32 @@ urlpatterns = [
     path("count-overdue/", views.TotalOverdueObligationsView.as_view(), name="overdue"),
     # Make the root URL properly handle project_id parameter by redirecting
     path("", root_redirect, name="index"),
-
     # Other existing URLs
     path("create/", views.ObligationCreateView.as_view(), name="create"),
     path(
         "view/<str:obligation_number>/",
         views.ObligationDetailView.as_view(),
-        name="detail"),
+        name="detail",
+    ),
     path(
         "update/<str:obligation_number>/",
         views.ObligationUpdateView.as_view(),
-        name="update"),
+        name="update",
+    ),
     path(
         "delete/<str:obligation_number>/",
         views.ObligationDeleteView.as_view(),
-        name="delete"),
+        name="delete",
+    ),
     path(
         "toggle-custom-aspect/",
         ToggleCustomAspectView.as_view(),
-        name="toggle_custom_aspect"),
+        name="toggle_custom_aspect",
+    ),
+    path("list/", views.ObligationListView.as_view(), name="list"),
+    path(
+        "project-autocomplete/",
+        autocomplete.Select2QuerySetView.as_view(model=Project),
+        name="project-autocomplete",
+    ),
 ]

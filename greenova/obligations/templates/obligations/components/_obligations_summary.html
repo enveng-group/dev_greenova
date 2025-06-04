@@ -72,104 +72,10 @@ Reset Filters
           <label for="search-box">
 Search:
           </label>
-          <input type="search"
-                 id="search-box"
-                 name="search"
-                 placeholder="Search obligations..."
-                 hx-get="/obligations/summary/"
-                 hx-target="#obligations-container"
-                 hx-trigger="keyup changed delay:500ms"
-                 hx-include="select[name='status'], select[name='phase']" />
-        </div>
-        <!-- Filter Controls -->
-        <div class="filter-controls">
-          <!-- Status Filter -->
-          <div class="filter-group">
-            <label for="status-filter">
-Status:
-            </label>
-            <select id="status-filter"
-                    name="status"
-                    multiple
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-trigger="change"
-                    hx-include="[name='search'], [name='phase']"
-                    hx-push-url="true">
-              <option value="not started">
-Not Started
-              </option>
-              <option value="in progress">
-In Progress
-              </option>
-              <option value="completed">
-Completed
-              </option>
-              <option value="overdue">
-Overdue
-              </option>
-            </select>
-          </div>
-          <!-- Phase Filter -->
-          <div class="filter-group">
-            <label for="phase-filter">
-Phase:
-            </label>
-            <select id="phase-filter"
-                    name="phase"
-                    multiple
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-trigger="change"
-                    hx-include="input[name='search'], select[name='status']">
-              {% for phase in phases %}
-                <option value="{{ phase }}">
-{{ phase }}
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-          <!-- Sort Options -->
-          <div class="filter-group">
-            <label for="sort-filter">
-Sort By:
-            </label>
-            <select id="sort-filter"
-                    name="sort"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-trigger="change"
-                    hx-include="input[name='search'], select[name='status'], select[name='phase'], select[name='order']">
-              <option value="obligation_number">
-Number
-              </option>
-              <option value="action_due_date" selected>
-Due Date
-              </option>
-              <option value="status">
-Status
-              </option>
-              <option value="primary_environmental_mechanism__name">
-Mechanism
-              </option>
-              <option value="project_phase">
-Phase
-              </option>
-            </select>
-            <select id="order-filter"
-                    name="order"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-trigger="change"
-                    hx-include="input[name='search'], select[name='status'], select[name='phase'], select[name='sort']">
-              <option value="asc" selected>
-Ascending
-              </option>
-              <option value="desc">
-Descending
-              </option>
-            </select>
-          </div>
+          <form method="get" hx-get="/obligations/summary/" hx-target="#obligations-container" hx-push-url="true" class="filter-form">
+            {{ filter.form.as_p }}
+            <button type="submit" class="btn-primary">Apply Filters</button>
+          </form>
         </div>
       </div>
     </div>
@@ -274,7 +180,7 @@ Actions
         </div>
         <!-- Pagination -->
         {% if page_obj %}
-{% include "obligations/components/_pagination.html" %}
+{% include_partial "obligations/components/_pagination.html" %}
         {% endif %}
       {% else %}
         <div class="centered-message">

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block title %}
   New Conversation
 {% endblock title %}
@@ -12,12 +13,7 @@
         <h2 id="new-conversation-form">New Conversation</h2>
         <form method="post" novalidate>
           {% csrf_token %}
-          <fieldset>
-            <legend>Conversation Details</legend>
-            <label for="{{ form.title.id_for_label }}">Title:</label>
-            {{ form.title }}
-            {% if form.title.errors %}<small class="error">{{ form.title.errors }}</small>{% endif %}
-          </fieldset>
+          {{ form|crispy }}
           <button type="submit">Create Conversation</button>
           <a href="{% url 'chatbot:chatbot_home' %}"
              role="button"

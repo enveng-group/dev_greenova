@@ -1,6 +1,8 @@
+{% load hyperscript %}
 {% extends "base.html" %}
 {% load static %}
 {% load company_tags %}
+{% load partials %}
 
 {% block title %}{{ company.name }} - Manage Members{% endblock title %}
 
@@ -15,8 +17,9 @@
     </div>
   </header>
 
-  <div class="members-container" hx-target="this" hx-swap="innerHTML">
-    {% include "company/partials/company_members.html" %}
+  <div class="members-container">
+    {# Use django-hyperscript for dynamic updates, e.g. _="on customEvent ..." #}
+    {% include_partial "company/partials/company_members.html" %}
   </div>
 </article>
 {% endblock content %}

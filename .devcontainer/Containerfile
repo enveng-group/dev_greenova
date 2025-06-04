@@ -9,6 +9,9 @@ RUN apk update && apk add --no-cache \
     linux-headers \
     libffi-dev \
     openssl-dev \
+    freetype-dev \
+    protobuf \
+    pkgconfig \
     sudo \
     shadow \
     util-linux \

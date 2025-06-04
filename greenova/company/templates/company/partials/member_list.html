@@ -28,10 +28,8 @@
       </td>
       <td class="action-buttons">
         {% if can_edit %}
-          <button class="btn-secondary"
-                  hx-get="{% url 'company:update_role' company.id member.id %}"
-                  hx-target="#role-form-container"
-                  hx-swap="innerHTML">
+          <button class="btn-secondary">
+            <!-- Use django-hyperscript for dynamic updates if needed. -->
             Edit Role
           </button>
           <button class="btn-danger"

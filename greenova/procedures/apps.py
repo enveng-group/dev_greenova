@@ -1,6 +1,8 @@
 from django.apps import AppConfig
 
 
-class ProcedureConfig(AppConfig):
+class ProceduresConfig(AppConfig):
+    """AppConfig for the procedures app."""
+
     default_auto_field = "django.db.models.BigAutoField"
     name = "procedures"

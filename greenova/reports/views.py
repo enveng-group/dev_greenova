@@ -22,17 +22,22 @@ Author: Adrian Gallo <agallo@enveng-group.com.au>
 
 from django.db.models import QuerySet
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Report
 from django.views.generic import ListView
+from .models import Report
+from guardian.shortcuts import get_objects_for_user
 
 
 class ReportListView(LoginRequiredMixin, ListView):
-    """List all reports."""
+    """List all reports with object-level permission checks."""
 
     model = Report
     template_name = "reports/reports_list.html"
     context_object_name = "reports"
 
     def get_queryset(self) -> QuerySet:
-        """Return the queryset of all reports for the list view."""
-        return Report.objects.all()
+        """Return the queryset of all reports the user has permission to view."""
+        return get_objects_for_user(
+            self.request.user,
+            "reports.view_report",
+            Report.objects.all(),
+        )

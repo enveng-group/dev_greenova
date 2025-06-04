@@ -1,10 +1,11 @@
-import base64
-import io
+# Standard library imports
 import logging
 from datetime import timedelta
 from typing import Any
 
+# Third-party library imports
 import matplotlib as mpl
+from beartype import beartype
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -12,11 +13,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
+from guardian.shortcuts import assign_perm
 from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
-from responsibility.figures import get_responsibility_chart
+from responsibility.figures import figure_to_svg, get_responsibility_chart
 
-from .figures import get_procedure_charts as get_all_procedure_charts
+# Local application imports
+from .figures import get_procedure_charts_svg as get_all_procedure_charts_svg
 
 mpl.use("Agg")  # Use Agg backend for non-interactive plotting
 logger = logging.getLogger(__name__)
@@ -27,17 +30,13 @@ logger = logging.getLogger(__name__)
 class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     """View for displaying procedure charts filtered by environmental mechanism."""
 
-    template_name = "procedures/procedure_charts.html"  # Changed to HTML
+    template_name = "procedures/procedure_charts.html"
 
-    def get_template_names(self):
-        """Return appropriate template based on request type."""
-        if self.request.htmx:
-            return [
-                "procedures/components/_procedure_charts.html",
-            ]  # Changed to HTML
-        return [self.template_name]
-
-    def _get_mechanism_and_obligations(self, mechanism_id):
+    @beartype
+    def _get_mechanism_and_obligations(
+        self,
+        mechanism_id: Any,
+    ) -> tuple[EnvironmentalMechanism, Any]:
         """Get mechanism and obligations for the given mechanism ID."""
         mechanism = get_object_or_404(EnvironmentalMechanism, id=mechanism_id)
         query = Obligation.objects
@@ -45,7 +44,12 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
         all_obligations = query
         return mechanism, all_obligations
 
-    def _apply_filters(self, obligations, request_params):
+    @beartype
+    def _apply_filters(
+        self,
+        obligations: Any,
+        request_params: Any,
+    ) -> tuple[Any, dict[str, Any]]:
         """Apply filters to obligations based on request parameters."""
         filtered_obligations = obligations
         phase_filter = request_params.get("phase", "")
@@ -83,13 +87,15 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
                 action_due_date__lt=today,
             ).exclude(status="completed")
 
-        filters_applied = any([
-            phase_filter,
-            responsibility_filter,
-            status_filter,
-            look_ahead,
-            overdue_only,
-        ])
+        filters_applied = any(
+            [
+                phase_filter,
+                responsibility_filter,
+                status_filter,
+                look_ahead,
+                overdue_only,
+            ],
+        )
 
         filter_params = {
             "phase_filter": phase_filter,
@@ -102,7 +108,8 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         return filtered_obligations, filter_params
 
-    def _calculate_statistics(self, all_obligations):
+    @beartype
+    def _calculate_statistics(self, all_obligations: Any) -> dict[str, int]:
         """Calculate statistics based on all obligations."""
         total = all_obligations.count()
         completed = all_obligations.filter(status="completed").count()
@@ -117,15 +124,26 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             "percentage": completion_percentage,
         }
 
-    def _get_available_filters(self, all_obligations):
+    @beartype
+    def _get_available_filters(self, all_obligations: Any) -> dict[str, Any]:
         """Get available filter options from obligations."""
-        phases = all_obligations.values_list(
-            "project_phase", flat=True,
-        ).distinct().order_by("project_phase")
+        phases = (
+            all_obligations.values_list(
+                "project_phase",
+                flat=True,
+            )
+            .distinct()
+            .order_by("project_phase")
+        )
 
-        responsibilities = all_obligations.values_list(
-            "responsibility", flat=True,
-        ).distinct().order_by("responsibility")
+        responsibilities = (
+            all_obligations.values_list(
+                "responsibility",
+                flat=True,
+            )
+            .distinct()
+            .order_by("responsibility")
+        )
 
         status_options = [
             ("not started", "Not Started"),
@@ -139,9 +157,14 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             "status_options": status_options,
         }
 
-    def _generate_responsibility_chart(self, mechanism_id, filtered_obligations=None,
-                                       filters_applied=False) -> str:
-        """Generate responsibility chart based on filtered obligations."""
+    @beartype
+    def _generate_responsibility_chart(
+        self,
+        mechanism_id: Any,
+        filtered_obligations: Any = None,
+        filters_applied: bool = False,
+    ) -> str:
+        """Generate responsibility chart as SVG based on filtered obligations."""
         if filters_applied and filtered_obligations is not None:
             filtered_ids = filtered_obligations.values_list("id", flat=True)
             fig = get_responsibility_chart(
@@ -150,21 +173,17 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             )
         else:
             fig = get_responsibility_chart(mechanism_id)
+        return figure_to_svg(fig)
 
-        buf = io.BytesIO()
-        fig.savefig(buf, format="png", bbox_inches="tight")
-        buf.seek(0)
-
-        base64_data = base64.b64encode(buf.getvalue()).decode()
-        return (
-            f'<img src="data:image/png;base64,{base64_data}" '
-            f'alt="Responsibility Distribution Chart" '
-            f'width="600" height="300">'
-        )
-
-    def _generate_procedure_charts(self, mechanism_id, filtered_obligations,
-                                   all_obligations, filters_applied):
-        """Generate charts for each procedure."""
+    @beartype
+    def _generate_procedure_charts(
+        self,
+        mechanism_id: Any,
+        filtered_obligations: Any,
+        all_obligations: Any,
+        filters_applied: bool,
+    ) -> list[dict[str, Any]]:
+        """Generate SVG charts for each procedure."""
         procedure_charts = []
 
         # Get filtered IDs if filters are applied
@@ -173,39 +192,30 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             filtered_ids = filtered_obligations.values_list("id", flat=True)
 
         # Generate charts for each procedure
-        charts_dict = get_all_procedure_charts(
+        charts_dict = get_all_procedure_charts_svg(
             mechanism_id,
             filtered_ids=filtered_ids,
         )
 
-        for procedure_name, fig in charts_dict.items():
+        for procedure_name, svg in charts_dict.items():
             # Create procedure chart data
             procedure_data = self._create_procedure_chart_data(
                 procedure_name,
-                fig,
+                svg,
                 filtered_obligations if filters_applied else all_obligations,
             )
             procedure_charts.append(procedure_data)
 
         return procedure_charts
 
+    @beartype
     def _create_procedure_chart_data(
-        self, procedure_name, fig, obligations,
-        # Removed unused argument 'filters_applied'
-    ):
-        """Create data for a specific procedure chart."""
-        # Create image for this procedure
-        buf = io.BytesIO()
-        fig.savefig(buf, format="png", bbox_inches="tight")
-        buf.seek(0)
-
-        base64_data = base64.b64encode(buf.getvalue()).decode()
-        chart_img = (
-            f'<img src="data:image/png;base64,{base64_data}" '
-            f'alt="{procedure_name} Chart" '
-            f'width="300" height="250">'
-        )
-
+        self,
+        procedure_name: Any,
+        svg: str,
+        obligations: Any,
+    ) -> dict[str, Any]:
+        """Create data for a specific procedure chart as SVG."""
         # Get obligations for this procedure
         proc_obligations = obligations.filter(procedure=procedure_name)
 
@@ -217,9 +227,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             "in_progress": sum(
                 1 for o in proc_obligations if o.status == "in progress"
             ),
-            "completed": sum(
-                1 for o in proc_obligations if o.status == "completed"
-            ),
+            "completed": sum(1 for o in proc_obligations if o.status == "completed"),
             "overdue": sum(1 for o in proc_obligations if o.is_overdue),
         }
         status_counts["total"] = (
@@ -229,11 +237,12 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
         )
         return {
             "name": procedure_name,
-            "chart": chart_img,
+            "chart": svg,
             "stats": status_counts,
         }
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
+    @beartype
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         """Get context data for rendering the template."""
         context = super().get_context_data(**kwargs)
 
@@ -266,24 +275,24 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             filter_options = self._get_available_filters(all_obligations)
 
             # Update context with basic data
-            context.update({
-                "total_obligations": stats["total"],
-                "completed_obligations": stats["completed"],
-                "remaining_obligations": stats["remaining"],
-                "completion_percentage": stats["percentage"],
-
-                # Save filter state for template
-                "filter_phase": filter_params["phase_filter"],
-                "filter_responsibility": filter_params["responsibility_filter"],
-                "filter_status": filter_params["status_filter"],
-                "filter_lookahead": filter_params["look_ahead"],
-                "filter_overdue": filter_params["overdue_only"],
-
-                # Add available filter options
-                "available_phases": filter_options["phases"],
-                "available_responsibilities": filter_options["responsibilities"],
-                "status_options": filter_options["status_options"],
-            })
+            context.update(
+                {
+                    "total_obligations": stats["total"],
+                    "completed_obligations": stats["completed"],
+                    "remaining_obligations": stats["remaining"],
+                    "completion_percentage": stats["percentage"],
+                    # Save filter state for template
+                    "filter_phase": filter_params["phase_filter"],
+                    "filter_responsibility": filter_params["responsibility_filter"],
+                    "filter_status": filter_params["status_filter"],
+                    "filter_lookahead": filter_params["look_ahead"],
+                    "filter_overdue": filter_params["overdue_only"],
+                    # Add available filter options
+                    "available_phases": filter_options["phases"],
+                    "available_responsibilities": filter_options["responsibilities"],
+                    "status_options": filter_options["status_options"],
+                },
+            )
 
             # Generate responsibility chart
             responsibility_chart_img = self._generate_responsibility_chart(
@@ -311,14 +320,38 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
                     "completed": chart["stats"]["completed"],
                     "overdue": chart["stats"]["overdue"],
                     "total": chart["stats"]["total"],
-                } for chart in procedure_charts
+                }
+                for chart in procedure_charts
             ]
 
-        except (EnvironmentalMechanism.DoesNotExist,
-                Obligation.DoesNotExist,
-                ValueError,
-                TypeError) as exc:
+        except (
+            EnvironmentalMechanism.DoesNotExist,
+            Obligation.DoesNotExist,
+            ValueError,
+            TypeError,
+        ) as exc:
             logger.exception("Error generating procedure charts: %s", str(exc))
             context["error"] = f"Error generating charts: {exc!s}"
 
         return context
+
+
+def create_procedure_with_permissions(user, form):
+    """Create a procedure and assign object-level permissions to the creator.
+
+    Args:
+        user: The user creating the procedure.
+        form: The validated ProcedureForm instance.
+
+    Returns:
+        The created Procedure instance.
+
+    """
+    procedure = form.save(commit=False)
+    procedure.save()
+    form.save_m2m()
+    # Assign object-level permissions to creator
+    assign_perm("view_procedure", user, procedure)
+    assign_perm("change_procedure", user, procedure)
+    assign_perm("delete_procedure", user, procedure)
+    return procedure

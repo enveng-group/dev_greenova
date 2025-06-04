@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load partials %}
 
 {% block title %}
 Update Company
@@ -13,6 +14,6 @@ Update Company
       </h1>
     </header>
 
-{% include "company/company_form_base.html" %}
+{% include_partial "company/company_form_base.html" %}
   </article>
 {% endblock content %}

@@ -9,7 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 def generate_responsibility_chart(
-        responsibility_counts: dict[str, int], fig_width: int = 600, fig_height: int = 300) -> Figure:
+    responsibility_counts: dict[str, int],
+    fig_width: int = 600,
+    fig_height: int = 300,
+) -> Figure:
     """Generate a horizontal bar chart showing obligation counts by responsibility.
 
     Args:
@@ -47,9 +50,13 @@ def generate_responsibility_chart(
             # Set title with accessible font size
             ax.set_title("Obligations by Responsibility", fontsize=12)
         else:
-            ax.text(0.5, 0.5, "No data available",
-                    horizontalalignment="center",
-                    verticalalignment="center")
+            ax.text(
+                0.5,
+                0.5,
+                "No data available",
+                horizontalalignment="center",
+                verticalalignment="center",
+            )
 
         # Ensure proper layout with enough room for labels
         fig.tight_layout()
@@ -63,19 +70,20 @@ def generate_responsibility_chart(
         ax.text(
             0.5,
             0.5,
-            f"Error: {
-                e!s}",
+            f"Error: {e!s}",
             horizontalalignment="center",
-            verticalalignment="center")
+            verticalalignment="center",
+        )
         return fig
 
 
 # Keep the original function with correct implementation
 def get_responsibility_chart(
-        mechanism_id: int,
-        fig_width: int = 600,
-        fig_height: int = 300,
-        filtered_ids: list[int] | None = None) -> Figure:
+    mechanism_id: int,
+    fig_width: int = 600,
+    fig_height: int = 300,
+    filtered_ids: list[int] | None = None,
+) -> Figure:
     """Generate a horizontal bar chart showing obligation counts by responsibility.
 
     Args:
@@ -91,16 +99,21 @@ def get_responsibility_chart(
     try:
         # Get obligations for this mechanism
         obligations = Obligation.objects.filter(
-            primary_environmental_mechanism_id=mechanism_id)
+            primary_environmental_mechanism_id=mechanism_id,
+        )
 
         # Apply additional filtering if provided
         if filtered_ids is not None:
             obligations = obligations.filter(id__in=filtered_ids)
 
         # Count obligations by responsibility using the ORM
-        responsibility_data = obligations.values("responsibility").annotate(
-            count=Count("obligation_number"),
-        ).order_by("-count")
+        responsibility_data = (
+            obligations.values("responsibility")
+            .annotate(
+                count=Count("obligation_number"),
+            )
+            .order_by("-count")
+        )
 
         # Extract responsibility labels and counts
         labels = [item["responsibility"] for item in responsibility_data]
@@ -127,9 +140,13 @@ def get_responsibility_chart(
             # Set title with accessible font size
             ax.set_title("Obligations by Responsibility", fontsize=12)
         else:
-            ax.text(0.5, 0.5, "No data available",
-                    horizontalalignment="center",
-                    verticalalignment="center")
+            ax.text(
+                0.5,
+                0.5,
+                "No data available",
+                horizontalalignment="center",
+                verticalalignment="center",
+            )
 
         # Ensure proper layout with enough room for labels
         fig.tight_layout()
@@ -143,10 +160,10 @@ def get_responsibility_chart(
         ax.text(
             0.5,
             0.5,
-            f"Error: {
-                e!s}",
+            f"Error: {e!s}",
             horizontalalignment="center",
-            verticalalignment="center")
+            verticalalignment="center",
+        )
         return fig
 
 
@@ -158,9 +175,32 @@ def figure_to_svg(fig: Figure) -> str:
 
     Returns:
         SVG image as a string.
+
     """
     buf = io.StringIO()
     fig.savefig(buf, format="svg")
     svg = buf.getvalue()
     buf.close()
     return svg
+
+
+def export_responsibility_chart_to_svg(
+    mechanism_id: int,
+    fig_width: int = 600,
+    fig_height: int = 300,
+    filtered_ids: list[int] | None = None,
+) -> str:
+    """Generate a responsibility chart and export it as an SVG string.
+
+    Args:
+        mechanism_id: ID of the environmental mechanism to filter by
+        fig_width: Width of figure in pixels
+        fig_height: Height of figure in pixels
+        filtered_ids: Optional list of obligation IDs to filter by
+
+    Returns:
+        SVG image as a string
+
+    """
+    fig = get_responsibility_chart(mechanism_id, fig_width, fig_height, filtered_ids)
+    return figure_to_svg(fig)

@@ -9,6 +9,7 @@
   - [Installation](#installation)
     - [Using Development Container (Recommended)](#using-development-container-recommended)
     - [Manual Installation](#manual-installation)
+    - [Content Security Policy (CSP) Integration](#content-security-policy-csp-integration)
   - [IPython Integration](#ipython-integration)
     - [Features](#features)
     - [Usage](#usage)
@@ -21,6 +22,13 @@
   - [Development Tools](#development-tools)
   - [Quick Start](#quick-start)
   - [Project Structure](#project-structure)
+  - [Frontend Build & Asset Pipeline](#frontend-build--asset-pipeline)
+    - [Build Steps](#build-steps)
+    - [One-Step Build](#one-step-build)
+    - [Details](#details)
+    - [Integration with Django](#integration-with-django)
+    - [Rebuilding](#rebuilding)
+  - [Obligations Filtering with django-filter](#obligations-filtering-with-django-filter)
   - [Contributing](#contributing)
   - [License](#license)
   - [Author](#author)
@@ -38,6 +46,7 @@ Greenova is a Django web application for environmental management, focusing on t
 - **Node.js**: 22.16.0 (exact version required)
 - **npm**: 11.3.0 (exact version required)
 - **Database**: SQLite3 for development and production
+- **Security**: [django-csp](https://django-csp.readthedocs.io/en/latest/) for Content Security Policy enforcement
 
 ## Requirements Files
 
@@ -108,6 +117,10 @@ This project uses two separate requirements files:
    # Alternative: Using pip
    pip install -r .devcontainer/local-features/python/requirements.txt
    ```
+
+### Content Security Policy (CSP) Integration
+
+Greenova uses [django-csp](https://django-csp.readthedocs.io/en/latest/) to enforce a strict Content Security Policy for enhanced security. The CSP is configured in `greenova/settings.py` and is compatible with HTMX, Hyperscript, and PicoCSS. If you encounter issues with inline scripts or styles during development, review the CSP settings and adjust as needed. For development, CSP is set to report-only mode by default.
 
 ## IPython Integration
 
@@ -242,6 +255,55 @@ greenova/
 ├── manage.py
 └── ...
 ```
+
+## Frontend Build & Asset Pipeline
+
+Greenova uses a unified frontend build process to compile and bundle all static assets (WASM, JS, CSS) for Django integration. All distributable assets are output to `greenova/static/dist/`.
+
+### Build Steps
+
+1. **Compile AssemblyScript to WASM/JS**
+2. **Build CSS (SASS + Tailwind + PicoCSS)**
+3. **Bundle/copy all vendor JS and CSS**
+
+### One-Step Build
+
+Run the following from the project root:
+
+```bash
+./build_frontend.sh
+```
+
+This will:
+
+- Compile AssemblyScript to `greenova/static/dist/optimized.wasm`
+- Build CSS (SASS, Tailwind, PicoCSS) to `greenova/static/dist/`
+- Copy all vendor JS and CSS to `greenova/static/dist/vendors/`
+
+### Details
+
+- **AssemblyScript**: Source in `greenova/static/as/assembly/`, output is optimized WASM.
+- **SASS/Tailwind/PicoCSS**: Source in `greenova/theme/static_src/src/styles.sass`, config in `tailwind.config.js` and `postcss.config.js`.
+- **Vendors**: All JS/CSS vendors are copied from `greenova/static/js/vendors/` and `greenova/static/css/vendor/`.
+
+### Integration with Django
+
+All built assets in `greenova/static/dist/` are ready for Django's staticfiles system.
+
+### Rebuilding
+
+Re-run `./build_frontend.sh` after any changes to frontend source files.
+
+## Obligations Filtering with django-filter
+
+The project uses [django-filter](https://django-filter.readthedocs.io/en/stable/) to provide standardized, declarative filtering for obligations. Filter logic is defined in `obligations/filters.py` and integrated into views and templates.
+
+- To add or modify filters, update `ObligationFilter` in `obligations/filters.py`.
+- Use `filter.form` in templates to render the filter form.
+- Filtering logic should not be implemented manually in views; always use the filterset.
+- Filter forms are compatible with HTMX for dynamic, accessible UI updates.
+
+See the developer documentation and code comments for further details.
 
 ## Contributing
 

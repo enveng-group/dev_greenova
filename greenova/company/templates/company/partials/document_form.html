@@ -1,11 +1,7 @@
+{% load hyperscript %}
 <div class="document-form-container">
   <h3>Upload New Document</h3>
-  <form method="post"
-        enctype="multipart/form-data"
-        action="{% url 'company:upload_document' company.id %}"
-        hx-post="{% url 'company:upload_document' company.id %}"
-        hx-target=".documents-container"
-        hx-swap="innerHTML">
+  <form method="post" enctype="multipart/form-data" action="{% url 'company:upload_document' company.id %}">
     {% csrf_token %}
 
     {% if form.errors %}
@@ -57,11 +53,8 @@
 
     <div class="form-actions">
       <button type="submit" class="btn-primary">Upload Document</button>
-      <button type="button"
-              class="btn-secondary"
-              hx-get="{% url 'company:detail' company.id %}"
-              hx-target="#document-form-container"
-              hx-swap="innerHTML">Cancel</button>
+      <button type="button" class="btn-secondary" _="on click set #document-form-container.innerHTML to ''">Cancel</button>
     </div>
   </form>
 </div>
+<!-- Use django-hyperscript for dynamic form logic if needed. -->

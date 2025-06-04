@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load partials %}
 
 {% block title %}Upload Document - {{ company.name }}{% endblock title %}
 
@@ -11,7 +12,7 @@
   </header>
 
   <div class="form-container">
-    {% include "company/partials/document_form.html" %}
+    {% include_partial "company/partials/document_form.html" %}
   </div>
 </article>
 {% endblock content %}

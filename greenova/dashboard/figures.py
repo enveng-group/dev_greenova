@@ -19,15 +19,9 @@ from obligations.models import Obligation
 from procedures.models import Procedure
 from projects.models import Project
 
-logger = logging.getLogger(__name__)
+from .commons import STATUS_COLORS
 
-# Color scheme for status indicators (matching PicoCSS theme)
-STATUS_COLORS = {
-    "Not Started": "#f9c74f",  # Yellow
-    "In Progress": "#90be6d",  # Green
-    "Completed": "#43aa8b",    # Teal
-    "Overdue": "#f94144",      # Red
-}
+logger = logging.getLogger(__name__)
 
 
 @beartype
@@ -65,12 +59,15 @@ def create_obligations_status_chart_svg(project_id: str | None) -> str:
 
     except Exception as e:
         logger.exception("Error creating obligations status chart: %s", e)
-        return f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        return (
+            f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        )
 
 
 @beartype
 def create_project_compliance_chart(
-        projects: QuerySet[Project]) -> tuple[go.Figure, bytes]:
+    projects: QuerySet[Project],
+) -> tuple[go.Figure, bytes]:
     """Create project compliance chart for dashboard overview.
 
     Args:
@@ -86,8 +83,10 @@ def create_project_compliance_chart(
             fig = go.Figure()
             fig.add_annotation(
                 text="No projects available",
-                x=0.5, y=0.5,
-                xref="paper", yref="paper",
+                x=0.5,
+                y=0.5,
+                xref="paper",
+                yref="paper",
                 showarrow=False,
             )
             return fig, b""
@@ -101,36 +100,49 @@ def create_project_compliance_chart(
                 completed = obligations.filter(status="completed").count()
                 compliance_rate = (completed / total) * 100 if total > 0 else 0
 
-                project_data.append({
-                    "name": project.name,
-                    "compliance_rate": compliance_rate,
-                    "total_obligations": total,
-                    "completed_obligations": completed,
-                })
+                project_data.append(
+                    {
+                        "name": project.name,
+                        "compliance_rate": compliance_rate,
+                        "total_obligations": total,
+                        "completed_obligations": completed,
+                    },
+                )
 
         if not project_data:
             fig = go.Figure()
             fig.add_annotation(
                 text="No obligation data available",
-                x=0.5, y=0.5,
-                xref="paper", yref="paper",
+                x=0.5,
+                y=0.5,
+                xref="paper",
+                yref="paper",
                 showarrow=False,
             )
             return fig, b""
 
         # Create Plotly bar chart
-        fig = go.Figure(data=[
-            go.Bar(
-                x=[p["name"] for p in project_data],
-                y=[p["compliance_rate"] for p in project_data],
-                marker_color=[
-                    "#43aa8b" if rate >= 80 else "#f9c74f" if rate >= 60 else "#f94144"
-                    for rate in [p["compliance_rate"] for p in project_data]
-                ],
-                text=[f"{rate:.1f}%" for rate in [p["compliance_rate"] for p in project_data]],
-                textposition="auto",
-            ),
-        ])
+        fig = go.Figure(
+            data=[
+                go.Bar(
+                    x=[p["name"] for p in project_data],
+                    y=[p["compliance_rate"] for p in project_data],
+                    marker_color=[
+                        "#43aa8b"
+                        if rate >= 80
+                        else "#f9c74f"
+                        if rate >= 60
+                        else "#f94144"
+                        for rate in [p["compliance_rate"] for p in project_data]
+                    ],
+                    text=[
+                        f"{rate:.1f}%"
+                        for rate in [p["compliance_rate"] for p in project_data]
+                    ],
+                    textposition="auto",
+                ),
+            ],
+        )
 
         fig.update_layout(
             title="Project Compliance Rates",
@@ -149,8 +161,10 @@ def create_project_compliance_chart(
         fig = go.Figure()
         fig.add_annotation(
             text=f"Error: {e}",
-            x=0.5, y=0.5,
-            xref="paper", yref="paper",
+            x=0.5,
+            y=0.5,
+            xref="paper",
+            yref="paper",
             showarrow=False,
         )
         return fig, b""
@@ -194,7 +208,9 @@ def create_mechanism_pie_chart_svg(project_id: str) -> str:
 
     except Exception as e:
         logger.exception("Error creating mechanism pie chart: %s", e)
-        return f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        return (
+            f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        )
 
 
 @beartype
@@ -234,7 +250,9 @@ def create_procedure_pie_chart_svg(mechanism_id: str) -> str:
 
     except Exception as e:
         logger.exception("Error creating procedure pie chart: %s", e)
-        return f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        return (
+            f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        )
 
 
 @beartype
@@ -279,12 +297,16 @@ def create_mechanism_pie_chart_svg(mechanism_id: int) -> str:
         return '<svg><text x="50%" y="50%" text-anchor="middle">Mechanism not found</text></svg>'
     except Exception as e:
         logger.exception("Error creating mechanism pie chart: %s", e)
-        return f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        return (
+            f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        )
 
 
 @beartype
 def create_procedure_pie_chart_svg(
-        procedure_id: int, chart_data: dict[str, int]) -> str:
+    procedure_id: int,
+    chart_data: dict[str, int],
+) -> str:
     """Create SVG pie chart for a specific procedure's obligation status.
 
     Args:
@@ -318,12 +340,15 @@ def create_procedure_pie_chart_svg(
         return '<svg><text x="50%" y="50%" text-anchor="middle">Procedure not found</text></svg>'
     except Exception as e:
         logger.exception("Error creating procedure pie chart: %s", e)
-        return f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        return (
+            f'<svg><text x="50%" y="50%" text-anchor="middle">Error: {e}</text></svg>'
+        )
 
 
 @beartype
 def _calculate_obligation_status_counts(
-        obligations: QuerySet[Obligation]) -> dict[str, int]:
+    obligations: QuerySet[Obligation],
+) -> dict[str, int]:
     """Calculate status counts for obligations, including overdue detection."""
     counts = {
         "Not Started": 0,
@@ -336,9 +361,11 @@ def _calculate_obligation_status_counts(
 
     for obligation in obligations:
         # Check if overdue (due date passed and not completed)
-        if (obligation.action_due_date and
-            obligation.action_due_date < today and
-                obligation.status != "completed"):
+        if (
+            obligation.action_due_date
+            and obligation.action_due_date < today
+            and obligation.status != "completed"
+        ):
             counts["Overdue"] += 1
         else:
             # Regular status counting
@@ -362,9 +389,15 @@ def _create_pie_chart_figure(data: dict[str, int], title: str) -> Figure:
     filtered_data = {k: v for k, v in data.items() if v > 0}
 
     if not filtered_data:
-        ax.text(0.5, 0.5, "No data available",
-                horizontalalignment="center", verticalalignment="center",
-                transform=ax.transAxes, fontsize=12)
+        ax.text(
+            0.5,
+            0.5,
+            "No data available",
+            horizontalalignment="center",
+            verticalalignment="center",
+            transform=ax.transAxes,
+            fontsize=12,
+        )
         ax.set_title(title)
         return fig
 
@@ -384,7 +417,8 @@ def _create_pie_chart_figure(data: dict[str, int], title: str) -> Figure:
 
     # Add click data attributes to wedges for JavaScript interaction
     for i, (wedge, label, value) in enumerate(
-            zip(wedges, labels, values, strict=False)):
+        zip(wedges, labels, values, strict=False),
+    ):
         # Set GID for JavaScript targeting
         wedge.set_gid(f"status_{label.lower().replace(' ', '_')}_{i}")
         # Add custom properties for data attributes
@@ -431,7 +465,8 @@ def _create_mechanism_pie_chart_figure(mechanism_data: dict[str, int]) -> Figure
         "Mechanisms by Obligation Count",
         fontsize=16,
         fontweight="bold",
-        pad=20)
+        pad=20,
+    )
     ax.axis("equal")
 
     return fig
@@ -465,7 +500,8 @@ def _create_procedure_pie_chart_figure(procedure_data: dict[str, int]) -> Figure
         "Procedures by Obligation Count",
         fontsize=16,
         fontweight="bold",
-        pad=20)
+        pad=20,
+    )
     ax.axis("equal")
 
     return fig
@@ -481,15 +517,22 @@ def _figure_to_svg(fig: Figure) -> str:
     import re
 
     svg_buffer = io.StringIO()
-    fig.savefig(svg_buffer, format="svg", bbox_inches="tight",
-                facecolor="white", edgecolor="none")
+    fig.savefig(
+        svg_buffer,
+        format="svg",
+        bbox_inches="tight",
+        facecolor="white",
+        edgecolor="none",
+    )
     svg_buffer.seek(0)
     svg_string = svg_buffer.getvalue()
     svg_buffer.close()
 
     # Add interactive chart class to the main SVG element
     svg_string = svg_string.replace(
-        "<svg", '<svg class="interactive-chart dashboard-chart"')
+        "<svg",
+        '<svg class="interactive-chart dashboard-chart"',
+    )
 
     # Add CSS classes and data attributes to pie chart paths for interactivity
     # This regex matches SVG path elements that are likely pie wedges
@@ -510,8 +553,14 @@ def _figure_to_svg(fig: Figure) -> str:
         svg_string = svg_string.replace(path, enhanced_path)
 
     # Add CSS classes to text elements for better styling
-    svg_string = re.sub(r"(<text[^>]*>)", r'<text class="chart-text">\1</text>'.replace(
-        '<text class="chart-text"><text', '<text class="chart-text"'), svg_string, )
+    svg_string = re.sub(
+        r"(<text[^>]*>)",
+        r'<text class="chart-text">\1</text>'.replace(
+            '<text class="chart-text"><text',
+            '<text class="chart-text"',
+        ),
+        svg_string,
+    )
 
     # Fix the text replacement to avoid double tags
     svg_string = re.sub(
@@ -564,14 +613,16 @@ def get_plotly_chart_data(project_id: str | None) -> dict[str, Any]:
                 "data": [],
                 "layout": {
                     "title": "No project selected",
-                    "annotations": [{
-                        "text": "Please select a project",
-                        "x": 0.5,
-                        "y": 0.5,
-                        "xref": "paper",
-                        "yref": "paper",
-                        "showarrow": False,
-                    }],
+                    "annotations": [
+                        {
+                            "text": "Please select a project",
+                            "x": 0.5,
+                            "y": 0.5,
+                            "xref": "paper",
+                            "yref": "paper",
+                            "showarrow": False,
+                        },
+                    ],
                 },
             }
 
@@ -586,31 +637,37 @@ def get_plotly_chart_data(project_id: str | None) -> dict[str, Any]:
                 "data": [],
                 "layout": {
                     "title": "No obligations found",
-                    "annotations": [{
-                        "text": "No obligations in this project",
-                        "x": 0.5,
-                        "y": 0.5,
-                        "xref": "paper",
-                        "yref": "paper",
-                        "showarrow": False,
-                    }],
+                    "annotations": [
+                        {
+                            "text": "No obligations in this project",
+                            "x": 0.5,
+                            "y": 0.5,
+                            "xref": "paper",
+                            "yref": "paper",
+                            "showarrow": False,
+                        },
+                    ],
                 },
             }
 
         # Create Plotly.js data
         return {
-            "data": [{
-                "values": list(filtered_counts.values()),
-                "labels": list(filtered_counts.keys()),
-                "type": "pie",
-                "marker": {
-                    "colors": [STATUS_COLORS.get(label, "#cccccc")
-                               for label in filtered_counts],
+            "data": [
+                {
+                    "values": list(filtered_counts.values()),
+                    "labels": list(filtered_counts.keys()),
+                    "type": "pie",
+                    "marker": {
+                        "colors": [
+                            STATUS_COLORS.get(label, "#cccccc")
+                            for label in filtered_counts
+                        ],
+                    },
+                    "textinfo": "label+percent",
+                    "textposition": "auto",
+                    "hovertemplate": "<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>",
                 },
-                "textinfo": "label+percent",
-                "textposition": "auto",
-                "hovertemplate": "<b>%{label}</b><br>Count: %{value}<br>Percentage: %{percent}<extra></extra>",
-            }],
+            ],
             "layout": {
                 "title": {
                     "text": "Project Obligations Status",
@@ -633,13 +690,15 @@ def get_plotly_chart_data(project_id: str | None) -> dict[str, Any]:
             "data": [],
             "layout": {
                 "title": f"Error: {e}",
-                "annotations": [{
-                    "text": f"Error loading chart: {e}",
-                    "x": 0.5,
-                    "y": 0.5,
-                    "xref": "paper",
-                    "yref": "paper",
-                    "showarrow": False,
-                }],
+                "annotations": [
+                    {
+                        "text": f"Error loading chart: {e}",
+                        "x": 0.5,
+                        "y": 0.5,
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                    },
+                ],
             },
         }

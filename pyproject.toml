@@ -1,3 +1,62 @@
+[project]
+name = "greenova"
+version = "0.1.0"
+description = "Greenova environmental management"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beartype>=0.21.0",
+    "cffi==1.17.1",
+    "cfgv==3.4.0",
+    "cryptography==45.0.3",
+    "distlib==0.3.9",
+    "django>=5.2.1",
+    "django-allauth>=65.9.0",
+    "django-browser-reload>=1.18.0",
+    "django-cors-headers>=4.7.0",
+    "django-debug-toolbar>=5.2.0",
+    "django-extensions>=4.1",
+    "django-htmx>=1.23.0",
+    "django-hyperscript>=1.5.2",
+    "django-matplotlib>=0.1",
+    "django-pb-model>=0.3.3",
+    "django-pdb>=0.6.2",
+    "django-plotly-dash>=2.4.6",
+    "django-silk>=5.4.0",
+    "django-tailwind>=4.0.1",
+    "django-template-partials>=24.4",
+    "django-csp>=3.8",
+    "django-filter>=23.5",
+    "django-tables2>=2.7",
+    "fido2>=2.0.0",
+    "filelock==3.18.0",
+    "identify==2.6.12",
+    "matplotlib>=3.10.3",
+    "nodeenv==1.9.1",
+    "pandas>=2.2.3",
+    "patchelf==0.17.2.2",
+    "platformdirs==4.3.8",
+    "pycparser==2.22",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.1.0",
+    "PyYAML==6.0.2",
+    "setuptools==80.9.0",
+    "whitenoise>=6.9.0",
+    "django-crispy-forms>=2.1",
+    "crispy-bootstrap4>=2024.2",
+    "django-guardian>=2.4.0",
+    "django-storages>=1.14.3",
+    "django-lifecycle>=1.2.0",
+    "django-autocomplete-light>=3.9.7",
+    "pillow>=10.3.0",
+    "python-slugify>=8.0.4",
+    "bleach>=6.1.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["greenova*"]
+exclude = ["node_modules*", "logs*"]
+
 [build-system]
 requires = ["setuptools", "wheel", "uvenv"]
 build-backend = "setuptools.build_meta"

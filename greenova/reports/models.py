@@ -27,12 +27,23 @@ Stub for future extensibility.
 
 # Third-party imports
 
-from typing import ClassVar
+
+from beartype import beartype
 from django.db import models
+from typing import ClassVar
 
 
+@beartype
 class Report(models.Model):
-    """Stub model for reports."""
+    """Stub model for reports.
+
+    Attributes:
+        name (models.CharField): The name of the report.
+        description (models.TextField): A brief description of the report.
+        created_at (models.DateTimeField): The timestamp when the report was created.
+        updated_at (models.DateTimeField): The timestamp when the report was last updated.
+
+    """
 
     name: models.CharField = models.CharField(max_length=255)
     description: models.TextField = models.TextField(blank=True)
@@ -45,6 +56,13 @@ class Report(models.Model):
         ordering: ClassVar[list[str]] = ["-created_at"]
         verbose_name = "Report"
         verbose_name_plural = "Reports"
+        permissions = [
+            ("view_report", "Can view report"),
+            ("change_report", "Can change report"),
+            ("delete_report", "Can delete report"),
+        ]
+        default_permissions = ("add", "change", "delete", "view")
+        # Enable object-level permissions for django-guardian
 
     def __str__(self) -> str:
         """Return the string representation of the report (its name)."""

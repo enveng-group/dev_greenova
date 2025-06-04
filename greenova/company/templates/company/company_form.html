@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load partials %}
 
 {% block title %}{{ action }} Company{% endblock title %}
 
@@ -10,7 +11,7 @@
   </header>
 
   <div class="form-container">
-    {% include "company/partials/company_form.html" %}
+    {% include_partial "company/partials/company_form.html" %}
   </div>
 </article>
 {% endblock content %}

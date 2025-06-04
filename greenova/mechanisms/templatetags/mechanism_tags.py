@@ -2,8 +2,7 @@ from typing import Any
 
 from django import template
 from django.db.models import QuerySet
-
-from greenova.mechanisms.models import EnvironmentalMechanism
+from mechanisms.models import EnvironmentalMechanism
 
 register = template.Library()
 

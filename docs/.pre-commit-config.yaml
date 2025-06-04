@@ -263,6 +263,11 @@ repos:
           - typescript-eslint/eslint-plugin@7.9.0
           - typescript-eslint/parser@7.9.0
 
+  - repo: https://github.com/pre-commit/mirrors-stylelint
+    rev: v15.11.0 # Use the latest stable version
+    hooks:
+      - id: stylelint
+
   # 11. Shell and other tools
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.11.0-1

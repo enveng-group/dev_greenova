@@ -117,10 +117,8 @@ servers, refactor code, update documentation, run pre-commit checks, etc.).
 5. **django-hyperscript**: Primary implementation for client-side interactions.
 6. **django-htmx**: Secondary implementation for client-side interactions only
    to complement django-hyperscript.
-7. **SASS/PostCSS**: Use for advanced styling needs when required.
-8. **TypeScript**: Introduce only when django-hyperscript and django-htmx
-   cannot meet the requirements. Use TypeScript for complex logic. Avoid using
-   TypeScript for simple interactions that can be handled by django-hyperscript
+7. **SCSS/PostCSS**: Use for advanced styling needs when required.
+8. **AssemblyScript**: Introduce only when django-hyperscript and django-htmx
+   cannot meet the requirements. Use AssemblyScript for complex logic. Avoid using
+   AssemblyScriptfor simple interactions that can be handled by django-hyperscript
    or django-htmx.
-9. **AssemblyScript**: Primary implementation for critical client-side
-   interactions and web assembly (WASM) implementations.

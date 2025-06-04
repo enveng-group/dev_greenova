@@ -1,6 +1,6 @@
 <form method="post" enctype="multipart/form-data"
-      action="{% if company %}{% url 'company:edit' company.id %}{% else %}{% url 'company:create' %}{% endif %}"
-      hx-boost="true">
+      action="{% if company %}{% url 'company:edit' company.id %}{% else %}{% url 'company:create' %}{% endif %}">
+  <!-- Use django-hyperscript for dynamic form logic if needed. -->
   {% csrf_token %}
 
   {% if form.errors %}

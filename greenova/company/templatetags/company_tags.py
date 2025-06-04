@@ -1,7 +1,6 @@
+from company.models import Company, CompanyMembership
 from django import template
 from django.utils.html import format_html
-
-from greenova.company.models import Company, CompanyMembership
 
 register = template.Library()
 

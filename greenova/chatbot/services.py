@@ -1,5 +1,6 @@
 import logging
 
+from beartype import beartype
 from django.db.models import Q
 
 from .models import ChatMessage, Conversation, PredefinedResponse, TrainingData
@@ -12,6 +13,7 @@ class ChatbotService:
     """Service class for chatbot logic."""
 
     @staticmethod
+    @beartype
     def create_conversation(user, title=None):
         """Create a new conversation for a user."""
         title = title or "New Conversation"
@@ -21,6 +23,7 @@ class ChatbotService:
         )
 
     @staticmethod
+    @beartype
     def add_message(conversation_id, content, is_bot=False, attachments=None):
         """Add a new message to a conversation."""
         try:
@@ -41,6 +44,7 @@ class ChatbotService:
             return None
 
     @staticmethod
+    @beartype
     def get_conversation_messages(conversation_id):
         """Get all messages for a conversation."""
         try:
@@ -51,8 +55,10 @@ class ChatbotService:
             return []
 
     @staticmethod
+    @beartype
     def process_user_message(conversation_id, message_text):
         """Process a user message and generate a response."""
+        # Example: use INTENT_CHOICES or MESSAGE_TYPE_CHOICES for logic
         # First check for predefined responses
         predefined = ChatbotService._check_predefined_responses(message_text)
 
@@ -72,17 +78,19 @@ class ChatbotService:
         return response_text
 
     @staticmethod
+    @beartype
     def _check_predefined_responses(message_text):
         """Check if message matches any predefined responses."""
         # Search for exact or partial matches in trigger phrases
         predefined_responses = PredefinedResponse.objects.filter(
-            Q(trigger_phrase__iexact=message_text) |
-            Q(trigger_phrase__icontains=message_text),
+            Q(trigger_phrase__iexact=message_text)
+            | Q(trigger_phrase__icontains=message_text),
         ).order_by("-priority")
 
         return predefined_responses.first()
 
     @staticmethod
+    @beartype
     def _generate_response(message_text):
         """Generate a response based on training data."""
         # Simple keyword matching from training data
@@ -109,6 +117,7 @@ class ChatbotService:
         return "I'm sorry, I don't have an answer for that question."
 
     @staticmethod
+    @beartype
     def serialize_message(message_id, content):
         """Serialize a message to protocol buffer format.
 
@@ -123,6 +132,7 @@ class ChatbotService:
         return create_chat_response(message_id, content)
 
     @staticmethod
+    @beartype
     def deserialize_message(data):
         """Deserialize a message from protocol buffer format.
 

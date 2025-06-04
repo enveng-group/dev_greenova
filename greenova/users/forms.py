@@ -1,5 +1,8 @@
 from typing import Any, TypeVar
 
+from beartype import beartype
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Fieldset, Layout, Submit
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -26,6 +29,7 @@ class UserProfileForm(forms.ModelForm):
             "bio": forms.Textarea(attrs={"rows": 4}),
         }
 
+    @beartype
     def __init__(
         self,
         *args: Any,
@@ -39,6 +43,22 @@ class UserProfileForm(forms.ModelForm):
             # type: ignore
             self.fields["last_name"].initial = self.instance.user.last_name
             self.fields["email"].initial = self.instance.user.email  # type: ignore
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Fieldset(
+                "Profile Information",
+                "first_name",
+                "last_name",
+                "email",
+                "bio",
+                "position",
+                "department",
+                "phone_number",
+                "profile_image",
+            ),
+            Submit("submit", "Save Profile"),
+        )
 
     def save(self, commit: bool = True) -> Profile:
         profile = super().save(commit=False)
@@ -71,9 +91,35 @@ class AdminUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = [
-            "username", "email", "first_name", "last_name",
-            "is_active", "is_staff", "is_superuser",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "is_active",
+            "is_staff",
+            "is_superuser",
         ]
+
+    @beartype
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Fieldset(
+                "User Details",
+                "username",
+                "email",
+                "first_name",
+                "last_name",
+                "is_active",
+                "is_staff",
+                "is_superuser",
+                "password1",
+                "password2",
+            ),
+            Submit("submit", "Save User"),
+        )
 
     def clean_password1(self) -> str | None:
         password = self.cleaned_data.get("password1")
@@ -124,3 +170,16 @@ class ProfileImageForm(forms.ModelForm):
         widgets = {
             "profile_image": forms.FileInput(attrs={"accept": "image/*"}),
         }
+
+    @beartype
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Fieldset(
+                "Profile Image",
+                "profile_image",
+            ),
+            Submit("submit", "Upload Image"),
+        )

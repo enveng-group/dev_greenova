@@ -2,19 +2,23 @@ import base64
 import io
 import logging
 
+from beartype import beartype
 from matplotlib.figure import Figure
 
+from .commons import MECHANISM_STATUS_COLORS
 from .models import EnvironmentalMechanism
 
 logger = logging.getLogger(__name__)
 
 
+@beartype
 def generate_pie_chart(
-        data: list[int],
-        labels: list[str],
-        colors: list[str],
-        fig_width: int = 300,
-        fig_height: int = 250) -> Figure:
+    data: list[int],
+    labels: list[str],
+    colors: list[str],
+    fig_width: int = 300,
+    fig_height: int = 250,
+) -> Figure:
     """Generate a pie chart for given data and labels with percentages in the legend."""
     fig = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)
     ax = fig.add_subplot(111)
@@ -25,8 +29,10 @@ def generate_pie_chart(
         percentages = [(value / total) * 100 for value in data]
 
         # Create legend labels with percentages
-        legend_labels = [f"{label} ({value} - {pct:.1f}%)"
-                         for label, value, pct in zip(labels, data, percentages, strict=False)]
+        legend_labels = [
+            f"{label} ({value} - {pct:.1f}%)"
+            for label, value, pct in zip(labels, data, percentages, strict=False)
+        ]
 
         # Create pie without percentage text on slices
         wedges, _ = ax.pie(
@@ -45,7 +51,8 @@ def generate_pie_chart(
             0.5,
             "No data available",
             horizontalalignment="center",
-            verticalalignment="center")
+            verticalalignment="center",
+        )
 
     ax.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle
     fig.tight_layout()
@@ -53,6 +60,7 @@ def generate_pie_chart(
     return fig
 
 
+@beartype
 def encode_figure_to_base64(fig: Figure) -> str:
     """Convert a matplotlib figure to a base64 encoded string."""
     buf = io.BytesIO()
@@ -61,8 +69,12 @@ def encode_figure_to_base64(fig: Figure) -> str:
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
 
-def get_mechanism_chart(mechanism_id: int, fig_width: int = 300,
-                        fig_height: int = 250) -> tuple[Figure, str]:
+@beartype
+def get_mechanism_chart(
+    mechanism_id: int,
+    fig_width: int = 300,
+    fig_height: int = 250,
+) -> tuple[Figure, str]:
     """Get pie chart for a specific mechanism based on its statuses.
     Returns both the figure and base64 encoded image data.
     """
@@ -75,21 +87,30 @@ def get_mechanism_chart(mechanism_id: int, fig_width: int = 300,
             mechanism.completed_count,
             mechanism.overdue_count,
         ]
-        colors = ["#f9c74f", "#90be6d", "#43aa8b", "#f94144"]
+        colors = MECHANISM_STATUS_COLORS
 
         fig = generate_pie_chart(data, labels, colors, fig_width, fig_height)
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image
     except EnvironmentalMechanism.DoesNotExist:
-        logger.exception(f"Mechanism with ID {mechanism_id} does not exist.")
-        fig = generate_pie_chart([0, 0, 0, 0], ["None", "None", "None", "None"], [
-                                 "#ccc", "#ccc", "#ccc", "#ccc"], fig_width, fig_height)
+        logger.exception("Mechanism with ID %s does not exist.", mechanism_id)
+        fig = generate_pie_chart(
+            [0, 0, 0, 0],
+            ["None", "None", "None", "None"],
+            ["#ccc", "#ccc", "#ccc", "#ccc"],
+            fig_width,
+            fig_height,
+        )
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image
 
 
-def get_overall_chart(project_id: int, fig_width: int = 300,
-                      fig_height: int = 250) -> tuple[Figure, str]:
+@beartype
+def get_overall_chart(
+    project_id: int,
+    fig_width: int = 300,
+    fig_height: int = 250,
+) -> tuple[Figure, str]:
     """Get overall pie chart for all mechanisms in a project.
     Returns both the figure and base64 encoded image data.
     """
@@ -104,14 +125,19 @@ def get_overall_chart(project_id: int, fig_width: int = 300,
 
         labels = ["Not Started", "In Progress", "Completed", "Overdue"]
         data = [not_started, in_progress, completed, overdue]
-        colors = ["#f9c74f", "#90be6d", "#43aa8b", "#f94144"]
+        colors = MECHANISM_STATUS_COLORS
 
         fig = generate_pie_chart(data, labels, colors, fig_width, fig_height)
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image
     except Exception as e:
-        logger.exception(f"Error generating overall chart: {e!s}")
-        fig = generate_pie_chart([0, 0, 0, 0], ["None", "None", "None", "None"], [
-                                 "#ccc", "#ccc", "#ccc", "#ccc"], fig_width, fig_height)
+        logger.exception("Error generating overall chart: %s", str(e))
+        fig = generate_pie_chart(
+            [0, 0, 0, 0],
+            ["None", "None", "None", "None"],
+            ["#ccc", "#ccc", "#ccc", "#ccc"],
+            fig_width,
+            fig_height,
+        )
         encoded_image = encode_figure_to_base64(fig)
         return fig, encoded_image

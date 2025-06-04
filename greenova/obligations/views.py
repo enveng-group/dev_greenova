@@ -1,18 +1,16 @@
 import logging
-from datetime import timedelta
-from typing import Any
 
+import django_tables2 as tables
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.db.models import Q, QuerySet
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import cache_control, require_http_methods
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import (
     CreateView,
@@ -21,14 +19,20 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
-from mechanisms.models import EnvironmentalMechanism  # Added missing import
+from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project
-from responsibility.models import ResponsibilityAssignment  # Import the new model
+from responsibility.models import ResponsibilityAssignment
 
+from .filters import ObligationFilter
 from .forms import EvidenceUploadForm, ObligationForm, ResponsibilityAssignmentFormSet
 from .models import Obligation, ObligationEvidence
+from .serializers import (
+    ObligationCollectionProtoSerializer,
+    ObligationProtoSerializer,
+)
+from .tables import get_obligation_table
 from .utils import (
-    is_obligation_overdue,  # Add explicit import for is_obligation_overdue
+    is_obligation_overdue,
 )
 
 # Create a logger for this module
@@ -42,148 +46,49 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
 
     def get_template_names(self):
         """Return appropriate template based on request type."""
-        if self.request.htmx:
-            return ["obligations/components/_obligations_summary.html"]
         return [self.template_name]
-
-    def apply_filters(self, queryset: QuerySet, filters: dict[str, Any]) -> QuerySet:
-        """Apply filters to the queryset."""
-        # Handle the date filter for lookahead intervals
-        date_filter = filters["date_filter"]
-        if date_filter in {"7days", "14days", "30days", "90days"}:
-            today = timezone.now().date()
-            days = int(date_filter.replace("days", ""))
-            future_date = today + timedelta(days=days)
-            queryset = queryset.filter(
-                action_due_date__gte=today,
-                action_due_date__lte=future_date,
-            )
-
-        # Apply status filter
-        if filters["status"]:
-            # Handle the special case of 'overdue' status which isn't in the database
-            if "overdue" in filters["status"] and len(filters["status"]) == 1:
-                from obligations.utils import is_obligation_overdue
-
-                # Filter for items that are overdue
-                filtered_ids = [
-                    obligation.obligation_number for obligation in queryset if is_obligation_overdue(obligation)]
-                queryset = queryset.filter(obligation_number__in=filtered_ids)
-            elif "overdue" in filters["status"] and len(filters["status"]) > 1:
-                # Handle mix of 'overdue' and other statuses
-                other_statuses = [s for s in filters["status"] if s != "overdue"]
-                filtered_ids = []
-                for obligation in queryset.filter(status__in=other_statuses):
-                    if is_obligation_overdue(obligation):
-                        filtered_ids.append(obligation.obligation_number)
-                queryset = queryset.filter(Q(status__in=other_statuses) | Q(
-                    obligation_number__in=filtered_ids))
-            else:
-                # Normal status filtering
-                queryset = queryset.filter(status__in=filters["status"])
-
-        # Apply mechanism filter if provided
-        if filters["mechanism"]:
-            queryset = queryset.filter(
-                primary_environmental_mechanism__id__in=filters["mechanism"],
-            )
-
-        # Apply phase filter if provided
-        if filters["phase"]:
-            queryset = queryset.filter(project_phase__in=filters["phase"])
-
-        # Apply search if provided
-        if filters["search"]:
-            queryset = queryset.filter(
-                Q(obligation_number__icontains=filters["search"]) |
-                Q(obligation__icontains=filters["search"]) |
-                Q(supporting_information__icontains=filters["search"]),
-            )
-
-        return queryset
-
-    def get_filters(self) -> dict[str, Any]:
-        """Extract filters from request."""
-        return {
-            "status": self.request.GET.getlist("status"),
-            "mechanism": self.request.GET.getlist("mechanism"),
-            "phase": self.request.GET.getlist("phase"),
-            "search": self.request.GET.get("search", ""),
-            "sort": self.request.GET.get("sort", "action_due_date"),
-            "order": self.request.GET.get("order", "asc"),
-            "date_filter": self.request.GET.get("date_filter", ""),
-        }
-
-    def user_has_role(self, obligation: Obligation, roles: list[str]) -> bool:
-        """Check if the current user has any of the specified roles for the obligation."""
-        return obligation.responsibility_assignments.filter(
-            user=self.request.user, role__in=roles,
-        ).exists()
 
     def get_context_data(self, **kwargs):
         """Get context data for the template."""
         context = super().get_context_data(**kwargs)
-
         mechanism_id = self.request.GET.get("mechanism_id")
-
-        """
-        if not mechanism_id:
-            context['error'] = "No procedure selected"
-            return context
-        """
         try:
-            # Verify project exists
             project = get_object_or_404(EnvironmentalMechanism, id=mechanism_id)
-
-            # Get filters from request
-            filters = self.get_filters()
-
-            # Get obligations for this project
             queryset = Obligation.objects.filter(
-                primary_environmental_mechanism=mechanism_id)
-
-            # Apply filters
-            queryset = self.apply_filters(queryset, filters)
-
-            # Sort results
-            sort_field = filters["sort"]
-            if filters["order"] == "desc":
-                sort_field = f"-{sort_field}"
-            queryset = queryset.order_by(sort_field)
-
-            # Paginate results
-            paginator = Paginator(queryset, 15)
+                primary_environmental_mechanism=mechanism_id,
+            )
+            filterset = ObligationFilter(self.request.GET, queryset=queryset)
             page_number = self.request.GET.get("page", 1)
+            paginator = Paginator(filterset.qs, 15)
             page_obj = paginator.get_page(page_number)
-
-            context.update({
-                "obligations": page_obj,
-                "page_obj": page_obj,
-                "project": project,
-                # 'project_id': project_id,
-                "mechanism_id": mechanism_id,
-                "filters": filters,
-                "total_count": paginator.count,
-            })
-            # Get only unique phases
-            phases = Obligation.objects.filter(
-                primary_environmental_mechanism=mechanism_id).exclude(
-                project_phase__isnull=True).exclude(
-                project_phase="").values_list(
-                "project_phase",
-                flat=True).distinct()
+            context.update(
+                {
+                    "obligations": page_obj,
+                    "page_obj": page_obj,
+                    "project": project,
+                    "mechanism_id": mechanism_id,
+                    "filter": filterset,
+                    "total_count": paginator.count,
+                },
+            )
+            phases = (
+                Obligation.objects.filter(primary_environmental_mechanism=mechanism_id)
+                .exclude(project_phase__isnull=True)
+                .exclude(project_phase="")
+                .values_list("project_phase", flat=True)
+                .distinct()
+            )
             phases_cleaned = {phase.strip() for phase in phases}
             context["phases"] = list(phases_cleaned)
 
-            # Permissions: user_can_edit if user has assignment with edit rights
             def user_can_edit_obligation(obligation, user):
                 return ResponsibilityAssignment.objects.filter(
                     obligation=obligation,
                     user=user,
-                    role__in=["Owner", "Editor"],  # Adjust roles as needed
+                    role__in=["Owner", "Editor"],
                 ).exists()
-            context["user_can_edit"] = user_can_edit_obligation
 
+            context["user_can_edit"] = user_can_edit_obligation
         except Exception as e:
             logger.exception(f"Error in ObligationSummaryView: {e!s}")
             context["error"] = f"Error loading obligations: {e!s}"
@@ -200,7 +105,8 @@ class TotalOverdueObligationsView(LoginRequiredMixin, View):
         obligations = Obligation.objects.filter(project_id=project_id)
 
         overdue_count = sum(
-            1 for obligation in obligations if is_obligation_overdue(obligation))
+            1 for obligation in obligations if is_obligation_overdue(obligation)
+        )
 
         return JsonResponse(overdue_count, safe=False)
 
@@ -238,7 +144,9 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         try:
             super().form_valid(form)
             formset = ResponsibilityAssignmentFormSet(
-                self.request.POST, instance=self.object)
+                self.request.POST,
+                instance=self.object,
+            )
             if formset.is_valid():
                 formset.save()
             else:
@@ -246,13 +154,15 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
 
             # Add success message
             messages.success(
-                self.request, f"Obligation {
-                    self.object.obligation_number} created successfully.")
+                self.request,
+                f"Obligation {self.object.obligation_number} created successfully.",
+            )
 
             # Redirect to appropriate page
             if "project_id" in self.request.GET:
                 return redirect(
-                    f"{reverse('dashboard:home')}?project_id={self.request.GET['project_id']}")
+                    f"{reverse('dashboard:home')}?project_id={self.request.GET['project_id']}",
+                )
             return redirect("dashboard:home")
 
         except Exception as e:
@@ -276,7 +186,8 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
     def user_has_role(self, roles: list[str]) -> bool:
         """Check if the current user has any of the specified roles for the obligation."""
         return self.object.responsibility_assignments.filter(
-            user=self.request.user, role__in=roles,
+            user=self.request.user,
+            role__in=roles,
         ).exists()
 
     def get_context_data(self, **kwargs):
@@ -305,13 +216,13 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
             role__in=["Owner", "Editor"],  # Adjust as needed
         ).exists():
             messages.error(
-                request, "You do not have permission to edit this obligation.")
+                request,
+                "You do not have permission to edit this obligation.",
+            )
             return redirect("dashboard:home")
         return super().dispatch(request, *args, **kwargs)
 
     def get_template_names(self):
-        if self.request.htmx:
-            return ["obligations/form/partial_update_obligation.html"]
         return [self.template_name]
 
     def get_form_kwargs(self):
@@ -325,7 +236,9 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         context["project_id"] = self.object.project_id
         if self.request.POST:
             context["formset"] = ResponsibilityAssignmentFormSet(
-                self.request.POST, instance=self.object)
+                self.request.POST,
+                instance=self.object,
+            )
         else:
             context["formset"] = ResponsibilityAssignmentFormSet(instance=self.object)
         return context
@@ -338,14 +251,19 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
 
             super().form_valid(form)
             formset = ResponsibilityAssignmentFormSet(
-                self.request.POST, instance=self.object)
+                self.request.POST,
+                instance=self.object,
+            )
             if formset.is_valid():
                 formset.save()
             else:
                 return self.form_invalid(form)
 
             # Update mechanism counts
-            if old_mechanism and old_mechanism != self.object.primary_environmental_mechanism:
+            if (
+                old_mechanism
+                and old_mechanism != self.object.primary_environmental_mechanism
+            ):
                 if old_mechanism:
                     old_mechanism.update_obligation_counts()
                 if self.object.primary_environmental_mechanism:
@@ -355,13 +273,15 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
 
             # Add success message
             messages.success(
-                self.request, f"Obligation {
-                    self.object.obligation_number} updated successfully.")
+                self.request,
+                f"Obligation {self.object.obligation_number} updated successfully.",
+            )
 
             # Redirect back to the appropriate page
             if "project_id" in self.request.GET:
                 return redirect(
-                    f"{reverse('dashboard:home')}?project_id={self.request.GET['project_id']}")
+                    f"{reverse('dashboard:home')}?project_id={self.request.GET['project_id']}",
+                )
             return redirect("dashboard:home")
 
         except Exception as e:
@@ -389,10 +309,13 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
                 user=request.user,
                 role__in=["Owner", "Editor"],  # Adjust as needed
             ).exists():
-                return JsonResponse({
-                    "status": "error",
-                    "message": "You do not have permission to delete this obligation.",
-                }, status=403)
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You do not have permission to delete this obligation.",
+                    },
+                    status=403,
+                )
 
             project_id = self.object.project_id
             mechanism = self.object.primary_environmental_mechanism
@@ -400,26 +323,35 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
             # Delete the obligation
             self.object.delete()
             logger.info(
-                f"Obligation {
-                    kwargs.get('obligation_number')} deleted successfully")
+                f"Obligation {kwargs.get('obligation_number')} deleted successfully",
+            )
 
             # Update mechanism counts
             if mechanism:
                 mechanism.update_obligation_counts()
 
             # Return JSON response for AJAX calls
-            return JsonResponse({
-                "status": "success",
-                "message": f"Obligation {kwargs.get('obligation_number')} deleted successfully",
-                "redirect_url": f"{reverse('dashboard:home')}?project_id={project_id}",
-            })
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": f"Obligation {
+                        kwargs.get('obligation_number')
+                    } deleted successfully",
+                    "redirect_url": f"{reverse('dashboard:home')}?project_id={
+                        project_id
+                    }",
+                },
+            )
 
         except Exception as e:
             logger.exception(f"Error deleting obligation: {e!s}")
-            return JsonResponse({
-                "status": "error",
-                "message": f"Error deleting obligation: {e!s}",
-            }, status=400)
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": f"Error deleting obligation: {e!s}",
+                },
+                status=400,
+            )
 
 
 @method_decorator(vary_on_headers("HX-Request"), name="dispatch")
@@ -427,12 +359,20 @@ class ToggleCustomAspectView(View):
     def get(self, request):
         aspect = request.GET.get("environmental_aspect")
         if aspect == "Other":
-            return render(request, "obligations/partials/custom_aspect_field.html", {
-                "show_field": True,
-            })
-        return render(request, "obligations/partials/custom_aspect_field.html", {
-            "show_field": False,
-        })
+            return render(
+                request,
+                "obligations/partials/custom_aspect_field.html",
+                {
+                    "show_field": True,
+                },
+            )
+        return render(
+            request,
+            "obligations/partials/custom_aspect_field.html",
+            {
+                "show_field": False,
+            },
+        )
 
 
 def upload_evidence(request, obligation_id):
@@ -442,7 +382,8 @@ def upload_evidence(request, obligation_id):
     if ObligationEvidence.objects.filter(obligation=obligation).count() >= 5:
         messages.error(
             request,
-            "This obligation already has the maximum of 5 evidence files")
+            "This obligation already has the maximum of 5 evidence files",
+        )
         return redirect("obligation_detail", obligation_id=obligation_id)
 
     if request.method == "POST":
@@ -455,8 +396,107 @@ def upload_evidence(request, obligation_id):
             return redirect("obligation_detail", obligation_id=obligation_id)
     else:
         form = EvidenceUploadForm()
-        return render(request, "upload_evidence.html", {
-            "obligation": obligation,
-            "form": form,
-        })
+        return render(
+            request,
+            "upload_evidence.html",
+            {
+                "obligation": obligation,
+                "form": form,
+            },
+        )
     return None
+
+
+@login_required
+def export_obligation(request, obligation_number: str) -> HttpResponse:
+    """Export a single obligation as Protocol Buffer binary data."""
+    if request.user.is_staff:
+        obligation = get_object_or_404(Obligation, obligation_number=obligation_number)
+    else:
+        obligation = get_object_or_404(
+            Obligation,
+            obligation_number=obligation_number,
+            responsibility_assignments__user=request.user,
+        )
+    serializer = ObligationProtoSerializer(instance=obligation)
+    data = serializer.data()
+    if not data:
+        messages.error(request, "Failed to export obligation.")
+        return redirect("dashboard:home")
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = (
+        f'attachment; filename="obligation_{obligation_number}.pb"'
+    )
+    return response
+
+
+@login_required
+def export_all_obligations(request) -> HttpResponse:
+    """Export all obligations as a Protocol Buffer collection."""
+    if request.user.is_staff:
+        obligations = list(Obligation.objects.all())
+    else:
+        obligations = list(
+            Obligation.objects.filter(responsibility_assignments__user=request.user),
+        )
+    serializer = ObligationCollectionProtoSerializer(instances=obligations)
+    data = serializer.data()
+    if not data:
+        messages.error(request, "Failed to export obligations.")
+        return redirect("dashboard:home")
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = 'attachment; filename="obligations.pb"'
+    return response
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def import_obligation(request) -> HttpResponse:
+    """Import an obligation from Protocol Buffer binary data."""
+    if request.method == "POST":
+        if "file" not in request.FILES:
+            messages.error(request, "No file was provided.")
+            return redirect("obligations:import_obligation")
+        uploaded_file = request.FILES["file"]
+        try:
+            data = uploaded_file.read()
+            serializer = ObligationProtoSerializer(data=data)
+            if not serializer.is_valid():
+                messages.error(
+                    request,
+                    "Could not deserialize the file. Invalid format.",
+                )
+                return redirect("obligations:import_obligation")
+            obligation = serializer.validated_data
+            # Set the creator to the current user if applicable
+            # obligation.created_by = request.user  # Uncomment if model supports
+            obligation.obligation_number = None  # Ensure a new record is created
+            obligation.save()
+            messages.success(request, "Obligation imported successfully.")
+            return redirect("dashboard:home")
+        except (ValueError, OSError, AttributeError, TypeError) as e:
+            logger.exception("Error importing obligation: %s", str(e))
+            messages.error(request, "An error occurred while importing the obligation.")
+            return redirect("obligations:import_obligation")
+    # GET request - show import form
+    return render(
+        request,
+        "obligations/import_obligation.html",
+        {
+            "page_title": "Import Obligation",
+        },
+    )
+
+
+class ObligationListView(LoginRequiredMixin, TemplateView):
+    template_name = "obligations/obligation_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = Obligation.objects.all()
+        # Filtering logic can be added here as needed
+        ObligationTable = get_obligation_table()
+        table = ObligationTable(queryset)
+        tables.RequestConfig(self.request, paginate={"per_page": 15}).configure(table)
+        context["table"] = table
+        return context

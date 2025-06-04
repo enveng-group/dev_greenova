@@ -1,3 +1,6 @@
+from beartype import beartype
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Fieldset, Layout, Submit
 from django import forms
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
@@ -12,12 +15,22 @@ class BugReportForm(forms.ModelForm):
     class Meta:
         model = BugReport
         fields = [
-            "title", "description",
-            "application_version", "operating_system", "browser", "device_type",
-            "steps_to_reproduce", "expected_behavior", "actual_behavior",
-            "error_messages", "trace_report",
-            "frequency", "impact_severity", "user_impact",
-            "workarounds", "additional_comments",
+            "title",
+            "description",
+            "application_version",
+            "operating_system",
+            "browser",
+            "device_type",
+            "steps_to_reproduce",
+            "expected_behavior",
+            "actual_behavior",
+            "error_messages",
+            "trace_report",
+            "frequency",
+            "impact_severity",
+            "user_impact",
+            "workarounds",
+            "additional_comments",
         ]
 
         widgets = {
@@ -37,16 +50,59 @@ class BugReportForm(forms.ModelForm):
             "user_impact": forms.Textarea(attrs={"rows": 3, "cols": 80}),
             "workarounds": forms.Textarea(attrs={"rows": 3, "cols": 80}),
             "additional_comments": forms.Textarea(attrs={"rows": 3, "cols": 80}),
+            # Example: "status": forms.Select(choices=FEEDBACK_STATUS_CHOICES)
+            # Example: "category": forms.Select(choices=FEEDBACK_CATEGORY_CHOICES)
         }
 
+    @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """Initialize the BugReportForm with required fields, help text, and layout.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        """
         super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Fieldset(
+                "Bug Report Details",
+                "title",
+                "description",
+                "application_version",
+                "operating_system",
+                "browser",
+                "device_type",
+                "steps_to_reproduce",
+                "expected_behavior",
+                "actual_behavior",
+                "error_messages",
+                "trace_report",
+                "frequency",
+                "impact_severity",
+                "user_impact",
+                "workarounds",
+                "additional_comments",
+            ),
+            Submit("submit", "Submit Bug Report"),
+        )
 
         # Mark most fields as required
         required_fields = [
-            "title", "description", "application_version", "operating_system",
-            "device_type", "steps_to_reproduce", "expected_behavior",
-            "actual_behavior", "frequency", "impact_severity", "user_impact",
+            "title",
+            "description",
+            "application_version",
+            "operating_system",
+            "device_type",
+            "steps_to_reproduce",
+            "expected_behavior",
+            "actual_behavior",
+            "frequency",
+            "impact_severity",
+            "user_impact",
         ]
 
         # Load the mandatory field message
@@ -56,22 +112,54 @@ class BugReportForm(forms.ModelForm):
 
         # Define field help text
         field_help = {
-            "title": _("A brief, descriptive title of the issue. Example: 'Dashboard fails to load environmental metrics when filtering by project'"),
-            "description": _("A concise summary of the problem. Focus on what happened, when it happened, and the context."),
-            "application_version": _("The version of Greenova where the bug was encountered. Check the footer of any Greenova page or look at the 'About' section in settings."),
-            "operating_system": _("Your operating system and version (e.g., Windows 10, macOS 11.2, Ubuntu 20.04)."),
-            "browser": _("Browser name and version (e.g., Chrome 89.0, Firefox 86.0). Leave blank if not applicable."),
-            "device_type": _("Type of device (e.g., desktop, laptop, smartphone). Include device model if on mobile."),
-            "steps_to_reproduce": _("Detailed numbered steps to reproduce the issue. Start from a known state and be specific about what you clicked, typed, or selected."),
-            "expected_behavior": _("What you expected to happen when following the steps above."),
-            "actual_behavior": _("What actually happened instead. Be specific about error messages, unexpected behavior, or missing functionality."),
-            "error_messages": _("Copy and paste the exact error text rather than paraphrasing. Include any error codes or numbers."),
-            "trace_report": _("If available, include the Django traceback or browser console logs. For Django errors: look for the section labeled 'Traceback', click on 'Switch to copy-and-paste view', and copy the entire trace report."),
-            "frequency": _("How often the issue occurs. Select the option that best matches your experience."),
-            "impact_severity": _("How severe the issue is: Minor (causes inconvenience), Major (prevents completing specific tasks), Critical (prevents core functionality, data loss, security risks)."),
-            "user_impact": _("How the issue affects user experience. Mention any deadlines or business processes affected."),
-            "workarounds": _("Any temporary solutions you've found to work around the issue."),
-            "additional_comments": _("Any other relevant information, patterns you've noticed, or when the issue started occurring."),
+            "title": _(
+                "A brief, descriptive title of the issue. Example: 'Dashboard fails to load environmental metrics when filtering by project'",
+            ),
+            "description": _(
+                "A concise summary of the problem. Focus on what happened, when it happened, and the context.",
+            ),
+            "application_version": _(
+                "The version of Greenova where the bug was encountered. Check the footer of any Greenova page or look at the 'About' section in settings.",
+            ),
+            "operating_system": _(
+                "Your operating system and version (e.g., Windows 10, macOS 11.2, Ubuntu 20.04).",
+            ),
+            "browser": _(
+                "Browser name and version (e.g., Chrome 89.0, Firefox 86.0). Leave blank if not applicable.",
+            ),
+            "device_type": _(
+                "Type of device (e.g., desktop, laptop, smartphone). Include device model if on mobile.",
+            ),
+            "steps_to_reproduce": _(
+                "Detailed numbered steps to reproduce the issue. Start from a known state and be specific about what you clicked, typed, or selected.",
+            ),
+            "expected_behavior": _(
+                "What you expected to happen when following the steps above.",
+            ),
+            "actual_behavior": _(
+                "What actually happened instead. Be specific about error messages, unexpected behavior, or missing functionality.",
+            ),
+            "error_messages": _(
+                "Copy and paste the exact error text rather than paraphrasing. Include any error codes or numbers.",
+            ),
+            "trace_report": _(
+                "If available, include the Django traceback or browser console logs. For Django errors: look for the section labeled 'Traceback', click on 'Switch to copy-and-paste view', and copy the entire trace report.",
+            ),
+            "frequency": _(
+                "How often the issue occurs. Select the option that best matches your experience.",
+            ),
+            "impact_severity": _(
+                "How severe the issue is: Minor (causes inconvenience), Major (prevents completing specific tasks), Critical (prevents core functionality, data loss, security risks).",
+            ),
+            "user_impact": _(
+                "How the issue affects user experience. Mention any deadlines or business processes affected.",
+            ),
+            "workarounds": _(
+                "Any temporary solutions you've found to work around the issue.",
+            ),
+            "additional_comments": _(
+                "Any other relevant information, patterns you've noticed, or when the issue started occurring.",
+            ),
         }
 
         # Apply help text and required status to fields
