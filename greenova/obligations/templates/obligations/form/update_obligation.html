@@ -333,19 +333,49 @@
           </div>
         {% endif %}
       </div>
-      <!-- Add Responsibilities field -->
-      {#
-      <div class="form-group">
-        {{ form.responsibilities.label_tag }}
-        {{ form.responsibilities }}
-        {% if form.responsibilities.help_text %}<small>{{ form.responsibilities.help_text }}</small>{% endif %}
-        {% if form.responsibilities.errors %}
+      <!-- Responsibility Assignments -->
+      <fieldset>
+        <legend>Assign Users and Responsibility Roles</legend>
+        {% if formset.non_form_errors %}
           <div class="invalid-feedback">
-            {% for error in form.responsibilities.errors %}{{ error }}{% endfor %}
+            {% for error in formset.non_form_errors %}{{ error }}{% endfor %}
           </div>
         {% endif %}
-      </div>
-      #}
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Responsibility Role</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for form in formset.forms %}
+              <tr>
+                <td>{{ form.user }}</td>
+                <td>{{ form.responsibility }}</td>
+                <td>{% if form.instance.pk %}{{ form.DELETE }} Remove{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button type="button" onclick="addFormRow()">Add Assignment</button>
+        {{ formset.management_form }}
+      </fieldset>
+      <script>
+        function addFormRow() {
+          // Simple JS to clone the last row and increment form index
+          const table = document.querySelector('table.table-bordered tbody');
+          const forms = table.querySelectorAll('tr');
+          const lastForm = forms[forms.length - 1];
+          const newForm = lastForm.cloneNode(true);
+          const totalForms = document.getElementById('id_responsibilityassignment_set-TOTAL_FORMS');
+          const formIdx = parseInt(totalForms.value, 10);
+          newForm.innerHTML = newForm.innerHTML.replace(/-(\d+)-/g, `-${formIdx}-`);
+          table.appendChild(newForm);
+          totalForms.value = formIdx + 1;
+        }
+      </script>
       <!-- Evidence File Upload -->
       <div class="form-group">
         <label for="id_evidence_file">Upload Evidence Files</label>

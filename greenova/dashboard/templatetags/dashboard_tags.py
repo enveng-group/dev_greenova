@@ -48,3 +48,33 @@ def format_date(date_value: Any, format_string: str = "%d %b %Y") -> str:
         return date_value.strftime(format_string)
     except (AttributeError, ValueError):
         return str(date_value)
+
+
+@register.filter(name="sum_field")
+def sum_field(queryset_or_list: Any, field_name: str) -> int:
+    """Sum a specific field across a list or queryset.
+
+    Args:
+        queryset_or_list: List or queryset to sum values from
+        field_name: Name of the field to sum
+
+    Returns:
+        Sum of the specified field values
+
+    """
+    if not queryset_or_list:
+        return 0
+
+    total = 0
+    for item in queryset_or_list:
+        if isinstance(item, dict):
+            value = item.get(field_name, 0)
+        else:
+            value = getattr(item, field_name, 0)
+
+        try:
+            total += int(value) if value is not None else 0
+        except (ValueError, TypeError):
+            continue
+
+    return total

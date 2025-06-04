@@ -320,6 +320,35 @@
         {% endif %}
       </div>
     </fieldset>
+    <!-- Responsibility Assignments -->
+    <fieldset>
+      <legend>Assign Users and Responsibility Roles</legend>
+      {% if formset.non_form_errors %}
+        <div class="invalid-feedback">
+          {% for error in formset.non_form_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Responsibility Role</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for form in formset.forms %}
+            <tr>
+              <td>{{ form.user }}</td>
+              <td>{{ form.responsibility }}</td>
+              <td>{% if form.instance.pk %}{{ form.DELETE }} Remove{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="button" onclick="addFormRow()">Add Assignment</button>
+      {{ formset.management_form }}
+    </fieldset>
     <!-- Form Actions -->
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">Create Obligation</button>
@@ -378,5 +407,18 @@
             });
         }
     });
+
+    function addFormRow() {
+      // Simple JS to clone the last row and increment form index
+      const table = document.querySelector('table.table-bordered tbody');
+      const forms = table.querySelectorAll('tr');
+      const lastForm = forms[forms.length - 1];
+      const newForm = lastForm.cloneNode(true);
+      const totalForms = document.getElementById('id_responsibilityassignment_set-TOTAL_FORMS');
+      const formIdx = parseInt(totalForms.value, 10);
+      newForm.innerHTML = newForm.innerHTML.replace(/-(\d+)-/g, `-${formIdx}-`);
+      table.appendChild(newForm);
+      totalForms.value = formIdx + 1;
+    }
   </script>
 {% endblock form_content %}

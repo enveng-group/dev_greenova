@@ -79,9 +79,18 @@
   <!-- Hyperscript for client-side interactivity -->
   <script src="{% static 'js/vendors/_hyperscript.min.js' %}" defer 
           onerror="this.src='{% static 'js/vendor/_hyperscript.min.js' %}'; this.onerror=null;"></script>
+
+  <!-- Plotly.js for interactive charts -->
+  <script src="{% static 'js/vendors/plotly-strict.min.js' %}" defer onerror="console.warn('Plotly.js not available')"></script>
+
+  <!-- Dashboard drilldown functionality -->
+  <script src="{% static 'js/dashboard-drilldown.js' %}" defer></script>
 {% endblock head_scripts %}
 
 {% block extra_head %}
+  <!-- Dashboard drilldown styles -->
+  <link rel="stylesheet" href="{% static 'css/dashboard-drilldown.css' %}">
+  
   <!-- Tailwind CSS -->
   {% tailwind_css %}
   {{ block.super }}

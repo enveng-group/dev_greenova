@@ -12,6 +12,106 @@ Dashboard | Greenova
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/dist/layouts/sidebar.css' %}" />
   <link rel="stylesheet" href="{% static 'css/dist/components/chat.css' %}" />
+  <style>
+    /* Drilldown Navigation Styles for Issue #165 */
+    .drilldown-navigation {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: var(--card-background-color);
+      border: 1px solid var(--card-border-color);
+      border-radius: 8px;
+    }
+    
+    .drilldown-navigation h3 {
+      margin: 0 0 1rem 0;
+      color: var(--primary-color);
+    }
+    
+    .drilldown-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .drilldown-card {
+      background: var(--card-background-color);
+      border: 1px solid var(--card-border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    
+    .drilldown-card h4 {
+      margin: 0 0 0.5rem 0;
+      color: var(--primary-color);
+    }
+    
+    .drilldown-card p {
+      margin: 0 0 1rem 0;
+      color: var(--muted-color);
+      font-size: 0.9rem;
+    }
+    
+    .drilldown-btn {
+      width: 100%;
+      margin-top: 1rem;
+    }
+    
+    .chart-container {
+      margin-top: 1rem;
+    }
+    
+    .chart-container svg {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Breadcrumb styles */
+    .breadcrumb {
+      margin: 1rem 0;
+    }
+    
+    .breadcrumb ol {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      gap: 0.5rem;
+    }
+    
+    .breadcrumb li::after {
+      content: " / ";
+      margin-left: 0.5rem;
+      color: var(--muted-color);
+    }
+    
+    .breadcrumb li:last-child::after {
+      content: "";
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .drilldown-options {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .drilldown-navigation {
+        margin: 1rem 0;
+        padding: 1rem;
+      }
+    }
+  </style>
 {% endblock extra_css %}
 
 {% block navbar_extra %}
@@ -87,9 +187,34 @@ Dashboard | Greenova
       <div id="dashboard-content-container">
         {% if selected_project_id %}
           {% include "dashboard/partials/dashboard_content.html" %}
-          <div class="chart-container">
-            {{ obligations_status_chart_svg|safe }}
-          </div>
+          
+          <!-- Drilldown Navigation for Issue #165 -->
+          <section class="drilldown-navigation" aria-label="Obligation Drilldown">
+            <h3>Drill Down into Obligations</h3>
+            <p>Explore your environmental obligations by navigating through mechanisms and procedures.</p>
+            
+            <div class="drilldown-options">
+              <article class="drilldown-card">
+                <h4>View by Mechanisms</h4>
+                <p>See obligations organized by environmental mechanisms</p>
+                <button class="button primary drilldown-btn" 
+                        hx-get="{% url 'dashboard:mechanism_drilldown' %}"
+                        hx-vals='{"project_id": "{{ selected_project_id }}"}'
+                        hx-target="#main-content"
+                        hx-push-url="true">
+                  View Mechanisms
+                </button>
+              </article>
+              
+              <!-- Status Chart Display -->
+              <article class="drilldown-card">
+                <h4>Obligation Status Overview</h4>
+                <div class="chart-container">
+                  {{ obligations_status_chart_svg|safe }}
+                </div>
+              </article>
+            </div>
+          </section>
         {% else %}
           <section class="dashboard-empty-state" aria-label="Select a project">
             <div class="empty-message">

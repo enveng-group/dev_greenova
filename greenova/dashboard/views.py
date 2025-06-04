@@ -15,19 +15,24 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import ListView, TemplateView
 from django_htmx.http import push_url, trigger_client_event
+from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
+from procedures.models import Procedure
 from projects.models import Project
 
 # Import new components from PR171
 try:
     from .figures import (
+        create_mechanism_pie_chart_svg,
         create_obligations_status_chart_svg,
+        create_procedure_pie_chart_svg,
         create_project_compliance_chart,
     )
     from .mixins import ChartMixin, ProjectAwareDashboardMixin
@@ -43,6 +48,14 @@ except ImportError:
     def create_project_compliance_chart(projects):
         """Fallback chart function."""
         return None, b""
+
+    def create_mechanism_pie_chart_svg(mechanism_id) -> str:
+        """Fallback chart function."""
+        return "<svg></svg>"
+
+    def create_procedure_pie_chart_svg(procedure_id, chart_data) -> str:
+        """Fallback chart function."""
+        return "<svg></svg>"
 
 # Constants for system information
 SYSTEM_STATUS = "operational"  # or fetch from settings/environment
@@ -202,6 +215,10 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
                 "upcoming_deadlines_count": self.get_upcoming_deadlines_count(),
                 "active_projects_count": projects.count(),
                 "active_mechanisms_count": self.get_active_mechanisms_count(),
+                "upcoming_7_count": self.get_upcoming_count(7),
+                "upcoming_14_count": self.get_upcoming_count(14),
+                "upcoming_30_count": self.get_upcoming_count(30),
+                "upcoming_90_count": self.get_upcoming_count(90),
             })
 
             # Add chart data
@@ -350,6 +367,22 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         # Would normally query the mechanisms model
         # Simplified placeholder implementation
         return 10  # Example count
+
+    @beartype
+    def get_upcoming_count(self, days: int) -> int:
+        """Get count of obligations due in the next N days for the selected project."""
+        project_id = self.selected_project_id
+        query_filter = {}
+        if project_id:
+            query_filter["project_id"] = project_id
+        today = timezone.now().date()
+        future_date = today + timedelta(days=days)
+        return Obligation.objects.filter(
+            action_due_date__gte=today,
+            action_due_date__lte=future_date,
+            status__in=["pending", "in_progress"],
+            **query_filter,
+        ).count()
 
 
 class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
@@ -502,4 +535,251 @@ class UpcomingObligationsView(ProjectAwareDashboardMixin, ListView):
         """
         context = super().get_context_data(**kwargs)
         context["selected_project_id"] = get_selected_project_id(self.request)
+        return context
+
+
+# Drilldown views for Issue #165
+@method_decorator(cache_control(max_age=300), name="dispatch")
+@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
+class MechanismDrilldownView(LoginRequiredMixin, TemplateView):
+    """View for mechanism drilldown charts in the obligation workflow."""
+
+    template_name = "dashboard/partials/mechanism_drilldown.html"
+    login_url = "account_login"
+
+    @beartype
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
+        """Get context data for mechanism drilldown charts.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Context dictionary with mechanism chart data.
+
+        """
+        context = super().get_context_data(**kwargs)
+        project_id = self.request.GET.get("project_id")
+
+        if not project_id or project_id == "0":
+            context["error"] = "No project selected"
+            return context
+
+        try:
+            project = get_object_or_404(Project, id=project_id)
+            mechanisms = EnvironmentalMechanism.objects.filter(project=project)
+
+            # Generate mechanism charts data
+            mechanism_charts = []
+            for mechanism in mechanisms:
+                # Create SVG chart for each mechanism
+                chart_svg = create_mechanism_pie_chart_svg(mechanism.id)
+                mechanism_charts.append({
+                    "id": mechanism.id,
+                    "name": mechanism.name,
+                    "chart_svg": chart_svg,
+                    "total_obligations": (
+                        mechanism.not_started_count +
+                        mechanism.in_progress_count +
+                        mechanism.completed_count +
+                        mechanism.overdue_count
+                    ),
+                    "overdue_count": mechanism.overdue_count,
+                })
+
+            context.update({
+                "project": project,
+                "mechanisms": mechanisms,
+                "mechanism_charts": mechanism_charts,
+                "selected_project_id": project_id,
+            })
+
+        except (Project.DoesNotExist, ValueError) as e:
+            logger.exception("Error in mechanism drilldown: %s", e)
+            context["error"] = f"Project not found or invalid ID: {project_id}"
+
+        return context
+
+
+@method_decorator(cache_control(max_age=300), name="dispatch")
+@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
+class ProcedureDrilldownView(LoginRequiredMixin, TemplateView):
+    """View for procedure drilldown charts in the obligation workflow."""
+
+    template_name = "dashboard/partials/procedure_drilldown.html"
+    login_url = "account_login"
+
+    @beartype
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
+        """Get context data for procedure drilldown charts.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Context dictionary with procedure chart data.
+
+        """
+        context = super().get_context_data(**kwargs)
+        mechanism_id = self.request.GET.get("mechanism_id")
+        project_id = self.request.GET.get("project_id")
+
+        if not mechanism_id:
+            context["error"] = "No mechanism selected"
+            return context
+
+        try:
+            mechanism = get_object_or_404(EnvironmentalMechanism, id=mechanism_id)
+            procedures = Procedure.objects.filter(mechanism=mechanism)
+
+            # Generate procedure charts data
+            procedure_charts = []
+            for procedure in procedures:
+                # Get obligations for this procedure
+                obligations = Obligation.objects.filter(procedure=procedure)
+
+                # Calculate status counts
+                not_started = obligations.filter(status="not_started").count()
+                in_progress = obligations.filter(status="in_progress").count()
+                completed = obligations.filter(status="completed").count()
+                overdue = sum(1 for obj in obligations if obj.is_overdue)
+
+                # Create chart data
+                chart_data = {
+                    "not_started": not_started,
+                    "in_progress": in_progress,
+                    "completed": completed,
+                    "overdue": overdue,
+                }
+
+                # Create SVG chart for this procedure
+                chart_svg = create_procedure_pie_chart_svg(procedure.id, chart_data)
+
+                procedure_charts.append({
+                    "id": procedure.id,
+                    "name": procedure.name,
+                    "chart_svg": chart_svg,
+                    "chart_data": chart_data,
+                    "total_obligations": not_started + in_progress + completed + overdue,
+                    "overdue_count": overdue,
+                })
+
+            context.update({
+                "mechanism": mechanism,
+                "procedures": procedures,
+                "procedure_charts": procedure_charts,
+                "selected_project_id": project_id,
+                "selected_mechanism_id": mechanism_id,
+            })
+
+        except (EnvironmentalMechanism.DoesNotExist, ValueError) as e:
+            logger.exception("Error in procedure drilldown: %s", e)
+            context["error"] = f"Mechanism not found or invalid ID: {mechanism_id}"
+
+        return context
+
+
+@method_decorator(cache_control(max_age=300), name="dispatch")
+@method_decorator(vary_on_headers("HX-Request"), name="dispatch")
+class ObligationListDrilldownView(LoginRequiredMixin, ListView):
+    """View for final obligation list in the drilldown workflow."""
+
+    model = Obligation
+    template_name = "dashboard/partials/obligation_list_drilldown.html"
+    context_object_name = "obligations"
+    paginate_by = 20
+    login_url = "account_login"
+
+    @beartype
+    def get_queryset(self) -> QuerySet[Obligation]:
+        """Get obligations filtered by procedure.
+
+        Returns:
+            QuerySet of obligations for the selected procedure.
+
+        """
+        procedure_id = self.request.GET.get("procedure_id")
+        mechanism_id = self.request.GET.get("mechanism_id")
+        project_id = self.request.GET.get("project_id")
+
+        queryset = Obligation.objects.select_related(
+            "project", "mechanism", "procedure",
+        ).prefetch_related("attachments")
+
+        # Filter by procedure if provided
+        if procedure_id:
+            queryset = queryset.filter(procedure_id=procedure_id)
+        elif mechanism_id:
+            queryset = queryset.filter(mechanism_id=mechanism_id)
+        elif project_id:
+            queryset = queryset.filter(project_id=project_id)
+        else:
+            queryset = queryset.none()
+
+        # Order by overdue status first, then by due date
+        return queryset.extra(
+            select={
+                "is_overdue_calc": """
+                    CASE WHEN action_due_date < %s AND status IN ('not_started', 'in_progress')
+                    THEN 1 ELSE 0 END
+                """,
+            },
+            select_params=[timezone.now().date()],
+        ).order_by("-is_overdue_calc", "action_due_date")
+
+    @beartype
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
+        """Add additional context for obligation list.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Context dictionary with drilldown navigation data.
+
+        """
+        context = super().get_context_data(**kwargs)
+
+        procedure_id = self.request.GET.get("procedure_id")
+        mechanism_id = self.request.GET.get("mechanism_id")
+        project_id = self.request.GET.get("project_id")
+
+        # Add breadcrumb context
+        breadcrumbs = []
+        if project_id:
+            try:
+                project = get_object_or_404(Project, id=project_id)
+                breadcrumbs.append({"name": project.name, "type": "project"})
+            except Project.DoesNotExist:
+                pass
+
+        if mechanism_id:
+            try:
+                mechanism = get_object_or_404(EnvironmentalMechanism, id=mechanism_id)
+                breadcrumbs.append({"name": mechanism.name, "type": "mechanism"})
+            except EnvironmentalMechanism.DoesNotExist:
+                pass
+
+        if procedure_id:
+            try:
+                procedure = get_object_or_404(Procedure, id=procedure_id)
+                breadcrumbs.append({"name": procedure.name, "type": "procedure"})
+            except Procedure.DoesNotExist:
+                pass
+
+        # Calculate counts for display
+        obligations = context["obligations"]
+        overdue_count = sum(1 for obj in obligations if obj.is_overdue)
+        active_count = obligations.filter(status="in_progress").count()
+
+        context.update({
+            "breadcrumbs": breadcrumbs,
+            "selected_project_id": project_id,
+            "selected_mechanism_id": mechanism_id,
+            "selected_procedure_id": procedure_id,
+            "overdue_count": overdue_count,
+            "active_count": active_count,
+            "total_count": obligations.count(),
+        })
+
         return context

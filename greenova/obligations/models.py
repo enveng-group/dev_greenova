@@ -3,8 +3,8 @@ import re
 from datetime import date
 from typing import Any
 
-from core.utils.roles import get_responsibility_choices
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -12,6 +12,7 @@ from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from projects.models import Project
+from responsibility.models import ResponsibilityAssignment
 
 from .constants import (
     FREQUENCY_ANNUAL,
@@ -108,9 +109,12 @@ class Obligation(models.Model):
             ("Perdaman-during operations", "Perdaman-during operations"),
         ],
     )
-    responsibility: str = models.CharField(
-        max_length=255,
-        choices=get_responsibility_choices(),
+    responsible_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through=ResponsibilityAssignment,
+        related_name="obligations_with_responsibility",
+        blank=True,
+        help_text="Users assigned to this obligation with a responsibility role.",
     )
     project_phase: str | None = models.CharField(
         max_length=255,
@@ -356,6 +360,12 @@ class Obligation(models.Model):
         if self.status != "completed" and self.action_due_date:
             return self.action_due_date < timezone.now().date()
         return False
+
+    @property
+    def responsibility_assignments(self):
+        """Return all ResponsibilityAssignment objects for this obligation."""
+        from responsibility.models import ResponsibilityAssignment
+        return ResponsibilityAssignment.objects.filter(obligation=self)
 
 
 # Signal handlers to update mechanism counts

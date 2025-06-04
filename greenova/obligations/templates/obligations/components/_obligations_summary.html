@@ -246,7 +246,14 @@ Actions
                     {% endif %}
                   </td>
                   <td>
-{{ obligation.responsibility|default:"-" }}
+                    {% for assignment in obligation.responsibility_assignments.all %}
+                      <span class="responsibility-assignment">
+                        {{ assignment.user.get_full_name|default:assignment.user.username }}
+                        (<mark>{{ assignment.responsibility.name }}</mark>)
+                      </span>{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                      <span>-</span>
+                    {% endfor %}
                   </td>
                   <td class="actions-column">
                     <div class="action-buttons">

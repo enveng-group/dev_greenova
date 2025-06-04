@@ -1,21 +1,33 @@
-import logging
-
-from core.utils.roles import get_responsibility_choices
-from django import forms
-from django.core.exceptions import ValidationError
-from mechanisms.models import EnvironmentalMechanism
-from projects.models import Project
-
+from .utils import normalize_frequency
+from .models import Obligation, ObligationEvidence
 from .constants import (
-    FREQUENCY_CHOICES,  # Import RESPONSIBILITY_ROLES
+    FREQUENCY_CHOICES,
     STATUS_CHOICES,
     STATUS_COMPLETED,
     STATUS_NOT_STARTED,
 )
-from .models import Obligation, ObligationEvidence
-from .utils import normalize_frequency
+import logging
+
+from django import forms
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.forms import inlineformset_factory
+from mechanisms.models import EnvironmentalMechanism
+from projects.models import Project
+from responsibility.models import Responsibility, ResponsibilityAssignment
+
+User = get_user_model()
+
 
 logger = logging.getLogger(__name__)
+
+ResponsibilityAssignmentFormSet = inlineformset_factory(
+    Obligation,
+    ResponsibilityAssignment,
+    fields=("user", "responsibility"),
+    extra=1,
+    can_delete=True,
+)
 
 
 class FilterForm(forms.Form):
@@ -274,13 +286,6 @@ class ObligationForm(forms.ModelForm):
         widget=forms.Select(attrs={"class": "form-input"}),
     )
 
-    responsibility = forms.ChoiceField(
-        choices=get_responsibility_choices(),
-        widget=forms.Select(attrs={"class": "form-input"}),
-        label="Primary Responsibility",
-        help_text="Select the primary responsibility for this obligation",
-    )
-
     project_phase = forms.ChoiceField(
         choices=[
             ("", "---------"),
@@ -357,9 +362,6 @@ class ObligationForm(forms.ModelForm):
         self.user = kwargs.pop("user", None)  # Add user context
 
         super().__init__(*args, **kwargs)
-
-        # Initialize the responsibility queryset
-        self.fields["responsibility"].choices = get_responsibility_choices()
 
         # Handle initial project
         if self.project:
@@ -588,6 +590,22 @@ class ObligationForm(forms.ModelForm):
             "inspection": "Does this obligation require inspections?",
             "gap_analysis": "Is a gap analysis required for this obligation?",
         }
+
+
+class ResponsibilityAssignmentForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), label="User")
+    responsibility = forms.ModelChoiceField(
+        queryset=Responsibility.objects.all(),
+        label="Responsibility Role")
+
+
+class ObligationResponsibilityForm(forms.Form):
+    assignments = forms.ModelMultipleChoiceField(
+        queryset=ResponsibilityAssignment.objects.none(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Assigned Users and Roles",
+    )
 
 
 class EvidenceUploadForm(forms.ModelForm):

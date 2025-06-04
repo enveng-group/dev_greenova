@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q, QuerySet
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -21,11 +21,11 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
-from django_htmx.http import trigger_client_event
 from mechanisms.models import EnvironmentalMechanism  # Added missing import
 from projects.models import Project
+from responsibility.models import ResponsibilityAssignment  # Import the new model
 
-from .forms import EvidenceUploadForm, ObligationForm
+from .forms import EvidenceUploadForm, ObligationForm, ResponsibilityAssignmentFormSet
 from .models import Obligation, ObligationEvidence
 from .utils import (
     is_obligation_overdue,  # Add explicit import for is_obligation_overdue
@@ -48,13 +48,15 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
 
     def apply_filters(self, queryset: QuerySet, filters: dict[str, Any]) -> QuerySet:
         """Apply filters to the queryset."""
-        # Handle the date filter first (14-day lookahead)
-        if filters["date_filter"] == "14days":
+        # Handle the date filter for lookahead intervals
+        date_filter = filters["date_filter"]
+        if date_filter in {"7days", "14days", "30days", "90days"}:
             today = timezone.now().date()
-            two_weeks = today + timedelta(days=14)
+            days = int(date_filter.replace("days", ""))
+            future_date = today + timedelta(days=days)
             queryset = queryset.filter(
                 action_due_date__gte=today,
-                action_due_date__lte=two_weeks,
+                action_due_date__lte=future_date,
             )
 
         # Apply status filter
@@ -75,7 +77,7 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
                     if is_obligation_overdue(obligation):
                         filtered_ids.append(obligation.obligation_number)
                 queryset = queryset.filter(Q(status__in=other_statuses) | Q(
-                    obligation_number__in=filtered_ids), )
+                    obligation_number__in=filtered_ids))
             else:
                 # Normal status filtering
                 queryset = queryset.filter(status__in=filters["status"])
@@ -111,6 +113,12 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
             "order": self.request.GET.get("order", "asc"),
             "date_filter": self.request.GET.get("date_filter", ""),
         }
+
+    def user_has_role(self, obligation: Obligation, roles: list[str]) -> bool:
+        """Check if the current user has any of the specified roles for the obligation."""
+        return obligation.responsibility_assignments.filter(
+            user=self.request.user, role__in=roles,
+        ).exists()
 
     def get_context_data(self, **kwargs):
         """Get context data for the template."""
@@ -167,8 +175,14 @@ class ObligationSummaryView(LoginRequiredMixin, TemplateView):
             phases_cleaned = {phase.strip() for phase in phases}
             context["phases"] = list(phases_cleaned)
 
-            context["user_can_edit"] = self.request.user.has_perm(
-                "obligations.change_obligation")
+            # Permissions: user_can_edit if user has assignment with edit rights
+            def user_can_edit_obligation(obligation, user):
+                return ResponsibilityAssignment.objects.filter(
+                    obligation=obligation,
+                    user=user,
+                    role__in=["Owner", "Editor"],  # Adjust roles as needed
+                ).exists()
+            context["user_can_edit"] = user_can_edit_obligation
 
         except Exception as e:
             logger.exception(f"Error in ObligationSummaryView: {e!s}")
@@ -214,17 +228,26 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         project_id = self.request.GET.get("project_id")
         if project_id:
             context["project_id"] = project_id
+        if self.request.POST:
+            context["formset"] = ResponsibilityAssignmentFormSet(self.request.POST)
+        else:
+            context["formset"] = ResponsibilityAssignmentFormSet()
         return context
 
     def form_valid(self, form):
         try:
-            # Save the form
-            obligation = form.save()
+            super().form_valid(form)
+            formset = ResponsibilityAssignmentFormSet(
+                self.request.POST, instance=self.object)
+            if formset.is_valid():
+                formset.save()
+            else:
+                return self.form_invalid(form)
 
             # Add success message
             messages.success(
                 self.request, f"Obligation {
-                    obligation.obligation_number} created successfully.")
+                    self.object.obligation_number} created successfully.")
 
             # Redirect to appropriate page
             if "project_id" in self.request.GET:
@@ -250,10 +273,17 @@ class ObligationDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "obligation"
     pk_url_kwarg = "obligation_number"
 
+    def user_has_role(self, roles: list[str]) -> bool:
+        """Check if the current user has any of the specified roles for the obligation."""
+        return self.object.responsibility_assignments.filter(
+            user=self.request.user, role__in=roles,
+        ).exists()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add project_id to context for back navigation
         context["project_id"] = self.object.project_id
+        context["user_can_edit"] = self.user_has_role(["Editor", "Owner", "Manager"])
         return context
 
 
@@ -265,6 +295,19 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "obligations/form/update_obligation.html"
     slug_field = "obligation_number"
     slug_url_kwarg = "obligation_number"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Only allow users with edit rights (Owner/Editor) to update
+        if not ResponsibilityAssignment.objects.filter(
+            obligation=self.object,
+            user=request.user,
+            role__in=["Owner", "Editor"],  # Adjust as needed
+        ).exists():
+            messages.error(
+                request, "You do not have permission to edit this obligation.")
+            return redirect("dashboard:home")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_template_names(self):
         if self.request.htmx:
@@ -280,25 +323,12 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         # Add project_id to context for back navigation
         context["project_id"] = self.object.project_id
+        if self.request.POST:
+            context["formset"] = ResponsibilityAssignmentFormSet(
+                self.request.POST, instance=self.object)
+        else:
+            context["formset"] = ResponsibilityAssignmentFormSet(instance=self.object)
         return context
-
-    def form_valid(self, form):
-        """Process the form submission."""
-        response = super().form_valid(form)
-
-        # If this is an HTMX request, return appropriate headers
-        if self.request.htmx:
-            # Using path-deps to refresh dependent components
-            response = HttpResponse("Obligation updated successfully")
-
-            # Explicitly trigger a refresh for path-deps components
-            trigger_client_event(response, "path-deps-refresh", {
-                "path": "/obligations/",
-            })
-
-            return response
-
-        return response
 
     def form_valid(self, form):
         try:
@@ -306,22 +336,27 @@ class ObligationUpdateView(LoginRequiredMixin, UpdateView):
             if self.object.primary_environmental_mechanism:
                 old_mechanism = self.object.primary_environmental_mechanism
 
-            # Save the updated obligation
-            obligation = form.save()
+            super().form_valid(form)
+            formset = ResponsibilityAssignmentFormSet(
+                self.request.POST, instance=self.object)
+            if formset.is_valid():
+                formset.save()
+            else:
+                return self.form_invalid(form)
 
             # Update mechanism counts
-            if old_mechanism and old_mechanism != obligation.primary_environmental_mechanism:
+            if old_mechanism and old_mechanism != self.object.primary_environmental_mechanism:
                 if old_mechanism:
                     old_mechanism.update_obligation_counts()
-                if obligation.primary_environmental_mechanism:
-                    obligation.primary_environmental_mechanism.update_obligation_counts()
-            elif obligation.primary_environmental_mechanism:
-                obligation.primary_environmental_mechanism.update_obligation_counts()
+                if self.object.primary_environmental_mechanism:
+                    self.object.primary_environmental_mechanism.update_obligation_counts()
+            elif self.object.primary_environmental_mechanism:
+                self.object.primary_environmental_mechanism.update_obligation_counts()
 
             # Add success message
             messages.success(
                 self.request, f"Obligation {
-                    obligation.obligation_number} updated successfully.")
+                    self.object.obligation_number} updated successfully.")
 
             # Redirect back to the appropriate page
             if "project_id" in self.request.GET:
@@ -348,6 +383,17 @@ class ObligationDeleteView(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         try:
             self.object = self.get_object()
+            # Only allow users with delete rights (Owner/Editor) to delete
+            if not ResponsibilityAssignment.objects.filter(
+                obligation=self.object,
+                user=request.user,
+                role__in=["Owner", "Editor"],  # Adjust as needed
+            ).exists():
+                return JsonResponse({
+                    "status": "error",
+                    "message": "You do not have permission to delete this obligation.",
+                }, status=403)
+
             project_id = self.object.project_id
             mechanism = self.object.primary_environmental_mechanism
 
