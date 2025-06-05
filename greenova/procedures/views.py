@@ -15,26 +15,26 @@ from typing import Any
 # Third-party library imports
 import matplotlib as mpl
 from beartype import beartype
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control, csrf_exempt
-from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_control
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
 from guardian.shortcuts import assign_perm
-from django.http import HttpResponse, JsonResponse
 from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
 from responsibility.figures import figure_to_svg, get_responsibility_chart
 
 # Local application imports
 from .figures import get_procedure_charts_svg as get_all_procedure_charts_svg
-from .serializers import ProcedureProtoSerializer, ProcedureCollectionProtoSerializer
 from .models import Procedure
-from .permissions import user_can_view_procedure
-from .types import ProcedureStepDict, ProcedureDefinitionDict, ProcedureResultDict, ProcedureManager, StepEvaluator, ResultProcessor
+from .serializers import ProcedureCollectionProtoSerializer, ProcedureProtoSerializer
 
 mpl.use("Agg")  # Use Agg backend for non-interactive plotting
 logger = logging.getLogger(__name__)
@@ -59,6 +59,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             A tuple containing the EnvironmentalMechanism instance and obligations queryset.
+
         """
         mechanism = get_object_or_404(EnvironmentalMechanism, id=mechanism_id)
         query = Obligation.objects
@@ -80,6 +81,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             A tuple of (filtered obligations queryset, filter parameters dict).
+
         """
         filtered_obligations = obligations
         phase_filter = request_params.get("phase", "")
@@ -147,6 +149,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             A dictionary with total, completed, remaining, and percentage.
+
         """
         total = all_obligations.count()
         completed = all_obligations.filter(status="completed").count()
@@ -170,6 +173,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             A dictionary with available phases, responsibilities, and status options.
+
         """
         phases = (
             all_obligations.values_list(
@@ -217,6 +221,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             SVG string of the responsibility chart.
+
         """
         if filters_applied and filtered_obligations is not None:
             filtered_ids = filtered_obligations.values_list("id", flat=True)
@@ -246,6 +251,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             A list of dictionaries with procedure chart data.
+
         """
         procedure_charts = []
 
@@ -287,6 +293,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             A dictionary with procedure chart data.
+
         """
         # Get obligations for this procedure
         proc_obligations = obligations.filter(procedure=procedure_name)
@@ -322,6 +329,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
 
         Returns:
             A dictionary with context data for the template.
+
         """
         context = super().get_context_data(**kwargs)
 
@@ -425,6 +433,7 @@ def create_procedure_with_permissions(user: Any, form: Any) -> Procedure:
 
     Returns:
         The created Procedure instance.
+
     """
     procedure = form.save(commit=False)
     procedure.save()
@@ -448,6 +457,7 @@ def export_procedure(request: Any, procedure_id: int) -> HttpResponse:
 
     Returns:
         HttpResponse: The HTTP response with the exported data.
+
     """
     procedure = get_object_or_404(Procedure, id=procedure_id)
     serializer = ProcedureProtoSerializer(instance=procedure)
@@ -455,9 +465,9 @@ def export_procedure(request: Any, procedure_id: int) -> HttpResponse:
     if not data:
         return JsonResponse({"error": "Failed to export procedure."}, status=400)
     response = HttpResponse(data, content_type="application/octet-stream")
-    response[
-        "Content-Disposition"
-    ] = f'attachment; filename="procedure_{procedure_id}.pb"'
+    response["Content-Disposition"] = (
+        f'attachment; filename="procedure_{procedure_id}.pb"'
+    )
     return response
 
 
@@ -472,6 +482,7 @@ def export_all_procedures(request: Any) -> HttpResponse:
 
     Returns:
         HttpResponse: The HTTP response with the exported data.
+
     """
     procedures = list(Procedure.objects.all())
     serializer = ProcedureCollectionProtoSerializer(instances=procedures)
@@ -495,6 +506,7 @@ def import_procedure(request: Any) -> HttpResponse:
 
     Returns:
         HttpResponse: The HTTP response after importing.
+
     """
     data = request.body
     serializer = ProcedureProtoSerializer(data=data)
@@ -502,5 +514,5 @@ def import_procedure(request: Any) -> HttpResponse:
         return JsonResponse({"error": serializer.errors}, status=400)
     procedure = serializer.save()
     return JsonResponse(
-        {"id": procedure.id, "message": "Procedure imported successfully."}
+        {"id": procedure.id, "message": "Procedure imported successfully."},
     )

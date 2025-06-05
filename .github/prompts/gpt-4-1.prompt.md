@@ -1,7 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [GitHub Copilot Prompt Template: utils.py (General-Purpose Utility Functions) Analysis and Recommendation Across All Apps](#github-copilot-prompt-template-utilspy-general-purpose-utility-functions-analysis-and-recommendation-across-all-apps)
+- [GitHub Copilot Prompt Template: Django Lifecycle Removal and Signal Migration](#github-copilot-prompt-template-django-lifecycle-removal-and-signal-migration)
   - [Goal](#goal)
   - [Context](#context)
   - [Objectives](#objectives)
@@ -16,7 +16,7 @@
 ---
 
 description:
-Prompt for Copilot to analyze all apps in the Greenova project and determine which would benefit from having a utils.py module for general-purpose utility functions. The output should recommend which apps should have a utils.py created, with reasoning for each recommendation, following project coding standards.
+Template for migrating from django-lifecycle to Django's native signals, including package removal, code refactoring, and signal organization recommendations.
 mode: agent
 
 tools:
@@ -31,28 +31,31 @@ tools:
 
 ---
 
-# GitHub Copilot Prompt Template: utils.py (General-Purpose Utility Functions) Analysis and Recommendation Across All Apps
+# GitHub Copilot Prompt Template: Django Lifecycle Removal and Signal Migration
 
 ## Goal
 
-Analyze all apps in the Greenova project (auditing, authentication, chatbot, company, core, dashboard, feedback, greenova, landing, mechanisms, obligations, procedures, projects, reports, responsibility, settings, static, templates, themes, users) and determine which would benefit from having a utils.py module for general-purpose utility functions. Recommend which apps should have a utils.py created, with reasoning for each recommendation.
+Remove the django-lifecycle module from the Greenova project and migrate all its hooks to Django's native signals system. This includes removing the package from dependencies, uninstalling it, and refactoring all files that use django-lifecycle hooks to use Django's built-in signals or model methods.
 
 ## Context
 
-- Greenova is a modular Django project with multiple apps, each potentially containing logic that could be clarified or improved by centralizing general-purpose utility functions in a utils.py module.
-- Project standards encourage the use of utils.py for reusable, app-specific utility functions, as outlined in the code generation guidelines.
-- Not all apps may require a utils.py; only recommend where it would improve maintainability, enable reuse, or clarify utility logic.
-- Recommendations should be based on actual code structure, presence of repeated or general-purpose helper functions, and project requirements.
+- The project currently uses django-lifecycle for model hooks and lifecycle events
+- django-lifecycle is causing circular import issues and registering models prematurely
+- Migration needed from django-lifecycle hooks to Django's native signals and model methods
+- Need to remove all django-lifecycle dependencies and usages from the project
+- Apps using django-lifecycle hooks need to be refactored to use Django's built-in signal system
+- Some apps may benefit from dedicated signals.py modules for better organization
 
 ## Objectives
 
-- Scan all relevant code in each app for:
-  - Presence of repeated, general-purpose, or helper functions (e.g., formatting, parsing, conversions, calculations)
-  - Opportunities to centralize and reuse utility logic for clarity and maintainability
-  - Existing utility functions defined in other files (e.g., models, views)
-- For each app, determine if a utils.py (with general-purpose utility functions) would be beneficial
-- Provide a list of apps that should have a utils.py, with a brief justification for each
-- Do not create or modify any files; only provide analysis and recommendations
+- Remove django-lifecycle from pyproject.toml dependencies
+- Uninstall django-lifecycle package
+- Identify and refactor all files using django-lifecycle hooks
+- Convert django-lifecycle hooks to Django's native signals or model methods
+- Create signals.py modules where beneficial for signal organization
+- Ensure all model lifecycle events continue working correctly after migration
+- Update any related tests to reflect the migration from lifecycle hooks to signals
+- Verify no circular imports remain after refactoring
 
 ## Sources
 
@@ -82,30 +85,33 @@ Analyze all apps in the Greenova project (auditing, authentication, chatbot, com
 ## Expectations
 
 - Use all available MCP servers to:
-  - Analyze code structure and usage patterns in each app
-  - Identify opportunities for centralizing reusable utility functions
-  - Reference project standards for when to create utils.py
-  - Provide clear, actionable recommendations
-- Do not make any code changes; only output analysis and recommendations
+  - Extract and understand current django-lifecycle usage patterns
+  - Map lifecycle hooks to equivalent Django signals
+  - Plan refactoring steps and dependencies
+  - Generate migration solutions
+- Make necessary code changes to remove django-lifecycle
 
 ## Acceptance Criteria
 
-- [ ] Each app is evaluated for the need for a utils.py module
-- [ ] Recommendations are provided only where justified
-- [ ] Each recommendation includes a brief explanation
-- [ ] No code is changed or created
-- [ ] Output is clear, actionable, and standards-compliant
+- [ ] django-lifecycle is removed from pyproject.toml
+- [ ] Package is uninstalled from the environment
+- [ ] All files using django-lifecycle are identified
+- [ ] All lifecycle hooks are converted to Django signals or model methods
+- [ ] signals.py modules are created where beneficial
+- [ ] All lifecycle events work correctly after migration
+- [ ] All tests pass after updates
+- [ ] No circular imports exist after refactoring
 
 ## Instructions
 
 - Use the filesystem and context7 MCP servers to analyze all relevant code
-- For each app, state whether a utils.py is recommended, and why
+- For each app, state whether a signals.py is recommended, and why
 - Summarize findings in a clear, organized list
 - Do not create or modify any files
 - Ensure recommendations align with project coding standards
 
 ## Additional Guidelines
 
-- Only recommend utils.py where it will improve code organization, enable reusable utility logic, or clarify helper function usage
+- Consider using signals.py where it will improve code organization and clarify signal handling
 - Reference project standards and code generation guidelines as needed
 - Use context7 and fetch for documentation lookups as needed

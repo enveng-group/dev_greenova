@@ -1,9 +1,7 @@
+coverage==7.8.2
+ipython==9.3.0
 pre-commit==4.2.0
 uv==0.7.7
 uvenv==3.9.5
 virtualenv==20.31.2
 wheel==0.45.1
-ipython==9.3.0
-autoflake==2.3.1
-djlint==1.36.4
-bandit==1.8.3

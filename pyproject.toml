@@ -46,7 +46,6 @@ dependencies = [
     "crispy-bootstrap4>=2024.2",
     "django-guardian>=2.4.0",
     "django-storages>=1.14.3",
-    "django-lifecycle>=1.2.0",
     "django-autocomplete-light>=3.9.7",
     "pillow>=10.3.0",
     "python-slugify>=8.0.4",

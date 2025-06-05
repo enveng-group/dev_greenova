@@ -15,7 +15,7 @@ License:
 import logging
 import re
 from datetime import date
-from typing import Any, ClassVar, Iterator
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from beartype import beartype
 from dateutil.relativedelta import relativedelta
@@ -24,7 +24,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils import timezone
-from django_lifecycle import AFTER_SAVE, BEFORE_SAVE, LifecycleModel, hook
 from guardian.models import UserObjectPermission
 from projects.models import Project
 from responsibility.models import ResponsibilityAssignment
@@ -41,7 +40,9 @@ from .constants import (
     STATUS_NOT_STARTED,
 )
 from .validators import validate_obligation_number
-from .types import ObligationDataDict, ComplianceStatusDict, ObligationDataManager, ComplianceChecker, StatusEvaluator
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 try:
     from pb_model.models import ProtoBufMixin
@@ -56,8 +57,7 @@ except ImportError:
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-@beartype
-class Obligation(LifecycleModel, ProtoBufMixin):
+class Obligation(ProtoBufMixin, models.Model):
     """Represents an environmental obligation.
 
     Integrates django-guardian for object-level permissions. Use ProjectRole to
@@ -244,7 +244,9 @@ class Obligation(LifecycleModel, ProtoBufMixin):
         choices=[("Site", "Site"), ("Desktop", "Desktop")],
         null=True,
     )
-    new_control_action_required: models.BooleanField = models.BooleanField(default=False)
+    new_control_action_required: models.BooleanField = models.BooleanField(
+        default=False,
+    )
     obligation_type: models.CharField = models.CharField(
         max_length=50,
         null=True,
@@ -275,11 +277,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             models.Index(fields=["action_due_date"]),
             models.Index(fields=["project"]),
         ]
-        permissions = [
-            ("view_obligation", "Can view obligation"),
-            ("change_obligation", "Can change obligation"),
-            ("delete_obligation", "Can delete obligation"),
-        ]
+        # Removed explicit view/change/delete permissions to avoid clash with builtins
         default_permissions = ("add", "change", "delete", "view")
 
     objects: models.Manager = models.Manager()  # Default manager
@@ -291,6 +289,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: Human-readable string for the obligation.
+
         """
         return f"{self.obligation_number} - {self.project.name}"
 
@@ -300,6 +299,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
 
         Returns:
             date | None: The next forecasted date or None if not applicable.
+
         """
         if not self.recurring_obligation or not self.recurring_frequency:
             return None
@@ -339,6 +339,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
 
         Returns:
             bool: True if the date was updated, False otherwise.
+
         """
         if not self.recurring_obligation:
             return False
@@ -356,15 +357,15 @@ class Obligation(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: The next obligation number (e.g., PCEMP-101).
+
         """
         prefix: str = "PCEMP-"
         highest_number: int = 0
         all_obligations: Iterator[Any] = cls.objects.all().iterator()
 
         for obligation in all_obligations:
-            if (
-                obligation.obligation_number
-                and obligation.obligation_number.startswith(prefix)
+            if obligation.obligation_number and obligation.obligation_number.startswith(
+                prefix,
             ):
                 try:
                     number_part: str = obligation.obligation_number[len(prefix):]
@@ -382,6 +383,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
 
         Raises:
             ValidationError: If the obligation number format is invalid.
+
         """
         super().clean()
         if self.obligation_number and self.obligation_number.strip():
@@ -402,6 +404,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
         Args:
             *args: Positional arguments for save.
             **kwargs: Keyword arguments for save.
+
         """
         if not self.obligation_number or self.obligation_number.strip() == "":
             self.obligation_number = self.get_next_obligation_number()
@@ -425,6 +428,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
 
         Returns:
             bool: True if overdue, False otherwise.
+
         """
         if self.status != "completed" and self.action_due_date:
             return self.action_due_date < timezone.now().date()
@@ -437,54 +441,11 @@ class Obligation(LifecycleModel, ProtoBufMixin):
 
         Returns:
             QuerySet: ResponsibilityAssignment queryset for this obligation.
+
         """
         return ResponsibilityAssignment.objects.filter(obligation=self)
 
-    @hook(AFTER_SAVE)
-    @beartype
-    def update_forecasted_date_after_save(self) -> None:
-        """Update recurring forecasted date after save if needed."""
-        if self.recurring_obligation and not self.recurring_forecasted_date:
-            self.update_recurring_forecasted_date()
-
-    @hook(AFTER_SAVE)
-    @beartype
-    def after_save_obligation(self) -> None:
-        """Log after save."""
-        logger.info("Obligation %s saved (lifecycle hook)", self.obligation_number)
-
-    @hook(AFTER_SAVE)
-    @beartype
-    def after_save_obligation_lifecycle(self) -> None:
-        """Lifecycle hook: called after saving an obligation instance."""
-        logger.info(
-            "Obligation %s saved (lifecycle hook, replaces signal)",
-            self.obligation_number,
-        )
-
-    @hook("after_delete")
-    @beartype
-    def after_delete_obligation_lifecycle(self) -> None:
-        """Lifecycle hook: called after deleting an obligation instance."""
-        logger.info(
-            "Obligation %s deleted (lifecycle hook, replaces signal)",
-            self.obligation_number,
-        )
-
-    @hook(BEFORE_SAVE)
-    @beartype
-    def before_save_obligation(self) -> None:
-        """Ensure custom aspect is set if needed.
-
-        Raises:
-            ValidationError: If 'Other' is selected but custom aspect is missing.
-        """
-        if (
-            self.environmental_aspect == "Other"
-            and not self.custom_environmental_aspect
-        ):
-            msg: str = "Custom environmental aspect required if 'Other' is selected."
-            raise ValidationError(msg)
+    # All lifecycle logic is now handled via Django signals in signals.py
 
 
 @beartype
@@ -532,6 +493,7 @@ class ObligationEvidence(models.Model):
 
         Returns:
             str: Human-readable string for the evidence file.
+
         """
         return f"Evidence for {self.obligation} - {self.file.name}"
 
@@ -541,6 +503,7 @@ class ObligationEvidence(models.Model):
 
         Returns:
             str: File size as a string.
+
         """
         size: int = self.file.size
         if size < 1024:

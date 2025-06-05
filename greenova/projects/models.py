@@ -25,26 +25,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
-from django_lifecycle import (
-    BEFORE_SAVE,
-    AFTER_SAVE,
-    AFTER_DELETE,
-    LifecycleModel,
-    hook,
-)
-from slugify import slugify
 
-from .commons import PROJECT_ROLE_CHOICES
 from .constants import PROJECT_ROLE_CHOICES
 from .validators import validate_project_name
-from .types import (
-    ProjectMetadataDict,
-    ProjectMembershipDict,
-    ProjectObligationDict,
-    ProjectManager,
-    MembershipManager,
-    ObligationRelationshipHandler,
-)
 
 try:
     from pb_model.models import ProtoBufMixin
@@ -67,8 +50,7 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-@beartype
-class Project(LifecycleModel, ProtoBufMixin):
+class Project(ProtoBufMixin, models.Model):
     """Project model to group obligations.
 
     Attributes:
@@ -79,6 +61,7 @@ class Project(LifecycleModel, ProtoBufMixin):
         members: A many-to-many relationship to users through ProjectMembership.
         created_at: The datetime when the project was created.
         updated_at: The datetime when the project was last updated.
+
     """
 
     pb_model = ProjectProto
@@ -99,9 +82,6 @@ class Project(LifecycleModel, ProtoBufMixin):
         verbose_name_plural = "Projects"
         ordering = ["-created_at"]
         permissions = [
-            ("view_project", "Can view project"),
-            ("change_project", "Can change project"),
-            ("delete_project", "Can delete project"),
             ("manage_members", "Can manage project members"),
         ]
         default_permissions = ("add", "change", "delete", "view")
@@ -112,15 +92,11 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: The project name.
+
         """
         return self.name
 
-    @hook(BEFORE_SAVE)
-    @beartype
-    def set_slug(self) -> None:
-        """Set slug from name if not already set."""
-        if not self.slug:
-            self.slug = slugify(self.name)
+    # Slug is now set via pre_save signal in signals.py
 
     @beartype
     def get_member_count(self) -> int:
@@ -128,6 +104,7 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             int: The number of members in the project.
+
         """
         return self.members.count()
 
@@ -140,6 +117,7 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: Role name or 'viewer' if no explicit role found.
+
         """
         try:
             membership = ProjectMembership.objects.get(project=self, user=user)
@@ -151,7 +129,11 @@ class Project(LifecycleModel, ProtoBufMixin):
             )
             return membership.role
         except ProjectMembership.DoesNotExist:
-            logger.debug("No membership found for user %s in project %s", user, self.name)
+            logger.debug(
+                "No membership found for user %s in project %s",
+                user,
+                self.name,
+            )
             return ProjectRole.VIEWER.value
         except Exception as e:
             logger.exception("Error getting user role: %s", str(e))
@@ -166,6 +148,7 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             bool: True if the user is a member, False otherwise.
+
         """
         return ProjectMembership.objects.filter(project=self, user=user).exists()
 
@@ -180,6 +163,7 @@ class Project(LifecycleModel, ProtoBufMixin):
         Args:
             user: The user to add to the project.
             role: The role to assign to the user. Defaults to 'member'.
+
         """
         if not self.has_member(user):
             ProjectMembership.objects.create(
@@ -187,7 +171,12 @@ class Project(LifecycleModel, ProtoBufMixin):
                 user=user,
                 role=role,
             )
-            logger.info("Added user %s to project %s with role %s", user, self.name, role)
+            logger.info(
+                "Added user %s to project %s with role %s",
+                user,
+                self.name,
+                role,
+            )
 
     @beartype
     def remove_member(self, user: AbstractUser) -> None:
@@ -195,6 +184,7 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Args:
             user: The user to remove from the project.
+
         """
         ProjectMembership.objects.filter(
             project=self,
@@ -211,6 +201,7 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             QuerySet[AbstractUser]: A queryset of users with the specified role.
+
         """
         return User.objects.filter(
             project_memberships__project=self,
@@ -224,13 +215,14 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             QuerySet: A queryset of obligations related to the project.
+
         """
         from obligations.models import Obligation
+
         return Obligation.objects.filter(project=self)
 
 
-@beartype
-class ProjectMembership(LifecycleModel, ProtoBufMixin):
+class ProjectMembership(ProtoBufMixin, models.Model):
     """Through model for project memberships.
 
     Attributes:
@@ -240,6 +232,7 @@ class ProjectMembership(LifecycleModel, ProtoBufMixin):
         role: The role of the user in the project.
         created_at: The datetime when the membership was created.
         updated_at: The datetime when the membership was last updated.
+
     """
 
     pb_model = ProjectMembershipProto
@@ -268,27 +261,8 @@ class ProjectMembership(LifecycleModel, ProtoBufMixin):
         verbose_name = "Project Membership"
         verbose_name_plural = "Project Memberships"
 
-    @hook(AFTER_SAVE)
-    @beartype
-    def after_save_membership_lifecycle(self) -> None:
-        """Lifecycle hook: called after saving a project membership."""
-        logger = logging.getLogger(__name__)
-        logger.info(
-            "ProjectMembership %s saved (lifecycle hook, replaces signal)",
-            self,
-        )
-        # Add additional event-driven logic here as needed
-
-    @hook(AFTER_DELETE)
-    @beartype
-    def after_delete_membership_lifecycle(self) -> None:
-        """Lifecycle hook: called after deleting a project membership."""
-        logger = logging.getLogger(__name__)
-        logger.info(
-            "ProjectMembership %s deleted (lifecycle hook, replaces signal)",
-            self,
-        )
-        # Add additional cleanup or notification logic here as needed
+    # Membership lifecycle logic is now handled via post_save and post_delete
+    # signals in signals.py
 
     @beartype
     def __str__(self) -> str:
@@ -296,12 +270,12 @@ class ProjectMembership(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: The user-project-role string.
+
         """
         return f"{self.user.username} - {self.project.name} ({self.role})"
 
 
-@beartype
-class ProjectObligation(ProtoBufMixin):
+class ProjectObligation(ProtoBufMixin, models.Model):
     """Through model for project obligations.
 
     Attributes:
@@ -310,6 +284,7 @@ class ProjectObligation(ProtoBufMixin):
         obligation: The obligation associated with the project.
         created_at: The datetime when the obligation was created.
         updated_at: The datetime when the obligation was last updated.
+
     """
 
     pb_model = ProjectObligationProto
@@ -339,5 +314,6 @@ class ProjectObligation(ProtoBufMixin):
 
         Returns:
             str: The project-obligation string.
+
         """
         return f"{self.project.name} - {self.obligation.obligation_number}"

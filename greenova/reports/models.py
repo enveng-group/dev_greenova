@@ -32,8 +32,6 @@ from beartype import beartype
 from django.db import models
 from typing import ClassVar
 
-from .types import ReportPayloadDict, ExportFormatDict, ReportResultDict, ReportPayloadManager, ExportFormatter, ResultProcessor
-
 
 @beartype
 class Report(models.Model):
@@ -58,11 +56,7 @@ class Report(models.Model):
         ordering: ClassVar[list[str]] = ["-created_at"]
         verbose_name = "Report"
         verbose_name_plural = "Reports"
-        permissions = [
-            ("view_report", "Can view report"),
-            ("change_report", "Can change report"),
-            ("delete_report", "Can delete report"),
-        ]
+        # Removed explicit view/change/delete permissions to avoid clash with builtins
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 

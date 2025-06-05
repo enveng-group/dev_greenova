@@ -21,7 +21,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.cache import cache_control, require_http_methods
+from django.views.decorators.cache import cache_control
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import (
     CreateView,
@@ -36,6 +37,7 @@ from responsibility.models import ResponsibilityAssignment
 
 from .filters import ObligationFilter
 from .forms import EvidenceUploadForm, ObligationForm, ResponsibilityAssignmentFormSet
+from .mixins import ObligationContextMixin, ObligationPermissionRequiredMixin
 from .models import Obligation, ObligationEvidence
 from .serializers import (
     ObligationCollectionProtoSerializer,
@@ -44,11 +46,6 @@ from .serializers import (
 from .tables import get_obligation_table
 from .utils import (
     is_obligation_overdue,
-)
-from .mixins import ObligationPermissionRequiredMixin, ObligationContextMixin
-from .permissions import user_can_view_obligation
-from .types import (
-    ObligationDataDict, ComplianceStatusDict, ObligationDataManager, ComplianceChecker, StatusEvaluator
 )
 
 logger = logging.getLogger(__name__)
@@ -67,6 +64,7 @@ class ObligationSummaryView(LoginRequiredMixin, ObligationContextMixin, Template
 
         Returns:
             List of template names.
+
         """
         return [self.template_name]
 
@@ -79,6 +77,7 @@ class ObligationSummaryView(LoginRequiredMixin, ObligationContextMixin, Template
 
         Returns:
             Context dictionary for the template.
+
         """
         context = super().get_context_data(**kwargs)
         mechanism_id = self.request.GET.get("mechanism_id")
@@ -120,6 +119,7 @@ class ObligationSummaryView(LoginRequiredMixin, ObligationContextMixin, Template
 
                 Returns:
                     True if user can edit, False otherwise.
+
                 """
                 return ResponsibilityAssignment.objects.filter(
                     obligation=obligation,
@@ -134,7 +134,11 @@ class ObligationSummaryView(LoginRequiredMixin, ObligationContextMixin, Template
         return context
 
 
-class TotalOverdueObligationsView(LoginRequiredMixin, ObligationPermissionRequiredMixin, View):
+class TotalOverdueObligationsView(
+    LoginRequiredMixin,
+    ObligationPermissionRequiredMixin,
+    View,
+):
     """View for returning the total number of overdue obligations."""
 
     @beartype
@@ -148,6 +152,7 @@ class TotalOverdueObligationsView(LoginRequiredMixin, ObligationPermissionRequir
 
         Returns:
             JsonResponse with overdue obligations count.
+
         """
         project_id = request.GET.get("project_id")
 
@@ -164,7 +169,10 @@ class TotalOverdueObligationsView(LoginRequiredMixin, ObligationPermissionRequir
 
 
 class ObligationCreateView(
-    LoginRequiredMixin, ObligationPermissionRequiredMixin, ObligationContextMixin, CreateView
+    LoginRequiredMixin,
+    ObligationPermissionRequiredMixin,
+    ObligationContextMixin,
+    CreateView,
 ):
     """View for creating a new obligation."""
 
@@ -178,6 +186,7 @@ class ObligationCreateView(
 
         Returns:
             Dictionary of form kwargs.
+
         """
         kwargs = super().get_form_kwargs()
         project_id = self.request.GET.get("project_id")
@@ -198,6 +207,7 @@ class ObligationCreateView(
 
         Returns:
             Context dictionary for the template.
+
         """
         context = super().get_context_data(**kwargs)
         project_id = self.request.GET.get("project_id")
@@ -218,6 +228,7 @@ class ObligationCreateView(
 
         Returns:
             HttpResponse redirecting to the appropriate page.
+
         """
         try:
             super().form_valid(form)
@@ -255,13 +266,17 @@ class ObligationCreateView(
 
         Returns:
             HttpResponse with form errors.
+
         """
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
 
 class ObligationDetailView(
-    LoginRequiredMixin, ObligationPermissionRequiredMixin, ObligationContextMixin, DetailView
+    LoginRequiredMixin,
+    ObligationPermissionRequiredMixin,
+    ObligationContextMixin,
+    DetailView,
 ):
     """View for viewing a single obligation."""
 
@@ -279,6 +294,7 @@ class ObligationDetailView(
 
         Returns:
             True if user has any of the roles, False otherwise.
+
         """
         return self.object.responsibility_assignments.filter(
             user=self.request.user,
@@ -294,6 +310,7 @@ class ObligationDetailView(
 
         Returns:
             Context dictionary for the template.
+
         """
         context = super().get_context_data(**kwargs)
         context["project_id"] = self.object.project_id
@@ -302,7 +319,10 @@ class ObligationDetailView(
 
 
 class ObligationUpdateView(
-    LoginRequiredMixin, ObligationPermissionRequiredMixin, ObligationContextMixin, UpdateView
+    LoginRequiredMixin,
+    ObligationPermissionRequiredMixin,
+    ObligationContextMixin,
+    UpdateView,
 ):
     """Update an existing obligation."""
 
@@ -323,6 +343,7 @@ class ObligationUpdateView(
 
         Returns:
             HttpResponse for the next step in the dispatch chain.
+
         """
         self.object = self.get_object()
         if not ResponsibilityAssignment.objects.filter(
@@ -343,6 +364,7 @@ class ObligationUpdateView(
 
         Returns:
             List of template names.
+
         """
         return [self.template_name]
 
@@ -352,6 +374,7 @@ class ObligationUpdateView(
 
         Returns:
             Dictionary of form kwargs.
+
         """
         kwargs = super().get_form_kwargs()
         kwargs["project"] = self.object.project
@@ -366,6 +389,7 @@ class ObligationUpdateView(
 
         Returns:
             Context dictionary for the template.
+
         """
         context = super().get_context_data(**kwargs)
         context["project_id"] = self.object.project_id
@@ -387,6 +411,7 @@ class ObligationUpdateView(
 
         Returns:
             HttpResponse redirecting to the appropriate page.
+
         """
         try:
             old_mechanism = None
@@ -439,13 +464,16 @@ class ObligationUpdateView(
 
         Returns:
             HttpResponse with form errors.
+
         """
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
 
 class ObligationDeleteView(
-    LoginRequiredMixin, ObligationPermissionRequiredMixin, DeleteView
+    LoginRequiredMixin,
+    ObligationPermissionRequiredMixin,
+    DeleteView,
 ):
     """View for deleting an obligation."""
 
@@ -463,6 +491,7 @@ class ObligationDeleteView(
 
         Returns:
             JsonResponse indicating success or failure.
+
         """
         try:
             self.object = self.get_object()
@@ -527,6 +556,7 @@ class ToggleCustomAspectView(View):
 
         Returns:
             HttpResponse with rendered partial template.
+
         """
         aspect = request.GET.get("environmental_aspect")
         if aspect == "Other":
@@ -556,6 +586,7 @@ def upload_evidence(request: HttpRequest, obligation_id: int) -> HttpResponse | 
 
     Returns:
         HttpResponse for the upload page or redirect, or None.
+
     """
     obligation = get_object_or_404(Obligation, pk=obligation_id)
 
@@ -598,6 +629,7 @@ def export_obligation(request: HttpRequest, obligation_number: str) -> HttpRespo
 
     Returns:
         HttpResponse with the exported data.
+
     """
     if request.user.is_staff:
         obligation = get_object_or_404(Obligation, obligation_number=obligation_number)
@@ -629,6 +661,7 @@ def export_all_obligations(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse with the exported data.
+
     """
     if request.user.is_staff:
         obligations = list(Obligation.objects.all())
@@ -657,6 +690,7 @@ def import_obligation(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse for the import page or redirect.
+
     """
     if request.method == "POST":
         if "file" not in request.FILES:
@@ -705,6 +739,7 @@ class ObligationListView(LoginRequiredMixin, ObligationContextMixin, TemplateVie
 
         Returns:
             Context dictionary for the template.
+
         """
         context = super().get_context_data(**kwargs)
         queryset = Obligation.objects.all()

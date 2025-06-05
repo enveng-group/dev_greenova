@@ -15,13 +15,10 @@ Author:
     Adrian Gallo <agallo@enveng-group.com.au>
 """
 
-from typing import Optional
-
 from beartype import beartype
 from django.core.exceptions import ValidationError
 
-from .models import ChatbotMessage
-from .types import ChatMessageDict, SessionStateDict
+from .models import ChatMessage
 
 try:
     from .proto_utils import (
@@ -38,7 +35,7 @@ except ImportError:
 
     def deserialize_chatbot_message(data: bytes) -> None:
         """Stub deserialize_chatbot_message for missing proto_utils."""
-        return None
+        return
 
     def serialize_chatbot_messages(objs: list[object]) -> bytes:
         """Stub serialize_chatbot_messages for missing proto_utils."""
@@ -55,25 +52,24 @@ class ChatbotMessageProtoSerializer:
     @beartype
     def __init__(
         self,
-        instance: Optional[ChatbotMessage] = None,
-        data: Optional[bytes] = None,
+        instance: ChatMessage | None = None,
+        data: bytes | None = None,
     ) -> None:
-        """
-        Initialize the ChatbotMessageProtoSerializer.
+        """Initialize the ChatbotMessageProtoSerializer.
 
         Args:
             instance: Optional ChatbotMessage instance to serialize.
             data: Optional protobuf3 binary data to deserialize.
+
         """
-        self.instance: Optional[ChatbotMessage] = instance
-        self.initial_data: Optional[bytes] = data
-        self.validated_data: Optional[ChatbotMessage] = None
-        self.errors: Optional[str] = None
+        self.instance: ChatMessage | None = instance
+        self.initial_data: bytes | None = data
+        self.validated_data: ChatMessage | None = None
+        self.errors: str | None = None
 
     @beartype
     def is_valid(self, raise_exception: bool = False) -> bool:
-        """
-        Validate the initial protobuf data and populate validated_data.
+        """Validate the initial protobuf data and populate validated_data.
 
         Args:
             raise_exception: Whether to raise ValidationError on failure.
@@ -83,6 +79,7 @@ class ChatbotMessageProtoSerializer:
 
         Raises:
             ValidationError: If data is invalid and raise_exception is True.
+
         """
         if self.initial_data is None:
             self.errors = "No data provided."
@@ -99,15 +96,15 @@ class ChatbotMessageProtoSerializer:
         return True
 
     @beartype
-    def save(self) -> ChatbotMessage:
-        """
-        Save the validated ChatbotMessage instance to the database.
+    def save(self) -> ChatMessage:
+        """Save the validated ChatbotMessage instance to the database.
 
         Returns:
             The saved ChatbotMessage instance.
 
         Raises:
             ValidationError: If called before is_valid().
+
         """
         if self.validated_data is None:
             msg = "Call is_valid() before save()."
@@ -117,12 +114,12 @@ class ChatbotMessageProtoSerializer:
         return self.instance
 
     @beartype
-    def data(self) -> Optional[bytes]:
-        """
-        Serialize the ChatbotMessage instance to protobuf3 binary format.
+    def data(self) -> bytes | None:
+        """Serialize the ChatbotMessage instance to protobuf3 binary format.
 
         Returns:
             Serialized protobuf3 binary data, or None if no instance.
+
         """
         if self.instance is None:
             return None
@@ -135,25 +132,24 @@ class ChatbotMessageCollectionProtoSerializer:
     @beartype
     def __init__(
         self,
-        instances: Optional[list[ChatbotMessage]] = None,
-        data: Optional[bytes] = None,
+        instances: list[ChatMessage] | None = None,
+        data: bytes | None = None,
     ) -> None:
-        """
-        Initialize the ChatbotMessageCollectionProtoSerializer.
+        """Initialize the ChatbotMessageCollectionProtoSerializer.
 
         Args:
             instances: Optional list of ChatbotMessage instances to serialize.
             data: Optional protobuf3 binary data to deserialize.
+
         """
-        self.instances: Optional[list[ChatbotMessage]] = instances
-        self.initial_data: Optional[bytes] = data
-        self.validated_data: Optional[list[ChatbotMessage]] = None
-        self.errors: Optional[str] = None
+        self.instances: list[ChatMessage] | None = instances
+        self.initial_data: bytes | None = data
+        self.validated_data: list[ChatMessage] | None = None
+        self.errors: str | None = None
 
     @beartype
     def is_valid(self, raise_exception: bool = False) -> bool:
-        """
-        Validate the initial protobuf data and populate validated_data.
+        """Validate the initial protobuf data and populate validated_data.
 
         Args:
             raise_exception: Whether to raise ValidationError on failure.
@@ -163,6 +159,7 @@ class ChatbotMessageCollectionProtoSerializer:
 
         Raises:
             ValidationError: If data is invalid and raise_exception is True.
+
         """
         if self.initial_data is None:
             self.errors = "No data provided."
@@ -179,12 +176,12 @@ class ChatbotMessageCollectionProtoSerializer:
         return True
 
     @beartype
-    def data(self) -> Optional[bytes]:
-        """
-        Serialize the collection of ChatbotMessage instances to protobuf3 binary format.
+    def data(self) -> bytes | None:
+        """Serialize the collection of ChatbotMessage instances to protobuf3 binary format.
 
         Returns:
             Serialized protobuf3 binary data, or None if no instances.
+
         """
         if self.instances is None:
             return None

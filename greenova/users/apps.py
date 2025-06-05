@@ -5,4 +5,5 @@ class UsersConfig(AppConfig):
     name = "users"
 
     def ready(self) -> None:
-        pass  # Signal connection is handled at the top level
+        """Import signal handlers for the users app."""
+        from . import signals  # noqa: F401

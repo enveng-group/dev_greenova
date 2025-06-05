@@ -15,24 +15,24 @@ from core.utils.roles import (
     get_responsibility_choices,
     get_responsibility_display_name,
 )
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse, HttpResponse, HttpRequest
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control, csrf_exempt
+from django.views.decorators.cache import cache_control
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
 from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView, View
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
 from obligations.models import Obligation
 
 from .figures import generate_responsibility_chart
-from .serializers import (
-    ResponsibilityProtoSerializer,
-    ResponsibilityCollectionProtoSerializer,
-)
 from .models import Responsibility
-from .permissions import user_can_view_responsibility
+from .serializers import (
+    ResponsibilityCollectionProtoSerializer,
+    ResponsibilityProtoSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ class ResponsibilityChartView(LoginRequiredMixin, TemplateView):
 
         Returns:
             dict[str, Any]: Context data for the template.
+
         """
         context = super().get_context_data(**kwargs)
         project_id = self.request.GET.get("project_id")
@@ -67,7 +68,7 @@ class ResponsibilityChartView(LoginRequiredMixin, TemplateView):
 
             for obligation in obligations:
                 resp_display = get_responsibility_display_name(
-                    obligation.responsibility
+                    obligation.responsibility,
                 )
                 if resp_display not in responsibility_counts:
                     responsibility_counts[resp_display] = 0
@@ -90,7 +91,10 @@ class ResponsibilityChartApiView(View):
 
     @beartype
     def get(
-        self, request: HttpRequest, *args: object, **kwargs: object
+        self,
+        request: HttpRequest,
+        *args: object,
+        **kwargs: object,
     ) -> HttpResponse:
         """Handle GET requests for the responsibility chart API.
 
@@ -101,6 +105,7 @@ class ResponsibilityChartApiView(View):
 
         Returns:
             HttpResponse: The HTTP response with the rendered chart.
+
         """
         # Stub: Implement API logic here
         return JsonResponse({"detail": "Not implemented"}, status=501)
@@ -116,6 +121,7 @@ def get_responsibility_options(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse: The HTTP response with options data.
+
     """
     choices = get_responsibility_choices()
     options = [{"value": value, "display": display} for value, display in choices]
@@ -126,7 +132,8 @@ def get_responsibility_options(request: HttpRequest) -> HttpResponse:
 @login_required
 @require_http_methods(["GET"])
 def export_responsibility(
-    request: HttpRequest, responsibility_id: int
+    request: HttpRequest,
+    responsibility_id: int,
 ) -> HttpResponse:
     """Export a single responsibility.
 
@@ -136,6 +143,7 @@ def export_responsibility(
 
     Returns:
         HttpResponse: The HTTP response with the exported data.
+
     """
     responsibility = get_object_or_404(Responsibility, id=responsibility_id)
     serializer = ResponsibilityProtoSerializer(instance=responsibility)
@@ -143,9 +151,9 @@ def export_responsibility(
     if not data:
         return JsonResponse({"error": "Failed to export responsibility."}, status=400)
     response = HttpResponse(data, content_type="application/octet-stream")
-    response[
-        "Content-Disposition"
-    ] = f'attachment; filename="responsibility_{responsibility_id}.pb"'
+    response["Content-Disposition"] = (
+        f'attachment; filename="responsibility_{responsibility_id}.pb"'
+    )
     return response
 
 
@@ -160,6 +168,7 @@ def export_all_responsibilities(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse: The HTTP response with the exported data.
+
     """
     responsibilities = list(Responsibility.objects.all())
     serializer = ResponsibilityCollectionProtoSerializer(instances=responsibilities)
@@ -183,6 +192,7 @@ def import_responsibility(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse: The HTTP response after importing.
+
     """
     data = request.body
     serializer = ResponsibilityProtoSerializer(data=data)
@@ -193,5 +203,5 @@ def import_responsibility(request: HttpRequest) -> HttpResponse:
         {
             "id": responsibility.id,
             "message": "Responsibility imported successfully.",
-        }
+        },
     )

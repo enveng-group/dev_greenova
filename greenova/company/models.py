@@ -24,29 +24,19 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
-from django_lifecycle import BEFORE_SAVE, LifecycleModel, hook
-from slugify import slugify
 
 from .constants import (
     COMPANY_TYPE_CHOICES,
     COMPANY_TYPE_PRIVATE,
 )
 from .validators import validate_company_name
-from .types import (
-    CompanyProfileDict,
-    EmployeeRecordDict,
-    OrgChartNodeDict,
-    CompanyProfileManager,
-    EmployeeManager,
-    OrgChartHandler,
-)
 
 logger = logging.getLogger(__name__)
 
 try:
     from pb_model.models import ProtoBufMixin
 except ImportError:
-    ProtoBufMixin = models.Model  # fallback for type checking
+    ProtoBufMixin = object  # fallback for type checking
 
 try:
     from .proto.company_pb2 import (
@@ -60,64 +50,75 @@ except ImportError:
     CompanyDocumentProto = None
 
 
-@beartype
-class Company(LifecycleModel, ProtoBufMixin):
+class Company(ProtoBufMixin, models.Model):  # type: ignore[misc]
     """Model representing a company or organization."""
 
     pb_model = CompanyProto
 
-    name: models.CharField = models.CharField(
-        max_length=255, unique=True, validators=[validate_company_name]
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        validators=[validate_company_name],
     )
-    slug: models.SlugField = models.SlugField(max_length=255, unique=True, blank=True)
-    logo: models.ImageField = models.ImageField(
-        upload_to="company_logos/", blank=True, null=True
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    logo = models.ImageField(
+        upload_to="company_logos/",
+        blank=True,
+        null=True,
     )
-    description: models.TextField = models.TextField(blank=True)
-    website: models.URLField = models.URLField(blank=True)
-    address: models.TextField = models.TextField(blank=True)
-    phone: models.CharField = models.CharField(max_length=50, blank=True)
-    email: models.EmailField = models.EmailField(blank=True)
+    description = models.TextField(blank=True)
+    website = models.URLField(blank=True)
+    address = models.TextField(blank=True)
+    phone = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(blank=True)
 
-    company_type: models.CharField = models.CharField(
+    company_type = models.CharField(
         max_length=20,
         choices=COMPANY_TYPE_CHOICES,
         default=COMPANY_TYPE_PRIVATE,
     )
 
-    COMPANY_SIZES: list[tuple[str, str]] = [
+    COMPANY_SIZES = [
         ("small", "Small (1-49 employees)"),
         ("medium", "Medium (50-249 employees)"),
         ("large", "Large (250+ employees)"),
     ]
-    size: models.CharField = models.CharField(
-        max_length=10, choices=COMPANY_SIZES, blank=True
+    size = models.CharField(
+        max_length=10,
+        choices=COMPANY_SIZES,
+        blank=True,
     )
 
-    INDUSTRY_SECTORS: list[tuple[str, str]] = [
-        ("manufacturing", "Manufacturing"),
-        ("construction", "Construction"),
-        ("mining", "Mining"),
-        ("energy", "Energy"),
-        ("transportation", "Transportation"),
+    COMPANY_TYPES = (
+        ("private", "Private"),
+        ("public", "Public"),
         ("government", "Government"),
-        ("consulting", "Consulting"),
+        ("nonprofit", "Non-profit"),
+    )
+    INDUSTRY_SECTORS = (
+        ("energy", "Energy"),
+        ("manufacturing", "Manufacturing"),
+        ("agriculture", "Agriculture"),
+        ("services", "Services"),
+        ("construction", "Construction"),
         ("other", "Other"),
-    ]
-    industry: models.CharField = models.CharField(
-        max_length=20, choices=INDUSTRY_SECTORS, blank=True
+    )
+    industry = models.CharField(
+        max_length=20,
+        choices=INDUSTRY_SECTORS,
+        blank=True,
     )
 
-    is_active: models.BooleanField = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
-    members: models.ManyToManyField = models.ManyToManyField(
+    members = models.ManyToManyField(
         User,
         through="CompanyMembership",
         related_name="companies",
     )
 
-    created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
-    updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @staticmethod
     @beartype
@@ -128,6 +129,7 @@ class Company(LifecycleModel, ProtoBufMixin):
 
         Returns:
             int: The ID of the default company.
+
         """
         return 1
 
@@ -136,9 +138,6 @@ class Company(LifecycleModel, ProtoBufMixin):
         verbose_name_plural = "Companies"
         ordering = ["name"]
         permissions = [
-            ("view_company", "Can view company"),
-            ("change_company", "Can change company"),
-            ("delete_company", "Can delete company"),
             ("manage_members", "Can manage company members"),
         ]
         default_permissions = ("add", "change", "delete", "view")
@@ -149,15 +148,11 @@ class Company(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: The name of the company.
+
         """
         return self.name
 
-    @hook(BEFORE_SAVE)
-    @beartype
-    def set_slug(self) -> None:
-        """Set slug from name if not already set."""
-        if not self.slug:
-            self.slug = slugify(self.name)
+    # Slug is now set via pre_save signal in signals.py
 
     @beartype
     def get_member_count(self) -> int:
@@ -165,6 +160,7 @@ class Company(LifecycleModel, ProtoBufMixin):
 
         Returns:
             int: The number of members in the company.
+
         """
         return self.members.count()
 
@@ -174,6 +170,7 @@ class Company(LifecycleModel, ProtoBufMixin):
 
         Returns:
             int: The number of active projects.
+
         """
         from django.db import connection
 
@@ -204,6 +201,7 @@ class Company(LifecycleModel, ProtoBufMixin):
 
         Returns:
             QuerySet: A queryset of users with the specified role.
+
         """
         return User.objects.filter(
             companymembership__company=self,
@@ -217,6 +215,7 @@ class Company(LifecycleModel, ProtoBufMixin):
         Args:
             user: The user to add.
             role: The role to assign to the user.
+
         """
         if not CompanyMembership.objects.filter(company=self, user=user).exists():
             CompanyMembership.objects.create(
@@ -237,18 +236,18 @@ class Company(LifecycleModel, ProtoBufMixin):
 
         Args:
             user: The user to remove.
+
         """
         CompanyMembership.objects.filter(company=self, user=user).delete()
         logger.info("Removed user %s from company %s", user.username, self.name)
 
 
-@beartype
-class CompanyMembership(LifecycleModel, ProtoBufMixin):
+class CompanyMembership(ProtoBufMixin, models.Model):  # type: ignore[misc]
     """Through model for company memberships."""
 
     pb_model = CompanyMembershipProto
 
-    ROLE_CHOICES: list[tuple[str, str]] = [
+    ROLE_CHOICES = [
         ("owner", "Owner"),
         ("admin", "Administrator"),
         ("manager", "Manager"),
@@ -258,25 +257,25 @@ class CompanyMembership(LifecycleModel, ProtoBufMixin):
         ("view_only", "View Only"),
     ]
 
-    company: models.ForeignKey = models.ForeignKey(
+    company = models.ForeignKey(
         "Company",
         on_delete=models.CASCADE,
         related_name="memberships",
     )
-    user: models.ForeignKey = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="company_memberships",
     )
-    role: models.CharField = models.CharField(
+    role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
         default="member",
     )
-    department: models.CharField = models.CharField(max_length=100, blank=True)
-    position: models.CharField = models.CharField(max_length=100, blank=True)
-    date_joined: models.DateTimeField = models.DateTimeField(default=timezone.now)
-    is_primary: models.BooleanField = models.BooleanField(
+    department = models.CharField(max_length=100, blank=True)
+    position = models.CharField(max_length=100, blank=True)
+    date_joined = models.DateTimeField(default=timezone.now)
+    is_primary = models.BooleanField(
         default=False,
         help_text="Designates if this is the user's primary company.",
     )
@@ -293,18 +292,11 @@ class CompanyMembership(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: The user-company-role string.
+
         """
         return f"{self.user.username} - {self.company.name} ({self.role})"
 
-    @hook(BEFORE_SAVE)
-    @beartype
-    def ensure_single_primary(self) -> None:
-        """Ensure only one primary company membership per user."""
-        if self.is_primary:
-            CompanyMembership.objects.filter(
-                user=self.user,
-                is_primary=True,
-            ).exclude(id=self.id or 0).update(is_primary=False)
+    # Single primary logic is now handled via pre_save signal in signals.py
 
     @beartype
     def clean(self) -> None:
@@ -312,6 +304,7 @@ class CompanyMembership(LifecycleModel, ProtoBufMixin):
 
         Raises:
             ValidationError: If a company already has an owner.
+
         """
         if self.role == "owner":
             existing_owner = (
@@ -327,8 +320,7 @@ class CompanyMembership(LifecycleModel, ProtoBufMixin):
                 raise ValidationError({"role": "A company can only have one owner."})
 
 
-@beartype
-class CompanyDocument(ProtoBufMixin):
+class CompanyDocument(ProtoBufMixin, models.Model):
     """Model for storing company documents.
 
     Attributes:
@@ -339,26 +331,27 @@ class CompanyDocument(ProtoBufMixin):
         document_type (str): The type of document.
         uploaded_by (ForeignKey): The user who uploaded the document.
         uploaded_at (DateTimeField): The timestamp when the document was uploaded.
+
     """
 
     pb_model = CompanyDocumentProto
 
-    company: models.ForeignKey = models.ForeignKey(
+    company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
         related_name="documents",
     )
-    name: models.CharField = models.CharField(max_length=255)
-    description: models.TextField = models.TextField(blank=True)
-    file: models.FileField = models.FileField(upload_to="company_documents/")
-    document_type: models.CharField = models.CharField(max_length=100, blank=True)
-    uploaded_by: models.ForeignKey = models.ForeignKey(
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    file = models.FileField(upload_to="company_documents/")
+    document_type = models.CharField(max_length=100, blank=True)
+    uploaded_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         related_name="uploaded_company_documents",
     )
-    uploaded_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["-uploaded_at"]
@@ -371,5 +364,6 @@ class CompanyDocument(ProtoBufMixin):
 
         Returns:
             str: The name of the document and the associated company.
+
         """
         return f"{self.name} ({self.company.name})"

@@ -18,7 +18,6 @@ Author:
 
 import json
 import logging
-from typing import Any
 
 from beartype import beartype
 from django.contrib import messages as django_messages
@@ -30,19 +29,12 @@ from django.views.decorators.http import require_http_methods, require_POST
 from guardian.shortcuts import get_objects_for_user
 
 from .forms import ConversationForm
-from .models import ChatbotMessage, ChatMessage, Conversation
+from .models import ChatMessage, Conversation
 from .serializers import (
     ChatbotMessageCollectionProtoSerializer,
     ChatbotMessageProtoSerializer,
 )
 from .services import ChatbotService
-from .types import (
-    ChatMessageDict,
-    SessionStateDict,
-    MessageHandler,
-    SessionManager,
-    BotLogic,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +49,7 @@ def chatbot_home(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse: The rendered chatbot home page.
+
     """
     user = request.user
     conversations = get_objects_for_user(
@@ -95,6 +88,7 @@ def create_conversation(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse: Redirect or rendered form.
+
     """
     if request.method == "POST":
         form = ConversationForm(request.POST)
@@ -128,6 +122,7 @@ def conversation_detail(request: HttpRequest, conversation_id: int) -> HttpRespo
 
     Returns:
         HttpResponse: The rendered conversation detail page.
+
     """
     query = {"id": conversation_id, "user": request.user}
     conversation = get_object_or_404(Conversation, **query)
@@ -157,6 +152,7 @@ def send_message(request: HttpRequest, conversation_id: int) -> JsonResponse:
 
     Returns:
         JsonResponse: The user and bot messages.
+
     """
     query = {"id": conversation_id, "user": request.user}
     conversation = get_object_or_404(Conversation, **query)
@@ -209,6 +205,7 @@ def delete_conversation(request: HttpRequest, conversation_id: int) -> HttpRespo
 
     Returns:
         HttpResponse: Redirect or rendered confirmation page.
+
     """
     query = {"id": conversation_id, "user": request.user}
     conversation = get_object_or_404(Conversation, **query)
@@ -235,9 +232,10 @@ def export_chatbot_message(request: HttpRequest, message_id: int) -> HttpRespons
 
     Returns:
         HttpResponse: The exported protobuf binary data.
+
     """
     message = get_object_or_404(
-        ChatbotMessage,
+        ChatMessage,
         id=message_id,
         conversation__user=request.user,
     )
@@ -263,8 +261,9 @@ def export_all_chatbot_messages(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse: The exported protobuf binary data.
+
     """
-    messages_qs = ChatbotMessage.objects.filter(conversation__user=request.user)
+    messages_qs = ChatMessage.objects.filter(conversation__user=request.user)
     serializer = ChatbotMessageCollectionProtoSerializer(instances=list(messages_qs))
     data = serializer.data()
     if not data:
@@ -286,6 +285,7 @@ def import_chatbot_message(request: HttpRequest) -> HttpResponse:
 
     Returns:
         HttpResponse: Success or error response.
+
     """
     if request.method == "POST":
         if "file" not in request.FILES:

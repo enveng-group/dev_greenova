@@ -1,4 +1,3 @@
-from beartype import beartype
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -20,8 +19,7 @@ from .constants import (
 User = get_user_model()
 
 
-@beartype
-class BugReport(ProtoBufMixin):
+class BugReport(ProtoBufMixin, models.Model):
     """Model for storing user-submitted bug reports, integrated with protobuf3.
 
     Attributes:
@@ -143,11 +141,6 @@ class BugReport(ProtoBufMixin):
         ordering = ["-created_at"]
         verbose_name = _("Bug Report")
         verbose_name_plural = _("Bug Reports")
-        permissions = [
-            ("view_bugreport", "Can view bug report"),
-            ("change_bugreport", "Can change bug report"),
-            ("delete_bugreport", "Can delete bug report"),
-        ]
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 

@@ -17,6 +17,7 @@ import warnings
 from pathlib import Path
 from shutil import which
 from typing import Any, TypedDict
+
 from beartype import beartype
 
 # Handle optional dependencies gracefully
@@ -211,32 +212,18 @@ if DEBUG:
 # Run validation
 validate_settings()
 
-# Content Security Policy (CSP) configuration for django-csp
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'wasm-unsafe-eval'",  # Required for HTMX and Hyperscript (WebAssembly)
-    "'unsafe-inline'",  # Required for Hyperscript and PicoCSS (inline scripts)
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'unsafe-inline'",  # Required for PicoCSS (inline styles)
-    "fonts.googleapis.com",  # Allow Google Fonts for PicoCSS
-)
-CSP_FONT_SRC = ("'self'", "fonts.gstatic.com")
-CSP_IMG_SRC = ("'self'", "data:")
-CSP_CONNECT_SRC = (
-    "'self'",
-    "ws://127.0.0.1:*",
-    "ws://localhost:*",
-)
-# For development, allow websocket connections for browser reload and HTMX
-# For production, restrict as needed
 
-# Optionally, configure CSP_REPORT_ONLY = True for development to test policy
-CSP_REPORT_ONLY = DEBUG
-
-# See https://django-csp.readthedocs.io/en/latest/configuration.html for more options
+# Content Security Policy (CSP) configuration for django-csp >= 4.0
+CONTENT_SECURITY_POLICY_REPORT_ONLY = {
+    "DIRECTIVES": {
+        "connect-src": ("'self'", "ws://127.0.0.1:*", "ws://localhost:*"),
+        "default-src": ("'self'",),
+        "font-src": ("'self'", "fonts.gstatic.com"),
+        "img-src": ("'self'", "data:"),
+        "script-src": ("'self'", "'wasm-unsafe-eval'", "'unsafe-inline'"),
+        "style-src": ("'self'", "'unsafe-inline'", "fonts.googleapis.com"),
+    },
+}
 
 # Tailwind CSS configuration
 TAILWIND_APP_NAME = "theme"
@@ -280,7 +267,6 @@ INSTALLED_APPS = [
     "crispy_bootstrap4",
     "guardian",
     "storages",
-    "django_lifecycle",
     "dal",
     "dal_select2",
     # Your local apps (ordered by dependency)
@@ -374,7 +360,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # django-guardian configuration
 ANONYMOUS_USER_NAME = "anonymous"
-GUARDIAN_MONKEY_PATCH = False
+GUARDIAN_MONKEY_PATCH_USER = False
 
 # Update TEMPLATES configuration
 TEMPLATES: list[TemplateConfig] = [

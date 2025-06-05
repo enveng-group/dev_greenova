@@ -490,18 +490,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-lifecycle"
-version = "1.2.4"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/9c/ac/4e5ce8cb8b2eef726157bbfb6f227e79a4bf8e14d6346b21490b689464fb/django_lifecycle-1.2.4.tar.gz", hash = "sha256:b37add8a95d0e85f9f97e652fac989cd5914cddb2380d933b6568f80238ab61e", size = 12223, upload-time = "2024-06-07T10:40:33.678Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/31/85dd0766c135e8688d88849fc3d245c783cab435cedfb6d9041a911ee22f/django_lifecycle-1.2.4-py3-none-any.whl", hash = "sha256:b54aea17b50de45adb5c90a06eea0171afa0d547682f51990dffb578b82fc658", size = 15012, upload-time = "2024-06-07T10:40:31.822Z" },
-]
-
-[[package]]
 name = "django-matplotlib"
 version = "0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -712,7 +700,6 @@ dependencies = [
     { name = "django-guardian" },
     { name = "django-htmx" },
     { name = "django-hyperscript" },
-    { name = "django-lifecycle" },
     { name = "django-matplotlib" },
     { name = "django-pb-model" },
     { name = "django-pdb" },
@@ -762,7 +749,6 @@ requires-dist = [
     { name = "django-guardian", specifier = ">=2.4.0" },
     { name = "django-htmx", specifier = ">=1.23.0" },
     { name = "django-hyperscript", specifier = ">=1.5.2" },
-    { name = "django-lifecycle", specifier = ">=1.2.0" },
     { name = "django-matplotlib", specifier = ">=0.1" },
     { name = "django-pb-model", specifier = ">=0.3.3" },
     { name = "django-pdb", specifier = ">=0.6.2" },

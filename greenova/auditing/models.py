@@ -15,32 +15,28 @@ License:
 from __future__ import annotations
 
 import logging
-from typing import Any, ClassVar, Optional, Type
+from typing import TYPE_CHECKING, Any, ClassVar
 
-from beartype import beartype
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import QuerySet
-from django_lifecycle import AFTER_SAVE, LifecycleModel, hook
 from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
 
 from .constants import (
     CORRECTIVE_ACTION_STATUS_CHOICES,
-    CORRECTIVE_ACTION_STATUS_CLOSED,
     CORRECTIVE_ACTION_STATUS_OPEN,
-    MITIGATION_STATUS_ACTION_REQUIRED,
     MITIGATION_STATUS_CHOICES,
-    MITIGATION_STATUS_CLOSED,
     MITIGATION_STATUS_OPEN,
 )
 from .validators import validate_non_empty_description
-from .types import AuditRecordDict, AuditEntryDict
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
 
 try:
     from pb_model.models import ProtoBufMixin
 except ImportError:
-    ProtoBufMixin: Type[models.Model] = models.Model  # type: ignore
+    ProtoBufMixin: type[models.Model] = models.Model  # type: ignore
 
 try:
     from .proto.auditing_pb2 import (
@@ -63,8 +59,7 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-@beartype
-class Mitigation(LifecycleModel, ProtoBufMixin):
+class Mitigation(ProtoBufMixin, models.Model):
     """Model representing a mitigation for an audit entry.
 
     Attributes:
@@ -73,6 +68,7 @@ class Mitigation(LifecycleModel, ProtoBufMixin):
         description: Description of the mitigation.
         status: Status of the mitigation.
         created_at: Timestamp of creation.
+
     """
 
     pb_model: ClassVar[Any] = MitigationProto
@@ -83,7 +79,7 @@ class Mitigation(LifecycleModel, ProtoBufMixin):
         related_name="mitigations",
     )
     description: models.TextField = models.TextField(
-        validators=[validate_non_empty_description]
+        validators=[validate_non_empty_description],
     )
     status: models.CharField = models.CharField(
         max_length=20,
@@ -92,49 +88,24 @@ class Mitigation(LifecycleModel, ProtoBufMixin):
     )
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 
-    @beartype
     def __str__(self) -> str:
         """Return string representation of the mitigation.
 
         Returns:
             Human-readable string for the mitigation.
+
         """
         return f"Mitigation for {self.audit_entry}"
 
-    @hook(AFTER_SAVE)
-    @beartype
-    def update_audit_entry_status_lifecycle(self) -> None:
-        """Lifecycle hook: update audit entry status after saving mitigation.
-
-        Updates the related AuditEntry status based on the status of all
-        associated mitigations.
-        """
-        audit_entry = self.audit_entry
-        if audit_entry.mitigations.exclude(
-            status=MITIGATION_STATUS_CLOSED
-        ).exists():
-            audit_entry.status = "noncompliant"
-        else:
-            audit_entry.status = "compliant"
-        audit_entry.save()
-        logger.info(
-            "AuditEntry %s status updated by Mitigation lifecycle hook",
-            audit_entry.id,
-        )
+    # Status update logic is now handled via post_save signal in signals.py
 
     class Meta:
         verbose_name = "Mitigation"
-        permissions = [
-            ("view_mitigation", "Can view mitigation"),
-            ("change_mitigation", "Can change mitigation"),
-            ("delete_mitigation", "Can delete mitigation"),
-        ]
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 
 
-@beartype
-class CorrectiveAction(LifecycleModel, ProtoBufMixin):
+class CorrectiveAction(ProtoBufMixin, models.Model):
     """Model representing a corrective action for a mitigation.
 
     Attributes:
@@ -145,6 +116,7 @@ class CorrectiveAction(LifecycleModel, ProtoBufMixin):
         assigned_to: User assigned to the action.
         created_at: Timestamp of creation.
         due_date: Due date for the action.
+
     """
 
     pb_model: ClassVar[Any] = CorrectiveActionProto
@@ -169,49 +141,24 @@ class CorrectiveAction(LifecycleModel, ProtoBufMixin):
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     due_date: models.DateField = models.DateField(null=True, blank=True)
 
-    @beartype
     def __str__(self) -> str:
         """Return string representation of the corrective action.
 
         Returns:
             Human-readable string for the corrective action.
+
         """
         return f"CA for {self.mitigation} (Status: {self.status})"
 
-    @hook(AFTER_SAVE)
-    @beartype
-    def update_mitigation_status_lifecycle(self) -> None:
-        """Lifecycle hook: update mitigation status after saving corrective action.
-
-        Updates the related Mitigation status based on the status of all
-        associated corrective actions.
-        """
-        mitigation = self.mitigation
-        if mitigation.corrective_actions.exclude(
-            status=CORRECTIVE_ACTION_STATUS_CLOSED
-        ).exists():
-            mitigation.status = MITIGATION_STATUS_ACTION_REQUIRED
-        else:
-            mitigation.status = MITIGATION_STATUS_CLOSED
-        mitigation.save()
-        logger.info(
-            "Mitigation %s status updated by CorrectiveAction lifecycle hook",
-            mitigation.id,
-        )
+    # Status update logic is now handled via post_save signal in signals.py
 
     class Meta:
         verbose_name = "Corrective Action"
-        permissions = [
-            ("view_correctiveaction", "Can view corrective action"),
-            ("change_correctiveaction", "Can change corrective action"),
-            ("delete_correctiveaction", "Can delete corrective action"),
-        ]
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 
 
-@beartype
-class Audit(LifecycleModel, ProtoBufMixin):
+class Audit(ProtoBufMixin):
     """Audit model for environmental compliance audits.
 
     Attributes:
@@ -219,6 +166,7 @@ class Audit(LifecycleModel, ProtoBufMixin):
         name: Name of the audit.
         created_at: Timestamp of creation.
         mechanisms: Related environmental mechanisms.
+
     """
 
     pb_model: ClassVar[Any] = AuditProto
@@ -226,10 +174,9 @@ class Audit(LifecycleModel, ProtoBufMixin):
     name: models.CharField = models.CharField(max_length=255)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     mechanisms: models.ManyToManyField = models.ManyToManyField(
-        EnvironmentalMechanism
+        EnvironmentalMechanism,
     )
 
-    @beartype
     def generate_entries_from_mechanisms(self) -> None:
         """Generate audit entries for all obligations related to mechanisms.
 
@@ -246,8 +193,7 @@ class Audit(LifecycleModel, ProtoBufMixin):
             )
 
 
-@beartype
-class AuditEntry(LifecycleModel, ProtoBufMixin):
+class AuditEntry(ProtoBufMixin):
     """Audit entry for a specific obligation in an audit.
 
     Attributes:
@@ -256,15 +202,19 @@ class AuditEntry(LifecycleModel, ProtoBufMixin):
         obligation: Related Obligation instance.
         status: Status of the audit entry.
         finding: Finding for the audit entry.
+
     """
 
     pb_model: ClassVar[Any] = AuditEntryProto
 
     audit: models.ForeignKey = models.ForeignKey(
-        Audit, on_delete=models.CASCADE, related_name="entries"
+        Audit,
+        on_delete=models.CASCADE,
+        related_name="entries",
     )
     obligation: models.ForeignKey = models.ForeignKey(
-        Obligation, on_delete=models.CASCADE
+        Obligation,
+        on_delete=models.CASCADE,
     )
     STATUS_CHOICES: ClassVar[list[tuple[str, str]]] = [
         ("pending", "Pending"),
@@ -272,7 +222,9 @@ class AuditEntry(LifecycleModel, ProtoBufMixin):
         ("noncompliant", "Non-Compliant"),
     ]
     status: models.CharField = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default="pending"
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending",
     )
     FINDING_CHOICES: ClassVar[list[tuple[str, str]]] = [
         ("compliant", "Compliant"),
@@ -286,8 +238,7 @@ class AuditEntry(LifecycleModel, ProtoBufMixin):
     )
 
 
-@beartype
-class ComplianceComment(LifecycleModel, ProtoBufMixin):
+class ComplianceComment(ProtoBufMixin):
     """Comment for compliance on an obligation.
 
     Attributes:
@@ -295,6 +246,7 @@ class ComplianceComment(LifecycleModel, ProtoBufMixin):
         obligation: Related Obligation instance.
         text: Comment text.
         created_at: Timestamp of creation.
+
     """
 
     pb_model: ClassVar[Any] = ComplianceCommentProto
@@ -307,18 +259,17 @@ class ComplianceComment(LifecycleModel, ProtoBufMixin):
     text: models.TextField = models.TextField()
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 
-    @beartype
     def __str__(self) -> str:
         """Return string representation of the compliance comment.
 
         Returns:
             Human-readable string for the compliance comment.
+
         """
         return f"Compliance for {self.obligation.obligation_number}"
 
 
-@beartype
-class NonConformanceComment(LifecycleModel, ProtoBufMixin):
+class NonConformanceComment(ProtoBufMixin):
     """Comment for non-conformance on an obligation.
 
     Attributes:
@@ -326,6 +277,7 @@ class NonConformanceComment(LifecycleModel, ProtoBufMixin):
         obligation: Related Obligation instance.
         text: Comment text.
         created_at: Timestamp of creation.
+
     """
 
     pb_model: ClassVar[Any] = NonConformanceCommentProto
@@ -338,11 +290,11 @@ class NonConformanceComment(LifecycleModel, ProtoBufMixin):
     text: models.TextField = models.TextField()
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 
-    @beartype
     def __str__(self) -> str:
         """Return string representation of the non-conformance comment.
 
         Returns:
             Human-readable string for the non-conformance comment.
+
         """
         return f"Non-Conformance for {self.obligation.obligation_number}"

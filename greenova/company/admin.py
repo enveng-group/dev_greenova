@@ -14,7 +14,6 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 # Third-party imports
-from beartype import beartype
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 
@@ -32,13 +31,12 @@ logger = logging.getLogger(__name__)
 class BaseModelAdmin(admin.ModelAdmin):
     """Base admin class with type safety and permission checks."""
 
-    @beartype
     def dispatch(
         self,
-        request: "HttpRequest",
+        request: HttpRequest,
         object_id: Any,
-        from_field: str | None = None,
-    ) -> "Model | None":
+        from_field: None = None,
+    ) -> object:
         """Get object with type safety and permission checking.
 
         Args:
@@ -51,6 +49,7 @@ class BaseModelAdmin(admin.ModelAdmin):
 
         Raises:
             PermissionDenied: If the user does not have permission to view the object.
+
         """
         obj = super().get_object(
             request,
@@ -76,9 +75,10 @@ class BaseModelAdmin(admin.ModelAdmin):
 
         return obj
 
-    @beartype
     def has_view_permission(
-        self, request: "HttpRequest", obj: "Model | None" = None
+        self,
+        request: HttpRequest,
+        obj: Model | None = None,
     ) -> bool:
         """Check if the user has permission to view the object.
 
@@ -88,14 +88,16 @@ class BaseModelAdmin(admin.ModelAdmin):
 
         Returns:
             True if the user can view, False otherwise.
+
         """
         if obj is not None:
             return user_can_view_company(request.user, obj)
         return super().has_view_permission(request, obj=obj)
 
-    @beartype
     def has_change_permission(
-        self, request: "HttpRequest", obj: "Model | None" = None
+        self,
+        request: HttpRequest,
+        obj: Model | None = None,
     ) -> bool:
         """Check if the user has permission to change the object.
 
@@ -105,14 +107,16 @@ class BaseModelAdmin(admin.ModelAdmin):
 
         Returns:
             True if the user can change, False otherwise.
+
         """
         if obj is not None:
             return user_can_view_company(request.user, obj)
         return super().has_change_permission(request, obj=obj)
 
-    @beartype
     def has_delete_permission(
-        self, request: "HttpRequest", obj: "Model | None" = None
+        self,
+        request: HttpRequest,
+        obj: Model | None = None,
     ) -> bool:
         """Check if the user has permission to delete the object.
 
@@ -122,6 +126,7 @@ class BaseModelAdmin(admin.ModelAdmin):
 
         Returns:
             True if the user can delete, False otherwise.
+
         """
         if obj is not None:
             return user_can_view_company(request.user, obj)

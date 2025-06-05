@@ -24,26 +24,9 @@
 			"extensions": [
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-				"ms-python.python",
-				"mikoz.autoflake-extension",
-				"ms-python.isort",
-				"charliermarsh.ruff",
-				"ms-python.autopep8",
-				"ms-python.pylint",
-				"ms-python.mypy-type-checker",
-				"monosans.djlint",
-				"redhat.vscode-yaml",
-				"esbenp.prettier-vscode",
-				"timonwong.shellcheck",
-				"foxundermoon.shell-format",
-				"bmalehorn.vscode-fish",
-				"pycqa.bandit-pycqa",
-				"tamasfe.even-better-toml"
+				"ms-python.python"
 			],
 			"settings": {
-				"python.defaultInterpreterPath": "/workspaces/greenova/.venv/bin/python",
-				"python.terminal.activateEnvironment": true,
-				"python.testing.unittestEnabled": true,
 				"terminal.integrated.defaultProfile.linux": "fish",
 				"terminal.integrated.profiles.linux": {
 					"fish": {

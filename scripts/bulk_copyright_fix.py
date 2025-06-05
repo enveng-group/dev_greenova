@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Script to bulk add copyright notices to all files flagged by ruff CPY001."""
 
-
 # Copyright notice template
 COPYRIGHT_NOTICE = '''"""
 Copyright (C) 2025 Adrian Gallo

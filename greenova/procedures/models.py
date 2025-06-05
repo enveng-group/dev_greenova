@@ -24,17 +24,9 @@ from beartype import beartype
 from django.db import models
 from django.utils import timezone
 from projects.models import Project
-from .validators import validate_document_id
 
 from .constants import COMPLIANCE_STATUSES, STATUS_CHOICES
-from .types import (
-    ProcedureStepDict,
-    ProcedureDefinitionDict,
-    ProcedureResultDict,
-    ProcedureManager,
-    StepEvaluator,
-    ResultProcessor,
-)
+from .validators import validate_document_id
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +58,7 @@ class Procedure(models.Model):
         mark_as_completed(): Marks the procedure as completed with the current timestamp.
         set_status(status: str): Updates the procedure status.
         is_due_for_review(): Checks if the procedure is due for review.
+
     """
 
     # Use centralized constants
@@ -118,11 +111,7 @@ class Procedure(models.Model):
 
     class Meta:
         ordering = ["-updated_at"]
-        permissions = [
-            ("view_procedure", "Can view procedure"),
-            ("change_procedure", "Can change procedure"),
-            ("delete_procedure", "Can delete procedure"),
-        ]
+        # Removed explicit view/change/delete permissions to avoid clash with builtins
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
         verbose_name = "Procedure"
@@ -139,6 +128,7 @@ class Procedure(models.Model):
 
         Returns:
             str: The document ID and name of the procedure.
+
         """
         return f"{self.document_id} - {self.name}"
 
@@ -157,6 +147,7 @@ class Procedure(models.Model):
 
         Raises:
             ValueError: If the provided status is invalid.
+
         """
         if status in dict(self.STATUS_CHOICES):
             self.status = status
@@ -174,6 +165,7 @@ class Procedure(models.Model):
 
         Returns:
             bool: True if the procedure is due for review, False otherwise.
+
         """
         if not self.review_date:
             return False

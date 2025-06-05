@@ -3,6 +3,7 @@ from core.utils.roles import get_responsibility_choices
 from django.conf import settings
 from django.db import models
 from django.db.models import CharField, TextField
+
 from .validators import validate_responsibility_name
 
 
@@ -30,11 +31,6 @@ class Responsibility(models.Model):
         verbose_name = "Responsibility"
         verbose_name_plural = "Responsibilities"
         ordering = ["name"]
-        permissions = [
-            ("view_responsibility", "Can view responsibility"),
-            ("change_responsibility", "Can change responsibility"),
-            ("delete_responsibility", "Can delete responsibility"),
-        ]
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 
@@ -78,11 +74,6 @@ class ResponsibilityAssignment(models.Model):
         verbose_name = "Responsibility Assignment"
         verbose_name_plural = "Responsibility Assignments"
         ordering = ["obligation", "user", "responsibility"]
-        permissions = [
-            ("view_responsibilityassignment", "Can view responsibility assignment"),
-            ("change_responsibilityassignment", "Can change responsibility assignment"),
-            ("delete_responsibilityassignment", "Can delete responsibility assignment"),
-        ]
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 

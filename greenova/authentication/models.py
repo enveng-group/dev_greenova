@@ -17,15 +17,8 @@ Author:
 
 from beartype import beartype
 from django.db import models
+
 from .validators import validate_username
-from .types import (
-    UserInfoDict,
-    SessionDataDict,
-    Authenticator,
-    PermissionChecker,
-    SessionManager,
-    MfaHandler,
-)
 
 
 @beartype
@@ -37,6 +30,7 @@ class AuthUser(models.Model):
         username (str): The username of the user.
         email (str): The email address of the user.
         password (str): The hashed password of the user.
+
     """
 
     id: models.AutoField = models.AutoField(primary_key=True)
@@ -59,14 +53,10 @@ class AuthUser(models.Model):
 
         Returns:
             str: The username of the user.
+
         """
         return self.username
 
     class Meta:
-        permissions = [
-            ("view_authuser", "Can view auth user"),
-            ("change_authuser", "Can change auth user"),
-            ("delete_authuser", "Can delete auth user"),
-        ]
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian

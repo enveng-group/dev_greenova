@@ -33,15 +33,8 @@ from obligations.constants import (
     STATUS_NOT_STARTED,
 )
 from obligations.utils import is_obligation_overdue
+
 from .validators import validate_reference_number
-from .types import (
-    MechanismDefinitionDict,
-    MechanismStateDict,
-    MechanismResultDict,
-    MechanismDefinitionManager,
-    MechanismStateEvaluator,
-    MechanismResultProcessor,
-)
 
 try:
     from pb_model.models import ProtoBufMixin
@@ -69,8 +62,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@beartype
-class EnvironmentalMechanism(ProtoBufMixin):
+class EnvironmentalMechanism(ProtoBufMixin, models.Model):
     """Represents an environmental mechanism that governs obligations.
 
     Attributes:
@@ -89,6 +81,7 @@ class EnvironmentalMechanism(ProtoBufMixin):
         created_at (models.DateTimeField): Timestamp of creation.
         updated_at (models.DateTimeField): Timestamp of last update.
         status_chart (MatplotlibFigureField): Chart representing status data.
+
     """
 
     name: models.CharField = models.CharField(max_length=255)
@@ -144,11 +137,7 @@ class EnvironmentalMechanism(ProtoBufMixin):
         verbose_name: str = "Environmental Mechanism"
         verbose_name_plural: str = "Environmental Mechanisms"
         ordering: list[str] = ["name"]
-        permissions = [
-            ("view_environmentalmechanism", "Can view environmental mechanism"),
-            ("change_environmentalmechanism", "Can change environmental mechanism"),
-            ("delete_environmentalmechanism", "Can delete environmental mechanism"),
-        ]
+        # Removed explicit view/change/delete permissions to avoid clash with builtins
         default_permissions = ("add", "change", "delete", "view")
 
     @beartype
@@ -157,6 +146,7 @@ class EnvironmentalMechanism(ProtoBufMixin):
 
         Returns:
             str: The name of the mechanism.
+
         """
         return self.name
 
@@ -167,12 +157,9 @@ class EnvironmentalMechanism(ProtoBufMixin):
 
         Returns:
             int: The total number of obligations.
+
         """
-        return (
-            self.not_started_count
-            + self.in_progress_count
-            + self.completed_count
-        )
+        return self.not_started_count + self.in_progress_count + self.completed_count
 
     @beartype
     def update_obligation_counts(self) -> None:
@@ -180,10 +167,11 @@ class EnvironmentalMechanism(ProtoBufMixin):
 
         Raises:
             Exception: If updating counts fails.
+
         """
         from obligations.models import Obligation
 
-        obligations: "QuerySet" = Obligation.objects.filter(
+        obligations: QuerySet = Obligation.objects.filter(
             primary_environmental_mechanism=self,
         )
 
@@ -213,6 +201,7 @@ class EnvironmentalMechanism(ProtoBufMixin):
 
         Returns:
             StatusData: Dictionary of status counts.
+
         """
         return StatusData(
             {
@@ -232,8 +221,9 @@ def update_all_mechanism_counts() -> int:
 
     Returns:
         int: The number of mechanisms updated.
+
     """
-    mechanisms: "QuerySet" = EnvironmentalMechanism.objects.all().select_related(
+    mechanisms: QuerySet = EnvironmentalMechanism.objects.all().select_related(
         "project",
     )
     updated_count: int = 0

@@ -1,90 +1,118 @@
 {
-	// See https://code.visualstudio.com/docs/editor/tasks for documentation
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Compile Protocol Buffers",
-			"type": "shell",
-			"command": "python3 /workspaces/greenova/greenova/manage.py compile_protos",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Run Django Server",
-			"type": "shell",
-			"command": "/workspaces/greenova/.venv/bin/python greenova/manage.py runserver 0.0.0.0:8000",
-			"group": {
-				"kind": "test",
-				"isDefault": false
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Django Makemigrations",
-			"type": "shell",
-			"command": "/workspaces/greenova/.venv/bin/python greenova/manage.py makemigrations",
-			"group": {
-				"kind": "build",
-				"isDefault": false
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Django Migrate",
-			"type": "shell",
-			"command": "/workspaces/greenova/.venv/bin/python greenova/manage.py migrate",
-			"group": {
-				"kind": "build",
-				"isDefault": false
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Django Collectstatic",
-			"type": "shell",
-			"command": "/workspaces/greenova/.venv/bin/python greenova/manage.py collectstatic --noinput",
-			"group": {
-				"kind": "build",
-				"isDefault": false
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Build Frontend",
-			"type": "shell",
-			"command": "python3 scripts/build_frontend.py",
-			"group": {
-				"kind": "build",
-				"isDefault": false
-			},
-			"presentation": {
-				"reveal": "always",
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		}
-	]
+  // See https://code.visualstudio.com/docs/editor/tasks for documentation
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile Protocol Buffers",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python3 /workspaces/greenova/greenova/manage.py compile_protos",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Django Server",
+      "type": "shell",
+      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py runserver 0.0.0.0:8000",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Makemigrations",
+      "type": "shell",
+      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py makemigrations",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Migrate",
+      "type": "shell",
+      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py migrate",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Collectstatic",
+      "type": "shell",
+      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py collectstatic --noinput",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Frontend",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python3 scripts/build_frontend.py",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Clean Initial Migrations",
+      "type": "shell",
+      "command": "find greenova -type f -path \"*/migrations/*_initial.py\" -delete",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Check",
+      "type": "shell",
+      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py check",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
 }

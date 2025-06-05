@@ -36,19 +36,11 @@ except ImportError:
 
 from beartype import beartype
 
-from .types import (
-    ChatMessageDict,
-    SessionStateDict,
-    MessageHandler,
-    SessionManager,
-    BotLogic,
-)
-
 User = get_user_model()
 
 
 @beartype
-class Conversation(ProtoBufMixin):
+class Conversation(ProtoBufMixin, models.Model):
     """Model representing a chat conversation.
 
     Attributes:
@@ -56,9 +48,13 @@ class Conversation(ProtoBufMixin):
         user (User): The user associated with the conversation.
         created_at (datetime): The timestamp when the conversation was created.
         updated_at (datetime): The timestamp when the conversation was last updated.
+
     """
 
-    title: models.CharField = models.CharField(max_length=255, default="New Conversation")
+    title: models.CharField = models.CharField(
+        max_length=255,
+        default="New Conversation",
+    )
     user: models.ForeignKey = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -67,28 +63,27 @@ class Conversation(ProtoBufMixin):
     created_at: models.DateTimeField = models.DateTimeField(default=timezone.now)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
-    @beartype
     def __str__(self) -> str:
         """Return a string representation of the conversation.
 
         Returns:
             str: The title and username of the user.
+
         """
         return f"{self.title} - {self.user.username}"
 
-    @beartype
     def to_proto(self) -> None:
         """Convert to protobuf representation.
 
         Returns:
             None
+
         """
         # Placeholder for protobuf conversion
         # Will be implemented when full proto support is needed
         return
 
     @classmethod
-    @beartype
     def from_proto(cls, proto_data: object) -> None:
         """Create from protobuf data.
 
@@ -97,6 +92,7 @@ class Conversation(ProtoBufMixin):
 
         Returns:
             None
+
         """
         # Placeholder for protobuf conversion
         # Will be implemented when full proto support is needed
@@ -105,17 +101,12 @@ class Conversation(ProtoBufMixin):
         verbose_name = "Conversation"
         verbose_name_plural = "Conversations"
         ordering = ["-updated_at"]
-        permissions = [
-            ("view_conversation", "Can view conversation"),
-            ("change_conversation", "Can change conversation"),
-            ("delete_conversation", "Can delete conversation"),
-        ]
+        # Removed explicit view/change/delete permissions to avoid clash with builtins
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 
 
-@beartype
-class ChatMessage(ProtoBufMixin):
+class ChatMessage(ProtoBufMixin, models.Model):
     """Model representing an individual chat message.
 
     Attributes:
@@ -125,6 +116,7 @@ class ChatMessage(ProtoBufMixin):
         is_bot (bool): Whether the message is sent by the bot.
         timestamp (datetime): The timestamp of the message.
         attachments (list): Any attachments associated with the message.
+
     """
 
     pb_model = ChatMessageProto
@@ -139,28 +131,27 @@ class ChatMessage(ProtoBufMixin):
     timestamp: models.DateTimeField = models.DateTimeField(default=timezone.now)
     attachments: models.JSONField = models.JSONField(default=list, blank=True)
 
-    @beartype
     def __str__(self) -> str:
         """Return a string representation of the chat message.
 
         Returns:
             str: A preview of the message content prefixed by sender type.
+
         """
         prefix = "Bot" if self.is_bot else "User"
         content_preview = str(self.content)[:50] if self.content else ""
         return f"{prefix}: {content_preview}"
 
-    @beartype
     def to_proto(self) -> object:
         """Convert to protobuf representation.
 
         Returns:
             Serialized protobuf representation of the chat message.
+
         """
         return serialize_chat_message(self)
 
     @classmethod
-    @beartype
     def from_proto(
         cls,
         proto_data: object,
@@ -174,6 +165,7 @@ class ChatMessage(ProtoBufMixin):
 
         Returns:
             ChatMessage: The created chat message instance, or None.
+
         """
         message_data = deserialize_chat_message(proto_data)
         if message_data and conversation:
@@ -195,6 +187,7 @@ class PredefinedResponse(models.Model):
 
         Returns:
             str: The trigger phrase.
+
         """
         return f"{self.trigger_phrase}"
 
@@ -214,6 +207,7 @@ class TrainingData(models.Model):
 
         Returns:
             str: A preview of the question.
+
         """
         question_str = str(self.question)
         return f"{question_str[:50]}"

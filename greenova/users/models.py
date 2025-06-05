@@ -17,13 +17,9 @@ Author:
     Adrian Gallo <agallo@enveng-group.com.au>
 """
 
-import os
-
 from beartype import beartype
 from django.contrib.auth.models import User
 from django.db import models
-from django_lifecycle import AFTER_SAVE, LifecycleModel, hook
-from PIL import Image
 
 try:
     from pb_model.models import ProtoBufMixin
@@ -36,18 +32,9 @@ except ImportError:
     ProfileProto = None
 
 from .validators import validate_phone_number
-from .types import (
-    UserProfileDict,
-    UserPermissionsDict,
-    SessionDataDict,
-    UserProfileManager,
-    PermissionManager,
-    UserSessionManager,
-)
 
 
-@beartype
-class Profile(LifecycleModel, ProtoBufMixin):
+class Profile(ProtoBufMixin, models.Model):
     """User profile model extending the default Django User model.
 
     Attributes:
@@ -61,6 +48,7 @@ class Profile(LifecycleModel, ProtoBufMixin):
         welcome_email_sent: A boolean field indicating if a welcome email was sent.
         created_at: A datetime field for the creation timestamp.
         updated_at: A datetime field for the last update timestamp.
+
     """
 
     pb_model = ProfileProto
@@ -88,11 +76,7 @@ class Profile(LifecycleModel, ProtoBufMixin):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        permissions = [
-            ("view_profile", "Can view profile"),
-            ("change_profile", "Can change profile"),
-            ("delete_profile", "Can delete profile"),
-        ]
+        # Removed explicit view/change/delete permissions to avoid clash with builtins
         default_permissions = ("add", "change", "delete", "view")
         # Enable object-level permissions for django-guardian
 
@@ -102,37 +86,8 @@ class Profile(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: The username's profile string.
+
         """
         return f"{self.user.username}'s profile"
 
-    @beartype
-    @hook(AFTER_SAVE)
-    def process_profile_image(self) -> None:
-        """Resize and create thumbnail for profile image after save.
-
-        If the profile image exceeds 400x400 pixels, it is resized to fit within
-        these dimensions. Additionally, a thumbnail of 100x100 pixels is created
-        and saved alongside the original image.
-
-        Raises:
-            Exception: If image processing fails.
-        """
-        if self.profile_image:
-            try:
-                img_path = self.profile_image.path
-                img = Image.open(img_path)
-                max_size = (400, 400)
-                if img.height > 400 or img.width > 400:
-                    img.thumbnail(max_size)
-                    img.save(img_path)
-                thumb_path = os.path.join(
-                    os.path.dirname(img_path),
-                    f"thumb_{os.path.basename(img_path)}",
-                )
-                img.thumbnail((100, 100))
-                img.save(thumb_path)
-            except Exception as e:
-                import logging
-
-                logger = logging.getLogger(__name__)
-                logger.warning("Profile image processing failed: %s", e)
+    # Profile image processing is now handled via post_save signal in signals.py
