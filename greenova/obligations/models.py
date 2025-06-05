@@ -1,7 +1,21 @@
+"""Obligation models for environmental compliance management.
+
+Defines Django ORM models for environmental obligations and evidence,
+with strict type annotations, Google style docstrings, and runtime
+type checking using beartype. Integrates django-guardian for object-level
+permissions and django-lifecycle for model hooks.
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+
+License:
+    AGPL-3.0
+"""
+
 import logging
 import re
 from datetime import date
-from typing import Any
+from typing import Any, ClassVar, Iterator
 
 from beartype import beartype
 from dateutil.relativedelta import relativedelta
@@ -26,20 +40,23 @@ from .constants import (
     FREQUENCY_WEEKLY,
     STATUS_NOT_STARTED,
 )
+from .validators import validate_obligation_number
+from .types import ObligationDataDict, ComplianceStatusDict, ObligationDataManager, ComplianceChecker, StatusEvaluator
 
 try:
     from pb_model.models import ProtoBufMixin
 except ImportError:
-    ProtoBufMixin = models.Model  # fallback for type checking
+    ProtoBufMixin: type = models.Model  # type: ignore
 
 try:
     from .proto.obligations_pb2 import ObligationProto
 except ImportError:
     ObligationProto = None
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
+@beartype
 class Obligation(LifecycleModel, ProtoBufMixin):
     """Represents an environmental obligation.
 
@@ -53,26 +70,27 @@ class Obligation(LifecycleModel, ProtoBufMixin):
     Uses django-lifecycle for model hooks.
     """
 
-    pb_model = ObligationProto
+    pb_model: ClassVar[Any] = ObligationProto
 
-    obligation_number = models.CharField(
+    obligation_number: models.CharField = models.CharField(
         max_length=20,
         primary_key=True,
         help_text="Format: PCEMP-XXX where XXX is a number",
+        validators=[validate_obligation_number],
     )
-    project = models.ForeignKey(
+    project: models.ForeignKey = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
         related_name="obligations",
     )
-    primary_environmental_mechanism = models.ForeignKey(
+    primary_environmental_mechanism: models.ForeignKey = models.ForeignKey(
         "mechanisms.EnvironmentalMechanism",
         on_delete=models.PROTECT,
         related_name="obligations",
         null=True,
         verbose_name="Environmental Mechanism",
     )
-    procedure: str | None = models.TextField(
+    procedure: models.TextField = models.TextField(
         default="Missing procedure",
         help_text="Procedure to follow for this obligation",
         choices=[
@@ -86,7 +104,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("Other", "Other"),
         ],
     )
-    environmental_aspect: str = models.CharField(
+    environmental_aspect: models.CharField = models.CharField(
         max_length=255,
         choices=[
             ("Air", "Air"),
@@ -123,14 +141,17 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("Other", "Other"),
         ],
     )
-    custom_environmental_aspect: str | None = models.CharField(
+    custom_environmental_aspect: models.CharField = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        help_text="If 'Other' is selected for Environmental Aspect, please specify the custom aspect here",
+        help_text=(
+            "If 'Other' is selected for Environmental Aspect, please specify "
+            "the custom aspect here"
+        ),
     )
-    obligation: str = models.TextField()
-    accountability: str = models.CharField(
+    obligation: models.TextField = models.TextField()
+    accountability: models.CharField = models.CharField(
         max_length=255,
         choices=[
             ("Perdaman", "Perdaman"),
@@ -139,14 +160,14 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("Perdaman-during operations", "Perdaman-during operations"),
         ],
     )
-    responsible_users = models.ManyToManyField(
+    responsible_users: models.ManyToManyField = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         through=ResponsibilityAssignment,
         related_name="obligations_with_responsibility",
         blank=True,
         help_text="Users assigned to this obligation with a responsibility role.",
     )
-    project_phase: str | None = models.CharField(
+    project_phase: models.CharField = models.CharField(
         max_length=255,
         null=True,
         choices=[
@@ -158,22 +179,22 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("Other", "Other"),
         ],
     )
-    action_due_date: models.DateField | None = models.DateField(null=True)
-    close_out_date: models.DateField | None = models.DateField(null=True, blank=True)
-    status: str = models.CharField(
+    action_due_date: models.DateField = models.DateField(null=True)
+    close_out_date: models.DateField = models.DateField(null=True, blank=True)
+    status: models.CharField = models.CharField(
         max_length=20,
         choices=OBLIGATION_STATUS_CHOICES,
         default=STATUS_NOT_STARTED,
     )
-    supporting_information: str | None = models.TextField(blank=True, null=True)
-    general_comments: str | None = models.TextField(blank=True, null=True)
-    evidence_notes = models.TextField(
+    supporting_information: models.TextField = models.TextField(blank=True, null=True)
+    general_comments: models.TextField = models.TextField(blank=True, null=True)
+    evidence_notes: models.TextField = models.TextField(
         blank=True,
         null=True,
         help_text="Notes about the uploaded evidence",
     )
-    recurring_obligation = models.BooleanField(default=False)
-    recurring_frequency: str | None = models.CharField(
+    recurring_obligation: models.BooleanField = models.BooleanField(default=False)
+    recurring_frequency: models.CharField = models.CharField(
         max_length=50,
         null=True,
         choices=[
@@ -190,7 +211,7 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("Extreme Weather", "Extreme Weather"),
         ],
     )
-    recurring_status: str | None = models.CharField(
+    recurring_status: models.CharField = models.CharField(
         max_length=50,
         default="not started",
         null=True,
@@ -201,12 +222,12 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("overdue", "Overdue"),
         ],
     )
-    recurring_forecasted_date: models.DateField | None = models.DateField(
+    recurring_forecasted_date: models.DateField = models.DateField(
         blank=True,
         null=True,
     )
-    inspection = models.BooleanField(default=False)
-    inspection_frequency: str | None = models.CharField(
+    inspection: models.BooleanField = models.BooleanField(default=False)
+    inspection_frequency: models.CharField = models.CharField(
         max_length=50,
         null=True,
         choices=[
@@ -218,13 +239,13 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("Annually", "Annually"),
         ],
     )
-    site_or_desktop: str | None = models.CharField(
+    site_or_desktop: models.CharField = models.CharField(
         max_length=10,
         choices=[("Site", "Site"), ("Desktop", "Desktop")],
         null=True,
     )
-    new_control_action_required: bool = models.BooleanField(default=False)
-    obligation_type: str | None = models.CharField(
+    new_control_action_required: models.BooleanField = models.BooleanField(default=False)
+    obligation_type: models.CharField = models.CharField(
         max_length=50,
         null=True,
         choices=[
@@ -240,8 +261,8 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             ("Safety", "Safety"),
         ],
     )
-    gap_analysis: bool | None = models.BooleanField(default=False)
-    notes_for_gap_analysis: str | None = models.TextField(blank=True, null=True)
+    gap_analysis: models.BooleanField = models.BooleanField(default=False)
+    notes_for_gap_analysis: models.TextField = models.TextField(blank=True, null=True)
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
@@ -261,11 +282,16 @@ class Obligation(LifecycleModel, ProtoBufMixin):
         ]
         default_permissions = ("add", "change", "delete", "view")
 
-    objects = models.Manager()  # Default manager
-    guardian = UserObjectPermission.objects
+    objects: models.Manager = models.Manager()  # Default manager
+    guardian: Any = UserObjectPermission.objects
 
     @beartype
     def __str__(self) -> str:
+        """Return string representation of the obligation.
+
+        Returns:
+            str: Human-readable string for the obligation.
+        """
         return f"{self.obligation_number} - {self.project.name}"
 
     @beartype
@@ -273,28 +299,20 @@ class Obligation(LifecycleModel, ProtoBufMixin):
         """Calculate the next recurring date based on frequency and current/last date.
 
         Returns:
-            date: The next forecasted date or None if not applicable
-
+            date | None: The next forecasted date or None if not applicable.
         """
-        # If not recurring or no frequency, don't calculate
         if not self.recurring_obligation or not self.recurring_frequency:
             return None
 
-        # Start from last forecasted date, due date, or today
-        base_date = (
+        base_date: date = (
             self.recurring_forecasted_date
             or self.action_due_date
             or timezone.now().date()
         )
-
-        # If base date is in the past, start from today
-        today = timezone.now().date()
+        today: date = timezone.now().date()
         base_date = max(base_date, today)
+        normalized_frequency: str = normalize_frequency(self.recurring_frequency)
 
-        # Normalize frequency
-        normalized_frequency = normalize_frequency(self.recurring_frequency)
-
-        # Calculate next date based on frequency
         if normalized_frequency == FREQUENCY_DAILY:
             return base_date + relativedelta(days=1)
         if normalized_frequency == FREQUENCY_WEEKLY:
@@ -309,11 +327,9 @@ class Obligation(LifecycleModel, ProtoBufMixin):
             return base_date + relativedelta(months=6)
         if normalized_frequency == FREQUENCY_ANNUAL:
             return base_date + relativedelta(years=1)
-        # Default to monthly if we don't recognize the frequency
         logger.warning(
-            f"Unrecognized frequency '{
-                self.recurring_frequency
-            }' - defaulting to monthly",
+            "Unrecognized frequency '%s' - defaulting to monthly",
+            self.recurring_frequency,
         )
         return base_date + relativedelta(months=1)
 
@@ -322,20 +338,15 @@ class Obligation(LifecycleModel, ProtoBufMixin):
         """Update the recurring forecasted date based on frequency and current status.
 
         Returns:
-            bool: True if the date was updated, False otherwise
-
+            bool: True if the date was updated, False otherwise.
         """
-        # Skip if not recurring
         if not self.recurring_obligation:
             return False
 
-        next_date = self.calculate_next_recurring_date()
-
-        # Check if the date changed
+        next_date: date | None = self.calculate_next_recurring_date()
         if next_date != self.recurring_forecasted_date:
             self.recurring_forecasted_date = next_date
             return True
-
         return False
 
     @classmethod
@@ -344,90 +355,89 @@ class Obligation(LifecycleModel, ProtoBufMixin):
         """Generate the next sequential obligation number in the format PCEMP-XXX.
 
         Returns:
-            str: The next obligation number (e.g., PCEMP-101)
-
+            str: The next obligation number (e.g., PCEMP-101).
         """
-        prefix = "PCEMP-"
-
-        # Extract the highest numeric value from all obligation numbers
-        highest_number = 0
-
-        # Query all obligation numbers
-        all_obligations = cls.objects.all()
+        prefix: str = "PCEMP-"
+        highest_number: int = 0
+        all_obligations: Iterator[Any] = cls.objects.all().iterator()
 
         for obligation in all_obligations:
-            if obligation.obligation_number and obligation.obligation_number.startswith(
-                prefix,
+            if (
+                obligation.obligation_number
+                and obligation.obligation_number.startswith(prefix)
             ):
                 try:
-                    # Extract numeric part after the prefix
-                    number_part = obligation.obligation_number[len(prefix):]
-                    current_number = int(number_part)
-
-                    # Update highest if we found a larger number
+                    number_part: str = obligation.obligation_number[len(prefix):]
+                    current_number: int = int(number_part)
                     highest_number = max(highest_number, current_number)
                 except (ValueError, IndexError):
-                    # Skip if we can't parse the number
                     continue
 
-        # Increment by 1 for the next number
-        next_number = highest_number + 1
-
-        # Format with leading zeros (e.g., PCEMP-001)
+        next_number: int = highest_number + 1
         return f"{prefix}{next_number:03d}"
 
     @beartype
     def clean(self) -> None:
-        """Validate the obligation number format."""
-        super().clean()
+        """Validate the obligation number format.
 
-        # Only validate if obligation_number is already set
-        # This allows new records to pass validation before the number is generated
+        Raises:
+            ValidationError: If the obligation number format is invalid.
+        """
+        super().clean()
         if self.obligation_number and self.obligation_number.strip():
             if not re.match(r"^PCEMP-\d+$", self.obligation_number):
                 raise ValidationError(
                     {
-                        "obligation_number": "Obligation number must be in the format PCEMP-XXX where XXX is a number",
+                        "obligation_number": (
+                            "Obligation number must be in the format PCEMP-XXX "
+                            "where XXX is a number"
+                        ),
                     },
                 )
 
     @beartype
     def save(self, *args: Any, **kwargs: Any) -> None:
-        """Override save to update mechanism counts and ensure proper obligation number format."""
-        # Generate a new obligation number if one isn't provided
+        """Override save to update mechanism counts and ensure proper obligation number format.
+
+        Args:
+            *args: Positional arguments for save.
+            **kwargs: Keyword arguments for save.
+        """
         if not self.obligation_number or self.obligation_number.strip() == "":
             self.obligation_number = self.get_next_obligation_number()
 
-        # Ensure the format is correct (prefix + number)
         if not self.obligation_number.startswith("PCEMP-"):
-            self.obligation_number = f"PCEMP-{
-                self.obligation_number.split('-')[-1]
-                if '-' in self.obligation_number
-                else self.obligation_number
-            }"
+            self.obligation_number = (
+                f"PCEMP-{self.obligation_number.split('-')[-1]}"
+                if "-" in self.obligation_number
+                else f"PCEMP-{self.obligation_number}"
+            )
 
         super().save(*args, **kwargs)
 
-        # Update mechanism counts
         if self.primary_environmental_mechanism:
             self.primary_environmental_mechanism.update_obligation_counts()
 
     @property
     @beartype
     def is_overdue(self) -> bool:
-        """Check if obligation is overdue."""
-        from django.utils import timezone
+        """Check if obligation is overdue.
 
+        Returns:
+            bool: True if overdue, False otherwise.
+        """
         if self.status != "completed" and self.action_due_date:
             return self.action_due_date < timezone.now().date()
         return False
 
     @property
     @beartype
-    def responsibility_assignments(self):
-        """Return all ResponsibilityAssignment objects for this obligation."""
-        from responsibility.models import ResponsibilityAssignment
+    def responsibility_assignments(self) -> models.QuerySet:
+        """Return all ResponsibilityAssignment objects for this obligation.
 
+        Returns:
+            QuerySet: ResponsibilityAssignment queryset for this obligation.
+        """
         return ResponsibilityAssignment.objects.filter(obligation=self)
 
     @hook(AFTER_SAVE)
@@ -443,27 +453,50 @@ class Obligation(LifecycleModel, ProtoBufMixin):
         """Log after save."""
         logger.info("Obligation %s saved (lifecycle hook)", self.obligation_number)
 
+    @hook(AFTER_SAVE)
+    @beartype
+    def after_save_obligation_lifecycle(self) -> None:
+        """Lifecycle hook: called after saving an obligation instance."""
+        logger.info(
+            "Obligation %s saved (lifecycle hook, replaces signal)",
+            self.obligation_number,
+        )
+
+    @hook("after_delete")
+    @beartype
+    def after_delete_obligation_lifecycle(self) -> None:
+        """Lifecycle hook: called after deleting an obligation instance."""
+        logger.info(
+            "Obligation %s deleted (lifecycle hook, replaces signal)",
+            self.obligation_number,
+        )
+
     @hook(BEFORE_SAVE)
     @beartype
     def before_save_obligation(self) -> None:
-        """Ensure custom aspect is set if needed."""
+        """Ensure custom aspect is set if needed.
+
+        Raises:
+            ValidationError: If 'Other' is selected but custom aspect is missing.
+        """
         if (
             self.environmental_aspect == "Other"
             and not self.custom_environmental_aspect
         ):
-            msg = "Custom environmental aspect required if 'Other' is selected."
+            msg: str = "Custom environmental aspect required if 'Other' is selected."
             raise ValidationError(msg)
 
 
+@beartype
 class ObligationEvidence(models.Model):
     """Model to store multiple evidence files for an obligation."""
 
-    obligation = models.ForeignKey(
+    obligation: models.ForeignKey = models.ForeignKey(
         "Obligation",
         on_delete=models.CASCADE,
         related_name="evidences",
     )
-    file = models.FileField(
+    file: models.FileField = models.FileField(
         upload_to="evidence_files/%Y/%m/%d/",
         validators=[
             FileExtensionValidator(
@@ -485,8 +518,8 @@ class ObligationEvidence(models.Model):
         max_length=255,
         help_text="Upload evidence documents (25MB max)",
     )
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-    description = models.CharField(max_length=255, blank=True)
+    uploaded_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    description: models.CharField = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ["-uploaded_at"]
@@ -495,12 +528,21 @@ class ObligationEvidence(models.Model):
 
     @beartype
     def __str__(self) -> str:
+        """Return string representation of the evidence file.
+
+        Returns:
+            str: Human-readable string for the evidence file.
+        """
         return f"Evidence for {self.obligation} - {self.file.name}"
 
     @beartype
     def file_size(self) -> str:
-        """Return the file size in a human-readable format."""
-        size = self.file.size
+        """Return the file size in a human-readable format.
+
+        Returns:
+            str: File size as a string.
+        """
+        size: int = self.file.size
         if size < 1024:
             return f"{size} bytes"
         if size < 1024 * 1024:

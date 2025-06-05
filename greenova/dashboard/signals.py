@@ -20,10 +20,10 @@ Author: Adrian Gallo <agallo@enveng-group.com.au>
 
 """Signal handlers for dashboard events.
 
-These signals handle project selection changes, dashboard data updates,
-and other events related to dashboard state management.
+Custom dashboard events (project selection, dashboard data updates) are handled by Django signals.
+Model-level event logic should be handled via django-lifecycle hooks in the relevant models.
+This file is retained for custom event signals and handlers only.
 """
-
 
 from django.contrib.auth.signals import user_logged_in
 import logging

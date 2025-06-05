@@ -1,0 +1,1 @@
+# responsibility management package

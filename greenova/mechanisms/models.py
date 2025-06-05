@@ -1,3 +1,22 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Mechanism models for the mechanisms app.
+
+This module provides the EnvironmentalMechanism model for managing environmental
+mechanisms that govern obligations, with strict type annotations, runtime type
+checking, and Protocol Buffer integration.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Protobuf3 integration for mechanism models
+    - Methods for updating obligation counts and status data
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 import logging
 from builtins import property
 from typing import TYPE_CHECKING
@@ -14,6 +33,15 @@ from obligations.constants import (
     STATUS_NOT_STARTED,
 )
 from obligations.utils import is_obligation_overdue
+from .validators import validate_reference_number
+from .types import (
+    MechanismDefinitionDict,
+    MechanismStateDict,
+    MechanismResultDict,
+    MechanismDefinitionManager,
+    MechanismStateEvaluator,
+    MechanismResultProcessor,
+)
 
 try:
     from pb_model.models import ProtoBufMixin
@@ -61,7 +89,6 @@ class EnvironmentalMechanism(ProtoBufMixin):
         created_at (models.DateTimeField): Timestamp of creation.
         updated_at (models.DateTimeField): Timestamp of last update.
         status_chart (MatplotlibFigureField): Chart representing status data.
-
     """
 
     name: models.CharField = models.CharField(max_length=255)
@@ -80,21 +107,19 @@ class EnvironmentalMechanism(ProtoBufMixin):
         max_length=50,
         blank=True,
         null=True,
+        validators=[validate_reference_number],
     )
     effective_date: models.DateField = models.DateField(null=True, blank=True)
 
-    # Add status field
     status: models.CharField = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default=STATUS_NOT_STARTED,
     )
 
-    # Add count fields
     not_started_count: models.IntegerField = models.IntegerField(default=0)
     in_progress_count: models.IntegerField = models.IntegerField(default=0)
     completed_count: models.IntegerField = models.IntegerField(default=0)
-    # Field to track overdue obligations
     overdue_count: models.IntegerField = models.IntegerField(default=0)
 
     primary_environmental_mechanism: models.CharField = models.CharField(
@@ -106,20 +131,14 @@ class EnvironmentalMechanism(ProtoBufMixin):
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     updated_at: models.DateTimeField = models.DateTimeField(auto_now=True)
 
-    # Add matplotlib figure fields
     status_chart: MatplotlibFigureField = MatplotlibFigureField(
-        figure="mechanisms.figures.get_mechanism_chart",  # Full import path
+        figure="mechanisms.figures.get_mechanism_chart",
         plt_args=lambda obj: (obj.id,),  # type: ignore
         fig_width=300,
         fig_height=250,
         output_format="png",
         silent=True,
     )
-
-    # Example usage for type/category/mode fields (if/when added):
-    # mechanism_type = models.CharField(max_length=20, choices=MECHANISM_TYPE_CHOICES, default=MECHANISM_TYPE_PHYSICAL)
-    # category = models.CharField(max_length=20, choices=MECHANISM_CATEGORY_CHOICES, default=MECHANISM_CATEGORY_PREVENTION)
-    # operational_mode = models.CharField(max_length=20, choices=OPERATIONAL_MODE_CHOICES, default=OPERATIONAL_MODE_AUTOMATIC)
 
     class Meta:
         verbose_name: str = "Environmental Mechanism"
@@ -131,40 +150,54 @@ class EnvironmentalMechanism(ProtoBufMixin):
             ("delete_environmentalmechanism", "Can delete environmental mechanism"),
         ]
         default_permissions = ("add", "change", "delete", "view")
-        # Enable object-level permissions for django-guardian
 
+    @beartype
     def __str__(self) -> str:
+        """Return the string representation of the mechanism.
+
+        Returns:
+            str: The name of the mechanism.
+        """
         return self.name
 
     @property
+    @beartype
     def total_obligations(self) -> int:
-        """Total number of obligations."""
-        return self.not_started_count + self.in_progress_count + self.completed_count
+        """Total number of obligations.
 
+        Returns:
+            int: The total number of obligations.
+        """
+        return (
+            self.not_started_count
+            + self.in_progress_count
+            + self.completed_count
+        )
+
+    @beartype
     def update_obligation_counts(self) -> None:
-        """Update obligation counts based on related obligations."""
+        """Update obligation counts based on related obligations.
+
+        Raises:
+            Exception: If updating counts fails.
+        """
         from obligations.models import Obligation
 
-        # Get all related obligations
-        obligations: QuerySet = Obligation.objects.filter(
+        obligations: "QuerySet" = Obligation.objects.filter(
             primary_environmental_mechanism=self,
         )
 
-        # Reset counts
         self.not_started_count = 0
         self.in_progress_count = 0
         self.completed_count = 0
         self.overdue_count = 0
 
-        # Count obligations by status
         for obligation in obligations:
             status = obligation.status
 
-            # Check if overdue using the utility function
             if is_obligation_overdue(obligation):
                 self.overdue_count += 1
 
-            # Also count by regular status
             if status == STATUS_NOT_STARTED:
                 self.not_started_count += 1
             elif status == STATUS_IN_PROGRESS:
@@ -174,8 +207,13 @@ class EnvironmentalMechanism(ProtoBufMixin):
 
         self.save()
 
+    @beartype
     def get_status_data(self) -> StatusData:
-        """Return a dictionary of status counts for charting."""
+        """Return a dictionary of status counts for charting.
+
+        Returns:
+            StatusData: Dictionary of status counts.
+        """
         return StatusData(
             {
                 "Overdue": self.overdue_count,
@@ -186,11 +224,16 @@ class EnvironmentalMechanism(ProtoBufMixin):
         )
 
 
+@beartype
 def update_all_mechanism_counts() -> int:
     """Update obligation counts for all mechanisms.
+
     Called after importing obligations to ensure counts are accurate.
+
+    Returns:
+        int: The number of mechanisms updated.
     """
-    mechanisms: QuerySet = EnvironmentalMechanism.objects.all().select_related(
+    mechanisms: "QuerySet" = EnvironmentalMechanism.objects.all().select_related(
         "project",
     )
     updated_count: int = 0
@@ -200,7 +243,7 @@ def update_all_mechanism_counts() -> int:
             mechanism.update_obligation_counts()
             updated_count += 1
         except (
-            ObjectDoesNotExist,  # Using imported exceptions
+            ObjectDoesNotExist,
             FieldError,
             AttributeError,
             ValueError,

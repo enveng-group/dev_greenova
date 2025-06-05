@@ -8,6 +8,13 @@
     {% element h1 tags="mfa,index" %}
         {% trans "Two-Factor Authentication" %}
     {% endelement %}
+    {% if is_authenticated %}
+        {% if mfa_enabled %}
+            <div class="alert alert-success">Multi-factor authentication is enabled on your account.</div>
+        {% else %}
+            <div class="alert alert-warning">Multi-factor authentication is not enabled.</div>
+        {% endif %}
+    {% endif %}
     {% if "totp" in MFA_SUPPORTED_TYPES %}
         {% element panel %}
             {% slot title %}

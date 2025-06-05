@@ -32,6 +32,8 @@ from beartype import beartype
 from django.db import models
 from typing import ClassVar
 
+from .types import ReportPayloadDict, ExportFormatDict, ReportResultDict, ReportPayloadManager, ExportFormatter, ResultProcessor
+
 
 @beartype
 class Report(models.Model):

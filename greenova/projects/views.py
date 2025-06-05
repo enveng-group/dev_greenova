@@ -1,6 +1,16 @@
+"""Views for the projects app.
+
+This module provides views for displaying, exporting, importing, and managing
+project data, including permission checks and project membership.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+
 import logging
 from typing import Any, TypeVar, cast
 
+from beartype import beartype
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -21,6 +31,9 @@ from .serializers import (
     ProjectCollectionProtoSerializer,
     ProjectProtoSerializer,
 )
+from .mixins import ProjectPermissionRequiredMixin, ProjectContextMixin
+from .permissions import user_can_view_project
+from .types import ProjectMetadataDict, ProjectMembershipDict, ProjectObligationDict, ProjectManager, MembershipManager, ObligationRelationshipHandler
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -30,13 +43,23 @@ T = TypeVar("T")
 
 @method_decorator(cache_control(max_age=300), name="dispatch")
 @method_decorator(vary_on_headers("HX-Request"), name="dispatch")
-class ProjectSelectionView(LoginRequiredMixin, TemplateView):
+class ProjectSelectionView(
+    LoginRequiredMixin, ProjectPermissionRequiredMixin, ProjectContextMixin, TemplateView
+):
     """Handle project selection with object-level permission checks."""
 
     template_name: str = "projects/projects_selector.html"
 
+    @beartype
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        """Add user's projects to the context using guardian permissions."""
+        """Add user's projects to the context using guardian permissions.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Context dictionary for the template.
+        """
         context = super().get_context_data(**kwargs)
         user_projects = get_objects_for_user(
             self.request.user,
@@ -49,12 +72,31 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             context["selected_project_id"] = self.request.GET.get("project_id")
         return context
 
+    @beartype
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle GET requests for project selection."""
+        """Handle GET requests for project selection.
+
+        Args:
+            request: The HTTP request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            HttpResponse for the project selection page.
+        """
         return super().get(request, *args, **kwargs)
 
+    @beartype
     def requires_special_access(self, project_id: str, _user: AbstractUser) -> bool:
-        """Check if a project requires special access permissions."""
+        """Check if a project requires special access permissions.
+
+        Args:
+            project_id: The project ID to check.
+            _user: The user to check permissions for.
+
+        Returns:
+            True if special access is required, False otherwise.
+        """
         try:
             Project.objects.get(id=project_id)
             # Implement your permission logic here
@@ -64,12 +106,20 @@ class ProjectSelectionView(LoginRequiredMixin, TemplateView):
             return False
 
 
+@beartype
 def project_obligations(_request: HttpRequest, project_id: str) -> JsonResponse:
-    """Retrieve obligations associated with a specific project."""
+    """Retrieve obligations associated with a specific project.
+
+    Args:
+        _request: The HTTP request object.
+        project_id: The project ID.
+
+    Returns:
+        JsonResponse with obligations data.
+    """
     project = get_object_or_404(Project, id=project_id)
     obligations = Obligation.objects.filter(project=project)
 
-    # Serialize obligations
     obligations_data = [
         {"id": o.obligation_number, "obligation_number": o.obligation_number}
         for o in obligations
@@ -78,15 +128,16 @@ def project_obligations(_request: HttpRequest, project_id: str) -> JsonResponse:
     return JsonResponse({"obligations": obligations_data})
 
 
+@beartype
 def get_user_role(project: Project, user: AbstractUser) -> str:
     """Get user's role in project.
 
     Args:
-        project: The project to check
-        user: The user to get role for
-    Returns:
-        str: User's role or 'viewer' if none found
+        project: The project to check.
+        user: The user to get role for.
 
+    Returns:
+        User's role or 'viewer' if none found.
     """
     try:
         return project.get_user_role(user)
@@ -95,25 +146,59 @@ def get_user_role(project: Project, user: AbstractUser) -> str:
         return "viewer"
 
 
+@beartype
 def get_item(dictionary: dict, key: Any) -> Any:
-    """Get item from dictionary by key."""
+    """Get item from dictionary by key.
+
+    Args:
+        dictionary: The dictionary to search.
+        key: The key to look up.
+
+    Returns:
+        The value for the key, or None if not found.
+    """
     return dictionary.get(key)
 
 
+@beartype
 def apply_to_all(queryset: Any, method_name: str) -> list:
-    """Call a method on each object in the queryset and return a list of results."""
+    """Call a method on each object in the queryset and return a list of results.
+
+    Args:
+        queryset: The queryset of objects.
+        method_name: The method name to call on each object.
+
+    Returns:
+        List of results from calling the method.
+    """
     if method_name == "to_dict":
         return [{"id": str(obj.id), "name": obj.name} for obj in queryset]
     return [getattr(obj, method_name)() for obj in queryset]
 
 
+@beartype
 def format_role(role: str) -> str:
-    """Format role name for display."""
+    """Format role name for display.
+
+    Args:
+        role: The role string.
+
+    Returns:
+        Formatted role string.
+    """
     return role.replace("_", " ").title()
 
 
+@beartype
 def role_badge(role: str) -> dict:
-    """Render role badge."""
+    """Render role badge.
+
+    Args:
+        role: The role string.
+
+    Returns:
+        Dictionary with role, color, and icon.
+    """
     colors = {
         "owner": "primary",
         "manager": "success",
@@ -133,23 +218,55 @@ def role_badge(role: str) -> dict:
     }
 
 
+@beartype
 def obligation_table(obligations_list: list) -> dict:
-    """Render obligation list table."""
+    """Render obligation list table.
+
+    Args:
+        obligations_list: List of obligations.
+
+    Returns:
+        Dictionary with obligations.
+    """
     return {"obligations": obligations_list}
 
 
+@beartype
 def get_project(project_id: str) -> Project:
-    """Get project by ID."""
+    """Get project by ID.
+
+    Args:
+        project_id: The project ID.
+
+    Returns:
+        The Project instance.
+    """
     return get_object_or_404(Project, id=project_id)
 
 
+@beartype
 def get_user(user_id: str) -> AbstractUser:
-    """Get user by ID."""
+    """Get user by ID.
+
+    Args:
+        user_id: The user ID.
+
+    Returns:
+        The AbstractUser instance.
+    """
     return cast("AbstractUser", get_object_or_404(User, id=user_id))
 
 
+@beartype
 def get_role_display(role_value: str) -> str:
-    """Get the display name for a role value."""
+    """Get the display name for a role value.
+
+    Args:
+        role_value: The role value.
+
+    Returns:
+        The display name for the role.
+    """
     ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
         "manager": "Manager",
@@ -159,8 +276,16 @@ def get_role_display(role_value: str) -> str:
     return ROLE_DISPLAY_NAMES.get(role_value, role_value.title())
 
 
+@beartype
 def get_role_color(role_value: str) -> str:
-    """Get the display color for a role value."""
+    """Get the display color for a role value.
+
+    Args:
+        role_value: The role value.
+
+    Returns:
+        The display color for the role.
+    """
     ROLE_COLORS = {
         "owner": "success",
         "manager": "primary",
@@ -170,12 +295,12 @@ def get_role_color(role_value: str) -> str:
     return ROLE_COLORS.get(role_value, "default")
 
 
+@beartype
 def get_role_choices() -> list[tuple[str, str]]:
     """Get choices for model field with human-readable display names.
 
     Returns:
-        List[Tuple[str, str]]: List of tuples (role_value, display_name)
-
+        List of tuples (role_value, display_name).
     """
     ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
@@ -186,16 +311,15 @@ def get_role_choices() -> list[tuple[str, str]]:
     return list(ROLE_DISPLAY_NAMES.items())
 
 
+@beartype
 def get_responsibility_choices() -> list[tuple[str, str]]:
-    """Get choices for the responsibility field in Obligation
-    model. Uses display names as values for backward compatibility.
+    """Get choices for the responsibility field in Obligation model.
+
+    Uses display names as values for backward compatibility.
 
     Returns:
-        List[Tuple[str, str]]: List of tuples (display_name, display_name)
-
+        List of tuples (display_name, display_name).
     """
-    # For the responsibility field, both the key and value are the display name
-    # This maintains compatibility with existing data
     return [
         (display_name, display_name)
         for _, display_name in get_role_choices()
@@ -203,14 +327,15 @@ def get_responsibility_choices() -> list[tuple[str, str]]:
     ]
 
 
-def get_role_from_responsibility(responsibility: str) -> str:
+@beartype
+def get_role_from_responsibility(responsibility: str) -> str | None:
     """Convert a responsibility display name to its corresponding role value.
 
     Args:
-        responsibility (str): The display name of the responsibility
-    Returns:
-        str: The corresponding role value or None if not found
+        responsibility: The display name of the responsibility.
 
+    Returns:
+        The corresponding role value or None if not found.
     """
     ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
@@ -222,14 +347,15 @@ def get_role_from_responsibility(responsibility: str) -> str:
     return inverse_map.get(responsibility)
 
 
-def get_responsibility_from_role(role: str) -> str:
+@beartype
+def get_responsibility_from_role(role: str) -> str | None:
     """Convert a role value to its corresponding responsibility display name.
 
     Args:
-        role (str): The role value
-    Returns:
-        str: The corresponding responsibility display name or None if not found
+        role: The role value.
 
+    Returns:
+        The corresponding responsibility display name or None if not found.
     """
     ROLE_DISPLAY_NAMES = {
         "owner": "Owner",
@@ -240,28 +366,34 @@ def get_responsibility_from_role(role: str) -> str:
     return ROLE_DISPLAY_NAMES.get(role)
 
 
-def get_responsibility_display_name(responsibility: str) -> str:
+@beartype
+def get_responsibility_display_name(responsibility: str) -> str | None:
     """Get the display name for a responsibility value.
 
     Args:
-        responsibility (str): The responsibility value or display name
-    Returns:
-        str: The display name for the responsibility
+        responsibility: The responsibility value or display name.
 
+    Returns:
+        The display name for the responsibility.
     """
-    # If the responsibility is already a display name, return it
     if responsibility in [display for _, display in get_role_choices()]:
         return responsibility
-
-    # Otherwise, convert to display name using the role mapping
     return get_responsibility_from_role(responsibility)
 
 
+@beartype
 @login_required
-def export_project(request, project_id: int) -> HttpResponse:
-    """Export a single project as Protocol Buffer binary data."""
+def export_project(request: HttpRequest, project_id: int) -> HttpResponse:
+    """Export a single project as Protocol Buffer binary data.
+
+    Args:
+        request: The HTTP request object.
+        project_id: The project ID.
+
+    Returns:
+        HttpResponse with the exported data or error.
+    """
     project = get_object_or_404(Project, id=project_id)
-    # Optionally restrict to user's projects
     serializer = ProjectProtoSerializer(instance=project)
     data = serializer.data()
     if not data:
@@ -272,11 +404,18 @@ def export_project(request, project_id: int) -> HttpResponse:
     return response
 
 
+@beartype
 @login_required
-def export_all_projects(request) -> HttpResponse:
-    """Export all projects as a Protocol Buffer collection."""
+def export_all_projects(request: HttpRequest) -> HttpResponse:
+    """Export all projects as a Protocol Buffer collection.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse with the exported data or error.
+    """
     projects = list(Project.objects.all())
-    # Optionally restrict to user's projects
     serializer = ProjectCollectionProtoSerializer(instances=projects)
     data = serializer.data()
     if not data:
@@ -287,10 +426,18 @@ def export_all_projects(request) -> HttpResponse:
     return response
 
 
+@beartype
 @login_required
 @require_http_methods(["GET", "POST"])
-def import_project(request) -> HttpResponse:
-    """Import a project from Protocol Buffer binary data."""
+def import_project(request: HttpRequest) -> HttpResponse:
+    """Import a project from Protocol Buffer binary data.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse for the import page or result.
+    """
     if request.method == "POST":
         if "file" not in request.FILES:
             messages.error(request, "No file was provided.")
@@ -310,14 +457,15 @@ def import_project(request) -> HttpResponse:
             project.save()
             messages.success(request, "Project imported successfully.")
             return HttpResponse(status=200)
-        except (ValueError, OSError, AttributeError, TypeError):
+        except (ValueError, OSError, AttributeError, TypeError) as e:
+            logger.exception("Error importing project: %s", e)
             messages.error(request, "An error occurred while importing the project.")
             return HttpResponse(status=400)
-    # GET request - show import form
     return HttpResponse("Import Project Form")
 
 
-def create_project_with_permissions(user, form):
+@beartype
+def create_project_with_permissions(user: Any, form: Any) -> Project:
     """Create a project and assign object-level permissions to the creator.
 
     Args:
@@ -326,12 +474,10 @@ def create_project_with_permissions(user, form):
 
     Returns:
         The created Project instance.
-
     """
     project = form.save(commit=False)
     project.save()
     form.save_m2m()
-    # Assign object-level permissions to creator
     assign_perm("view_project", user, project)
     assign_perm("change_project", user, project)
     assign_perm("delete_project", user, project)

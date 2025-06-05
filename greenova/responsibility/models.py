@@ -3,6 +3,7 @@ from core.utils.roles import get_responsibility_choices
 from django.conf import settings
 from django.db import models
 from django.db.models import CharField, TextField
+from .validators import validate_responsibility_name
 
 
 @beartype
@@ -21,6 +22,7 @@ class Responsibility(models.Model):
         max_length=255,
         unique=True,
         choices=get_responsibility_choices(),
+        validators=[validate_responsibility_name],
     )
     description: TextField | None = models.TextField(blank=True)
 

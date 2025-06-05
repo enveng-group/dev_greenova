@@ -1,9 +1,34 @@
 {% extends "base.html" %}
+{% load project_tags %}
 {% block title %}
 Projects
 {% endblock %}
 {% block content %}
   <main>
+    <div class="site-meta">
+      <span class="site-name">{% get_site_name site_name %}</span>
+      <span class="site-version">v{% get_site_version site_version %}</span>
+    </div>
+    <div class="project-summary-bar">
+      <span class="current-project">
+        Current Project:
+        {% with cp=get_current_project current_project %}
+          {% if cp %}
+            <strong>{{ cp.name }}</strong>
+          {% else %}
+            <span>None selected</span>
+          {% endif %}
+        {% endwith %}
+      </span>
+      <span class="user-projects-count">
+        Your Projects: <strong>{% get_user_projects user_projects|length %}</strong>
+      </span>
+      <span class="project-status-summary">
+        Status: {% with summary=get_project_status_summary project_status_summary %}
+          Active: {{ summary.active|default:0 }}, Inactive: {{ summary.inactive|default:0 }}, Total: {{ summary.total|default:0 }}
+        {% endwith %}
+      </span>
+    </div>
     <h1>
 Projects
     </h1>
@@ -11,9 +36,9 @@ Projects
       <h2 id="projects-list-heading">
 Your Projects
       </h2>
-      {% if projects %}
+      {% if user_projects %}
         <ul>
-          {% for project in projects %}
+          {% for project in user_projects %}
             <li>
               <a href="#">{{ project.name }}</a>
               <span class="description">{{ project.description|default:"No description" }}</span>

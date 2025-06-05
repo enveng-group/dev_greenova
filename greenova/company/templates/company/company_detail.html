@@ -3,12 +3,15 @@
 {% load company_tags %}
 {% load partials %}
 
-{% block title %}{{ company.name }}{% endblock title %}
+{% block title %}{{ company_settings.name|default:company.name }}{% endblock title %}
 
 {% block content %}
 <article>
   <header>
-    <h1>{{ company.name }}</h1>
+    <h1>{{ company_settings.name|default:company.name }}</h1>
+    <div class="company-branding">
+      <img src="{% company_logo_url company_settings %}" alt="{{ company_settings.name|default:company.name }} logo" class="company-logo" />
+    </div>
     {% if can_edit %}
     <div class="header-actions">
       <a href="{% url 'company:edit' company.id %}" role="button" class="btn-secondary">

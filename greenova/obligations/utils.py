@@ -1,3 +1,15 @@
+"""
+utils.py: General-purpose utility functions for the obligations app.
+
+This module is intended for reusable helper functions that improve code
+maintainability and clarity. All functions must be type-annotated and use the
+@beartype decorator. Follow project standards for documentation and imports.
+
+Existing utility functions should be migrated here as needed.
+"""
+
+from beartype import beartype
+
 import logging
 from datetime import date, timedelta
 from typing import Any, Union

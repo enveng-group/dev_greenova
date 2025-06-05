@@ -1,5 +1,10 @@
 {% load project_tags static hyperscript %}
 
+<div class="site-meta">
+  <span class="site-name">{% get_site_name site_name %}</span>
+  <span class="site-version">v{% get_site_version site_version %}</span>
+</div>
+
 <section aria-labelledby="project-selection-heading"
          class="project-selection"
          hx-ext="class-tools path-deps">

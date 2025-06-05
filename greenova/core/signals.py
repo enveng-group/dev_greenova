@@ -1,4 +1,8 @@
-"""Signal handlers for the core application."""
+"""Signal handlers for the core application.
+
+Core event-driven logic for user login/logout and user model changes is handled by Django signals and cannot be replaced by django-lifecycle for built-in User model.
+This file is retained for custom event signals and handlers only.
+"""
 
 import logging
 from typing import Any

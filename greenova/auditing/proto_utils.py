@@ -8,6 +8,7 @@ import logging
 from beartype import beartype
 
 from .models import AuditEvent
+from .types import AuditProtoUtils
 
 logger = logging.getLogger(__name__)
 

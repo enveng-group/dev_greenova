@@ -1,6 +1,12 @@
+from beartype import beartype  # Added for runtime type checking
 from django.apps import AppConfig
 
 
 class ProjectsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "projects"
+
+    @beartype
+    def ready(self) -> None:
+        # Import signal handlers to ensure registration
+        import projects.signals  # noqa: F401

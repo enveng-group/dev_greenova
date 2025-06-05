@@ -5,16 +5,27 @@
 
 This module provides common functionality for Protocol Buffer operations
 across all apps in the Greenova project.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Centralized helpers for protobuf message type resolution and import
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
 """
 
 import importlib
 import logging
 import os
+from typing import Any
 
+from beartype import beartype
 from django.apps import apps
 from django.conf import settings
 from google.protobuf import message as proto_message
 from google.protobuf import symbol_database as _symbol_database
+from .types import StatusData, DjangoError, ModelOperationError
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +36,7 @@ _sym_db = _symbol_database.Default()
 _message_type_cache: dict[str, type[proto_message.Message]] = {}
 
 
+@beartype
 def get_proto_message_type(full_name: str) -> type[proto_message.Message] | None:
     """Get a Protocol Buffer message type by its fully qualified name.
 
@@ -77,9 +89,17 @@ def get_proto_message_type(full_name: str) -> type[proto_message.Message] | None
             return None
 
 
+@beartype
 def _find_pb2_files(directory: str) -> list[str]:
-    """Find all *_pb2.py files in a directory and its subdirectories."""
-    pb2_files = []
+    """Find all *_pb2.py files in a directory and its subdirectories.
+
+    Args:
+        directory: The root directory to search.
+
+    Returns:
+        List of absolute paths to *_pb2.py files.
+    """
+    pb2_files: list[str] = []
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith("_pb2.py"):
@@ -89,6 +109,7 @@ def _find_pb2_files(directory: str) -> list[str]:
     return pb2_files
 
 
+@beartype
 def _get_module_name(file_path: str) -> str:
     """Convert a file path to a module name.
 

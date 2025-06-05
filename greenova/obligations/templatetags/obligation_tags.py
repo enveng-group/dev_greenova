@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 
+from beartype import beartype
 from django import template
 from django.utils import timezone
 from django.utils.html import format_html
@@ -10,6 +11,7 @@ register = template.Library()
 
 
 @register.filter
+@beartype
 def format_due_date(target_date: datetime | date | None) -> str:
     """Format due date as a simple date string.
 
@@ -32,7 +34,8 @@ def format_due_date(target_date: datetime | date | None) -> str:
 
 
 @register.filter
-def multiply(value, arg):
+@beartype
+def multiply(value: float, arg: float) -> float:
     """Multiply the value by the argument.
 
     Usage: {{ value|multiply:2 }}
@@ -48,10 +51,11 @@ def multiply(value, arg):
     try:
         return float(value) * float(arg)
     except (ValueError, TypeError):
-        return 0
+        return 0.0
 
 
 @register.inclusion_tag("obligations/components/_status_badge.html")
+@beartype
 def status_badge(status: str) -> dict[str, str]:
     """Return a styled status badge.
 
@@ -82,7 +86,8 @@ def status_badge(status: str) -> dict[str, str]:
 
 
 @register.filter
-def display_status(obligation):
+@beartype
+def display_status(obligation) -> str:
     """Display an obligation status with appropriate styling.
 
     Checks if an obligation is overdue based on the due date and
@@ -124,7 +129,8 @@ def display_status(obligation):
 
 
 @register.filter
-def format_due_date(due_date):
+@beartype
+def format_due_date(due_date: date | None) -> str:
     """Format a due date or indicate if it's missing."""
     if not due_date:
         return "-"
@@ -141,7 +147,8 @@ def format_due_date(due_date):
 
 
 @register.simple_tag
-def status_badge(status):
+@beartype
+def status_badge(status: str) -> str:
     """Generate an HTML badge based on the provided status.
 
     This tag takes a status string and returns an HTML span element with appropriate
@@ -163,7 +170,8 @@ def status_badge(status):
 
 
 @register.filter
-def display_responsibility(responsibility):
+@beartype
+def display_responsibility(responsibility: str | None) -> str:
     """Format the responsibility value for display.
 
     Args:
@@ -177,3 +185,24 @@ def display_responsibility(responsibility):
         return "-"
 
     return get_responsibility_display_name(responsibility)
+
+
+@register.simple_tag
+@beartype
+def get_active_obligations(active_obligations=None):
+    """Return the queryset of active obligations or empty queryset."""
+    return active_obligations or []
+
+
+@register.simple_tag
+@beartype
+def get_compliance_status(compliance_status: str | None = None) -> str:
+    """Return the compliance status string or 'Unknown'."""
+    return compliance_status or "Unknown"
+
+
+@register.simple_tag
+@beartype
+def get_next_due_obligation(next_due_obligation=None):
+    """Return the next due obligation object or None."""
+    return next_due_obligation

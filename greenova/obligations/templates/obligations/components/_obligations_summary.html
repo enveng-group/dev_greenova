@@ -6,6 +6,27 @@
          hx-trigger="path-deps:from path-deps"
          classes="add fade-in"
          _="on load transition opacity to 1 over 300ms">
+  <!-- Compliance status and next due obligation summary -->
+  <div class="obligations-summary-bar">
+    <span class="compliance-status">
+      Compliance Status: <strong>{% get_compliance_status compliance_status %}</strong>
+    </span>
+    <span class="next-due-obligation">
+      Next Due Obligation:
+      {% with next_due=get_next_due_obligation next_due_obligation %}
+        {% if next_due %}
+          <a href="{% url 'obligations:detail' next_due.obligation_number %}">
+            {{ next_due.obligation|truncatechars:40 }} (Due: {{ next_due.action_due_date|format_due_date }})
+          </a>
+        {% else %}
+          <span>None</span>
+        {% endif %}
+      {% endwith %}
+    </span>
+    <span class="active-obligations-count">
+      Active Obligations: <strong>{% get_active_obligations active_obligations|length %}</strong>
+    </span>
+  </div>
   {% if error %}
     <div class="notice error" role="alert">
       <p>

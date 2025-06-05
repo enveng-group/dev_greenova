@@ -1,3 +1,21 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Forms for company management in the company app.
+
+This module provides Django forms for creating, updating, searching, and
+managing companies, memberships, and documents, with strict type annotations
+and runtime type checking.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Forms for company, membership, document, and user management
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 from beartype import beartype
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, Fieldset, Layout, Row, Submit
@@ -6,6 +24,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from .models import Company, CompanyDocument, CompanyMembership
+from .types import CompanyProfileDict, EmployeeRecordDict
 
 User = get_user_model()
 
@@ -36,6 +55,13 @@ class CompanyForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the CompanyForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"
@@ -79,6 +105,13 @@ class CompanyMembershipForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the CompanyMembershipForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"
@@ -113,6 +146,13 @@ class CompanyDocumentForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the CompanyDocumentForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"

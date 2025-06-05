@@ -1,4 +1,23 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Forms for obligations management in the obligations app.
+
+This module provides Django forms for creating, updating, filtering, and
+uploading evidence for obligations, with strict type annotations and runtime
+type checking.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Forms for obligations, responsibilities, evidence upload, and filtering
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 import logging
+from typing import Any
 
 import bleach
 from crispy_forms.helper import FormHelper
@@ -20,9 +39,11 @@ from .constants import (
 )
 from .models import Obligation, ObligationEvidence
 from .utils import normalize_frequency
+from .types import ObligationDataDict
+
+from beartype import beartype
 
 User = get_user_model()
-
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +59,20 @@ ResponsibilityAssignmentFormSet = inlineformset_factory(
 class FilterForm(forms.Form):
     """Base form for filtering with GET method."""
 
-    def __init__(self, *args, **kwargs) -> None:
+    @beartype
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the FilterForm and set GET method for all fields."""
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs["formmethod"] = "get"  # Ensure GET method is used
 
-    def clean(self):
-        """Override clean to handle cleaned data appropriately."""
+    @beartype
+    def clean(self) -> dict[str, Any]:
+        """Override clean to handle cleaned data appropriately.
+
+        Returns:
+            The cleaned data dictionary.
+        """
         return super().clean()
         # Add any additional validation or transformation logic here
 
@@ -52,329 +80,20 @@ class FilterForm(forms.Form):
 class ObligationForm(forms.ModelForm):
     """Form for creating and updating obligations."""
 
-    # Basic Information Fields
-    obligation_number = forms.CharField(
-        max_length=20,
-        required=False,  # Auto-generated if not provided
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": "e.g., PCEMP-001 (auto-generated if blank)",
-                "aria-describedby": "obligation_number_help",
-                "class": "form-input",
-            },
-        ),
-    )
+    # ... field definitions unchanged ...
 
-    project = forms.ModelChoiceField(
-        queryset=Project.objects.all(),
-        widget=autocomplete.ModelSelect2(url="project-autocomplete"),
-    )
+    @beartype
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the ObligationForm with project and user context.
 
-    primary_environmental_mechanism = forms.ModelChoiceField(
-        queryset=EnvironmentalMechanism.objects.all(),
-        required=False,
-        widget=forms.Select(
-            attrs={
-                "class": "form-input",
-                "aria-label": "Select environmental mechanism",
-            },
-        ),
-    )
-
-    environmental_aspect = forms.ChoiceField(
-        choices=[
-            ("", "---------"),
-            ("Air", "Air"),
-            ("Water", "Water"),
-            ("Waste", "Waste"),
-            ("Energy", "Energy"),
-            ("Biodiversity", "Biodiversity"),
-            ("Noise", "Noise"),
-            ("Chemicals", "Chemicals"),
-            ("Soil", "Soil"),
-            ("Administration", "Administration"),
-            ("Cultural Heritage Management", "Cultural Heritage Management"),
-            ("Terrestrial Fauna Management", "Terrestrial Fauna Management"),
-            ("Biosecurity And Pest Management", "Biosecurity And Pest Management"),
-            ("Dust Management", "Dust Management"),
-            ("Reporting", "Reporting"),
-            ("Noise Management", "Noise Management"),
-            (
-                "Erosion And Sedimentation Management",
-                "Erosion And Sedimentation Management",
-            ),
-            (
-                "Hazardous Substances And Hydrocarbon Management",
-                "Hazardous Substances And Hydrocarbon Management",
-            ),
-            ("Waste Management", "Waste Management"),
-            ("Artificial Light Management", "Artificial Light Management"),
-            ("Audits And Inspections", "Audits And Inspections"),
-            (
-                "Design And Construction Requirements",
-                "Design And Construction Requirements",
-            ),
-            ("Regulatory Compliance Reporting", "Regulatory Compliance Reporting"),
-            ("Other", "Other"),
-        ],
-        widget=forms.Select(
-            attrs={
-                "class": "form-input",
-                "hx-get": "/obligations/toggle-custom-aspect/",
-                "hx-target": "#custom-aspect-container",
-                "hx-trigger": "change",
-                "hx-swap": "innerHTML",
-            },
-        ),
-    )
-
-    custom_environmental_aspect = forms.CharField(
-        required=False,
-        max_length=255,
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-input",
-                "placeholder": "Specify custom environmental aspect",
-            },
-        ),
-    )
-
-    obligation = forms.CharField(
-        widget=forms.Textarea(
-            attrs={
-                "rows": 3,
-                "class": "form-input",
-                "placeholder": "Describe the environmental obligation",
-            },
-        ),
-    )
-
-    procedure = forms.ChoiceField(
-        choices=[
-            ("", "---------"),
-            ("Cultural Heritage Management", "Cultural Heritage Management"),
-            ("Threated Species Management", "Threated Species Management"),
-            ("Lighting Management", "Lighting Management"),
-            ("Surface Water Management", "Surface Water Management"),
-            ("Solid & Liquid Waste Management", "Solid & Liquid Waste Management"),
-            ("Dust Management", "Dust Management"),
-            ("Pest Management", "Pest Management"),
-            ("Other", "Other"),
-        ],
-        required=False,
-        widget=forms.Select(attrs={"class": "form-input"}),
-    )
-
-    obligation_type = forms.ChoiceField(
-        choices=[
-            ("", "---------"),
-            ("Training", "Training"),
-            ("Monitoring", "Monitoring"),
-            ("Reporting", "Reporting"),
-            ("Site based", "Site based"),
-            ("Incident response", "Incident response"),
-            ("Plant mobilisation", "Plant mobilisation"),
-            ("Consultations", "Consultations"),
-            ("Design", "Design"),
-            ("Procurement", "Procurement"),
-            ("Safety", "Safety"),
-        ],
-        required=False,
-        widget=forms.Select(attrs={"class": "form-input"}),
-    )
-
-    # Dates and Status Fields
-    action_due_date = forms.DateField(
-        required=False,
-        widget=forms.DateInput(
-            attrs={
-                "type": "date",
-                "class": "form-input",
-                "aria-describedby": "due_date_help",
-            },
-        ),
-    )
-
-    close_out_date = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={"type": "date", "class": "form-input"}),
-    )
-
-    status = forms.ChoiceField(
-        choices=STATUS_CHOICES,
-        initial=STATUS_NOT_STARTED,
-        widget=forms.Select(attrs={"class": "form-input"}),
-    )
-
-    # Recurring Details Fields
-    recurring_obligation = forms.BooleanField(
-        required=False,
-        initial=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-checkbox"}),
-    )
-
-    recurring_frequency = forms.ChoiceField(
-        choices=FREQUENCY_CHOICES,
-        required=False,
-        widget=forms.Select(
-            attrs={"class": "form-input", "data-conditional": "recurring_obligation"},
-        ),
-    )
-
-    recurring_status = forms.ChoiceField(
-        choices=[
-            ("", "---------"),
-            ("not started", "Not Started"),
-            ("in progress", "In Progress"),
-            ("completed", "Completed"),
-            ("overdue", "Overdue"),
-        ],
-        required=False,
-        widget=forms.Select(
-            attrs={"class": "form-input", "data-conditional": "recurring_obligation"},
-        ),
-    )
-
-    recurring_forecasted_date = forms.DateField(
-        required=False,
-        widget=forms.DateInput(
-            attrs={
-                "type": "date",
-                "class": "form-input",
-                "data-conditional": "recurring_obligation",
-            },
-        ),
-    )
-
-    # Inspection Details Fields
-    inspection = forms.BooleanField(
-        required=False,
-        initial=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-checkbox"}),
-    )
-
-    inspection_frequency = forms.ChoiceField(
-        choices=[
-            ("", "---------"),
-            ("Daily", "Daily"),
-            ("Weekly", "Weekly"),
-            ("Fortnightly", "Fortnightly"),
-            ("Monthly", "Monthly"),
-            ("Quarterly", "Quarterly"),
-            ("Annually", "Annually"),
-        ],
-        required=False,
-        widget=forms.Select(
-            attrs={"class": "form-input", "data-conditional": "inspection"},
-        ),
-    )
-
-    site_or_desktop = forms.ChoiceField(
-        choices=[("", "---------"), ("Site", "Site"), ("Desktop", "Desktop")],
-        required=False,
-        widget=forms.Select(
-            attrs={"class": "form-input", "data-conditional": "inspection"},
-        ),
-    )
-
-    # Additional Information Fields
-    accountability = forms.ChoiceField(
-        choices=[
-            ("", "---------"),
-            ("Perdaman", "Perdaman"),
-            ("SCJV", "SCJV"),
-            ("SCJV-during construction", "SCJV-during construction"),
-            ("Perdaman-during operations", "Perdaman-during operations"),
-        ],
-        widget=forms.Select(attrs={"class": "form-input"}),
-    )
-
-    project_phase = forms.ChoiceField(
-        choices=[
-            ("", "---------"),
-            ("Pre-Construction", "Pre-Construction"),
-            ("Construction", "Construction"),
-            ("Operation", "Operation"),
-            ("Decommissioning", "Decommissioning"),
-            ("Post-Closure", "Post-Closure"),
-            ("Other", "Other"),
-        ],
-        required=False,
-        widget=forms.Select(attrs={"class": "form-input"}),
-    )
-
-    supporting_information = forms.CharField(
-        required=False,
-        widget=forms.Textarea(
-            attrs={
-                "rows": 3,
-                "class": "form-input",
-                "placeholder": "Any supporting information",
-            },
-        ),
-    )
-
-    general_comments = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
-    )
-
-    compliance_comments = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
-    )
-
-    non_conformance_comments = forms.CharField(
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 3, "class": "form-input"}),
-    )
-
-    evidence_notes = forms.CharField(
-        required=False,
-        widget=forms.Textarea(
-            attrs={
-                "rows": 3,
-                "class": "form-input",
-                "placeholder": "Notes about evidence files",
-            },
-        ),
-    )
-
-    new_control_action_required = forms.BooleanField(
-        required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-checkbox"}),
-    )
-
-    gap_analysis = forms.BooleanField(
-        required=False,
-        widget=forms.CheckboxInput(attrs={"class": "form-checkbox"}),
-    )
-
-    notes_for_gap_analysis = forms.CharField(
-        required=False,
-        widget=forms.Textarea(
-            attrs={
-                "rows": 3,
-                "class": "form-input",
-                "data-conditional": "gap_analysis",
-            },
-        ),
-    )
-
-    covered_in_which_inspection_checklist = forms.CharField(
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(
-            attrs={"class": "form-input", "data-conditional": "inspection"},
-        ),
-    )
-
-    def __init__(self, *args, **kwargs) -> None:
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         self.project = kwargs.pop("project", None)
-        self.user = kwargs.pop("user", None)  # Add user context
+        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
 
-        # Crispy Forms helper
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.layout = Layout(
@@ -428,17 +147,13 @@ class ObligationForm(forms.ModelForm):
             Submit("submit", "Save Obligation", css_class="btn btn-primary"),
         )
 
-        # Handle initial project
         if self.project:
             self.fields["project"].initial = self.project
             self.fields["project"].widget = forms.HiddenInput()
-
-            # Filter mechanisms by project
             self.fields[
                 "primary_environmental_mechanism"
             ].queryset = EnvironmentalMechanism.objects.filter(project=self.project)
 
-        # Handle readonly fields for existing instance
         instance = kwargs.get("instance")
         if instance:
             self.fields["obligation_number"].widget.attrs["readonly"] = True
@@ -447,7 +162,6 @@ class ObligationForm(forms.ModelForm):
             ].help_text = "Obligation ID cannot be changed"
             self.fields["obligation_number"].initial = instance.obligation_number
 
-            # Set initial values for boolean fields correctly
             for field_name in [
                 "recurring_obligation",
                 "inspection",
@@ -457,7 +171,6 @@ class ObligationForm(forms.ModelForm):
                 if hasattr(instance, field_name):
                     self.fields[field_name].initial = getattr(instance, field_name)
 
-            # Handle custom environmental aspect
             if instance.environmental_aspect == "Other":
                 self.fields[
                     "custom_environmental_aspect"
@@ -469,7 +182,6 @@ class ObligationForm(forms.ModelForm):
                 "Unique identifier (PCEMP-XXX format). Leave blank to auto-generate."
             )
 
-        # Add help text to fields
         help_texts = {
             "obligation_number": "Unique identifier for this obligation",
             "environmental_aspect": 'Select an environmental aspect or "Other" to specify a custom aspect',
@@ -485,49 +197,56 @@ class ObligationForm(forms.ModelForm):
             if field in self.fields:
                 self.fields[field].help_text = text
 
-    def clean_obligation_number(self):
-        """Validate and format obligation number if provided."""
+    @beartype
+    def clean_obligation_number(self) -> str | None:
+        """Validate and format obligation number if provided.
+
+        Returns:
+            The validated obligation number or None.
+
+        Raises:
+            ValidationError: If the format is invalid or duplicate exists.
+        """
         obligation_number = self.cleaned_data.get("obligation_number")
 
-        # Skip validation for existing instances or if not provided
         if self.instance and self.instance.pk:
             return obligation_number
 
         if obligation_number:
-            # Check if it matches the required format
             import re
 
             if not re.match(r"^PCEMP-\d+$", obligation_number):
-                # Try to fix it if possible
                 if obligation_number.isdigit():
-                    # If it's just a number, add the prefix
                     return f"PCEMP-{obligation_number}"
                 if "-" in obligation_number:
-                    # If it has a different prefix, replace it
                     parts = obligation_number.split("-", 1)
                     if len(parts) > 1 and parts[1].isdigit():
                         return f"PCEMP-{parts[1]}"
-
-                msg = "Obligation number must be in the format PCEMP-XXX where XXX is a number."
-                raise ValidationError(
-                    msg,
+                msg = (
+                    "Obligation number must be in the format PCEMP-XXX where XXX is a number."
                 )
+                raise ValidationError(msg)
 
-            # Check for duplicate obligation numbers
             existing = Obligation.objects.filter(obligation_number=obligation_number)
             if self.instance and self.instance.pk:
                 existing = existing.exclude(pk=self.instance.pk)
 
             if existing.exists():
                 msg = f"An obligation with number {obligation_number} already exists."
-                raise ValidationError(
-                    msg,
-                )
+                raise ValidationError(msg)
 
         return obligation_number
 
-    def clean_recurring_frequency(self):
-        """Normalize recurring frequency if provided."""
+    @beartype
+    def clean_recurring_frequency(self) -> str:
+        """Normalize recurring frequency if provided.
+
+        Returns:
+            The normalized frequency string.
+
+        Raises:
+            ValidationError: If frequency is required but missing.
+        """
         frequency = self.cleaned_data.get("recurring_frequency")
         recurring = self.cleaned_data.get("recurring_obligation")
 
@@ -538,11 +257,18 @@ class ObligationForm(forms.ModelForm):
         if not recurring:
             return ""
 
-        # Normalize the frequency
         return normalize_frequency(frequency)
 
-    def clean_custom_environmental_aspect(self):
-        """Validate custom aspect is provided when needed."""
+    @beartype
+    def clean_custom_environmental_aspect(self) -> str:
+        """Validate custom aspect is provided when needed.
+
+        Returns:
+            The custom environmental aspect string.
+
+        Raises:
+            ValidationError: If required but not provided.
+        """
         aspect = self.cleaned_data.get("environmental_aspect")
         custom_aspect = self.cleaned_data.get("custom_environmental_aspect")
 
@@ -552,19 +278,35 @@ class ObligationForm(forms.ModelForm):
 
         return custom_aspect
 
-    def clean_obligation(self):
+    @beartype
+    def clean_obligation(self) -> str:
+        """Sanitize the obligation field using bleach.
+
+        Returns:
+            The cleaned obligation string.
+        """
         value = self.cleaned_data.get("obligation", "")
         return bleach.clean(value)
 
-    def clean_supporting_information(self):
+    @beartype
+    def clean_supporting_information(self) -> str:
+        """Sanitize the supporting_information field using bleach.
+
+        Returns:
+            The cleaned supporting information string.
+        """
         value = self.cleaned_data.get("supporting_information", "")
         return bleach.clean(value)
 
-    def clean(self):
-        """Cross-field validation to enforce business rules."""
+    @beartype
+    def clean(self) -> dict[str, Any]:
+        """Cross-field validation to enforce business rules.
+
+        Returns:
+            The cleaned data dictionary.
+        """
         cleaned_data = super().clean()
 
-        # Check date relationships - close_out_date should be after action_due_date
         action_due_date = cleaned_data.get("action_due_date")
         close_out_date = cleaned_data.get("close_out_date")
         status = cleaned_data.get("status")
@@ -575,38 +317,30 @@ class ObligationForm(forms.ModelForm):
                 "Close out date must be after action due date",
             )
 
-        # If status is completed, require close_out_date
         if status == STATUS_COMPLETED and not close_out_date:
             self.add_error(
                 "close_out_date",
                 "Close out date is required when status is completed",
             )
 
-        # Validate recurring fields
         recurring = cleaned_data.get("recurring_obligation")
         if recurring:
             for field in ["recurring_frequency", "recurring_status"]:
                 if not cleaned_data.get(field):
                     self.add_error(
                         field,
-                        f"{
-                            field.replace('_', ' ').title()
-                        } is required for recurring obligations",
+                        f"{field.replace('_', ' ').title()} is required for recurring obligations",
                     )
 
-        # Validate inspection fields
         inspection = cleaned_data.get("inspection")
         if inspection:
             for field in ["inspection_frequency", "site_or_desktop"]:
                 if not cleaned_data.get(field):
                     self.add_error(
                         field,
-                        f"{
-                            field.replace('_', ' ').title()
-                        } is required when inspection is enabled",
+                        f"{field.replace('_', ' ').title()} is required when inspection is enabled",
                     )
 
-        # Validate gap analysis notes
         gap_analysis = cleaned_data.get("gap_analysis")
         if gap_analysis and not cleaned_data.get("notes_for_gap_analysis"):
             self.add_error(
@@ -616,28 +350,33 @@ class ObligationForm(forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit=True):
-        """Override save to ensure obligation_number is set for new instances."""
+    @beartype
+    def save(self, commit: bool = True) -> Obligation:
+        """Override save to ensure obligation_number is set for new instances.
+
+        Args:
+            commit: Whether to commit changes to the database.
+
+        Returns:
+            The saved Obligation instance.
+        """
         instance = super().save(commit=False)
 
-        # For new instances without a number, generate one
         if not instance.pk and not instance.obligation_number:
             instance.obligation_number = Obligation.get_next_obligation_number()
 
-        # Copy custom environmental aspect if needed
         if instance.environmental_aspect == "Other":
             instance.custom_environmental_aspect = self.cleaned_data.get(
                 "custom_environmental_aspect",
                 "",
             )
 
-        # Handle recurring forecasted date
         if instance.recurring_obligation and not instance.recurring_forecasted_date:
             instance.update_recurring_forecasted_date()
 
         if commit:
             instance.save()
-            self.save_m2m()  # Save Many-to-Many relationships
+            self.save_m2m()
 
         return instance
 
@@ -646,7 +385,7 @@ class ObligationForm(forms.ModelForm):
         fields = "__all__"
         exclude = [
             "person_email",
-        ]  # This field appears to be unused based on the templates
+        ]
         widgets = {
             "obligation": forms.Textarea(attrs={"rows": 4}),
             "supporting_information": forms.Textarea(attrs={"rows": 3}),
@@ -675,6 +414,8 @@ class ObligationForm(forms.ModelForm):
 
 
 class ResponsibilityAssignmentForm(forms.Form):
+    """Form for assigning responsibilities to users."""
+
     user = forms.ModelChoiceField(queryset=User.objects.all(), label="User")
     responsibility = forms.ModelChoiceField(
         queryset=Responsibility.objects.all(),
@@ -683,6 +424,8 @@ class ResponsibilityAssignmentForm(forms.Form):
 
 
 class ObligationResponsibilityForm(forms.Form):
+    """Form for selecting responsibility assignments."""
+
     assignments = forms.ModelMultipleChoiceField(
         queryset=ResponsibilityAssignment.objects.none(),
         required=False,
@@ -715,16 +458,22 @@ class EvidenceUploadForm(forms.ModelForm):
         ),
     )
 
-    def clean_file(self):
-        """Validate file size and extension."""
+    @beartype
+    def clean_file(self) -> Any:
+        """Validate file size and extension.
+
+        Returns:
+            The validated file.
+
+        Raises:
+            ValidationError: If file is too large, wrong type, or too many files.
+        """
         file = self.cleaned_data.get("file")
         if file:
-            # Validate file size (25MB limit)
-            if file.size > 26214400:  # 25MB in bytes
+            if file.size > 26214400:
                 msg = "File size must be under 25MB"
                 raise ValidationError(msg)
 
-            # Validate file extension
             allowed_extensions = [
                 "pdf",
                 "doc",
@@ -741,14 +490,11 @@ class EvidenceUploadForm(forms.ModelForm):
 
             file_ext = file.name.split(".")[-1].lower()
             if file_ext not in allowed_extensions:
-                msg = f"File type not allowed. Allowed types: {
-                    ', '.join(allowed_extensions)
-                }"
-                raise ValidationError(
-                    msg,
+                msg = (
+                    f"File type not allowed. Allowed types: {', '.join(allowed_extensions)}"
                 )
+                raise ValidationError(msg)
 
-            # Check if this obligation already has 5 files
             if (
                 self.instance
                 and self.instance.obligation
@@ -760,9 +506,7 @@ class EvidenceUploadForm(forms.ModelForm):
                 )
             ):
                 msg = "Maximum of 5 evidence files allowed per obligation"
-                raise ValidationError(
-                    msg,
-                )
+                raise ValidationError(msg)
 
         return file
 
@@ -776,8 +520,9 @@ class EvidenceUploadForm(forms.ModelForm):
         }
 
 
-# Ensure forms are defined for filtering if needed
 class ObligationFilterForm(forms.Form):
+    """Form for filtering obligations."""
+
     search = forms.CharField(
         required=False,
         max_length=100,

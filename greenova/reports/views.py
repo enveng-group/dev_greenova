@@ -23,11 +23,21 @@ Author: Adrian Gallo <agallo@enveng-group.com.au>
 from django.db.models import QuerySet
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .serializers import ReportProtoSerializer, ReportCollectionProtoSerializer
 from .models import Report
 from guardian.shortcuts import get_objects_for_user
+from beartype import beartype
+from .mixins import ReportPermissionRequiredMixin, ReportContextMixin
+from .permissions import user_can_view_report
+from .types import ReportPayloadDict, ExportFormatDict, ReportResultDict, ReportPayloadManager, ExportFormatter, ResultProcessor
 
 
-class ReportListView(LoginRequiredMixin, ListView):
+class ReportListView(ReportPermissionRequiredMixin, ReportContextMixin, LoginRequiredMixin, ListView):
     """List all reports with object-level permission checks."""
 
     model = Report
@@ -41,3 +51,50 @@ class ReportListView(LoginRequiredMixin, ListView):
             "reports.view_report",
             Report.objects.all(),
         )
+
+
+@beartype
+@login_required
+@require_http_methods(["GET"])
+def export_report(request, report_id: int) -> HttpResponse:
+    """Export a single report as Protocol Buffer binary data."""
+    report = get_object_or_404(Report, id=report_id)
+    if not user_can_view_report(request.user, report):
+        return JsonResponse({"error": "Permission denied."}, status=403)
+    serializer = ReportProtoSerializer(instance=report)
+    data = serializer.data()
+    if not data:
+        return JsonResponse({"error": "Failed to export report."}, status=400)
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = f'attachment; filename="report_{report_id}.pb"'
+    return response
+
+
+@beartype
+@login_required
+@require_http_methods(["GET"])
+def export_all_reports(request) -> HttpResponse:
+    """Export all reports as a Protocol Buffer collection."""
+    reports = list(Report.objects.all())
+    accessible_reports = [report for report in reports if user_can_view_report(request.user, report)]
+    serializer = ReportCollectionProtoSerializer(instances=accessible_reports)
+    data = serializer.data()
+    if not data:
+        return JsonResponse({"error": "Failed to export reports."}, status=400)
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = 'attachment; filename="reports.pb"'
+    return response
+
+
+@beartype
+@csrf_exempt
+@login_required
+@require_http_methods(["POST"])
+def import_report(request) -> HttpResponse:
+    """Import a report from Protocol Buffer binary data."""
+    data = request.body
+    serializer = ReportProtoSerializer(data=data)
+    if not serializer.is_valid():
+        return JsonResponse({"error": serializer.errors}, status=400)
+    report = serializer.save()
+    return JsonResponse({"id": report.id, "message": "Report imported successfully."})

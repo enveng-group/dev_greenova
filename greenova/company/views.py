@@ -1,3 +1,12 @@
+"""Views for the company app.
+
+This module provides views for displaying, exporting, importing, and managing
+company data, including membership, document management, and permission checks.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+
 import logging
 from typing import Any
 
@@ -23,10 +32,12 @@ from .forms import (
     CompanySearchForm,
 )
 from .models import Company, CompanyDocument, CompanyMembership
+from .permissions import user_can_view_company
 from .serializers import (
     CompanyCollectionProtoSerializer,
     CompanyProtoSerializer,
 )
+from .types import CompanyProfileDict, EmployeeRecordDict, OrgChartNodeDict, CompanyProfileManager, EmployeeManager, OrgChartHandler
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +45,7 @@ User = get_user_model()
 
 
 @beartype
-def create_company_with_permissions(user, form):
+def create_company_with_permissions(user: Any, form: Any) -> Company:
     """Create a company and assign object-level permissions to the creator.
 
     Args:
@@ -43,12 +54,10 @@ def create_company_with_permissions(user, form):
 
     Returns:
         The created Company instance.
-
     """
     company = form.save(commit=False)
     company.save()
     form.save_m2m()
-    # Assign object-level permissions to creator
     assign_perm("view_company", user, company)
     assign_perm("change_company", user, company)
     assign_perm("delete_company", user, company)
@@ -59,16 +68,21 @@ def create_company_with_permissions(user, form):
 @beartype
 @login_required
 def company_list(request: HttpRequest) -> HttpResponse:
-    """View for listing companies with object-level permission checks."""
+    """View for listing companies with object-level permission checks.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse with the rendered company list.
+    """
     search_form = CompanySearchForm(request.GET)
-    # Only show companies the user has view permission for
     companies_query: QuerySet[Company] = get_objects_for_user(
         request.user,
         "company.view_company",
         Company.objects.all(),
     )
 
-    # Apply filters if form is submitted
     if search_form.is_valid():
         search = search_form.cleaned_data.get("search")
         company_type = search_form.cleaned_data.get("company_type")
@@ -79,25 +93,18 @@ def company_list(request: HttpRequest) -> HttpResponse:
             companies_query = companies_query.filter(
                 Q(name__icontains=search) | Q(description__icontains=search),
             )
-
         if company_type:
             companies_query = companies_query.filter(company_type=company_type)
-
         if industry:
             companies_query = companies_query.filter(industry=industry)
-
         if is_active is not None:
             companies_query = companies_query.filter(is_active=is_active)
 
-    # Add member count annotation
     companies_query = companies_query.annotate(member_count=Count("members"))
-
-    # Handle pagination
     paginator = Paginator(companies_query, 10)
     page_number = int(request.GET.get("page", 1))
     companies: Page[Company] = paginator.get_page(page_number)
 
-    # Check user permissions for each company using guardian
     user_permissions: dict[int, list[str]] = {}
     if not request.user.is_superuser:
         for company in companies:
@@ -110,27 +117,26 @@ def company_list(request: HttpRequest) -> HttpResponse:
         "page_obj": companies,
         "can_create": is_company_admin(request.user),
     }
-
-    # Always render full template
     return render(request, "company/company_list.html", context)
 
 
 @beartype
 @login_required
 def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
-    """View for viewing company details."""
+    """View for viewing company details.
+
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+
+    Returns:
+        HttpResponse with the rendered company detail.
+    """
     company = get_object_or_404(Company, id=company_id)
-
-    # Get projects related to this company
     projects = company.projects.all()
-
-    # Get members with their roles
     members = CompanyMembership.objects.filter(company=company).select_related("user")
-
-    # Get documents
     documents = company.documents.all()
 
-    # Check user permissions
     can_edit = False
     can_manage_members = False
     if request.user.is_superuser:
@@ -158,8 +164,6 @@ def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
         "can_edit": can_edit,
         "can_manage_members": can_manage_members,
     }
-
-    # Always render full template
     return render(request, "company/company_detail.html", context)
 
 
@@ -167,38 +171,46 @@ def company_detail(request: HttpRequest, company_id: int) -> HttpResponse:
 @login_required
 @user_passes_test(is_company_admin)
 def company_create(request: HttpRequest) -> HttpResponse:
-    """View for creating a new company."""
+    """View for creating a new company.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse with the rendered company creation form or redirect.
+    """
     if request.method == "POST":
         form = CompanyForm(request.POST, request.FILES)
         if form.is_valid():
             company: Company = create_company_with_permissions(request.user, form)
-
-            # Add the creator as an owner of the company
             CompanyMembership.objects.create(
                 company=company,
                 user=request.user,
                 role="owner",
                 is_primary=True,
             )
-
             messages.success(request, f"Company '{company.name}' created successfully!")
             return redirect("company:detail", company_id=company.id)
     else:
         form = CompanyForm()
 
     context: dict[str, Any] = {"form": form, "action": "Create"}
-
-    # Always render full template
     return render(request, "company/company_form.html", context)
 
 
 @beartype
 @login_required
 def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
-    """View for editing a company."""
-    company = get_object_or_404(Company, id=company_id)
+    """View for editing a company.
 
-    # Check if user has permission to edit this company
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+
+    Returns:
+        HttpResponse with the rendered company edit form or redirect.
+    """
+    company = get_object_or_404(Company, id=company_id)
     has_permission: bool = request.user.is_superuser
     if not has_permission:
         try:
@@ -224,8 +236,6 @@ def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
         form = CompanyForm(instance=company)
 
     context: dict[str, Any] = {"form": form, "company": company, "action": "Update"}
-
-    # Always render full template
     return render(request, "company/company_form.html", context)
 
 
@@ -233,19 +243,23 @@ def company_edit(request: HttpRequest, company_id: int) -> HttpResponse:
 @login_required
 @user_passes_test(is_company_admin)
 def company_delete(request: HttpRequest, company_id: int) -> HttpResponse:
-    """View for deleting a company."""
-    company = get_object_or_404(Company, id=company_id)
+    """View for deleting a company.
 
-    # Check if user has permission to delete this company
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+
+    Returns:
+        HttpResponse with the rendered company delete form or redirect.
+    """
+    company = get_object_or_404(Company, id=company_id)
     if not request.user.is_superuser:
         try:
-            # Note: We're using the membership value now
             CompanyMembership.objects.get(
                 company=company,
                 user=request.user,
                 role="owner",
             )
-            # We could check membership.role here if needed
         except CompanyMembership.DoesNotExist:
             messages.error(request, "Only the owner can delete this company.")
             return redirect("company:detail", company_id=company.id)
@@ -257,18 +271,22 @@ def company_delete(request: HttpRequest, company_id: int) -> HttpResponse:
         return redirect("company:list")
 
     context: dict[str, Any] = {"company": company}
-
-    # Always render full template
     return render(request, "company/company_delete.html", context)
 
 
 @beartype
 @login_required
 def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
-    """View for managing company members."""
-    company = get_object_or_404(Company, id=company_id)
+    """View for managing company members.
 
-    # Check if user has permission to manage members
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+
+    Returns:
+        HttpResponse with the rendered member management page.
+    """
+    company = get_object_or_404(Company, id=company_id)
     can_manage = False
     if request.user.is_superuser:
         can_manage = True
@@ -287,10 +305,7 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
         messages.error(request, "You don't have permission to manage members.")
         return redirect("company:detail", company_id=company.id)
 
-    # Get all members
     members = CompanyMembership.objects.filter(company=company).select_related("user")
-
-    # Initialize forms
     add_user_form = AddUserToCompanyForm()
 
     context: dict[str, Any] = {
@@ -299,8 +314,6 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
         "add_user_form": add_user_form,
         "can_edit": can_manage,
     }
-
-    # Always render full template
     return render(request, "company/company_members.html", context)
 
 
@@ -308,10 +321,16 @@ def manage_members(request: HttpRequest, company_id: int) -> HttpResponse:
 @login_required
 @require_http_methods(["POST"])
 def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
-    """View for adding a member to a company."""
-    company = get_object_or_404(Company, id=company_id)
+    """View for adding a member to a company.
 
-    # Check permissions
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+
+    Returns:
+        HttpResponse or JsonResponse with the result.
+    """
+    company = get_object_or_404(Company, id=company_id)
     can_manage = False
     if request.user.is_superuser:
         can_manage = True
@@ -332,7 +351,6 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
             status=403,
         )
 
-    # Process form
     form = AddUserToCompanyForm(request.POST)
     if form.is_valid():
         user = form.cleaned_data["user"]
@@ -341,7 +359,6 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
         position = form.cleaned_data["position"]
         is_primary = form.cleaned_data["is_primary"]
 
-        # Check if user is already a member
         if CompanyMembership.objects.filter(company=company, user=user).exists():
             return JsonResponse(
                 {
@@ -351,8 +368,7 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
                 status=400,
             )
 
-        # Create membership
-        membership = CompanyMembership.objects.create(
+        CompanyMembership.objects.create(
             company=company,
             user=user,
             role=role,
@@ -361,7 +377,6 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
             is_primary=is_primary,
         )
 
-        # Return updated member list
         members = CompanyMembership.objects.filter(company=company).select_related(
             "user",
         )
@@ -374,7 +389,6 @@ def add_member(request: HttpRequest, company_id: int) -> HttpResponse:
             },
             request=request,
         )
-
         return HttpResponse(html)
 
     return JsonResponse({"status": "error", "errors": form.errors}, status=400)
@@ -388,11 +402,18 @@ def remove_member(
     company_id: int,
     member_id: int,
 ) -> HttpResponse:
-    """View for removing a member from a company."""
+    """View for removing a member from a company.
+
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+        member_id: The ID of the member to remove.
+
+    Returns:
+        HttpResponse or JsonResponse with the result.
+    """
     company = get_object_or_404(Company, id=company_id)
     membership = get_object_or_404(CompanyMembership, id=member_id, company=company)
-
-    # Check permissions
     can_manage = False
     if request.user.is_superuser:
         can_manage = True
@@ -402,8 +423,6 @@ def remove_member(
                 company=company,
                 user=request.user,
             )
-
-            # Only owner and admin can remove members
             if user_role.role in {"owner", COMPANY_ROLE_ADMIN}:
                 can_manage = True
         except CompanyMembership.DoesNotExist:
@@ -415,7 +434,6 @@ def remove_member(
             status=403,
         )
 
-    # Can't remove the owner
     if membership.role == "owner" and not request.user.is_superuser:
         return JsonResponse(
             {
@@ -425,10 +443,7 @@ def remove_member(
             status=400,
         )
 
-    # Remove membership
     membership.delete()
-
-    # Return updated member list
     members = CompanyMembership.objects.filter(company=company).select_related("user")
     html = render_to_string(
         "company/partials/member_list.html",
@@ -439,7 +454,6 @@ def remove_member(
         },
         request=request,
     )
-
     return HttpResponse(html)
 
 
@@ -450,11 +464,18 @@ def update_member_role(
     company_id: int,
     member_id: int,
 ) -> HttpResponse:
-    """View for updating a member's role in a company."""
+    """View for updating a member's role in a company.
+
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+        member_id: The ID of the member to update.
+
+    Returns:
+        HttpResponse or JsonResponse with the result.
+    """
     company = get_object_or_404(Company, id=company_id)
     membership = get_object_or_404(CompanyMembership, id=member_id, company=company)
-
-    # Check permissions
     can_manage = False
     if request.user.is_superuser:
         can_manage = True
@@ -464,7 +485,6 @@ def update_member_role(
                 company=company,
                 user=request.user,
             )
-            # Only owner and admin can update roles
             if user_membership.role in {"owner", COMPANY_ROLE_ADMIN}:
                 can_manage = True
         except CompanyMembership.DoesNotExist:
@@ -484,23 +504,27 @@ def update_member_role(
         return JsonResponse({"status": "error", "errors": form.errors}, status=400)
 
     form = CompanyMembershipForm(instance=membership)
-
     context: dict[str, Any] = {
         "form": form,
         "membership": membership,
         "company": company,
     }
-
     return render(request, "company/partials/member_role_form.html", context)
 
 
 @beartype
 @login_required
 def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
-    """View for uploading a document to a company."""
-    company = get_object_or_404(Company, id=company_id)
+    """View for uploading a document to a company.
 
-    # Check permissions
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+
+    Returns:
+        HttpResponse with the rendered document upload form or redirect.
+    """
+    company = get_object_or_404(Company, id=company_id)
     can_edit = False
     if request.user.is_superuser:
         can_edit = True
@@ -525,7 +549,6 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
             document.company = company
             document.uploaded_by = request.user
             document.save()
-
             messages.success(
                 request,
                 f"Document '{document.name}' uploaded successfully!",
@@ -538,8 +561,6 @@ def upload_document(request: HttpRequest, company_id: int) -> HttpResponse:
         "form": form,
         "company": company,
     }
-
-    # Always render full template
     return render(request, "company/document_form.html", context)
 
 
@@ -550,11 +571,18 @@ def delete_document(
     company_id: int,
     document_id: int,
 ) -> HttpResponse:
-    """View for deleting a document from a company."""
+    """View for deleting a document from a company.
+
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+        document_id: The ID of the document to delete.
+
+    Returns:
+        HttpResponse with the rendered document delete form or redirect.
+    """
     company = get_object_or_404(Company, id=company_id)
     document = get_object_or_404(CompanyDocument, id=document_id, company=company)
-
-    # Check permissions
     can_edit = False
     if request.user.is_superuser:
         can_edit = True
@@ -584,15 +612,21 @@ def delete_document(
         "document": document,
         "company": company,
     }
-
-    # Always render full template
     return render(request, "company/document_delete.html", context)
 
 
 @beartype
 @login_required
-def export_company(request, company_id: int) -> HttpResponse:
-    """Export a single company as Protocol Buffer binary data."""
+def export_company(request: HttpRequest, company_id: int) -> HttpResponse:
+    """Export a single company as Protocol Buffer binary data.
+
+    Args:
+        request: The HTTP request object.
+        company_id: The ID of the company.
+
+    Returns:
+        HttpResponse with the exported data or redirect.
+    """
     if request.user.is_superuser:
         company = get_object_or_404(Company, id=company_id)
     else:
@@ -613,8 +647,15 @@ def export_company(request, company_id: int) -> HttpResponse:
 
 @beartype
 @login_required
-def export_all_companies(request) -> HttpResponse:
-    """Export all companies as a Protocol Buffer collection."""
+def export_all_companies(request: HttpRequest) -> HttpResponse:
+    """Export all companies as a Protocol Buffer collection.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse with the exported data or redirect.
+    """
     if request.user.is_superuser:
         companies = list(Company.objects.all())
     else:
@@ -632,8 +673,15 @@ def export_all_companies(request) -> HttpResponse:
 @beartype
 @login_required
 @require_http_methods(["GET", "POST"])
-def import_company(request) -> HttpResponse:
-    """Import a company from Protocol Buffer binary data."""
+def import_company(request: HttpRequest) -> HttpResponse:
+    """Import a company from Protocol Buffer binary data.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse with the import form or redirect.
+    """
     if request.method == "POST":
         if "file" not in request.FILES:
             messages.error(request, "No file was provided.")
@@ -657,7 +705,6 @@ def import_company(request) -> HttpResponse:
             logger.exception("Error importing company: %s", str(e))
             messages.error(request, "An error occurred while importing the company.")
             return redirect("company:import_company")
-    # GET request - show import form
     return render(
         request,
         "company/import_company.html",

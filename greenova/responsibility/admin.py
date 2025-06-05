@@ -1,9 +1,22 @@
+"""Admin configuration for the Responsibility app.
+
+This module customizes the Django admin interface for the Responsibility model,
+including syncing from core roles and enforcing referential integrity.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+
+from typing import Any, Optional
+
+from beartype import beartype
 from core.utils.roles import get_responsibility_choices
 from django.contrib import admin, messages
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import path, reverse
 
 from .models import Responsibility
+from .permissions import user_can_view_responsibility
 
 
 @admin.register(Responsibility)
@@ -20,40 +33,72 @@ class ResponsibilityAdmin(admin.ModelAdmin):
         }),
     )
 
-    def get_readonly_fields(self, request, obj=None):
-        """Make name field readonly after creation to maintain referential integrity."""
-        if obj:  # If editing existing object
+    @beartype
+    def get_readonly_fields(
+        self, request: HttpRequest, obj: Optional[Responsibility] = None
+    ) -> tuple[str, ...]:
+        """Make name field readonly after creation to maintain referential integrity.
+
+        Args:
+            request: The HTTP request object.
+            obj: The Responsibility instance (optional).
+
+        Returns:
+            A tuple of readonly field names.
+        """
+        if obj:
             return ("name",)
         return ()
 
-    def has_delete_permission(self, request, obj=None) -> bool:
-        """Prevent deletion of responsibility values to maintain referential integrity."""
-        # Only allow deletion if the responsibility is not used by any obligations
+    @beartype
+    def has_delete_permission(
+        self, request: HttpRequest, obj: Optional[Responsibility] = None
+    ) -> bool:
+        """Prevent deletion of responsibility values to maintain referential integrity.
+
+        Args:
+            request: The HTTP request object.
+            obj: The Responsibility instance (optional).
+
+        Returns:
+            True if deletion is allowed, False otherwise.
+        """
         if obj:
-            # Check if this responsibility is being used by any obligations
             from obligations.models import Obligation
             if Obligation.objects.filter(responsibility=obj.name).exists():
                 return False
         return True
 
-    def get_urls(self):
+    @beartype
+    def get_urls(self) -> list[Any]:
+        """Get custom admin URLs for ResponsibilityAdmin.
+
+        Returns:
+            A list of URL patterns.
+        """
         urls = super().get_urls()
         custom_urls = [
             path(
                 "sync-from-roles/",
                 self.sync_from_roles,
-                name="responsibility_sync_from_roles"),
+                name="responsibility_sync_from_roles",
+            ),
         ]
         return custom_urls + urls
 
-    def sync_from_roles(self, request):
-        """Sync responsibility values from core.utils.roles."""
+    @beartype
+    def sync_from_roles(self, request: HttpRequest) -> HttpResponseRedirect:
+        """Sync responsibility values from core.utils.roles.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            HttpResponseRedirect to the responsibility changelist.
+        """
         try:
-            # Get all responsibility choices from roles.py
             choices = get_responsibility_choices()
             count = 0
-
-            # Create Responsibility objects for each choice that doesn't exist
             for _value, display_name in choices:
                 if not Responsibility.objects.filter(name=display_name).exists():
                     Responsibility.objects.create(
@@ -61,7 +106,6 @@ class ResponsibilityAdmin(admin.ModelAdmin):
                         description=f"Auto-generated from roles system: {display_name}",
                     )
                     count += 1
-
             self.message_user(
                 request,
                 f"Successfully synced {count} new responsibilities from roles configuration.",
@@ -73,6 +117,6 @@ class ResponsibilityAdmin(admin.ModelAdmin):
                 f"Error syncing responsibilities: {e!s}",
                 messages.ERROR,
             )
-
         return HttpResponseRedirect(
-            reverse("admin:responsibility_responsibility_changelist"))
+            reverse("admin:responsibility_responsibility_changelist")
+        )

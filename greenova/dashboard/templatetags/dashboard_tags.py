@@ -6,6 +6,7 @@
 This module provides template tags and filters that can be used in Django templates.
 """
 from typing import Any
+from beartype import beartype
 
 from django import template
 
@@ -13,6 +14,7 @@ register = template.Library()
 
 
 @register.filter(name="display_name")
+@beartype
 def display_name(user: Any) -> str:
     """Return the best display name for a user.
 
@@ -31,6 +33,7 @@ def display_name(user: Any) -> str:
 
 
 @register.filter(name="format_date")
+@beartype
 def format_date(date_value: Any, format_string: str = "%d %b %Y") -> str:
     """Format a date with a specified format string.
 
@@ -51,6 +54,7 @@ def format_date(date_value: Any, format_string: str = "%d %b %Y") -> str:
 
 
 @register.filter(name="sum_field")
+@beartype
 def sum_field(queryset_or_list: Any, field_name: str) -> int:
     """Sum a specific field across a list or queryset.
 
@@ -78,3 +82,24 @@ def sum_field(queryset_or_list: Any, field_name: str) -> int:
             continue
 
     return total
+
+
+@register.simple_tag
+@beartype
+def get_unread_notifications(unread_notifications: int | None = None) -> int:
+    """Return the count of unread notifications or 0."""
+    return unread_notifications or 0
+
+
+@register.simple_tag
+@beartype
+def get_pending_tasks(pending_tasks: int | None = None) -> int:
+    """Return the count of pending tasks or 0."""
+    return pending_tasks or 0
+
+
+@register.simple_tag
+@beartype
+def get_dashboard_alerts(dashboard_alerts: list[Any] | None = None) -> list[Any]:
+    """Return the dashboard alerts list or empty list."""
+    return dashboard_alerts or []

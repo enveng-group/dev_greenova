@@ -17,6 +17,7 @@ import warnings
 from pathlib import Path
 from shutil import which
 from typing import Any, TypedDict
+from beartype import beartype
 
 # Handle optional dependencies gracefully
 try:
@@ -334,6 +335,8 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
     "silk.middleware.SilkyMiddleware",
+    "core.middleware.ProjectSelectionMiddleware",
+    "users.middleware.UserProfileEnforcementMiddleware",
 ]
 
 # Authentication settings
@@ -520,6 +523,7 @@ if not os.path.exists(LOGS_DIR):
 class SuppressChromeDevtools404(logging.Filter):
     """Custom logging filter to suppress 404 warnings for chrome.devtools.json requests."""
 
+    @beartype
     def filter(self, record: logging.LogRecord) -> bool:
         """Determine if the log record should be logged.
 

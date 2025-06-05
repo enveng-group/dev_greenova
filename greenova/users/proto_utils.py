@@ -1,13 +1,28 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""Protocol buffer utilities for the users app."""
+"""Protocol buffer utilities for the users app.
+
+This module provides serialization and deserialization helpers for converting
+between Django User models and Protocol Buffer messages in the users app.
+
+Features:
+    - Safe import and fallback stubs for protobufs
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Serialization/deserialization helpers for User and UserCollection
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
 
 import logging
+from typing import Any, List, Optional
 
 from beartype import beartype
 
 from .models import User
+from .types import UserProfileDict, UserPermissionsDict, SessionDataDict
 
 logger = logging.getLogger(__name__)
 
@@ -18,19 +33,47 @@ except ImportError:
     logger.warning("users_pb2 not found. Ensure .proto files are compiled.")
 
     class UserProto:
+        """Stub UserProto for missing protobufs."""
+
+        @beartype
         def SerializeToString(self) -> bytes:
+            """Serialize the dummy user proto to bytes.
+
+            Returns:
+                Empty bytes object.
+            """
             return b""
 
-        def ParseFromString(self, data) -> None:
+        @beartype
+        def ParseFromString(self, data: bytes) -> None:
+            """Parse the dummy user proto from bytes.
+
+            Args:
+                data: Bytes to parse (ignored).
+            """
             pass
 
     class UserCollection:
-        users = []
+        """Stub UserCollection for missing protobufs."""
 
+        users: list[Any] = []
+
+        @beartype
         def SerializeToString(self) -> bytes:
+            """Serialize the dummy user collection to bytes.
+
+            Returns:
+                Empty bytes object.
+            """
             return b""
 
-        def ParseFromString(self, data) -> None:
+        @beartype
+        def ParseFromString(self, data: bytes) -> None:
+            """Parse the dummy user collection from bytes.
+
+            Args:
+                data: Bytes to parse (ignored).
+            """
             pass
 
     users_pb2 = type(
@@ -44,7 +87,18 @@ except ImportError:
 
 
 @beartype
-def serialize_user(user: User) -> bytes | None:
+def serialize_user(user: User) -> Optional[bytes]:
+    """Serialize a User instance to a Protocol Buffer message.
+
+    Args:
+        user: The User instance to serialize.
+
+    Returns:
+        Serialized protocol buffer data as bytes, or None if serialization failed.
+
+    Raises:
+        Exception: For any serialization error.
+    """
     try:
         proto = user.to_pb()  # type: ignore[attr-defined]
         return proto.SerializeToString()
@@ -54,7 +108,18 @@ def serialize_user(user: User) -> bytes | None:
 
 
 @beartype
-def deserialize_user(data: bytes) -> User | None:
+def deserialize_user(data: bytes) -> Optional[User]:
+    """Deserialize Protocol Buffer data to a User instance.
+
+    Args:
+        data: Serialized protocol buffer data.
+
+    Returns:
+        User instance, or None if deserialization failed.
+
+    Raises:
+        Exception: For any deserialization error.
+    """
     try:
         proto = users_pb2.UserProto()
         proto.ParseFromString(data)
@@ -65,7 +130,18 @@ def deserialize_user(data: bytes) -> User | None:
 
 
 @beartype
-def serialize_users(users: list[User]) -> bytes | None:
+def serialize_users(users: List[User]) -> Optional[bytes]:
+    """Serialize a list of User instances to a Protocol Buffer collection.
+
+    Args:
+        users: List of User instances to serialize.
+
+    Returns:
+        Serialized protocol buffer data as bytes, or None if serialization failed.
+
+    Raises:
+        Exception: For any serialization error.
+    """
     try:
         collection = users_pb2.UserCollection()
         for user in users:
@@ -78,11 +154,22 @@ def serialize_users(users: list[User]) -> bytes | None:
 
 
 @beartype
-def deserialize_users(data: bytes) -> list[User]:
+def deserialize_users(data: bytes) -> List[User]:
+    """Deserialize Protocol Buffer data to a list of User instances.
+
+    Args:
+        data: Serialized protocol buffer data.
+
+    Returns:
+        List of User instances, or empty list if deserialization failed.
+
+    Raises:
+        Exception: For any deserialization error.
+    """
     try:
         collection = users_pb2.UserCollection()
         collection.ParseFromString(data)
-        users = []
+        users: List[User] = []
         for proto in getattr(collection, "users", []):
             user = User().from_pb(proto)  # type: ignore[attr-defined]
             if user:

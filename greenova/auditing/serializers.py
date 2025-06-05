@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 
 from .commons import BaseProtoSerializer
 from .models import AuditEvent
+from .types import AuditEventSerializerProto, AuditEventCollectionSerializerProto
 
 try:
     from .proto_utils import (

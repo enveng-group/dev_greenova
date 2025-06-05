@@ -28,6 +28,8 @@ that they belong to.
 from django.http import HttpRequest, HttpResponse
 from .models import CompanyMembership
 from django.core.exceptions import PermissionDenied
+from .permissions import user_can_view_company
+from beartype import beartype
 
 
 class CompanyAccessMixin:
@@ -36,50 +38,19 @@ class CompanyAccessMixin:
     This mixin handles both direct company membership and active_company.
     """
 
+    @beartype
     def dispatch(
         self, request: HttpRequest, *args: tuple, **kwargs: dict,
     ) -> HttpResponse:
-        """Check if user has permission to access this view.
-
-        Args:
-            request: The HTTP request object.
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-
-        Returns:
-            The result of the parent dispatch method if access is granted.
-
-        Raises:
-            PermissionDenied: If the user does not have access to the company.
-
-        """
-        # Superusers always have access
-        if request.user.is_superuser:
-            return super().dispatch(request, *args, **kwargs)
-
-        # First check if the user is a member of any company (for list views)
-        if hasattr(request.user, "companies") and request.user.companies.exists():
-            return super().dispatch(request, *args, **kwargs)
-
-        # Otherwise check specific company access (for detail/edit views)
         company_id = kwargs.get("company_id")
         if company_id:
-            try:
-                # Check if user has direct membership
-                CompanyMembership.objects.get(company_id=company_id, user=request.user)
+            company = CompanyMembership.objects.filter(
+                company_id=company_id, user=request.user
+            ).first()
+            if company and user_can_view_company(request.user, company):
                 return super().dispatch(request, *args, **kwargs)
-            except CompanyMembership.DoesNotExist:
-                pass
-
-        # Finally, check active company from session
+        # Fallback: check active company
         company = getattr(request, "active_company", None)
-        if (
-            company
-            and hasattr(company, "users")
-            and company.users.filter(id=request.user.id).exists()
-        ):
+        if company and user_can_view_company(request.user, company):
             return super().dispatch(request, *args, **kwargs)
-
-        # No access granted
-        msg = "You do not have access to this company."
-        raise PermissionDenied(msg)
+        raise PermissionDenied("You do not have access to this company.")

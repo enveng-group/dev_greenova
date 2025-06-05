@@ -1,0 +1,24 @@
+from django.test import TestCase
+from django.urls import reverse
+from .models import User
+
+class UserManagementTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+
+    def test_user_profile_update(self):
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.post(reverse('profile_update'), {'username': 'newusername'})
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'newusername')
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_permissions(self):
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('restricted_view'))
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_interaction(self):
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('user_interaction'))
+        self.assertContains(response, 'Welcome, testuser!')

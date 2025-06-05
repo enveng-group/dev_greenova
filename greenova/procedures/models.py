@@ -1,3 +1,22 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Procedure models for the procedures app.
+
+This module provides the Procedure model for managing environmental procedures
+and workflows, with strict type annotations, runtime type checking, and
+centralized constants for statuses and compliance.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Centralized constants for statuses and compliance
+    - Methods for status management and review checks
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 import logging
 from typing import ClassVar
 
@@ -5,8 +24,17 @@ from beartype import beartype
 from django.db import models
 from django.utils import timezone
 from projects.models import Project
+from .validators import validate_document_id
 
 from .constants import COMPLIANCE_STATUSES, STATUS_CHOICES
+from .types import (
+    ProcedureStepDict,
+    ProcedureDefinitionDict,
+    ProcedureResultDict,
+    ProcedureManager,
+    StepEvaluator,
+    ResultProcessor,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +66,6 @@ class Procedure(models.Model):
         mark_as_completed(): Marks the procedure as completed with the current timestamp.
         set_status(status: str): Updates the procedure status.
         is_due_for_review(): Checks if the procedure is due for review.
-
     """
 
     # Use centralized constants
@@ -51,6 +78,7 @@ class Procedure(models.Model):
         max_length=50,
         unique=True,
         help_text="Unique procedure identifier (e.g., ENV-PROC-001)",
+        validators=[validate_document_id],
     )
     project: models.ForeignKey = models.ForeignKey(
         Project,
@@ -107,6 +135,11 @@ class Procedure(models.Model):
 
     @beartype
     def __str__(self) -> str:
+        """Return string representation of the procedure.
+
+        Returns:
+            str: The document ID and name of the procedure.
+        """
         return f"{self.document_id} - {self.name}"
 
     @beartype
@@ -124,7 +157,6 @@ class Procedure(models.Model):
 
         Raises:
             ValueError: If the provided status is invalid.
-
         """
         if status in dict(self.STATUS_CHOICES):
             self.status = status
@@ -142,7 +174,6 @@ class Procedure(models.Model):
 
         Returns:
             bool: True if the procedure is due for review, False otherwise.
-
         """
         if not self.review_date:
             return False

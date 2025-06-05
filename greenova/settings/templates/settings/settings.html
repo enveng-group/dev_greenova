@@ -5,6 +5,26 @@
   <h1>Settings</h1>
   <section aria-labelledby="settings-section-heading">
     <h2 id="settings-section-heading">Site or User Settings</h2>
+    <div class="settings-summary-bar">
+      <span class="theme-preference">
+        Theme: <strong>{{ theme_preference|capfirst }}</strong>
+      </span>
+      <span class="system-settings">
+        Site: <strong>{{ system_settings.site_name }}</strong> (v{{ system_settings.site_version }})
+      </span>
+      <span class="feature-flags">
+        Features:
+        {% for flag, enabled in system_settings.feature_flags.items %}
+          <span class="feature-flag">{{ flag }}: <strong>{{ enabled|yesno:"On,Off" }}</strong></span>{% if not forloop.last %}, {% endif %}
+        {% empty %}
+          <span>No feature flags</span>
+        {% endfor %}
+      </span>
+    </div>
+    <div class="user-settings">
+      <h3>User Settings</h3>
+      <pre>{{ user_settings|default:"No user settings found."|safe }}</pre>
+    </div>
     <p>This is a placeholder for site or user settings. You can extend this page with forms and controls for managing application settings as needed.</p>
   </section>
 </main>

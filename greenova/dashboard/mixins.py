@@ -18,6 +18,7 @@ from django.db.models import Count, QuerySet
 from django.utils import timezone
 from obligations.models import Obligation  # Moved to top-level import
 from projects.models import Project
+from dashboard.permissions import user_can_view_dashboard
 
 logger = logging.getLogger(__name__)
 

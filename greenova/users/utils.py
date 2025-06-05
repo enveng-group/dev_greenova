@@ -18,6 +18,16 @@ along with Greenova. If not, see <https://www.gnu.org/licenses/>.
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
 
+"""
+utils.py: General-purpose utility functions for the users app.
+
+This module is intended for reusable helper functions that improve code
+maintainability and clarity. All functions must be type-annotated and use the
+@beartype decorator. Follow project standards for documentation and imports.
+
+Existing utility functions should be migrated here as needed.
+"""
+
 """Utility functions for user-related operations.
 
 This module provides helper functions to calculate and manage
@@ -29,8 +39,10 @@ Module namespace: users.utils
 from company.models import CompanyMembership
 from obligations.models import Obligation
 from projects.models import Project
+from beartype import beartype
 
 
+@beartype
 def calculate_overdue_obligations(user_id: int) -> list[Obligation]:
     """Calculate overdue obligations for a given user."""
     company_memberships = CompanyMembership.objects.filter(user_id=user_id)

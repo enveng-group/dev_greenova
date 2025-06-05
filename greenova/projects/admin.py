@@ -1,11 +1,22 @@
-from logging import getLogger
-from typing import TypeVar
+"""Admin configuration for the projects app.
 
+This module provides admin classes for the Project and ProjectMembership models,
+including permission checks, inline admin, and logging.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+
+from logging import getLogger
+from typing import TypeVar, Any
+
+from beartype import beartype
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest
 
 from .models import Project, ProjectMembership
+from .permissions import user_can_view_project
 
 logger = getLogger(__name__)
 
@@ -13,22 +24,34 @@ T = TypeVar("T")
 
 
 class BaseModelAdmin[T](admin.ModelAdmin):
-    """Base admin class with type safety."""
+    """Base admin class with type safety and permission checks."""
 
+    @beartype
     def dispatch(
         self, request: HttpRequest, object_id: str, from_field: None = None,
     ) -> T | None:
+        """Get object with type safety and permission checking.
+
+        Args:
+            request: The HTTP request object.
+            object_id: The object's primary key or unique identifier.
+            from_field: The field to use for lookup (optional).
+
+        Returns:
+            The model instance if found and permitted, otherwise None.
+
+        Raises:
+            PermissionDenied: If the user does not have permission to view the object.
+        """
         obj = super().get_object(request, object_id, from_field)
-        if obj and not self.has_view_or_change_permission(request, obj):
+        if obj and not user_can_view_project(request.user, obj):
             logger.warning(
                 "Permission denied for user %s on object %s",
                 request.user,
                 object_id,
             )
             msg = "You do not have permission to access this object."
-            raise PermissionDenied(
-                msg,
-            )
+            raise PermissionDenied(msg)
         return obj
 
 
@@ -51,8 +74,16 @@ class ProjectAdmin(BaseModelAdmin[Project]):
     date_hierarchy = "created_at"
 
     @admin.display(description="Members")
+    @beartype
     def member_count(self, obj: Project) -> int:
-        """Get number of project members."""
+        """Get number of project members.
+
+        Args:
+            obj: The Project instance.
+
+        Returns:
+            The number of members in the project.
+        """
         return obj.get_member_count()
 
 
@@ -71,36 +102,81 @@ class ProjectMembershipAdmin(BaseModelAdmin[ProjectMembership]):
         description="Project",
         ordering="project__name",
     )
+    @beartype
     def get_project(self, obj: ProjectMembership) -> str:
-        """Get project name."""
+        """Get project name.
+
+        Args:
+            obj: The ProjectMembership instance.
+
+        Returns:
+            The name of the project.
+        """
         return str(obj.project.name)
 
     @admin.display(
         description="User",
         ordering="user__username",
     )
+    @beartype
     def get_user(self, obj: ProjectMembership) -> str:
-        """Get username."""
+        """Get username.
+
+        Args:
+            obj: The ProjectMembership instance.
+
+        Returns:
+            The username of the user.
+        """
         return str(obj.user.username)
 
     @admin.display(
         description="Role",
         ordering="role",
     )
+    @beartype
     def get_role(self, obj: ProjectMembership) -> str:
-        """Get role."""
+        """Get role.
+
+        Args:
+            obj: The ProjectMembership instance.
+
+        Returns:
+            The role of the user in the project.
+        """
         return str(obj.role)
 
     @admin.display(
         description="Created",
         ordering="created_at",
     )
+    @beartype
     def get_created(self, obj: ProjectMembership) -> str:
-        """Get creation date."""
+        """Get creation date.
+
+        Args:
+            obj: The ProjectMembership instance.
+
+        Returns:
+            The creation date as a formatted string.
+        """
         return obj.created_at.strftime("%Y-%m-%d %H:%M")
 
-    def save_model(self, request, obj, form, change) -> None:
-        """Log changes when saving model."""
+    @beartype
+    def save_model(
+        self, request: HttpRequest, obj: ProjectMembership, form: Any, change: bool
+    ) -> None:
+        """Log changes when saving model.
+
+        Args:
+            request: The HTTP request object.
+            obj: The ProjectMembership instance being saved.
+            form: The model form instance.
+            change: Boolean indicating if this is an update.
+
+        Returns:
+            None.
+        """
         action = "updated" if change else "created"
         logger.info(
             "ProjectMembership %s %s by %s",

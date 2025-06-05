@@ -1,0 +1,6 @@
+{
+	"id": "fish",
+	"version": "1.0.0",
+	"name": "Friendly Interactive Shell (fish)",
+	"description": "Installs the Fish Shell using Alpine package manager."
+}

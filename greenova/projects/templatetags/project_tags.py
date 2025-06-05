@@ -1,6 +1,7 @@
 import logging
 from typing import Any
 
+from beartype import beartype
 from django import template
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,18 +16,21 @@ register = template.Library()
 
 
 @register.inclusion_tag("obligations/components/tables/obligation_list.html")
+@beartype
 def obligation_table(obligations: QuerySet[Obligation]) -> dict[str, Any]:
     """Render obligation list table."""
     return {"obligations": obligations}
 
 
 @register.filter
+@beartype
 def get_item(dictionary: dict[str, Any], key: Any) -> Any:
     """Get item from dictionary by key."""
     return dictionary.get(key)
 
 
 @register.filter
+@beartype
 def get_user_role(project: Project, user: AbstractUser) -> str:
     """Get user's role in project.
 
@@ -46,12 +50,14 @@ def get_user_role(project: Project, user: AbstractUser) -> str:
 
 
 @register.filter
+@beartype
 def format_role(role: str) -> str:
     """Format role name for display."""
     return role.replace("_", " ").title()
 
 
 @register.inclusion_tag("projects/components/role_badge.html")
+@beartype
 def role_badge(role: str) -> dict[str, str]:
     """Render role badge."""
     colors = {
@@ -67,7 +73,8 @@ def role_badge(role: str) -> dict[str, str]:
 
 
 @register.filter
-def transform_queryset(queryset, method_name):
+@beartype
+def transform_queryset(queryset: Any, method_name: str) -> list[Any]:
     """Call a method on each object in the queryset and return a list of results."""
     if method_name == "to_dict":
         return [{"id": str(obj.id), "name": obj.name} for obj in queryset]
@@ -80,12 +87,14 @@ def transform_queryset(queryset, method_name):
 
 
 @register.filter
-def to_list(value):
+@beartype
+def to_list(value: Any) -> list[Any]:
     """Convert an iterable to a list."""
     return list(value)
 
 
 @register.simple_tag
+@beartype
 def project_status_badge(status: str) -> str:
     """Generate a status badge for projects."""
     status_classes = {
@@ -105,6 +114,7 @@ def project_status_badge(status: str) -> str:
 
 
 @register.simple_tag
+@beartype
 def project_badge(project_type: str, display_text: str | None = None) -> str:
     """Generate a badge for project types with icon and text."""
     try:
@@ -121,6 +131,7 @@ def project_badge(project_type: str, display_text: str | None = None) -> str:
     )
 
 
+@beartype
 def get_badge_config(project_type: str) -> dict[str, str]:
     """Get badge configuration for a project type."""
     badge_configs = {
@@ -144,8 +155,51 @@ def get_badge_config(project_type: str) -> dict[str, str]:
 
 
 @register.inclusion_tag("projects/partials/project_list.html")
+@beartype
 def project_list(projects: list[Any], max_items: int = 5) -> dict[str, Any]:
     """Render a list of projects."""
     return {
         "projects": projects[:max_items],
     }
+
+
+@register.simple_tag
+@beartype
+def get_site_name(site_name: str | None = None) -> str:
+    """Return the site name or default."""
+    return site_name or "Greenova"
+
+
+@register.simple_tag
+@beartype
+def get_site_version(site_version: str | None = None) -> str:
+    """Return the site version or default."""
+    return site_version or "1.0.0"
+
+
+@register.filter
+@beartype
+def feature_enabled(feature_flags: dict[str, Any], feature: str) -> bool:
+    """Check if a feature flag is enabled."""
+    return feature_flags.get(feature, False)
+
+
+@register.simple_tag
+@beartype
+def get_current_project(current_project: Any = None) -> Any:
+    """Return the current project or None."""
+    return current_project
+
+
+@register.simple_tag
+@beartype
+def get_user_projects(user_projects: Any = None) -> Any:
+    """Return the queryset of user projects or empty queryset."""
+    return user_projects or []
+
+
+@register.simple_tag
+@beartype
+def get_project_status_summary(project_status_summary: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Return the project status summary dict or empty dict."""
+    return project_status_summary or {}

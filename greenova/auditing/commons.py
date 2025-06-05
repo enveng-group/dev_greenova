@@ -8,6 +8,7 @@ This module centralizes reusable code to improve maintainability and reduce dupl
 from typing import Any
 
 from beartype import beartype
+from .types import AuditRecordDict, AuditEntryDict
 
 # Shared error messages for protobuf serialization/deserialization
 PROTOBUF_ERROR_MESSAGES = {

@@ -22,10 +22,13 @@ Author: Adrian Gallo <agallo@enveng-group.com.au>
 
 
 from django.urls import path
-from .views import ReportListView
+from .views import ReportListView, export_report, export_all_reports, import_report
 
 app_name = "reports"
 
 urlpatterns = [
     path("", ReportListView.as_view(), name="report_list"),
+    path("export/<int:report_id>/", export_report, name="export_report"),
+    path("export-all/", export_all_reports, name="export_all_reports"),
+    path("import/", import_report, name="import_report"),
 ]

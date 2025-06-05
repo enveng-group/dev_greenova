@@ -1,11 +1,28 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""Protocol buffer utilities for the projects app."""
+"""Protocol buffer utilities for the projects app.
+
+This module provides serialization and deserialization helpers for converting
+between Django Project models and Protocol Buffer messages in the projects app.
+
+Features:
+    - Safe import and fallback stubs for protobufs
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Serialization/deserialization helpers for Project and ProjectCollection
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
 
 import logging
+from typing import Any, List, Optional
+
+from beartype import beartype
 
 from .models import Project
+from .types import ProjectMetadataDict, ProjectMembershipDict, ProjectObligationDict
 
 logger = logging.getLogger(__name__)
 
@@ -16,19 +33,47 @@ except ImportError:
     logger.warning("projects_pb2 not found. Ensure .proto files are compiled.")
 
     class ProjectProto:
+        """Stub ProjectProto for missing protobufs."""
+
+        @beartype
         def SerializeToString(self) -> bytes:
+            """Serialize the dummy project proto to bytes.
+
+            Returns:
+                Empty bytes object.
+            """
             return b""
 
-        def ParseFromString(self, data) -> None:
+        @beartype
+        def ParseFromString(self, data: bytes) -> None:
+            """Parse the dummy project proto from bytes.
+
+            Args:
+                data: Bytes to parse (ignored).
+            """
             pass
 
     class ProjectCollection:
-        projects = []
+        """Stub ProjectCollection for missing protobufs."""
 
+        projects: list[Any] = []
+
+        @beartype
         def SerializeToString(self) -> bytes:
+            """Serialize the dummy project collection to bytes.
+
+            Returns:
+                Empty bytes object.
+            """
             return b""
 
-        def ParseFromString(self, data) -> None:
+        @beartype
+        def ParseFromString(self, data: bytes) -> None:
+            """Parse the dummy project collection from bytes.
+
+            Args:
+                data: Bytes to parse (ignored).
+            """
             pass
 
     projects_pb2 = type(
@@ -41,7 +86,19 @@ except ImportError:
     )
 
 
-def serialize_project(project: Project) -> bytes | None:
+@beartype
+def serialize_project(project: Project) -> Optional[bytes]:
+    """Serialize a Project instance to a Protocol Buffer message.
+
+    Args:
+        project: The Project instance to serialize.
+
+    Returns:
+        Serialized protocol buffer data as bytes, or None if serialization failed.
+
+    Raises:
+        Exception: For any serialization error.
+    """
     try:
         proto = project.to_pb()  # type: ignore[attr-defined]
         return proto.SerializeToString()
@@ -50,7 +107,19 @@ def serialize_project(project: Project) -> bytes | None:
         return None
 
 
-def deserialize_project(data: bytes) -> Project | None:
+@beartype
+def deserialize_project(data: bytes) -> Optional[Project]:
+    """Deserialize Protocol Buffer data to a Project instance.
+
+    Args:
+        data: Serialized protocol buffer data.
+
+    Returns:
+        Project instance, or None if deserialization failed.
+
+    Raises:
+        Exception: For any deserialization error.
+    """
     try:
         proto = projects_pb2.ProjectProto()
         proto.ParseFromString(data)
@@ -60,7 +129,19 @@ def deserialize_project(data: bytes) -> Project | None:
         return None
 
 
-def serialize_projects(projects: list[Project]) -> bytes | None:
+@beartype
+def serialize_projects(projects: List[Project]) -> Optional[bytes]:
+    """Serialize a list of Project instances to a Protocol Buffer collection.
+
+    Args:
+        projects: List of Project instances to serialize.
+
+    Returns:
+        Serialized protocol buffer data as bytes, or None if serialization failed.
+
+    Raises:
+        Exception: For any serialization error.
+    """
     try:
         collection = projects_pb2.ProjectCollection()
         for project in projects:
@@ -72,11 +153,23 @@ def serialize_projects(projects: list[Project]) -> bytes | None:
         return None
 
 
-def deserialize_projects(data: bytes) -> list[Project]:
+@beartype
+def deserialize_projects(data: bytes) -> List[Project]:
+    """Deserialize Protocol Buffer data to a list of Project instances.
+
+    Args:
+        data: Serialized protocol buffer data.
+
+    Returns:
+        List of Project instances, or empty list if deserialization failed.
+
+    Raises:
+        Exception: For any deserialization error.
+    """
     try:
         collection = projects_pb2.ProjectCollection()
         collection.ParseFromString(data)
-        projects = []
+        projects: List[Project] = []
         for proto in getattr(collection, "projects", []):
             project = Project().from_pb(proto)  # type: ignore[attr-defined]
             if project:

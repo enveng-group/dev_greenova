@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load partials %}
+{% load company_tags %}
 
 {% block title %}Companies{% endblock title %}
 
@@ -8,6 +9,12 @@
 <article>
   <header>
     <h1>Companies</h1>
+    {% if current_company %}
+      <div class="company-branding">
+        <img src="{% company_logo_url company_settings %}" alt="{{ company_brand_name company_settings }} logo" class="company-logo" />
+        <span class="company-brand-name">{{ company_brand_name company_settings }}</span>
+      </div>
+    {% endif %}
     {% if can_create %}
     <div class="header-actions">
       <a href="{% url 'company:create' %}" role="button" class="btn-primary">

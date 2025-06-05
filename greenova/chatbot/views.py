@@ -1,10 +1,29 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Views for chatbot management in the chatbot app.
+
+This module provides views for managing chatbot conversations, messages,
+and Protocol Buffer import/export, with strict type annotations and runtime
+type checking.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Views for conversation, message, and protobuf import/export
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 import json
 import logging
+from typing import Any
 
 from beartype import beartype
-from django.contrib import messages
+from django.contrib import messages as django_messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.html import escape
 from django.views.decorators.http import require_http_methods, require_POST
@@ -17,14 +36,28 @@ from .serializers import (
     ChatbotMessageProtoSerializer,
 )
 from .services import ChatbotService
+from .types import (
+    ChatMessageDict,
+    SessionStateDict,
+    MessageHandler,
+    SessionManager,
+    BotLogic,
+)
 
 logger = logging.getLogger(__name__)
 
 
 @login_required
 @beartype
-def chatbot_home(request) -> HttpResponse:
-    """Main chatbot interface showing conversation list and a selected conversation with object-level permission checks."""
+def chatbot_home(request: HttpRequest) -> HttpResponse:
+    """Main chatbot interface showing conversation list and a selected conversation with object-level permission checks.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered chatbot home page.
+    """
     user = request.user
     conversations = get_objects_for_user(
         user,
@@ -34,7 +67,7 @@ def chatbot_home(request) -> HttpResponse:
 
     active_conversation_id = request.GET.get("conversation_id")
     active_conversation = None
-    messages = []
+    messages: list[ChatMessage] = []
 
     if active_conversation_id:
         query = {"id": active_conversation_id, "user": user}
@@ -54,8 +87,15 @@ def chatbot_home(request) -> HttpResponse:
 
 @login_required
 @beartype
-def create_conversation(request) -> HttpResponse:
-    """Create a new conversation."""
+def create_conversation(request: HttpRequest) -> HttpResponse:
+    """Create a new conversation.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Redirect or rendered form.
+    """
     if request.method == "POST":
         form = ConversationForm(request.POST)
         if form.is_valid():
@@ -79,8 +119,16 @@ def create_conversation(request) -> HttpResponse:
 
 @login_required
 @beartype
-def conversation_detail(request, conversation_id: int) -> HttpResponse:
-    """View a specific conversation."""
+def conversation_detail(request: HttpRequest, conversation_id: int) -> HttpResponse:
+    """View a specific conversation.
+
+    Args:
+        request: The HTTP request object.
+        conversation_id: The ID of the conversation.
+
+    Returns:
+        HttpResponse: The rendered conversation detail page.
+    """
     query = {"id": conversation_id, "user": request.user}
     conversation = get_object_or_404(Conversation, **query)
     messages = ChatMessage.objects.filter(
@@ -100,8 +148,16 @@ def conversation_detail(request, conversation_id: int) -> HttpResponse:
 @login_required
 @require_POST
 @beartype
-def send_message(request, conversation_id: int) -> JsonResponse:
-    """Process a new message in a conversation."""
+def send_message(request: HttpRequest, conversation_id: int) -> JsonResponse:
+    """Process a new message in a conversation.
+
+    Args:
+        request: The HTTP request object.
+        conversation_id: The ID of the conversation.
+
+    Returns:
+        JsonResponse: The user and bot messages.
+    """
     query = {"id": conversation_id, "user": request.user}
     conversation = get_object_or_404(Conversation, **query)
 
@@ -144,8 +200,16 @@ def send_message(request, conversation_id: int) -> JsonResponse:
 
 @login_required
 @beartype
-def delete_conversation(request, conversation_id: int) -> HttpResponse:
-    """Delete a conversation."""
+def delete_conversation(request: HttpRequest, conversation_id: int) -> HttpResponse:
+    """Delete a conversation.
+
+    Args:
+        request: The HTTP request object.
+        conversation_id: The ID of the conversation.
+
+    Returns:
+        HttpResponse: Redirect or rendered confirmation page.
+    """
     query = {"id": conversation_id, "user": request.user}
     conversation = get_object_or_404(Conversation, **query)
 
@@ -162,8 +226,16 @@ def delete_conversation(request, conversation_id: int) -> HttpResponse:
 
 @login_required
 @beartype
-def export_chatbot_message(request, message_id: int) -> HttpResponse:
-    """Export a single chatbot message as Protocol Buffer binary data."""
+def export_chatbot_message(request: HttpRequest, message_id: int) -> HttpResponse:
+    """Export a single chatbot message as Protocol Buffer binary data.
+
+    Args:
+        request: The HTTP request object.
+        message_id: The ID of the chatbot message.
+
+    Returns:
+        HttpResponse: The exported protobuf binary data.
+    """
     message = get_object_or_404(
         ChatbotMessage,
         id=message_id,
@@ -172,7 +244,7 @@ def export_chatbot_message(request, message_id: int) -> HttpResponse:
     serializer = ChatbotMessageProtoSerializer(instance=message)
     data = serializer.data()
     if not data:
-        messages.error(request, "Failed to export chatbot message.")
+        django_messages.error(request, "Failed to export chatbot message.")
         return HttpResponse(status=400)
     response = HttpResponse(data, content_type="application/octet-stream")
     response["Content-Disposition"] = (
@@ -183,13 +255,20 @@ def export_chatbot_message(request, message_id: int) -> HttpResponse:
 
 @login_required
 @beartype
-def export_all_chatbot_messages(request) -> HttpResponse:
-    """Export all chatbot messages as a Protocol Buffer collection."""
+def export_all_chatbot_messages(request: HttpRequest) -> HttpResponse:
+    """Export all chatbot messages as a Protocol Buffer collection.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: The exported protobuf binary data.
+    """
     messages_qs = ChatbotMessage.objects.filter(conversation__user=request.user)
     serializer = ChatbotMessageCollectionProtoSerializer(instances=list(messages_qs))
     data = serializer.data()
     if not data:
-        messages.error(request, "Failed to export chatbot messages.")
+        django_messages.error(request, "Failed to export chatbot messages.")
         return HttpResponse(status=400)
     response = HttpResponse(data, content_type="application/octet-stream")
     response["Content-Disposition"] = 'attachment; filename="chatbot_messages.pb"'
@@ -199,18 +278,25 @@ def export_all_chatbot_messages(request) -> HttpResponse:
 @login_required
 @require_http_methods(["GET", "POST"])
 @beartype
-def import_chatbot_message(request) -> HttpResponse:
-    """Import a chatbot message from Protocol Buffer binary data."""
+def import_chatbot_message(request: HttpRequest) -> HttpResponse:
+    """Import a chatbot message from Protocol Buffer binary data.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Success or error response.
+    """
     if request.method == "POST":
         if "file" not in request.FILES:
-            messages.error(request, "No file was provided.")
+            django_messages.error(request, "No file was provided.")
             return HttpResponse(status=400)
         uploaded_file = request.FILES["file"]
         try:
             data = uploaded_file.read()
             serializer = ChatbotMessageProtoSerializer(data=data)
             if not serializer.is_valid():
-                messages.error(
+                django_messages.error(
                     request,
                     "Could not deserialize the file. Invalid format.",
                 )
@@ -218,10 +304,10 @@ def import_chatbot_message(request) -> HttpResponse:
             message = serializer.validated_data
             message.id = None  # Ensure a new record is created
             message.save()
-            messages.success(request, "Chatbot message imported successfully.")
+            django_messages.success(request, "Chatbot message imported successfully.")
             return HttpResponse(status=200)
         except (ValueError, OSError, AttributeError, TypeError):
-            messages.error(
+            django_messages.error(
                 request,
                 "An error occurred while importing the chatbot message.",
             )

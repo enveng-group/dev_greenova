@@ -115,4 +115,14 @@ No company affiliations.
        hx-target=".profile-container"
        hx-swap="innerHTML">Change Password</a>
   </div>
+  <div class="profile-section">
+    <h3>User Permissions</h3>
+    <ul>
+      {% for perm in get_user_permissions user_permissions %}
+        <li>{{ perm }}</li>
+      {% empty %}
+        <li>No permissions found.</li>
+      {% endfor %}
+    </ul>
+  </div>
 </section>

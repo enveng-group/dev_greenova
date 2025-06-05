@@ -39,7 +39,7 @@ Dashboard | Greenova
             aria-label="Notifications"
             aria-haspopup="true">
       <span class="icon-bell" aria-hidden="true"></span>
-      <span class="notification-badge">3</span>
+      <span class="notification-badge">{% get_unread_notifications unread_notifications %}</span>
     </button>
 
     <button class="navbar-action-item" aria-label="Help" aria-haspopup="true">
@@ -54,6 +54,22 @@ Dashboard | Greenova
 
 {% block content %}
   <div class="dashboard-layout">
+    <!-- Dashboard alerts/messages -->
+    {% with alerts=get_dashboard_alerts dashboard_alerts %}
+      {% if alerts %}
+        <div class="dashboard-alerts">
+          {% for alert in alerts %}
+            <div class="alert alert-warning" role="alert">{{ alert }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <!-- Pending tasks quick stat -->
+    <div class="dashboard-quick-stats">
+      <span class="quick-stat">
+        Pending Tasks: <strong>{% get_pending_tasks pending_tasks %}</strong>
+      </span>
+    </div>
     <!-- Include our new sidebar component -->
     {% include_partial "dashboard/components/sidebar.html" %}
 

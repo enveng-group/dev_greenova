@@ -23,6 +23,7 @@ from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
 from procedures.models import Procedure
 from projects.models import Project
+from dashboard.permissions import user_can_view_dashboard
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AbstractUser

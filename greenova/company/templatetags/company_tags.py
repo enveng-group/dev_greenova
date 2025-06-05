@@ -1,13 +1,23 @@
 from company.models import Company, CompanyMembership
 from django import template
 from django.utils.html import format_html
+from beartype import beartype
 
 register = template.Library()
 
 
 @register.filter
-def company_role(user, company):
-    """Return user's role in a company."""
+@beartype
+def company_role(user, company) -> str | None:
+    """Return user's role in a company.
+
+    Args:
+        user: The user object.
+        company: The company object or company id.
+
+    Returns:
+        The user's role in the company, or None if not found.
+    """
     try:
         if isinstance(company, int):
             membership = CompanyMembership.objects.get(user=user, company_id=company)
@@ -19,8 +29,16 @@ def company_role(user, company):
 
 
 @register.filter
-def company_role_badge(role):
-    """Return HTML badge for a company role."""
+@beartype
+def company_role_badge(role: str) -> str:
+    """Return HTML badge for a company role.
+
+    Args:
+        role: The role string.
+
+    Returns:
+        HTML string for the badge.
+    """
     badge_mapping = {
         "owner": '<mark role="status" class="info">Owner</mark>',
         "admin": '<mark role="status" class="info">Admin</mark>',
@@ -32,20 +50,19 @@ def company_role_badge(role):
 
     badge_html = badge_mapping.get(role, f'<mark role="status">{role}</mark>')
     return format_html(badge_html)
-    if role == "owner":
-        return format_html('<mark role="status" class="info">Owner</mark>')
-    if role == "admin":
-        return format_html('<mark role="status" class="info">Admin</mark>')
-    try:
-        membership = CompanyMembership.objects.get(user=user, is_primary=True)
-        return membership.company
-    except CompanyMembership.DoesNotExist:
-        return None
 
 
 @register.filter
-def company_type_label(company_type):
-    """Convert company_type code to display label."""
+@beartype
+def company_type_label(company_type: str) -> str:
+    """Convert company_type code to display label.
+
+    Args:
+        company_type: The company type code.
+
+    Returns:
+        The display label for the company type.
+    """
     for code, label in Company.COMPANY_TYPES:
         if code == company_type:
             return label
@@ -53,8 +70,16 @@ def company_type_label(company_type):
 
 
 @register.filter
-def industry_label(industry_code):
-    """Convert industry code to display label."""
+@beartype
+def industry_label(industry_code: str) -> str:
+    """Convert industry code to display label.
+
+    Args:
+        industry_code: The industry code.
+
+    Returns:
+        The display label for the industry.
+    """
     for code, label in Company.INDUSTRY_SECTORS:
         if code == industry_code:
             return label
@@ -62,8 +87,16 @@ def industry_label(industry_code):
 
 
 @register.simple_tag
-def company_selector(user):
-    """Render a company selector dropdown."""
+@beartype
+def company_selector(user) -> str:
+    """Render a company selector dropdown.
+
+    Args:
+        user: The user object.
+
+    Returns:
+        HTML string for the company selector dropdown.
+    """
     companies = Company.objects.filter(members=user).order_by("name")
 
     if not companies:
@@ -94,3 +127,31 @@ def company_selector(user):
 
     output.append("</select>")
     return format_html("".join(output))
+
+
+@register.simple_tag
+@beartype
+def company_logo_url(company_settings: dict) -> str:
+    """Return the logo URL from company_settings dict, or a default placeholder.
+
+    Args:
+        company_settings: Dictionary with company settings.
+
+    Returns:
+        The logo URL or a default placeholder.
+    """
+    return company_settings.get("logo_url") or "/static/img/company-placeholder.png"
+
+
+@register.simple_tag
+@beartype
+def company_brand_name(company_settings: dict) -> str:
+    """Return the company name from company_settings dict, or 'Company'.
+
+    Args:
+        company_settings: Dictionary with company settings.
+
+    Returns:
+        The company name or 'Company'.
+    """
+    return company_settings.get("name") or "Company"

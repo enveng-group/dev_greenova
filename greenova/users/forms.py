@@ -1,3 +1,20 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Forms for user profile and admin user management in the users app.
+
+This module provides Django forms for updating user profiles, managing users
+in the admin interface, and uploading profile images.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Forms for user profile, admin user, and profile image upload
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 from typing import Any, TypeVar
 
 from beartype import beartype
@@ -10,6 +27,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Model
 
 from .models import Profile
+from .types import UserProfileDict, UserPermissionsDict
 
 User = get_user_model()
 T = TypeVar("T", bound=Model)
@@ -35,6 +53,12 @@ class UserProfileForm(forms.ModelForm):
         *args: Any,
         **kwargs: Any,
     ) -> None:
+        """Initialize the UserProfileForm.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         if self.instance and hasattr(self.instance, "pk") and self.instance.pk:
             # Type ignore comments prevent type checker errors for user attributes
@@ -60,7 +84,16 @@ class UserProfileForm(forms.ModelForm):
             Submit("submit", "Save Profile"),
         )
 
+    @beartype
     def save(self, commit: bool = True) -> Profile:
+        """Save the updated profile and related user fields.
+
+        Args:
+            commit: Whether to commit changes to the database.
+
+        Returns:
+            The updated Profile instance.
+        """
         profile = super().save(commit=False)
         user = profile.user  # type: ignore
         user.first_name = self.cleaned_data["first_name"]
@@ -102,6 +135,12 @@ class AdminUserForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the AdminUserForm.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"
@@ -121,18 +160,34 @@ class AdminUserForm(forms.ModelForm):
             Submit("submit", "Save User"),
         )
 
+    @beartype
     def clean_password1(self) -> str | None:
+        """Validate the password1 field using Django's password validators.
+
+        Returns:
+            The validated password or None.
+
+        Raises:
+            ValidationError: If the password does not meet requirements.
+        """
         password = self.cleaned_data.get("password1")
         if password:
-            # Validate password against Django's password validation rules
             try:
                 validate_password(password, self.instance)
             except ValidationError as error:
-                # Pass the errors to the form
                 self.add_error("password1", error)
         return password
 
+    @beartype
     def clean(self) -> dict[str, Any]:
+        """Validate the form, ensuring password fields match.
+
+        Returns:
+            The cleaned data dictionary.
+
+        Raises:
+            ValidationError: If passwords do not match.
+        """
         cleaned_data = super().clean()
         if not cleaned_data:
             return {}
@@ -145,7 +200,16 @@ class AdminUserForm(forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit: bool = True) -> Any:  # Return type as Any instead of User
+    @beartype
+    def save(self, commit: bool = True) -> Any:
+        """Save the user instance, setting password if provided.
+
+        Args:
+            commit: Whether to commit changes to the database.
+
+        Returns:
+            The saved User instance.
+        """
         user = super().save(commit=False)
         password = self.cleaned_data.get("password1")
 
@@ -173,6 +237,12 @@ class ProfileImageForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the ProfileImageForm.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"

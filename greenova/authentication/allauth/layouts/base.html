@@ -21,6 +21,19 @@
                     </ul>
                 </div>
             {% endif %}
+            {% if is_authenticated %}
+                <div>
+                    <p>Welcome, {{ user.username }}!</p>
+                    {% if mfa_enabled %}
+                        <span class="badge badge-success">MFA Enabled</span>
+                    {% else %}
+                        <span class="badge badge-warning">MFA Not Enabled</span>
+                    {% endif %}
+                    <p>Session expires at: {{ session_expiry|date:'Y-m-d H:i:s' }}</p>
+                </div>
+            {% else %}
+                <p>Please sign in.</p>
+            {% endif %}
             <div>
                 <strong>{% trans "Menu:" %}</strong>
                 <ul>

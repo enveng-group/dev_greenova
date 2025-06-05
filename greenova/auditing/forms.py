@@ -1,3 +1,21 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Auditing forms for the auditing app.
+
+This module provides Django forms for managing audits, audit entries,
+mitigations, corrective actions, and comments, with strict type annotations
+and runtime type checking.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Forms for audit, mitigation, corrective action, and comment management
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 from beartype import beartype
 from dal import autocomplete
 from django import forms
@@ -11,9 +29,12 @@ from .models import (
     Mitigation,
     NonConformanceComment,
 )
+from .types import AuditRecordDict, AuditEntryDict
 
 
 class MitigationForm(forms.ModelForm):
+    """Form for creating and updating mitigations."""
+
     audit_entry = forms.ModelChoiceField(
         queryset=AuditEntry.objects.all(),
         widget=autocomplete.ModelSelect2(url="auditentry-autocomplete"),
@@ -27,10 +48,19 @@ class MitigationForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the MitigationForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
 
 
 class CorrectiveActionForm(forms.ModelForm):
+    """Form for creating and updating corrective actions."""
+
     mitigation = forms.ModelChoiceField(
         queryset=Mitigation.objects.all(),
         widget=autocomplete.ModelSelect2(url="mitigation-autocomplete"),
@@ -49,10 +79,19 @@ class CorrectiveActionForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the CorrectiveActionForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
 
 
 class AuditEntryForm(forms.ModelForm):
+    """Form for creating and updating audit entries."""
+
     audit = forms.ModelChoiceField(
         queryset=Audit.objects.all(),
         widget=autocomplete.ModelSelect2(url="audit-autocomplete"),
@@ -68,10 +107,19 @@ class AuditEntryForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the AuditEntryForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
 
 
 class ComplianceCommentForm(forms.ModelForm):
+    """Form for adding compliance comments."""
+
     obligation = forms.ModelChoiceField(
         queryset=Obligation.objects.all(),
         widget=autocomplete.ModelSelect2(url="obligation-autocomplete"),
@@ -83,10 +131,19 @@ class ComplianceCommentForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the ComplianceCommentForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
 
 
 class NonConformanceCommentForm(forms.ModelForm):
+    """Form for adding non-conformance comments."""
+
     obligation = forms.ModelChoiceField(
         queryset=Obligation.objects.all(),
         widget=autocomplete.ModelSelect2(url="obligation-autocomplete"),
@@ -98,6 +155,13 @@ class NonConformanceCommentForm(forms.ModelForm):
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the NonConformanceCommentForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
 
 

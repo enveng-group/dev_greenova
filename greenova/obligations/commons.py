@@ -6,6 +6,7 @@ This module centralizes reusable code to improve maintainability and reduce dupl
 """
 
 from beartype import beartype
+from .types import ObligationDataDict, ComplianceStatusDict
 
 OBLIGATION_STATUS_CHOICES = [
     ("not_started", "Not Started"),

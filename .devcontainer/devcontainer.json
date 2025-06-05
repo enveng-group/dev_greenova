@@ -6,9 +6,12 @@
 	},
 	"features": {
 		"./local-features/git": {},
+		"./local-features/bash": {},
 		"./local-features/node": {},
 		"./local-features/python": {},
-		"./local-features/dropbear": {}
+		"./local-features/dropbear": {},
+		"./local-features/protoc": {},
+		"./local-features/fish": {}
 	},
 	"mounts": [
 		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
@@ -21,21 +24,40 @@
 			"extensions": [
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-				"ms-python.python"
+				"ms-python.python",
+				"mikoz.autoflake-extension",
+				"ms-python.isort",
+				"charliermarsh.ruff",
+				"ms-python.autopep8",
+				"ms-python.pylint",
+				"ms-python.mypy-type-checker",
+				"monosans.djlint",
+				"redhat.vscode-yaml",
+				"esbenp.prettier-vscode",
+				"timonwong.shellcheck",
+				"foxundermoon.shell-format",
+				"bmalehorn.vscode-fish",
+				"pycqa.bandit-pycqa",
+				"tamasfe.even-better-toml"
 			],
 			"settings": {
 				"python.defaultInterpreterPath": "/workspaces/greenova/.venv/bin/python",
 				"python.terminal.activateEnvironment": true,
-				"python.linting.enabled": true,
-				"python.linting.pylintEnabled": true,
-				"python.linting.mypyEnabled": true
+				"python.testing.unittestEnabled": true,
+				"terminal.integrated.defaultProfile.linux": "fish",
+				"terminal.integrated.profiles.linux": {
+					"fish": {
+						"path": "fish"
+					}
+				}
 			}
-		}
-	},
-	"remoteEnv": {
-		"PATH": "/workspaces/greenova/.venv/bin:${containerEnv:PATH}",
-		"PYTHONPATH": "/workspaces/greenova"
-	},
-	"workspaceFolder": "/workspaces/greenova",
-	"runArgs": ["--userns=keep-id"]
-}
+		},
+		"remoteEnv": {
+			"PATH": "/workspaces/greenova/.venv/bin:${containerEnv:PATH}",
+			"PYTHONPATH": "/workspaces/greenova"
+		},
+		"workspaceFolder": "/workspaces/greenova",
+		"runArgs": [
+			"--userns=keep-id"
+		]
+	}

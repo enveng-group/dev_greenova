@@ -45,6 +45,11 @@
                     {% endfor %}
                 </tbody>
             {% endelement %}
+            {% if is_authenticated %}
+                <div>
+                    <span class="badge badge-info">Session expires at: {{ session_expiry|date:'Y-m-d H:i:s' }}</span>
+                </div>
+            {% endif %}
         {% endslot %}
         {% slot actions %}
             {% if session_count > 1 %}

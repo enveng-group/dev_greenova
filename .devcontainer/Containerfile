@@ -3,14 +3,12 @@ FROM python:${VARIANT}
 
 # Install essential packages
 RUN apk update && apk add --no-cache \
-    bash \
     curl \
     build-base \
     linux-headers \
     libffi-dev \
     openssl-dev \
     freetype-dev \
-    protobuf \
     pkgconfig \
     sudo \
     shadow \
@@ -32,6 +30,3 @@ WORKDIR /workspaces/greenova
 
 # Switch to vscode user
 USER vscode
-
-# Set default shell to bash
-SHELL ["/bin/bash", "-c"]

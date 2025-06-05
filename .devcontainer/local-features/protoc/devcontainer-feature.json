@@ -1,0 +1,6 @@
+{
+	"id": "protoc",
+	"version": "1.0.0",
+	"name": "Protocol Buffers (protoc)",
+	"description": "Installs Protocol Buffers Protocol Compiler using Alpine package manager."
+}

@@ -1,21 +1,41 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Forms for chatbot management in the chatbot app.
+
+This module provides Django forms for creating conversations and training data
+for the chatbot, with strict type annotations and runtime type checking.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Forms for conversation and training data management
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 from beartype import beartype
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Layout, Submit
 from django import forms
 
 from .models import Conversation, TrainingData
+from .types import ChatMessageDict, SessionStateDict
 
 
 class ConversationForm(forms.ModelForm):
-    """Form for creating a new conversation.
-
-    Attributes:
-        helper (FormHelper): Helper for crispy forms layout.
-
-    """
+    """Form for creating a new conversation."""
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the ConversationForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"
@@ -39,15 +59,17 @@ class ConversationForm(forms.ModelForm):
 
 
 class TrainingDataForm(forms.ModelForm):
-    """Form for adding new training data.
-
-    Attributes:
-        helper (FormHelper): Helper for crispy forms layout.
-
-    """
+    """Form for adding new training data."""
 
     @beartype
     def __init__(self, *args, **kwargs) -> None:
+        """
+        Initialize the TrainingDataForm and set up the crispy form helper.
+
+        Args:
+            *args: Positional arguments for the parent constructor.
+            **kwargs: Keyword arguments for the parent constructor.
+        """
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"

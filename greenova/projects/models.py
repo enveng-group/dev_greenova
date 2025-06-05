@@ -1,3 +1,21 @@
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""Project models for the projects app.
+
+This module provides the Project, ProjectMembership, and ProjectObligation models,
+with strict type annotations, runtime type checking, and Protocol Buffer integration.
+
+Features:
+    - Strict type annotations and runtime type checking with beartype
+    - Google style docstrings throughout
+    - Protobuf3 integration for project models
+    - Lifecycle hooks for membership management
+
+Author:
+    Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 import logging
 
 from beartype import beartype
@@ -7,11 +25,26 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import QuerySet
 from django.utils import timezone
-from django_lifecycle import BEFORE_SAVE, LifecycleModel, hook
+from django_lifecycle import (
+    BEFORE_SAVE,
+    AFTER_SAVE,
+    AFTER_DELETE,
+    LifecycleModel,
+    hook,
+)
 from slugify import slugify
 
 from .commons import PROJECT_ROLE_CHOICES
 from .constants import PROJECT_ROLE_CHOICES
+from .validators import validate_project_name
+from .types import (
+    ProjectMetadataDict,
+    ProjectMembershipDict,
+    ProjectObligationDict,
+    ProjectManager,
+    MembershipManager,
+    ObligationRelationshipHandler,
+)
 
 try:
     from pb_model.models import ProtoBufMixin
@@ -46,12 +79,11 @@ class Project(LifecycleModel, ProtoBufMixin):
         members: A many-to-many relationship to users through ProjectMembership.
         created_at: The datetime when the project was created.
         updated_at: The datetime when the project was last updated.
-
     """
 
     pb_model = ProjectProto
 
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, validators=[validate_project_name])
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField(blank=True)
     members = models.ManyToManyField(
@@ -73,27 +105,33 @@ class Project(LifecycleModel, ProtoBufMixin):
             ("manage_members", "Can manage project members"),
         ]
         default_permissions = ("add", "change", "delete", "view")
-        # Enable object-level permissions for django-guardian
 
+    @beartype
     def __str__(self) -> str:
-        """Return the string representation of the Project."""
+        """Return the string representation of the Project.
+
+        Returns:
+            str: The project name.
+        """
         return self.name
 
     @hook(BEFORE_SAVE)
+    @beartype
     def set_slug(self) -> None:
         """Set slug from name if not already set."""
         if not self.slug:
             self.slug = slugify(self.name)
 
+    @beartype
     def get_member_count(self) -> int:
         """Get count of project members.
 
         Returns:
             int: The number of members in the project.
-
         """
         return self.members.count()
 
+    @beartype
     def get_user_role(self, user: AbstractUser) -> str:
         """Get user's role in project.
 
@@ -102,21 +140,24 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             str: Role name or 'viewer' if no explicit role found.
-
         """
         try:
             membership = ProjectMembership.objects.get(project=self, user=user)
             logger.debug(
-                f"Found role {membership.role} for user {user} in project {self.name}",
+                "Found role %s for user %s in project %s",
+                membership.role,
+                user,
+                self.name,
             )
             return membership.role
         except ProjectMembership.DoesNotExist:
-            logger.debug(f"No membership found for user {user} in project {self.name}")
+            logger.debug("No membership found for user %s in project %s", user, self.name)
             return ProjectRole.VIEWER.value
         except Exception as e:
-            logger.exception(f"Error getting user role: {e!s}")
+            logger.exception("Error getting user role: %s", str(e))
             return ProjectRole.VIEWER.value
 
+    @beartype
     def has_member(self, user: AbstractUser) -> bool:
         """Check if user is a member of the project.
 
@@ -125,10 +166,10 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             bool: True if the user is a member, False otherwise.
-
         """
         return ProjectMembership.objects.filter(project=self, user=user).exists()
 
+    @beartype
     def add_member(
         self,
         user: AbstractUser,
@@ -139,7 +180,6 @@ class Project(LifecycleModel, ProtoBufMixin):
         Args:
             user: The user to add to the project.
             role: The role to assign to the user. Defaults to 'member'.
-
         """
         if not self.has_member(user):
             ProjectMembership.objects.create(
@@ -147,21 +187,22 @@ class Project(LifecycleModel, ProtoBufMixin):
                 user=user,
                 role=role,
             )
-            logger.info(f"Added user {user} to project {self.name} with role {role}")
+            logger.info("Added user %s to project %s with role %s", user, self.name, role)
 
+    @beartype
     def remove_member(self, user: AbstractUser) -> None:
         """Remove a user from the project.
 
         Args:
             user: The user to remove from the project.
-
         """
         ProjectMembership.objects.filter(
             project=self,
             user=user,
         ).delete()
-        logger.info(f"Removed user {user} from project {self.name}")
+        logger.info("Removed user %s from project %s", user, self.name)
 
+    @beartype
     def get_members_by_role(self, role: str) -> QuerySet[AbstractUser]:
         """Get all users with specified role.
 
@@ -170,7 +211,6 @@ class Project(LifecycleModel, ProtoBufMixin):
 
         Returns:
             QuerySet[AbstractUser]: A queryset of users with the specified role.
-
         """
         return User.objects.filter(
             project_memberships__project=self,
@@ -178,21 +218,19 @@ class Project(LifecycleModel, ProtoBufMixin):
         )
 
     @property
-    def obligations(self):
+    @beartype
+    def obligations(self) -> QuerySet:
         """Get related obligations.
 
         Returns:
             QuerySet: A queryset of obligations related to the project.
-
         """
-        # Move import inside method to avoid circular import
         from obligations.models import Obligation
-
         return Obligation.objects.filter(project=self)
 
 
 @beartype
-class ProjectMembership(ProtoBufMixin):
+class ProjectMembership(LifecycleModel, ProtoBufMixin):
     """Through model for project memberships.
 
     Attributes:
@@ -202,7 +240,6 @@ class ProjectMembership(ProtoBufMixin):
         role: The role of the user in the project.
         created_at: The datetime when the membership was created.
         updated_at: The datetime when the membership was last updated.
-
     """
 
     pb_model = ProjectMembershipProto
@@ -231,8 +268,35 @@ class ProjectMembership(ProtoBufMixin):
         verbose_name = "Project Membership"
         verbose_name_plural = "Project Memberships"
 
+    @hook(AFTER_SAVE)
+    @beartype
+    def after_save_membership_lifecycle(self) -> None:
+        """Lifecycle hook: called after saving a project membership."""
+        logger = logging.getLogger(__name__)
+        logger.info(
+            "ProjectMembership %s saved (lifecycle hook, replaces signal)",
+            self,
+        )
+        # Add additional event-driven logic here as needed
+
+    @hook(AFTER_DELETE)
+    @beartype
+    def after_delete_membership_lifecycle(self) -> None:
+        """Lifecycle hook: called after deleting a project membership."""
+        logger = logging.getLogger(__name__)
+        logger.info(
+            "ProjectMembership %s deleted (lifecycle hook, replaces signal)",
+            self,
+        )
+        # Add additional cleanup or notification logic here as needed
+
+    @beartype
     def __str__(self) -> str:
-        """Return the string representation of the ProjectMembership."""
+        """Return the string representation of the ProjectMembership.
+
+        Returns:
+            str: The user-project-role string.
+        """
         return f"{self.user.username} - {self.project.name} ({self.role})"
 
 
@@ -246,7 +310,6 @@ class ProjectObligation(ProtoBufMixin):
         obligation: The obligation associated with the project.
         created_at: The datetime when the obligation was created.
         updated_at: The datetime when the obligation was last updated.
-
     """
 
     pb_model = ProjectObligationProto
@@ -270,6 +333,11 @@ class ProjectObligation(ProtoBufMixin):
         verbose_name = "Project Obligation"
         verbose_name_plural = "Project Obligations"
 
+    @beartype
     def __str__(self) -> str:
-        """Return string representation of ProjectObligation."""
+        """Return string representation of ProjectObligation.
+
+        Returns:
+            str: The project-obligation string.
+        """
         return f"{self.project.name} - {self.obligation.obligation_number}"
