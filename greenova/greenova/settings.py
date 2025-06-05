@@ -299,6 +299,7 @@ INSTALLED_APPS = [
     "feedback.apps.FeedbackConfig",  # Add the feedback app here
     "reports.apps.ReportsConfig",  # Reports app for managing reports
     "settings.apps.SettingsConfig",  # Settings app for managing settings
+    "inspection.apps.InspectionConfig",  # Manages inspection records and scheduling
 ]
 
 
