@@ -1,31 +1,31 @@
-from django.urls import path
-from django.views.generic import TemplateView
+"""URL configuration for the Greenova core app.
 
-from . import views
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+# Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
+# SPDX-License-Identifier: AGPL-3.0
+
+from django.urls import path
+
+from .views import EnvironmentalObligationListView, obligations_api, theme_config_api
 
 app_name = "core"
 
 urlpatterns = [
-    path("health/", views.HealthCheckView.as_view(), name="health_check"),
-    # Error pages for testing/development
     path(
-        "error/400/",
-        TemplateView.as_view(
-            template_name="errors/400.html"),
-        name="error_400"),
+        "obligations/",
+        EnvironmentalObligationListView.as_view(),
+        name="obligation_list",
+    ),
     path(
-        "error/403/",
-        TemplateView.as_view(
-            template_name="errors/403.html"),
-        name="error_403"),
+        "api/obligations/",
+        obligations_api,
+        name="obligations_api",
+    ),
     path(
-        "error/404/",
-        TemplateView.as_view(
-            template_name="errors/404.html"),
-        name="error_404"),
-    path(
-        "error/500/",
-        TemplateView.as_view(
-            template_name="errors/500.html"),
-        name="error_500"),
+        "api/theme-config/",
+        theme_config_api,
+        name="theme_config_api",
+    ),
 ]

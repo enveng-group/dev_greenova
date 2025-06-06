@@ -1,0 +1,109 @@
+// Greenova Button Components
+// Advanced button styling beyond Bootstrap utilities
+
+@use '../variables' as vars;
+@use '../mixins' as mix;
+
+.btn-greenova {
+  @include mix.button-environmental(vars.$greenova-primary);
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-primary, 0.5);
+  }
+}
+
+.btn-greenova-secondary {
+  @include mix.button-environmental(vars.$greenova-secondary);
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-secondary, 0.5);
+  }
+}
+
+.btn-greenova-outline {
+  @include mix.button-outline(vars.$greenova-primary);
+}
+
+.btn-greenova-outline-secondary {
+  @include mix.button-outline(vars.$greenova-secondary);
+}
+
+// Floating action button for environmental actions
+.btn-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: vars.$greenova-primary;
+  color: vars.$white;
+  border: none;
+  box-shadow: vars.$shadow-heavy;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: vars.$z-index-fab;
+  transition: vars.$transition-medium;
+
+  &:hover {
+    background-color: darken(vars.$greenova-primary, 10%);
+    transform: scale(1.1);
+    box-shadow: vars.$shadow-heavy, 0 0 20px rgba(vars.$greenova-primary, 0.3);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: vars.$shadow-heavy, 0 0 0 0.2rem rgba(vars.$greenova-primary, 0.5);
+  }
+
+  @include mix.media-breakpoint-down(sm) {
+    bottom: 1rem;
+    right: 1rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+  }
+}
+
+// Button groups for environmental actions
+.btn-group-environmental {
+  .btn {
+    border-color: vars.$greenova-border;
+
+    &:not(:last-child) {
+      border-right-color: transparent;
+    }
+
+    &.active,
+    &:hover {
+      background-color: vars.$greenova-primary;
+      border-color: vars.$greenova-primary;
+      color: vars.$white;
+    }
+  }
+}
+
+// Toggle buttons for filters and options
+.btn-toggle {
+  border: 1px solid vars.$greenova-border;
+  background-color: transparent;
+  color: vars.$greenova-dark;
+  transition: vars.$transition-fast;
+
+  &:hover {
+    background-color: rgba(vars.$greenova-primary, 0.1);
+    border-color: vars.$greenova-primary;
+  }
+
+  &.active {
+    background-color: vars.$greenova-primary;
+    border-color: vars.$greenova-primary;
+    color: vars.$white;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-primary, 0.25);
+  }
+}

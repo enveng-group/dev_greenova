@@ -1,3 +1,5 @@
+"""Dashboard app config for Greenova."""
+
 from django.apps import AppConfig
 
 

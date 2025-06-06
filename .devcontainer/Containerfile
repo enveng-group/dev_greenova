@@ -13,20 +13,6 @@ RUN apk update && apk add --no-cache \
     sudo \
     shadow \
     util-linux \
-    chromium \
-  nss \
-  atk \
-  cups-libs \
-  libxcomposite \
-  libxdamage \
-  libxfixes \
-  libxrandr \
-  libgbm \
-  libxkbcommon \
-  pango \
-  cairo \
-  alsa-lib \
-  ttf-freefont
     && rm -rf /var/cache/apk/*
 
 # Create vscode user with sudo privileges

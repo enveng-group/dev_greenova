@@ -1,23 +1,25 @@
-#!/usr/bin/env python3.9
-"""Django's command-line utility for administrative tasks."""
+#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks in Greenova.
+
+Raises:
+    ImportError: If Django is not installed or cannot be imported.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+
+"""
+# Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
+# SPDX-License-Identifier: AGPL-3.0
 
 import os
 import sys
-
-import django
-from django.core.management import execute_from_command_line
-from dotenv import load_dotenv
-
-# Provide a default path or check if file exists first
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path=dotenv_path if os.path.exists(dotenv_path) else None)
 
 
 def main() -> None:
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "greenova.settings")
     try:
-        django.setup()  # Ensure Django is initialized
+        from django.core.management import execute_from_command_line
     except ImportError as exc:
         msg = (
             "Couldn't import Django. Are you sure it's installed and "

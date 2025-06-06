@@ -1,0 +1,6 @@
+{
+  "id": "chromium",
+  "version": "1.0.0",
+  "name": "chromium browser",
+  "description": "Installs Google's open source Chromium Browser using Alpine package manager."
+}

@@ -57,7 +57,6 @@ obligations management system.
 ### Frontend
 
 - HTMX for dynamic interactions
-- PicoCSS for styling
 - Hyperscript for enhanced interactivity
 
 ## Data Flow

@@ -1,0 +1,29 @@
+<section class="py-5 bg-light" aria-labelledby="hero-heading" _="on load if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .animate-fade-in to me">
+  <!-- Animation rationale: Accessible fade-in on load using django-hyperscript. Respects reduced motion. -->
+  <div class="container d-flex flex-column align-items-center text-center">
+    <img src="/static/core/img/favicon.svg" alt="Greenova Logo" class="mb-3" style="width: 5rem; height: 5rem;" />
+    <h1 id="hero-heading" class="display-4 fw-bold mb-3 text-success">
+      Environmental Management <span class="text-primary">Made Simple</span>
+    </h1>
+    <p class="lead text-secondary mb-4 mx-auto" style="max-width: 40rem;">
+      Streamline your environmental compliance with Greenova's intuitive platform. Track obligations, manage requirements, and stay ahead of regulatory changes.
+    </p>
+    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+      <a href="/accounts/signup" class="btn btn-success btn-lg">Start Free Trial</a>
+      <a href="/accounts/login" class="btn btn-outline-success btn-lg">Sign In</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Accessible fade-in animation, respects prefers-reduced-motion */
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-fade-in {
+      opacity: 0;
+      animation: fadeIn 1.2s ease-in forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  }
+</style>

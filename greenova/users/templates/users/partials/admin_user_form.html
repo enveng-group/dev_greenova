@@ -1,7 +1,0 @@
-<section class="admin-user-form">
-  <form method="post" enctype="multipart/form-data" hx-boost="true">
-    {% csrf_token %}
-    {% load crispy_forms_tags %}
-    {{ form|crispy }}
-  </form>
-</section>

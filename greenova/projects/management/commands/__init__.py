@@ -1,1 +1,0 @@
-# projects management commands package

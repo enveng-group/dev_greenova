@@ -3,20 +3,6 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Compile Protocol Buffers",
-      "type": "shell",
-      "command": "/workspaces/greenova/.venv/bin/python3 /workspaces/greenova/greenova/manage.py compile_protos",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
       "label": "Run Django Server",
       "type": "shell",
       "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py runserver 0.0.0.0:8000",
@@ -62,34 +48,6 @@
       "label": "Django Collectstatic",
       "type": "shell",
       "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py collectstatic --clear --noinput",
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Build Frontend",
-      "type": "shell",
-      "command": "/workspaces/greenova/.venv/bin/python3 scripts/build_frontend.py",
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Clean Initial Migrations",
-      "type": "shell",
-      "command": "find greenova -type f -path \"*/migrations/*.py\" -delete",
       "group": {
         "kind": "build",
         "isDefault": false

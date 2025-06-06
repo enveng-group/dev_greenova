@@ -1,23 +1,20 @@
-"""Core app configuration."""
+"""App configuration for the Greenova core app.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+# Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
+# SPDX-License-Identifier: AGPL-3.0
+
 from django.apps import AppConfig
-from django.contrib import admin
 
 
 class CoreConfig(AppConfig):
-    """Configuration for the Core app."""
+    """AppConfig for the core app."""
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "core"
-    verbose_name = "Core System"
+    verbose_name = "Core"
 
-    def ready(self) -> None:
-        """Initialize core components when Django is ready."""
-        # Import signals to register handlers
 
-        # Customize admin site
-        admin.site.site_header = "Environmental Obligations Management"
-        admin.site.site_title = "Greenova Admin Portal"
-        admin.site.index_title = "Welcome to Greenova Environmental Management"
-
-        # Set site-wide settings
-        admin.site.enable_nav_sidebar = True
+app_name = "core"

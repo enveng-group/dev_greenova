@@ -5,6 +5,7 @@
   - [Project Domain and Context](#project-domain-and-context)
   - [Technical Stack and Version Requirements](#technical-stack-and-version-requirements)
   - [Frontend Technologies](#frontend-technologies)
+    - [Technology Priority Order (Expanded)](#technology-priority-order-expanded)
   - [Expectations](#expectations)
   - [Development Tools and Standards](#development-tools-and-standards)
     - [Testing Tools](#testing-tools)
@@ -42,6 +43,10 @@
     - [Shell Scripts](#shell-scripts)
   - [Handling Long Lines in Code](#handling-long-lines-in-code)
     - [Guidelines for Long Lines](#guidelines-for-long-lines)
+  - [Tool and Dependency Use-Cases for Code Generation in Greenova](#tool-and-dependency-use-cases-for-code-generation-in-greenova)
+    - [Python/Django Dependencies](#pythondjango-dependencies)
+    - [JavaScript/TypeScript/Frontend Dependencies](#javascripttypescriptfrontend-dependencies)
+    - [General Guidelines for Code Generation](#general-guidelines-for-code-generation)
   - [Author Information](#author-information)
   - [Context7 Documentation Lookup](#context7-documentation-lookup)
 
@@ -69,29 +74,17 @@ and manage obligations related to environmental regulations.
 - **Simplicity First**: Always choose the simplest effective solution
 - **Plain Text / HTML First**: Start with semantic HTML before adding
   complexity
-- **Technology Priority Order**:
 
-1. **Restructured Text (RST)**: Use as the foundational layer for body, content
-   and messages for HTML.
+### Technology Priority Order (Expanded)
 
-2. **HTML**: Utilize for semantic structure and markup. Do not apply inline
-   styles and scripts.
-
-3. **Protobuf3**: Primary implementation for data serialization.
-
-4. **Classless-CSS**: Apply minimal styling using Classless-PicoCSS as HTML.
-
-5. **django-hyperscript**: Primary implementation for client-side interactions.
-
-6. **django-htmx**: Secondary implementation for client-side interactions only
-   to compliment django-hyperscript.
-
-7. **SCSS/PostCSS**: Use for advanced styling needs when required.
-
-8. **AssemblyScript**: Introduce only when django-hyperscript and django-htmx
-   cannot meet the requirements. Use AssemblyScript for complex logic. Avoid using
-   AssemblyScriptfor simple interactions that can be handled by django-hyperscript
-   or django-htmx.
+1. **Restructured Text (RST)**: Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
+2. **Jinja2**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+3. **Protobuf3**: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
+4. **django-bootstrap5**: Use as the sole primary styling framework for all new development.
+5. **django-hyperscript**: Use for all simple client-side interactions. Avoid custom JS unless required.
+6. **django-htmx**: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
+7. **SASS**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting Bootstrap utility options.
+8. **AssemblyScript**: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
 
 ## Expectations
 
@@ -154,7 +147,7 @@ and manage obligations related to environmental regulations.
 - **pylint & pylint-django**: Secondary Python linters
 - **djlint**: For Django template linting
 - **markdownlint-cli2**: For Markdown file linting
-- **stylelint**: CSS/SCSS linting
+- **stylelint**: CSS/SASS linting
 - **eslint**: JavaScript/TypeScript linting
 - **shellcheck**: Shell script linting
 
@@ -361,7 +354,7 @@ fi
 
 ### Template Structure
 
-- Use Django's template inheritance with `{% extends %}` and `{% include %}`
+- Use Jinja2 template inheritance with `{% extends %}` and `{% include %}`
 - Separate templates into layouts, components, and partials
 - Create reusable blocks for common elements
 - Templates must pass djlint validation
@@ -382,9 +375,10 @@ fi
 
 ### Example Template Structure
 
-```html
-{% extends "base.html" %} {% block title %}Page Title{% endblock title %} {%
-block content %}
+```jinja
+{% extends "base.jinja" %}
+{% block title %}Page Title{% endblock title %}
+{% block content %}
 <main>
   <h1>Primary Heading</h1>
 
@@ -393,11 +387,11 @@ block content %}
 
     <!-- HTMX-enhanced form -->
     <form
-      hx-post="{% url 'submit_form' %}"
+      hx-post="{{ url('submit_form') }}"
       hx-target="#results"
       hx-swap="outerHTML"
     >
-      {% csrf_token %}
+      {# CSRF token and form fields #}
       <label for="input-field">Field Label:</label>
       <input id="input-field" name="field_name" type="text" required />
       <button type="submit">Submit</button>
@@ -477,8 +471,9 @@ block content %}
 
 ### Django/HTML
 
+- DTL (django-html) is not used in this project. Only Jinja2 templates (`.jinja`) are supported.
 - Missing CSRF tokens in forms
-- Hardcoded URLs instead of `{% url %}` tags
+- Hardcoded URLs instead of `{{ url('...') }}`
 - Logic in templates instead of views
 - Unescaped user input
 - Missing form validation
@@ -548,6 +543,73 @@ block content %}
      """This is a long docstring that spans multiple lines."""
      ```
 
+## Tool and Dependency Use-Cases for Code Generation in Greenova
+
+### Python/Django Dependencies
+
+- **beartype**: Decorate all public functions and methods for runtime type checking. Use in every Python module to enforce type safety and catch type errors early.
+- **django**: Core web framework. Use Django's MTV pattern, class-based views, forms, and models as per project standards. All new features and refactors must follow Django best practices.
+- **django-allauth**: Use for authentication, registration, and multi-factor auth. Integrate for user management and permission-based access control.
+- **django-browser-reload**: Use for live reloading during development. No production use.
+- **django-cors-headers**: Add CORS support for API endpoints or cross-origin integrations. Configure in settings as needed.
+- **django-debug-toolbar**: Use for debugging and performance profiling in development only.
+- **django-extensions**: Use for shell_plus, graph_models, and other dev utilities. Not for production code.
+- **django-htmx**: Use for AJAX and partial page updates. Only use when django-hyperscript cannot achieve the required interaction. Always prefer django-hyperscript for simple client-side logic.
+- **django-hyperscript**: Primary tool for client-side interactivity. Use for form validation, toggling UI, and simple dynamic behaviors. Prefer over custom JS.
+- **django-matplotlib**: Use for server-side chart generation (SVG/PNG) in reports and static visualizations. Do not use for interactive charts.
+
+- **django-plotly-dash**: Use for advanced, interactive dashboards. Only introduce when plotly.js or django-hyperscript/htmx are insufficient.
+- **django-silk**: Use for profiling and performance monitoring in development.
+- **django-bootstrap5**: Use for integrating Bootstrap 5. Use as the sole primary styling framework for all new development.
+- **django-template-partials**: Use to break templates into reusable, composable blocks. Prefer `{% include_partial %}` for shared UI fragments.
+- **django-csp**: Enforce Content Security Policy headers. Use to harden security for all HTML responses.
+- **django-filter**: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
+- **django-tables2**: Use for rendering tabular data in templates. Prefer over custom table markup.
+- **django-crispy-forms** and **crispy-bootstrap4**: Use for rendering forms with consistent, accessible markup. Prefer over custom form templates.
+- **django-guardian**: Use for object-level permissions. Integrate with custom user model and access control logic.
+- **django-storages**: Use for cloud storage backends (S3, GCS, etc.). Configure in settings as needed.
+- **django-autocomplete-light**: Use for autocomplete widgets in forms with large datasets.
+- **pillow**: Use for image processing in models, forms, and admin.
+- **python-slugify**: Use for generating slugs for URLs and filenames.
+- **bleach**: Use for sanitizing user input and HTML content.
+- **ipython**: Use for enhanced shell and debugging in development.
+- **matplotlib**: Use for all server-side static charting. Integrate with django-matplotlib.
+- **pandas**: Use for data analysis, reporting, and ETL tasks. Do not use in request/response cycle unless necessary.
+- **python-dateutil**: Use for robust date parsing and manipulation.
+- **python-dotenv**: Use for loading environment variables from .env files. Do not hardcode secrets.
+- **PyYAML**: Use for YAML config parsing. Only use when JSON is insufficient.
+- **fido2**: Use for WebAuthn and hardware security key support in authentication.
+- **cryptography**: Use for encryption, signing, and secure token generation.
+- **whitenoise**: Use for serving static files in production.
+
+### JavaScript/TypeScript/Frontend Dependencies
+
+- **@bootstrap/\*, bootstrap**: Use for advanced styling and utility classes. Use as the sole primary styling framework for all new development.
+- **@typescript-eslint/\*, typescript**: Use for all TypeScript code. Enforce strict type checking and linting.
+- **assemblyscript**: Use for compiling TypeScript to WebAssembly. Only introduce for performance-critical or complex client-side logic that cannot be handled by django-hyperscript or htmx.
+- **autoprefixer, postcss, postcss-\*:** Use for CSS post-processing and compatibility. Integrate in build pipeline.
+- **critical**: Use for extracting and inlining critical CSS for performance.
+- **cross-env**: Use for setting environment variables in npm scripts.
+- **eslint, prettier**: Use for linting and formatting all JS/TS/CSS/JSON/YAML code. Fix all warnings before commit.
+- **protobufjs-cli**: Use for generating JS/TS code from Protobuf3 schemas. Integrate with django-pb-model for frontend-backend data exchange.
+- **rimraf**: Use for cross-platform file deletion in npm scripts.
+- **stylelint**: Use for linting CSS/SCSS. Fix all warnings before commit.
+
+### General Guidelines for Code Generation
+
+- Always use the simplest tool that meets requirements, following the priority order.
+- Integrate each dependency as per its documented use-case above.
+- Document all new code and modules with Google style docstrings and usage notes.
+- Add tests for all new features, especially when integrating new dependencies.
+- Ensure all code passes linting, formatting, and type checking tools relevant to the language (ruff, mypy, eslint, stylelint, etc.).
+- Use Protobuf3 and django-pb-model for all new API endpoints and data serialization tasks.
+- Prefer django-hyperscript for client-side logic; only use htmx or JS/TS when necessary.
+- Use django-template-partials to break templates into reusable blocks.
+- For all forms, use crispy-forms or select2 widgets as appropriate.
+- For charts, use matplotlib for static images and plotly for interactive charts, following the charting guidelines.
+- For authentication, always use django-allauth and fido2 for MFA.
+- For security, always use django-csp, bleach, and cryptography as needed.
+
 ## Author Information
 
 - Author: Adrian Gallo
@@ -563,7 +625,7 @@ This provides access to all project-specific configuration files and standards.
 or frameworks, use the `fetch` or `context7` MCP server to retrieve and
 reference their official documentation as needed:
 
-- GSAP Animation, PicoCSS Classless, Hyperscript, HTMX, django-hyperscript,
+- GSAP Animation,django-hyperscript,
   django-htmx, AssemblyScript, Django, Protobuf3, SQLite, django-pb-model,
   Matplotlib, django_matplotlib, Plotly, Pandas, NumPy, django-csp,
   django-template-partials, dj-all-auth, python-dotenv-vault.

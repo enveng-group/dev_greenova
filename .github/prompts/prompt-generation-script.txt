@@ -35,3 +35,231 @@ and then use sequential_thinking mcp server to analayse investigate decide recom
 provide guidance instructions on whether the files changed in https://github.com/enveng-group/dev_greenova/pull/151
 resolves https://github.com/enveng-group/dev_greenova/issues/31 and it is safe to merge the changes into integration/v0.0.7
 and close both https://github.com/enveng-group/dev_greenova/pull/151 and https://github.com/enveng-group/dev_greenova/issues/31
+
+
+investigate whether any other python modules can be used for project's current implementation to further enhance:
+
+# Tool and Dependency Use-Cases for Code Generation in Greenova
+
+## Python/Django Dependencies
+
+- **beartype**: Decorate all public functions and methods for runtime type checking. Use in every Python module to enforce type safety and catch type errors early.
+- **django**: Core web framework. Use Django's MTV pattern, class-based views, forms, and models as per project standards. All new features and refactors must follow Django best practices.
+- **django-allauth**: Use for authentication, registration, and multi-factor auth. Integrate for user management and permission-based access control.
+- **django-browser-reload**: Use for live reloading during development. No production use.
+- **django-cors-headers**: Add CORS support for API endpoints or cross-origin integrations. Configure in settings as needed.
+- **django-extensions**: Use for shell_plus, graph_models, and other dev utilities. Not for production code.
+- **django-htmx**: Use for AJAX and partial page updates. Only use when django-hyperscript cannot achieve the required interaction. Always prefer django-hyperscript for simple client-side logic.
+- **django-hyperscript**: Primary tool for client-side interactivity. Use for form validation, toggling UI, and simple dynamic behaviors. Prefer over custom JS.
+- **django-matplotlib**: Use for server-side chart generation (SVG/PNG) in reports and static visualizations. Do not use for interactive charts.
+
+- **django-plotly-dash**: Use for advanced, interactive dashboards. Only introduce when plotly.js or django-hyperscript/htmx are insufficient.
+- **django-bootstrap5**: Use for integrating Bootstrap 5. Use as the sole primary styling framework for all new development.
+- **django-template-partials**: Use to break templates into reusable, composable blocks. Prefer `{% include_partial %}` for shared UI fragments.
+- **django-csp**: Enforce Content Security Policy headers. Use to harden security for all HTML responses.
+- **django-filter**: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
+- **django-tables2**: Use for rendering tabular data in templates. Prefer over custom table markup.
+- **django-crispy-forms** and **crispy-bootstrap4**: Use for rendering forms with consistent, accessible markup. Prefer over custom form templates.
+- **django-guardian**: Use for object-level permissions. Integrate with custom user model and access control logic.
+- **django-autocomplete-light**: Use for autocomplete widgets in forms with large datasets.
+- **pillow**: Use for image processing in models, forms, and admin.
+- **python-slugify**: Use for generating slugs for URLs and filenames.
+- **bleach**: Use for sanitizing user input and HTML content.
+- **ipython**: Use for enhanced shell and debugging in development.
+- **matplotlib**: Use for all server-side static charting. Integrate with django-matplotlib.
+- **pandas**: Use for data analysis, reporting, and ETL tasks. Do not use in request/response cycle unless necessary.
+- **python-dateutil**: Use for robust date parsing and manipulation.
+- **python-dotenv**: Use for loading environment variables from .env files. Do not hardcode secrets.
+- **cryptography**: Use for encryption, signing, and secure token generation.
+
+
+investigate technologogy stack priority is correct adhered and followed:
+
+## Frontend Technologies
+
+- **Simplicity First**: Always choose the simplest effective solution
+- **Plain Text / HTML First**: Start with semantic HTML before adding
+  complexity
+
+### Technology Priority Order (Expanded)
+
+1. **Restructured Text (RST)**: Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
+2. **Jinja2**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+3. **Protobuf3**: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
+4. **django-bootstrap5**: Use as the sole primary styling framework for all new development.
+5. **django-hyperscript**: Use for all simple client-side interactions. Avoid custom JS unless required.
+6. **django-htmx**: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
+7. **SASS**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
+8. **AssemblyScript**: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
+
+
+investigate to ensure project's colour styling and theming scheme is followed strictly:
+
+# Branding, Styling, and Colour Scheme Guidelines
+
+## Greenova Branding and UI Styling
+
+All UI components, templates, and styles must adhere to the Greenova branding
+guidelines. Use the following CSS custom properties for color, spacing, and
+typography to ensure a consistent and accessible user experience across the
+application. These variables must be used in Tailwind configuration, custom
+CSS, and any SASS extensions.
+
+### Primary Color Palette
+
+```
+--color-green-primary: #7fb04f;
+--color-orange-primary: #ec7a32;
+--color-blue-primary: #30aee4;
+```
+
+### Secondary Color Palette
+
+```
+--color-gray-dark: #58595b;
+--color-green-olive: #526827;
+--color-orange-rust: #cc6114;
+--color-blue-teal: #146890;
+--color-blue-deep: #0e4f6e;
+--color-green-light: #a3c77e;
+```
+
+### Neutral Color Scale
+
+```
+--color-neutral-50: #fafafa;
+--color-neutral-100: #f5f5f5;
+--color-neutral-200: #e5e5e5;
+--color-neutral-300: #d4d4d4;
+--color-neutral-400: #a3a3a3;
+--color-neutral-500: #737373;
+--color-neutral-600: #525252;
+--color-neutral-700: #404040;
+--color-neutral-800: #262626;
+--color-neutral-900: #171717;
+```
+
+### Background Colors
+
+```
+--greenova-background-primary: #f8f9fa;
+--greenova-background-secondary: #fff;
+--greenova-background-tertiary: #f0f2f5;
+--greenova-beige-primary: #f7f5f0;
+--greenova-beige-secondary: #efeae0;
+```
+
+### Text Colors (Accessible Contrast)
+
+```
+--greenova-text-primary-dark: #212529;
+--greenova-text-secondary-dark: #495057;
+--greenova-text-tertiary-dark: #6c757d;
+--greenova-text-primary-light: #fff;
+--greenova-text-secondary-light: #f8f9fa;
+--greenova-text-tertiary-light: #e9ecef;
+```
+
+### Border & Outline Colors
+
+```
+--greenova-border-color: #dee2e6;
+--greenova-border-focus: #80c261;
+```
+
+### Form Element Colors
+
+```
+--greenova-input-bg: #fff;
+--greenova-input-color: #212529;
+--greenova-input-border: #ced4da;
+--greenova-input-placeholder: #adb5bd;
+```
+
+### Notification & Status Colors (Accessible)
+
+```
+--greenova-notif-primary-low: #2fc709;
+--greenova-notif-primary-mid: #fae100;
+--greenova-notif-primary-high: #ff1f1f;
+--greenova-notif-secondary-low: #e3f9dd;
+--greenova-notif-secondary-mid: #fff9d6;
+--greenova-notif-secondary-high: #ffe0e0;
+
+--greenova-success-text: #0d5613;
+--greenova-success-background: #e3f9dd;
+--greenova-success-border: #a2e68f;
+--greenova-warning-text: #664d03;
+--greenova-warning-background: #fff9d6;
+--greenova-warning-border: #fed94f;
+--greenova-error-text: #991b1b;
+--greenova-error-background: #ffe0e0;
+--greenova-error-border: #f87171;
+--greenova-info-text: #0c5460;
+--greenova-info-background: #d1ecf1;
+--greenova-info-border: #86cfdb;
+```
+
+### Spacing Variables
+
+```
+--greenova-spacing-mini: 0.25rem;
+--greenova-spacing-small: 0.5rem;
+--greenova-spacing: 1rem;
+--greenova-spacing-large: 1.5rem;
+--greenova-spacing-xlarge: 2rem;
+--greenova-spacing-xxlarge: 3rem;
+--greenova-padding-mini: 0.25rem;
+--greenova-padding-small: 0.5rem;
+--greenova-padding: 1rem;
+--greenova-padding-large: 1.5rem;
+--greenova-padding-xlarge: 2rem;
+--greenova-spacing-inline-start: 1rem;
+--greenova-spacing-inline-end: 1rem;
+--greenova-spacing-block-start: 1rem;
+--greenova-spacing-block-end: 1rem;
+```
+
+### Typography Variables
+
+```
+--greenova-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+--greenova-font-size-xs: 0.75rem;
+--greenova-font-size-sm: 0.875rem;
+--greenova-font-size-base: 1rem;
+--greenova-font-size-lg: 1.125rem;
+--greenova-font-size-xl: 1.25rem;
+--greenova-font-size-2xl: 1.5rem;
+--greenova-font-size-3xl: 1.875rem;
+--greenova-font-size-4xl: 2.25rem;
+--greenova-input-label: 0.875rem;
+--greenova-input-size: 1rem;
+--greenova-table-size: 0.875rem;
+--greenova-button-size: 1rem;
+--greenova-line-height-tight: 1.25;
+--greenova-line-height-base: 1.5;
+--greenova-line-height-loose: 1.75;
+--greenova-font-weight-light: 300;
+--greenova-font-weight-normal: 400;
+--greenova-font-weight-medium: 500;
+--greenova-font-weight-semibold: 600;
+--greenova-font-weight-bold: 700;
+--greenova-btn-font-weight: 500;
+--greenova-btn-line-height: 1.5;
+--greenova-btn-font-size: var(--greenova-font-size-base);
+--greenova-btn-padding-y: 0.5rem;
+--greenova-btn-padding-x: 1rem;
+--greenova-btn-border-width: 1px;
+```
+
+#### Usage Notes
+
+- Always use these variables for all new SASS, and Bootstrap theme
+  extensions.
+- Ensure all UI elements meet WCAG AA color contrast requirements.
+- Do not override these variables in component-level styles; extend only via
+  theme configuration.
+- For custom components, reference these variables for backgrounds, text,
+  borders, and spacing.
+- All templates and UI code must use these variables for consistent branding.
+- Document any exceptions or additions in the design system documentation.

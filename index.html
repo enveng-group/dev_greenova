@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Welcome to Greenova
+{% endblock title %}
+
+{% block meta_description %}
+Greenova helps environmental professionals monitor compliance status and manage regulatory obligations efficiently.
+{% endblock meta_description %}
+
+{% block meta %}
+{{ block.super }}
+  <meta name="keywords"
+        content="environmental management, compliance tracking, regulatory obligations, sustainability" />
+
+  <!-- Resource hints -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
+  <!-- HTMX configuration for post-logout handling -->
+  {% if is_post_logout %}
+    <meta name="htmx-config" content='{"refreshOnHistoryMiss": true}' />
+  {% endif %}
+{% endblock meta %}
+
+{% block extra_css %}
+  <style>
+    /* No-JS Fallback Styles */
+    .no-js-visible {
+      opacity: 1 !important;
+      transform: none !important;
+      visibility: visible !important;
+    }
+    /* Add these styles for initial page load */
+    body:not(.js-enabled) .fade-in,
+    body:not(.js-enabled) .slide-up,
+    body:not(.js-enabled) .reveal-element,
+    body:not(.js-enabled) .reveal-text {
+      opacity: 1 !important;
+      transform: none !important;
+      visibility: visible !important;
+    }
+  </style>
+  <link rel="stylesheet" href="{% static 'css/dist/pages/landing.css' %}" />
+  <link rel="stylesheet"
+        href="{% static 'css/dist/pages/landing_enhanced.css' %}" />
+  <link rel="stylesheet"
+        href="{% static 'css/dist/components/animations.css' %}" />
+{% endblock extra_css %}
+
+{% block head_scripts %}
+  {{ block.super }}
+  <!-- HTMX for AJAX and dynamic content -->
+  <script src="{% static 'js/vendors/htmx/htmx.min.js' %}" defer></script>
+  <!-- Hyperscript for client-side interactivity -->
+  <script src="{% static 'js/vendors/_hyperscript.min.js' %}" defer></script>
+{% endblock head_scripts %}
+
+{% block extra_head %}
+  <!-- JS feature detection -->
+  <script>
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('js-enabled');
+  </script>
+  <!-- Landing page specific scripts -->
+  <script src="{% static 'ts/dist/landing.bundle.js' %}" defer></script>
+{% endblock extra_head %}
+
+{% block content %}
+  <!-- Main content with progressive enhancement -->
+  <div class="hero-logo-container no-js-visible">
+    <img src="{% static 'img/favicon.svg' %}"
+         alt="Greenova Logo"
+         class="hero-logo"
+         width="80"
+         height="80"
+         loading="eager" />
+    <span class="hero-brand-title">Greenova</span>
+  </div>
+
+  <main id="main-content" class="no-js-visible">
+{% include "landing/sections/_hero.html" %}
+{% include "landing/sections/_features.html" %}
+{% include "landing/sections/_stats.html" %}
+{% include "landing/sections/_benefits.html" %}
+{% include "landing/sections/_testimonials.html" %}
+{% include "landing/sections/_cta.html" %}
+  </main>
+{% endblock content %}

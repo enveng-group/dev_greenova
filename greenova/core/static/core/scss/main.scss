@@ -1,0 +1,92 @@
+// Greenova Main SASS Compilation File
+// This file imports all SASS modules and compiles to CSS
+
+// =============================================
+// Import Foundation and Configuration
+// =============================================
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// =============================================
+// Import Greenova Components
+// =============================================
+@use 'components/buttons';
+@use 'components/forms';
+
+// =============================================
+// Bootstrap 5 Integration (fallback when available)
+// =============================================
+// Note: Bootstrap integration requires Bootstrap to be available
+// For now, we'll use our custom variables and mixins
+
+// Override with Greenova theme colors
+$primary: vars.$greenova-primary;
+$secondary: vars.$greenova-secondary;
+$success: vars.$greenova-success;
+$info: vars.$greenova-info;
+$warning: vars.$greenova-warning;
+$danger: vars.$greenova-danger;
+$light: vars.$greenova-light;
+$dark: vars.$greenova-dark;
+
+// =============================================
+// Greenova Custom Components
+// =============================================
+
+// Base layout and typography
+.greenova-container {
+  @include mix.container-responsive;
+  background-color: vars.$greenova-bg-light;
+}
+
+.greenova-header {
+  background: linear-gradient(135deg, vars.$primary, vars.$secondary);
+  color: vars.$white;
+  padding: vars.$spacer-lg;
+  box-shadow: vars.$shadow-medium;
+
+  h1, h2, h3 {
+    color: inherit;
+    margin-bottom: 0;
+  }
+}
+
+.greenova-footer {
+  background-color: vars.$greenova-dark;
+  color: vars.$greenova-light;
+  padding: vars.$spacer-lg;
+  margin-top: auto;
+
+  a {
+    color: vars.$greenova-accent;
+    text-decoration: none;
+
+    &:hover {
+      color: lighten(vars.$greenova-accent, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .greenova-header,
+  .greenova-footer,
+  .greenova-nav {
+    display: none;
+  }
+
+  .greenova-card {
+    box-shadow: none;
+    border: 1px solid vars.$greenova-border;
+  }
+}
+
+// Accessibility enhancements
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

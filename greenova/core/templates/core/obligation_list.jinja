@@ -1,0 +1,244 @@
+{% extends "core/base.jinja" %}
+{% load django_bootstrap5 %}
+{% block title %}Environmental Obligations{% endblock title %}
+{% block content %}
+<main class="greenova-container py-5">
+  <header class="greenova-header mb-4">
+    <h1 class="h1">Environmental Obligations</h1>
+    <p class="lead">Manage and track your environmental compliance requirements</p>
+  </header>
+  
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">Filter Options</h5>
+        </div>
+        <div class="card-body">
+          <form method="get" id="filter-form">
+            {% bootstrap_form filter.form %}
+            {% bootstrap_button "Apply Filter" button_type="submit" button_class="btn-primary w-100" %}
+          </form>
+        </div>
+      </div>
+      
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="card-title mb-0">Theme Settings</h5>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="theme-selector">Theme:</label>
+            <select id="theme-selector" class="form-select">
+              <option value="0">Light</option>
+              <option value="1">Dark</option>
+              <option value="2" selected>Auto</option>
+            </select>
+          </div>
+          <button id="apply-theme" class="btn btn-info w-100 mt-2">Apply Theme</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-9">
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Obligations List</h5>
+          <span id="obligation-count" class="badge bg-secondary">Loading...</span>
+        </div>
+        <div class="card-body">
+          <div id="obligations-table">
+            {% render_table table %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}
+
+{% block styles %}
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .row-highlight {
+      background-color: var(--greenova-success-background) !important;
+      transition: background-color 0.3s cubic-bezier(.4,0,.2,1);
+    }
+  }
+  
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-green-primary);
+    color: var(--greenova-text-primary-light);
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 1000;
+  }
+  
+  .skip-link:focus {
+    top: 6px;
+  }
+
+  .loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0,0,0,.3);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+{% endblock styles %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize components after WASM is loaded
+    if (window.wasmReady) {
+        initializeObligationList();
+    } else {
+        // Wait for WASM to be ready
+        document.addEventListener('wasmReady', initializeObligationList);
+    }
+
+    function initializeObligationList() {
+        const themeSelector = document.getElementById('theme-selector');
+        const applyThemeBtn = document.getElementById('apply-theme');
+        const obligationCount = document.getElementById('obligation-count');
+
+        // Initialize theme selector with current theme
+        if (window.wasmModule) {
+            const currentTheme = window.wasmModule.getTheme();
+            themeSelector.value = currentTheme.toString();
+        }
+
+        // Theme change handler
+        function handleThemeChange() {
+            const selectedTheme = parseInt(themeSelector.value);
+            if (window.wasmModule) {
+                try {
+                    window.wasmModule.setTheme(selectedTheme);
+                    const resolvedTheme = window.wasmModule.resolveTheme(selectedTheme);
+                    
+                    // Update document class based on resolved theme
+                    document.documentElement.classList.remove('theme-light', 'theme-dark');
+                    document.documentElement.classList.add(resolvedTheme === 0 ? 'theme-light' : 'theme-dark');
+                    
+                    // Show success feedback
+                    showNotification('Theme updated successfully', 'success');
+                } catch (error) {
+                    console.error('Error applying theme:', error);
+                    showNotification('Error applying theme', 'error');
+                }
+            }
+        }
+
+        // Event listeners
+        applyThemeBtn.addEventListener('click', handleThemeChange);
+        themeSelector.addEventListener('change', handleThemeChange);
+
+        // Load obligations data
+        loadObligationsData();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadObligationsData, 30000);
+    }
+
+    function loadObligationsData() {
+        const obligationCount = document.getElementById('obligation-count');
+        
+        // Show loading state
+        obligationCount.innerHTML = '<span class="loading-spinner"></span> Loading...';
+        
+        fetch('{% url "core:obligations_api" %}')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                updateObligationCount(data.obligations.length);
+                updateObligationTable(data.obligations);
+            })
+            .catch(error => {
+                console.error('Error loading obligations:', error);
+                obligationCount.textContent = 'Error';
+                showNotification('Failed to load obligations data', 'error');
+            });
+    }
+
+    function updateObligationCount(count) {
+        const obligationCount = document.getElementById('obligation-count');
+        obligationCount.textContent = `${count} obligations`;
+        obligationCount.classList.add('fade-in');
+    }
+
+    function updateObligationTable(obligations) {
+        // This would integrate with the existing django-tables2 table
+        // For now, we'll just highlight new or updated rows
+        const tableRows = document.querySelectorAll('#obligations-table tbody tr');
+        
+        if (window.wasmModule) {
+            tableRows.forEach((row, index) => {
+                // Use WASM easing function for smooth animations
+                const delay = window.wasmModule.linearEasing(index * 0.1);
+                setTimeout(() => {
+                    row.classList.add('row-highlight');
+                    setTimeout(() => row.classList.remove('row-highlight'), 1000);
+                }, delay * 100);
+            });
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+
+    // Filter form enhancement
+    const filterForm = document.getElementById('filter-form');
+    if (filterForm) {
+        filterForm.addEventListener('submit', function(e) {
+            const submitBtn = filterForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.innerHTML = '<span class="loading-spinner"></span> Applying...';
+                submitBtn.disabled = true;
+            }
+        });
+    }
+});
+</script>
+{% endblock scripts %}

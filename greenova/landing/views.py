@@ -1,44 +1,61 @@
-import logging
-from typing import Any
+"""Views for the Greenova landing app.
 
-from django.conf import settings
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+# Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
+# SPDX-License-Identifier: AGPL-3.0
+
+import logging
+
+import bleach
+from beartype import beartype
+from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.generic import TemplateView
+from django.shortcuts import redirect, render
+from django.urls import reverse
+
+from .forms import NewsletterSignupForm
 
 logger = logging.getLogger(__name__)
 
 
-@method_decorator(cache_control(max_age=300), name="dispatch")
-class HomeView(TemplateView):
-    """Landing page view."""
+@beartype
+def landing_page(request: HttpRequest) -> HttpResponse:
+    """Render the Greenova landing page.
 
-    template_name = "landing/index.html"
+    Args:
+        request: The HTTP request object.
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        """Handle GET requests."""
-        logger.debug(
-            "Landing page - User authenticated: %s",
-            request.user.is_authenticated,
-        )
+    Returns:
+        HttpResponse: The rendered landing page.
 
-        # Always render the full template
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
-        """Add landing page context data."""
-        context = super().get_context_data(**kwargs)
-        # Add basic context data that was previously in utils
-        context.update(
-            {
-                "app_version": getattr(settings, "APP_VERSION", "0.1.0"),
-                "show_landing_content": True,
-                "show_dashboard_link": self.request.user.is_authenticated,
-            },
-        )
-        return context
+    """
+    logger.info("Rendering landing page")
+    return render(request, "landing/landing.jinja", {})
 
 
-class TestPartialView(TemplateView):
-    template_name = "landing/test_partial.html"
+@beartype
+def newsletter_signup(request: HttpRequest) -> HttpResponse:
+    """Handle newsletter signup form submission.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        HttpResponse: Redirect or re-render with form errors.
+
+    """
+    if request.method == "POST":
+        form = NewsletterSignupForm(request.POST)
+        if form.is_valid():
+            email = bleach.clean(form.cleaned_data["email"])
+            # TODO(Adrian Gallo): Save email to newsletter list or send to external service
+            # See issue: https://github.com/enveng-group/greenova/issues/1
+            logger.info("Newsletter signup: %s", email)
+            messages.success(request, "Thank you for subscribing!")
+            return redirect(reverse("landing:home"))
+        logger.warning("Newsletter signup form invalid: %s", form.errors)
+    else:
+        form = NewsletterSignupForm()
+    return render(request, "landing/landing.jinja", {"form": form})

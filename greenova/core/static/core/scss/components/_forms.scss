@@ -1,0 +1,191 @@
+// Greenova Form Components
+// Advanced form styling beyond Bootstrap utilities
+
+@use '../variables' as vars;
+@use '../mixins' as mix;
+
+.form-environmental {
+  .form-floating {
+    > .form-control,
+    > .form-select {
+      border: 2px solid vars.$greenova-border;
+
+      &:focus {
+        border-color: vars.$greenova-primary;
+        box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-primary, 0.25);
+      }
+
+      &:invalid {
+        border-color: vars.$greenova-danger;
+
+        &:focus {
+          box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-danger, 0.25);
+        }
+      }
+    }
+
+    > label {
+      color: vars.$greenova-muted;
+    }
+
+    > .form-control:focus ~ label,
+    > .form-control:not(:placeholder-shown) ~ label,
+    > .form-select ~ label {
+      color: vars.$greenova-primary;
+    }
+  }
+}
+
+// Environmental obligation form styling
+.obligation-form {
+  .form-section {
+    background-color: vars.$greenova-bg-light;
+    border: 1px solid vars.$greenova-border;
+    border-radius: vars.$border-radius-lg;
+    padding: vars.$spacer-lg;
+    margin-bottom: vars.$spacer-lg;
+
+    .section-title {
+      color: vars.$greenova-primary;
+      font-weight: vars.$font-weight-medium;
+      margin-bottom: vars.$spacer-md;
+      padding-bottom: vars.$spacer-sm;
+      border-bottom: 2px solid vars.$greenova-primary;
+    }
+  }
+
+  .form-group-inline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: vars.$spacer-md;
+
+    @include mix.media-breakpoint-down(sm) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Date picker styling
+.datepicker-environmental {
+  .form-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23#{str-slice(#{vars.$greenova-primary}, 2)}' d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 4v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4H2z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right vars.$spacer-sm center;
+    background-size: 16px;
+    padding-right: 2.5rem;
+  }
+}
+
+// File upload styling
+.file-upload-environmental {
+  .form-control {
+    &[type="file"] {
+      border: 2px dashed vars.$greenova-border;
+      background-color: vars.$greenova-bg-light;
+      padding: vars.$spacer-lg;
+      text-align: center;
+      transition: vars.$transition-medium;
+
+      &:hover {
+        border-color: vars.$greenova-primary;
+        background-color: rgba(vars.$greenova-primary, 0.05);
+      }
+
+      &:focus {
+        border-color: vars.$greenova-primary;
+        box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-primary, 0.25);
+      }
+    }
+  }
+
+  .file-upload-label {
+    color: vars.$greenova-muted;
+    font-size: vars.$font-size-sm;
+    margin-top: vars.$spacer-sm;
+  }
+}
+
+// Checkbox and radio button styling
+.form-check-environmental {
+  .form-check-input {
+    &:checked {
+      background-color: vars.$greenova-primary;
+      border-color: vars.$greenova-primary;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-primary, 0.25);
+    }
+  }
+
+  .form-check-label {
+    color: vars.$greenova-dark;
+  }
+}
+
+// Switch styling for environmental toggles
+.form-switch-environmental {
+  .form-check-input {
+    &:checked {
+      background-color: vars.$greenova-success;
+      border-color: vars.$greenova-success;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-success, 0.25);
+    }
+  }
+}
+
+// Input group styling
+.input-group-environmental {
+  .input-group-text {
+    background-color: vars.$greenova-bg-light;
+    border-color: vars.$greenova-border;
+    color: vars.$greenova-primary;
+  }
+
+  .form-control {
+    &:focus {
+      border-color: vars.$greenova-primary;
+      box-shadow: none;
+    }
+  }
+
+  &:focus-within {
+    .input-group-text {
+      border-color: vars.$greenova-primary;
+      background-color: rgba(vars.$greenova-primary, 0.1);
+    }
+  }
+}
+
+// Validation styling
+.was-validated {
+  .form-control,
+  .form-select {
+    &:valid {
+      border-color: vars.$greenova-success;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-success, 0.25);
+      }
+    }
+
+    &:invalid {
+      border-color: vars.$greenova-danger;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(vars.$greenova-danger, 0.25);
+      }
+    }
+  }
+
+  .valid-feedback {
+    color: vars.$greenova-success;
+  }
+
+  .invalid-feedback {
+    color: vars.$greenova-danger;
+  }
+}
