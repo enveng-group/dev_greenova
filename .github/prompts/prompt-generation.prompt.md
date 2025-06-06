@@ -20,15 +20,6 @@ Template for generating automated issue resolution prompts for Copilot,
 including context, objectives, and acceptance criteria.
 mode: agent
 
-tools:
-
-- context7 # REQUIRED: Use for all context and background information
-- json
-- git
-- fetch # REQUIRED: Use for all web content retrieval (e.g., documentation, reports)
-- filesystem # REQUIRED: Use for all file reading, writing, and editing
-- sequential-thinking # REQUIRED: Use for all planning, reasoning, and stepwise logic
-- github
 
 ---
 
@@ -79,9 +70,7 @@ servers, refactor code, update documentation, run pre-commit checks, etc.).
 
 ## Additional Guidelines
 
-- **Documentation Lookup**: Always use the `fetch` and `context7` MCP servers
-  to look up and reference official documentation for the following
-  technologies as needed:
+- **Documentation Lookup**:
 
   - [GSAP Animation](https://gsap.com/docs/v3/)
   - [PicoCSS Classless](https://picocss.com/docs/classless)

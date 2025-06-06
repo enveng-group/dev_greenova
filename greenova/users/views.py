@@ -28,6 +28,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
 
 from beartype import beartype
 
@@ -400,3 +402,14 @@ def import_user(request: HttpRequest) -> HttpResponse:
     return render(request, "users/import_user.html", {
         "page_title": "Import User",
     })
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    """List view for all users."""
+    model = User
+    template_name = "users/users_list.html"
+    context_object_name = "users"
+
+    def get_queryset(self):
+        """Return all users ordered by username."""
+        return User.objects.all().order_by("username")

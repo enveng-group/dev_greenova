@@ -89,7 +89,7 @@
     {
       "label": "Clean Initial Migrations",
       "type": "shell",
-      "command": "find greenova -type f -path \"*/migrations/*_initial.py\" -delete",
+      "command": "find greenova -type f -path \"*/migrations/*.py\" -delete",
       "group": {
         "kind": "build",
         "isDefault": false

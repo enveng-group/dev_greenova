@@ -1,4 +1,10 @@
+from typing import Any, cast
+from django.db import models
 from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Project
+from guardian.shortcuts import get_objects_for_user
+
 
 class ProjectListView(LoginRequiredMixin, ListView):
     """List all projects the user can view."""
@@ -6,13 +12,16 @@ class ProjectListView(LoginRequiredMixin, ListView):
     template_name = "projects/project_list.html"
     context_object_name = "object_list"
 
-    def get_queryset(self):
-        # Only show projects the user has permission to view
-        return get_objects_for_user(
+    def get_queryset(self) -> models.QuerySet[Project]:
+        """Return queryset of projects the user can view."""
+        allowed_projects = get_objects_for_user(
             self.request.user,
             "projects.view_project",
             Project.objects.all(),
         )
+        # get_objects_for_user returns a list[Model], so cast to list[Project]
+        allowed_ids = [cast(Project, p).id for p in allowed_projects]
+        return Project.objects.filter(id__in=allowed_ids)
 """Views for the projects app.
 
 This module provides views for displaying, exporting, importing, and managing

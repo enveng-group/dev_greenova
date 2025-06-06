@@ -1,4 +1,4 @@
-{% load obligation_tags includes %}
+{% load obligation_tags %}
 <section aria-labelledby="obligations-heading"
          class="obligations-section"
          hx-ext="class-tools path-deps"
@@ -13,7 +13,7 @@
     </span>
     <span class="next-due-obligation">
       Next Due Obligation:
-      {% with next_due=get_next_due_obligation next_due_obligation %}
+      {% get_next_due_obligation next_due_obligation as next_due %}
         {% if next_due %}
           <a href="{% url 'obligations:detail' next_due.obligation_number %}">
             {{ next_due.obligation|truncatechars:40 }} (Due: {{ next_due.action_due_date|format_due_date }})
@@ -21,7 +21,6 @@
         {% else %}
           <span>None</span>
         {% endif %}
-      {% endwith %}
     </span>
     <span class="active-obligations-count">
       Active Obligations: <strong>{% get_active_obligations active_obligations|length %}</strong>

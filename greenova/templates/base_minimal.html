@@ -20,16 +20,17 @@
     <!-- Favicon -->
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
 
+
     <!-- PicoCSS (classless) for base styling -->
     <link rel="stylesheet" href="{% static 'dist/vendors/pico-classless.min.css' %}">
-    <!-- Main CSS: only styles.css from dist -->
+    <!-- Main CSS: styles.css from dist (always loaded, after PicoCSS) -->
+    <link rel="stylesheet" href="{% static 'dist/styles.css' %}" />
+    <!-- Optionally keep preload for performance, but always load stylesheet -->
     <link rel="preload"
           href="{% static 'dist/styles.css' %}"
           as="style"
           onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript>
-      <link rel="stylesheet" href="{% static 'dist/styles.css' %}" />
-    </noscript>
+    <!-- No <noscript> fallback needed since stylesheet is always loaded above -->
 
     {% block extra_css %}
     {% endblock extra_css %}

@@ -1,7 +1,7 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [GitHub Copilot Prompt Template: Resolve Missing Elements, Tags, and Columns for Greenova POC](#github-copilot-prompt-template-resolve-missing-elements-tags-and-columns-for-greenova-poc)
+- [GitHub Copilot Prompt Template for Automated Issue Resolution](#github-copilot-prompt-template-for-automated-issue-resolution)
   - [Goal](#goal)
   - [Context](#context)
   - [Objectives](#objectives)
@@ -9,121 +9,68 @@
   - [Expectations](#expectations)
   - [Acceptance Criteria](#acceptance-criteria)
   - [Instructions](#instructions)
-  - [Additional Guidelines](#additional-guidelines)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ---
 
 description:
-Prompt for resolving missing elements, tags, and columns in files, templates, and database to ensure the Greenova proof of concept (POC) fully supports all required CRUD and navigation features.
+Prompt for resolving the issue where styles.css is not being reflected on the landing page, resulting in a missing color scheme and visual inconsistencies. The prompt guides the investigation and fix of any template conflicts or misconfigurations that prevent the correct application of styles.css.
 mode: agent
-
-tools:
-
-- context7 # REQUIRED: Use for all context and background information
-- json
-- git
-- fetch # REQUIRED: Use for all web content retrieval (e.g., documentation, reports)
-- filesystem # REQUIRED: Use for all file reading, writing, and editing
-- sequential-thinking # REQUIRED: Use for all planning, reasoning, and stepwise logic
-- github
 
 ---
 
-# GitHub Copilot Prompt Template: Resolve Missing Elements, Tags, and Columns for Greenova POC
+# GitHub Copilot Prompt Template for Automated Issue Resolution
 
 ## Goal
 
-Ensure the Greenova proof of concept (POC) fully supports:
-- User login
-- Project creation and environmental mechanism definition
-- Adding obligations to projects
-- Assigning responsibilities to users
-- Monitoring compliance status
-- CRUD for user profiles and company information
-- Drill-down navigation: mechanisms → procedures → obligations
-- CRUD for obligations (including overdue obligations)
-- Tooltip on overdue obligations card listing clickable, detailed overdue obligations
-- Editing obligations from detail pages
-- All CRUD operations for overdue obligations
+Resolve the issue where styles.css is not being reflected on the landing page, resulting in missing color scheme and visual inconsistencies. Investigate and fix any template conflicts or misconfigurations that prevent the correct application of styles.css.
 
 ## Context
 
-- Many files, templates, and database models are missing required elements, tags, or columns, preventing the POC from working as intended.
-- The following features must be implemented and working:
-  1. Log in using credentials created during setup
-  2. Create projects and define environmental mechanisms
-  3. Add obligations related to projects
-  4. Assign responsibilities to users
-  5. Monitor compliance status
-  6. CRUD user profiles and company information
-  7. Drill down into mechanisms, then procedures, then obligations for details
-  8. Perform CRUD on obligations
-  9. Tooltip on overdue obligations card lists clickable overdue obligations, linking to detail pages
-  10. Edit obligations from detail pages
-  11. Full CRUD for overdue obligations
-- See these issues/PRs for more details and requirements:
-  - https://github.com/enveng-group/dev_greenova/pull/171
-  - https://github.com/enveng-group/dev_greenova/issues/160
-  - https://github.com/enveng-group/dev_greenova/issues/158
-  - https://github.com/enveng-group/dev_greenova/issues/159
-  - https://github.com/enveng-group/dev_greenova/issues/163
-  - https://github.com/enveng-group/dev_greenova/issues/156
-  - https://github.com/enveng-group/dev_greenova/issues/161
-  - https://github.com/enveng-group/dev_greenova/issues/162
-  - https://github.com/enveng-group/dev_greenova/pull/174
+- The landing page does not display the expected color scheme or styles from styles.css.
+- styles.css is present in the static/dist directory but its styles are not visible on the landing page.
+- There may be conflicts or misconfigurations in Django templates (base.html, base_minimal.html, etc.) that prevent styles.css from loading or being applied.
+- PicoCSS (classless) is also loaded, and there may be a conflict or override issue.
+- The project uses Django 5.2, Python 3.12.10, and strict frontend guidelines (see .copilot-codeGeneration-instructions.md).
 
 ## Objectives
 
-- Identify and add all missing elements, tags, and columns in files, templates, and database models required for the above features.
-- Ensure all CRUD operations and navigation paths are present and functional.
-- Implement tooltips and clickable lists for overdue obligations as described.
-- Ensure all templates and forms have the necessary fields, blocks, and logic.
-- Update database models and migrations to include missing columns/relations.
-- Reference and resolve all requirements from the linked issues/PRs.
-- Iterate using all available MCP servers (github, fetch, sequential-thinking, filesystem, context7) to:
-  - Analyze code, templates, and database schema
-  - Plan and execute necessary changes
-  - Validate with pre-commit and tests after each change
-- Document all changes and ensure compliance with project standards.
+- Diagnose why styles.css is not being applied on the landing page.
+- Check for template conflicts, static file misconfigurations, or CSS override issues.
+- Ensure styles.css is loaded and applied after PicoCSS and any vendor styles.
+- Confirm that the correct color scheme and design tokens are visible on the landing page.
+- Update templates or static file references as needed to resolve the issue.
+- Ensure all changes pass pre-commit checks and do not break other pages.
 
 ## Sources
 
-- All relevant Django models, forms, views, templates, and static files in the workspace
-- Database migration files
-- The above GitHub issues and PRs
-- Project documentation and standards (context7)
+- /workspaces/greenova/greenova/static/dist/styles.css
+- /workspaces/greenova/styles.scss
+- /workspaces/greenova/greenova/templates/base.html
+- /workspaces/greenova/greenova/templates/base_minimal.html
+- /workspaces/greenova/greenova/landing/templates/landing/index.html
+- .copilot-codeGeneration-instructions.md
 
 ## Expectations
 
-- Use all available MCP servers to:
-  - Analyze and fix missing elements, tags, and columns
-  - Implement and validate all required CRUD and navigation features
-  - Update code, templates, and database as needed
-  - Run pre-commit and tests after each change
-  - Iterate until all requirements are met and all checks pass
-- Ensure all changes align with project coding, documentation, and testing standards
+- Copilot should iterate using all available MCP servers to:
+  - Analyze template and static file loading order
+  - Refactor templates if necessary to ensure styles.css is loaded and applied
+  - Check for and resolve any CSS conflicts or overrides
+  - Update documentation if any changes to the loading order or template structure are made
+  - Run pre-commit checks after each change
+  - Test the landing page to confirm the color scheme and styles are correct
+  - Ensure no regressions on other pages
 
 ## Acceptance Criteria
 
-- All required elements, tags, and columns are present in files, templates, and database
-- All CRUD and navigation features described above are implemented and working
-- Overdue obligations tooltip lists clickable obligations linking to detail pages
-- Obligations can be edited from their detail pages
-- All pre-commit checks and tests pass
-- All changes are documented as per project standards
+- styles.css is loaded and applied on the landing page after PicoCSS
+- The correct color scheme and design tokens are visible
+- No template or static file conflicts remain
+- All pre-commit checks pass
+- No regressions on other pages
+- Documentation is updated if template/static loading order changes
 
 ## Instructions
-
-- Use this prompt to guide Copilot in resolving the described missing elements/tags/columns issue
-- Reference all relevant files, issues, and documentation
-- Use github, fetch, sequential-thinking, filesystem, and context7 for planning and execution
-- Iterate until the POC works as described and all checks pass
-
-## Additional Guidelines
-
-- Always use the simplest effective solution
-- Follow the project's coding, documentation, and testing standards (see context7)
-- Document any changes or decisions clearly in code and commit messages
-- Use semantic reasoning and all available MCP servers for planning and execution
+- Paste this prompt into Copilot chat and iterate until the issue is fully resolved

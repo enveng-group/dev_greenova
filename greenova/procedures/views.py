@@ -25,6 +25,60 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView, ListView
+from guardian.shortcuts import assign_perm
+from mechanisms.models import EnvironmentalMechanism
+from obligations.models import Obligation
+from responsibility.figures import figure_to_svg, get_responsibility_chart
+
+# Local application imports
+from .figures import get_procedure_charts_svg as get_all_procedure_charts_svg
+from .models import Procedure
+from .serializers import ProcedureCollectionProtoSerializer, ProcedureProtoSerializer
+
+mpl.use("Agg")  # Use Agg backend for non-interactive plotting
+logger = logging.getLogger(__name__)
+
+
+class ProcedureListView(LoginRequiredMixin, ListView):
+    """List view for all procedures.
+
+    Displays all procedures in the system, ordered by name.
+    """
+    model = Procedure
+    template_name = "procedures/procedures_list.html"
+    context_object_name = "procedures"
+
+    def get_queryset(self):
+        """Return all procedures ordered by name."""
+        return Procedure.objects.all().order_by("name")
+"""Views for the procedures app.
+
+This module provides views for displaying, exporting, and importing
+procedure data, including chart rendering and API endpoints.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
+"""
+
+# Standard library imports
+import logging
+from datetime import timedelta
+from typing import Any
+
+# Third-party library imports
+import matplotlib as mpl
+from beartype import beartype
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.vary import vary_on_headers
 from django.views.generic import TemplateView
 from guardian.shortcuts import assign_perm
 from mechanisms.models import EnvironmentalMechanism

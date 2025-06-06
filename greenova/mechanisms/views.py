@@ -1,3 +1,21 @@
+from django.views.generic import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import EnvironmentalMechanism
+from .permissions import user_can_view_mechanism
+class MechanismListView(LoginRequiredMixin, ListView):
+    """View for listing all environmental mechanisms."""
+    model = EnvironmentalMechanism
+    template_name = "mechanisms/mechanisms_list.html"
+    context_object_name = "mechanisms"
+
+    def get_queryset(self):
+        """Return queryset of mechanisms the user can view."""
+        qs = super().get_queryset()
+        user = self.request.user
+        # Filtering by permission (if guardian is used, can use .filter(user_has_perm...))
+        # For now, fallback to list and filter manually, then return pk__in
+        allowed_ids = [m.pk for m in qs if user_can_view_mechanism(user, m)]
+        return qs.filter(pk__in=allowed_ids)
 """Views for the mechanisms app.
 
 This module provides views for displaying, exporting, and importing

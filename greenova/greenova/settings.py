@@ -233,8 +233,8 @@ INTERNAL_IPS = [
 
 # Application definition
 INSTALLED_APPS = [
-    "whitenoise.runserver_nostatic",
-    "csp",  # django-csp for Content Security Policy
+    #"whitenoise.runserver_nostatic",
+    #"csp",  # django-csp for Content Security Policy
     # Core Django apps (must be first)
     "django.contrib.admin",
     "django.contrib.auth",
@@ -256,17 +256,17 @@ INSTALLED_APPS = [
     "django_htmx",
     "django_hyperscript",
     "django_matplotlib",
-    "django_pdb",
+    #"django_pdb",
     "template_partials",
     "tailwind",
     "django_browser_reload",
     "debug_toolbar",
     "pb_model",
-    "silk",
+    #"silk",
     "crispy_forms",
     "crispy_bootstrap4",
     "guardian",
-    "storages",
+    #"storages",
     "dal",
     "dal_select2",
     "django_tables2",
@@ -287,6 +287,8 @@ INSTALLED_APPS = [
     "feedback.apps.FeedbackConfig",
     "django_plotly_dash.apps.DjangoPlotlyDashConfig",
     "auditing.apps.AuditingConfig",
+    "settings",
+    "reports.apps.ReportsConfig",
 ]
 
 # Conditionally add django_extensions for development only
@@ -309,8 +311,8 @@ DJANGO_MATPLOTLIB_FIG_DEFAULTS: MatplotlibFigDefaults = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "csp.middleware.CSPMiddleware",  # django-csp middleware for CSP enforcement
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    #"csp.middleware.CSPMiddleware",  # django-csp middleware for CSP enforcement
+    #"whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -321,7 +323,7 @@ MIDDLEWARE = [
     "django_htmx.middleware.HtmxMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
-    "silk.middleware.SilkyMiddleware",
+    #"silk.middleware.SilkyMiddleware",
     "core.middleware.ProjectSelectionMiddleware",
     "users.middleware.UserProfileEnforcementMiddleware",
 ]
@@ -483,29 +485,24 @@ APP_VERSION = "0.0.7"
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Security settings
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = "DENY"
-CSRF_TRUSTED_ORIGINS = ["https://app.greenova.com.au"]
-SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
-SESSION_COOKIE_HTTPONLY = True
+# Security settings (commented out for simplification)
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# X_FRAME_OPTIONS = "DENY"
+# CSRF_TRUSTED_ORIGINS = ["https://app.greenova.com.au"]
+# SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+# SESSION_COOKIE_HTTPONLY = True
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
-CORS_ALLOW_HEADERS = ["Content-Type", "Authorization"]
+# CORS settings (commented out for simplification)
+# CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+# CORS_ALLOW_HEADERS = ["Content-Type", "Authorization"]
 
 # Cache configuration
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "greenova-cache",
-        "TIMEOUT": 300,
-        "OPTIONS": {
-            "MAX_ENTRIES": 1000,
-        },
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     },
 }
 
@@ -643,23 +640,23 @@ if SENTRY_AVAILABLE and sentry_sdk:
     )
 
 # Silk configuration
-PROFILES_DIR = os.path.join(BASE_DIR, "greenova", "profiles")
-if not os.path.exists(PROFILES_DIR):
-    os.makedirs(PROFILES_DIR)
+#PROFILES_DIR = os.path.join(BASE_DIR, "greenova", "profiles")
+#if not os.path.exists(PROFILES_DIR):
+#    os.makedirs(PROFILES_DIR)
 
-SILKY_PYTHON_PROFILER = True
-SILKY_PYTHON_PROFILER_BINARY = False
-SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
-SILKY_AUTHENTICATION = True
-SILKY_AUTHORISATION = True
-SILKY_META = True
+#SILKY_PYTHON_PROFILER = True
+#SILKY_PYTHON_PROFILER_BINARY = False
+#SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
+#SILKY_AUTHENTICATION = True
+#SILKY_AUTHORISATION = True
+#SILKY_META = True
 
 # Garbage collection settings for small server environment
-SILKY_MAX_RECORDED_REQUESTS = 500
-SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50
-SILKY_MAX_REQUEST_BODY_SIZE = 1024
-SILKY_MAX_RESPONSE_BODY_SIZE = 1024
-SILKY_INTERCEPT_PERCENT = 25
+#SILKY_MAX_RECORDED_REQUESTS = 500
+#SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50
+#SILKY_MAX_REQUEST_BODY_SIZE = 1024
+#SILKY_MAX_RESPONSE_BODY_SIZE = 1024
+#SILKY_INTERCEPT_PERCENT = 25
 
 # Django Extensions (shell_plus) Configuration
 SHELL_PLUS = "ipython"
@@ -686,25 +683,6 @@ SHELL_PLUS_SUBCLASSES_IMPORT = [
     "django.db.models.Model",
     "django.contrib.auth.models.AbstractUser",
 ]
-
-# django-storages S3 configuration (for production)
-if not DEBUG:
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "ap-southeast-2")
-    AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN")
-    AWS_S3_OBJECT_PARAMETERS = {
-        "CacheControl": "max-age=86400",
-    }
-    AWS_DEFAULT_ACL = None
-    AWS_QUERYSTRING_AUTH = False
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_LOCATION = "media"
-    MEDIA_URL = f"https://{
-        AWS_S3_CUSTOM_DOMAIN or AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com'
-    }/media/"
 
 # django-autocomplete-light configuration
 DAL_SELECT2_JS = [

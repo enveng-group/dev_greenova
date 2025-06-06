@@ -57,6 +57,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("chat/", include("chatbot.urls", namespace="chat")),
     path("mechanisms/", include("mechanisms.urls")),
     path("procedures/", include("procedures.urls")),
+    path("reports/", include("reports.urls", namespace="reports")),
     # Add company URLs
     path("company/", include("company.urls", namespace="company")),
     # Add responsibility URLs - create a new file for this
@@ -67,9 +68,10 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("sentry-debug/", trigger_error),
     # Plotly
     path("django_plotly_dash/", include("django_plotly_dash.urls")),
+    path("settings/", include("settings.urls", namespace="settings")),
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]
+    # Silk integration disabled

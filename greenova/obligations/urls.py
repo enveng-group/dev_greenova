@@ -45,7 +45,12 @@ urlpatterns = [
         ToggleCustomAspectView.as_view(),
         name="toggle_custom_aspect",
     ),
-    path("list/", views.ObligationListView.as_view(), name="list"),
+path("list/", views.ObligationListView.as_view(), name="list"),
+path(
+    "all/",
+    views.ObligationListView.as_view(),
+    name="obligation_list",
+),
     path(
         "project-autocomplete/",
         autocomplete.Select2QuerySetView.as_view(model=Project),

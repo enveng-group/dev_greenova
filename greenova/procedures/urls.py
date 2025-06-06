@@ -2,11 +2,16 @@ from django.urls import path, include
 
 from . import views
 from . import plotlyapp
-from .views import export_procedure, export_all_procedures, import_procedure
+from .views import export_procedure, export_all_procedures, import_procedure, ProcedureListView
 
 app_name = "procedures"
 
 urlpatterns = [
+    path(
+        "",
+        ProcedureListView.as_view(),
+        name="procedure_list",
+    ),
     path(
         "charts/<int:mechanism_id>/",
         views.ProcedureChartsView.as_view(),

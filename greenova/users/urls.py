@@ -26,4 +26,7 @@ urlpatterns = [
         "admin/users/<int:user_id>/delete/",
         views.admin_user_delete,
         name="admin_user_delete"),
+
+    # User list URL
+    path("list/", views.UserListView.as_view(), name="user_list"),
 ]
