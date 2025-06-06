@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load partials %}
+
 {% load company_tags %}
 
 {% block title %}Companies{% endblock title %}
@@ -51,7 +51,7 @@
   </section>
 
   <div id="company-list-container" class="table-container">
-    {% include_partial "company/partials/company_list.html" %}
+    {% include "company/includes/company_list.html" %}
   </div>
 </article>
 {% endblock %}

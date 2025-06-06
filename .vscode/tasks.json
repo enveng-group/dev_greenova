@@ -61,7 +61,7 @@
     {
       "label": "Django Collectstatic",
       "type": "shell",
-      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py collectstatic --noinput",
+      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py collectstatic --clear --noinput",
       "group": {
         "kind": "build",
         "isDefault": false

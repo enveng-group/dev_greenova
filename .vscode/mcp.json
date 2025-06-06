@@ -49,15 +49,6 @@
 			"type": "stdio",
 			"command": "npx",
 			"args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-		},
-		"Framelink Figma MCP": {
-			"command": "npx",
-			"args": [
-				"-y",
-				"figma-developer-mcp",
-				"--figma-api-key=YOUR-KEY",
-				"--stdio"
-			]
 		}
 	}
 }

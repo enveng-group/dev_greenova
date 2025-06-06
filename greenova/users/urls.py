@@ -8,6 +8,7 @@ urlpatterns = [
     # User profile URLs
     path("profile/", views.profile_view, name="profile"),
     path("profile/edit/", views.profile_edit, name="profile_edit"),
+    path("profile/complete/", views.profile_complete, name="profile_complete"),
     path("profile/change-password/", views.change_password, name="change_password"),
     path(
         "profile/upload-image/",

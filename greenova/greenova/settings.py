@@ -269,6 +269,7 @@ INSTALLED_APPS = [
     "storages",
     "dal",
     "dal_select2",
+    "django_tables2",
     # Your local apps (ordered by dependency)
     "authentication.apps.AuthenticationConfig",
     "core.apps.CoreConfig",
@@ -363,7 +364,7 @@ ANONYMOUS_USER_NAME = "anonymous"
 GUARDIAN_MONKEY_PATCH_USER = False
 
 # Update TEMPLATES configuration
-TEMPLATES: list[TemplateConfig] = [
+TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
@@ -379,6 +380,14 @@ TEMPLATES: list[TemplateConfig] = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "debug": DEBUG,
+            "builtins": [
+                "template_partials.templatetags.partials",
+            ],
+            "loaders": [
+                "template_partials.loader.Loader",
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
+            ],
         },
     },
     {

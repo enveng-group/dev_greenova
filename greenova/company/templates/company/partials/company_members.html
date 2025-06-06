@@ -1,5 +1,5 @@
 {% load company_tags %}
-{% load partials %}
+
 
 <section class="add-member" aria-labelledby="add-member-heading">
   <h2 id="add-member-heading">Add Member</h2>
@@ -49,6 +49,6 @@
   <h2 id="current-members-heading">Current Members</h2>
 
   <div id="members-list-container">
-    {% include_partial "company/partials/member_list.html" %}
+    {% include "company/includes/member_list.html" %}
   </div>
 </section>

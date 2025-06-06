@@ -59,6 +59,7 @@ class Profile(ProtoBufMixin, models.Model):
         related_name="profile",
     )
     bio = models.TextField(max_length=500, blank=True)
+    has_completed_profile = models.BooleanField(default=False)
     position = models.CharField(max_length=100, blank=True)
     department = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(

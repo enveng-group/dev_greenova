@@ -8,5 +8,7 @@
   "extensions.experimental.deferredStartupFinishedActivation": true,
   "extensions.experimental.issueQuickAccess": false,
   "extensions.ignoreRecommendations": true,
-  "remote.downloadExtensionsLocally": false
+  "remote.downloadExtensionsLocally": false,
+  "chat.mcp.discovery.enabled": true,
+  "chat.mcp.enabled": true
 }

@@ -51,6 +51,39 @@ if TYPE_CHECKING:
 
 User = get_user_model()
 
+# --- Profile Completion View ---
+@beartype
+@login_required
+@require_http_methods(["GET", "POST"])
+def profile_complete(request: HttpRequest) -> HttpResponse:
+    """View for completing user profile if incomplete.
+
+    Args:
+        request: The HTTP request.
+
+    Returns:
+        Rendered profile completion form or redirect after completion.
+    """
+    profile = request.user.profile
+    if getattr(profile, "has_completed_profile", False):
+        return redirect("users:profile")
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            # Mark profile as complete
+            setattr(profile, "has_completed_profile", True)
+            profile.save()
+            messages.success(request, "Profile completed successfully.")
+            return redirect("users:profile")
+    else:
+        form = UserProfileForm(instance=profile)
+    context: dict[str, Any] = {
+        "form": form,
+        "profile": profile,
+        "page_title": "Complete Your Profile",
+    }
+    return render(request, "users/profile_complete.html", context)
 
 @beartype
 def is_admin(user: Any) -> bool:

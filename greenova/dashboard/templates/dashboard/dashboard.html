@@ -4,7 +4,7 @@
 {% load user_tags %}
 {% load core_tags %}
 {% load dashboard_tags %}
-{% load partials %}
+
 
 {% block title %}
 Dashboard | Greenova
@@ -55,7 +55,7 @@ Dashboard | Greenova
 {% block content %}
   <div class="dashboard-layout">
     <!-- Dashboard alerts/messages -->
-    {% with alerts=get_dashboard_alerts dashboard_alerts %}
+     {% with alerts=dashboard_alerts %} 
       {% if alerts %}
         <div class="dashboard-alerts">
           {% for alert in alerts %}
@@ -67,15 +67,15 @@ Dashboard | Greenova
     <!-- Pending tasks quick stat -->
     <div class="dashboard-quick-stats">
       <span class="quick-stat">
-        Pending Tasks: <strong>{% get_pending_tasks pending_tasks %}</strong>
+        Pending Tasks: <strong>{% get_pending_tasks pending_tasks|default:0 %}</strong>
       </span>
     </div>
     <!-- Include our new sidebar component -->
-    {% include_partial "dashboard/components/sidebar.html" %}
+    {% include "dashboard/components/sidebar.html" %}
 
     <!-- Semantic breadcrumbs navigation for accessibility and navigation -->
     {# Render breadcrumbs for both authenticated and anonymous users #}
-    {% include_partial "layouts/_breadcrumbs.html" %}
+    {% include "layouts/_breadcrumbs.html" %}
 
     <!-- Main dashboard content area -->
     <main class="main-content">
@@ -100,11 +100,11 @@ Dashboard | Greenova
       </header>
       <!-- Project selector - ALWAYS VISIBLE -->
       <div class="project-selector-container">
-        {% include_partial "projects/projects_selector.html" %}
+        {% include "projects/projects_selector.html" %}
       </div>
       <div id="dashboard-content-container">
         {% if selected_project_id %}
-          {% include_partial "dashboard/partials/dashboard_content.html" %}
+          {% include "dashboard/includes/dashboard_content.html" %}
           
           <!-- Drilldown Navigation for Issue #165 -->
           <section class="drilldown-navigation" aria-label="Obligation Drilldown">

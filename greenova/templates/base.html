@@ -20,7 +20,7 @@
 {% load user_tags %}
 {% load core_tags %}
 {% load render_table from django_tables2 %}
-{% load partials %}
+
 
 {% block meta %}
   <meta charset="UTF-8" />
@@ -45,16 +45,27 @@
 {% endblock title %}
 
 {% block head_scripts %}
-  <!-- WASM bundle -->
-  <script src="{% static 'dist/optimized.wasm' %}" type="module" onerror="console.warn('WASM bundle not available')"></script>
+  <!-- WASM bundle loader (ES module) -->
+  <script src="{% static 'dist/wasm-loader.js' %}" type="module" onerror="console.warn('WASM loader not available')"></script>
 
-  <!-- GSAP Animation Framework (optional) -->
-  <script src="{% static 'dist/vendors/gsap/gsap.min.js' %}" defer onerror="console.warn('GSAP not available')"></script>
-  <script src="{% static 'dist/vendors/gsap/ScrollTrigger.min.js' %}" defer onerror="console.warn('ScrollTrigger not available')"></script>
-  <script src="{% static 'dist/vendors/gsap/ScrollSmoother.min.js' %}" defer onerror="console.warn('ScrollSmoother not available')"></script>
+  <!-- GSAP Animation Framework (load in correct order) -->
+  <script src="{% static 'dist/vendors/gsap/gsap.min.js' %}" onerror="console.warn('GSAP not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/ScrollTrigger.min.js' %}" onerror="console.warn('ScrollTrigger not available')"></script>
+  <script src="{% static 'dist/vendors/gsap/ScrollSmoother.min.js' %}" onerror="console.warn('ScrollSmoother not available')"></script>
   <script src="{% static 'dist/vendors/gsap/Flip.min.js' %}" defer onerror="console.warn('Flip not available')"></script>
   <script src="{% static 'dist/vendors/gsap/MorphSVGPlugin.min.js' %}" defer onerror="console.warn('MorphSVG not available')"></script>
   <script src="{% static 'dist/vendors/gsap/SplitText.min.js' %}" defer onerror="console.warn('SplitText not available')"></script>
+
+  <!-- Initialize GSAP plugins after core library loads -->
+  <script>
+    // Wait for GSAP to be available before registering plugins
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+      if (typeof ScrollSmoother !== 'undefined') {
+        gsap.registerPlugin(ScrollSmoother);
+      }
+    }
+  </script>
 
   <!-- HTMX -->
   <script src="{% static 'dist/vendors/htmx/htmx.min.js' %}" defer></script>
@@ -74,6 +85,10 @@
 {% endblock head_scripts %}
 
 {% block extra_head %}
+  <!-- PicoCSS (classless) for base styling -->
+  <link rel="stylesheet" href="{% static 'dist/vendors/pico-classless.min.css' %}">
+  <!-- PicoCSS (classless) for base styling -->
+  <link rel="stylesheet" href="{% static 'dist/vendors/pico-classless.min.css' %}">
   <!-- Main CSS: only styles.css from dist -->
   <link rel="stylesheet" href="{% static 'dist/styles.css' %}">
   {{ block.super }}
@@ -103,19 +118,19 @@
             <ul class="theme-container">
               <li>
                 <a href="#" data-theme-switcher="auto">
-                  {% include_partial "core/components/theme_icon_dark.html" %}
+                  {% include "core/components/theme_icon_dark.html" %}
                   Auto
                 </a>
               </li>
               <li>
                 <a href="#" data-theme-switcher="light">
-                  {% include_partial "core/components/theme_icon_light.html" %}
+                  {% include "core/components/theme_icon_light.html" %}
                   Light
                 </a>
               </li>
               <li>
                 <a href="#" data-theme-switcher="dark">
-                  {% include_partial "core/components/theme_icon_dark.html" %}
+                  {% include "core/components/theme_icon_dark.html" %}
                   Dark
                 </a>
               </li>
@@ -198,7 +213,7 @@
       </header>
 
       <!-- Status messages -->
-      {% include_partial "core/components/status_messages.html" %}
+      {% include "core/components/status_messages.html" %}
 
       <!-- Main content area -->
       <main id="main-content" role="main" hx-history-elt>
@@ -260,7 +275,7 @@
   {% endblock modal %}
 
   <!-- Include chatbot widget -->
-  {% include_partial "chatbot/chat_widget.html" %}
+  {% include "chatbot/chat_widget.html" %}
 
   {% block extra_js %}
   {% endblock extra_js %}

@@ -1,3 +1,18 @@
+from django.views.generic import ListView
+
+class ProjectListView(LoginRequiredMixin, ListView):
+    """List all projects the user can view."""
+    model = Project
+    template_name = "projects/project_list.html"
+    context_object_name = "object_list"
+
+    def get_queryset(self):
+        # Only show projects the user has permission to view
+        return get_objects_for_user(
+            self.request.user,
+            "projects.view_project",
+            Project.objects.all(),
+        )
 """Views for the projects app.
 
 This module provides views for displaying, exporting, importing, and managing

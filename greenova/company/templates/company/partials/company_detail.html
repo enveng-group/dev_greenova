@@ -1,5 +1,5 @@
 {% load company_tags %}
-{% load partials %}
+
 
 <section class="company-profile" aria-labelledby="company-profile-heading">
   <h2 id="company-profile-heading">Company Profile</h2>
@@ -146,6 +146,6 @@
   <div id="document-form-container"></div>
 
   <div class="documents-container">
-    {% include_partial "company/partials/document_list.html" %}
+    {% include "company/includes/document_list.html" %}
   </div>
 </section>

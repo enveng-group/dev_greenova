@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Complete Your Profile{% endblock title %}
+{% block content %}
+<main>
+  <h1>Complete Your Profile</h1>
+  <section aria-labelledby="profile-complete-section">
+    <h2 id="profile-complete-section">Profile Information</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Complete Profile</button>
+    </form>
+  </section>
+</main>
+{% endblock content %}

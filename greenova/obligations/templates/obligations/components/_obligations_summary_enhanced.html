@@ -1,6 +1,6 @@
 {% load static %}
 {% load obligation_tags %}
-{% load partials %}
+
 <div id="obligations-container" class="obligations-container">
   {% if error %}
     <div class="error-container">
@@ -419,4 +419,4 @@ No
 </div>
 
 <!-- Include the obligation detail modal -->
-{% include_partial "obligations/components/_obligation_detail_modal.html" %}
+{% include "obligations/components/_obligation_detail_modal.html" %}

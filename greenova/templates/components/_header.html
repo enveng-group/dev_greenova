@@ -1,6 +1,6 @@
 {% load static %}
 {% load core_tags %}
-{% load partials %}
+
 <!-- CSRF token for htmx global use (logout link) -->
 <form id="htmx-csrf-token-form" class="visually-hidden">
   {% csrf_token %}
@@ -11,7 +11,7 @@
     {% if request.user.is_authenticated %}
       <!-- Left side navigation -->
       <li class="navbar-nav-item">
-{% include_partial "layouts/_breadcrumbs.html" %}
+{% include "layouts/_breadcrumbs.html" %}
       </li>
       <li class="navbar-nav-item">
         <a href="{% url 'users:profile' %}" class="navbar-nav-link">Profile</a>

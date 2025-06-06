@@ -1,4 +1,4 @@
-{% load obligation_tags partials %}
+{% load obligation_tags includes %}
 <section aria-labelledby="obligations-heading"
          class="obligations-section"
          hx-ext="class-tools path-deps"
@@ -201,7 +201,7 @@ Actions
         </div>
         <!-- Pagination -->
         {% if page_obj %}
-{% include_partial "obligations/components/_pagination.html" %}
+{% include "obligations/components/_pagination.html" %}
         {% endif %}
       {% else %}
         <div class="centered-message">

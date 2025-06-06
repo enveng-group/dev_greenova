@@ -38,3 +38,7 @@ class HomeView(TemplateView):
             },
         )
         return context
+
+
+class TestPartialView(TemplateView):
+    template_name = "landing/test_partial.html"

@@ -2,9 +2,9 @@
 {% load user_tags %}
 {% load core_tags %}
 {% load dashboard_tags %}
-{% load partials %}
 
-<!-- Partial content for HTMX dashboard refreshes -->
+
+<!-- include content for HTMX dashboard refreshes -->
 <header data-hx-ext="class-tools" data-classes="add slide-in-from-top:0.3s">
   <hgroup>
     <h1>Hi {{ request.user|display_name }}</h1>
@@ -15,7 +15,7 @@
 </header>
 
 <!-- Project Selection -->
-{% include_partial "projects/projects_selector.html" %}
+{% include "projects/projects_selector.html" %}
 
 <!-- Obligation Summary Cards -->
 <section class="summary-cards" aria-label="Obligation Summary">

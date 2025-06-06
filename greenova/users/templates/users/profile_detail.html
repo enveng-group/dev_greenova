@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load partials %}
+
 {% load user_tags %}
 
 {% block title %}User Profile{% endblock title %}
@@ -11,18 +11,16 @@
     <h1>User Profile</h1>
     <div class="user-profile-summary">
       <span class="user-profile-name">
-        {% with up=get_user_profile user_profile %}
-          {% if up %}{{ up.get_full_name|default:up.username }}{% else %}Unknown{% endif %}
-        {% endwith %}
+         {% if user_profile %}{{ user_profile.get_full_name|default:user_profile.username }}{% else %}Unknown{% endif %}
       </span>
       <span class="user-admin-status">
-        Admin: <strong>{% if get_is_admin is_admin %}Yes{% else %}No{% endif %}</strong>
+        Admin: <strong>{% if is_admin %}Yes{% else %}No{% endif %}</strong>
       </span>
     </div>
   </header>
 
   <div class="profile-container" hx-target="this" hx-swap="outerHTML">
-    {% include_partial "users/partials/profile_detail.html" %}
+    {% include "users/includes/profile_detail.html" %}
   </div>
 </article>
 {% endblock content %}

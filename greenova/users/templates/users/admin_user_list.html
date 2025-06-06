@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load partials %}
+
 {% block title %}
   User Management
 {% endblock title %}
@@ -13,7 +13,7 @@
       </div>
     </header>
     <div class="users-container" hx-target="this" hx-swap="innerHTML">
-      {% include_partial "users/partials/admin_user_list.html" %}
+      {% include "users/includes/admin_user_list.html" %}
     </div>
   </article>
 {% endblock content %}

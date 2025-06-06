@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load partials %}
+
 
 {% block title %}Delete Company{% endblock title %}
 
@@ -12,7 +12,7 @@
 
   <div class="delete-container">
     <!-- Use django-hyperscript for dynamic updates if needed. -->
-    {% include_partial "company/partials/company_delete_confirm.html" %}
+    {% include "company/includes/company_delete_confirm.html" %}
   </div>
 </article>
 {% endblock content %}

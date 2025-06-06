@@ -9,7 +9,7 @@ License: AGPL-3.0
 """
 
 from beartype import beartype
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseBase
 from typing import Callable
 
 
@@ -28,27 +28,26 @@ class UserProfileEnforcementMiddleware:
         self.get_response = get_response
 
     @beartype
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request: HttpRequest) -> HttpResponseBase:
         """Check user profile completeness and redirect if incomplete.
 
         Args:
             request: The HTTP request object.
 
         Returns:
-            HttpResponse: The response object, possibly a redirect.
+            HttpResponseBase: The response object, possibly a redirect or streaming response.
         """
         user = getattr(request, "user", None)
         # Only check for authenticated users and skip for profile completion page
         if user and user.is_authenticated and request.path != "/users/profile/complete/":
-            # Example: Assume user.profile.has_completed_profile is a boolean
             profile = getattr(user, "profile", None)
-            if profile and not getattr(profile, "has_completed_profile", False):
+            if profile is not None and not getattr(profile, "has_completed_profile", False):
                 from django.shortcuts import redirect
                 from django.contrib import messages
                 messages.info(
                     request,
                     "Please complete your profile to continue."
                 )
-                return redirect("/users/profile/complete/")
+                return redirect("users:profile_complete")
         response = self.get_response(request)
         return response

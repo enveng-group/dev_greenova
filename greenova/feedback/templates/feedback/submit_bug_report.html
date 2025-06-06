@@ -1,6 +1,6 @@
 {% extends "feedback/layouts/base.html" %}
 {% load feedback_tags %}
-{% load partials %}
+
 
 {% block feedback_content %}
   <h2>
@@ -17,5 +17,5 @@ This form is the only official method to submit bug reports.
 Fields marked with * are required.
     </p>
   </div>
-{% include_partial "feedback/form/form.html" with form=form %}
+{% include "feedback/form/form.html" with form=form %}
 {% endblock %}

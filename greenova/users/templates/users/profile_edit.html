@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% load partials %}
+
 
 {% block title %}Edit Profile{% endblock title %}
 
@@ -11,7 +11,7 @@
   </header>
 
   <div class="profile-container" hx-target="this" hx-swap="outerHTML">
-    {% include_partial "users/partials/profile_edit_form.html" %}
+    {% include "users/includes/profile_edit_form.html" %}
   </div>
 </article>
 {% endblock content %}
