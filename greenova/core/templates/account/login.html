@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}Sign In{% endblock %}
+{% block content %}
+<main class="container py-5">
+  <section aria-labelledby="signin-heading" class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <h1 id="signin-heading" class="card-title text-center mb-4">Sign In</h1>
+          <form method="post" action="{% url 'account_login' %}" novalidate>
+            {% csrf_token %}
+            {% if form %}
+              {% bootstrap_form form %}
+            {% else %}
+              {% bootstrap_field form.login %}
+              {% bootstrap_field form.password %}
+              {% bootstrap_field form.remember %}
+            {% endif %}
+            {% bootstrap_button "Sign In" button_type="submit" button_class="btn-primary" extra_classes="w-100" %}
+          </form>
+          <div class="text-center mt-3">
+            <a href="{% url 'account_reset_password' %}">Forgot your password?</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

@@ -25,8 +25,7 @@
 			"extensions": [
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-				"ms-python.python",
-				"wholroyd.jinja"
+				"ms-python.python"
 			],
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "fish",

@@ -362,6 +362,54 @@
 .was-validated .invalid-feedback {
   color: #d32f2f;
 }
+:root {
+  --color-green-primary: #2d6b3e;
+  --color-green-secondary: #4a9960;
+  --color-green-accent: #7cb342;
+  --color-green-success: #388e3c;
+  --color-green-warning: #f57f17;
+  --color-green-danger: #d32f2f;
+  --color-green-info: #1976d2;
+  --greenova-background-primary: #f8f9fa;
+  --greenova-background-secondary: #ffffff;
+  --greenova-bg-light: #f8f9fa;
+  --greenova-bg-dark: #212529;
+  --greenova-border-color: #dee2e6;
+  --greenova-input-border: #dee2e6;
+  --greenova-text-primary: #263238;
+  --greenova-text-primary-dark: #263238;
+  --greenova-text-secondary: #546e7a;
+  --greenova-text-secondary-dark: #546e7a;
+  --greenova-text-muted: #6c757d;
+  --greenova-input-bg: #ffffff;
+  --greenova-input-color: #263238;
+  --greenova-input-label: 0.875rem;
+  --greenova-padding-small: 0.5rem;
+  --greenova-padding-medium: 1rem;
+  --greenova-padding-large: 2rem;
+  --greenova-padding-xlarge: 4rem;
+  --greenova-font-weight-normal: 400;
+  --greenova-font-weight-medium: 500;
+  --greenova-font-weight-semibold: 600;
+  --greenova-font-weight-bold: 700;
+  --greenova-font-primary:
+    Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+  --greenova-font-secondary: Roboto Slab, Georgia, serif;
+  --greenova-font-mono: JetBrains Mono, Fira Code, monospace;
+  --greenova-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --greenova-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --greenova-shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --greenova-shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --greenova-border-radius: 0.375rem;
+  --greenova-border-radius-sm: 0.25rem;
+  --greenova-border-radius-lg: 0.5rem;
+  --greenova-transition-fast: all 150ms ease-in-out;
+  --greenova-transition-medium: all 300ms ease-in-out;
+  --greenova-transition-slow: all 500ms ease-in-out;
+}
 .greenova-container {
   width: 100%;
   max-width: 1200px;

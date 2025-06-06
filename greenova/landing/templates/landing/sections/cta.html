@@ -1,0 +1,30 @@
+{% load django_bootstrap5 %}
+{% load hyperscript %}
+<section class="py-5 bg-success text-white" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="card bg-success bg-gradient rounded-4 p-5 shadow text-center">
+      <div class="card-body">
+        <h2 id="cta-title" class="h1 fw-bold mb-3">Ready to Transform Your Environmental Compliance?</h2>
+        <p class="lead mb-4">Join thousands of environmental professionals who have simplified their compliance management with Greenova.</p>
+        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mb-4">
+          <a href="/dashboard/home" class="btn btn-light btn-lg" _="on pointerdown if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .btn-press to me then wait 150ms then remove .btn-press from me">Go to Dashboard</a>
+          <a href="/support/contact" class="btn btn-outline-light btn-lg" _="on pointerdown if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .btn-press to me then wait 150ms then remove .btn-press from me">Contact Support</a>
+          <a href="/accounts/signup" class="btn btn-light btn-lg" _="on pointerdown if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .btn-press to me then wait 150ms then remove .btn-press from me">Start Free Trial</a>
+          <a href="/accounts/login" class="btn btn-outline-light btn-lg" _="on pointerdown if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .btn-press to me then wait 150ms then remove .btn-press from me">Sign In</a>
+        </div>
+        <div class="newsletter-form mx-auto mw-32rem">
+          <h3 class="h4 fw-semibold mb-2">Stay Updated</h3>
+          <p class="mb-3">Subscribe to our newsletter for compliance insights and platform updates</p>
+          <form method="post" action="{% url 'landing:newsletter_signup' %}" id="newsletter-signup-form" class="row g-2 align-items-center justify-content-center" _="on submit if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .form-sending to #newsletter-submit then wait 800ms then remove .form-sending from #newsletter-submit">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="col-auto">
+              {% bootstrap_button "Subscribe" button_type="submit" button_class="btn-light" %}
+            </div>
+          </form>
+          <div id="newsletter-response" class="mt-2 small">We respect your privacy. Your information is safe and will never be shared.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

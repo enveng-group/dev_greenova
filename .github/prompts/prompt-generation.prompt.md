@@ -49,6 +49,7 @@ business context. Include any error messages, stack traces, or logs if
 applicable.
 
 - **All code, models, and CRUD logic must be structured according to the actual database schema in `schema.json` and sample data in `data.json`. Use these files as the authoritative source for field names, types, relationships, and data structure.**
+- \*\*All templates must use Django Template Language (DTL) with `.html` extension.
 
 ## Objectives
 
@@ -58,7 +59,10 @@ points for clarity.
 ## Sources
 
 - List relevant files in the workspace (relative paths):
+
   - e.g., `src/app/models.py`
+  - e.g., `templates/app/example.html`
+
 - List relevant GitHub repositories and branches:
   - e.g., `https://github.com/org/repo/tree/branch`
 - List URLs to documentation/manuals/reference material:
@@ -104,7 +108,6 @@ servers, refactor code, update documentation, run pre-commit checks, etc.).
   - [Pandas](https://pandas.pydata.org/docs/)
   - [NumPy](https://numpy.org/doc/stable/user/index.html#user)
   - [django-csp](https://django-csp.readthedocs.io/en/latest/)
-  - [django-template-partials](https://github.com/carltongibson/django-template-partials?tab=readme-ov-file#basic-usage)
   - [dj-all-auth](https://github.com/deviserops/dj-all-auth)
   - [python-dotenv-vault](https://github.com/dotenv-org/python-dotenv-vault)
 
@@ -120,10 +123,10 @@ servers, refactor code, update documentation, run pre-commit checks, etc.).
 ### Technology Priority Order (Expanded)
 
 1. **Restructured Text (RST)**: Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
-2. **Jinja2**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+2. **Django Template Language (DTL)**: Use for semantic structure. All templates must use `.html` extension and be compatible with Django's built-in template engine. No inline styles/scripts. All templates must be accessible and pass djlint.
 3. **Protobuf3**: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
 4. **django-bootstrap5**: Use as the sole primary styling framework for all new development.
 5. **django-hyperscript**: Use for all simple client-side interactions. Avoid custom JS unless required.
 6. **django-htmx**: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
-7. **SASS**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
+7. **scss**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
 8. **AssemblyScript**: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.

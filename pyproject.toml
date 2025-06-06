@@ -22,7 +22,6 @@ dependencies = [
     "django-pdb>=0.6.2",
     "django-plotly-dash>=2.4.6",
     "django-silk>=5.4.0",
-    "django-template-partials>=24.4",
     "django-csp>=3.8",
     "django-filter>=23.5",
     "django-tables2>=2.7",
@@ -48,6 +47,10 @@ dependencies = [
     "bleach>=6.1.0",
     "ipython>=9.3.0",
     "django-bootstrap5>=25.1",
+    "django-select2>=8.4.1",
+    "protobuf==4.25.3",
+    "google>=3.0.0",
+    "googleapis-common-protos>=1.70.0",
 ]
 
 [tool.setuptools.packages.find]

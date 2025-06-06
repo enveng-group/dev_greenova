@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dal",
+    "dal_select2",
     "core",
     "landing",
     "dashboard",
@@ -49,6 +51,12 @@ INSTALLED_APPS = [
     "allauth.account",
     "django_hyperscript",
     "django_htmx",
+    "csp",  # Correct import for django-csp
+    "django_browser_reload",  # Dev only: live reload
+    "django_extensions",  # Dev only: shell_plus, graph_models, etc.
+    "projects",
+    "django_tables2",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -61,19 +69,14 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "csp.middleware.CSPMiddleware",
+    # Dev only: browser reload middleware (must be after AuthenticationMiddleware)
+    *(["django_browser_reload.middleware.BrowserReloadMiddleware"] if DEBUG else []),
 ]
 
 ROOT_URLCONF = "greenova.urls"
 
 TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.jinja2.Jinja2",
-        "DIRS": [BASE_DIR / "core" / "templates"],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "environment": "core.jinja2.environment.environment",
-        },
-    },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "core" / "templates"],
@@ -148,5 +151,66 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Redirect users to dashboard after login
+LOGIN_REDIRECT_URL = "/dashboard/"
+
+# Django Bootstrap5 Configuration
+BOOTSTRAP5 = {
+    "css_url": {
+        "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css",
+        "integrity": "sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN",
+        "crossorigin": "anonymous",
+    },
+    "javascript_url": {
+        "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js",
+        "integrity": "sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL",
+        "crossorigin": "anonymous",
+    },
+    "theme_url": None,
+    "color_mode": None,
+    "javascript_in_head": False,
+    "wrapper_class": "mb-3",
+    "inline_wrapper_class": "",
+    "horizontal_label_class": "col-sm-2",
+    "horizontal_field_class": "col-sm-10",
+    "horizontal_field_offset_class": "offset-sm-2",
+    "set_placeholder": True,
+    "required_css_class": "",
+    "error_css_class": "is-invalid",
+    "success_css_class": "is-valid",
+    "server_side_validation": True,
+}
+
+# Crispy Forms Configuration
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Content Security Policy Configuration (django-csp 4.0+)
+CONTENT_SECURITY_POLICY: dict[str, dict[str, tuple[str, ...]]] = {
+    "DIRECTIVES": {
+        "default-src": ("'self'",),
+        "style-src": (
+            "'self'",
+            "https://cdn.jsdelivr.net",
+            "https://fonts.googleapis.com",
+            "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css",
+            "'sha256-bsV5JivYxvGywDAZ22EZJKBFip65Ng9xoJVLbBg7bdo='",
+        ),
+        "font-src": (
+            "'self'",
+            "https://fonts.gstatic.com",
+            "https://cdn.jsdelivr.net",
+        ),
+        "script-src": (
+            "'self'",
+            "https://cdn.jsdelivr.net",
+            "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js",
+            "'wasm-unsafe-eval'",
+        ),
+        "img-src": ("'self'", "data:", "https://cdn.jsdelivr.net"),
+        "connect-src": ("'self'",),
+        "object-src": ("'none'",),
+        "base-uri": ("'self'",),
+        "form-action": ("'self'",),
+    },
+}

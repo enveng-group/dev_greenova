@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% load django_tables2 %}
+
+{% block content %}
+<main id="main-content">
+  <h1>Projects</h1>
+  {% render_table table %}
+</main>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+
+{% block title %}Welcome to Greenova{% endblock title %}
+
+{% block content %}
+<main id="main-content">
+  {% include "landing/sections/hero.html" %}
+  {% include "landing/sections/features.html" %}
+  {% include "landing/sections/stats.html" %}
+  {% include "landing/sections/benefits.html" %}
+  {% include "landing/sections/testimonials.html" %}
+  {% include "landing/sections/cta.html" %}
+</main>
+{% endblock content %}

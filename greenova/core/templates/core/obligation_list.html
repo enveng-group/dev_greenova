@@ -1,0 +1,62 @@
+{% extends "core/base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}Environmental Obligations{% endblock title %}
+{% block content %}
+<main class="greenova-container py-5">
+  <header class="greenova-header mb-4">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h1 class="h1">Environmental Obligations</h1>
+        <p class="lead">Manage and track your environmental compliance requirements</p>
+      </div>
+    </div>
+  </header>
+  
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <form method="get" id="filter-form">
+            {% bootstrap_form filter.form %}
+            {% bootstrap_button "Apply Filter" button_type="submit" button_class="btn-primary w-100" %}
+          </form>
+        </div>
+      </div>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="form-group">
+            <label for="theme-selector">Theme:</label>
+            <select id="theme-selector" class="form-select">
+              <option value="0">Light</option>
+              <option value="1">Dark</option>
+              <option value="2" selected>Auto</option>
+            </select>
+          </div>
+          {% bootstrap_button "Apply Theme" button_type="button" button_class="btn-info w-100 mt-2" id="apply-theme" %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-9">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div id="obligations-table">
+            {{ table|render_table }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+{% endblock styles %}
+
+{% block scripts %}
+<script>
+  window.OBLIGATIONS_API_URL = "{% url 'core:obligations_api' %}";
+</script>
+<script src="{% static 'core/js/obligation-list.js' %}" defer></script>
+{% endblock scripts %}

@@ -16,6 +16,7 @@ Including another URLconf
 
 """
 
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
@@ -31,4 +32,10 @@ urlpatterns = [
         include(("navigation.urls", "navigation"), namespace="navigation"),
     ),
     path("protobuf/", include(("protobuf.urls", "protobuf"), namespace="protobuf")),
+    path("projects/", include(("projects.urls", "projects"), namespace="projects")),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        path("__reload__/", include("django_browser_reload.urls")),
+    ]

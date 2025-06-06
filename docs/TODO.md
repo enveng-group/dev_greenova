@@ -9,7 +9,6 @@
     - [DevOps & Infrastructure](#devops--infrastructure)
     - [Code Quality & CI/CD](#code-quality--cicd)
     - [Documentation & Architecture](#documentation--architecture)
-    - [Migrate Templates from DTL to Jinja2](#migrate-templates-from-dtl-to-jinja2)
   - [References](#references)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -85,23 +84,6 @@ The following tasks have been completed and moved to `done.txt`:
 - [ ] Modularize base.html template
 - [ ] Document HTML-first design principles
 - [ ] Create architecture diagrams for Docker setup
-
-### Migrate Templates from DTL to Jinja2
-
-- [ ] Authentication
-- [ ] Chatbot
-- [ ] Company
-- [ ] Core
-- [] Dashboard
-- [x] Feedback
-- [ ] Landing
-- [ ] Mechanisms
-- [ ] Obligations
-- [] Procedures
-- [ ] Projects
-- [ ] Responsibility
-- [ ] Templates
-- [ ] Users
 
 ## References
 

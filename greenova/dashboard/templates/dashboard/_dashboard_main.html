@@ -1,0 +1,59 @@
+{# Partial template for dashboard main content, for HTMX swaps #}
+{% block dashboard_content %}
+  {% include "projects/projects_selector.html" with projects=user_projects %}
+  <section class="container-fluid px-0">
+    <div class="row g-4 mb-4">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 d-flex flex-column align-items-center justify-content-center">
+          <div class="card-body">
+            <i class="bi bi-bar-chart-line fs-1 text-primary mb-2" aria-hidden="true"></i>
+            <h2 class="h5">Project Overview</h2>
+            <p class="text-muted small mb-0">Track active projects, compliance status, and deadlines at a glance.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 d-flex flex-column align-items-center justify-content-center">
+          <div class="card-body">
+            <i class="bi bi-gear-wide-connected fs-1 text-success mb-2" aria-hidden="true"></i>
+            <h2 class="h5">Mechanism Insights</h2>
+            <p class="text-muted small mb-0">Monitor mechanisms, obligations, and recent activity for each project.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm h-100 d-flex flex-column align-items-center justify-content-center">
+          <div class="card-body">
+            <i class="bi bi-people fs-1 text-info mb-2" aria-hidden="true"></i>
+            <h2 class="h5">Team & Collaboration</h2>
+            <p class="text-muted small mb-0">See team assignments, roles, and collaboration status for your projects.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-12 col-lg-8">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-white border-bottom-0">
+            <h3 class="h6 mb-0">Recent Activity</h3>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">No recent activity yet. Start by creating a project or mechanism.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-white border-bottom-0">
+            <h3 class="h6 mb-0">Quick Actions</h3>
+          </div>
+          <div class="card-body d-flex flex-column gap-2">
+            <a href="/projects/" class="btn btn-primary w-100">Create Project</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock dashboard_content %}

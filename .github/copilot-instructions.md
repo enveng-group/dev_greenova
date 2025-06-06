@@ -30,7 +30,6 @@
     - [Template Structure](#template-structure)
     - [HTML Structure](#html-structure)
     - [HTMX Integration](#htmx-integration)
-    - [Example Template Structure](#example-template-structure)
   - [JavaScript/TypeScript Standards](#javascripttypescript-standards)
     - [TypeScript Configuration](#typescript-configuration)
     - [ESLint Configuration](#eslint-configuration)
@@ -78,12 +77,12 @@ and manage obligations related to environmental regulations.
 ### Technology Priority Order (Expanded)
 
 1. **Restructured Text (RST)**: Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
-2. **Jinja2**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+2. **Django-Html**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
 3. **Protobuf3**: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
 4. **django-bootstrap5**: Use as the sole primary styling framework for all new development.
 5. **django-hyperscript**: Use for all simple client-side interactions. Avoid custom JS unless required.
 6. **django-htmx**: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
-7. **SASS**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting Bootstrap utility options.
+7. **scss**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting Bootstrap utility options.
 8. **AssemblyScript**: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
 
 ## Expectations
@@ -147,7 +146,7 @@ and manage obligations related to environmental regulations.
 - **pylint & pylint-django**: Secondary Python linters
 - **djlint**: For Django template linting
 - **markdownlint-cli2**: For Markdown file linting
-- **stylelint**: CSS/SASS linting
+- **stylelint**: CSS/scss linting
 - **eslint**: JavaScript/TypeScript linting
 - **shellcheck**: Shell script linting
 
@@ -168,7 +167,7 @@ and manage obligations related to environmental regulations.
   - matplotlib-stubs
   - pandas-stubs
   - types-pytz
-  - types-jinja2
+  - types-Django-Html
   - types-setuptools
   - types-cryptography
   - types-flake8
@@ -354,7 +353,7 @@ fi
 
 ### Template Structure
 
-- Use Jinja2 template inheritance with `{% extends %}` and `{% include %}`
+- Use Django-Html template inheritance with `{% extends %}` and `{% include %}`
 - Separate templates into layouts, components, and partials
 - Create reusable blocks for common elements
 - Templates must pass djlint validation
@@ -372,36 +371,6 @@ fi
 - Define clear swap targets with `hx-target` and `hx-swap`
 - Set proper event handlers with `hx-trigger`
 - Enable URL history management with `hx-push-url`
-
-### Example Template Structure
-
-```jinja
-{% extends "base.jinja" %}
-{% block title %}Page Title{% endblock title %}
-{% block content %}
-<main>
-  <h1>Primary Heading</h1>
-
-  <section aria-labelledby="section-id">
-    <h2 id="section-id">Section Heading</h2>
-
-    <!-- HTMX-enhanced form -->
-    <form
-      hx-post="{{ url('submit_form') }}"
-      hx-target="#results"
-      hx-swap="outerHTML"
-    >
-      {# CSRF token and form fields #}
-      <label for="input-field">Field Label:</label>
-      <input id="input-field" name="field_name" type="text" required />
-      <button type="submit">Submit</button>
-    </form>
-
-    <div id="results" role="region" aria-live="polite"></div>
-  </section>
-</main>
-{% endblock content %}
-```
 
 ## JavaScript/TypeScript Standards
 
@@ -471,7 +440,7 @@ fi
 
 ### Django/HTML
 
-- DTL (django-html) is not used in this project. Only Jinja2 templates (`.jinja`) are supported.
+- DTL (django-html) is not used in this project. Only Django-Html templates (`.jinja`) are supported.
 - Missing CSRF tokens in forms
 - Hardcoded URLs instead of `{{ url('...') }}`
 - Logic in templates instead of views
@@ -557,11 +526,9 @@ fi
 - **django-htmx**: Use for AJAX and partial page updates. Only use when django-hyperscript cannot achieve the required interaction. Always prefer django-hyperscript for simple client-side logic.
 - **django-hyperscript**: Primary tool for client-side interactivity. Use for form validation, toggling UI, and simple dynamic behaviors. Prefer over custom JS.
 - **django-matplotlib**: Use for server-side chart generation (SVG/PNG) in reports and static visualizations. Do not use for interactive charts.
-
 - **django-plotly-dash**: Use for advanced, interactive dashboards. Only introduce when plotly.js or django-hyperscript/htmx are insufficient.
 - **django-silk**: Use for profiling and performance monitoring in development.
 - **django-bootstrap5**: Use for integrating Bootstrap 5. Use as the sole primary styling framework for all new development.
-- **django-template-partials**: Use to break templates into reusable, composable blocks. Prefer `{% include_partial %}` for shared UI fragments.
 - **django-csp**: Enforce Content Security Policy headers. Use to harden security for all HTML responses.
 - **django-filter**: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
 - **django-tables2**: Use for rendering tabular data in templates. Prefer over custom table markup.
@@ -604,7 +571,6 @@ fi
 - Ensure all code passes linting, formatting, and type checking tools relevant to the language (ruff, mypy, eslint, stylelint, etc.).
 - Use Protobuf3 and django-pb-model for all new API endpoints and data serialization tasks.
 - Prefer django-hyperscript for client-side logic; only use htmx or JS/TS when necessary.
-- Use django-template-partials to break templates into reusable blocks.
 - For all forms, use crispy-forms or select2 widgets as appropriate.
 - For charts, use matplotlib for static images and plotly for interactive charts, following the charting guidelines.
 - For authentication, always use django-allauth and fido2 for MFA.
@@ -628,7 +594,7 @@ reference their official documentation as needed:
 - GSAP Animation,django-hyperscript,
   django-htmx, AssemblyScript, Django, Protobuf3, SQLite, django-pb-model,
   Matplotlib, django_matplotlib, Plotly, Pandas, NumPy, django-csp,
-  django-template-partials, dj-all-auth, python-dotenv-vault.
+  , dj-all-auth, python-dotenv-vault.
 
 **Additional Resources**: The github, filesystem, JSON, context7, git,
 fetch, sequential-thinking and docker MCP servers have been switched on and

@@ -44,19 +44,13 @@ investigate whether any other python modules can be used for project's current i
 ## Python/Django Dependencies
 
 - **beartype**: Decorate all public functions and methods for runtime type checking. Use in every Python module to enforce type safety and catch type errors early.
-- **django**: Core web framework. Use Django's MTV pattern, class-based views, forms, and models as per project standards. All new features and refactors must follow Django best practices.
 - **django-allauth**: Use for authentication, registration, and multi-factor auth. Integrate for user management and permission-based access control.
-- **django-browser-reload**: Use for live reloading during development. No production use.
 - **django-cors-headers**: Add CORS support for API endpoints or cross-origin integrations. Configure in settings as needed.
-- **django-extensions**: Use for shell_plus, graph_models, and other dev utilities. Not for production code.
 - **django-htmx**: Use for AJAX and partial page updates. Only use when django-hyperscript cannot achieve the required interaction. Always prefer django-hyperscript for simple client-side logic.
 - **django-hyperscript**: Primary tool for client-side interactivity. Use for form validation, toggling UI, and simple dynamic behaviors. Prefer over custom JS.
 - **django-matplotlib**: Use for server-side chart generation (SVG/PNG) in reports and static visualizations. Do not use for interactive charts.
-
 - **django-plotly-dash**: Use for advanced, interactive dashboards. Only introduce when plotly.js or django-hyperscript/htmx are insufficient.
 - **django-bootstrap5**: Use for integrating Bootstrap 5. Use as the sole primary styling framework for all new development.
-- **django-template-partials**: Use to break templates into reusable, composable blocks. Prefer `{% include_partial %}` for shared UI fragments.
-- **django-csp**: Enforce Content Security Policy headers. Use to harden security for all HTML responses.
 - **django-filter**: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
 - **django-tables2**: Use for rendering tabular data in templates. Prefer over custom table markup.
 - **django-crispy-forms** and **crispy-bootstrap4**: Use for rendering forms with consistent, accessible markup. Prefer over custom form templates.
@@ -84,12 +78,12 @@ investigate technologogy stack priority is correct adhered and followed:
 ### Technology Priority Order (Expanded)
 
 1. **Restructured Text (RST)**: Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
-2. **Jinja2**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+2. **Django-Html**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
 3. **Protobuf3**: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
 4. **django-bootstrap5**: Use as the sole primary styling framework for all new development.
 5. **django-hyperscript**: Use for all simple client-side interactions. Avoid custom JS unless required.
 6. **django-htmx**: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
-7. **SASS**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
+7. **scss**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
 8. **AssemblyScript**: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
 
 
@@ -103,7 +97,7 @@ All UI components, templates, and styles must adhere to the Greenova branding
 guidelines. Use the following CSS custom properties for color, spacing, and
 typography to ensure a consistent and accessible user experience across the
 application. These variables must be used in Tailwind configuration, custom
-CSS, and any SASS extensions.
+CSS, and any scss extensions.
 
 ### Primary Color Palette
 
@@ -254,7 +248,7 @@ CSS, and any SASS extensions.
 
 #### Usage Notes
 
-- Always use these variables for all new SASS, and Bootstrap theme
+- Always use these variables for all new scss, and Bootstrap theme
   extensions.
 - Ensure all UI elements meet WCAG AA color contrast requirements.
 - Do not override these variables in component-level styles; extend only via
@@ -263,3 +257,19 @@ CSS, and any SASS extensions.
   borders, and spacing.
 - All templates and UI code must use these variables for consistent branding.
 - Document any exceptions or additions in the design system documentation.
+
+
+fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstrap5.readthedocs.io/en/latest/widgets.html https://django-bootstrap5.readthedocs.io/en/latest/templates.html https://django-bootstrap5.readthedocs.io/en/latest/settings.html https://django-bootstrap5.readthedocs.io/en/latest/templatetags.html https://django-bootstrap5.readthedocs.io/en/latest/forms.html https://django-bootstrap5.readthedocs.io/en/latest/migrate.html https://django-bootstrap5.readthedocs.io/en/latest/quickstart.html and check the applicabble templates are using django-bootstrap5 tags correctly as django-bootstrap5 is main styling framework along with our own overrides
+
+
+now check all templates and views.py they are primarily using django_hyperscript template tags correctly and its implementation as per documentation http://pypi.org/project/django-hyperscript/ https://github.com/LucLor06/django-hyperscript and only to compliment django_hyperscript, we are applying django_htmx templatetags correctly https://django-htmx.readthedocs.io/en/latest/installation.html https://django-htmx.readthedocs.io/en/latest/middleware.html https://django-htmx.readthedocs.io/en/latest/template_tags.html https://django-htmx.readthedocs.io/en/latest/http.html https://django-htmx.readthedocs.io/en/latest/example_project.html https://github.com/adamchainz/django-htmx/tree/main/example/example https://django-htmx.readthedocs.io/en/latest/tips.html
+
+
+lets enhance current project implementation by integrating:
+
+Forms: Use django-autocomplete-light for any large select fields.
+Dashboard: Integrate django-matplotlib or django-plotly-dash if you want to add charts.
+Security: Add django-csp and consider cryptography for sensitive features.
+
+
+Remove any remaining non-semantic markup or unused classes.

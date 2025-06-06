@@ -1,0 +1,16 @@
+{# Dashboard base template: composes sidebar and header partials, provides main content block #}
+{% extends "core/base.html" %}
+{% block title %}Dashboard{% endblock title %}
+{% block content %}
+<div class="dashboard-layout d-flex dashboard-layout-min-height">
+  {% include "sidebar/sidebar_partial.html" %}
+  <div class="flex-grow-1 d-flex flex-column">
+    {% include "navigation/header_partial.html" %}
+    <main id="dashboard-main" class="flex-grow-1 p-4" tabindex="-1">
+      {% block dashboard_content %}
+      <!-- Dashboard main content goes here -->
+      {% endblock dashboard_content %}
+    </main>
+  </div>
+</div>
+{% endblock content %}

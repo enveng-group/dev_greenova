@@ -1,0 +1,22 @@
+{% load django_bootstrap5 %}
+{% load hyperscript %}
+<section class="py-5 bg-light" aria-labelledby="hero-heading" _="on load if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .animate-fade-in to me">
+  <div class="container d-flex flex-column align-items-center text-center">
+    <div class="card border-0 bg-transparent">
+      <div class="card-body p-0">
+        <img src="/static/core/img/favicon.svg" alt="Greenova Logo" class="mb-3 w-5rem h-5rem" />
+        <h1 id="hero-heading" class="display-4 fw-bold mb-3 text-success">
+          Environmental Management <span class="text-primary">Made Simple</span>
+        </h1>
+        <p class="lead text-secondary mb-4 mx-auto mw-40rem">
+          Streamline your environmental compliance with Greenova's intuitive platform. Track obligations, manage requirements, and stay ahead of regulatory changes.
+        </p>
+        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+          {% bootstrap_button "Start Free Trial" href="/accounts/signup/" button_class="btn-success" size="lg" %}
+          {% bootstrap_button "Sign In" href="/accounts/login/" button_class="btn-outline-success" size="lg" %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Removed <style> block; moved to SCSS/CSS -->

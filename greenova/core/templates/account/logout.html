@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}Sign Out{% endblock %}
+{% block content %}
+<main class="container py-5">
+  <section aria-labelledby="logout-heading" class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <h1 id="logout-heading" class="card-title mb-4">Sign Out</h1>
+          <form method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <p class="mb-4">Are you sure you want to sign out?</p>
+            <div class="d-grid gap-2">
+              {% bootstrap_button "Sign Out" button_type="submit" button_class="btn-danger" %}
+              <a href="/" class="btn btn-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

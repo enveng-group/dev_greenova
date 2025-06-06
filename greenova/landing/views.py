@@ -12,7 +12,8 @@ import bleach
 from beartype import beartype
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
 
 from .forms import NewsletterSignupForm
@@ -32,7 +33,17 @@ def landing_page(request: HttpRequest) -> HttpResponse:
 
     """
     logger.info("Rendering landing page")
-    return render(request, "landing/landing.jinja", {})
+    form = NewsletterSignupForm()
+    context = {
+        "form": form,
+        "context": {},  # for bootstrap_messages
+    }
+    html = render_to_string(
+        "landing/landing.html",
+        context,
+        request=request,
+    )
+    return HttpResponse(html)
 
 
 @beartype
@@ -58,4 +69,5 @@ def newsletter_signup(request: HttpRequest) -> HttpResponse:
         logger.warning("Newsletter signup form invalid: %s", form.errors)
     else:
         form = NewsletterSignupForm()
-    return render(request, "landing/landing.jinja", {"form": form})
+    html = render_to_string("landing/landing.html", {"form": form}, request=request)
+    return HttpResponse(html)

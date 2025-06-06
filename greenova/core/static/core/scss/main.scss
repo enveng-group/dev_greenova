@@ -30,6 +30,77 @@ $light: vars.$greenova-light;
 $dark: vars.$greenova-dark;
 
 // =============================================
+// CSS Custom Properties (CSS Variables)
+// =============================================
+
+// Define CSS custom properties from SASS variables for use in templates
+:root {
+  // Color variables
+  --color-green-primary: #{vars.$greenova-primary};
+  --color-green-secondary: #{vars.$greenova-secondary};
+  --color-green-accent: #{vars.$greenova-accent};
+  --color-green-success: #{vars.$greenova-success};
+  --color-green-warning: #{vars.$greenova-warning};
+  --color-green-danger: #{vars.$greenova-danger};
+  --color-green-info: #{vars.$greenova-info};
+
+  // Background colors
+  --greenova-background-primary: #{vars.$greenova-bg-light};
+  --greenova-background-secondary: #{vars.$white};
+  --greenova-bg-light: #{vars.$greenova-bg-light};
+  --greenova-bg-dark: #{vars.$greenova-bg-dark};
+
+  // Border colors
+  --greenova-border-color: #{vars.$greenova-border};
+  --greenova-input-border: #{vars.$greenova-border};
+
+  // Text colors
+  --greenova-text-primary: #{vars.$greenova-dark};
+  --greenova-text-primary-dark: #{vars.$greenova-dark};
+  --greenova-text-secondary: #{vars.$greenova-medium};
+  --greenova-text-secondary-dark: #{vars.$greenova-medium};
+  --greenova-text-muted: #{vars.$greenova-muted};
+
+  // Input styling
+  --greenova-input-bg: #{vars.$white};
+  --greenova-input-color: #{vars.$greenova-dark};
+  --greenova-input-label: #{vars.$font-size-sm};
+
+  // Spacing
+  --greenova-padding-small: #{vars.$spacing-3};
+  --greenova-padding-medium: #{vars.$spacing-5};
+  --greenova-padding-large: #{vars.$spacing-8};
+  --greenova-padding-xlarge: #{vars.$spacing-12};
+
+  // Typography
+  --greenova-font-weight-normal: #{vars.$font-weight-normal};
+  --greenova-font-weight-medium: #{vars.$font-weight-medium};
+  --greenova-font-weight-semibold: #{vars.$font-weight-semibold};
+  --greenova-font-weight-bold: #{vars.$font-weight-bold};
+
+  // Font families
+  --greenova-font-primary: #{vars.$font-family-primary};
+  --greenova-font-secondary: #{vars.$font-family-secondary};
+  --greenova-font-mono: #{vars.$font-family-mono};
+
+  // Shadows
+  --greenova-shadow-sm: #{vars.$shadow-sm};
+  --greenova-shadow: #{vars.$shadow};
+  --greenova-shadow-md: #{vars.$shadow-md};
+  --greenova-shadow-lg: #{vars.$shadow-lg};
+
+  // Border radius
+  --greenova-border-radius: #{vars.$border-radius};
+  --greenova-border-radius-sm: #{vars.$border-radius-sm};
+  --greenova-border-radius-lg: #{vars.$border-radius-lg};
+
+  // Transitions
+  --greenova-transition-fast: #{vars.$transition-fast};
+  --greenova-transition-medium: #{vars.$transition-medium};
+  --greenova-transition-slow: #{vars.$transition-slow};
+}
+
+// =============================================
 // Greenova Custom Components
 // =============================================
 
@@ -65,6 +136,40 @@ $dark: vars.$greenova-dark;
       color: lighten(vars.$greenova-accent, 10%);
       text-decoration: underline;
     }
+  }
+}
+
+// Utility classes for widths and max-widths
+.mw-32rem {
+  max-width: 32rem !important;
+}
+.w-5rem {
+  width: 5rem !important;
+}
+.h-5rem {
+  height: 5rem !important;
+}
+.mw-40rem {
+  max-width: 40rem !important;
+}
+
+// Button press feedback animation, accessible and respects reduced motion
+@media (prefers-reduced-motion: no-preference) {
+  .btn-press {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0.2rem rgba(0,0,0,0.08);
+    transition: transform 0.12s cubic-bezier(.4,0,.2,1), box-shadow 0.12s;
+  }
+  .form-sending {
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  // .animate-fade-in and fadeIn keyframes for landing sections are defined here.
+  // Do not add inline <style> blocks in templates; use this SCSS file instead.
+  .animate-fade-in {
+    opacity: 0;
+    animation: fadeIn 1.2s ease-in forwards;
   }
 }
 
