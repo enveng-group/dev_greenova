@@ -39,7 +39,7 @@ except ImportError:
     ProtoBufMixin: type[models.Model] = models.Model  # type: ignore
 
 try:
-    from .proto.auditing_pb2 import (
+    from greenova.protobuf.auditing_pb2 import (
         AuditEntryProto,
         AuditProto,
         ComplianceCommentProto,

@@ -7,7 +7,6 @@ from django import template
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.html import format_html
-from obligations.models import Obligation
 from projects.models import Project
 
 logger = logging.getLogger(__name__)
@@ -25,10 +24,17 @@ class ProjectRole(Enum):
 
 
 @register.inclusion_tag("obligations/components/tables/obligation_list.html")
-@beartype
-def obligation_table(obligations: QuerySet[Obligation]) -> dict[str, Any]:
-    """Render obligation list table."""
-    return {"obligations": obligations}
+def render_obligation_list(context: dict[str, Any]) -> dict[str, Any]:
+    """Render the obligation list template with the given context.
+
+    Args:
+        context: The context data for the template.
+
+    Returns:
+        A dictionary containing the context data.
+
+    """
+    return context
 
 
 @register.filter
@@ -66,19 +72,17 @@ def format_role(role: str) -> str:
 
 
 @register.inclusion_tag("projects/components/role_badge.html")
-@beartype
-def role_badge(role: str) -> dict[str, str]:
-    """Render role badge."""
-    colors = {
-        ProjectRole.OWNER.value: "primary",
-        ProjectRole.MANAGER.value: "success",
-        ProjectRole.MEMBER.value: "info",
-        ProjectRole.VIEWER.value: "secondary",
-    }
-    return {
-        "role": role,
-        "color": colors.get(role, "secondary"),
-    }
+def render_role_badge(context: dict[str, Any]) -> dict[str, Any]:
+    """Render the role badge template with the given context.
+
+    Args:
+        context: The context data for the template.
+
+    Returns:
+        A dictionary containing the context data.
+
+    """
+    return context
 
 
 @register.filter
@@ -164,12 +168,17 @@ def get_badge_config(project_type: str) -> dict[str, str]:
 
 
 @register.inclusion_tag("projects/partials/project_list.html")
-@beartype
-def project_list(projects: list[Any], max_items: int = 5) -> dict[str, Any]:
-    """Render a list of projects."""
-    return {
-        "projects": projects[:max_items],
-    }
+def render_project_list(context: dict[str, Any]) -> dict[str, Any]:
+    """Render the project list template with the given context.
+
+    Args:
+        context: The context data for the template.
+
+    Returns:
+        A dictionary containing the context data.
+
+    """
+    return context
 
 
 @register.simple_tag

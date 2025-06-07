@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 # Import generated protobuf modules with improved error handling
 try:
-    from .proto import feedback_pb2
+    from greenova.protobuf import feedback_pb2
 
     logger.info("Successfully imported feedback_pb2 from proto subdirectory")
 except ImportError:

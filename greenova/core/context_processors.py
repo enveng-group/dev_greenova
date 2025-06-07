@@ -11,11 +11,12 @@ from typing import Any
 
 from beartype import beartype
 from django.db.models import Q
+from django.http import HttpRequest
 from projects.models import Project
 
 
 @beartype
-def projects_context(request) -> dict[str, Any]:
+def projects_context(request: HttpRequest) -> dict[str, Any]:
     """Inject project-related context variables into templates.
 
     Args:

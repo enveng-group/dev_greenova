@@ -39,7 +39,7 @@ except ImportError:
     ProtoBufMixin = object  # fallback for type checking
 
 try:
-    from .proto.company_pb2 import (
+    from greenova.protobuf.company_pb2 import (
         CompanyDocumentProto,
         CompanyMembershipProto,
         CompanyProto,

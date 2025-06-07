@@ -12,7 +12,7 @@
       - [GET /protobuf/api/projects/<project_id>/](#get-protobufapiprojectsproject_id)
       - [GET /protobuf/api/projects/<project_id>/obligations/](#get-protobufapiprojectsproject_idobligations)
       - [GET /protobuf/api/charts/<chart_id>/](#get-protobufapichartschart_id)
-  - [Client Integration Notes](#client-integration-notes)
+    - [Client Integration Notes](#client-integration-notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -45,6 +45,7 @@ Retrieves list of obligations.
 ### Protobuf Endpoints
 
 #### GET /protobuf/api/projects/
+
 Returns all projects in Protocol Buffer (protobuf) binary format.
 
 - **Response Content-Type:** application/x-protobuf
@@ -53,26 +54,31 @@ Returns all projects in Protocol Buffer (protobuf) binary format.
   - Frontend/clients should use protobuf.js or a compatible library to parse the binary response.
 
 #### GET /protobuf/api/projects/<project_id>/
+
 Returns a single project in protobuf format.
 
 - **Response Content-Type:** application/x-protobuf
 - **Response Body:** Serialized ProjectProto message
 
 #### GET /protobuf/api/projects/<project_id>/obligations/
+
 Returns all obligations for a project in protobuf format.
 
 - **Response Content-Type:** application/x-protobuf
 - **Response Body:** Serialized ObligationList message (see greenova_data.proto)
 
 #### GET /protobuf/api/charts/<chart_id>/
+
 Returns chart data in protobuf format.
 
 - **Response Content-Type:** application/x-protobuf
 - **Response Body:** Serialized ChartData message
 
 ### Client Integration Notes
+
 - To consume these endpoints, use a Protocol Buffer parser (e.g., protobuf.js for JavaScript/TypeScript frontends).
 - Example (JavaScript):
+
   ```js
   // Fetch binary protobuf data
   fetch('/protobuf/api/projects/1/obligations/')
@@ -85,4 +91,5 @@ Returns chart data in protobuf format.
       // Now you can use message.obligations
     });
   ```
+
 - Prefer protobuf over JSON for new API/data exchange for efficiency and type safety.

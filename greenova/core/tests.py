@@ -9,6 +9,10 @@ License: AGPL-3.0
 from datetime import UTC, datetime
 
 from beartype import beartype
+from core.serializers import (
+    MechanismCollectionProtoSerializer,
+    MechanismProtoSerializer,
+)
 from django.test import TestCase
 from django.urls import reverse
 
@@ -27,8 +31,8 @@ class EnvironmentalObligationModelTests(TestCase):
             due_date=datetime.now(UTC).date(),
             is_complete=False,
         )
-        assert obj.name == "Test Obligation"
-        assert not obj.is_complete
+        assert getattr(obj, "name", None) == "Test Obligation"
+        assert not getattr(obj, "is_complete", True)
 
 
 class EnvironmentalObligationListViewTests(TestCase):
@@ -41,3 +45,45 @@ class EnvironmentalObligationListViewTests(TestCase):
         response = self.client.get(url)
         assert response.status_code == 200
         self.assertContains(response, "Environmental Obligations")
+
+
+class MechanismProtoSerializerTests(TestCase):
+    """Tests for MechanismProtoSerializer."""
+
+    @beartype
+    def test_is_valid_with_none_data(self) -> None:
+        serializer = MechanismProtoSerializer(data=None)
+        assert not serializer.is_valid()
+        assert serializer.errors == "No data provided."
+
+    @beartype
+    def test_is_valid_with_invalid_data(self) -> None:
+        serializer = MechanismProtoSerializer(data=b"invalid")
+        assert not serializer.is_valid()
+        assert serializer.errors == "Invalid protobuf data."
+
+    @beartype
+    def test_data_with_no_instance(self) -> None:
+        serializer = MechanismProtoSerializer()
+        assert serializer.data() is None
+
+
+class MechanismCollectionProtoSerializerTests(TestCase):
+    """Tests for MechanismCollectionProtoSerializer."""
+
+    @beartype
+    def test_is_valid_with_none_data(self) -> None:
+        serializer = MechanismCollectionProtoSerializer(data=None)
+        assert not serializer.is_valid()
+        assert serializer.errors == "No data provided."
+
+    @beartype
+    def test_is_valid_with_invalid_data(self) -> None:
+        serializer = MechanismCollectionProtoSerializer(data=b"invalid")
+        assert not serializer.is_valid()
+        assert serializer.errors == "Invalid protobuf data or empty collection."
+
+    @beartype
+    def test_data_with_no_instances(self) -> None:
+        serializer = MechanismCollectionProtoSerializer()
+        assert serializer.data() is None

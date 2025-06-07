@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             id="greenova_workflow_definitions"
+             targetNamespace="http://enveng-group.com.au/greenova/bpmn20"
+             exporter="GitHub Copilot"
+             exporterVersion="1.0">
+  <process id="GreenovaEMS" name="Greenova Environmental Management System Workflow" isExecutable="true">
+    <laneSet>
+      <lane id="lane_user" name="Environmental Professional User"/>
+      <lane id="lane_system" name="System Backend & Services"/>
+    </laneSet>
+    <startEvent id="start_user_access" name="User Accesses Greenova System"/>
+    <subProcess id="authentication_flow" name="User Authentication & Registration Flow">
+      <startEvent id="auth_start" name="Begin Authentication"/>
+      <userTask id="navigate_login" name="Navigate to Login Page"/>
+      <exclusiveGateway id="auth_choice" name="Authentication Action Choice"/>
+      <userTask id="user_login" name="User Login Authentication"/>
+      <exclusiveGateway id="login_validation" name="Login Credentials Valid?"/>
+      <userTask id="login_error_display" name="Display Login Error"/>
+      <userTask id="user_registration" name="New User Registration"/>
+      <userTask id="email_verification" name="Email Verification Process"/>
+      <userTask id="password_reset" name="Password Reset Process"/>
+      <endEvent id="auth_end" name="Authentication Complete"/>
+      <sequenceFlow id="sf1" sourceRef="auth_start" targetRef="navigate_login"/>
+      <sequenceFlow id="sf2" sourceRef="navigate_login" targetRef="auth_choice"/>
+      <sequenceFlow id="sf3" sourceRef="auth_choice" targetRef="user_login"/>
+      <sequenceFlow id="sf4" sourceRef="auth_choice" targetRef="user_registration"/>
+      <sequenceFlow id="sf5" sourceRef="auth_choice" targetRef="password_reset"/>
+      <sequenceFlow id="sf6" sourceRef="user_login" targetRef="login_validation"/>
+      <sequenceFlow id="sf7" sourceRef="login_validation" targetRef="login_error_display"/>
+      <sequenceFlow id="sf8" sourceRef="login_validation" targetRef="auth_end"/>
+      <sequenceFlow id="sf9" sourceRef="user_registration" targetRef="email_verification"/>
+      <sequenceFlow id="sf10" sourceRef="email_verification" targetRef="auth_end"/>
+      <sequenceFlow id="sf11" sourceRef="password_reset" targetRef="auth_end"/>
+    </subProcess>
+    <subProcess id="dashboard_main" name="Main Dashboard Interface & Navigation">
+      <userTask id="dashboard_load" name="Load Dashboard Interface"/>
+      <userTask id="project_context_setup" name="Initialize Project Context"/>
+      <userTask id="sidebar_navigation" name="Sidebar Navigation & Toggle"/>
+      <userTask id="project_selection" name="Project Selection & Context Switch"/>
+      <exclusiveGateway id="project_selected_check" name="Project Selected?"/>
+      <userTask id="project_selection_prompt" name="Prompt Project Selection"/>
+      <userTask id="dashboard_content_load" name="Load Project-Specific Dashboard Content"/>
+      <endEvent id="dashboard_end" name="Dashboard Ready"/>
+      <sequenceFlow id="dsf1" sourceRef="dashboard_load" targetRef="project_context_setup"/>
+      <sequenceFlow id="dsf2" sourceRef="project_context_setup" targetRef="sidebar_navigation"/>
+      <sequenceFlow id="dsf3" sourceRef="sidebar_navigation" targetRef="project_selection"/>
+      <sequenceFlow id="dsf4" sourceRef="project_selection" targetRef="project_selected_check"/>
+      <sequenceFlow id="dsf5" sourceRef="project_selected_check" targetRef="dashboard_content_load"/>
+      <sequenceFlow id="dsf6" sourceRef="project_selected_check" targetRef="project_selection_prompt"/>
+      <sequenceFlow id="dsf7" sourceRef="dashboard_content_load" targetRef="dashboard_end"/>
+    </subProcess>
+    <subProcess id="obligation_management" name="Comprehensive Obligation Management">
+      <userTask id="obligation_dashboard_cards" name="View Obligation Summary Cards"/>
+      <userTask id="obligation_popups" name="Interactive Obligation Hover Popups"/>
+      <userTask id="add_obligation_button" name="Sticky Add Obligation Button"/>
+      <exclusiveGateway id="add_obligation_context" name="Project Context Available?"/>
+      <userTask id="project_selection_required" name="Prompt Project Selection for Obligation"/>
+      <userTask id="obligation_form_load" name="Load Obligation Creation Form"/>
+      <userTask id="obligation_creation" name="Create New Obligation"/>
+      <userTask id="obligation_list_view" name="View Obligation List"/>
+      <userTask id="obligation_detail_view" name="View Obligation Details"/>
+      <userTask id="obligation_edit" name="Edit Obligation"/>
+      <userTask id="obligation_delete" name="Delete Obligation"/>
+      <userTask id="chart_drilldown" name="Chart Drilldown Navigation"/>
+    </subProcess>
+    <subProcess id="responsibility_management" name="User Role Assignment & Responsibility Management">
+      <userTask id="role_assignment_interface" name="Role Assignment Interface"/>
+      <userTask id="user_obligation_linking" name="Link Users to Obligations"/>
+      <userTask id="responsibility_dashboard" name="Responsibility Dashboard View"/>
+      <userTask id="role_based_permissions" name="Enforce Role-Based Permissions"/>
+    </subProcess>
+    <subProcess id="project_management" name="Project & Environmental Mechanism Management">
+      <userTask id="project_creation" name="Create New Project"/>
+      <userTask id="project_management_interface" name="Project Management Dashboard"/>
+      <userTask id="mechanism_definition" name="Define Environmental Mechanisms"/>
+      <userTask id="project_member_management" name="Manage Project Members"/>
+    </subProcess>
+    <subProcess id="user_company_management" name="User Profile & Company Management">
+      <userTask id="user_profile_management" name="User Profile CRUD Operations"/>
+      <userTask id="company_management" name="Company Information CRUD"/>
+      <userTask id="navigation_integration" name="Header Navigation Integration"/>
+    </subProcess>
+    <subProcess id="analytics_reporting" name="Data Analytics & Interactive Reporting">
+      <userTask id="chart_generation" name="Generate Interactive Charts"/>
+      <userTask id="dashboard_analytics" name="Dashboard Statistics & Analytics"/>
+      <userTask id="search_filter" name="Advanced Search & Filtering"/>
+      <userTask id="report_generation" name="Generate Compliance Reports"/>
+    </subProcess>
+    <subProcess id="notification_system" name="Notification & Communication System">
+      <userTask id="notification_display" name="Display Notifications"/>
+      <userTask id="email_notifications" name="Email Notification System"/>
+    </subProcess>
+    <userTask id="user_logout" name="User Logout Process"/>
+    <endEvent id="end_user_session" name="User Session Ended"/>
+    <!-- Add sequenceFlow elements to connect the above as needed for your tool -->
+  </process>
+</definitions>

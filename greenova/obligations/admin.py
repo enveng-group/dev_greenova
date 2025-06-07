@@ -11,6 +11,8 @@ import logging
 from typing import Any
 
 from beartype import beartype
+from core.utils import is_obligation_overdue  # type: ignore[import]
+from core.utils.roles import get_responsibility_choices
 
 # from auditing.models import ComplianceComment, NonConformanceComment
 from django import forms
@@ -26,7 +28,6 @@ from .models import (
     Obligation,
     ObligationEvidence,
 )
-from .utils import get_responsibility_choices, is_obligation_overdue
 
 logger = logging.getLogger(__name__)
 

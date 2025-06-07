@@ -58,11 +58,11 @@ class DummyMessage:
 # Import generated protobuf modules with improved error handling
 try:
     try:
-        from chatbot.proto import chatbot_pb2
+        from greenova.protobuf import chatbot_pb2
 
         logger.info("Successfully imported chatbot_pb2 from top-level")
     except ImportError:
-        from chatbot.proto import chatbot_pb2
+        from greenova.protobuf import chatbot_pb2
 
         logger.info("Successfully imported chatbot_pb2 from proto package")
 except ImportError:

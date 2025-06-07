@@ -1,3 +1,5 @@
+continue to iterate, checking off the acceptance criteria checklist in core prompt until all is complete, do not ask what is next, just complete until the below core app refactoring is complete by iterating
+
 using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
 
 
@@ -274,7 +276,7 @@ Security: Add django-csp and consider cryptography for sensitive features.
 
 Remove any remaining non-semantic markup or unused classes.
 
-can you firstly provide me an anlaysis of what files to keep from my previous legacy app of the project app to fit in with the new projects guidelines and structure
+can you firstly provide me an analysis of what files to keep from my previous legacy app of the project app to fit in with the new projects guidelines and structure
 
 
 
@@ -287,7 +289,7 @@ complexity
 Technology Priority Order (Expanded)
 Restructured Text (RST): Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
 Django-Html: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
-Protobuf3: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
+Protobuf3: Use for all data serialization between backend (protoc) and frontend (as-proto and protobufjs). Prefer over JSON for APIs and data exports.
 django-bootstrap5: Use as the sole primary styling framework for all new development.
 django-hyperscript: Use for all simple client-side interactions. Avoid custom JS unless required.
 django-htmx: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
@@ -302,7 +304,7 @@ fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstr
 
 yes fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstrap5.readthedocs.io/en/latest/widgets.html https://django-bootstrap5.readthedocs.io/en/latest/templates.html https://django-bootstrap5.readthedocs.io/en/latest/settings.html https://django-bootstrap5.readthedocs.io/en/latest/templatetags.html https://django-bootstrap5.readthedocs.io/en/latest/forms.html https://django-bootstrap5.readthedocs.io/en/latest/migrate.html https://django-bootstrap5.readthedocs.io/en/latest/quickstart.html and ensure they are all using django-bootstrap5 tags tempaltetags correctly as django-bootstrap5 is main styling framework along with our own overrides
 
-ow ceck all templates and views.py they are primarily using django_hyperscript tempalte tags correctly and its implementation as per documentation http://pypi.org/project/django-hyperscript/ https://github.com/LucLor06/django-hyperscript and only to compliment django_hyperscript, we are applying django_htmx templatetags correctly https://django-htmx.readthedocs.io/en/latest/installation.html https://django-htmx.readthedocs.io/en/latest/middleware.html https://django-htmx.readthedocs.io/en/latest/template_tags.html https://django-htmx.readthedocs.io/en/latest/http.html https://django-htmx.readthedocs.io/en/latest/example_project.html https://github.com/adamchainz/django-htmx/tree/main/example/example https://django-htmx.readthedocs.io/en/latest/tips.html
+ow check all templates and views.py they are primarily using django_hyperscript template tags correctly and its implementation as per documentation http://pypi.org/project/django-hyperscript/ https://github.com/LucLor06/django-hyperscript and only to compliment django_hyperscript, we are applying django_htmx templatetags correctly https://django-htmx.readthedocs.io/en/latest/installation.html https://django-htmx.readthedocs.io/en/latest/middleware.html https://django-htmx.readthedocs.io/en/latest/template_tags.html https://django-htmx.readthedocs.io/en/latest/http.html https://django-htmx.readthedocs.io/en/latest/example_project.html https://github.com/adamchainz/django-htmx/tree/main/example/example https://django-htmx.readthedocs.io/en/latest/tips.html
 
 
 Remove any remaining non-semantic markup or unused classes.
@@ -338,7 +340,7 @@ check for any duplications conflicts unused files methods classes and opportunit
 
 
 
-can you firstly provide me an anlaysis of what files to keep from my previous legacy app of the mechanisms app to fit in with the new projects guidelines and structure
+can you firstly provide me an analysis of what files to keep from my previous legacy app of the mechanisms app to fit in with the new projects guidelines and structure
 
 Tool and Dependency Use-Cases for Code Generation in Greenova
 Python/Django Dependencies

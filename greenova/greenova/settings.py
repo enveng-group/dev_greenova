@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
     "guardian",  # Added for object-level permissions
     "obligations",  # Obligations app for environmental compliance
     "mechanisms",  # Stub app for EnvironmentalMechanism model
+    "responsibility",  # Responsibility app for role/responsibility models
 ]
 
 MIDDLEWARE = [
@@ -83,11 +85,12 @@ MIDDLEWARE = [
     "csp.middleware.CSPMiddleware",
     # Dev only: browser reload middleware (must be after AuthenticationMiddleware)
     *(["django_browser_reload.middleware.BrowserReloadMiddleware"] if DEBUG else []),
+    "core.middleware.AuditMiddleware",
 ]
 
 ROOT_URLCONF = "greenova.urls"
 
-TEMPLATES = [
+TEMPLATES: list[dict[str, Any]] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "core" / "templates"],
@@ -108,7 +111,7 @@ WSGI_APPLICATION = "greenova.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
+DATABASES: dict[str, dict[str, Any]] = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
@@ -165,8 +168,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Redirect users to dashboard after login
 LOGIN_REDIRECT_URL = "/dashboard/"
 
+# Custom user model for authentication
+AUTH_USER_MODEL = "core.CustomUser"
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "guardian.backends.ObjectPermissionBackend",
+]
+
 # Django Bootstrap5 Configuration
-BOOTSTRAP5 = {
+BOOTSTRAP5: dict[str, Any] = {
     "css_url": {
         "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css",
         "integrity": "sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN",

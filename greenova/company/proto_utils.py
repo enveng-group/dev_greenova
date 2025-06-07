@@ -26,7 +26,7 @@ from .models import Company
 logger = logging.getLogger(__name__)
 
 try:
-    from .proto import company_pb2
+    from greenova.protobuf import company_pb2
 except ImportError:
     company_pb2 = None
     logger.warning("company_pb2 not found. Ensure .proto files are compiled.")

@@ -533,21 +533,13 @@ fi
 - **django-filter**: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
 - **django-tables2**: Use for rendering tabular data in templates. Prefer over custom table markup.
 - **django-crispy-forms** and **crispy-bootstrap4**: Use for rendering forms with consistent, accessible markup. Prefer over custom form templates.
-- **django-guardian**: Use for object-level permissions. Integrate with custom user model and access control logic.
-- **django-storages**: Use for cloud storage backends (S3, GCS, etc.). Configure in settings as needed.
-- **django-autocomplete-light**: Use for autocomplete widgets in forms with large datasets.
+- **django-guardian**: Use for object-level permissions. Integrate with custom user model and access control logic.- **django-autocomplete-light**: Use for autocomplete widgets in forms with large datasets.
 - **pillow**: Use for image processing in models, forms, and admin.
 - **python-slugify**: Use for generating slugs for URLs and filenames.
 - **bleach**: Use for sanitizing user input and HTML content.
 - **ipython**: Use for enhanced shell and debugging in development.
 - **matplotlib**: Use for all server-side static charting. Integrate with django-matplotlib.
 - **pandas**: Use for data analysis, reporting, and ETL tasks. Do not use in request/response cycle unless necessary.
-- **python-dateutil**: Use for robust date parsing and manipulation.
-- **python-dotenv**: Use for loading environment variables from .env files. Do not hardcode secrets.
-- **PyYAML**: Use for YAML config parsing. Only use when JSON is insufficient.
-- **fido2**: Use for WebAuthn and hardware security key support in authentication.
-- **cryptography**: Use for encryption, signing, and secure token generation.
-- **whitenoise**: Use for serving static files in production.
 
 ### JavaScript/TypeScript/Frontend Dependencies
 

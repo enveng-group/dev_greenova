@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+<main class="container py-5">
+  <section aria-labelledby="edit-profile-heading" class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h1 id="edit-profile-heading" class="card-title mb-4">Edit Profile</h1>
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="d-grid gap-2 mt-4">
+              <button type="submit" class="btn btn-greenova">Save Changes</button>
+              <a href="{% url 'core:profile_detail' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

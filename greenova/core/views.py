@@ -9,11 +9,16 @@ License: AGPL-3.0
 import logging
 
 from beartype import beartype
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
+from obligations.models import Obligation
+from obligations.proto_utils import serialize_obligations
 
 from .filters import EnvironmentalObligationFilter
+from .forms import UserProfileForm
 from .models import EnvironmentalObligation
 from .tables import EnvironmentalObligationTable
 
@@ -37,45 +42,17 @@ class EnvironmentalObligationListView(SingleTableMixin, FilterView):
 
 
 @beartype
-def obligations_protobuf_api(request) -> HttpResponse:
+def obligations_protobuf_api(request: HttpRequest) -> HttpResponse:
     """API endpoint that returns obligations data in protobuf format.
 
     Returns:
         HttpResponse: Protobuf serialized obligations data.
 
     """
-    obligations = EnvironmentalObligation.objects.all().order_by("due_date")
-
-    # Convert Django models to protobuf messages
-    protobuf_obligations = []
-    for obligation in obligations:
-        pb_obligation = Obligation()
-        pb_obligation.id = obligation.id or 0
-        pb_obligation.title = obligation.name
-        pb_obligation.description = obligation.description
-        pb_obligation.due_date = obligation.due_date.isoformat()
-        pb_obligation.status = "complete" if obligation.is_complete else "pending"
-        pb_obligation.created_at = int(obligation.created_at.timestamp())
-        pb_obligation.updated_at = int(obligation.updated_at.timestamp())
-        protobuf_obligations.append(pb_obligation)
-
-    # For demonstration, return JSON representation (in production, return
-    # binary protobuf)
-    data = [
-        {
-            "id": pb_obj.id,
-            "title": pb_obj.title,
-            "description": pb_obj.description,
-            "due_date": pb_obj.due_date,
-            "status": pb_obj.status,
-            "created_at": pb_obj.created_at,
-            "updated_at": pb_obj.updated_at,
-        }
-        for pb_obj in protobuf_obligations
-    ]
-
-    logger.info("Returning %d obligations via protobuf API", len(data))
-    return JsonResponse({"obligations": data, "format": "protobuf-compatible"})
+    obligations = Obligation.objects.all().order_by("due_date")
+    protobuf_data = serialize_obligations(list(obligations))
+    logger.info("Returning %d obligations via protobuf API", obligations.count())
+    return HttpResponse(protobuf_data, content_type="application/x-protobuf")
 
 
 @beartype
@@ -90,7 +67,6 @@ def obligations_api(request: HttpRequest) -> JsonResponse:
 
     """
     obligations = EnvironmentalObligation.objects.all().order_by("due_date")
-
     data = [
         {
             "id": obligation.pk,
@@ -103,13 +79,12 @@ def obligations_api(request: HttpRequest) -> JsonResponse:
         }
         for obligation in obligations
     ]
-
     logger.info("Returning %d obligations via API", len(data))
     return JsonResponse({"obligations": data, "count": len(data)})
 
 
 @beartype
-def wasm_theme_api(request) -> JsonResponse:
+def wasm_theme_api(request: HttpRequest) -> JsonResponse:
     """API endpoint for theme management using WASM.
 
     Returns:
@@ -126,7 +101,6 @@ def wasm_theme_api(request) -> JsonResponse:
             "auto": "greenova-theme-auto",
         },
     }
-
     logger.info("Providing theme configuration for WASM integration")
     return JsonResponse(theme_config)
 
@@ -158,6 +132,28 @@ def theme_config_api(request: HttpRequest) -> JsonResponse:
             "easing": "ease-in-out",
         },
     }
-
     logger.info("Providing theme configuration for frontend integration")
     return JsonResponse(theme_config)
+
+
+@beartype
+@login_required
+def profile_detail_view(request: HttpRequest) -> HttpResponse:
+    """Display the current user's profile details."""
+    return render(request, "core/profile_detail.html", {"user": request.user})
+
+
+@beartype
+@login_required
+def profile_edit_view(request: HttpRequest) -> HttpResponse:
+    """Allow the current user to edit their profile."""
+    profile = getattr(request.user, "profile", None)
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            logger.info("User %s updated their profile.", request.user.username)
+            return redirect("core:profile_detail")
+    else:
+        form = UserProfileForm(instance=profile)
+    return render(request, "core/profile_edit.html", {"form": form})

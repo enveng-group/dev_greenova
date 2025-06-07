@@ -3,10 +3,11 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 from beartype import beartype
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -17,9 +18,7 @@ class SignInFlowTests(TestCase):
     @beartype
     def setUp(self) -> None:
         self.user = User.objects.create_user(
-            username="testuser",
-            email="testuser@example.com",
-            password="testpass123"
+            username="testuser", email="testuser@example.com", password="testpass123"
         )
 
     @beartype
@@ -32,18 +31,14 @@ class SignInFlowTests(TestCase):
     @beartype
     def test_login_success(self) -> None:
         url = reverse("account_login")
-        response = self.client.post(url, {
-            "login": "testuser",
-            "password": "testpass123"
-        }, follow=True)
+        response = self.client.post(
+            url, {"login": "testuser", "password": "testpass123"}, follow=True
+        )
         self.assertTrue(response.context["user"].is_authenticated)
 
     @beartype
     def test_login_failure(self) -> None:
         url = reverse("account_login")
-        response = self.client.post(url, {
-            "login": "testuser",
-            "password": "wrongpass"
-        })
+        response = self.client.post(url, {"login": "testuser", "password": "wrongpass"})
         self.assertFalse(response.context["user"].is_authenticated)
         self.assertContains(response, "Sign In")

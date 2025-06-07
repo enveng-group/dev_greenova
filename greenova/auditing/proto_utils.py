@@ -12,7 +12,7 @@ from .models import AuditEvent
 logger = logging.getLogger(__name__)
 
 try:
-    from .proto import auditing_pb2
+    from greenova.protobuf import auditing_pb2
 except ImportError:
     auditing_pb2 = None
     logger.warning("auditing_pb2 not found. Ensure .proto files are compiled.")
