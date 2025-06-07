@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  Greenova Chatbot
+{% endblock title %}
+{% block content %}
+  <main role="main">
+    <article>
+      <header>
+        <h1>Greenova Assistant</h1>
+      </header>
+      <div class="container">
+        <div class="row">
+          <!-- Conversation List -->
+          <div class="column conversation-list" aria-label="Conversation list">
+            <h2>Your Conversations</h2>
+            <a href="{% url 'chatbot:create_conversation' %}"
+               role="button"
+               class="new-conversation-btn">New Conversation</a>
+            {% if conversations %}
+              <ul class="conversations">
+                {% for conversation in conversations %}
+                  <li {% if active_conversation.id == conversation.id %}class="active"{% endif %}>
+                    <a href="{% url 'chatbot:conversation_detail' conversation.id %}">
+                      {{ conversation.title }}
+                      <small>{{ conversation.updated_at|date:"M d, Y" }}</small>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>No conversations yet. Start a new one!</p>
+            {% endif %}
+          </div>
+          <!-- Chat Window -->
+          <div class="column chat-window" aria-label="Chat messages">
+            {% if active_conversation %}
+              <h2>{{ active_conversation.title }}</h2>
+              <div id="chat-messages" class="messages-container" aria-live="polite">
+                {% for message in messages %}
+                  <div class="message {% if message.is_bot %}bot{% else %}user{% endif %}">
+                    <div class="message-content">{{ message.content }}</div>
+                    <div class="message-time">{{ message.timestamp|time:"H:i" }}</div>
+                  </div>
+                {% endfor %}
+              </div>
+              <form id="message-form"
+                    hx-post="{% url 'chatbot:send_message' active_conversation.id %}"
+                    hx-trigger="submit"
+                    hx-swap="beforeend"
+                    hx-target="#chat-messages"
+                    _="on submit set #message-input.value to ''">
+                <div class="message-input-container">
+                  <input type="text"
+                         id="message-input"
+                         name="message"
+                         placeholder="Type your message..."
+                         required
+                         aria-label="Message input" />
+                  <button type="submit" aria-label="Send message">Send</button>
+                </div>
+              </form>
+              <div class="conversation-actions">
+                <a href="{% url 'chatbot:delete_conversation' active_conversation.id %}"
+                   class="delete-link">Delete Conversation</a>
+              </div>
+            {% else %}
+              <div class="no-conversation-selected">
+                <p>Select a conversation or start a new one to begin chatting.</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </article>
+  </main>
+{% endblock content %}
+{% block extra_js %}
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+    const messagesContainer = document.getElementById('chat-messages');
+
+    if (messageForm) {
+      messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        // Add user message to UI immediately
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'message user';
+        userMessageDiv.innerHTML = `
+          <div class="message-content">${message}</div>
+          <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        `;
+        messagesContainer.appendChild(userMessageDiv);
+
+        // Clear input
+        messageInput.value = '';
+
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Send message to server
+        fetch(messageForm.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Add bot response to UI
+          const botMessageDiv = document.createElement('div');
+          botMessageDiv.className = 'message bot';
+          botMessageDiv.innerHTML = `
+            <div class="message-content">${data.bot_response.content}</div>
+            <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+          `;
+          messagesContainer.appendChild(botMessageDiv);
+
+          // Scroll to bottom
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    }
+
+    // Auto-scroll to bottom of messages on page load
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+  </script>
+{% endblock %}

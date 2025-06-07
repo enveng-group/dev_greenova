@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% load core_tags %}
+{% block content %}
+  <form method="post"
+        action="{% url 'obligation_update' obligation.obligation_number %}">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+{% endblock %}

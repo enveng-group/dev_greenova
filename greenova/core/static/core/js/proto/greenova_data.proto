@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package greenova.core;
+
+// Environmental obligation data structure
+message Obligation {
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+  string status = 4;
+  string due_date = 5;
+  int32 project_id = 6;
+  repeated Requirement requirements = 7;
+  int64 created_at = 8;
+  int64 updated_at = 9;
+}
+
+// Environmental requirement data structure
+message Requirement {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string compliance_status = 4;
+  repeated string tags = 5;
+}
+
+// Project data structure for environmental management
+message Project {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string location = 4;
+  repeated Obligation obligations = 5;
+  ProjectMetadata metadata = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+}
+
+// Project metadata for additional information
+message ProjectMetadata {
+  string environmental_zone = 1;
+  repeated string compliance_frameworks = 2;
+  string project_manager = 3;
+  string contact_email = 4;
+}
+
+// Dashboard data for frontend visualization
+message DashboardData {
+  ProjectSummary project_summary = 1;
+  repeated ObligationSummary obligation_summaries = 2;
+  ComplianceMetrics compliance_metrics = 3;
+  int64 last_updated = 4;
+}
+
+// Project summary for dashboard
+message ProjectSummary {
+  int32 total_projects = 1;
+  int32 active_projects = 2;
+  int32 completed_projects = 3;
+  repeated Project recent_projects = 4;
+}
+
+// Obligation summary for dashboard
+message ObligationSummary {
+  string status = 1;
+  int32 count = 2;
+  repeated Obligation upcoming_obligations = 3;
+}
+
+// Compliance metrics for monitoring
+message ComplianceMetrics {
+  double overall_compliance_rate = 1;
+  int32 overdue_obligations = 2;
+  int32 due_this_week = 3;
+  int32 due_this_month = 4;
+  repeated ComplianceByFramework compliance_by_framework = 5;
+}
+
+// Compliance metrics by framework
+message ComplianceByFramework {
+  string framework_name = 1;
+  double compliance_rate = 2;
+  int32 total_obligations = 3;
+  int32 compliant_obligations = 4;
+}

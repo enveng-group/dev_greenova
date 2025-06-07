@@ -1,0 +1,45 @@
+<div class="delete-confirmation">
+  <div class="alert warning" role="alert">
+    <h4>Warning!</h4>
+    <p>You are about to delete the document <strong>{{ document.name }}</strong>.</p>
+    <p>This action cannot be undone.</p>
+  </div>
+
+  <div class="document-info">
+    <h3>Document Information</h3>
+    <dl>
+      <dt>Name:</dt>
+      <dd>{{ document.name }}</dd>
+
+      <dt>Type:</dt>
+      <dd>{{ document.document_type|default:"Not specified" }}</dd>
+
+      <dt>Description:</dt>
+      <dd>{{ document.description|default:"Not provided" }}</dd>
+
+      <dt>Uploaded By:</dt>
+      <dd>{{ document.uploaded_by.get_full_name|default:document.uploaded_by.username }}</dd>
+
+      <dt>Upload Date:</dt>
+      <dd>{{ document.uploaded_at|date:"d M Y H:i" }}</dd>
+    </dl>
+  </div>
+
+  <div class="action-buttons">
+    <form method="post"
+          action="{% url 'company:delete_document' company.id document.id %}"
+          hx-post="{% url 'company:delete_document' company.id document.id %}"
+          hx-target=".documents-container"
+          hx-swap="innerHTML">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button type="submit" class="btn-danger">Confirm Delete</button>
+        <button type="button"
+                class="btn-secondary"
+                hx-get="{% url 'company:detail' company.id %}"
+                hx-target="#document-delete-container"
+                hx-swap="innerHTML">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

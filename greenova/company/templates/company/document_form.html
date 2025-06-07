@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Upload Document - {{ company.name }}{% endblock title %}
+
+{% block content %}
+<article>
+  <header>
+    <h1>Upload Document</h1>
+    <h2>{{ company.name }}</h2>
+  </header>
+
+  <div class="form-container">
+    {% include "company/includes/document_form.html" %}
+  </div>
+</article>
+{% endblock content %}

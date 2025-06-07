@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Confirm Delete Company
+{% endblock title %}
+
+{% block content %}
+  <article>
+    <header>
+      <h1>
+Delete Company
+      </h1>
+    </header>
+
+    <div class="alert alert-danger">
+      <p>
+Are you sure you want to delete the company "{{ object.name }}"?
+      </p>
+      <p>
+        <strong>Warning:</strong> This action cannot be undone. All related data will be permanently deleted.
+      </p>
+    </div>
+
+    <form method="post">
+{% csrf_token %}
+      <div class="form-actions">
+        <button type="submit"
+                class="btn btn-danger"
+                aria-label="Confirm delete company">
+          Confirm Delete
+        </button>
+        <a href="{% url 'company:list' %}"
+           class="btn btn-secondary"
+           aria-label="Cancel deletion">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </article>
+{% endblock content %}

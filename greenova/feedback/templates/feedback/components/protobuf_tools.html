@@ -1,0 +1,62 @@
+{% load feedback_tags %}
+
+<div class="protobuf-tools">
+  <h3>
+Data Import/Export Tools
+  </h3>
+
+  <div class="export-section">
+    <h4>
+Export Bug Reports
+    </h4>
+    <p class="help-text">
+      Export bug reports in Protocol Buffer format for efficient data transfer or backup.
+    </p>
+
+    {% if bug_reports %}
+      <div class="report-list">
+        <ul>
+          {% for report in bug_reports %}
+            <li>
+              {{ report.title }}
+              <a href="{% url 'feedback:export_report' report.id %}"
+                 class="export-link">Export</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <p>
+No bug reports available for export.
+      </p>
+    {% endif %}
+  </div>
+
+  <div class="import-section">
+    <h4>
+Import Bug Report
+    </h4>
+    <p class="help-text">
+      Upload a previously exported bug report in Protocol Buffer format.
+    </p>
+
+    <form method="post"
+          action="{% url 'feedback:import_report' %}"
+          enctype="multipart/form-data">
+{% csrf_token %}
+      <div class="form-group">
+        <label for="protobuf_file">
+Select Protocol Buffer File:
+        </label>
+        <input type="file"
+               id="protobuf_file"
+               name="protobuf_file"
+               accept=".pb,application/x-protobuf"
+               required />
+      </div>
+      <button type="submit">
+Import Report
+      </button>
+    </form>
+  </div>
+</div>

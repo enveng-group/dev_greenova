@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<main>
+  <h1>Reports</h1>
+  <section aria-labelledby="reports-list-heading">
+    <h2 id="reports-list-heading">All Reports</h2>
+    {% if reports %}
+      <ul>
+        {% for report in reports %}
+          <li>
+            <strong>{{ report.name }}</strong>
+            <span class="description">{{ report.description|default:"No description" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No reports found.</p>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}

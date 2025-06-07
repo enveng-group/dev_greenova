@@ -1,0 +1,92 @@
+{% load static %}
+{% load mechanism_tags %}
+{% load hyperscript %}
+
+{% if mechanism_charts %}
+  <section class="container charts-section my-4" aria-labelledby="charts-heading">
+    <h2 id="charts-heading" class="mb-4">Environmental Mechanisms Analysis</h2>
+    <nav class="d-flex justify-content-between align-items-center mb-3" aria-label="Mechanism charts navigation">
+      <button type="button" class="btn btn-outline-primary btn-sm me-2" _="on click call scrollCharts('left')" aria-label="Scroll left">
+        &larr;
+      </button>
+      <button type="button" class="btn btn-outline-primary btn-sm" _="on click call scrollCharts('right')" aria-label="Scroll right">
+        &rarr;
+      </button>
+    </nav>
+    <div id="chartGallery" class="row g-4" role="region" aria-label="Chart gallery">
+      {% for mech in mechanism_charts %}
+        <article class="col-12 col-md-6 col-lg-4 mechanism-chart card p-3">
+          <header>
+            <h3 class="h5">{{ mech.name }}</h3>
+          </header>
+          {% if mech.id %}
+            <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}" class="stretched-link" aria-label="View details for {{ mech.name }}">
+          {% endif %}
+          <figure>
+            <figcaption class="visually-hidden">{{ mech.name }} Status Distribution</figcaption>
+            <img src="data:image/png;base64,{{ mech.image_data }}"
+                 alt="Chart for {{ mech.name }}"
+                 class="img-fluid rounded border"
+                 width="400"
+                 height="400" />
+          </figure>
+          {% if mech.id %}
+            </a>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+    {% if table_data %}
+      <article class="card mt-4">
+        <header class="card-header d-flex align-items-center justify-content-between">
+          <h3 class="h6 mb-0">Detailed Statistics</h3>
+          <button class="btn btn-link btn-sm" _="on click toggle .d-none on the next <div/>" aria-label="Toggle table visibility">+</button>
+        </header>
+        <div class="card-body d-none">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle" role="grid">
+              <thead class="table-light">
+                <tr>
+                  <th>Mechanism</th>
+                  <th>Not Started</th>
+                  <th>In Progress</th>
+                  <th>Completed</th>
+                  <th>Overdue</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in table_data %}
+                  <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.not_started }}</td>
+                    <td>{{ item.in_progress }}</td>
+                    <td>{{ item.completed }}</td>
+                    <td>{{ item.overdue }}</td>
+                    <td>{{ item.total }}</td>
+                    <td>
+                      {% if item.id %}
+                        <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
+                           class="btn btn-outline-secondary btn-sm"
+                           aria-label="View details for {{ item.name }}">View</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </article>
+    {% endif %}
+  </section>
+{% elif error %}
+  <div role="alert" class="alert alert-danger my-4">
+    <p>{{ error }}</p>
+  </div>
+{% else %}
+  <div role="status" class="alert alert-info my-4">
+    <p>Please select a project to view mechanism charts.</p>
+  </div>
+{% endif %}

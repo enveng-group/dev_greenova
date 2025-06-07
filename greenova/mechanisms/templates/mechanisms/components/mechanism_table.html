@@ -1,0 +1,34 @@
+{% load mechanism_tags %}
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle" role="grid" aria-label="Mechanisms table">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Mechanism</th>
+        <th scope="col">Not Started</th>
+        <th scope="col">In Progress</th>
+        <th scope="col">Completed</th>
+        <th scope="col">Overdue</th>
+        <th scope="col">Total</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for mechanism in mechanisms %}
+        <tr>
+          <td>{{ mechanism.name }}</td>
+          <td>{{ mechanism.not_started_count }}</td>
+          <td>{{ mechanism.in_progress_count }}</td>
+          <td>{{ mechanism.completed_count }}</td>
+          <td>{{ mechanism.overdue_count }}</td>
+          <td>{{ mechanism|total_obligations }}</td>
+          <td>
+            <a href="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
+               class="btn btn-outline-secondary btn-sm"
+               aria-label="View details for {{ mechanism.name }}">View</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Delete Company{% endblock title %}
+
+{% block content %}
+<article>
+  <header>
+    <h1>Delete Company</h1>
+  </header>
+
+  <div class="delete-container">
+    <!-- Use django-hyperscript for dynamic updates if needed. -->
+    {% include "company/includes/company_delete_confirm.html" %}
+  </div>
+</article>
+{% endblock content %}

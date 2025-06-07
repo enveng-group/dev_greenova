@@ -1,0 +1,85 @@
+{% load company_tags %}
+
+{% if companies %}
+<table aria-label="Company list">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Type</th>
+      <th scope="col">Industry</th>
+      <th scope="col">Members</th>
+      <th scope="col">Status</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for company in companies %}
+    <tr>
+      <td><a href="{% url 'company:detail' company.id %}">{{ company.name }}</a></td>
+      <td>{{ company.company_type|company_type_label }}</td>
+      <td>{{ company.industry|industry_label|default:"Not specified" }}</td>
+      <td>{{ company.member_count }}</td>
+      <td>
+        {% if company.is_active %}
+          <mark role="status" class="success">Active</mark>
+        {% else %}
+          <mark role="status" class="warning">Inactive</mark>
+        {% endif %}
+      </td>
+      <td class="action-buttons">
+        <a href="{% url 'company:detail' company.id %}" class="btn-secondary" role="button">View</a>
+        {% if request.user.is_superuser or company.id|company_role:request.user == 'owner' or company.id|company_role:request.user == 'admin' %}
+        <a href="{% url 'company:edit' company.id %}" class="btn-secondary" role="button">Edit</a>
+        <a href="{% url 'company:delete' company.id %}" class="btn-danger" role="button">Delete</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<nav class="pagination" aria-label="Pagination">
+  <ul class="pagination-list">
+    {% if page_obj.has_previous %}
+      <li>
+        <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-get="{% url 'company:list' %}?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-target="#company-list-container">&laquo; First</a>
+      </li>
+      <li>
+        <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-get="{% url 'company:list' %}?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-target="#company-list-container">&lsaquo; Previous</a>
+      </li>
+    {% endif %}
+
+    <li class="pagination-info">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </li>
+
+    {% if page_obj.has_next %}
+      <li>
+        <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-get="{% url 'company:list' %}?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-target="#company-list-container">Next &rsaquo;</a>
+      </li>
+      <li>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-get="{% url 'company:list' %}?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+           hx-target="#company-list-container">Last &raquo;</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="centered-message">
+  <p>No companies found.</p>
+  {% if can_create %}
+    <a href="{% url 'company:create' %}" role="button">Create a company</a>
+  {% endif %}
+</div>
+{% endif %}

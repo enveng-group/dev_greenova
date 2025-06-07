@@ -1,0 +1,38 @@
+{% load procedure_tags %}
+
+<dl class="stats-list">
+  <div class="stat-row">
+    <dt>Not Started:</dt>
+    <dd>
+      {{ stats.not_started }}
+
+    </dd>
+  </div>
+  <div class="stat-row">
+    <dt>In Progress:</dt>
+    <dd>
+      {{ stats.in_progress }}
+
+    </dd>
+  </div>
+  <div class="stat-row">
+    <dt>Completed:</dt>
+    <dd>
+      {{ stats.completed }}
+
+    </dd>
+  </div>
+  <div class="stat-row">
+    <dt>Overdue:</dt>
+    <dd>
+      {{ stats.overdue }}
+
+    </dd>
+  </div>
+  <div class="stat-row total">
+    <dt>Total:</dt>
+    <dd>
+      {{ stats.total }}
+    </dd>
+  </div>
+</dl>

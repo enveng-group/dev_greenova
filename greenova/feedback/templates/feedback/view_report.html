@@ -1,0 +1,89 @@
+{% extends "feedback/layouts/base.html" %}
+{% load feedback_tags %}
+
+{% block feedback_content %}
+  <article>
+    <h2>
+{{ bug_report.title }}
+    </h2>
+
+    <dl>
+      <dt>
+Status:
+      </dt>
+      <dd>
+{{ bug_report.get_status_display }}
+      </dd>
+
+      <dt>
+Severity:
+      </dt>
+      <dd>
+{{ bug_report.get_severity_display }}
+      </dd>
+
+      <dt>
+Reported:
+      </dt>
+      <dd>
+{{ bug_report.created_at|date:"Y-m-d H:i" }}
+      </dd>
+    </dl>
+
+    <section>
+      <h3>
+Description
+      </h3>
+      <p>
+{{ bug_report.description|linebreaks }}
+      </p>
+    </section>
+
+    <section>
+      <h3>
+Steps to Reproduce
+      </h3>
+      <p>
+{{ bug_report.steps_to_reproduce|linebreaks }}
+      </p>
+    </section>
+
+    <section>
+      <h3>
+Expected vs Actual Behavior
+      </h3>
+      <h4>
+Expected:
+      </h4>
+      <p>
+{{ bug_report.expected_behavior|linebreaks }}
+      </p>
+      <h4>
+Actual:
+      </h4>
+      <p>
+{{ bug_report.actual_behavior|linebreaks }}
+      </p>
+    </section>
+
+    {% if bug_report.error_messages %}
+      <section>
+        <h3>
+Error Messages
+        </h3>
+        <pre>{{ bug_report.error_messages }}</pre>
+      </section>
+    {% endif %}
+
+    {% if bug_report.trace_report %}
+      <section>
+        <h3>
+Trace Report
+        </h3>
+        <pre>{{ bug_report.trace_report }}</pre>
+      </section>
+    {% endif %}
+
+    <a href="{% url 'feedback:index' %}">Back to Bug Reports</a>
+  </article>
+{% endblock %}

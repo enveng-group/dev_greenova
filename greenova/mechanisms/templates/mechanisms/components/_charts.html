@@ -1,0 +1,68 @@
+{% extends "base_generic.html" %}
+{% block content %}
+  <section class="container charts-container my-4" aria-labelledby="charts-heading">
+    <h2 id="charts-heading" class="mb-4">Environmental Mechanism Status Charts</h2>
+    <nav class="d-flex justify-content-between align-items-center mb-3" aria-label="Chart navigation">
+      <button type="button" class="btn btn-outline-primary btn-sm me-2" _="on click call scrollCharts('left')" aria-label="Scroll left through charts">&larr;</button>
+      <button type="button" class="btn btn-outline-primary btn-sm" _="on click call scrollCharts('right')" aria-label="Scroll right through charts">&rarr;</button>
+    </nav>
+    <div id="chartGallery" class="row g-4 chart-gallery" role="region" aria-label="Chart gallery">
+      {% if mechanism_charts %}
+        {% for chart in mechanism_charts %}
+          <article class="col-12 col-md-6 col-lg-4 mechanism-chart card p-3">
+            <header>
+              <h3 class="h5">{{ chart.name }}</h3>
+            </header>
+            <figure>
+              <figcaption class="visually-hidden">{{ chart.name }} - Status Distribution</figcaption>
+              <img src="{{ chart.chart }}"
+                   alt="Pie chart for {{ chart.name }} mechanism"
+                   class="img-fluid rounded border"
+                   width="400"
+                   height="400">
+            </figure>
+          </article>
+        {% endfor %}
+      {% else %}
+        <p class="alert alert-info">No charts available at the moment. Please check back later.</p>
+      {% endif %}
+    </div>
+    {% if table_data %}
+      <section class="card mt-4 data-table-section">
+        <h3 class="card-header h6">Mechanism Status Overview</h3>
+        <div class="card-body table-responsive">
+          <table class="table table-bordered table-hover align-middle data-table">
+            <thead class="table-light">
+              <tr>
+                <th>Mechanism</th>
+                <th>Not Started</th>
+                <th>In Progress</th>
+                <th>Completed</th>
+                <th>Overdue</th>
+                <th>Total</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in table_data %}
+                <tr>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.not_started }}</td>
+                  <td>{{ item.in_progress }}</td>
+                  <td>{{ item.completed }}</td>
+                  <td>{{ item.overdue }}</td>
+                  <td>{{ item.total }}</td>
+                  <td>
+                    <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
+                       class="btn btn-outline-secondary btn-sm"
+                       aria-label="View chart for {{ item.name }}">View Chart</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    {% endif %}
+  </section>
+{% endblock content %}

@@ -455,6 +455,36 @@
   color: hsl(89.203539823, 46.1224489796%, 58.0392156863%);
   text-decoration: underline;
 }
+.mw-32rem {
+  max-width: 32rem !important;
+}
+.w-5rem {
+  width: 5rem !important;
+}
+.h-5rem {
+  height: 5rem !important;
+}
+.mw-40rem {
+  max-width: 40rem !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn-press {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.08);
+    transition:
+      transform 0.12s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.12s;
+  }
+  .form-sending {
+    opacity: 0.7;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .animate-fade-in {
+    opacity: 0;
+    animation: fadeIn 1.2s ease-in forwards;
+  }
+}
 @media print {
   .greenova-header,
   .greenova-footer,

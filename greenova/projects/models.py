@@ -180,8 +180,47 @@ class Project(models.Model):
             project_memberships__role=role,
         )
 
-    # Do not use @beartype on save() due to *args, **kwargs
-    def save(self, *args, **kwargs) -> None:
+    @beartype
+    def to_pb(self) -> "object":  # type: ignore[return]
+        """Convert this Project instance to a ProjectProto message.
+
+        Returns:
+            ProjectProto: The protocol buffer message representing this project.
+
+        """
+        from . import projects_pb2  # type: ignore[import]
+
+        proto = projects_pb2.ProjectProto()  # type: ignore[attr-defined]
+        proto.id = str(self.pk) if self.pk is not None else ""
+        proto.name = self.name or ""
+        proto.description = self.description or ""
+        # type: ignore[attr-defined]
+        proto.member_user_ids.extend([str(user.pk) for user in self.members.all()])
+        proto.created_at = self.created_at.isoformat() if self.created_at else ""
+        proto.updated_at = self.updated_at.isoformat() if self.updated_at else ""
+        return proto  # type: ignore[return]
+
+    @beartype
+    def from_pb(self, proto: object) -> "Project":
+        """Populate this Project instance from a ProjectProto message.
+
+        Args:
+            proto: The ProjectProto message to populate from (expected type: projects_pb2.ProjectProto).
+
+        Returns:
+            Project: The populated Project instance (self).
+
+        """
+        # Type: ignore is used because generated proto types are not always
+        # visible to type checkers
+        self.name = getattr(proto, "name", "")
+        self.description = getattr(proto, "description", "")
+        # Slug and owner are not set from proto for safety
+        # Members are not set here; handle separately if needed
+        # created_at/updated_at are not set directly (managed by Django)
+        return self
+
+    def save(self, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
         """Override save to sanitize description and ensure slug."""
         if not self.slug:
             self.slug = slugify(self.name)
@@ -236,6 +275,41 @@ class ProjectMembership(models.Model):
 
         """
         return f"{self.user.username} - {self.project.name} ({self.role})"
+
+    @beartype
+    def to_pb(self) -> "object":  # type: ignore[return]
+        """Convert this ProjectMembership instance to a ProjectMembershipProto message.
+
+        Returns:
+            ProjectMembershipProto: The protocol buffer message representing this membership.
+
+        """
+        from . import projects_pb2  # type: ignore[import]
+
+        proto = projects_pb2.ProjectMembershipProto()  # type: ignore[attr-defined]
+        proto.id = str(self.pk) if self.pk is not None else ""
+        proto.project_id = str(self.project.pk) if self.project.pk else ""
+        proto.user_id = str(self.user.pk) if self.user.pk else ""
+        proto.role = self.role or ""
+        proto.created_at = self.created_at.isoformat() if self.created_at else ""
+        proto.updated_at = self.updated_at.isoformat() if self.updated_at else ""
+        return proto  # type: ignore[return]
+
+    @beartype
+    def from_pb(self, proto: object) -> "ProjectMembership":
+        """Populate this ProjectMembership instance from a ProjectMembershipProto message.
+
+        Args:
+            proto: The ProjectMembershipProto message to populate from (expected type: projects_pb2.ProjectMembershipProto).
+
+        Returns:
+            ProjectMembership: The populated ProjectMembership instance (self).
+
+        """
+        # Only set fields that are safe to update
+        self.role = getattr(proto, "role", "")
+        # project, user, created_at, updated_at are not set here (handle in view/logic)
+        return self
 
 
 # TODO: Uncomment when obligations app is implemented

@@ -39,19 +39,23 @@
     "build:sass:dev": "sass greenova/core/static/core/scss/main.scss:greenova/core/static/core/css/main.css --watch --source-map",
     "build:wasm": "npx asc greenova/core/static/core/as/assembly/index.ts --config greenova/core/static/core/as/asconfig.json --outFile greenova/core/static/core/as/build/release.wasm --optimize --sourceMap",
     "build:wasm:dev": "npx asc greenova/core/static/core/as/assembly/index.ts --config greenova/core/static/core/as/asconfig.json --outFile greenova/core/static/core/as/build/debug.wasm --debug --sourceMap",
-    "build:frontend": "echo 'Frontend build placeholder - no additional frontend compilation needed'",
+    "build:protos:copy": "mkdir -p greenova/core/static/core/js/proto && cp greenova/protobuf/*.proto greenova/core/static/core/js/proto/",
+    "build:ts": "tsc -p greenova/core/static/core/ts/tsconfig.json",
+    "build:frontend": "npm run build:protos:copy && npm run build:ts",
     "build:vendors": "echo 'Vendors build placeholder - vendors served via CDN or Django static files'",
     "build:all": "npm run build:sass && npm run build:wasm && npm run build:frontend && npm run build:vendors"
   },
   "dependencies": {
-    "npm": "11.3.0",
     "bootstrap": "^5.3.0",
+    "npm": "11.3.0",
+    "protobufjs": "7.5.3",
     "sass": "^1.69.0"
   },
   "devDependencies": {
     "@eslint/js": "9.28.0",
     "@typescript-eslint/eslint-plugin": "8.33.1",
     "@typescript-eslint/parser": "8.33.1",
+    "as-proto": "1.3.0",
     "assemblyscript": "0.28.2",
     "cross-env": "^7.0.3",
     "eslint": "^9.27.0",

@@ -1,0 +1,20 @@
+{% load feedback_tags %}
+
+<div class="mini-bug-tracker">
+  <h4>
+Latest Bug Reports ({{ count }})
+  </h4>
+  <ul>
+    {% for bug in bug_reports %}
+      <li>
+        {{ bug.title }}
+        <span class="severity-badge severity-{{ bug.severity|severity_color }}">
+          {{ bug.get_severity_display }}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+  <p class="help-text">
+    {{ help_text }}
+  </p>
+</div>

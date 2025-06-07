@@ -1,8 +1,26 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% load django_bootstrap5 %}
+{% load hyperscript %}
 {# Main dashboard content for Greenova business intelligence dashboard #}
 {% block dashboard_content %}
   {% include "projects/projects_selector.html" with projects=user_projects %}
+  <button id="add-obligation-btn"
+          class="btn btn-success position-fixed bottom-0 end-0 m-4 shadow-lg"
+          style="z-index: 1050;"
+          aria-label="Add new obligation"
+          _="on click
+                set projectId to document.getElementById('project-selector') && document.getElementById('project-selector').value
+                if projectId == '' or projectId == null
+                  call alert('Please select a project before adding an obligation.')
+                else
+                  window.location.href = '/obligations/create/?project_id=' + projectId
+             end">
+    <span class="visually-hidden">Add Obligation</span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    </svg>
+  </button>
 <section class="container-fluid px-0">
   <div class="row g-4 mb-4">
     <div class="col-12 col-md-6 col-lg-4">

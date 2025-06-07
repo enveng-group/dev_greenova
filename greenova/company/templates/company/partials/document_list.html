@@ -1,0 +1,37 @@
+{% if documents %}
+<table aria-label="Company documents">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Type</th>
+      <th scope="col">Uploaded By</th>
+      <th scope="col">Upload Date</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for document in documents %}
+    <tr>
+      <td>{{ document.name }}</td>
+      <td>{{ document.document_type|default:"Not specified" }}</td>
+      <td>{{ document.uploaded_by.get_full_name|default:document.uploaded_by.username }}</td>
+      <td>{{ document.uploaded_at|date:"d M Y H:i" }}</td>
+      <td class="action-buttons">
+        <a href="{{ document.file.url }}" class="btn-secondary" target="_blank" download>Download</a>
+        {% if can_edit %}
+          <button class="btn-danger"
+                  hx-get="{% url 'company:delete_document' company.id document.id %}"
+                  hx-target="#document-delete-container"
+                  hx-swap="innerHTML">Delete</button>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div id="document-delete-container"></div>
+{% else %}
+<div class="centered-message">
+  <p>No documents have been uploaded for this company.</p>
+</div>
+{% endif %}

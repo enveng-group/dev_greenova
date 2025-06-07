@@ -1,0 +1,40 @@
+<div class="delete-confirmation">
+  <div class="alert warning" role="alert">
+    <h4>Warning!</h4>
+    <p>You are about to delete the company <strong>{{ company.name }}</strong>.</p>
+    <p>This action cannot be undone. All associated data including membership records, documents, and project associations will be permanently deleted.</p>
+  </div>
+
+  <div class="company-info">
+    <h3>Company Information</h3>
+    <dl>
+      <dt>Name:</dt>
+      <dd>{{ company.name }}</dd>
+
+      <dt>Type:</dt>
+      <dd>{{ company.get_company_type_display }}</dd>
+
+      <dt>Industry:</dt>
+      <dd>{{ company.get_industry_display|default:"Not specified" }}</dd>
+
+      <dt>Members:</dt>
+      <dd>{{ company.members.count }}</dd>
+
+      <dt>Projects:</dt>
+      <dd>{{ company.projects.count }}</dd>
+
+      <dt>Documents:</dt>
+      <dd>{{ company.documents.count }}</dd>
+    </dl>
+  </div>
+
+  <div class="action-buttons">
+    <form method="post" action="{% url 'company:delete' company.id %}">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button type="submit" class="btn-danger">Confirm Delete</button>
+        <a href="{% url 'company:detail' company.id %}" class="btn-secondary" role="button">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

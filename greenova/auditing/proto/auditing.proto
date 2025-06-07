@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package auditing;
+
+// Mitigation message
+message MitigationProto {
+  string id = 1;
+  string audit_entry_id = 2;
+  string description = 3;
+  string status = 4;
+  string created_at = 5;
+}
+
+// CorrectiveAction message
+message CorrectiveActionProto {
+  string id = 1;
+  string mitigation_id = 2;
+  string task = 3;
+  string status = 4;
+  string assigned_to_user_id = 5;
+  string created_at = 6;
+  string due_date = 7;
+}
+
+// Audit message
+message AuditProto {
+  string id = 1;
+  string name = 2;
+  string created_at = 3;
+  repeated string mechanism_ids = 4;
+}
+
+// AuditEntry message
+message AuditEntryProto {
+  string id = 1;
+  string audit_id = 2;
+  string obligation_id = 3;
+  string status = 4;
+  string finding = 5;
+}
+
+// ComplianceComment message
+message ComplianceCommentProto {
+  string id = 1;
+  string obligation_id = 2;
+  string text = 3;
+  string created_at = 4;
+}
+
+// NonConformanceComment message
+message NonConformanceCommentProto {
+  string id = 1;
+  string obligation_id = 2;
+  string text = 3;
+  string created_at = 4;
+}
+
+// Collections
+message MitigationCollection {
+  repeated MitigationProto mitigations = 1;
+}
+
+message CorrectiveActionCollection {
+  repeated CorrectiveActionProto corrective_actions = 1;
+}
+
+message AuditCollection {
+  repeated AuditProto audits = 1;
+}
+
+message AuditEntryCollection {
+  repeated AuditEntryProto audit_entries = 1;
+}
+
+message ComplianceCommentCollection {
+  repeated ComplianceCommentProto compliance_comments = 1;
+}
+
+message NonConformanceCommentCollection {
+  repeated NonConformanceCommentProto non_conformance_comments = 1;
+}

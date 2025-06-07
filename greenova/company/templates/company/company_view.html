@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+View Company
+{% endblock title %}
+
+{% block content %}
+  <article>
+    <header>
+      <h1>
+{{ company.name }}
+      </h1>
+    </header>
+
+    <div class="details-container">
+      <div class="company-info">
+        <h2>
+Company Information
+        </h2>
+        <dl>
+          <dt>
+ID
+          </dt>
+          <dd>
+{{ company.id }}
+          </dd>
+
+          <dt>
+Name
+          </dt>
+          <dd>
+{{ company.name }}
+          </dd>
+
+          <dt>
+Description
+          </dt>
+          <dd>
+{{ company.description|default:"No description provided" }}
+          </dd>
+
+          <dt>
+Address
+          </dt>
+          <dd>
+{{ company.address|default:"No address provided" }}
+          </dd>
+
+          <dt>
+Contact Email
+          </dt>
+          <dd>
+{{ company.email|default:"No email provided" }}
+          </dd>
+
+          <dt>
+Phone
+          </dt>
+          <dd>
+{{ company.phone|default:"No phone provided" }}
+          </dd>
+
+          <dt>
+Type
+          </dt>
+          <dd>
+{{ company.get_company_type_display }}
+          </dd>
+
+          <dt>
+Industry
+          </dt>
+          <dd>
+{{ company.get_industry_display|default:"Not specified" }}
+          </dd>
+
+          <dt>
+Status
+          </dt>
+          <dd>
+{{ company.is_active|yesno:"Active,Inactive" }}
+          </dd>
+        </dl>
+      </div>
+    </div>
+
+    <footer class="action-buttons">
+      <a href="{% url 'company:update' company.id %}"
+         class="btn btn-secondary"
+         aria-label="Edit company information">Edit</a>
+      <form method="post"
+            action="{% url 'company:delete' company.id %}"
+            class="inline-form">
+{% csrf_token %}
+        <button type="submit" class="btn btn-danger" aria-label="Delete company">
+          Delete
+        </button>
+      </form>
+      <a href="{% url 'company:list' %}"
+         class="btn btn-outline"
+         aria-label="Return to company list">
+        Back to List
+      </a>
+    </footer>
+  </article>
+{% endblock content %}

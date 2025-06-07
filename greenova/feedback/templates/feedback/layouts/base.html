@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Greenova Bug Tracker</title>
+  </head>
+  <body>
+    <header>
+      <h1>
+Greenova Feedback System
+      </h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="/dashboard/">Back to Dashboard</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      {% if messages %}
+        <div>
+          <ul>
+            {% for message in messages %}
+              <li>
+{{ message|safe }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% block feedback_content %}
+      {% endblock %}
+    </main>
+
+    <footer>
+      <p>
+Greenova Environmental Management System - Feedback Module
+      </p>
+    </footer>
+  </body>
+</html>

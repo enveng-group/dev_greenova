@@ -11,8 +11,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env if present
+load_dotenv(dotenv_path=BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -46,6 +51,7 @@ INSTALLED_APPS = [
     "protobuf",  # Protobuf3 integration
     "django_bootstrap5",  # Ensure django-bootstrap5 is enabled
     "crispy_forms",
+    "crispy_bootstrap4",  # Add crispy-bootstrap4 for legacy support
     "crispy_bootstrap5",
     "allauth",
     "allauth.account",
@@ -57,9 +63,14 @@ INSTALLED_APPS = [
     "projects",
     "django_tables2",
     "django_filters",
+    "corsheaders",  # Corrected CORS headers app name
+    "guardian",  # Added for object-level permissions
+    "obligations",  # Obligations app for environmental compliance
+    "mechanisms",  # Stub app for EnvironmentalMechanism model
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # Corrected CORS middleware import path
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -182,7 +193,7 @@ BOOTSTRAP5 = {
 }
 
 # Crispy Forms Configuration
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap4", "bootstrap5"]
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Content Security Policy Configuration (django-csp 4.0+)
@@ -214,3 +225,18 @@ CONTENT_SECURITY_POLICY: dict[str, dict[str, tuple[str, ...]]] = {
         "form-action": ("'self'",),
     },
 }
+
+# CORS configuration (django-cors-headers)
+CORS_ALLOW_ALL_ORIGINS = True  # For development; restrict in production
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]

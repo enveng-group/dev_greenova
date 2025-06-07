@@ -31,9 +31,10 @@ from django_tables2.views import SingleTableMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user
 
 # from obligations.models import Obligation
-from .models import Project
+from .models import Project, ProjectMembership
 from .serializers import (
     ProjectCollectionProtoSerializer,
+    ProjectMembershipProtoSerializer,
     ProjectProtoSerializer,
 )
 from .tables import ProjectTable
@@ -304,137 +305,6 @@ def get_user(user_id: str) -> AbstractUser:
 
 
 @beartype
-def get_role_display(role_value: str) -> str:
-    """Get the display name for a role value.
-
-    Args:
-        role_value: The role value.
-
-    Returns:
-        The display name for the role.
-
-    """
-    ROLE_DISPLAY_NAMES = {
-        "owner": "Owner",
-        "manager": "Manager",
-        "member": "Member",
-        "viewer": "Viewer",
-    }
-    return ROLE_DISPLAY_NAMES.get(role_value, role_value.title())
-
-
-@beartype
-def get_role_color(role_value: str) -> str:
-    """Get the display color for a role value.
-
-    Args:
-        role_value: The role value.
-
-    Returns:
-        The display color for the role.
-
-    """
-    ROLE_COLORS = {
-        "owner": "success",
-        "manager": "primary",
-        "member": "info",
-        "viewer": "default",
-    }
-    return ROLE_COLORS.get(role_value, "default")
-
-
-@beartype
-def get_role_choices() -> list[tuple[str, str]]:
-    """Get choices for model field with human-readable display names.
-
-    Returns:
-        List of tuples (role_value, display_name).
-
-    """
-    ROLE_DISPLAY_NAMES = {
-        "owner": "Owner",
-        "manager": "Manager",
-        "member": "Member",
-        "viewer": "Viewer",
-    }
-    return list(ROLE_DISPLAY_NAMES.items())
-
-
-@beartype
-def get_responsibility_choices() -> list[tuple[str, str]]:
-    """Get choices for the responsibility field in Obligation model.
-
-    Uses display names as values for backward compatibility.
-
-    Returns:
-        List of tuples (display_name, display_name).
-
-    """
-    return [
-        (display_name, display_name)
-        for _, display_name in get_role_choices()
-        if display_name not in {"Owner", "Manager", "Member", "Viewer"}
-    ]
-
-
-@beartype
-def get_role_from_responsibility(responsibility: str) -> str | None:
-    """Convert a responsibility display name to its corresponding role value.
-
-    Args:
-        responsibility: The display name of the responsibility.
-
-    Returns:
-        The corresponding role value or None if not found.
-
-    """
-    ROLE_DISPLAY_NAMES = {
-        "owner": "Owner",
-        "manager": "Manager",
-        "member": "Member",
-        "viewer": "Viewer",
-    }
-    inverse_map = {display: value for value, display in ROLE_DISPLAY_NAMES.items()}
-    return inverse_map.get(responsibility)
-
-
-@beartype
-def get_responsibility_from_role(role: str) -> str | None:
-    """Convert a role value to its corresponding responsibility display name.
-
-    Args:
-        role: The role value.
-
-    Returns:
-        The corresponding responsibility display name or None if not found.
-
-    """
-    ROLE_DISPLAY_NAMES = {
-        "owner": "Owner",
-        "manager": "Manager",
-        "member": "Member",
-        "viewer": "Viewer",
-    }
-    return ROLE_DISPLAY_NAMES.get(role)
-
-
-@beartype
-def get_responsibility_display_name(responsibility: str) -> str | None:
-    """Get the display name for a responsibility value.
-
-    Args:
-        responsibility: The responsibility value or display name.
-
-    Returns:
-        The display name for the responsibility.
-
-    """
-    if responsibility in [display for _, display in get_role_choices()]:
-        return responsibility
-    return get_responsibility_from_role(responsibility)
-
-
-@beartype
 @login_required
 def export_project(request: HttpRequest, project_id: int) -> HttpResponse:
     """Export a single project as Protocol Buffer binary data.
@@ -518,6 +388,78 @@ def import_project(request: HttpRequest) -> HttpResponse:
             messages.error(request, "An error occurred while importing the project.")
             return HttpResponse(status=400)
     return HttpResponse("Import Project Form")
+
+
+@beartype
+@login_required
+def export_project_membership(request: HttpRequest, membership_id: int) -> HttpResponse:
+    """Export a single ProjectMembership as Protocol Buffer binary data."""
+    membership = get_object_or_404(ProjectMembership, pk=membership_id)
+    serializer = ProjectMembershipProtoSerializer(instance=membership)
+    data = serializer.data()
+    if not data:
+        messages.error(request, "Failed to export project membership.")
+        return HttpResponse(status=400)
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = (
+        f'attachment; filename="membership_{membership_id}.pb"'
+    )
+    return response
+
+
+@beartype
+@login_required
+def export_all_project_memberships(request: HttpRequest) -> HttpResponse:
+    """Export all ProjectMemberships as Protocol Buffer binary data (collection)."""
+    memberships = list(ProjectMembership.objects.all())
+    from . import projects_pb2  # type: ignore[import]
+
+    # type: ignore[attr-defined]
+    collection = projects_pb2.ProjectMembershipCollection()
+    for membership in memberships:
+        proto = membership.to_pb()  # type: ignore[attr-defined]
+        collection.memberships.append(proto)  # type: ignore[attr-defined]
+    data = collection.SerializeToString()  # type: ignore[attr-defined]
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = 'attachment; filename="project_memberships.pb"'
+    return response
+
+
+@beartype
+@login_required
+@require_http_methods(["GET", "POST"])
+def import_project_membership(request: HttpRequest) -> HttpResponse:
+    """Import a ProjectMembership from Protocol Buffer binary data."""
+    if request.method == "POST":
+        if "file" not in request.FILES:
+            messages.error(request, "No file was provided.")
+            return HttpResponse(status=400)
+        uploaded_file = request.FILES["file"]
+        try:
+            data = uploaded_file.read()
+            serializer = ProjectMembershipProtoSerializer(data=data)
+            if not serializer.is_valid():
+                messages.error(
+                    request,
+                    "Could not deserialize the file. Invalid format.",
+                )
+                return HttpResponse(status=400)
+            membership = serializer.validated_data
+            if membership is not None:
+                membership.pk = None  # type: ignore[attr-defined]
+                membership.save()
+                messages.success(request, "Project membership imported successfully.")
+                return HttpResponse(status=200)
+            messages.error(request, "Deserialized membership is None.")
+            return HttpResponse(status=400)
+        except (ValueError, OSError, AttributeError, TypeError) as e:
+            logger.exception("Error importing project membership: %s", e)
+            messages.error(
+                request,
+                "An error occurred while importing the project membership.",
+            )
+            return HttpResponse(status=400)
+    return HttpResponse("Import ProjectMembership Form")
 
 
 @beartype

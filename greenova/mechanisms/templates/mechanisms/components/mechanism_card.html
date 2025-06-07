@@ -1,0 +1,41 @@
+{% load mechanism_tags %}
+
+<article class="card mb-3 mechanism-card" role="region" aria-label="Mechanism card for {{ mechanism.name }}">
+  <header class="card-header d-flex justify-content-between align-items-center">
+    <h3 class="h5 mb-0">{{ mechanism.name }}</h3>
+    {% if mechanism.reference_number %}
+      <span class="badge bg-secondary ms-2">{{ mechanism.reference_number }}</span>
+    {% endif %}
+  </header>
+  <div class="card-body mechanism-stats">
+    <div class="row mb-2">
+      <div class="col-6 col-md-4">
+        <span class="fw-bold">Not Started:</span>
+        <span class="badge bg-light text-dark ms-1 {% if mechanism.not_started_count == 0 %}opacity-50{% endif %}">{{ mechanism.not_started_count }}</span>
+      </div>
+      <div class="col-6 col-md-4">
+        <span class="fw-bold">In Progress:</span>
+        <span class="badge bg-info text-dark ms-1 {% if mechanism.in_progress_count == 0 %}opacity-50{% endif %}">{{ mechanism.in_progress_count }}</span>
+      </div>
+      <div class="col-6 col-md-4">
+        <span class="fw-bold">Completed:</span>
+        <span class="badge bg-success ms-1 {% if mechanism.completed_count == 0 %}opacity-50{% endif %}">{{ mechanism.completed_count }}</span>
+      </div>
+      <div class="col-6 col-md-4">
+        <span class="fw-bold">Overdue:</span>
+        <span class="badge bg-danger ms-1 {% if mechanism.overdue_count == 0 %}opacity-50{% else %}fw-bold{% endif %}">{{ mechanism.overdue_count }}</span>
+      </div>
+      <div class="col-6 col-md-4">
+        <span class="fw-bold">Total:</span>
+        <span class="badge bg-primary ms-1">{{ mechanism|total_obligations }}</span>
+      </div>
+    </div>
+  </div>
+  <footer class="card-footer text-end">
+    <a href="{% url 'procedures:procedure_charts' mechanism_id=mechanism.id %}"
+       class="btn btn-outline-secondary btn-sm"
+       aria-label="View details for {{ mechanism.name }}">
+      View Details
+    </a>
+  </footer>
+</article>

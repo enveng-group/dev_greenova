@@ -25,3 +25,33 @@ def user_can_view_project(user: User, project: Any) -> bool:
 
     """
     return user.has_perm("projects.view_project", project)
+
+
+@beartype
+def user_can_view_obligation(user: User, obligation: Any) -> bool:
+    """Check if the user has permission to view the obligation object.
+
+    Args:
+        user: The user instance.
+        obligation: The obligation instance.
+
+    Returns:
+        True if the user can view the obligation, False otherwise.
+
+    """
+    return user.has_perm("obligations.view_obligation", obligation)
+
+
+@beartype
+def user_can_view_mechanism(user: User, mechanism: Any) -> bool:
+    """Check if the user has permission to view the mechanism object.
+
+    Args:
+        user: The user instance.
+        mechanism: The mechanism instance.
+
+    Returns:
+        True if the user can view the mechanism, False otherwise.
+
+    """
+    return user.has_perm("mechanisms.view_environmentalmechanism", mechanism)

@@ -1,0 +1,26 @@
+{% comment %}
+include update form for an Obligation.
+This template is intended for HTMX/django-hyperscript include updates.
+{% endcomment %}
+<form method="post"
+      hx-post="."
+      hx-target="#obligation-form"
+      hx-swap="outerHTML">
+  {% csrf_token %}
+  <fieldset>
+    <legend>Update Obligation</legend>
+    {% for field in form.visible_fields %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </fieldset>
+  <button type="submit" class="btn btn-primary">Update</button>
+</form>

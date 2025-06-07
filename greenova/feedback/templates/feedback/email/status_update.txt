@@ -1,0 +1,24 @@
+Subject: Greenova Bug Report #{id} - Status Update
+
+Dear {user_name},
+
+The status of your bug report "{title}" has been updated to "{status}".
+
+{status_description}
+
+Report Details:
+---------------
+ID: {id}
+Title: {title}
+Submitted: {created_at}
+Current Status: {status}
+Severity: {severity}
+
+{admin_comment}
+
+You can view the complete report and any updates by logging into your Greenova account and visiting the feedback section.
+
+Thank you for helping us improve Greenova.
+
+Best regards,
+The Greenova Team

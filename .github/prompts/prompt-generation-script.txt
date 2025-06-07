@@ -67,7 +67,7 @@ investigate whether any other python modules can be used for project's current i
 - **cryptography**: Use for encryption, signing, and secure token generation.
 
 
-investigate technologogy stack priority is correct adhered and followed:
+investigate technologogy stack priority is correct adhered and followed for obligations app:
 
 ## Frontend Technologies
 
@@ -273,3 +273,154 @@ Security: Add django-csp and consider cryptography for sensitive features.
 
 
 Remove any remaining non-semantic markup or unused classes.
+
+can you firstly provide me an anlaysis of what files to keep from my previous legacy app of the project app to fit in with the new projects guidelines and structure
+
+
+
+refactor all files in the project to strictly adhere to the new project's coding tech stack guidelines:
+
+Frontend Technologies
+Simplicity First: Always choose the simplest effective solution
+Plain Text / HTML First: Start with semantic HTML before adding
+complexity
+Technology Priority Order (Expanded)
+Restructured Text (RST): Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
+Django-Html: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+Protobuf3: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
+django-bootstrap5: Use as the sole primary styling framework for all new development.
+django-hyperscript: Use for all simple client-side interactions. Avoid custom JS unless required.
+django-htmx: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
+SASS: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting Bootstrap utility options.
+AssemblyScript: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
+
+
+Refactor template inheritance to always use the correct base (base.html).
+
+
+fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstrap5.readthedocs.io/en/latest/widgets.html https://django-bootstrap5.readthedocs.io/en/latest/templates.html https://django-bootstrap5.readthedocs.io/en/latest/settings.html https://django-bootstrap5.readthedocs.io/en/latest/templatetags.html https://django-bootstrap5.readthedocs.io/en/latest/forms.html https://django-bootstrap5.readthedocs.io/en/latest/migrate.html https://django-bootstrap5.readthedocs.io/en/latest/quickstart.html and check the applicabble templates are using django-bootstrap5 tags correctly as django-bootstrap5 is main styling framework along with our own overrides
+
+yes fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstrap5.readthedocs.io/en/latest/widgets.html https://django-bootstrap5.readthedocs.io/en/latest/templates.html https://django-bootstrap5.readthedocs.io/en/latest/settings.html https://django-bootstrap5.readthedocs.io/en/latest/templatetags.html https://django-bootstrap5.readthedocs.io/en/latest/forms.html https://django-bootstrap5.readthedocs.io/en/latest/migrate.html https://django-bootstrap5.readthedocs.io/en/latest/quickstart.html and ensure they are all using django-bootstrap5 tags tempaltetags correctly as django-bootstrap5 is main styling framework along with our own overrides
+
+ow ceck all templates and views.py they are primarily using django_hyperscript tempalte tags correctly and its implementation as per documentation http://pypi.org/project/django-hyperscript/ https://github.com/LucLor06/django-hyperscript and only to compliment django_hyperscript, we are applying django_htmx templatetags correctly https://django-htmx.readthedocs.io/en/latest/installation.html https://django-htmx.readthedocs.io/en/latest/middleware.html https://django-htmx.readthedocs.io/en/latest/template_tags.html https://django-htmx.readthedocs.io/en/latest/http.html https://django-htmx.readthedocs.io/en/latest/example_project.html https://github.com/adamchainz/django-htmx/tree/main/example/example https://django-htmx.readthedocs.io/en/latest/tips.html
+
+
+Remove any remaining non-semantic markup or unused classes.
+
+
+identify any reusable content that is better off in the core app as globals for the entire project
+
+and then migrate from projects app to core app those globals and then remove from projects app and identify any shared logic newly identified into core that can be used across the apps dashboard landing protobuf sidebar navigation, if only applicable
+
+
+Use the new core modules for any shared logic or utilities in all apps.
+
+
+
+but can any existing apps and their modules use these new core modules?
+
+
+have we integrated the project selector tool into the dashboard view now when the user successfully signs in?
+
+
+integrate the project selector into the dashboard view so it appears after a successful sign-in
+Update the dashboard template to include the project selector.
+Ensure the context provides the necessary project data for the selector.
+double check all of the project templates and modules are being used, if not advise what to remove
+
+
+
+can we compile projects.proto and ensure it is correctly used in the projects app?
+
+
+check for any duplications conflicts unused files methods classes and opportunities for consolidation in across the greenova project and its apps
+
+
+
+
+can you firstly provide me an anlaysis of what files to keep from my previous legacy app of the mechanisms app to fit in with the new projects guidelines and structure
+
+Tool and Dependency Use-Cases for Code Generation in Greenova
+Python/Django Dependencies
+beartype: Decorate all public functions and methods for runtime type checking. Use in every Python module to enforce type safety and catch type errors early.
+django-allauth: Use for authentication, registration, and multi-factor auth. Integrate for user management and permission-based access control.
+django-cors-headers: Add CORS support for API endpoints or cross-origin integrations. Configure in settings as needed.
+django-htmx: Use for AJAX and partial page updates. Only use when django-hyperscript cannot achieve the required interaction. Always prefer django-hyperscript for simple client-side logic.
+django-hyperscript: Primary tool for client-side interactivity. Use for form validation, toggling UI, and simple dynamic behaviors. Prefer over custom JS.
+django-matplotlib: Use for server-side chart generation (SVG/PNG) in reports and static visualizations. Do not use for interactive charts.
+django-plotly-dash: Use for advanced, interactive dashboards. Only introduce when plotly.js or django-hyperscript/htmx are insufficient.
+django-silk: Use for profiling and performance monitoring in development.
+django-bootstrap5: Use for integrating Bootstrap 5. Use as the sole primary styling framework for all new development.
+django-csp: Enforce Content Security Policy headers. Use to harden security for all HTML responses.
+django-filter: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
+django-tables2: Use for rendering tabular data in templates. Prefer over custom table markup.
+django-crispy-forms and crispy-bootstrap4: Use for rendering forms with consistent, accessible markup. Prefer over custom form templates.
+django-guardian: Use for object-level permissions. Integrate with custom user model and access control logic.
+django-autocomplete-light: Use for autocomplete widgets in forms with large datasets.
+pillow: Use for image processing in models, forms, and admin.
+python-slugify: Use for generating slugs for URLs and filenames.
+bleach: Use for sanitizing user input and HTML content.
+ipython: Use for enhanced shell and debugging in development.
+matplotlib: Use for all server-side static charting. Integrate with django-matplotlib.
+pandas: Use for data analysis, reporting, and ETL tasks. Do not use in request/response cycle unless necessary.
+Technology Priority Order (Expanded)
+Restructured Text (RST): Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
+HTML: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+Protobuf3: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
+django-bootstrap5: Use as the sole primary styling framework for all new development.
+django-hyperscript: Use for all simple client-side interactions. Avoid custom JS unless required.
+django-htmx: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
+scss: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
+AssemblyScript: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
+
+
+
+
+
+. Core Python Codebase Refactoring
+a. Type Safety & Runtime Checking
+
+Add strict type annotations to all functions, methods, and class attributes.
+Decorate all public functions and methods with @beartype.
+b. Docstrings & Documentation
+
+Add/complete Google style docstrings for all public modules, copyright headers, classes, and functions.
+Ensure all docstrings are wrapped at 88 characters.
+c. Logging
+
+Replace all print statements with the logging module.
+Use lazy formatting for log messages.
+d. Imports & Structure
+
+Reorganize imports: standard library, third-party, then local.
+Remove unused imports and code.
+2. Protobuf3 Integration
+Ensure all serialization between backend and frontend uses Protobuf3.
+Refactor any JSON-based APIs or data exports to use Protobuf3.
+Validate that .proto files and generated Python code are up to date.
+3. Template Refactoring
+Ensure all templates use Django-Html (not DTL), are accessible, and pass djlint.
+Remove inline JavaScript; use django-hyperscript for simple interactivity, django-htmx for AJAX/partial updates, and only use AssemblyScript for complex logic.
+Use Bootstrap 5 classes for all styling; remove custom CSS unless required for advanced theming.
+Ensure all forms use crispy-forms or Bootstrap 5 markup.
+4. Testing & Linting
+Add/complete unit tests for all models, views, forms, and utilities using Django’s TestCase.
+Ensure at least 80% test coverage (100% for critical code).
+Run and fix all issues flagged by: ruff, mypy, pylint, djlint, shellcheck, stylelint, and prettier.
+Generate .pyi stub files for all internal modules and validate with stubtest.
+5. Permissions & Security
+Ensure all permission logic uses Django’s permissions framework and django-guardian for object-level permissions.
+Integrate django-csp for Content Security Policy headers.
+Use bleach for sanitizing user input and HTML content.
+6. Admin & Middleware
+Refactor admin classes for type safety, docstrings, and optimized queryset usage.
+Refactor middleware for type safety, docstrings, and correct Django middleware patterns.
+7. Environment & Configuration
+Ensure all environment variables are loaded via .env and accessed with os.environ.get() or os.environ[] as appropriate.
+Validate all required environment variables at startup.
+8. Documentation
+Convert or add all technical documentation in RST format.
+Update or add module-level docstrings and usage notes.
+9. Cleanup
+Remove any legacy JS, CSS, DTL templates, or unused files.
+Remove any code, documentation, or assets not referenced in the new structure.

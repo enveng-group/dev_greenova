@@ -20,7 +20,7 @@ from typing import Any
 from beartype import beartype
 from django.core.exceptions import ValidationError
 
-from .models import Project
+from .models import Project, ProjectMembership
 
 try:
     from .proto_utils import (
@@ -188,3 +188,46 @@ class ProjectCollectionProtoSerializer:
         if self.instances is None:
             return None
         return serialize_projects(self.instances)
+
+
+class ProjectMembershipProtoSerializer:
+    """Serializer for ProjectMembership using protobuf3 binary format."""
+
+    @beartype
+    def __init__(
+        self,
+        instance: ProjectMembership | None = None,
+        data: bytes | None = None,
+    ) -> None:
+        self.instance = instance
+        self.initial_data = data
+        self.validated_data = None
+        self.errors = None
+
+    @beartype
+    def is_valid(self, raise_exception: bool = False) -> bool:
+        from . import projects_pb2  # type: ignore[import]
+
+        if self.initial_data is None:
+            self.errors = "No data provided."
+            if raise_exception:
+                raise ValidationError(self.errors)
+            return False
+        try:
+            proto = projects_pb2.ProjectMembershipProto()  # type: ignore[attr-defined]
+            proto.ParseFromString(self.initial_data)
+            membership = ProjectMembership().from_pb(proto)
+            self.validated_data = membership
+            return True
+        except Exception as e:
+            self.errors = str(e)
+            if raise_exception:
+                raise ValidationError(self.errors)
+            return False
+
+    @beartype
+    def data(self) -> bytes | None:
+        if self.instance is None:
+            return None
+        proto = self.instance.to_pb()  # type: ignore[attr-defined]
+        return proto.SerializeToString()  # type: ignore[attr-defined]

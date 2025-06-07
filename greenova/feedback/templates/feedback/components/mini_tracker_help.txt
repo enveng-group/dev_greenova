@@ -1,0 +1,7 @@
+This mini-tracker shows the most recent open bug reports in the system.
+
+Each entry displays the bug title and severity level.
+
+For a complete list of all bug reports and their current statuses, please visit the main Feedback page.
+
+Report new bugs using the feedback form to ensure they are properly tracked and resolved.

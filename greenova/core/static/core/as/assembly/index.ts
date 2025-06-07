@@ -1,6 +1,6 @@
-// filepath: /assemblyscript-project/assembly/index.ts
-// This file serves as the main entry point for the AssemblyScript code.
-// It exports functions and types that can be used in other parts of the project.
+// AssemblyScript file (not standard TypeScript)
+// Types like i32, u8, f32, usize are built-in in AssemblyScript
+// Do not import store/load; they are available globally in AssemblyScript
 
 /**
  * Greenova AssemblyScript Core Implementation
@@ -153,4 +153,54 @@ export function calculateAnimationHeight(
   const currentDiff = heightDiff * progress;
 
   return startHeight + currentDiff;
+}
+
+/**
+ * Protobuf Integration Stub
+ * Simple WASM interop functions for Protobuf3 data processing
+ * These functions provide a bridge between JS and WASM for high-performance data processing
+ */
+
+/**
+ * WASM interop function for decoding greenova_data.proto Obligation
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeGreenovaObligationWasm(ptr: usize, len: i32): i32 {
+  // Stub implementation - returns data length for JS to handle
+  return len;
+}
+
+/**
+ * WASM interop function for decoding projects.proto ProjectProto
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeProjectProtoWasm(ptr: usize, len: i32): i32 {
+  // Stub implementation - returns data length for JS to handle
+  return len;
+}
+
+/**
+ * WASM interop function for decoding obligations.proto ObligationProto
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeObligationProtoWasm(ptr: usize, len: i32): i32 {
+  // Stub implementation - returns data length for JS to handle
+  return len;
+}
+
+/**
+ * WASM interop function for decoding chart_data.proto ChartData
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeChartDataProtoWasm(ptr: usize, len: i32): i32 {
+  // Stub implementation - returns data length for JS to handle
+  return len;
 }

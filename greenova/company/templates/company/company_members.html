@@ -1,0 +1,28 @@
+{% load hyperscript %}
+{% extends "base.html" %}
+{% load static %}
+{% load company_tags %}
+
+
+{% block title %}{{ company_settings.name|default:company.name }} - Manage Members{% endblock title %}
+
+{% block content %}
+<article>
+  <header>
+    <h1>{{ company_settings.name|default:company.name }} - Manage Members</h1>
+    <div class="company-branding">
+      <img src="{% company_logo_url company_settings %}" alt="{{ company_settings.name|default:company.name }} logo" class="company-logo" />
+    </div>
+    <div class="header-actions">
+      <a href="{% url 'company:detail' company.id %}" role="button" class="btn-secondary">
+        Back to Company
+      </a>
+    </div>
+  </header>
+
+  <div class="members-container">
+    {# Use django-hyperscript for dynamic updates, e.g. _="on customEvent ..." #}
+    {% include "company/includes/company_members.html" %}
+  </div>
+</article>
+{% endblock content %}

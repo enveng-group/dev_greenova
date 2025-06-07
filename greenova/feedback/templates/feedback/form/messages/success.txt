@@ -1,0 +1,5 @@
+Thank you for submitting your bug report. Your feedback is valuable and helps us improve Greenova.
+
+Your report has been logged with the title "{{ bug_report.title }}" and will be reviewed by our team.
+
+You can track the status of your report on the feedback page. If we need additional information, we'll contact you directly.

@@ -7,9 +7,7 @@ from django import template
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.html import format_html
-
-# from obligations.models import Obligation  # TODO: Uncomment when
-# obligations app is implemented
+from obligations.models import Obligation
 from projects.models import Project
 
 logger = logging.getLogger(__name__)
@@ -26,12 +24,11 @@ class ProjectRole(Enum):
     VIEWER = "viewer"
 
 
-# TODO: Uncomment when obligations app is implemented
-# @register.inclusion_tag("obligations/components/tables/obligation_list.html")
-# @beartype
-# def obligation_table(obligations: QuerySet[Obligation]) -> dict[str, Any]:
-#     """Render obligation list table."""
-#     return {"obligations": obligations}
+@register.inclusion_tag("obligations/components/tables/obligation_list.html")
+@beartype
+def obligation_table(obligations: QuerySet[Obligation]) -> dict[str, Any]:
+    """Render obligation list table."""
+    return {"obligations": obligations}
 
 
 @register.filter

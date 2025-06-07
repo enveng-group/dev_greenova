@@ -1,0 +1,20 @@
+{% load crispy_forms_tags %}
+
+<form method="post"
+      action="{% url 'feedback:submit_bug_report' %}"
+      id="bug-report-form">
+{% csrf_token %}
+
+  {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li>
+{{ message|safe }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {{ form|crispy }}
+
+</form>
