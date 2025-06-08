@@ -49,9 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       // Use protobuf API endpoint for type safety
       const response = await fetch(window.OBLIGATIONS_API_URL + '?format=pb')
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+      if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`) }
       const buffer = new Uint8Array(await response.arrayBuffer())
       const decoded = await window.decodeObligationProtoWasm(buffer)
       const obligations = decoded.obligations || []

@@ -427,6 +427,13 @@
     padding: 0 2rem;
   }
 }
+body.greenova-container,
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
 .greenova-header {
   background: linear-gradient(135deg, #2d6b3e, #4a9960);
   color: #fff;
@@ -454,6 +461,38 @@
 .greenova-footer a:hover {
   color: hsl(89.203539823, 46.1224489796%, 58.0392156863%);
   text-decoration: underline;
+}
+.sidebar {
+  min-height: 100vh;
+  background: #f8f9fa;
+  border-right: 1px solid #e0e0e0;
+}
+.sidebar .nav-link {
+  color: #2d6b3e;
+  font-weight: 500;
+}
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+  background: #7cb342;
+  color: #fff;
+}
+.sidebar .nav-link i {
+  margin-right: 0.5rem;
+}
+.navbar {
+  box-shadow: 0 2px 4px rgba(44, 107, 62, 0.03);
+}
+.navbar .navbar-brand {
+  color: #2d6b3e;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.navbar .nav-link {
+  color: #2d6b3e;
+}
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: #7cb342;
 }
 .mw-32rem {
   max-width: 32rem !important;

@@ -60,7 +60,7 @@ function createFallbackModule () {
     easeInOut: (t, d) => {
       t /= d / 2
       if (t < 1) {
-        return 0.5 * t * t
+        return 0.5 * t * t;
       }
       t -= 1
       return -0.5 * (t * (t - 2) - 1)
@@ -166,7 +166,7 @@ window.GreenovaAnimation = {
     let start = null
     const animate = (timestamp) => {
       if (!start) {
-        start = timestamp
+        start = timestamp;
       }
       const progress = Math.min((timestamp - start) / duration, 1)
       const easedProgress = window.wasmModule
@@ -198,7 +198,7 @@ window.GreenovaAnimation = {
     let start = null
     const animate = (timestamp) => {
       if (!start) {
-        start = timestamp
+        start = timestamp;
       }
       const progress = Math.min((timestamp - start) / duration, 1)
       const easedProgress = window.wasmModule

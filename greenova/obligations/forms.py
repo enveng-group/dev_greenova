@@ -87,7 +87,9 @@ class ObligationForm(forms.ModelForm):
         if self.project and "primary_environmental_mechanism" in self.fields:
             field = self.fields["primary_environmental_mechanism"]
             if isinstance(field, forms.ModelChoiceField):
-                field.queryset = EnvironmentalMechanism.objects.filter(project=self.project)
+                field.queryset = EnvironmentalMechanism.objects.filter(
+                    project=self.project,
+                )
 
         if self.project:
             self.fields["project"].initial = self.project

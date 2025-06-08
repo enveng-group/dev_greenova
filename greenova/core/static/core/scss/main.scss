@@ -110,6 +110,13 @@ $dark: vars.$greenova-dark;
   background-color: vars.$greenova-bg-light;
 }
 
+body.greenova-container, .container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 .greenova-header {
   background: linear-gradient(135deg, vars.$primary, vars.$secondary);
   color: vars.$white;

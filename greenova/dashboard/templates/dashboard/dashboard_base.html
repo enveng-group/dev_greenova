@@ -5,20 +5,17 @@
 {% block title %}
     Dashboard
 {% endblock title %}
+
+{% block navigation %}
+    {% include "navigation/header_partial.html" %}
+{% endblock navigation %}
+
+{% block sidebar %}
+    {% include "sidebar/sidebar_partial.html" %}
+{% endblock sidebar %}
+
 {% block content %}
     <div class="dashboard-layout d-flex dashboard-layout-min-height">
-
-        {% include "sidebar/sidebar_partial.html" %}
-
-        <div class="flex-grow-1 d-flex flex-column">
-
-            {% include "navigation/header_partial.html" %}
-
-            <main id="dashboard-main" class="flex-grow-1 p-4" tabindex="-1">
-                {% block dashboard_content %}
-                    <!-- Dashboard main content goes here -->
-                {% endblock dashboard_content %}
-            </main>
-        </div>
+        {% block dashboard_content %}{% endblock dashboard_content %}
     </div>
 {% endblock content %}
