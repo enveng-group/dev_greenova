@@ -11,115 +11,33 @@
 {% block form_content %}
   <div class="obligation-details">
     <div class="form-grid">
-      <!-- Basic details -->
       <fieldset>
-        <legend>Basic Details</legend>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Obligation Number</label>
-            <div class="detail-value">{{ obligation.obligation_number }}</div>
-          </div>
-          <div class="form-group">
-            <label>Project</label>
-            <div class="detail-value">{{ obligation.project.name }}</div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Environmental Aspect</label>
-            <div class="detail-value">{{ obligation.environmental_aspect }}</div>
-          </div>
-          <div class="form-group">
-            <label>Status</label>
-            <div class="detail-value">{% status_badge obligation|display_status %}</div>
-          </div>
-        </div>
+        <legend>Basic Information</legend>
+        <div class="mb-3"><strong>Obligation Number:</strong> {{ obligation.obligation_number }}</div>
+        <div class="mb-3"><strong>Environmental Aspect:</strong> {{ obligation.environmental_aspect|default:"Not specified" }}</div>
+        <div class="mb-3"><strong>Mechanism:</strong> {{ obligation.primary_environmental_mechanism.name|default:"Not specified" }}</div>
+        <div class="mb-3"><strong>Status:</strong> {{ obligation|display_status }}</div>
       </fieldset>
-      <!-- Obligation details -->
       <fieldset>
         <legend>Obligation Details</legend>
-        <div class="form-group">
-          <label>Obligation</label>
-          <div class="detail-value">{{ obligation.obligation|linebreaks }}</div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Environmental Mechanism</label>
-            <div class="detail-value">
-              {% if obligation.primary_environmental_mechanism %}
-                {{ obligation.primary_environmental_mechanism.name }}
-              {% else %}
-                Not specified
-              {% endif %}
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Procedure</label>
-            <div class="detail-value">{{ obligation.procedure|default:"Not specified"|linebreaks }}</div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Responsibility</label>
-          <div class="detail-value">{{ obligation.responsibility|display_responsibility }}</div>
-        </div>
+        <div class="mb-3"><strong>Description:</strong> {{ obligation.obligation|linebreaks|default:"No description provided" }}</div>
+        <div class="mb-3"><strong>Procedure:</strong> {{ obligation.procedure|default:"Not specified" }}</div>
+        <div class="mb-3"><strong>Responsibility:</strong> {{ obligation.responsibility|display_responsibility }}</div>
       </fieldset>
-      <!-- Timeline details -->
       <fieldset>
-        <legend>Timeline</legend>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Action Due Date</label>
-            <div class="detail-value">{{ obligation.action_due_date|format_due_date }}</div>
-          </div>
-          <div class="form-group">
-            <label>Close Out Date</label>
-            <div class="detail-value">{{ obligation.close_out_date|format_due_date }}</div>
-          </div>
-        </div>
+        <legend>Timeline &amp; Dates</legend>
+        <div class="mb-3"><strong>Due Date:</strong> {{ obligation.action_due_date|format_due_date }}</div>
+        <div class="mb-3"><strong>Close Out Date:</strong> {{ obligation.close_out_date|format_due_date|default:"Not set" }}</div>
+        <div class="mb-3"><strong>Recurring Frequency:</strong> {{ obligation.recurring_frequency|default:"Not specified" }}</div>
+        <div class="mb-3"><strong>Next Forecasted Date:</strong> {{ obligation.recurring_forecasted_date|format_due_date|default:"Not calculated" }}</div>
       </fieldset>
-      <!-- Recurring details -->
       <fieldset>
-        <legend>Recurring Information</legend>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Recurring Obligation</label>
-            <div class="detail-value">{{ obligation.recurring_obligation|yesno:"Yes,No" }}</div>
-          </div>
-          <div class="form-group">
-            <label>Frequency</label>
-            <div class="detail-value">{{ obligation.recurring_frequency|default:"N/A" }}</div>
-          </div>
-          <div class="form-group">
-            <label>Forecasted Date</label>
-            <div class="detail-value">{{ obligation.recurring_forecasted_date|format_due_date }}</div>
-          </div>
-        </div>
-      </fieldset>
-      <!-- Comments and additional info -->
-      <fieldset>
-        <legend>Comments and Additional Information</legend>
-        <div class="form-group">
-          <label>General Comments</label>
-          <div class="detail-value">{{ obligation.general_comments|default:"No comments"|linebreaks }}</div>
-        </div>
-        <div class="form-group">
-          <label>Supporting Information</label>
-          <div class="detail-value">{{ obligation.supporting_information|default:"None provided"|linebreaks }}</div>
-        </div>
+        <legend>Comments &amp; Additional Information</legend>
+        <div class="mb-3"><strong>General Comments:</strong> {{ obligation.general_comments|linebreaks|default:"No comments" }}</div>
       </fieldset>
     </div>
-    <!-- Action buttons -->
     <div class="form-actions">
-      <a href="{% url 'obligations:update' obligation_number=obligation.obligation_number %}"
-         class="btn-primary">Edit</a>
-      <a href="{% url 'dashboard:home' %}?project_id={{ project_id }}"
-         class="btn-secondary">Back</a>
-      <button type="button"
-              class="btn-danger"
-              _="on click if confirm('Are you sure you want to delete this obligation? This action cannot be undone.') fetch '{% url 'obligations:delete' obligation_number=obligation.obligation_number %}' { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}' } } then if result.ok set response to JSON.parse(result.response) set window.location.href to response.redirect_url else alert('Failed to delete obligation') end">
-        Delete
-      </button>
+      <!-- Add action buttons here if needed -->
     </div>
   </div>
-  {# Removed inline <style> block, now in styles.sass #}
 {% endblock form_content %}

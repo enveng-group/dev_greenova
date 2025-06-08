@@ -85,9 +85,9 @@ class ObligationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if self.project and "primary_environmental_mechanism" in self.fields:
-            self.fields[
-                "primary_environmental_mechanism"
-            ].queryset = EnvironmentalMechanism.objects.filter(project=self.project)
+            field = self.fields["primary_environmental_mechanism"]
+            if isinstance(field, forms.ModelChoiceField):
+                field.queryset = EnvironmentalMechanism.objects.filter(project=self.project)
 
         if self.project:
             self.fields["project"].initial = self.project
@@ -319,7 +319,7 @@ class ObligationForm(forms.ModelForm):
         exclude = [
             "person_email",
         ]
-        widgets = {
+        widgets: dict[str, forms.Widget] = {
             "obligation": forms.Textarea(attrs={"rows": 4, "class": "form-control"}),
             "supporting_information": forms.Textarea(
                 attrs={"rows": 3, "class": "form-control"},

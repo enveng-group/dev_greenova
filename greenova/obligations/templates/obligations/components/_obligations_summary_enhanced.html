@@ -65,11 +65,12 @@ Actions
                 {% for obligation in obligations %}
                   <tr>
                     <td>
-                      <a href="#"
-                         class="obligation-link modal-trigger"
+                      <a href="#obligationDetailModal"
+                         class="obligation-link"
                          data-obligation-number="{{ obligation.obligation_number }}"
                          role="button"
-                         aria-label="View details for {{ obligation.obligation_number }}">
+                         aria-label="View details for {{ obligation.obligation_number }}"
+                         _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
                         {{ obligation.obligation_number }}
                       </a>
                     </td>
@@ -94,9 +95,10 @@ Actions
                     <td class="actions-column">
                       <div class="action-buttons">
                         <button type="button"
-                                class="action-btn view modal-trigger"
+                                class="action-btn view"
                                 data-obligation-number="{{ obligation.obligation_number }}"
-                                aria-label="View obligation details">
+                                aria-label="View obligation details"
+                                _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
                           View
                         </button>
                         {% if user_can_edit %}
@@ -339,11 +341,12 @@ Actions
               {% for obligation in obligations %}
                 <tr>
                   <td>
-                    <a href="#"
-                       class="obligation-link modal-trigger"
+                    <a href="#obligationDetailModal"
+                       class="obligation-link"
                        data-obligation-number="{{ obligation.obligation_number }}"
                        role="button"
-                       aria-label="View details for {{ obligation.obligation_number }}">
+                       aria-label="View details for {{ obligation.obligation_number }}"
+                       _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
                       {{ obligation.obligation_number }}
                     </a>
                   </td>
@@ -375,9 +378,10 @@ No
                   <td class="actions-column">
                     <div class="action-buttons">
                       <button type="button"
-                              class="action-btn view modal-trigger"
+                              class="action-btn view"
                               data-obligation-number="{{ obligation.obligation_number }}"
-                              aria-label="View obligation details">
+                              aria-label="View obligation details"
+                              _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
                         View
                       </button>
                       {% if user_can_edit %}

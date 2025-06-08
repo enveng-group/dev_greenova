@@ -63,7 +63,7 @@ Filter Obligations
         <div class="filter-actions">
           <!-- Quick filter buttons -->
           <button type="button"
-                  class="quick-filter-btn"
+                  class="btn btn-outline-secondary quick-filter-btn"
                   hx-get="/obligations/summary/"
                   hx-target="#obligations-container"
                   hx-vals='{"status": "overdue"}'
@@ -71,7 +71,7 @@ Filter Obligations
 Overdue
           </button>
           <button type="button"
-                  class="quick-filter-btn"
+                  class="btn btn-outline-secondary quick-filter-btn"
                   hx-get="/obligations/summary/"
                   hx-target="#obligations-container"
                   hx-vals='{"date_filter": "14days"}'
@@ -79,7 +79,7 @@ Overdue
 14-day Lookahead
           </button>
           <button type="button"
-                  class="btn-secondary"
+                  class="btn btn-secondary"
                   hx-get="/obligations/summary/"
                   hx-target="#obligations-container">
 Reset Filters
@@ -89,12 +89,30 @@ Reset Filters
       <div class="controls-container">
         <!-- Search Box -->
         <div class="search-control">
-          <label for="search-box">
-Search:
-          </label>
-          <form method="get" hx-get="/obligations/summary/" hx-target="#obligations-container" hx-push-url="true" class="filter-form">
-            {{ filter.form.as_p }}
-            <button type="submit" class="btn-primary">Apply Filters</button>
+          <form method="get" hx-get="/obligations/summary/" hx-target="#obligations-container" hx-push-url="true" class="filter-form row g-2 align-items-end">
+            <div class="col-auto">
+              <label for="search" class="form-label">Search:</label>
+              <input type="text" id="search" name="search" class="form-control" />
+            </div>
+            <div class="col-auto">
+              <label for="status" class="form-label">Status:</label>
+              <select id="status" name="status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <label for="phase" class="form-label">Phase:</label>
+              <select id="phase" name="phase" class="form-select">
+                <option value="">All Phases</option>
+                <option value="planning">Planning</option>
+                <option value="execution">Execution</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
           </form>
         </div>
       </div>

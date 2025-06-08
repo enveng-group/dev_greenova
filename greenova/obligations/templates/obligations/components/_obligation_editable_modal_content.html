@@ -313,3 +313,18 @@ Desktop
     </div>
   {% endif %}
 </form>
+
+<div class="modal-buttons">
+  <button type="button" class="btn btn-primary" id="modal-edit-btn"
+          _="on click add .edit-mode to #obligation-edit-form then remove .view-mode from #obligation-edit-form then add .d-none to #modal-edit-btn then remove .d-none from #modal-cancel-btn then remove .d-none from #modal-save-btn then halt">
+    Edit
+  </button>
+  <button type="button" class="btn btn-secondary d-none" id="modal-cancel-btn"
+          _="on click remove .edit-mode from #obligation-edit-form then add .view-mode to #obligation-edit-form then remove .d-none from #modal-edit-btn then add .d-none to #modal-cancel-btn then add .d-none to #modal-save-btn then halt">
+    Cancel
+  </button>
+  <button type="submit" class="btn btn-primary d-none" id="modal-save-btn"
+          _="on click remove .edit-mode from #obligation-edit-form then add .view-mode to #obligation-edit-form then remove .d-none from #modal-edit-btn then add .d-none to #modal-cancel-btn then add .d-none to #modal-save-btn then halt">
+    Save Changes
+  </button>
+</div>

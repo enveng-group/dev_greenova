@@ -1,72 +1,55 @@
+{% extends "core/base.html" %}
 {% load static obligation_tags %}
-<!-- Obligation Detail Modal -->
-<div id="obligation-detail-modal"
-     class="obligation-detail-modal"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="obligation-modal-title"
-     hidden>
-  <div class="obligation-detail-backdrop" aria-hidden="true">
-  </div>
-  <div class="obligation-detail-content" role="document">
-    <header class="obligation-detail-header">
-      <div>
-        <h2 id="obligation-modal-title" class="obligation-detail-title">
-          <span id="modal-obligation-number">Loading...</span>
-        </h2>
-        <p class="obligation-detail-subtitle" id="modal-project-name">
-Loading...
-        </p>
-      </div>
-      <button type="button"
-              class="obligation-detail-close"
-              aria-label="Close obligation details">
-        <span aria-hidden="true">×</span>
-      </button>
-    </header>
-
-    <div class="obligation-detail-body" id="obligation-modal-content">
-      <div class="obligation-detail-loading">
-        <div class="loading-spinner">
+{% load bootstrap5 %}
+{% block content %}
+  {% include "navigation/navbar.html" %}
+  {% include "sidebar/sidebar.html" %}
+  <div class="modal fade" id="obligationDetailModal" tabindex="-1" aria-labelledby="obligationDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="obligationDetailModalLabel">Obligation Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                  _="on click remove .show from #obligationDetailModal then remove style 'display:block;' from #obligationDetailModal then remove .modal-backdrop from <body/> then halt">
+          </button>
         </div>
-        <span style="margin-left: 0.5rem;">Loading obligation details...</span>
+        <div class="modal-body">
+          {% block obligation_detail_content %}
+            <div class="mb-3">
+              <h2 id="obligation-modal-title" class="fw-bold">
+                <span id="modal-obligation-number">Loading...</span>
+              </h2>
+              <p class="text-muted" id="modal-project-name">Loading...</p>
+            </div>
+            <div id="obligation-modal-content">
+              <div class="d-flex align-items-center">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <span class="ms-2">Loading obligation details...</span>
+              </div>
+            </div>
+          {% endblock %}
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex justify-content-between w-100">
+            <div>
+              <span class="fw-bold">Status:</span>
+              <span id="modal-obligation-status">Loading...</span>
+            </div>
+            <div>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                      _="on click remove .show from #obligationDetailModal then remove style 'display:block;' from #obligationDetailModal then remove .modal-backdrop from <body/> then halt">
+                Close
+              </button>
+              <button type="button" id="modal-edit-btn" class="btn btn-primary">Edit</button>
+              <button type="button" id="modal-delete-btn" class="btn btn-danger">Delete</button>
+              <button type="button" id="modal-cancel-btn" class="btn btn-secondary d-none">Cancel</button>
+              <button type="button" id="modal-save-btn" class="btn btn-primary d-none">Save Changes</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <footer class="obligation-detail-footer">
-      <div class="obligation-detail-status">
-        <span>Status:</span>
-        <span id="modal-obligation-status">Loading...</span>
-      </div>
-      <div class="obligation-detail-actions">
-        <!-- View mode buttons -->
-        <div id="view-mode-actions" class="action-group">
-          <button type="button"
-                  class="btn-modal btn-modal-secondary obligation-detail-close">
-            Close
-          </button>
-          <button type="button" id="modal-edit-btn" class="btn-modal btn-modal-primary">
-            Edit
-          </button>
-          <button type="button"
-                  id="modal-delete-btn"
-                  class="btn-modal btn-modal-danger">
-            Delete
-          </button>
-        </div>
-
-        <!-- Edit mode buttons -->
-        <div id="edit-mode-actions" class="action-group" style="display: none;">
-          <button type="button"
-                  id="modal-cancel-btn"
-                  class="btn-modal btn-modal-secondary">
-            Cancel
-          </button>
-          <button type="button" id="modal-save-btn" class="btn-modal btn-modal-primary">
-            Save Changes
-          </button>
-        </div>
-      </div>
-    </footer>
   </div>
-</div>
+{% endblock %}
