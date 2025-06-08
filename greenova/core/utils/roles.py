@@ -2,18 +2,15 @@
 
 Provides role display helpers for use in obligations and other apps.
 
-Author:
-    Adrian Gallo <agallo@enveng-group.com.au>
-
-License:
-    AGPL-3.0
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+License: AGPL-3.0
 """
 
 from enum import StrEnum
 
 
 class ProjectRole(StrEnum):
-    """Define valid project roles."""
+    """Project role constants."""
 
     PERDAMAN_MANAGEMENT = "perdaman_management"
     PERDAMAN_ENV_HERITAGE_MANAGER = "perdaman_env_heritage_manager"

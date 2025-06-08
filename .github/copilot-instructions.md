@@ -130,7 +130,7 @@ and manage obligations related to environmental regulations.
 
 ### Testing Tools
 
-- **unittest**: Primary testing frameworks
+- **Django-Test-Runner**: Primary testing frameworks
 
 ### Linting Tools
 
@@ -565,7 +565,7 @@ fi
 - Prefer django-hyperscript for client-side logic; only use htmx or JS/TS when necessary.
 - For all forms, use crispy-forms or select2 widgets as appropriate.
 - For charts, use matplotlib for static images and plotly for interactive charts, following the charting guidelines.
-- For authentication, always use django-allauth and fido2 for MFA.
+- For authentication, always use django-allauth.
 - For security, always use django-csp, bleach, and cryptography as needed.
 
 ## Author Information

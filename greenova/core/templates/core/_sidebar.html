@@ -1,0 +1,27 @@
+{# Sidebar navigation include for Greenova #}
+<nav class="sidebar bg-light border-end" aria-label="Sidebar">
+  <div class="sidebar-sticky pt-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'core:audit_log_list' %}">
+          <i class="bi bi-clipboard-data"></i> Audit Log
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'core:profile_detail' %}">
+          <i class="bi bi-person-circle"></i> Profile
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'core:profile_edit' %}">
+          <i class="bi bi-pencil-square"></i> Edit Profile
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'account_logout' %}">
+          <i class="bi bi-box-arrow-right"></i> Sign Out
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

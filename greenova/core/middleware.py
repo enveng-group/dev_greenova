@@ -7,32 +7,37 @@ License: AGPL-3.0
 """
 
 from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 from beartype import beartype
 from django.http import HttpRequest, HttpResponse
+from django.utils.deprecation import MiddlewareMixin
 
 from .audit_utils import log_audit_event
-from .models import CustomUser
+
+if TYPE_CHECKING:
+    from .models import CustomUser
 
 
-class AuditMiddleware:
-    """Middleware to log user actions for auditing purposes."""
-
-    @beartype
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
-        self.get_response = get_response
+class AuditMiddleware(MiddlewareMixin):
+    """Middleware to log user actions for audit trail."""
 
     @beartype
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        response = self.get_response(request)
-        # Example: log all POST requests as audit events
-        if request.method == "POST" and request.user.is_authenticated:
+    def process_view(
+        self,
+        request: HttpRequest,
+        view_func: Callable[..., HttpResponse],
+        view_args: tuple[Any, ...],
+        view_kwargs: dict[str, Any],
+    ) -> None:
+        if request.user.is_authenticated and hasattr(request.user, "pk"):
+            user: CustomUser = request.user  # type: ignore
+            action = f"{request.method.lower()}_{view_func.__name__}"
             log_audit_event(
-                user=request.user if isinstance(request.user, CustomUser) else None,
-                action="post_request",
-                object_type="URL",
-                object_id=request.path,
-                message=f"POST to {request.path}",
+                user=user,
+                action=action,
+                object_type=view_func.__module__,
+                object_id="",
+                message=f"User {user.username} performed {action}",
                 ip_address=request.META.get("REMOTE_ADDR"),
             )
-        return response

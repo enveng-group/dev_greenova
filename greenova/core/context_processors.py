@@ -17,31 +17,25 @@ from projects.models import Project
 
 @beartype
 def projects_context(request: HttpRequest) -> dict[str, Any]:
-    """Inject project-related context variables into templates.
+    """Provide project/user context for templates.
 
     Args:
-        request: The current HttpRequest object.
+        request: The current HTTP request.
 
     Returns:
-        A dictionary of project-related context variables, including:
-            - current_project: The user's selected project or None.
-            - user_projects: Queryset of projects the user can access.
-            - project_status_summary: Dict of project status counts.
+        Context dictionary with project list, current project, and user info.
 
     """
     user = getattr(request, "user", None)
+    projects = Project.objects.none()
     current_project = None
-    user_projects = Project.objects.none()
-    project_status_summary = {}
     if user and user.is_authenticated:
-        # All projects user can access (view permission)
-        user_projects = Project.objects.filter(
-            Q(members=user) | Q(owner=user),
+        projects = Project.objects.filter(
+            Q(memberships__user=user) | Q(owner=user)
         ).distinct()
-        # Current project from session or GET param
-
+        current_project = getattr(request, "current_project", None)
     return {
+        "project_list": projects,
         "current_project": current_project,
-        "user_projects": user_projects,
-        "project_status_summary": project_status_summary,
+        "user": user,
     }

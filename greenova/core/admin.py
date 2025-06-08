@@ -8,8 +8,6 @@ License: AGPL-3.0
 
 from beartype import beartype
 from django.contrib import admin
-from django.db.models.query import QuerySet
-from django.http import HttpRequest
 
 from .forms import (
     CustomUserChangeForm,
@@ -26,40 +24,49 @@ from .models import (
 
 
 @admin.register(EnvironmentalObligation)
-class EnvironmentalObligationAdmin(admin.ModelAdmin):  # type: ignore[misc]
-    """Admin for EnvironmentalObligation with autocomplete support."""
+@beartype
+class EnvironmentalObligationAdmin(admin.ModelAdmin):
+    """Admin for EnvironmentalObligation model."""
 
     form = EnvironmentalObligationForm
-    search_fields = ["name", "description"]
-    list_display = ("name", "due_date", "is_complete")
+    list_display = ("name", "due_date", "is_complete", "created_at", "updated_at")
     list_filter = ("is_complete", "due_date")
+    search_fields = ("name", "description")
 
 
 @admin.register(CustomUser)
-class CustomUserAdmin(admin.ModelAdmin):  # type: ignore[misc]
-    """Admin for CustomUser with custom creation and change forms."""
+@beartype
+class CustomUserAdmin(admin.ModelAdmin):
+    """Admin for CustomUser model."""
 
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
-    list_display = ("username", "email", "company", "is_mfa_enabled", "is_active")
+    list_display = (
+        "username",
+        "email",
+        "is_mfa_enabled",
+        "company",
+        "is_staff",
+        "is_active",
+    )
     search_fields = ("username", "email", "company")
-    list_filter = ("is_active", "is_mfa_enabled")
-    ordering = ("username",)
+    list_filter = ("is_mfa_enabled", "is_staff", "is_active")
 
 
 @admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):  # type: ignore[misc]
-    """Admin for UserProfile with search and display options."""
+@beartype
+class UserProfileAdmin(admin.ModelAdmin):
+    """Admin for UserProfile model."""
 
     form = UserProfileForm
     list_display = ("user", "display_name", "updated_at")
     search_fields = ("user__username", "display_name")
-    ordering = ("user__username",)
 
 
 @admin.register(AuditLog)
-class AuditLogAdmin(admin.ModelAdmin):  # type: ignore[misc]
-    """Admin for AuditLog entries with optimized queryset and filters."""
+@beartype
+class AuditLogAdmin(admin.ModelAdmin):
+    """Admin for AuditLog model."""
 
     list_display = (
         "timestamp",
@@ -69,13 +76,13 @@ class AuditLogAdmin(admin.ModelAdmin):  # type: ignore[misc]
         "object_id",
         "ip_address",
     )
-    search_fields = ("user__username", "action", "object_type", "object_id", "message")
+    search_fields = (
+        "user__username",
+        "action",
+        "object_type",
+        "object_id",
+        "ip_address",
+    )
     list_filter = ("action", "object_type", "timestamp")
-    ordering = ("-timestamp",)
-    readonly_fields = ("timestamp",)
 
-    @beartype
-    def get_queryset(self, request: HttpRequest) -> QuerySet[AuditLog]:
-        """Optimize queryset for audit log admin."""
-        qs = super().get_queryset(request)
-        return qs.select_related("user")
+

@@ -2,7 +2,10 @@
 
 from datetime import date
 
+from beartype import beartype
 
+
+@beartype
 def is_obligation_overdue(due_date: date) -> bool:
     """Check if an obligation is overdue.
 

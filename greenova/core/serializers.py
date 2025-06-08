@@ -1,7 +1,8 @@
-"""Serializers for EnvironmentalMechanism Protobuf integration.
+"""Serializers for EnvironmentalMechanism and EnvironmentalObligation Protobuf integration.
 
 Provides serialization and deserialization logic for EnvironmentalMechanism
-objects using Protobuf3, with strict type safety and runtime validation.
+and EnvironmentalObligation objects using Protobuf3, with strict type safety
+and runtime validation.
 
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
@@ -9,12 +10,12 @@ License: AGPL-3.0
 
 import logging
 from collections.abc import Sequence
+from typing import Any
 
 from beartype import beartype
+from core.models import EnvironmentalObligation
 from django.core.exceptions import ValidationError
 from mechanisms.models import EnvironmentalMechanism
-
-logger = logging.getLogger(__name__)
 
 try:
     from core.charts import (
@@ -36,6 +37,30 @@ except ImportError:
 
     def deserialize_mechanisms(data: bytes) -> Sequence[object]:
         return []
+
+
+try:
+    from protobuf.greenova_data_pb2 import Obligation as ObligationProto
+    from protobuf.greenova_data_pb2 import ObligationCollection
+
+    PROTOBUF_AVAILABLE = True
+except ImportError:
+    PROTOBUF_AVAILABLE = False
+    ObligationProto = None
+    ObligationCollection = None
+
+try:
+    from protobuf import auditing_pb2
+
+    AuditEntryProto = getattr(auditing_pb2, "AuditEntryProto", None)
+    AuditEntryCollection = getattr(auditing_pb2, "AuditEntryCollection", None)
+    AUDIT_PROTOBUF_AVAILABLE = True
+except ImportError:
+    AUDIT_PROTOBUF_AVAILABLE = False
+    AuditEntryProto = None
+    AuditEntryCollection = None
+
+logger = logging.getLogger(__name__)
 
 
 class MechanismProtoSerializer:
@@ -168,8 +193,7 @@ class MechanismCollectionProtoSerializer:
         if not mechanisms:
             self.errors = "Invalid protobuf data or empty collection."
             logger.error(
-                "MechanismCollectionProtoSerializer: Invalid protobuf data or empty collection."
-            )
+                "MechanismCollectionProtoSerializer: Invalid protobuf data or empty collection.", )
             if raise_exception:
                 raise ValidationError(self.errors)
             return False
@@ -190,3 +214,115 @@ class MechanismCollectionProtoSerializer:
             )
             return None
         return serialize_mechanisms(self.instances)  # type: ignore[arg-type]
+
+
+@beartype
+def obligation_to_dict(obligation: EnvironmentalObligation) -> dict[str, Any]:
+    """Convert an EnvironmentalObligation instance to a dict for serialization."""
+    return {
+        "id": obligation.id,
+        "name": obligation.name,
+        "description": obligation.description,
+        "due_date": obligation.due_date.isoformat() if obligation.due_date else None,
+        "is_complete": obligation.is_complete,
+        "created_at": obligation.created_at.isoformat()
+        if obligation.created_at
+        else None,
+        "updated_at": obligation.updated_at.isoformat()
+        if obligation.updated_at
+        else None,
+    }
+
+
+@beartype
+def obligation_to_proto(obligation: EnvironmentalObligation) -> Any:
+    """Convert an EnvironmentalObligation instance to a Protobuf Obligation message."""
+    if ObligationProto is None:
+        msg = "Protobuf Obligation message not available."
+        raise ImportError(msg)
+    proto = ObligationProto()
+    proto.id = obligation.id or 0
+    proto.name = obligation.name or ""
+    proto.description = obligation.description or ""
+    proto.due_date = obligation.due_date.isoformat() if obligation.due_date else ""
+    proto.is_complete = obligation.is_complete
+    proto.created_at = (
+        obligation.created_at.isoformat() if obligation.created_at else ""
+    )
+    proto.updated_at = (
+        obligation.updated_at.isoformat() if obligation.updated_at else ""
+    )
+    return proto
+
+
+@beartype
+def obligations_to_protobuf(queryset) -> bytes:
+    """Serialize a queryset of EnvironmentalObligation to Protobuf bytes."""
+    if ObligationProto is None:
+        msg = "Protobuf Obligation message not available."
+        raise ImportError(msg)
+    # Assume a repeated field for obligations (define a wrapper message if needed)
+    # For now, just serialize the first obligation for demo
+    if queryset.count() == 1:
+        return obligation_to_proto(queryset.first()).SerializeToString()
+    # If multiple, return a list of serialized messages (not optimal, but demo)
+    return b"".join([obligation_to_proto(obj).SerializeToString() for obj in queryset])
+
+
+@beartype
+def audit_log_to_proto(audit_log: Any) -> Any:
+    """Convert an AuditLog instance to a Protobuf AuditEntryProto message."""
+    if AuditEntryProto is None:
+        msg = "Protobuf AuditEntryProto message not available."
+        raise ImportError(msg)
+    proto = AuditEntryProto()
+    proto.id = str(audit_log.id) if audit_log.id is not None else ""
+    proto.audit_id = ""  # Not available in core.AuditLog, left blank
+    proto.obligation_id = audit_log.object_id or ""
+    proto.status = audit_log.action or ""
+    proto.finding = audit_log.message or ""
+    return proto
+
+
+@beartype
+def audit_logs_to_protobuf(queryset) -> bytes:
+    """Serialize a queryset of AuditLog to Protobuf bytes (AuditEntryCollection)."""
+    if AuditEntryCollection is None:
+        msg = "Protobuf AuditEntryCollection message not available."
+        raise ImportError(msg)
+    collection = AuditEntryCollection()
+    for log in queryset:
+        proto = audit_log_to_proto(log)
+        collection.audit_entries.append(proto)
+    return collection.SerializeToString()
+
+
+@beartype
+class ObligationProtoSerializer:
+    """Serializer for EnvironmentalObligation objects (Protobuf3 or dict fallback)."""
+
+    def __init__(self, obligations: Any, many: bool = False) -> None:
+        self.many = many
+        if many:
+            self.data = [obligation_to_dict(obj) for obj in obligations]
+        else:
+            self.data = obligation_to_dict(obligations)
+
+    @staticmethod
+    @beartype
+    def obligation_to_dict(obligation: EnvironmentalObligation) -> dict[str, Any]:
+        return {
+            "id": obligation.id,
+            "name": obligation.name,
+            "description": obligation.description,
+            "due_date": obligation.due_date.isoformat()
+            if obligation.due_date
+            else None,
+            "is_complete": obligation.is_complete,
+            "created_at": obligation.created_at.isoformat()
+            if obligation.created_at
+            else None,
+            "updated_at": obligation.updated_at.isoformat()
+            if obligation.updated_at
+            else None,
+        }

@@ -27,16 +27,16 @@ def log_audit_event(
     ip_address: str | None = None,
     extra_data: dict[str, Any] | None = None,
 ) -> None:
-    """Log an audit event to the database and info log.
+    """Log an audit event to the AuditLog model.
 
     Args:
-        user: The user performing the action (may be None).
-        action: The action performed (e.g., 'login', 'update_profile').
+        user: The user performing the action.
+        action: The action performed.
         object_type: The type of object affected.
         object_id: The ID of the object affected.
-        message: Human-readable message.
-        ip_address: The user's IP address.
-        extra_data: Additional data (optional).
+        message: Additional message or context.
+        ip_address: IP address of the user.
+        extra_data: Any extra data to log.
 
     """
     AuditLog.objects.create(
@@ -61,13 +61,13 @@ def log_audit_event(
 
 @beartype
 def get_recent_audit_logs(limit: int = 50) -> list[AuditLog]:
-    """Return the most recent audit log entries.
+    """Retrieve recent audit logs.
 
     Args:
-        limit: The maximum number of entries to return.
+        limit: The maximum number of logs to retrieve.
 
     Returns:
-        List of AuditLog objects.
+        A list of AuditLog instances.
 
     """
     return list(AuditLog.objects.select_related("user").order_by("-timestamp")[:limit])

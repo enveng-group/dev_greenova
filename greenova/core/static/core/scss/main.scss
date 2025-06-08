@@ -139,6 +139,40 @@ $dark: vars.$greenova-dark;
   }
 }
 
+// Sidebar styles
+.sidebar {
+  min-height: 100vh;
+  background: #f8f9fa;
+  border-right: 1px solid #e0e0e0;
+  .nav-link {
+    color: vars.$greenova-primary;
+    font-weight: 500;
+    &.active, &:hover {
+      background: vars.$greenova-accent;
+      color: #fff;
+    }
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Navbar styles
+.navbar {
+  box-shadow: 0 2px 4px rgba(44,107,62,0.03);
+  .navbar-brand {
+    color: vars.$greenova-primary;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .nav-link {
+    color: vars.$greenova-primary;
+    &:hover, &.active {
+      color: vars.$greenova-accent;
+    }
+  }
+}
+
 // Utility classes for widths and max-widths
 .mw-32rem {
   max-width: 32rem !important;

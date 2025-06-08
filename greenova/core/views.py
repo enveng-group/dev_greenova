@@ -7,153 +7,146 @@ License: AGPL-3.0
 # SPDX-License-Identifier: AGPL-3.0
 
 import logging
+from typing import Any
 
 from beartype import beartype
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-from obligations.models import Obligation
-from obligations.proto_utils import serialize_obligations
 
 from .filters import EnvironmentalObligationFilter
-from .forms import UserProfileForm
-from .models import EnvironmentalObligation
+from .forms import AuditLogFilterForm, UserProfileForm
+from .models import AuditLog, EnvironmentalObligation, UserProfile
+from .serializers import ObligationProtoSerializer, obligations_to_protobuf
 from .tables import EnvironmentalObligationTable
 
 logger = logging.getLogger(__name__)
 
 
-class EnvironmentalObligationListView(SingleTableMixin, FilterView):
-    """List view for EnvironmentalObligation objects with table and filter support."""
+class EnvironmentalObligationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    """List view for environmental obligations with filtering and table display."""
 
     model = EnvironmentalObligation
     table_class = EnvironmentalObligationTable
-    template_name = "core/obligation_list.jinja"
+    template_name = "core/obligation_list.html"
     filterset_class = EnvironmentalObligationFilter
-    context_object_name = "obligations"
+    paginate_by = 25
 
     @beartype
-    def get_queryset(self):
-        """Return queryset of obligations ordered by due date."""
-        logger.info("Fetching all environmental obligations for list view.")
-        return EnvironmentalObligation.objects.order_by("due_date")
+    def get_table_data(self) -> Any:
+        return self.filterset.qs
 
 
 @beartype
-def obligations_protobuf_api(request: HttpRequest) -> HttpResponse:
-    """API endpoint that returns obligations data in protobuf format.
-
-    Returns:
-        HttpResponse: Protobuf serialized obligations data.
-
-    """
-    obligations = Obligation.objects.all().order_by("due_date")
-    protobuf_data = serialize_obligations(list(obligations))
-    logger.info("Returning %d obligations via protobuf API", obligations.count())
-    return HttpResponse(protobuf_data, content_type="application/x-protobuf")
-
-
-@beartype
-def obligations_api(request: HttpRequest) -> JsonResponse:
-    """API endpoint that returns obligations data for protobuf processing.
-
-    Args:
-        request: The HTTP request object.
-
-    Returns:
-        JsonResponse: Obligations data in JSON format.
-
-    """
-    obligations = EnvironmentalObligation.objects.all().order_by("due_date")
-    data = [
-        {
-            "id": obligation.pk,
-            "name": obligation.name,
-            "description": obligation.description,
-            "due_date": obligation.due_date.isoformat(),
-            "is_complete": obligation.is_complete,
-            "created_at": obligation.created_at.isoformat(),
-            "updated_at": obligation.updated_at.isoformat(),
-        }
-        for obligation in obligations
-    ]
-    logger.info("Returning %d obligations via API", len(data))
-    return JsonResponse({"obligations": data, "count": len(data)})
-
-
-@beartype
-def wasm_theme_api(request: HttpRequest) -> JsonResponse:
-    """API endpoint for theme management using WASM.
-
-    Returns:
-        JsonResponse: Theme configuration for WASM processing.
-
-    """
-    theme_config = {
-        "wasm_available": True,
-        "theme_options": ["light", "dark", "auto"],
-        "default_theme": "auto",
-        "css_classes": {
-            "light": "greenova-theme-light",
-            "dark": "greenova-theme-dark",
-            "auto": "greenova-theme-auto",
-        },
-    }
-    logger.info("Providing theme configuration for WASM integration")
-    return JsonResponse(theme_config)
-
-
-@beartype
-def theme_config_api(request: HttpRequest) -> JsonResponse:
-    """API endpoint for theme configuration used by WASM and SASS.
-
-    Args:
-        request: The HTTP request object.
-
-    Returns:
-        JsonResponse: Theme configuration for frontend processing.
-
-    """
-    theme_config = {
-        "wasm_available": True,
-        "sass_compiled": True,
-        "theme_options": ["light", "dark", "auto"],
-        "default_theme": "auto",
-        "css_classes": {
-            "light": "greenova-theme-light",
-            "dark": "greenova-theme-dark",
-            "auto": "greenova-theme-auto",
-        },
-        "animations": {
-            "enabled": True,
-            "duration": 300,
-            "easing": "ease-in-out",
-        },
-    }
-    logger.info("Providing theme configuration for frontend integration")
-    return JsonResponse(theme_config)
+@login_required
+def obligations_api(request: HttpRequest) -> HttpResponse:
+    """API endpoint for serialized obligations (protobuf or JSON)."""
+    obligations = EnvironmentalObligation.objects.all()
+    accept = request.headers.get("Accept", "")
+    if "application/x-protobuf" in accept:
+        try:
+            proto_bytes = obligations_to_protobuf(obligations)
+            return HttpResponse(proto_bytes, content_type="application/x-protobuf")
+        except Exception as e:
+            logger.exception("Protobuf serialization failed: %s", e)
+            return JsonResponse({"error": str(e)}, status=500)
+    serializer = ObligationProtoSerializer(obligations, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 
 @beartype
 @login_required
 def profile_detail_view(request: HttpRequest) -> HttpResponse:
-    """Display the current user's profile details."""
-    return render(request, "core/profile_detail.html", {"user": request.user})
+    """Display the user's profile details."""
+    profile = UserProfile.objects.get(user=request.user)
+    return render(
+        request, "core/profile_detail.html", {"user": request.user, "profile": profile}
+    )
 
 
 @beartype
 @login_required
 def profile_edit_view(request: HttpRequest) -> HttpResponse:
-    """Allow the current user to edit their profile."""
-    profile = getattr(request.user, "profile", None)
+    """Edit the user's profile."""
+    profile = UserProfile.objects.get(user=request.user)
     if request.method == "POST":
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            logger.info("User %s updated their profile.", request.user.username)
             return redirect("core:profile_detail")
     else:
         form = UserProfileForm(instance=profile)
     return render(request, "core/profile_edit.html", {"form": form})
+
+
+@beartype
+def theme_config_api(request: HttpRequest) -> JsonResponse:
+    """API endpoint for theme configuration (light/dark/auto)."""
+    theme = request.GET.get("theme", "auto")
+    return JsonResponse({"theme": theme})
+
+
+@beartype
+@login_required
+def audit_log_list_view(request: HttpRequest) -> HttpResponse:
+    """Display the audit log list with filtering."""
+    logs = AuditLog.objects.all().order_by("-timestamp")
+    filter_form = AuditLogFilterForm(request.GET or None)
+    if filter_form.is_valid():
+        if filter_form.cleaned_data.get("user"):
+            logs = logs.filter(
+                user__username__icontains=filter_form.cleaned_data["user"]
+            )
+        if filter_form.cleaned_data.get("action"):
+            logs = logs.filter(action__icontains=filter_form.cleaned_data["action"])
+        if filter_form.cleaned_data.get("object_type"):
+            logs = logs.filter(
+                object_type__icontains=filter_form.cleaned_data["object_type"]
+            )
+        if filter_form.cleaned_data.get("date_from"):
+            logs = logs.filter(timestamp__gte=filter_form.cleaned_data["date_from"])
+        if filter_form.cleaned_data.get("date_to"):
+            logs = logs.filter(timestamp__lte=filter_form.cleaned_data["date_to"])
+    paginator = Paginator(logs, 50)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(
+        request,
+        "core/audit_log_list.html",
+        {"audit_logs": page_obj, "filter": filter_form},
+    )
+
+
+@beartype
+@login_required
+def audit_log_api(request: HttpRequest) -> HttpResponse:
+    """API endpoint for audit logs (Protobuf or JSON)."""
+    logs = AuditLog.objects.all().order_by("-timestamp")[:100]
+    accept = request.headers.get("Accept", "")
+    if "application/x-protobuf" in accept:
+        try:
+            import importlib
+
+            serializers = importlib.import_module("core.serializers")
+            proto_bytes = serializers.audit_logs_to_protobuf(logs)
+            return HttpResponse(proto_bytes, content_type="application/x-protobuf")
+        except Exception as e:
+            logger.exception("Protobuf serialization failed: %s", e)
+            return JsonResponse({"error": str(e)}, status=500)
+    data = [
+        {
+            "timestamp": log.timestamp.isoformat(),
+            "user": str(log.user) if log.user else None,
+            "action": log.action,
+            "object_type": log.object_type,
+            "object_id": log.object_id,
+            "ip_address": log.ip_address,
+            "message": log.message,
+        }
+        for log in logs
+    ]
+    return JsonResponse(data, safe=False)

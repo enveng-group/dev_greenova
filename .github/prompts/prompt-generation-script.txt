@@ -1,3 +1,5 @@
+cd /workspaces/greenova/greenova; ./manage.py test core
+
 continue to iterate, checking off the acceptance criteria checklist in core prompt until all is complete, do not ask what is next, just complete until the below core app refactoring is complete by iterating
 
 using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:

@@ -88,7 +88,7 @@ The global `core` app is central to the Greenova project, providing shared utili
 
    - Ensure `apps.py` for the `core` app is correctly configured.
    - Ensure `AUTH_USER_MODEL` in `greenova/settings.py` correctly points to the custom user model in `core.models`.
-   - Verify `django-allauth` settings in `greenova/settings.py` are complete, including MFA configurations (e.g., FIDO2), and that related user flows are clear.
+   - Verify `django-allauth` settings in `greenova/settings.py` are complete, and that related user flows are clear.
    - Review any other `core`-specific settings in `greenova/settings.py` and ensure they align with project standards.
 
 6. **Testing (Core & User Management)**:
@@ -130,7 +130,7 @@ The global `core` app is central to the Greenova project, providing shared utili
 - [ ] All `print` statements in the `core` app are replaced with appropriate logging.
 - [ ] Imports in `core` app Python files are correctly structured.
 - [ ] `core/templates/core/base.html`, user profile templates, and overridden `django-allauth` templates use DTL, `django-bootstrap5`, and are free of JavaScript, using `django-htmx`/`django-hyperscript` for interactions.
-- [ ] `django-allauth` integration is robust, its templates are styled with `django-bootstrap5`, and MFA is correctly configured.
+- [ ] `django-allauth` integration is robust, its templates are styled with `django-bootstrap5` is correctly configured.
 - [ ] SCSS files are set up with Greenova branding and compile correctly.
 - [ ] `py.typed` marker is present in the `core` app.
 - [ ] Protobuf messages for core and user data are defined and used if necessary, and are managed in the `protobuf` app.

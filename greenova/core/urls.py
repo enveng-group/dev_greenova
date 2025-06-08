@@ -10,6 +10,8 @@ from django.urls import path
 
 from .views import (
     EnvironmentalObligationListView,
+    audit_log_api,
+    audit_log_list_view,
     obligations_api,
     profile_detail_view,
     profile_edit_view,
@@ -29,11 +31,21 @@ urlpatterns = [
         obligations_api,
         name="obligations_api",
     ),
+    path("profile/", profile_detail_view, name="profile_detail"),
+    path("profile/edit/", profile_edit_view, name="profile_edit"),
     path(
-        "api/theme-config/",
+        "api/theme/",
         theme_config_api,
         name="theme_config_api",
     ),
-    path("profile/", profile_detail_view, name="profile_detail"),
-    path("profile/edit/", profile_edit_view, name="profile_edit"),
+    path(
+        "audit-log/",
+        audit_log_list_view,
+        name="audit_log_list",
+    ),
+    path(
+        "api/audit-log/",
+        audit_log_api,
+        name="audit_log_api",
+    ),
 ]

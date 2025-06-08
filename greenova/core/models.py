@@ -15,6 +15,7 @@ from django.db import models
 logger = logging.getLogger(__name__)
 
 
+@beartype
 class EnvironmentalObligation(models.Model):
     """Model representing an environmental obligation in Greenova.
 
@@ -28,19 +29,23 @@ class EnvironmentalObligation(models.Model):
 
     """
 
-    name = models.CharField(max_length=255)  # type: ignore[assignment]
-    description = models.TextField(blank=True)  # type: ignore[assignment]
-    due_date = models.DateField()  # type: ignore[assignment]
-    is_complete = models.BooleanField(default=False)  # type: ignore[assignment]
-    created_at = models.DateTimeField(auto_now_add=True)  # type: ignore[assignment]
-    updated_at = models.DateTimeField(auto_now=True)  # type: ignore[assignment]
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    due_date = models.DateField()
+    is_complete = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @beartype
-    def __str__(self) -> str:  # type: ignore[no-any-return]
+    def __str__(self) -> str:
         """Return a string representation of the obligation."""
         return str(self.name)
 
+    class Meta:
+        app_label = "core"
 
+
+@beartype
 class CustomUser(AbstractUser):
     """Custom user model for Greenova, extending AbstractUser.
 
@@ -51,16 +56,20 @@ class CustomUser(AbstractUser):
 
     """
 
-    email = models.EmailField(unique=True)  # type: ignore[assignment]
-    is_mfa_enabled = models.BooleanField(default=False)  # type: ignore[assignment]
-    company = models.CharField(max_length=255, blank=True)  # type: ignore[assignment]
+    email = models.EmailField(unique=True)
+    is_mfa_enabled = models.BooleanField(default=False)
+    company = models.CharField(max_length=255, blank=True)
 
     @beartype
-    def __str__(self) -> str:  # type: ignore[no-any-return]
+    def __str__(self) -> str:
         """Return a string representation of the user."""
         return str(self.username)
 
+    class Meta:
+        app_label = "core"
 
+
+@beartype
 class UserProfile(models.Model):
     """Profile model for extended user information in Greenova.
 
@@ -77,23 +86,22 @@ class UserProfile(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         related_name="profile",
-    )  # type: ignore[assignment]
-    display_name = models.CharField(
-        max_length=255,
-        blank=True)  # type: ignore[assignment]
-    preferences = models.JSONField(default=dict, blank=True)  # type: ignore[assignment]
-    avatar = models.ImageField(
-        upload_to="avatars/",
-        blank=True,
-        null=True)  # type: ignore[assignment]
-    updated_at = models.DateTimeField(auto_now=True)  # type: ignore[assignment]
+    )
+    display_name = models.CharField(max_length=255, blank=True)
+    preferences = models.JSONField(default=dict, blank=True)
+    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @beartype
-    def __str__(self) -> str:  # type: ignore[no-any-return]
+    def __str__(self) -> str:
         """Return a string representation of the user profile."""
         return str(self.display_name or self.user.username)
 
+    class Meta:
+        app_label = "core"
 
+
+@beartype
 class AuditLog(models.Model):
     """Audit log entry for system-wide audit trails in Greenova.
 
@@ -114,20 +122,17 @@ class AuditLog(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-    )  # type: ignore[assignment]
-    action = models.CharField(max_length=64)  # type: ignore[assignment]
-    object_type = models.CharField(
-        max_length=64,
-        blank=True)  # type: ignore[assignment]
-    object_id = models.CharField(max_length=64, blank=True)  # type: ignore[assignment]
-    message = models.TextField(blank=True)  # type: ignore[assignment]
-    timestamp = models.DateTimeField(auto_now_add=True)  # type: ignore[assignment]
-    ip_address = models.GenericIPAddressField(
-        blank=True, null=True)  # type: ignore[assignment]
-    extra_data = models.JSONField(default=dict, blank=True)  # type: ignore[assignment]
+    )
+    action = models.CharField(max_length=64)
+    object_type = models.CharField(max_length=64, blank=True)
+    object_id = models.CharField(max_length=64, blank=True)
+    message = models.TextField(blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    extra_data = models.JSONField(default=dict, blank=True)
 
     @beartype
-    def __str__(self) -> str:  # type: ignore[no-any-return]
+    def __str__(self) -> str:
         """Return a string representation of the audit log entry."""
         return f"{self.timestamp} {self.user} {self.action} {self.object_type}"
 
@@ -135,3 +140,4 @@ class AuditLog(models.Model):
         verbose_name = "Audit Log Entry"
         verbose_name_plural = "Audit Log Entries"
         ordering = ["-timestamp"]
+        app_label = "core"

@@ -18,9 +18,19 @@
     {% block styles %}{% endblock styles %}
   </head>
   <body class="greenova-container">
+    {% include "core/_navbar.html" %}
     <a href="#main-content" class="skip-link visually-hidden-focusable">Skip to main content</a>
     {% bootstrap_messages %}
-    {% block content %}{% endblock content %}
+    <div class="container-fluid">
+      <div class="row">
+        <aside class="col-md-2 d-none d-md-block p-0">
+          {% include "core/_sidebar.html" %}
+        </aside>
+        <main id="main-content" class="col-md-10 ms-sm-auto px-md-4" tabindex="-1">
+          {% block content %}{% endblock content %}
+        </main>
+      </div>
+    </div>
     {% bootstrap_javascript %}
     <script src="{% static 'core/js/wasm-loader.js' %}" defer></script>
     <script src="{% static 'core/js/obligation-list.js' %}" defer></script>

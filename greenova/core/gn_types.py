@@ -17,7 +17,6 @@ class ProjectMetadataDict(TypedDict):
     id: str
     name: str
     description: str
-    member_user_ids: list[str]
     created_at: str
     updated_at: str
 
@@ -25,12 +24,10 @@ class ProjectMetadataDict(TypedDict):
 class ProjectMembershipDict(TypedDict):
     """TypedDict for project membership."""
 
-    id: str
-    project_id: str
     user_id: str
+    project_id: str
     role: str
-    created_at: str
-    updated_at: str
+    joined_at: str
 
 
 class ProjectObligationDict(TypedDict):
@@ -213,3 +210,14 @@ class MechanismResultProcessor(Protocol):
 
     @beartype
     def process(self, result: MechanismResultDict) -> None: ...
+
+
+@runtime_checkable
+class ProjectLike(Protocol):
+    """Protocol for project-like objects."""
+
+    id: Any
+    name: str
+    description: str
+    created_at: Any
+    updated_at: Any
