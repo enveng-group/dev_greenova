@@ -8,11 +8,12 @@ License: AGPL-3.0
 
 from django.urls import path
 
-from .views import landing_page, newsletter_signup
+from .views import landing_page, landing_page_api, newsletter_signup
 
 app_name = "landing"
 
 urlpatterns = [
     path("", landing_page, name="home"),
     path("newsletter_signup", newsletter_signup, name="newsletter_signup"),
+    path("api/content.protobuf", landing_page_api, name="landing_page_api"),
 ]

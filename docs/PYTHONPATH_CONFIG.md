@@ -57,9 +57,8 @@ If you experience module discovery issues, check these configuration files:
 
 1. `.envrc` or `.env` files
 2. VS Code task configurations in `.vscode/tasks.json`
-3. pytest.ini (should use `pythonpath = .`)
-4. Shell configuration files (`.bashrc`, `.config/fish/config.fish`, etc.)
-5. Devcontainer configuration in `.devcontainer/`
+3. Shell configuration files (`.bashrc`, `.config/fish/config.fish`, etc.)
+4. Devcontainer configuration in `.devcontainer/`
 
 ## Best Practices
 

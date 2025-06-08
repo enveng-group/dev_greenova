@@ -47,10 +47,8 @@ except ImportError:
     ObligationProto = None
 
 from core.constants import (
-    FREQUENCY_ANNUAL,
-    FREQUENCY_BIANNUAL,
+    FREQUENCY_ANNUALLY,
     FREQUENCY_DAILY,
-    FREQUENCY_FORTNIGHTLY,
     FREQUENCY_MONTHLY,
     FREQUENCY_QUARTERLY,
     FREQUENCY_WEEKLY,
@@ -204,7 +202,6 @@ class Obligation(ProtoBufMixin, models.Model):
             ("Monthly", "Monthly"),
             ("Quarterly", "Quarterly"),
             ("Annually", "Annually"),
-            ("Bi-Annually", "Bi-Annually"),
             ("As Required", "As Required"),
             ("Mobilisation", "Mobilisation"),
             ("Decommissioning", "Decommissioning"),
@@ -320,16 +317,18 @@ class Obligation(ProtoBufMixin, models.Model):
             return base_date + relativedelta(days=1)
         if normalized_frequency == FREQUENCY_WEEKLY:
             return base_date + relativedelta(weeks=1)
-        if normalized_frequency == FREQUENCY_FORTNIGHTLY:
+        if normalized_frequency == "fortnightly":
             return base_date + relativedelta(weeks=2)
+        # TODO: Add FREQUENCY_FORTNIGHTLY to core/constants.py for consistency
         if normalized_frequency == FREQUENCY_MONTHLY:
             return base_date + relativedelta(months=1)
         if normalized_frequency == FREQUENCY_QUARTERLY:
             return base_date + relativedelta(months=3)
-        if normalized_frequency == FREQUENCY_BIANNUAL:
-            return base_date + relativedelta(months=6)
-        if normalized_frequency == FREQUENCY_ANNUAL:
+        if normalized_frequency == FREQUENCY_ANNUALLY:
             return base_date + relativedelta(years=1)
+        # if normalized_frequency == FREQUENCY_BIANNUAL:
+        #     return base_date + relativedelta(months=6)
+        # TODO: Add support for biannual frequency if needed
         logger.warning(
             "Unrecognized frequency '%s' - defaulting to monthly",
             self.recurring_frequency,

@@ -1036,6 +1036,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "ruff" },
     { name = "setuptools" },
+    { name = "types-bleach" },
     { name = "types-click" },
     { name = "types-cryptography" },
     { name = "types-dataclasses-json" },
@@ -1131,6 +1132,7 @@ requires-dist = [
     { name = "pyyaml", specifier = "==6.0.2" },
     { name = "ruff", specifier = ">=0.11.13" },
     { name = "setuptools", specifier = "==80.9.0" },
+    { name = "types-bleach", specifier = ">=6.2.0.20250514" },
     { name = "types-click", specifier = ">=7.1.8" },
     { name = "types-cryptography", specifier = ">=3.3.23.2" },
     { name = "types-dataclasses-json", specifier = ">=0.5.9" },
@@ -2325,6 +2327,18 @@ wheels = [
 ]
 
 [[package]]
+name = "types-bleach"
+version = "6.2.0.20250514"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "types-html5lib" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/35/e0/0b8b54767b843a4d5ba3fd9335f13959066662984f564d339f09fb9a65ca/types_bleach-6.2.0.20250514.tar.gz", hash = "sha256:38c2e51d9cac51dc70c1b66121a11f4dad8bbf47fbad494bb7a77d8b8f3c4323", size = 11219, upload-time = "2025-05-14T03:04:56.625Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/9a/cbe65e1d98ceea751a345032d655504a60864d60388270483c96604aff95/types_bleach-6.2.0.20250514-py3-none-any.whl", hash = "sha256:380cb74f0db1e3c3b2e0cde217221108e975e07e95ef0970c9d41f7cd4e8ea3c", size = 12000, upload-time = "2025-05-14T03:04:55.72Z" },
+]
+
+[[package]]
 name = "types-click"
 version = "7.1.8"
 source = { registry = "https://pypi.org/simple" }
@@ -2370,6 +2384,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/77/b6/97e950207a03f9a6a0b165890fdaaaad73f2fb6656fe0b67fc23ba23a3a1/types_flake8-7.2.0.20250330.tar.gz", hash = "sha256:481e5c914a26fabd23e85704ad055f2716f9238740bfe6fe77259c2533cb970c", size = 14785, upload-time = "2025-03-30T03:00:08.456Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9a/e0/079d49e89015bdb23fd741d3ad38650723f72855f838613de0dd7a42d4b0/types_flake8-7.2.0.20250330-py3-none-any.whl", hash = "sha256:af31590a269586309b80a439c94e59359e139e17475a8fc8d3c426ab01a40547", size = 20839, upload-time = "2025-03-30T03:00:07.595Z" },
+]
+
+[[package]]
+name = "types-html5lib"
+version = "1.1.11.20250516"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/ed/9f092ff479e2b5598941855f314a22953bb04b5fb38bcba3f880feb833ba/types_html5lib-1.1.11.20250516.tar.gz", hash = "sha256:65043a6718c97f7d52567cc0cdf41efbfc33b1f92c6c0c5e19f60a7ec69ae720", size = 16136, upload-time = "2025-05-16T03:07:12.231Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cc/3b/cb5b23c7b51bf48b8c9f175abb9dce2f1ecd2d2c25f92ea9f4e3720e9398/types_html5lib-1.1.11.20250516-py3-none-any.whl", hash = "sha256:5e407b14b1bd2b9b1107cbd1e2e19d4a0c46d60febd231c7ab7313d7405663c1", size = 21770, upload-time = "2025-05-16T03:07:11.102Z" },
 ]
 
 [[package]]

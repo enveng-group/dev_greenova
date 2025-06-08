@@ -209,32 +209,12 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap4", "bootstrap5"]
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Content Security Policy Configuration (django-csp 4.0+)
-CONTENT_SECURITY_POLICY: dict[str, dict[str, tuple[str, ...]]] = {
+CONTENT_SECURITY_POLICY: dict[str, dict[str, dict[str, tuple[str, ...]]]] = {
     "DIRECTIVES": {
         "default-src": ("'self'",),
-        "style-src": (
-            "'self'",
-            "https://cdn.jsdelivr.net",
-            "https://fonts.googleapis.com",
-            "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css",
-            "'sha256-bsV5JivYxvGywDAZ22EZJKBFip65Ng9xoJVLbBg7bdo='",
-        ),
-        "font-src": (
-            "'self'",
-            "https://fonts.gstatic.com",
-            "https://cdn.jsdelivr.net",
-        ),
-        "script-src": (
-            "'self'",
-            "https://cdn.jsdelivr.net",
-            "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js",
-            "'wasm-unsafe-eval'",
-        ),
-        "img-src": ("'self'", "data:", "https://cdn.jsdelivr.net"),
-        "connect-src": ("'self'",),
-        "object-src": ("'none'",),
-        "base-uri": ("'self'",),
-        "form-action": ("'self'",),
+        "img-src": ("'self'", "data:", "cdn.jsdelivr.net", "unpkg.com"),
+        "script-src": ("'self'", "cdn.jsdelivr.net", "unpkg.com"),
+        "style-src": ("'self'", "cdn.jsdelivr.net", "unpkg.com"),
     },
 }
 

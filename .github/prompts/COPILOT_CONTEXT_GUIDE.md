@@ -82,7 +82,6 @@ To ensure accurate and context-aware code generation and refactoring, always pro
 - `.pre-commit-config.yaml`: Pre-commit hooks configuration.
 - `ruff.toml`: Python linting configuration.
 - `mypy.ini`: Type checking configuration.
-- `pytest.ini`: Testing configuration.
 
 ## 8. Template & Static Structure Examples
 
