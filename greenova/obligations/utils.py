@@ -5,28 +5,13 @@ maintainability and clarity. All functions must be type-annotated and use the
 @beartype decorator. Follow project standards for documentation and imports.
 
 Existing utility functions should be migrated here as needed.
+
+Note: Status, overdue, and frequency normalization logic is provided by core.utils.
 """
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-
-# ...existing code...
-# Use core.utils.is_obligation_overdue instead
-# ...existing code...
-
-
-# ...existing code...
-# Use core.utils.get_obligation_status instead
-# ...existing code...
-
-
-# ...existing code...
-# Use core.utils.normalize_frequency instead
-# ...existing code...
-
-
-# ...existing code...
-# Use core.utils.get_responsibility_display_name and get_responsibility_choices instead
-# ...existing code...
+# All status, overdue, and frequency normalization logic is provided by core.utils.
+# Import and use core.utils functions directly in the obligations app.

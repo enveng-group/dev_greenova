@@ -11,6 +11,7 @@ Features:
     - Strict type annotations and runtime type checking with beartype
     - Google style docstrings throughout
     - Forms for obligations, responsibilities, evidence upload, and filtering
+    - Uses django-bootstrap5 for all form rendering (no crispy_forms)
 
 Author:
     Adrian Gallo <agallo@enveng-group.com.au>
@@ -21,22 +22,16 @@ from typing import Any
 
 import bleach
 from beartype import beartype
-from core.constants import (
-    STATUS_COMPLETED,
-)
-
-# from mechanisms.models import EnvironmentalMechanism
-# from responsibility.models import Responsibility, ResponsibilityAssignment
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import ButtonHolder, Fieldset, Layout, Submit
-from dal import autocomplete
+from core.constants import STATUS_COMPLETED
+from core.frequency import normalize_frequency
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory
+from mechanisms.models import EnvironmentalMechanism
+from responsibility.models import Responsibility, ResponsibilityAssignment
 
 from .models import Obligation, ObligationEvidence
-from .utils import normalize_frequency
 
 User = get_user_model()
 
@@ -89,63 +84,14 @@ class ObligationForm(forms.ModelForm):
         self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
 
-        # Use autocomplete-light for user, project, and mechanism fields if present
-        if "project" in self.fields:
-            self.fields["project"].widget = autocomplete.ModelSelect2(
-                url="project-autocomplete",
-            )
-        if "primary_environmental_mechanism" in self.fields:
+        if self.project and "primary_environmental_mechanism" in self.fields:
             self.fields[
                 "primary_environmental_mechanism"
-            ].widget = autocomplete.ModelSelect2(url="mechanism-autocomplete")
-        if "responsible_users" in self.fields:
-            self.fields["responsible_users"].widget = autocomplete.ModelSelect2Multiple(
-                url="user-autocomplete",
-            )
-
-        # Add crispy form helper for Bootstrap 5
-        self.helper = FormHelper()
-        self.helper.form_method = "post"
-        self.helper.form_class = "form-horizontal"
-        self.helper.label_class = "col-lg-2"
-        self.helper.field_class = "col-lg-8"
-        self.helper.layout = Layout(
-            Fieldset(
-                "Basic Information",
-                "obligation_number",
-                "project",
-                "primary_environmental_mechanism",
-                "environmental_aspect",
-                "custom_environmental_aspect",
-            ),
-            Fieldset(
-                "Obligation Details",
-                "obligation",
-                "procedure",
-                "responsibility",
-                "supporting_information",
-            ),
-            Fieldset(
-                "Timeline & Dates",
-                "action_due_date",
-                "close_out_date",
-                "status",
-                "recurring_obligation",
-                "recurring_frequency",
-                "recurring_status",
-                "recurring_forecasted_date",
-            ),
-            ButtonHolder(
-                Submit("submit", "Save Obligation", css_class="btn btn-primary"),
-            ),
-        )
+            ].queryset = EnvironmentalMechanism.objects.filter(project=self.project)
 
         if self.project:
             self.fields["project"].initial = self.project
             self.fields["project"].widget = forms.HiddenInput()
-            self.fields[
-                "primary_environmental_mechanism"
-            ].queryset = EnvironmentalMechanism.objects.filter(project=self.project)
 
         instance = kwargs.get("instance")
         if instance:
@@ -234,46 +180,28 @@ class ObligationForm(forms.ModelForm):
 
     @beartype
     def clean_recurring_frequency(self) -> str:
-        """Normalize recurring frequency if provided.
-
-        Returns:
-            The normalized frequency string.
-
-        Raises:
-            ValidationError: If frequency is required but missing.
-
-        """
+        """Normalize recurring frequency if provided."""
         frequency = self.cleaned_data.get("recurring_frequency")
         recurring = self.cleaned_data.get("recurring_obligation")
-
         if recurring and not frequency:
             msg = "Frequency is required for recurring obligations"
             raise ValidationError(msg)
-
         if not recurring:
             return ""
-
+        if not isinstance(frequency, str):
+            msg = "Frequency must be a string"
+            raise ValidationError(msg)
         return normalize_frequency(frequency)
 
     @beartype
     def clean_custom_environmental_aspect(self) -> str:
-        """Validate custom aspect is provided when needed.
-
-        Returns:
-            The custom environmental aspect string.
-
-        Raises:
-            ValidationError: If required but not provided.
-
-        """
+        """Validate custom aspect is provided when needed."""
         aspect = self.cleaned_data.get("environmental_aspect")
         custom_aspect = self.cleaned_data.get("custom_environmental_aspect")
-
         if aspect == "Other" and not custom_aspect:
             msg = "Please specify a custom environmental aspect."
             raise ValidationError(msg)
-
-        return custom_aspect
+        return str(custom_aspect or "")
 
     @beartype
     def clean_obligation(self) -> str:

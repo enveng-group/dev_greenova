@@ -9,22 +9,12 @@ License:
     AGPL-3.0
 """
 
-from core.constants import (
-    STATUS_COMPLETED,
-    STATUS_IN_PROGRESS,
-    STATUS_NOT_STARTED,
-    STATUS_OVERDUE,
-)
+# Only import what is used from core.constants
+from core.constants import STATUS_NOT_STARTED
 
-OBLIGATION_DEFAULT_STATUS = "not started"
+OBLIGATION_DEFAULT_STATUS = STATUS_NOT_STARTED
 
-OBLIGATION_STATUS_CHOICES = [
-    (STATUS_NOT_STARTED, "Not Started"),
-    (STATUS_IN_PROGRESS, "In Progress"),
-    (STATUS_COMPLETED, "Completed"),
-    (STATUS_OVERDUE, "Overdue"),
-]
-
+# Frequency constants and aliases (obligation-specific)
 FREQUENCY_DAILY = "Daily"
 FREQUENCY_WEEKLY = "Weekly"
 FREQUENCY_FORTNIGHTLY = "Fortnightly"
@@ -42,7 +32,3 @@ FREQUENCY_ALIASES = {
     "biannual": FREQUENCY_BIANNUAL,
     "annual": FREQUENCY_ANNUAL,
 }
-
-STATUS_COMPLETED = "completed"
-STATUS_OVERDUE = "overdue"
-STATUS_UPCOMING = "upcoming"

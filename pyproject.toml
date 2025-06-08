@@ -97,6 +97,7 @@ dependencies = [
     "isort>=6.0.1",
     "flake8>=7.2.0",
     "types-bleach>=6.2.0.20250514",
+    "coverage>=7.8.2",
 ]
 
 [tool.setuptools.packages.find]
