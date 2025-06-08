@@ -5,7 +5,6 @@
 
 /* Import theme-specific color variables */
 @import url('themes/light.css');
-@import url('themes/dark.css');
 
 /* Import utility color definitions */
 @import url('utils/colours.css');
@@ -56,6 +55,7 @@
 .htmx-indicator {
   opacity: 0;
   transition: opacity 300ms ease-in;
+  display: none !important; /*NV 27-05-2025*/
 }
 
 .htmx-request .htmx-indicator {

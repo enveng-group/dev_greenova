@@ -4,8 +4,8 @@
 
 # Production server
 gunicorn
-uvicorn
-uvicorn-worker
+#uvicorn
+#uvicorn-worker
 
 # Performance monitoring
 autopep8  # Required by django-silk,

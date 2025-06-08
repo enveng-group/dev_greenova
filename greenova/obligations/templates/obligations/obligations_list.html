@@ -1,31 +1,72 @@
 {% extends "base.html" %}
-{% block title %}
-Obligations
-{% endblock %}
+
+{% block title %}Obligations{% endblock %}
+
 {% block content %}
-  <main>
-    <h1>
-Obligations
-    </h1>
-    <section aria-labelledby="obligations-list-heading">
-      <h2 id="obligations-list-heading">
-All Obligations
-      </h2>
-      {% if obligations %}
-        <ul>
-          {% for obligation in obligations %}
-            <li>
-              <strong>{{ obligation.obligation_number }}</strong>
-              <span class="description">{{ obligation.obligation|default:"No description" }}</span>
-              <span class="status">Status: {{ obligation.get_status_display }}</span>
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>
-No obligations found.
-        </p>
-      {% endif %}
-    </section>
-  </main>
+<main class="container">
+  <div class="d-flex justify-between items-center mb-4">
+    <h1>Obligations</h1>
+    {% if project_id %}
+      <a href="{% url 'obligations:create' %}?project_id={{ project_id }}" class="btn btn-success">
+        + Create Obligation
+      </a>
+    {% endif %}
+  </div>
+
+  <section>
+    {% if obligations %}
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Obligation #</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for obligation in obligations %}
+              <tr>
+                <td>
+                  <a href="{% url 'obligations:detail' obligation.obligation_number %}?project_id={{ project_id }}">
+                    {{ obligation.obligation_number }}
+                  </a>
+                </td>
+                <td>{{ obligation.obligation|default:"(No description)"|truncatewords:10 }}</td>
+                <td>{{ obligation.get_status_display }}</td>
+                <td>{{ obligation.action_due_date|date:"M d, Y" }}</td>
+                <td>
+                  <a class="btn btn-sm btn-outline-primary"
+                     href="{% url 'obligations:update' obligation.obligation_number %}?project_id={{ project_id }}">
+                    Edit
+                  </a>
+                </td>
+                <td>
+                <button
+    class="btn btn-danger"
+    hx-post="{% url 'obligations:delete' obligation_number=obligation.obligation_number %}"
+    hx-confirm="Are you sure you want to delete this obligation?"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-trigger="click"
+    hx-swap="none"
+    hx-on="htmx:afterOnLoad: window.location.href = '{% url 'dashboard:home' %}?project_id={{ project_id }}';"
+  >
+    <i class="fa fa-trash-o" aria-hidden="true"></i>
+  </button>
+  </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+       {% include "obligations/components/_pagination.html" with page_obj=page_obj project_id=project_id %}
+
+    {% else %}
+      <div class="alert alert-info">No obligations found.</div>
+    {% endif %}
+  </section>
+</main>
 {% endblock %}

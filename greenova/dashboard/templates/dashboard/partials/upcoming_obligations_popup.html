@@ -1,0 +1,12 @@
+{% load static %}
+<section class="popup-card">
+  <header class="popup-header">
+    <h2>Upcoming Obligations</h2>
+    <button onclick="document.getElementById('popup-container').innerHTML = ''"
+            class="close-button" aria-label="Close popup">✕</button>
+  </header>
+  <div class="popup-content">
+    {% include "dashboard/partials/upcoming_obligations_table.html" %}
+  </div>
+</section>
+

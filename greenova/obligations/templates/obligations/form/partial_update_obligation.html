@@ -1,0 +1,19 @@
+{% comment %}
+Partial update form for an Obligation.
+This template is intended for HTMX/django-hyperscript partial updates.
+{% endcomment %}
+<form method="post"
+      hx-post="."
+      hx-target="#obligation-form"
+      hx-swap="outerHTML">
+{% csrf_token %}
+  <fieldset>
+    <legend>
+Update Obligation
+    </legend>
+    {{ form.as_p }}
+  </fieldset>
+  <button type="submit">
+Update
+  </button>
+</form>

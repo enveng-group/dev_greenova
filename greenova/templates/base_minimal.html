@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     {% block head_scripts %}
     {% endblock head_scripts %}
@@ -31,10 +31,20 @@
           href="{% static 'css/dist/styles.css' %}"
           as="style"
           onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <noscript>
       <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}" />
     </noscript>
-
+    <style>
+      /*NV*/
+      html {
+        color-scheme: light !important;
+        background-color: white;
+      }
+      html[data-theme="dark"] {
+        display: none !important;
+      }
+    </style>
     {% block extra_css %}
     {% endblock extra_css %}
     {% block extra_head %}

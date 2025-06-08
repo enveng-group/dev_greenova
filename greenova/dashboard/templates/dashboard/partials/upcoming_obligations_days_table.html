@@ -1,0 +1,114 @@
+{% load static %}
+<div class="modal-overlay" hx-trigger="click" hx-target="#modal-container" hx-swap="outerHTML">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title" hx-on="keydown.escape: closeModal()">
+    <header>
+      <h2 id="modal-title">{{ period_label }}</h2>
+      <button class="modal-close" aria-label="Close" onclick="closeModal()">&times;</button>
+    </header>
+      {% if obligations %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Obligation Number</th>
+              <th>Obligation Title</th>
+              <th>Due Date</th>
+              <th>Status</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for obligation in obligations %}
+            <tr>
+               <td>{{ obligation.obligation_number }}</td>
+              <td>{{ obligation.obligation }}</td>
+              <td>{{ obligation.action_due_date }}</td>
+              <td>{{ obligation.status }}</td>
+              <td><button class="btn btn-primary btnedit custedit" type="edit"><a href="{% url 'obligations:update' obligation.obligation_number %}">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                </a>
+                </button></td>
+              <td>
+                  <button
+    class="btn btn-danger btnedit custdelete"
+    hx-post="{% url 'obligations:delete' obligation_number=obligation.obligation_number %}"
+    hx-confirm="Are you sure you want to delete this obligation?"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-trigger="click"
+    hx-swap="none"
+    hx-on="htmx:afterOnLoad: window.location.href = '{% url 'dashboard:home' %}?project_id={{ project_id }}';"
+  >
+    <i class="fa fa-trash-o" aria-hidden="true"></i>
+  </button>
+              <td>
+
+</td>
+</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No overdue obligations found.</p>
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+<script>
+  function closeModal() {
+    const modal = document.getElementById("modal-container");
+    if (modal) {
+      modal.innerHTML = "";  // removes modal content
+    }
+  }
+</script>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .modal-content {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  button.btn.btn-primary.btnedit.custedit, button.btn.btn-danger.btnedit.custdelete {
+    background-color: transparent !important;
+    padding: 0;
+    min-width: fit-content;
+    border: 0px !important;
+    color: #e45151;
+}
+button.modal-close {
+    color: #000;
+    top: 5px;
+    font-weight: bold;
+    padding: 0px;
+    margin-right: 15px;
+}
+h2#modal-title {
+    text-align: center;
+}
+</style>

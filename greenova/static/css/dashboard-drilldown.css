@@ -1,0 +1,319 @@
+/* Dashboard Drilldown Chart Styles */
+
+/* Chart tooltip styles */
+.chart-tooltip {
+	position: absolute;
+	background: rgba(0, 0, 0, 0.9);
+	color: white;
+	padding: 8px 12px;
+	border-radius: 4px;
+	font-size: 0.875rem;
+	pointer-events: none;
+	z-index: 1000;
+	white-space: nowrap;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	display: none;
+}
+
+.chart-tooltip::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+}
+
+/* Interactive chart styles */
+.interactive-chart {
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.interactive-chart:hover {
+	filter: brightness(1.1);
+}
+
+.interactive-chart path {
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.interactive-chart path:hover {
+	stroke: #333;
+	stroke-width: 2;
+}
+
+.interactive-chart path:focus {
+	outline: 2px solid #007bff;
+	outline-offset: 2px;
+}
+
+/* Mechanism chart container styles */
+.mechanism-chart {
+	transition: all 0.3s ease;
+	cursor: pointer;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.mechanism-chart:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mechanism-chart h3 {
+	margin: 0 0 1rem 0;
+	font-size: 1.1rem;
+	color: #333;
+}
+
+/* Procedure chart container styles */
+.procedure-chart {
+	transition: all 0.3s ease;
+	cursor: pointer;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.procedure-chart:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.procedure-chart h4 {
+	margin: 0 0 1rem 0;
+	font-size: 1rem;
+	color: #333;
+}
+
+/* Chart container grid styles */
+.chart-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 1.5rem;
+	margin: 1.5rem 0;
+}
+
+.chart-container {
+	background: white;
+	border-radius: 8px;
+	padding: 1.5rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Obligation row styles */
+.obligation-row {
+	transition: all 0.2s ease;
+	cursor: pointer;
+	border-radius: 4px;
+	padding: 0.5rem;
+	margin: 0.25rem 0;
+}
+
+.obligation-row:hover {
+	background-color: #f8f9fa;
+}
+
+.obligation-row.overdue {
+	border-left: 3px solid #f94144;
+	background-color: #fff5f5;
+}
+
+.obligation-row.overdue:hover {
+	background-color: #ffe5e6;
+}
+
+.obligation-row.selected {
+	background-color: #e3f2fd;
+	border-left: 3px solid #2196f3;
+}
+
+/* Drilldown navigation styles */
+.drilldown-nav {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 1rem 0;
+	padding: 0.75rem;
+	background: #f8f9fa;
+	border-radius: 4px;
+}
+
+.drilldown-nav a {
+	color: #007bff;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.drilldown-nav a:hover {
+	text-decoration: underline;
+}
+
+.drilldown-nav .separator {
+	color: #6c757d;
+	font-weight: normal;
+}
+
+/* Chart status indicators */
+.status-indicator {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	margin-right: 0.5rem;
+}
+
+.status-indicator.not-started {
+	background-color: #f9c74f;
+}
+
+.status-indicator.in-progress {
+	background-color: #90be6d;
+}
+
+.status-indicator.completed {
+	background-color: #43aa8b;
+}
+
+.status-indicator.overdue {
+	background-color: #f94144;
+}
+
+/* Loading states */
+.chart-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+	color: #6c757d;
+}
+
+.chart-loading::after {
+	content: "";
+	width: 24px;
+	height: 24px;
+	border: 2px solid #f3f3f3;
+	border-top: 2px solid #007bff;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+	margin-left: 0.5rem;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* Error states */
+.chart-error {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+	color: #dc3545;
+	flex-direction: column;
+	text-align: center;
+}
+
+.chart-error::before {
+	content: "⚠️";
+	font-size: 2rem;
+	margin-bottom: 0.5rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.chart-grid {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.chart-container {
+		padding: 1rem;
+	}
+
+	.mechanism-chart,
+	.procedure-chart {
+		margin: 0.5rem 0;
+	}
+
+	.chart-tooltip {
+		font-size: 0.8rem;
+		padding: 6px 10px;
+	}
+}
+
+@media (max-width: 480px) {
+	.chart-grid {
+		gap: 0.75rem;
+	}
+
+	.chart-container {
+		padding: 0.75rem;
+	}
+
+	.drilldown-nav {
+		padding: 0.5rem;
+		font-size: 0.9rem;
+	}
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+	.mechanism-chart,
+	.procedure-chart,
+	.obligation-row,
+	.chart-container {
+		transition: none;
+	}
+
+	.chart-loading::after {
+		animation: none;
+	}
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+	.chart-tooltip {
+		background: black;
+		color: white;
+		border: 1px solid white;
+	}
+
+	.obligation-row.overdue {
+		border-left-color: #ff0000;
+		background-color: #ffcccc;
+	}
+
+	.interactive-chart path:focus {
+		outline: 3px solid #000;
+	}
+}
+
+/* Print styles */
+@media print {
+	.chart-tooltip {
+		display: none !important;
+	}
+
+	.mechanism-chart,
+	.procedure-chart {
+		break-inside: avoid;
+	}
+
+	.chart-grid {
+		break-inside: avoid;
+	}
+}

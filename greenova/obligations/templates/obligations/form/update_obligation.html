@@ -13,7 +13,10 @@ Edit Obligation
 Edit Obligation Form
 {% endblock %}
 {% block form_content %}
-  <form method="post"
+<div id="form-container">
+  <form
+       
+        method="post"
         enctype="multipart/form-data"
         novalidate
         hx-ext="path-deps"
@@ -540,6 +543,7 @@ Update Obligation
       </button>
     </div>
   </form>
+  </div>
   <!-- Add JavaScript for validation enhancements -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {

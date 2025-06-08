@@ -1,0 +1,986 @@
+{% load static %}
+{% load core_tags %}
+
+<link rel="stylesheet" href="{% static 'css/dashboard-drilldown.css' %}">
+
+<!-- Obligation List Drilldown View for Issue #165 -->
+{% if error %}
+  <div class="error-message" role="alert">
+    <h3>Error</h3>
+    <p>{{ error }}</p>
+  </div>
+{% else %}
+  <section class="drilldown-section" aria-labelledby="obligation-list-heading">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="Drilldown navigation">
+      <ol>
+        {% for breadcrumb in breadcrumbs %}
+          <li>
+            {% if not forloop.last %}
+              <a href="{% url 'dashboard:home' %}?project_id={{ selected_project_id }}">{{ breadcrumb.name }}</a>
+            {% else %}
+              <span aria-current="page">{{ breadcrumb.name }}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+        <li aria-current="page">Obligations</li>
+      </ol>
+    </nav>
+
+    <header>
+      <h2 id="obligation-list-heading">
+        Obligations
+        {% if breadcrumbs %}
+          for {{ breadcrumbs|last.name }}
+        {% endif %}
+      </h2>
+      
+      <!-- Summary Statistics -->
+      <div class="obligation-summary">
+        <div class="summary-card">
+          <span class="summary-count">{{ total_count }}</span>
+          <span class="summary-label">Total</span>
+        </div>
+        <div class="summary-card active">
+          <span class="summary-count">{{ active_count }}</span>
+          <span class="summary-label">Active</span>
+        </div>
+        {% if overdue_count > 0 %}
+          <div class="summary-card overdue">
+            <span class="summary-count">{{ overdue_count }}</span>
+            <span class="summary-label">Overdue</span>
+          </div>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if obligations %}
+      <!-- Obligation List -->
+      <div class="obligation-list" role="region" aria-label="Obligation list">
+        <div class="list-header">
+          <h3>Obligation Details</h3>
+          <div class="list-actions">
+            <button class="filter-toggle" 
+                    aria-expanded="false"
+                    aria-controls="filter-panel">
+              Filter & Sort
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Panel (initially hidden) -->
+        <div id="filter-panel" class="filter-panel" hidden>
+          <form class="filter-form">
+            <div class="filter-group">
+              <label for="status-filter">Status:</label>
+              <select id="status-filter" name="status">
+                <option value="">All</option>
+                <option value="not_started">Not Started</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="overdue">Overdue</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="sort-filter">Sort by:</label>
+              <select id="sort-filter" name="sort">
+                <option value="due_date">Due Date</option>
+                <option value="status">Status</option>
+                <option value="priority">Priority</option>
+                <option value="name">Name</option>
+              </select>
+            </div>
+            <button type="submit" class="apply-filters">Apply</button>
+          </form>
+        </div>
+
+        <!-- Obligation Cards -->
+        <div class="obligation-cards">
+          {% for obligation in obligations %}
+            <article class="obligation-card obligation-row {% if obligation.is_overdue %}overdue{% endif %}"
+                     data-obligation-id="{{ obligation.id }}"
+                     data-status="{{ obligation.status|lower }}"
+                     data-due-date="{{ obligation.action_due_date|date:'Y-m-d' }}"
+                     role="button"
+                     tabindex="0"
+                     aria-label="View obligation: {{ obligation.title }}"
+                     hx-get="{% url 'obligations:detail' obligation.id %}"
+                     hx-target="#modal-body"
+                     hx-trigger="click,keydown[Enter,Space]">
+              
+              <!-- Overdue indicator -->
+              {% if obligation.is_overdue %}
+                <div class="overdue-indicator" aria-label="Overdue">
+                  <span class="icon-alert-triangle"></span>
+                  OVERDUE
+                </div>
+              {% endif %}
+
+              <header class="obligation-header">
+                <h4>{{ obligation.title }}</h4>
+                <div class="obligation-meta">
+                  <span class="status-badge status-{{ obligation.status|lower|slugify }}">
+                    {{ obligation.get_status_display }}
+                  </span>
+                  {% if obligation.priority %}
+                    <span class="priority-badge priority-{{ obligation.priority|lower }}">
+                      {{ obligation.get_priority_display }}
+                    </span>
+                  {% endif %}
+                </div>
+              </header>
+
+              <div class="obligation-content">
+                <p class="obligation-description">
+                  {{ obligation.description|truncatewords:20 }}
+                </p>
+                
+                <dl class="obligation-details">
+                  <dt>Due Date:</dt>
+                  <dd class="{% if obligation.is_overdue %}overdue-date{% endif %}">
+                    {{ obligation.action_due_date|date:"d M Y" }}
+                    {% if obligation.is_overdue %}
+                      <span class="overdue-text">({{ obligation.action_due_date|timesince }} ago)</span>
+                    {% endif %}
+                  </dd>
+                  
+                  {% if obligation.assigned_to %}
+                    <dt>Assigned to:</dt>
+                    <dd>{{ obligation.assigned_to.get_full_name|default:obligation.assigned_to.username }}</dd>
+                  {% endif %}
+                  
+                  {% if obligation.compliance_reference %}
+                    <dt>Reference:</dt>
+                    <dd>{{ obligation.compliance_reference }}</dd>
+                  {% endif %}
+                </dl>
+              </div>
+
+              <footer class="obligation-footer">
+                <div class="obligation-actions">
+                  <a href="{% url 'obligations:detail' obligation.id %}" 
+                     class="action-link">View Details</a>
+                  <a href="{% url 'obligations:edit' obligation.id %}" 
+                     class="action-link">Edit</a>
+                </div>
+                
+                <div class="obligation-progress">
+                  {% if obligation.completion_percentage %}
+                    <div class="progress-bar">
+                      <div class="progress-fill" 
+                           style="width: {{ obligation.completion_percentage }}%"
+                           aria-label="{{ obligation.completion_percentage }}% complete"></div>
+                    </div>
+                    <span class="progress-text">{{ obligation.completion_percentage }}%</span>
+                  {% endif %}
+                </div>
+              </footer>
+            </article>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+          <nav class="pagination" aria-label="Obligation list pagination">
+            <div class="pagination-info">
+              Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} obligations
+            </div>
+            <div class="pagination-controls">
+              {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+              {% endif %}
+              
+              <span class="page-current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+              </span>
+              
+              {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+              {% endif %}
+            </div>
+          </nav>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="empty-state" role="region" aria-label="No obligations">
+        <h3>No Obligations Found</h3>
+        <p>
+          {% if breadcrumbs %}
+            This {{ breadcrumbs|last.type }} doesn't have any obligations yet.
+          {% else %}
+            No obligations found matching your criteria.
+          {% endif %}
+        </p>
+        <a href="{% url 'obligations:create' %}" class="button primary">
+          Add First Obligation
+        </a>
+      </div>
+    {% endif %}
+  </section>
+{% endif %}
+
+<!-- Modal for obligation details -->
+<div id="obligation-detail-modal" class="modal" hidden aria-labelledby="modal-title" role="dialog">
+  <div class="modal-content">
+    <button class="modal-close" type="button" aria-label="Close modal">&times;</button>
+    <div id="modal-body">
+      <!-- Content will be loaded via HTMX -->
+    </div>
+  </div>
+</div>
+
+<style>
+/* Obligation Summary Cards */
+.obligation-summary {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0 2rem 0;
+}
+
+.summary-card {
+  background: var(--card-background-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  min-width: 100px;
+}
+
+.summary-card.active {
+  border-color: var(--primary-color);
+}
+
+.summary-card.overdue {
+  border-color: var(--del-color);
+  background: rgba(249, 65, 68, 0.1);
+}
+
+.summary-count {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.summary-card.overdue .summary-count {
+  color: var(--del-color);
+}
+
+.summary-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted-color);
+  margin-top: 0.25rem;
+}
+
+/* List Header */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.list-header h3 {
+  margin: 0;
+}
+
+/* Filter Panel */
+.filter-panel {
+  background: var(--card-background-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-form {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+/* Obligation Cards */
+.obligation-cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.obligation-card {
+  background: var(--card-background-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.obligation-card:hover,
+.obligation-card:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.obligation-card.overdue {
+  border-left: 4px solid var(--del-color);
+  background: rgba(249, 65, 68, 0.02);
+}
+
+/* Loading state for obligation cards */
+.obligation-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+  position: relative;
+}
+
+.obligation-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Overdue Indicator */
+.overdue-indicator {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--del-color);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Obligation Header */
+.obligation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.obligation-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.obligation-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Status and Priority Badges */
+.status-badge,
+.priority-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.status-badge.status-not-started {
+  background: #f9c74f;
+  color: #333;
+}
+
+.status-badge.status-in-progress {
+  background: #90be6d;
+  color: white;
+}
+
+.status-badge.status-completed {
+  background: #43aa8b;
+  color: white;
+}
+
+.priority-badge.priority-high {
+  background: #f94144;
+  color: white;
+}
+
+.priority-badge.priority-medium {
+  background: #f9c74f;
+  color: #333;
+}
+
+.priority-badge.priority-low {
+  background: #90be6d;
+  color: white;
+}
+
+/* Obligation Content */
+.obligation-description {
+  margin: 0 0 1rem 0;
+  color: var(--muted-color);
+  line-height: 1.5;
+}
+
+.obligation-details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.obligation-details dt {
+  font-weight: bold;
+  color: var(--muted-color);
+}
+
+.obligation-details dd {
+  margin: 0;
+}
+
+.overdue-date {
+  color: var(--del-color);
+  font-weight: bold;
+}
+
+.overdue-text {
+  font-size: 0.8rem;
+  color: var(--del-color);
+}
+
+/* Obligation Footer */
+.obligation-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--card-border-color);
+}
+
+.obligation-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.action-link {
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+.action-link:hover {
+  text-decoration: underline;
+}
+
+/* Progress Bar */
+.obligation-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-bar {
+  width: 80px;
+  height: 6px;
+  background: var(--card-border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: var(--muted-color);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: var(--card-background-color);
+  border-radius: 8px;
+}
+
+.pagination-info {
+  font-size: 0.9rem;
+  color: var(--muted-color);
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.page-link {
+  text-decoration: none;
+  color: var(--primary-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--primary-color);
+}
+
+.page-link:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.page-current {
+  font-weight: bold;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-content {
+  background: var(--card-background-color);
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 2rem;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--muted-color);
+}
+
+.modal-close:hover {
+  color: var(--primary-color);
+}
+
+/* Focus styles for better accessibility */
+.obligation-card:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.filter-toggle:focus,
+.page-link:focus,
+.action-link:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .obligation-card {
+    border-width: 2px;
+  }
+  
+  .overdue-indicator {
+    border: 2px solid white;
+  }
+  
+  .status-badge,
+  .priority-badge {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .obligation-summary {
+    flex-wrap: wrap;
+  }
+  
+  .summary-card {
+    flex: 1;
+    min-width: 80px;
+  }
+  
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .filter-form {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .obligation-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .obligation-meta {
+    justify-content: flex-start;
+  }
+  
+  .obligation-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .pagination {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+</style>
+
+<script src="{% static 'js/dashboard-drilldown.js' %}"></script>
+
+<script>
+// Filter toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const filterToggle = document.querySelector('.filter-toggle');
+  const filterPanel = document.querySelector('#filter-panel');
+  
+  if (filterToggle && filterPanel) {
+    filterToggle.addEventListener('click', function() {
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !isExpanded);
+      filterPanel.hidden = isExpanded;
+    });
+  }
+  
+  // Initialize dashboard drilldown functionality
+  if (typeof window.initializeDashboardDrilldown === 'function') {
+    window.initializeDashboardDrilldown();
+  }
+  
+  // Initialize obligation list specific functionality
+  initializeObligationList();
+});
+
+// Re-initialize when loaded via HTMX
+document.addEventListener('htmx:afterSettle', function() {
+  if (typeof window.initializeDashboardDrilldown === 'function') {
+    window.initializeDashboardDrilldown();
+  }
+  initializeObligationList();
+});
+
+/**
+ * Initialize obligation list specific functionality
+ */
+function initializeObligationList() {
+  // Add click handlers for obligation cards
+  const obligationCards = document.querySelectorAll('.obligation-card');
+  
+  obligationCards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Prevent navigation if clicking on action links
+      if (e.target.classList.contains('action-link')) {
+        return;
+      }
+      
+      const obligationId = this.dataset.obligationId;
+      if (obligationId) {
+        // Use HTMX to load obligation detail
+        const hxGet = this.getAttribute('hx-get');
+        if (hxGet) {
+          htmx.trigger(this, 'click');
+        }
+      }
+    });
+    
+    // Add keyboard navigation
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.click();
+      }
+    });
+  });
+  
+  // Initialize filter functionality
+  const filterForm = document.querySelector('.filter-form');
+  if (filterForm) {
+    filterForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      applyFilters();
+    });
+    
+    // Apply filters on change
+    const filterSelects = filterForm.querySelectorAll('select');
+    filterSelects.forEach(select => {
+      select.addEventListener('change', applyFilters);
+    });
+  }
+  
+  // Initialize modal functionality
+  initializeModal();
+}
+
+/**
+ * Apply filters to obligation list
+ */
+function applyFilters() {
+  const statusFilter = document.getElementById('status-filter')?.value;
+  const sortFilter = document.getElementById('sort-filter')?.value;
+  const obligationCards = document.querySelectorAll('.obligation-card');
+  
+  let visibleCards = Array.from(obligationCards);
+  
+  // Apply status filter
+  if (statusFilter) {
+    visibleCards = visibleCards.filter(card => {
+      const cardStatus = card.dataset.status;
+      if (statusFilter === 'overdue') {
+        return card.classList.contains('overdue');
+      }
+      return cardStatus === statusFilter;
+    });
+  }
+  
+  // Hide/show cards based on filter
+  obligationCards.forEach(card => {
+    card.style.display = visibleCards.includes(card) ? 'block' : 'none';
+  });
+  
+  // Apply sorting
+  if (sortFilter && visibleCards.length > 0) {
+    const container = document.querySelector('.obligation-cards');
+    const sortedCards = visibleCards.sort((a, b) => {
+      switch (sortFilter) {
+        case 'due_date':
+          const dateA = new Date(a.dataset.dueDate);
+          const dateB = new Date(b.dataset.dueDate);
+          return dateA - dateB;
+        case 'status':
+          return a.dataset.status.localeCompare(b.dataset.status);
+        case 'name':
+          const nameA = a.querySelector('h4').textContent;
+          const nameB = b.querySelector('h4').textContent;
+          return nameA.localeCompare(nameB);
+        default:
+          return 0;
+      }
+    });
+    
+    // Reorder DOM elements
+    sortedCards.forEach(card => container.appendChild(card));
+  }
+  
+  // Update visible count
+  updateVisibleCount(visibleCards.length);
+}
+
+/**
+ * Update the visible count display
+ */
+function updateVisibleCount(count) {
+  const totalCount = document.querySelectorAll('.obligation-card').length;
+  const paginationInfo = document.querySelector('.pagination-info');
+  
+  if (paginationInfo) {
+    paginationInfo.textContent = `Showing ${count} of ${totalCount} obligations`;
+  }
+}
+
+/**
+ * Initialize modal functionality
+ */
+function initializeModal() {
+  const modal = document.getElementById('obligation-detail-modal');
+  const modalClose = document.querySelector('.modal-close');
+  
+  if (!modal) return;
+  
+  // Close modal when clicking close button
+  if (modalClose) {
+    modalClose.addEventListener('click', function() {
+      closeModal();
+    });
+  }
+  
+  // Close modal when clicking outside content
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+  
+  // Close modal with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !modal.hidden) {
+      closeModal();
+    }
+  });
+}
+
+/**
+ * Open the obligation detail modal
+ */
+function openModal() {
+  const modal = document.getElementById('obligation-detail-modal');
+  if (modal) {
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    
+    // Focus the modal for screen readers
+    const firstFocusable = modal.querySelector('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (firstFocusable) {
+      firstFocusable.focus();
+    }
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+/**
+ * Close the obligation detail modal
+ */
+function closeModal() {
+  const modal = document.getElementById('obligation-detail-modal');
+  if (modal) {
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    
+    // Clear modal content
+    const modalBody = document.getElementById('modal-body');
+    if (modalBody) {
+      modalBody.innerHTML = '';
+    }
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+    
+    // Return focus to the trigger element if available
+    const activeCard = document.querySelector('.obligation-card.loading');
+    if (activeCard) {
+      activeCard.focus();
+    }
+  }
+}
+
+/**
+ * Handle obligation card interactions with improved accessibility
+ */
+function handleObligationCardInteraction(card) {
+  const obligationId = card.dataset.obligationId;
+  const obligationTitle = card.querySelector('h4').textContent;
+  
+  // Add loading state
+  card.classList.add('loading');
+  
+  // Update ARIA label to indicate loading
+  card.setAttribute('aria-label', `Loading obligation: ${obligationTitle}`);
+  
+  // The HTMX request will be handled by the hx-get attribute
+  // We can listen for HTMX events to handle success/error states
+}
+
+// Listen for HTMX events to handle loading states
+document.addEventListener('htmx:beforeSend', function(e) {
+  const target = e.target;
+  if (target.classList.contains('obligation-card')) {
+    target.classList.add('loading');
+  }
+});
+
+document.addEventListener('htmx:afterSettle', function(e) {
+  const target = e.target;
+  if (target.classList.contains('obligation-card')) {
+    target.classList.remove('loading');
+  }
+  
+  // Open modal when content is loaded into modal body
+  const modalBody = document.getElementById('modal-body');
+  if (e.target === modalBody && modalBody.innerHTML.trim()) {
+    openModal();
+  }
+});
+
+document.addEventListener('htmx:responseError', function(e) {
+  const target = e.target;
+  if (target.classList.contains('obligation-card')) {
+    target.classList.remove('loading');
+    // Show error message
+    console.error('Failed to load obligation details');
+    
+    // Show user-friendly error in modal
+    const modalBody = document.getElementById('modal-body');
+    if (modalBody) {
+      modalBody.innerHTML = `
+        <div class="error-message" role="alert">
+          <h3>Error Loading Obligation</h3>
+          <p>Sorry, we couldn't load the obligation details. Please try again.</p>
+          <button type="button" onclick="closeModal()" class="button primary">Close</button>
+        </div>
+      `;
+      openModal();
+    }
+  }
+});
+
+// Handle successful HTMX requests
+document.addEventListener('htmx:afterRequest', function(e) {
+  const target = e.target;
+  
+  // Handle obligation card clicks that load modal content
+  if (target.classList.contains('obligation-card') && e.detail.successful) {
+    // The content will be loaded into modal-body, modal opening is handled in afterSettle
+  }
+});
+
+// Expose functions globally for use in templates
+window.openModal = openModal;
+window.closeModal = closeModal;
+</script>

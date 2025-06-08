@@ -34,7 +34,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--greenova-padding-large);
+  padding: 10px !important;
   background: linear-gradient(
     to right,
     var(--color-green-primary),
@@ -43,6 +43,7 @@
   color: white;
   border-radius: var(--greenova-border-radius);
   box-shadow: var(--greenova-shadow);
+  margin-left: 25px;
 }
 
 .dashboard-welcome-content h1 {

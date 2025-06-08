@@ -264,7 +264,7 @@ class ObligationForm(forms.ModelForm):
     )
 
     responsibility: forms.ChoiceField = forms.ChoiceField(
-        choices=get_responsibility_choices(),
+        choices=[],
         widget=forms.Select(attrs={"class": "form-input"}),
         label="Primary Responsibility",
         help_text="Select the primary responsibility for this obligation",
@@ -546,24 +546,18 @@ class ObligationForm(forms.ModelForm):
         # Validate recurring fields
         recurring = cleaned_data.get("recurring_obligation")
         if recurring:
-            for field in ["recurring_frequency", "recurring_status"]:
-                if not cleaned_data.get(field):
-                    self.add_error(
-                        field,
-                        f"{field.replace('_', ' ').title()} is required for "
-                        f"recurring obligations",
-                    )
+            if not cleaned_data.get("recurring_frequency"):
+                self.add_error("recurring_frequency", "Recurring frequency is required for recurring obligations.")
+            if not cleaned_data.get("recurring_status"):
+                self.add_error("recurring_status", "Recurring status is required for recurring obligations.")
 
         # Validate inspection fields
         inspection = cleaned_data.get("inspection")
         if inspection:
-            for field in ["inspection_frequency", "site_or_desktop"]:
-                if not cleaned_data.get(field):
-                    self.add_error(
-                        field,
-                        f"{field.replace('_', ' ').title()} is required when "
-                        f"inspection is enabled",
-                    )
+            if not cleaned_data.get("inspection_frequency"):
+                self.add_error("inspection_frequency", "Inspection frequency is required when inspection is enabled.")
+            if not cleaned_data.get("site_or_desktop"):
+                self.add_error("site_or_desktop", "Site or desktop is required when inspection is enabled.")
 
         # Validate gap analysis notes
         gap_analysis = cleaned_data.get("gap_analysis")
@@ -592,11 +586,30 @@ class ObligationForm(forms.ModelForm):
         # Handle recurring forecasted date
         if instance.recurring_obligation and not instance.recurring_forcasted_date:
             instance.update_recurring_forecasted_date()
+        
+        selected_role_name = self.cleaned_data['responsibility']  # string from choices
+        # Find related Responsibility object if you need it:
+        role_instance = Responsibility.objects.filter(name=selected_role_name).first()
+
 
         if commit:
             instance.save()
             self.save_m2m()  # Save Many-to-Many relationships
 
+            # Assign user to responsibilities (many-to-many)
+            selected_responsibilities = self.cleaned_data.get("responsibilities", [])
+
+            if self.user and selected_responsibilities and role_instance:
+                from responsibility.models import ResponsibilityAssignment
+
+                for responsibility in selected_responsibilities:
+                    ResponsibilityAssignment.objects.get_or_create(
+                        user=self.user,
+                        obligation=instance,
+                        responsibility=responsibility,
+                        role=role_instance,
+                        defaults={"created_by": self.user},
+                    )
         return instance
 
     class Meta:

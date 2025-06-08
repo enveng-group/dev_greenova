@@ -3,7 +3,7 @@
 <!-- Skinny floating sidebar navigation -->
 <aside class="sidebar sidebar-float"
        data-hx-ext="class-tools"
-       data-classes="add slide-in-from-left:0.3s">
+       data-classes="add slide-in-from-left:0.3s" id="sidebar">
   <nav aria-label="Main Navigation">
     <ul class="sidebar-nav">
       <li class="sidebar-nav-item" data-tooltip="Dashboard">
@@ -61,7 +61,7 @@
         </a>
       </li>
       <li class="sidebar-nav-item" data-tooltip="Obligations">
-        <a href="{% url 'obligations:obligation_list' %}"
+        <a href="{% url 'obligations:obligation_list' %}?project_id=1"
            class="sidebar-nav-link
                   {% if request.resolver_match.namespace == 'obligations' %}
                     active

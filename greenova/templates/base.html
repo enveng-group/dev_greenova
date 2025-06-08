@@ -7,7 +7,6 @@
 
   Features:
   - Responsive design using PicoCSS
-  - Dark/Light theme support
   - HTMX for dynamic content loading
   - Hyperscript for client-side interactivity
   - WCAG 2.1 AA compliance
@@ -24,7 +23,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <meta name="color-scheme" content="light dark" />
+  <meta name="color-scheme" content="light" />
   <meta name="keywords"
         content="environmental compliance, management system, greenova, sustainability" />
   <meta name="description"
@@ -60,6 +59,9 @@
 
   <!-- Theme initialization: must be before hyperscript -->
   <script src="{% static 'js/modules/theme-init.js' %}"></script>
+
+  <!-- Custom JS -->
+  <script src="{% static 'js/custom.js' %}"></script>
 
   <!-- HTMX -->
   <script src="{% static 'js/vendors/htmx/htmx.min.js' %}" defer></script>

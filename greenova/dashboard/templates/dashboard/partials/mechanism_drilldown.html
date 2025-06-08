@@ -1,0 +1,212 @@
+{% load static %}
+{% load core_tags %}
+
+<link rel="stylesheet" href="{% static 'css/dashboard-drilldown.css' %}">
+
+<!-- Mechanism Drilldown View for Issue #165 -->
+{% if error %}
+  <div class="error-message" role="alert">
+    <h3>Error</h3>
+    <p>{{ error }}</p>
+  </div>
+{% else %}
+  <section class="drilldown-section" aria-labelledby="mechanism-drilldown-heading">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="Drilldown navigation">
+      <ol>
+        <li><a href="{% url 'dashboard:home' %}?project_id={{ selected_project_id }}">{{ project.name }}</a></li>
+        <li aria-current="page">Environmental Mechanisms</li>
+      </ol>
+    </nav>
+
+    <header>
+      <h2 id="mechanism-drilldown-heading">
+        Environmental Mechanisms for {{ project.name }}
+      </h2>
+      <p>Click on a mechanism chart to view its procedures and obligations.</p>
+    </header>
+
+    {% if mechanism_charts %}
+      <!-- Responsive Chart Grid -->
+      <div class="chart-grid mechanism-charts" role="region" aria-label="Mechanism charts">
+        {% for chart in mechanism_charts %}
+          <article class="chart-card mechanism-chart" 
+                   data-mechanism-id="{{ chart.id }}"
+                   data-project-id="{{ selected_project_id }}"
+                   role="button"
+                   tabindex="0"
+                   aria-label="View procedures for {{ chart.name }}"
+                   hx-get="{% url 'dashboard:procedure_drilldown' %}"
+                   hx-vals='{"mechanism_id": "{{ chart.id }}", "project_id": "{{ selected_project_id }}"}'
+                   hx-target="#main-content"
+                   hx-push-url="true"
+                   _="on keydown[Enter,Space] from me trigger click">
+            
+            <header class="chart-header">
+              <h3>{{ chart.name }}</h3>
+              <div class="chart-stats">
+                <span class="total-count">{{ chart.total_obligations }} obligations</span>
+                {% if chart.overdue_count > 0 %}
+                  <span class="overdue-badge" aria-label="{{ chart.overdue_count }} overdue">
+                    {{ chart.overdue_count }} overdue
+                  </span>
+                {% endif %}
+              </div>
+            </header>
+
+            <div class="chart-container">
+              {{ chart.chart_svg|safe }}
+            </div>
+
+            <footer class="chart-footer">
+              <p>Click to view procedures</p>
+            </footer>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state" role="region" aria-label="No mechanisms">
+        <h3>No Environmental Mechanisms Found</h3>
+        <p>This project doesn't have any environmental mechanisms defined yet.</p>
+        <a href="{% url 'mechanisms:create' %}" class="button primary">
+          Add First Mechanism
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Summary Statistics -->
+    <aside class="summary-panel" aria-labelledby="summary-heading">
+      <h3 id="summary-heading">Summary</h3>
+      <dl class="stats-list">
+        <dt>Total Mechanisms</dt>
+        <dd>{{ mechanism_charts|length }}</dd>
+        
+        <dt>Total Obligations</dt>
+        <dd>{{ mechanism_charts|sum_field:"total_obligations" }}</dd>
+        
+        <dt>Overdue Items</dt>
+        <dd class="{% if mechanism_charts|sum_field:'overdue_count' > 0 %}warning{% endif %}">
+          {{ mechanism_charts|sum_field:"overdue_count" }}
+        </dd>
+      </dl>
+    </aside>
+  </section>
+{% endif %}
+
+<style>
+/* Responsive Grid Layout */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.chart-card {
+  background: var(--card-background-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.chart-card:hover,
+.chart-card:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.chart-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.chart-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.overdue-badge {
+  background: var(--del-color);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.chart-container {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.chart-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.chart-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted-color);
+}
+
+.summary-panel {
+  background: var(--card-background-color);
+  border: 1px solid var(--card-border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.stats-list {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+
+.stats-list dt {
+  font-weight: normal;
+}
+
+.stats-list dd {
+  font-weight: bold;
+  text-align: right;
+  margin: 0;
+}
+
+.warning {
+  color: var(--del-color);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .chart-stats {
+    align-items: flex-start;
+  }
+}
+</style>

@@ -13,12 +13,13 @@ Update Obligation
         <label for="responsibility">
 Responsibility:
         </label>
-        <select id="responsibility" name="responsibility" class="form-input">
-          {% for value, display_name in form.fields.responsibility.choices %}
+        <select name="responsibility" id="id_responsibility" class="form-input">
+          {% for value, label in form.fields.responsibility.choices %}
             <option value="{{ value }}"
-                    {% if value == form.instance.responsibility %}selected{% endif %}>
-{{ display_name }}
-            </option>
+              {% if form.data.responsibility == value or form.initial.responsibility == value %}
+                selected
+              {% endif %}
+            >{{ label }}</option>
           {% endfor %}
         </select>
       </div>

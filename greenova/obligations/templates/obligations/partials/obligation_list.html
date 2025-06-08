@@ -9,7 +9,7 @@
     <div class="obligation-item">
       <strong>{{ obligation.obligation_number }}</strong>
       <div>
-{{ obligation.obligation|truncatechars:50 }}
+{{ obligation.obligation_number|truncatechars:50 }}
       </div>
       <div>
 Due: {{ obligation.action_due_date|date:"M d, Y" }}

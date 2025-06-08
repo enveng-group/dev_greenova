@@ -1,0 +1,38 @@
+/* NV */
+
+nav li {
+  padding: 5px var(--pico-nav-element-spacing-horizontal) !important;
+}
+nav ul.navbar-nav li.navbar-right {
+    margin-left: 5px;
+}
+main#main-content {
+    padding: 30px;
+}
+.navbar {
+  padding: 3px;
+}
+section.project-selection {
+    padding: 0px !important;
+}
+section.project-selection {
+    padding: 0px !important;
+    max-width: 100% !important;
+}
+.project-selector-container {
+    padding: 10px 10px 0px 25px;
+}
+.notice.warning p {
+    margin-bottom: 0px;
+}
+/*Sidebar*/
+/* When collapsed */
+.sidebar.sidebar-collapsed {
+  width: 125px !important;
+  max-width: 125px !important;
+  min-width: 125px !important;
+}
+
+.sidebar.sidebar-collapsed .sidebar-nav-text {
+  display: none !important;
+}

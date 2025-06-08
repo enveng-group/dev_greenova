@@ -42,16 +42,16 @@ class ResponsibilityAssignment(models.Model):
         on_delete=models.CASCADE,
         related_name="responsibility_assignments",
     )
-    responsibility: models.ForeignKey = models.ForeignKey(
-        Responsibility, on_delete=models.CASCADE, related_name="assignments"
-    )
     obligation: models.ForeignKey = models.ForeignKey(
         "obligations.Obligation",
         on_delete=models.CASCADE,
         related_name="responsibility_assignments",
     )
+    responsibility: models.ForeignKey = models.ForeignKey(
+        "responsibility.Responsibility", on_delete=models.CASCADE, related_name="assignments"
+    )
     role: models.ForeignKey = models.ForeignKey(
-        Responsibility, on_delete=models.CASCADE, related_name="role_assignments"
+        "responsibility.Responsibility", on_delete=models.CASCADE, related_name="role_assignments"
     )
     created_by: models.ForeignKey = models.ForeignKey(
         settings.AUTH_USER_MODEL,
