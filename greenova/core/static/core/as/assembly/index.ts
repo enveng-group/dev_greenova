@@ -2,6 +2,12 @@
 // Types like i32, u8, f32, usize are built-in in AssemblyScript
 // Do not import store/load; they are available globally in AssemblyScript
 
+import { ObligationProto, ObligationCollection } from "./proto/obligations";
+import { ProjectProto, ProjectMembershipProto, ProjectObligationProto, ProjectCollection, ProjectMembershipCollection, ProjectObligationCollection } from "./proto/projects";
+import { ObligationInsight, ObligationInsightResponse, ChartSegment, ChartData, ChartResponse } from "./proto/mechanism";
+import { LandingPageContent } from "./proto/landing";
+import { ChartData as ChartDataProto } from "./proto/chart_data";
+
 /**
  * Greenova AssemblyScript Core Implementation
  *
@@ -9,6 +15,7 @@
  * 1. Theme management
  * 2. Animation calculations
  * 3. Error handling core
+ * 4. Protobuf3 obligations processing
  */
 
 // Memory layout constants
@@ -187,10 +194,20 @@ export function decodeProjectProtoWasm(ptr: usize, len: i32): i32 {
  * WASM interop function for decoding obligations.proto ObligationProto
  * @param ptr Pointer to protobuf binary data
  * @param len Length of binary data
- * @returns Length of processed data (stub implementation)
+ * @returns Length of processed data using ObligationProto.decode
  */
 export function decodeObligationProtoWasm(ptr: usize, len: i32): i32 {
-  // Stub implementation - returns data length for JS to handle
+  // Get the binary data from memory
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+
+  // Decode using our ObligationProto class
+  const obligation = ObligationProto.decode(data);
+
+  // For now, just return the length to indicate successful processing
+  // In a real implementation, you might store the decoded object somewhere
   return len;
 }
 
@@ -202,5 +219,65 @@ export function decodeObligationProtoWasm(ptr: usize, len: i32): i32 {
  */
 export function decodeChartDataProtoWasm(ptr: usize, len: i32): i32 {
   // Stub implementation - returns data length for JS to handle
+  return len;
+}
+
+/**
+ * WASM interop function for decoding mechanism.proto ObligationInsightResponse
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeObligationInsightResponseWasm(ptr: usize, len: i32): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const response = ObligationInsightResponse.decode(data);
+  return len;
+}
+
+/**
+ * WASM interop function for decoding mechanism.proto ChartResponse
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeChartResponseWasm(ptr: usize, len: i32): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const response = ChartResponse.decode(data);
+  return len;
+}
+
+/**
+ * WASM interop function for decoding landing.proto LandingPageContent
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeLandingPageContentWasm(ptr: usize, len: i32): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const content = LandingPageContent.decode(data);
+  return len;
+}
+
+/**
+ * WASM interop function for decoding chart_data.proto ChartData
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data (stub implementation)
+ */
+export function decodeChartDataWasm(ptr: usize, len: i32): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const chart = ChartDataProto.decode(data);
   return len;
 }

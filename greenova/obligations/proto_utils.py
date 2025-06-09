@@ -31,155 +31,79 @@ except ImportError:
     obligations_pb2 = None
     logger.warning("obligations_pb2 not found. Ensure .proto files are compiled.")
 
-    class ObligationProto:
-        """Stub ObligationProto for missing protobufs."""
-
-        @beartype
-        def SerializeToString(self) -> bytes:
-            """Serialize the dummy obligation proto to bytes.
-
-            Returns:
-                Empty bytes object.
-
-            """
-            return b""
-
-        @beartype
-        def ParseFromString(self, data: bytes) -> None:
-            """Parse the dummy obligation proto from bytes.
-
-            Args:
-                data: Bytes to parse (ignored).
-
-            """
-
-    class ObligationCollection:
-        """Stub ObligationCollection for missing protobufs."""
-
-        obligations: list[Any] = []
-
-        @beartype
-        def SerializeToString(self) -> bytes:
-            """Serialize the dummy obligation collection to bytes.
-
-            Returns:
-                Empty bytes object.
-
-            """
-            return b""
-
-        @beartype
-        def ParseFromString(self, data: bytes) -> None:
-            """Parse the dummy obligation collection from bytes.
-
-            Args:
-                data: Bytes to parse (ignored).
-
-            """
-
-    obligations_pb2 = type(
-        "obligations_pb2",
-        (),
-        {
-            "ObligationProto": ObligationProto,
-            "ObligationCollection": ObligationCollection,
-        },
-    )
-
 
 @beartype
-def serialize_obligation(obligation: Obligation) -> bytes | None:
-    """Serialize an Obligation instance to a Protocol Buffer message.
+def serialize_obligation(obligation: Obligation) -> Any:
+    """Serialize a Django Obligation instance to a Protobuf ObligationProto message.
 
     Args:
         obligation: The Obligation instance to serialize.
 
     Returns:
-        Serialized protocol buffer data as bytes, or None if serialization failed.
-
-    Raises:
-        Exception: For any serialization error.
+        A Protobuf ObligationProto message (dynamic type).
 
     """
-    try:
-        proto = obligation.to_pb()  # type: ignore[attr-defined]
-        return proto.SerializeToString()
-    except Exception as e:
-        logger.exception("Failed to serialize obligation: %s", str(e))
-        return None
+    proto = obligations_pb2.ObligationProto()
+    proto.obligation_number = obligation.obligation_number or ""
+    proto.project_id = str(getattr(obligation.project, "id", ""))
+    proto.primary_environmental_mechanism_id = str(
+        getattr(obligation.primary_environmental_mechanism, "id", "")
+    )
+    proto.procedure = obligation.procedure or ""
+    proto.environmental_aspect = obligation.environmental_aspect or ""
+    proto.custom_environmental_aspect = (
+        getattr(obligation, "custom_environmental_aspect", "") or ""
+    )
+    return proto
 
 
 @beartype
-def deserialize_obligation(data: bytes) -> Obligation | None:
-    """Deserialize Protocol Buffer data to an Obligation instance.
+def serialize_obligations(obligations: list[Obligation]) -> Any:
+    """Serialize a list of Obligation instances to a Protobuf ObligationCollection message.
 
     Args:
-        data: Serialized protocol buffer data.
+        obligations: List of Obligation instances.
 
     Returns:
-        Obligation instance, or None if deserialization failed.
-
-    Raises:
-        Exception: For any deserialization error.
+        A Protobuf ObligationCollection message (dynamic type).
 
     """
-    try:
-        proto = obligations_pb2.ObligationProto()
-        proto.ParseFromString(data)
-        return Obligation().from_pb(proto)  # type: ignore[attr-defined]
-    except Exception as e:
-        logger.exception("Failed to deserialize obligation: %s", str(e))
-        return None
+    collection = obligations_pb2.ObligationCollection()
+    for obligation in obligations:
+        proto = serialize_obligation(obligation)
+        collection.obligations.append(proto)
+    return collection
 
 
 @beartype
-def serialize_obligations(obligations: list[Obligation]) -> bytes | None:
-    """Serialize a list of Obligation instances to a Protocol Buffer collection.
+def deserialize_obligation(proto: Any) -> dict[str, Any]:
+    """Deserialize a Protobuf ObligationProto message to a dict suitable for creating an Obligation.
 
     Args:
-        obligations: List of Obligation instances to serialize.
+        proto: The ObligationProto message (dynamic type).
 
     Returns:
-        Serialized protocol buffer data as bytes, or None if serialization failed.
-
-    Raises:
-        Exception: For any serialization error.
+        A dict of Obligation fields.
 
     """
-    try:
-        collection = obligations_pb2.ObligationCollection()
-        for obligation in obligations:
-            proto = obligation.to_pb()  # type: ignore[attr-defined]
-            collection.obligations.append(proto)
-        return collection.SerializeToString()
-    except Exception as e:
-        logger.exception("Failed to serialize obligations collection: %s", str(e))
-        return None
+    return {
+        "obligation_number": proto.obligation_number,
+        "procedure": proto.procedure,
+        "environmental_aspect": proto.environmental_aspect,
+        "custom_environmental_aspect": proto.custom_environmental_aspect,
+        # project and mechanism must be resolved separately
+    }
 
 
 @beartype
-def deserialize_obligations(data: bytes) -> list[Obligation]:
-    """Deserialize Protocol Buffer data to a list of Obligation instances.
+def deserialize_obligations(proto_collection: Any) -> list[dict[str, Any]]:
+    """Deserialize a Protobuf ObligationCollection message to a list of dicts.
 
     Args:
-        data: Serialized protocol buffer data.
+        proto_collection: The ObligationCollection message (dynamic type).
 
     Returns:
-        List of Obligation instances, or empty list if deserialization failed.
-
-    Raises:
-        Exception: For any deserialization error.
+        A list of dicts for Obligation creation.
 
     """
-    try:
-        collection = obligations_pb2.ObligationCollection()
-        collection.ParseFromString(data)
-        obligations: list[Obligation] = []
-        for proto in getattr(collection, "obligations", []):
-            obligation = Obligation().from_pb(proto)  # type: ignore[attr-defined]
-            if obligation:
-                obligations.append(obligation)
-        return obligations
-    except Exception as e:
-        logger.exception("Failed to deserialize obligations collection: %s", str(e))
-        return []
+    return [deserialize_obligation(proto) for proto in proto_collection.obligations]

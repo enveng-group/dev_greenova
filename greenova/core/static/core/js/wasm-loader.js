@@ -228,6 +228,12 @@ export function decodeObligation (buffer) {
 export function encodeObligation (obligation) {
   return ObligationsProto.encodeObligationProto(obligation)
 }
+export function decodeObligationCollection (buffer) {
+  return ObligationsProto.decodeObligationCollection(buffer)
+}
+export function encodeObligationCollection (collection) {
+  return ObligationsProto.encodeObligationCollection(collection)
+}
 export function decodeProject (buffer) {
   return ProjectsProto.decodeProjectProto(buffer)
 }

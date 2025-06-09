@@ -3,36 +3,10 @@
  * Integrates WebAssembly compiled from TypeScript for theme management and animations
  */
 
-import type { Root, Type } from "protobufjs";
-import * as protobuf from "protobufjs/minimal";
-import * as MechanismProto from "../js/proto/mechanism_pb";
-import * as ObligationsProto from "../js/proto/obligations_pb";
-import * as ProjectsProto from "../js/proto/projects_pb";
-import * as ChartDataProto from "../js/proto/chart_data_pb";
-import * as GreenovaDataProto from "../js/proto/greenova_data_pb";
+export {};
 
-// Declare global window extensions for type safety
-declare global {
-  interface Window {
-    wasmModule: any;
-    wasmReady: boolean;
-    protobuf?: typeof import("protobufjs");
-    decodeProtoWasm: (
-      protoFile: string,
-      messageType: string,
-      buffer: Uint8Array,
-      wasmFuncName?: string
-    ) => Promise<any>;
-    decodeObligationProtoWasm: (buffer: Uint8Array) => Promise<any>;
-    decodeGreenovaObligationWasm: (buffer: Uint8Array) => Promise<any>;
-    decodeProjectProtoWasm: (buffer: Uint8Array) => Promise<any>;
-    decodeChartDataProtoWasm: (buffer: Uint8Array) => Promise<any>;
-    GreenovaAnimation: any;
-  }
-}
-
-window.wasmModule = null;
-window.wasmReady = false;
+(window as any).wasmModule = null;
+(window as any).wasmReady = false;
 
 // WASM module loading and initialization
 async function loadWasmModule(): Promise<any> {
@@ -41,7 +15,7 @@ async function loadWasmModule(): Promise<any> {
     const wasmModule = await WebAssembly.instantiateStreaming(fetch(wasmPath));
     const exports = wasmModule.instance.exports;
 
-    window.wasmModule = {
+    (window as any).wasmModule = {
       // Theme management functions
       setTheme: exports.setTheme || (() => {}),
       getTheme: exports.getTheme || (() => 0),
@@ -65,16 +39,17 @@ async function loadWasmModule(): Promise<any> {
       __getString: exports.__getString,
       __newArray: exports.__newArray,
       __getArray: exports.__getArray,
+      Uint8Array_ID: exports.Uint8Array_ID,
     };
 
-    window.wasmReady = true;
+    (window as any).wasmReady = true;
     document.dispatchEvent(new CustomEvent("wasmReady"));
     console.log("WASM module loaded successfully with Protobuf3 support");
     return wasmModule;
   } catch (error) {
     console.warn("Failed to load WASM module, using fallback:", error);
-    window.wasmModule = createFallbackModule();
-    window.wasmReady = true;
+    (window as any).wasmModule = createFallbackModule();
+    (window as any).wasmReady = true;
     document.dispatchEvent(new CustomEvent("wasmReady"));
     return null;
   }
@@ -101,74 +76,48 @@ function createFallbackModule() {
   };
 }
 
-// Protobuf3 integration functions for TypeScript/JS
-window.decodeObligationProtoWasm = async function(buffer: Uint8Array): Promise<any> {
-  try {
-    // Decode using the generated JS protobuf module
-    const obligationCollection = ObligationsProto.decodeObligationCollection(buffer);
-
-    // Optionally pass to WASM for additional processing
-    if (window.wasmModule && window.wasmModule.decodeObligationProtoWasm) {
-      window.wasmModule.decodeObligationProtoWasm(buffer.byteOffset, buffer.length);
-    }
-
-    return obligationCollection;
-  } catch (error) {
-    console.error("Error decoding obligation proto:", error);
-    return { obligations: [], total_count: 0, error: String(error) };
+// WASM decode wrappers
+(window as any).decodeObligationProtoWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeObligationProtoWasm) {
+    throw new Error("WASM module not loaded");
   }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.decodeObligationProtoWasm(ptr, buffer.length);
+  return result;
 };
 
-window.decodeGreenovaObligationWasm = async function(buffer: Uint8Array): Promise<any> {
-  try {
-    const obligation = GreenovaDataProto.decodeObligation(buffer);
-
-    if (window.wasmModule && window.wasmModule.decodeGreenovaObligationWasm) {
-      window.wasmModule.decodeGreenovaObligationWasm(buffer.byteOffset, buffer.length);
-    }
-
-    return obligation;
-  } catch (error) {
-    console.error("Error decoding greenova obligation:", error);
-    return { id: 0, title: "", description: "", status: "", due_date: "", error: String(error) };
+(window as any).decodeGreenovaObligationWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeGreenovaObligationWasm) {
+    throw new Error("WASM module not loaded");
   }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.decodeGreenovaObligationWasm(ptr, buffer.length);
+  return result;
 };
 
-window.decodeProjectProtoWasm = async function(buffer: Uint8Array): Promise<any> {
-  try {
-    const project = ProjectsProto.decodeProjectProto(buffer);
-
-    if (window.wasmModule && window.wasmModule.decodeProjectProtoWasm) {
-      window.wasmModule.decodeProjectProtoWasm(buffer.byteOffset, buffer.length);
-    }
-
-    return project;
-  } catch (error) {
-    console.error("Error decoding project proto:", error);
-    return { id: "", name: "", description: "", error: String(error) };
+(window as any).decodeProjectProtoWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeProjectProtoWasm) {
+    throw new Error("WASM module not loaded");
   }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.decodeProjectProtoWasm(ptr, buffer.length);
+  return result;
 };
 
-window.decodeChartDataProtoWasm = async function(buffer: Uint8Array): Promise<any> {
-  try {
-    const chartData = ChartDataProto.decodeChartData(buffer);
-
-    if (window.wasmModule && window.wasmModule.decodeChartDataProtoWasm) {
-      window.wasmModule.decodeChartDataProtoWasm(buffer.byteOffset, buffer.length);
-    }
-
-    return chartData;
-  } catch (error) {
-    console.error("Error decoding chart data proto:", error);
-    return { charts: [], error: String(error) };
+(window as any).decodeChartDataProtoWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeChartDataProtoWasm) {
+    throw new Error("WASM module not loaded");
   }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.decodeChartDataProtoWasm(ptr, buffer.length);
+  return result;
 };
 
 function initializeTheme(): void {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  if (window.wasmModule) {
-    const currentTheme = window.wasmModule.getTheme();
-    const resolvedTheme = window.wasmModule.resolveTheme(prefersDark ? 1 : 0);
+  if ((window as any).wasmModule) {
+    const currentTheme = (window as any).wasmModule.getTheme();
+    const resolvedTheme = (window as any).wasmModule.resolveTheme(prefersDark ? 1 : 0);
     document.documentElement.classList.remove("theme-light", "theme-dark");
     document.documentElement.classList.add(resolvedTheme === 0 ? "theme-light" : "theme-dark");
   }
@@ -179,14 +128,14 @@ if (window.matchMedia) {
 }
 
 // Enhanced Animation utilities with Protobuf3 support
-window.GreenovaAnimation = {
+(window as any).GreenovaAnimation = {
   easeInOut: function(element: HTMLElement, duration = 300, callback?: () => void) {
     let start: number | null = null;
     const animate = (timestamp: number) => {
       if (!start) start = timestamp;
       const progress = Math.min((timestamp - start) / duration, 1);
-      const easedProgress = window.wasmModule ?
-        window.wasmModule.easeInOut(progress, 1.0) :
+      const easedProgress = (window as any).wasmModule ?
+        (window as any).wasmModule.easeInOut(progress, 1.0) :
         progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
 
       element.style.opacity = easedProgress.toString();
@@ -218,8 +167,8 @@ window.GreenovaAnimation = {
     const animate = (timestamp: number) => {
       if (!start) start = timestamp;
       const progress = Math.min((timestamp - start) / duration, 1);
-      const easedProgress = window.wasmModule ?
-        window.wasmModule.linearEasing(progress, 1.0) : progress;
+      const easedProgress = (window as any).wasmModule ?
+        (window as any).wasmModule.linearEasing(progress, 1.0) : progress;
 
       element.style.height = (height * easedProgress) + "px";
 
@@ -233,39 +182,6 @@ window.GreenovaAnimation = {
     requestAnimationFrame(animate);
   },
 };
-
-// Protobuf encode/decode utility functions using generated modules
-export function decodeMechanism(buffer: Uint8Array) {
-  return MechanismProto.decodeObligationInsight(buffer);
-}
-
-export function encodeMechanism(mechanism: any) {
-  return MechanismProto.encodeObligationInsight(mechanism);
-}
-
-export function decodeObligation(buffer: Uint8Array) {
-  return ObligationsProto.decodeObligationProto(buffer);
-}
-
-export function encodeObligation(obligation: any) {
-  return ObligationsProto.encodeObligationProto(obligation);
-}
-
-export function decodeProject(buffer: Uint8Array) {
-  return ProjectsProto.decodeProjectProto(buffer);
-}
-
-export function encodeProject(project: any) {
-  return ProjectsProto.encodeProjectProto(project);
-}
-
-export function decodeChartData(buffer: Uint8Array) {
-  return ChartDataProto.decodeChartData(buffer);
-}
-
-export function encodeChartData(chartData: any) {
-  return ChartDataProto.encodeChartData(chartData);
-}
 
 // Load WASM module immediately
 if (document.readyState === "loading") {
