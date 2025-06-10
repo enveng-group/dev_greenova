@@ -1,9 +1,4 @@
-{% if status == 'overdue' %}
-  <mark role="status" class="warning">Overdue</mark>
-{% elif status == 'upcoming' %}
-  <mark role="status" class="info">Upcoming</mark>
-{% elif status == 'completed' %}
-  <mark role="status" class="success">Completed</mark>
-{% else %}
-  <mark role="status">{{ status|default:"Not Started"|title }}</mark>
-{% endif %}
+{% comment %}
+Status badge component for obligations. Bootstrap 5, accessible, no logic in template.
+{% endcomment %}
+<span class="badge bg-{{ status|lower }}" aria-label="Status: {{ status }}">{{ status }}</span>

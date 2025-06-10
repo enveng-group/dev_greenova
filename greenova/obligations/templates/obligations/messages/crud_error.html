@@ -1,10 +1,12 @@
-<div class="alert error" role="alert">
-    <h4>Error</h4>
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Error</h4>
     <p>{{ message }}</p>
     {% if errors %}
-        <ul>
+        <ul class="mb-0">
             {% for field, field_errors in errors.items %}
-                <li>{{ field }}: {{ field_errors|join:", " }}</li>
+                <li>
+                    <strong>{{ field }}</strong>: {{ field_errors|join:", " }}
+                </li>
             {% endfor %}
         </ul>
     {% endif %}

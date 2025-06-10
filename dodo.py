@@ -11,6 +11,7 @@ License: AGPL-3.0
 import os
 import subprocess
 from pathlib import Path
+from typing import Any
 
 from beartype import beartype
 
@@ -55,7 +56,7 @@ def get_as_files() -> list[Path]:
 # =============================================================================
 
 
-def task_compile_proto_python():
+def task_compile_proto_python() -> dict[str, Any]:
     """Compile .proto files to Python *_pb2.py files."""
     proto_files = get_proto_files()
 
@@ -97,6 +98,38 @@ def task_compile_proto_as():
         "actions": [copy_protos],
         "file_dep": [str(f) for f in proto_files],
         "targets": [str(FRONTEND_AS_DIR / "proto" / f.name) for f in proto_files],
+        "clean": True,
+        "verbosity": 2,
+    }
+
+
+def task_generate_proto_as() -> dict[str, Any]:
+    """Generate AssemblyScript stubs from .proto files using as-proto-gen."""
+    proto_files = get_proto_files()
+
+    def generate_as_stubs() -> None:
+        """Generate AssemblyScript protobuf stubs."""
+        os.makedirs(FRONTEND_AS_DIR / "assembly" / "proto", exist_ok=True)
+        os.chdir(GREENOVA_ROOT)
+
+        for proto_file in proto_files:
+            cmd = [
+                "protoc",
+                f"--plugin=protoc-gen-as={WORKSPACE_ROOT}/node_modules/.bin/as-proto-gen",
+                f"--as_out={FRONTEND_AS_DIR}/assembly/proto",
+                f"protobuf/{proto_file.name}",
+            ]
+            subprocess.run(cmd, check=True)
+
+    target_files = [
+        str(FRONTEND_AS_DIR / "assembly" / "proto" / f"{f.stem}.ts")
+        for f in proto_files
+    ]
+
+    return {
+        "actions": [generate_as_stubs],
+        "file_dep": [str(f) for f in proto_files],
+        "targets": target_files,
         "clean": True,
         "verbosity": 2,
     }
@@ -158,7 +191,7 @@ def task_compile_wasm_debug():
         cmd = [
             "npx",
             "asc",
-            str(FRONTEND_AS_DIR / "assembly" / "index_simple.ts"),
+            str(FRONTEND_AS_DIR / "assembly" / "index.ts"),
             "--config",
             str(FRONTEND_AS_DIR / "asconfig.json"),
             "--outFile",
@@ -173,7 +206,7 @@ def task_compile_wasm_debug():
         "file_dep": [str(f) for f in as_files]
         + [str(FRONTEND_AS_DIR / "asconfig.json")],
         "targets": [str(FRONTEND_AS_DIR / "build" / "debug.wasm")],
-        "task_dep": ["copy_as_proto_runtime", "compile_proto_as"],
+        "task_dep": ["copy_as_proto_runtime", "generate_proto_as"],
         "clean": True,
         "verbosity": 2,
     }
@@ -244,7 +277,7 @@ def task_build_scss():
 
     return {
         "actions": [compile_scss],
-        "file_dep": [str(f) for f in scss_files] + ["postcss.config.js"],
+        "file_dep": [str(f) for f in scss_files] + [str(WORKSPACE_ROOT / ".postcssrc")],
         "targets": [str(FRONTEND_CSS_DIR / "main.css")],
         "clean": True,
         "verbosity": 2,
@@ -337,6 +370,7 @@ def task_build_all_dev():
         "task_dep": [
             "compile_proto_python",
             "compile_proto_as",
+            "generate_proto_as",
             "copy_as_proto_runtime",
             "compile_wasm_debug",
             "build_scss",
@@ -354,6 +388,7 @@ def task_build_all_prod():
         "task_dep": [
             "compile_proto_python",
             "compile_proto_as",
+            "generate_proto_as",
             "copy_as_proto_runtime",
             "compile_wasm_release",
             "build_scss",

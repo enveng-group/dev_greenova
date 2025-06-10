@@ -1,43 +1,35 @@
-{% extends "obligations/layouts/crud_base.html" %}
-{% load static obligation_tags %}
-{% block crud_title %}
-  Obligation Details
-{% endblock crud_title %}
-{% block breadcrumb_active %}Obligation Details{% endblock %}
-{% block form_title %}
-  Obligation: {{ obligation.obligation_number }}
-{% endblock form_title %}
-{% block form_heading %}Obligation Details{% endblock %}
-{% block form_content %}
-  <div class="obligation-details">
-    <div class="form-grid">
-      <fieldset>
-        <legend>Basic Information</legend>
-        <div class="mb-3"><strong>Obligation Number:</strong> {{ obligation.obligation_number }}</div>
-        <div class="mb-3"><strong>Environmental Aspect:</strong> {{ obligation.environmental_aspect|default:"Not specified" }}</div>
-        <div class="mb-3"><strong>Mechanism:</strong> {{ obligation.primary_environmental_mechanism.name|default:"Not specified" }}</div>
-        <div class="mb-3"><strong>Status:</strong> {{ obligation|display_status }}</div>
-      </fieldset>
-      <fieldset>
-        <legend>Obligation Details</legend>
-        <div class="mb-3"><strong>Description:</strong> {{ obligation.obligation|linebreaks|default:"No description provided" }}</div>
-        <div class="mb-3"><strong>Procedure:</strong> {{ obligation.procedure|default:"Not specified" }}</div>
-        <div class="mb-3"><strong>Responsibility:</strong> {{ obligation.responsibility|display_responsibility }}</div>
-      </fieldset>
-      <fieldset>
-        <legend>Timeline &amp; Dates</legend>
-        <div class="mb-3"><strong>Due Date:</strong> {{ obligation.action_due_date|format_due_date }}</div>
-        <div class="mb-3"><strong>Close Out Date:</strong> {{ obligation.close_out_date|format_due_date|default:"Not set" }}</div>
-        <div class="mb-3"><strong>Recurring Frequency:</strong> {{ obligation.recurring_frequency|default:"Not specified" }}</div>
-        <div class="mb-3"><strong>Next Forecasted Date:</strong> {{ obligation.recurring_forecasted_date|format_due_date|default:"Not calculated" }}</div>
-      </fieldset>
-      <fieldset>
-        <legend>Comments &amp; Additional Information</legend>
-        <div class="mb-3"><strong>General Comments:</strong> {{ obligation.general_comments|linebreaks|default:"No comments" }}</div>
-      </fieldset>
-    </div>
-    <div class="form-actions">
-      <!-- Add action buttons here if needed -->
-    </div>
-  </div>
-{% endblock form_content %}
+{% extends "core/base.html" %}
+
+{% block content %}
+    <main>
+        <h1 class="mb-4">Obligation Details</h1>
+        <dl class="row">
+            <dt class="col-sm-3">Obligation Number</dt>
+            <dd class="col-sm-9">
+                {{ obligation.obligation_number }}
+            </dd>
+            <dt class="col-sm-3">Title</dt>
+            <dd class="col-sm-9">
+                {{ obligation.title }}
+            </dd>
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">
+
+                {% include "obligations/components/_status_badge.html" with status=obligation.status %}
+
+            </dd>
+            <dt class="col-sm-3">Due Date</dt>
+            <dd class="col-sm-9">
+                {{ obligation.due_date }}
+            </dd>
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">
+                {{ obligation.description }}
+            </dd>
+            <!-- Add more fields as needed -->
+        </dl>
+        <a href="{% url 'obligation_update' obligation.obligation_number %}"
+           class="btn btn-primary">Edit</a>
+        <a href="{% url 'obligation_list' %}" class="btn btn-secondary">Back to List</a>
+    </main>
+{% endblock content %}

@@ -71,6 +71,7 @@
     "@typescript-eslint/eslint-plugin": "8.33.1",
     "@typescript-eslint/parser": "8.33.1",
     "as-proto": "1.3.0",
+    "as-proto-gen": "1.3.0",
     "assemblyscript": "0.28.2",
     "autoprefixer": "10.4.21",
     "critical": "7.2.1",

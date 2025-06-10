@@ -1,426 +1,323 @@
 {% load static %}
 {% load obligation_tags %}
+{% load render_table crispy_forms_tags %}
 
 <div id="obligations-container" class="obligations-container">
-  {% if error %}
-    <div class="error-container">
-      <p class="error">
-{{ error }}
-      </p>
-    </div>
-  {% else %}
-    {% if show_overdue_only %}
-      <!-- Special view for overdue obligations from profile page -->
-      <div class="profile-overdue-view">
-        <div class="heading-with-actions">
-          <h2>
-Overdue Obligations
-          </h2>
-          <a href="javascript:history.back()" class="button">Back to Profile</a>
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <p class="mb-0">{{ error }}</p>
         </div>
-
-        <div class="summary-cards">
-          <article class="card overdue">
-            <h3>
-Overdue
-            </h3>
-            <p class="count">
-{{ obligations|length }}
-            </p>
-          </article>
-        </div>
-
-        {% if obligations %}
-          <div class="horizontal-scroll">
-            <table role="grid">
-              <thead>
-                <tr>
-                  <th scope="col">
-Number
-                  </th>
-                  <th scope="col">
-Obligation
-                  </th>
-                  <th scope="col">
-Due Date
-                  </th>
-                  <th scope="col">
-Status
-                  </th>
-                  <th scope="col">
-Mechanism
-                  </th>
-                  <th scope="col">
-Phase
-                  </th>
-                  <th scope="col">
-Responsibility
-                  </th>
-                  <th scope="col">
-Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for obligation in obligations %}
-                  <tr>
-                    <td>
-                      <a href="#obligationDetailModal"
-                         class="obligation-link"
-                         data-obligation-number="{{ obligation.obligation_number }}"
-                         role="button"
-                         aria-label="View details for {{ obligation.obligation_number }}"
-                         _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
-                        {{ obligation.obligation_number }}
-                      </a>
-                    </td>
-                    <td>
-{{ obligation.obligation|truncatechars:50 }}
-                    </td>
-                    <td>
-{{ obligation.action_due_date|format_due_date }}
-                    </td>
-                    <td>
-{{ obligation|display_status }}
-                    </td>
-                    <td>
-{{ obligation.primary_environmental_mechanism.name|default:"-" }}
-                    </td>
-                    <td>
-{{ obligation.project_phase|default:"-" }}
-                    </td>
-                    <td>
-{{ obligation.responsibility|default:"-" }}
-                    </td>
-                    <td class="actions-column">
-                      <div class="action-buttons">
-                        <button type="button"
-                                class="action-btn view"
-                                data-obligation-number="{{ obligation.obligation_number }}"
-                                aria-label="View obligation details"
-                                _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
-                          View
-                        </button>
-                        {% if user_can_edit %}
-                          <a href="{% url 'obligations:update' obligation.obligation_number %}"
-                             class="action-btn edit"
-                             aria-label="Edit obligation">Edit</a>
-                        {% endif %}
-                      </div>
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <p>
-No overdue obligations found. Excellent job staying on top of your tasks!
-          </p>
-        {% endif %}
-      </div>
     {% else %}
-      <!-- Standard mechanism-based obligations view -->
-      <!-- Summary Statistics -->
-      <div class="summary-cards">
-        <article class="card not-started">
-          <h3>
-Not Started
-          </h3>
-          <p class="count">
-{{ project.not_started_count|default:"0" }}
-          </p>
-        </article>
-        <article class="card in-progress">
-          <h3>
-In Progress
-          </h3>
-          <p class="count">
-{{ project.in_progress_count|default:"0" }}
-          </p>
-        </article>
-        <article class="card completed">
-          <h3>
-Completed
-          </h3>
-          <p class="count">
-{{ project.completed_count|default:"0" }}
-          </p>
-        </article>
-        <article class="card overdue">
-          <h3>
-Overdue
-          </h3>
-          <p class="count">
-{{ project.overdue_count|default:"0" }}
-          </p>
-        </article>
-      </div>
-
-      <!-- Filter Controls -->
-      <div id="obligation-controls" class="obligation-controls">
-        <h3>
-Obligations for {{ project.name }}
-        </h3>
-
-        <div class="quick-filters">
-          <p>
-Quick Filters:
-          </p>
-          <div class="button-group">
-            <button type="button"
-                    class="quick-filter-btn"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-vals='{"status": "not started", "mechanism_id": "{{ mechanism_id }}"}'>
-Not Started
-            </button>
-            <button type="button"
-                    class="quick-filter-btn"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-vals='{"status": "in progress", "mechanism_id": "{{ mechanism_id }}"}'>
-In Progress
-            </button>
-            <button type="button"
-                    class="quick-filter-btn"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-vals='{"status": "completed", "mechanism_id": "{{ mechanism_id }}"}'>
-Completed
-            </button>
-            <button type="button"
-                    class="quick-filter-btn"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-vals='{"status": "overdue", "mechanism_id": "{{ mechanism_id }}"}'>
-Overdue
-            </button>
-            <button type="button"
-                    class="quick-filter-btn"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-vals='{"date_filter": "14days", "mechanism_id": "{{ mechanism_id }}"}'>
-14-day Lookahead
-            </button>
-            <button type="button"
-                    class="btn-secondary"
-                    hx-get="/obligations/summary/"
-                    hx-target="#obligations-container"
-                    hx-vals='{"mechanism_id": "{{ mechanism_id }}"}'>
-Reset Filters
-            </button>
-          </div>
-        </div>
-
-        <div class="filter-container">
-          <div class="search-control">
-            <label for="search-input">
-Search:
-            </label>
-            <input type="search"
-                   id="search-input"
-                   name="search"
-                   value="{{ filters.search|default:'' }}"
-                   hx-get="/obligations/summary/"
-                   hx-target="#obligations-container"
-                   hx-trigger="input changed delay:500ms"
-                   hx-include="[name='status'], [name='phase']"
-                   hx-push-url="true" />
-          </div>
-
-          <div class="filter-controls">
-            <div class="filter-group">
-              <label for="status-filter">
-Status:
-              </label>
-              <select id="status-filter"
-                      name="status"
-                      multiple
-                      hx-get="/obligations/summary/"
-                      hx-target="#obligations-container"
-                      hx-trigger="change"
-                      hx-include="[name='search'], [name='phase']"
-                      hx-push-url="true">
-                <option value="not started"
-                        {% if 'not started' in filters.status %}
-                          selected
-                        {% endif %}>
-Not Started
-                </option>
-                <option value="in progress"
-                        {% if 'in progress' in filters.status %}
-                          selected
-                        {% endif %}>
-In Progress
-                </option>
-                <option value="completed"
-                        {% if 'completed' in filters.status %}
-                          selected
-                        {% endif %}>
-Completed
-                </option>
-                <option value="overdue"
-                        {% if 'overdue' in filters.status %}
-                          selected
-                        {% endif %}>
-Overdue
-                </option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label for="phase-filter">
-Phase:
-              </label>
-              <select id="phase-filter"
-                      name="phase"
-                      multiple
-                      hx-get="/obligations/summary/"
-                      hx-target="#obligations-container"
-                      hx-trigger="change"
-                      hx-include="[name='search'], [name='status']"
-                      hx-push-url="true">
-                {% for phase in phases %}
-                  <option value="{{ phase }}"
-                          {% if phase in filters.phase %}
-                            selected
-                          {% endif %}>
-{{ phase }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="obligation-list-container">
-        {% if total_count %}
-          <div class="results-summary">
-            <p>
-Showing {{ obligations|length }} of {{ total_count }} obligations
-            </p>
-          </div>
-        {% endif %}
-
-        <div class="horizontal-scroll">
-          <table role="grid">
-            <thead>
-              <tr>
-                <th scope="col">
-Number
-                </th>
-                <th scope="col">
-Obligation
-                </th>
-                <th scope="col">
-Due Date
-                </th>
-                <th scope="col">
-Status
-                </th>
-                <th scope="col">
-Mechanism
-                </th>
-                <th scope="col">
-Phase
-                </th>
-                <th scope="col">
-Recurring
-                </th>
-                <th scope="col">
-Responsibility
-                </th>
-                <th scope="col">
-Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for obligation in obligations %}
-                <tr>
-                  <td>
-                    <a href="#obligationDetailModal"
-                       class="obligation-link"
-                       data-obligation-number="{{ obligation.obligation_number }}"
-                       role="button"
-                       aria-label="View details for {{ obligation.obligation_number }}"
-                       _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
-                      {{ obligation.obligation_number }}
-                    </a>
-                  </td>
-                  <td>
-{{ obligation.obligation|truncatechars:50 }}
-                  </td>
-                  <td>
-{{ obligation.action_due_date|format_due_date }}
-                  </td>
-                  <td>
-{{ obligation|display_status }}
-                  </td>
-                  <td>
-{{ obligation.primary_environmental_mechanism.name|default:"-" }}
-                  </td>
-                  <td>
-{{ obligation.project_phase|default:"-" }}
-                  </td>
-                  <td>
-                    {% if obligation.recurring_obligation %}
-Yes
-                    {% else %}
-No
-                    {% endif %}
-                  </td>
-                  <td>
-{{ obligation.responsibility|default:"-" }}
-                  </td>
-                  <td class="actions-column">
-                    <div class="action-buttons">
-                      <button type="button"
-                              class="action-btn view"
-                              data-obligation-number="{{ obligation.obligation_number }}"
-                              aria-label="View obligation details"
-                              _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
-                        View
-                      </button>
-                      {% if user_can_edit %}
-                        <a href="{% url 'obligations:update' obligation.obligation_number %}"
-                           class="action-btn edit"
-                           aria-label="Edit obligation">Edit</a>
-                      {% endif %}
+        {% if show_overdue_only %}
+            <!-- Special view for overdue obligations from profile page -->
+            <div class="profile-overdue-view">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h4 mb-0">Overdue Obligations</h2>
+                    <a href="#"
+                       class="btn btn-outline-secondary btn-sm"
+                       _="on click go back">Back to Profile</a>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col">
+                        <div class="card border-danger text-danger">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Overdue</h3>
+                                <p class="display-6">{{ obligations|length }}</p>
+                            </div>
+                        </div>
                     </div>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        {% if page_obj.has_other_pages %}
-          <nav class="pagination" aria-label="Obligations pagination">
-            <ul>
-              {% if page_obj.has_previous %}
-                <li>
-                  <a href="?page={{ page_obj.previous_page_number }}" rel="prev">Previous</a>
-                </li>
-              {% endif %}
-              <li>
-                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-              </li>
-              {% if page_obj.has_next %}
-                <li>
-                  <a href="?page={{ page_obj.next_page_number }}" rel="next">Next</a>
-                </li>
-              {% endif %}
-            </ul>
-          </nav>
+                </div>
+                {% if obligations %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle" role="grid">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Number</th>
+                                    <th scope="col">Obligation</th>
+                                    <th scope="col">Due Date</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Mechanism</th>
+                                    <th scope="col">Phase</th>
+                                    <th scope="col">Responsibility</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for obligation in obligations %}
+                                    <tr>
+                                        <td>
+                                            <a href="#obligationDetailModal"
+                                               class="obligation-link"
+                                               data-obligation-number="{{ obligation.obligation_number }}"
+                                               role="button"
+                                               aria-label="View details for {{ obligation.obligation_number }}"
+                                               _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
+                                            {{ obligation.obligation_number }}
+                                        </a>
+                                    </td>
+                                    <td>{{ obligation.obligation|truncatechars:50 }}</td>
+                                    <td>{{ obligation.action_due_date|format_due_date }}</td>
+                                    <td>{{ obligation|display_status }}</td>
+                                    <td>{{ obligation.primary_environmental_mechanism.name|default:"-" }}</td>
+                                    <td>{{ obligation.project_phase|default:"-" }}</td>
+                                    <td>{{ obligation.responsibility|default:"-" }}</td>
+                                    <td class="actions-column">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button"
+                                                    class="btn btn-outline-primary"
+                                                    data-obligation-number="{{ obligation.obligation_number }}"
+                                                    aria-label="View obligation details"
+                                                    _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
+                                            View
+                                        </button>
+                                        {% if user_can_edit %}
+                                            <a href="{% url 'obligations:update' obligation.obligation_number %}"
+                                               class="btn btn-outline-secondary"
+                                               aria-label="Edit obligation">Edit</a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-success">
+                No overdue obligations found. Excellent job staying on top of your tasks!
+            </p>
         {% endif %}
-      </div>
+    </div>
+{% else %}
+    <!-- Summary Statistics -->
+    <div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
+        <div class="col">
+            <div class="card border-secondary text-secondary h-100">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Not Started</h3>
+                    <p class="display-6">{{ project.not_started_count|default:"0" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-info text-info h-100">
+                <div class="card-body text-center">
+                    <h3 class="card-title">In Progress</h3>
+                    <p class="display-6">{{ project.in_progress_count|default:"0" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-success text-success h-100">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Completed</h3>
+                    <p class="display-6">{{ project.completed_count|default:"0" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card border-danger text-danger h-100">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Overdue</h3>
+                    <p class="display-6">{{ project.overdue_count|default:"0" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Filter Controls -->
+    <div id="obligation-controls" class="mb-4">
+        <h3 class="h5 mb-3">Obligations for {{ project.name }}</h3>
+        <form class="row g-2 align-items-end mb-3" method="get">
+            <div class="col-auto">
+                <label for="search-input" class="form-label">Search:</label>
+                <input type="search"
+                       id="search-input"
+                       name="search"
+                       value="{{ filters.search|default:'' }}"
+                       class="form-control" />
+            </div>
+            <div class="col-auto">
+                <label for="status-filter" class="form-label">Status:</label>
+                <select id="status-filter" name="status" class="form-select" multiple>
+                    <option value="not started"
+                            {% if 'not started' in filters.status %}selected{% endif %}>Not Started</option>
+                    <option value="in progress"
+                            {% if 'in progress' in filters.status %}selected{% endif %}>In Progress</option>
+                    <option value="completed"
+                            {% if 'completed' in filters.status %}selected{% endif %}>Completed</option>
+                    <option value="overdue"
+                            {% if 'overdue' in filters.status %}selected{% endif %}>Overdue</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <label for="phase-filter" class="form-label">Phase:</label>
+                <select id="phase-filter" name="phase" class="form-select" multiple>
+                    {% for phase in phases %}
+                        <option value="{{ phase }}"
+                                {% if phase in filters.phase %}selected{% endif %}>{{ phase }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-primary">Filter</button>
+            </div>
+        </form>
+        <div class="mb-3">
+            <div class="btn-group" role="group" aria-label="Quick Filters">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        hx-get="/obligations/summary/"
+                        hx-target="#obligations-container"
+                        hx-vals='{"status": "not started", "mechanism_id": "{{ mechanism_id }}"}'>
+                    Not Started
+                </button>
+                <button type="button"
+                        class="btn btn-outline-info"
+                        hx-get="/obligations/summary/"
+                        hx-target="#obligations-container"
+                        hx-vals='{"status": "in progress", "mechanism_id": "{{ mechanism_id }}"}'>
+                    In Progress
+                </button>
+                <button type="button"
+                        class="btn btn-outline-success"
+                        hx-get="/obligations/summary/"
+                        hx-target="#obligations-container"
+                        hx-vals='{"status": "completed", "mechanism_id": "{{ mechanism_id }}"}'>
+                    Completed
+                </button>
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        hx-get="/obligations/summary/"
+                        hx-target="#obligations-container"
+                        hx-vals='{"status": "overdue", "mechanism_id": "{{ mechanism_id }}"}'>
+                    Overdue
+                </button>
+                <button type="button"
+                        class="btn btn-outline-dark"
+                        hx-get="/obligations/summary/"
+                        hx-target="#obligations-container"
+                        hx-vals='{"date_filter": "14days", "mechanism_id": "{{ mechanism_id }}"}'>
+                    14-day Lookahead
+                </button>
+                <button type="button"
+                        class="btn btn-secondary"
+                        hx-get="/obligations/summary/"
+                        hx-target="#obligations-container"
+                        hx-vals='{"mechanism_id": "{{ mechanism_id }}"}'>
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="obligation-list-container">
+        {% if total_count %}
+            <div class="alert alert-info py-2 mb-2">
+                Showing {{ obligations|length }} of {{ total_count }} obligations
+            </div>
+        {% endif %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle" role="grid">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Number</th>
+                        <th scope="col">Obligation</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Mechanism</th>
+                        <th scope="col">Phase</th>
+                        <th scope="col">Recurring</th>
+                        <th scope="col">Responsibility</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obligation in obligations %}
+                        <tr>
+                            <td>
+                                <a href="#obligationDetailModal"
+                                   class="obligation-link"
+                                   data-obligation-number="{{ obligation.obligation_number }}"
+                                   role="button"
+                                   aria-label="View details for {{ obligation.obligation_number }}"
+                                   _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">{{ obligation.obligation_number }}</a>
+                            </td>
+                            <td>{{ obligation.obligation|truncatechars:50 }}</td>
+                            <td>{{ obligation.action_due_date|format_due_date }}</td>
+                            <td>{{ obligation|display_status }}</td>
+                            <td>{{ obligation.primary_environmental_mechanism.name|default:"-" }}</td>
+                            <td>{{ obligation.project_phase|default:"-" }}</td>
+                            <td>
+                                {% if obligation.recurring_obligation %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                            <td>{{ obligation.responsibility|default:"-" }}</td>
+                            <td class="actions-column">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button"
+                                            class="btn btn-outline-primary"
+                                            data-obligation-number="{{ obligation.obligation_number }}"
+                                            aria-label="View obligation details"
+                                            _="on click add .show to #obligationDetailModal then add style 'display:block;' to #obligationDetailModal then add .modal-backdrop to <body/> then halt">
+                                    View
+                                </button>
+                                {% if user_can_edit %}
+                                    <a href="{% url 'obligations:update' obligation.obligation_number %}"
+                                       class="btn btn-outline-secondary"
+                                       aria-label="Edit obligation">Edit</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if page_obj.has_other_pages %}
+        <nav class="pagination" aria-label="Obligations pagination">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.previous_page_number }}"
+                           rel="prev">Previous</a>
+                    </li>
+                {% endif %}
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ page_obj.next_page_number }}"
+                           rel="next">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     {% endif %}
-  {% endif %}
 </div>
-
+{% endif %}
+{% endif %}
+</div>
 <!-- Include the obligation detail modal -->
+
 {% include "obligations/components/_obligation_detail_modal.html" %}
+
+{% if obligations %}
+    <section aria-labelledby="summary-title-enhanced">
+        <h2 id="summary-title-enhanced">Obligations Summary (Enhanced)</h2>
+        <ul class="list-group mb-3">
+            {% for summary in obligations %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ summary.title }}
+                    <span class="badge bg-info">{{ summary.count }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% else %}
+    <p>No summary available.</p>
+{% endif %}

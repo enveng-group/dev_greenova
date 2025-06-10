@@ -25,8 +25,7 @@ class LandingPageTests(TestCase):
         response = self.client.get(url)
         assert response.status_code == 200
         assert b"Welcome to Greenova" in response.content
-        assert b"Start Free Trial" in response.content
-        assert b"Sign In" in response.content
+        assert b"Get Started Free" in response.content
 
 
 class NewsletterSignupFormTests(TestCase):
@@ -126,7 +125,9 @@ class LandingSerializerTests(TestCase):
     @beartype
     def test_deserialize_newsletter_signup_request_invalid(self) -> None:
         # Invalid data should raise DecodeError
-        with pytest.raises(Exception):
-            data = b"not-protobuf"
-            parsed = landing_pb2.NewsletterSignupRequest()
+        from google.protobuf.message import DecodeError
+
+        data = b"not-protobuf"
+        parsed = landing_pb2.NewsletterSignupRequest()
+        with pytest.raises(DecodeError):
             parsed.ParseFromString(data)

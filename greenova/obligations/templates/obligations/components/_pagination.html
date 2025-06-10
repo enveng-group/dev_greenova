@@ -1,42 +1,42 @@
-<!-- Pagination Controls -->
-<nav class="pagination" aria-label="Obligations pagination">
-  <ul class="pagination-list">
-    {% if page_obj.has_previous %}
-      <li>
-        <a href="#"
-           role="button"
-           hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&page={{ page_obj.previous_page_number }}"
-           hx-target=".obligations-section"
-           hx-swap="outerHTML"
-           rel="prev"
-           aria-label="Previous page"
-           data-loading-disable
-           data-loading-aria-busy
-           hx-indicator=".loading-spinner">
-          <span class="loading-spinner" style="display: none;"></span>
-          Previous
-        </a>
-      </li>
-    {% endif %}
-    <li>
-      <span class="pagination-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-    </li>
-    {% if page_obj.has_next %}
-      <li>
-        <a href="#"
-           role="button"
-           hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&page={{ page_obj.next_page_number }}"
-           hx-target=".obligations-section"
-           hx-swap="outerHTML"
-           rel="next"
-           aria-label="Next page"
-           data-loading-disable
-           data-loading-aria-busy
-           hx-indicator=".loading-spinner">
-          <span class="loading-spinner" style="display: none;"></span>
-          Next
-        </a>
-      </li>
-    {% endif %}
-  </ul>
-</nav>
+{% comment %}
+Pagination component for obligations tables. Bootstrap 5, accessible, no logic in template.
+{% endcomment %}
+{% if page_obj.has_other_pages %}
+    <nav aria-label="Obligations pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}"
+                       aria-label="Previous">«</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">«</span>
+                </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}"
+                       aria-label="Next">»</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">»</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

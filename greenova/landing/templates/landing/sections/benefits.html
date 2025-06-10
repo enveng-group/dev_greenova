@@ -1,3 +1,5 @@
+{% load django_bootstrap5 %}
+{% load static %}
 {% load hyperscript %}
 <section class="py-5 bg-white" aria-labelledby="benefits-heading">
   <div class="container">
@@ -11,7 +13,7 @@
           <div class="card-body">
             <div class="row align-items-center mb-4" _="on intersect if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .animate-fade-in to me then remove @intersect from me">
               <div class="col-md-2 d-none d-md-block">
-                <img src="/static/core/img/illustrations/streamlined-workflow.svg" alt="Streamlined Workflow illustration" class="img-fluid" loading="lazy" />
+                <img src="{% static 'core/img/illustrations/streamlined-workflow.svg' %}" alt="Streamlined Workflow illustration" class="img-fluid" loading="lazy" />
               </div>
               <div class="col-md-8">
                 <h3 class="h5 fw-semibold mb-2">Streamlined Workflow</h3>
@@ -34,7 +36,7 @@
           <div class="card-body">
             <div class="row align-items-center mb-4 flex-md-row-reverse" _="on intersect if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .animate-fade-in to me then remove @intersect from me">
               <div class="col-md-2 d-none d-md-block">
-                <img src="/static/core/img/illustrations/risk-reduction.svg" alt="Risk Reduction illustration" class="img-fluid" loading="lazy" />
+                <img src="{% static 'core/img/illustrations/risk-reduction.svg' %}" alt="Risk Reduction illustration" class="img-fluid" loading="lazy" />
               </div>
               <div class="col-md-8">
                 <h3 class="h5 fw-semibold mb-2">Risk Reduction</h3>

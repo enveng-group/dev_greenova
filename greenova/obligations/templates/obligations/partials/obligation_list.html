@@ -1,26 +1,10 @@
-{% if error %}
-  <div class="notice error" role="alert">
-    <p>
-{{ error }}
-    </p>
-  </div>
-{% else %}
-  {% for obligation in obligations %}
-    <div class="obligation-item">
-      <strong>{{ obligation.obligation_number }}</strong>
-      <div>
-{{ obligation.obligation|truncatechars:50 }}
-      </div>
-      <div>
-Due: {{ obligation.action_due_date|date:"M d, Y" }}
-      </div>
-      <div>
-Status: {{ obligation.status }}
-      </div>
-    </div>
-  {% empty %}
-    <p>
-No obligations match this filter.
-    </p>
-  {% endfor %}
-{% endif %}
+{% extends "core/base.html" %}
+
+{% block content %}
+    <main>
+        <h1 class="mb-4">Obligations</h1>
+
+        {% include "obligations/obligation_list.html" %}
+
+    </main>
+{% endblock content %}

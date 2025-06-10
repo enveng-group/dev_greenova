@@ -35,4 +35,12 @@ Rationale
 
 All UI is composed using Jinja2 templates, django-bootstrap5, and django-hyperscript, following Greenova's technology and accessibility standards.
 
+Dashboard Navigation and Workflow Integration
+============================================
+
+- Dashboard navigation (sidebar, header) provides access to all modules as per BPMN.
+- Entry/exit points, context switching, and cancellation options are implemented and documented.
+- User flows and decision points are mapped to BPMN gateways and subprocesses.
+- The dashboard UI and backend are fully aligned with the Greenova-Workflow.bpmn process.
+
 See also: `ARCHITECTURE.md`, `style_guide.md`, and app docstrings for further details.

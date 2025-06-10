@@ -1,0 +1,327 @@
+Name                                                                           Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------------------------------------------
+__init__.py                                                                        0      0   100%
+auditing/__init__.py                                                               0      0   100%
+auditing/admin.py                                                                 44     44     0%   1-87
+auditing/apps.py                                                                   8      8     0%   1-12
+auditing/commons.py                                                               19     19     0%   8-41
+auditing/constants.py                                                             10      0   100%
+auditing/forms.py                                                                 47     47     0%   19-164
+auditing/management/__init__.py                                                    0      0   100%
+auditing/management/commands/__init__.py                                           0      0   100%
+auditing/management/commands/cleanup_audit_logs.py                                 9      9     0%   1-12
+auditing/models.py                                                                81     53    35%   34, 50-56, 98, 108-300
+auditing/permissions.py                                                            6      6     0%   10-28
+auditing/proto_utils.py                                                           67     67     0%   6-97
+auditing/serializers.py                                                           77     77     0%   6-114
+auditing/signals.py                                                               25     25     0%   10-51
+auditing/tasks.py                                                                 13     13     0%   6-24
+auditing/test_auditing.py                                                         19     16    16%   7-34
+auditing/types.py                                                                 86     86     0%   17-275
+auditing/validators.py                                                             5      3    40%   19-21
+auditing/views.py                                                                 63     63     0%   19-139
+chatbot/__init__.py                                                                0      0   100%
+chatbot/apps.py                                                                    4      4     0%   1-6
+chatbot/chatbot_pb2.py                                                            17     17     0%   5-28
+chatbot/commons.py                                                                 8      8     0%   8-36
+chatbot/constants.py                                                              11     11     0%   12-32
+chatbot/forms.py                                                                  27     27     0%   18-88
+chatbot/management/__init__.py                                                     0      0   100%
+chatbot/management/commands/__init__.py                                            0      0   100%
+chatbot/management/commands/process_pending_messages.py                            9      9     0%   1-12
+chatbot/models.py                                                                 70     70     0%   19-213
+chatbot/permissions.py                                                             3      3     0%   1-5
+chatbot/proto_utils.py                                                           113    113     0%   20-264
+chatbot/serializers.py                                                            76     76     0%   18-188
+chatbot/services.py                                                               69     69     0%   1-146
+chatbot/tasks.py                                                                  17     17     0%   6-29
+chatbot/templatetags/__init__.py                                                   0      0   100%
+chatbot/templatetags/chatbot_tags.py                                               6      6     0%   1-11
+chatbot/test_chatbot.py                                                           11      4    64%   8-9, 13-14
+chatbot/types.py                                                                  37     37     0%   16-121
+chatbot/urls.py                                                                    4      4     0%   1-7
+chatbot/views.py                                                                 123    123     0%   19-316
+company/__init__.py                                                                0      0   100%
+company/admin.py                                                                  30     30     0%   11-133
+company/apps.py                                                                    7      7     0%   1-11
+company/commons.py                                                                 8      8     0%   8-24
+company/company_pb2.py                                                            23     23     0%   5-34
+company/constants.py                                                              14      0   100%
+company/context_processors.py                                                     19     19     0%   10-56
+company/forms.py                                                                  54     54     0%   19-244
+company/management/__init__.py                                                     1      0   100%
+company/management/commands/__init__.py                                            1      0   100%
+company/management/commands/check_and_create_company_users_table.py               13     13     0%   21-71
+company/management/commands/ensure_default_company.py                             11     11     0%   1-28
+company/middleware.py                                                             22     22     0%   21-76
+company/mixins.py                                                                 19     19     0%   21-61
+company/models.py                                                                121     64    47%   47-50, 134, 153, 165, 175-193, 206, 220-226, 241-369
+company/permissions.py                                                             9      9     0%   10-43
+company/proto_utils.py                                                            66     66     0%   19-185
+company/serializers.py                                                            76     76     0%   18-188
+company/signals.py                                                                17     17     0%   10-35
+company/tasks.py                                                                  35     35     0%   19-140
+company/templatetags/__init__.py                                                   0      0   100%
+company/templatetags/company_tags.py                                              61     61     0%   1-164
+company/test_company.py                                                           10      8    20%   6-18
+company/types.py                                                                  45     45     0%   17-133
+company/urls.py                                                                    4      4     0%   1-7
+company/validators.py                                                             11      7    36%   21-24, 37-39
+company/views.py                                                                 337    337     0%   10-721
+core/__init__.py                                                                   0      0   100%
+core/admin.py                                                                     31      0   100%
+core/apps.py                                                                       5      0   100%
+core/audit_utils.py                                                               13      1    92%   73
+core/charts.py                                                                     2      2     0%   10-12
+core/constants.py                                                                 19      0   100%
+core/context_processors.py                                                        14      2    86%   38-41
+core/filters.py                                                                    6      0   100%
+core/forms.py                                                                     38      0   100%
+core/frequency.py                                                                 15     12    20%   21-32
+core/gn_types.py                                                                 111    111     0%   9-221
+core/middleware.py                                                                15      1    93%   19
+core/migrations/0001_initial.py                                                   10      0   100%
+core/migrations/__init__.py                                                        0      0   100%
+core/mixins.py                                                                    47     22    53%   27-31, 39-43, 49, 64-68, 76-85
+core/models.py                                                                    56      1    98%   32
+core/permissions.py                                                               12      3    75%   27, 42, 57
+core/serializers.py                                                              167     85    49%   41-44, 65-68, 84-98, 111-118, 128-131, 150-153, 169-185, 195-200, 214, 234-240, 257-263, 276-277, 300-301, 331-332, 352-356, 370, 401
+core/signals.py                                                                   26     26     0%   9-83
+core/tables.py                                                                     7      0   100%
+core/tests/__init__.py                                                             0      0   100%
+core/tests/test_api.py                                                            54      2    96%   58-59
+core/tests/test_forms.py                                                          65      0   100%
+core/tests/test_models.py                                                         82      0   100%
+core/tests/test_serializers.py                                                    53      4    92%   40-41, 51-52
+core/tests/test_signin.py                                                         20      0   100%
+core/tests/test_views.py                                                          55      0   100%
+core/tests_legacy.py                                                               0      0   100%
+core/types.py                                                                     15      0   100%
+core/urls.py                                                                       4      0   100%
+core/utils/__init__.py                                                             4      0   100%
+core/utils/audit_helpers.py                                                       11     11     0%   12-64
+core/utils/base.py                                                                57     27    53%   55, 69, 83-85, 99-101, 115-117, 135-147, 162, 176-177, 191
+core/utils/date_utils.py                                                          11     11     0%   9-56
+core/utils/obligations.py                                                          6      2    67%   19-21
+core/utils/roles.py                                                               41      8    80%   89, 94, 135-136, 149, 163-167
+core/utils/string_utils.py                                                        12     12     0%   9-44
+core/views.py                                                                    100     29    71%   42, 48-49, 56-66, 99-100, 110-123, 152-154
+dashboard/__init__.py                                                              0      0   100%
+dashboard/api/protobuf_api.py                                                     20      8    60%   22-30
+dashboard/apps.py                                                                  6      0   100%
+dashboard/forms.py                                                                26      4    85%   80-83
+dashboard/migrations/0001_initial.py                                               7      0   100%
+dashboard/migrations/__init__.py                                                   0      0   100%
+dashboard/models.py                                                              122     69    43%   16, 34, 40-50, 55-61, 77, 81-90, 95-101, 118, 122-133, 138-144, 162, 166-174, 179
+dashboard/serializers.py                                                           0      0   100%
+dashboard/tests.py                                                               105     72    31%   13, 15, 18, 25, 41, 43, 48-49, 54-59, 62-64, 67-69, 72-74, 77-79, 85-86, 91, 97-170
+dashboard/urls.py                                                                  4      0   100%
+dashboard/utils.py                                                                28     16    43%   34-49, 67-70, 88-95, 107-109
+dashboard/views.py                                                               149     73    51%   88-90, 119-126, 138, 150-157, 169-178, 190-199, 211-214, 230-264, 281-287
+feedback/__init__.py                                                               0      0   100%
+feedback/admin.py                                                                 38     38     0%   1-194
+feedback/apps.py                                                                   4      4     0%   1-6
+feedback/constants.py                                                             16      0   100%
+feedback/feedback_pb2.py                                                          21     21     0%   5-32
+feedback/forms.py                                                                 29     29     0%   1-174
+feedback/management/__init__.py                                                    0      0   100%
+feedback/management/commands/__init__.py                                           0      0   100%
+feedback/management/commands/process_feedback_queue.py                             9      9     0%   1-12
+feedback/models.py                                                                49      3    94%   12-13, 148
+feedback/proto_utils.py                                                           91     91     0%   11-188
+feedback/serializers.py                                                           58     58     0%   6-93
+feedback/tasks.py                                                                 14     14     0%   6-26
+feedback/templatetags/__init__.py                                                  0      0   100%
+feedback/templatetags/feedback_tags.py                                            25     25     0%   9-98
+feedback/test_feedback.py                                                         17     15    12%   6-41
+feedback/urls.py                                                                   4      4     0%   1-7
+feedback/views.py                                                                118    118     0%   1-269
+greenova/__init__.py                                                               0      0   100%
+greenova/asgi.py                                                                   4      4     0%   9-15
+greenova/settings.py                                                              33      0   100%
+greenova/urls.py                                                                   6      1    83%   39
+greenova/wsgi.py                                                                   4      4     0%   9-15
+landing/__init__.py                                                                0      0   100%
+landing/apps.py                                                                    4      0   100%
+landing/forms.py                                                                  10      3    70%   42-44
+landing/landing_pb2.py                                                            23      0   100%
+landing/serializers.py                                                            99     65    34%   43-48, 62-69, 84-87, 101-111, 141-164, 181-204, 220-222, 237-238, 249-290
+landing/tests.py                                                                  89     86     3%   13-132
+landing/urls.py                                                                    4      0   100%
+landing/views.py                                                                  46     26    43%   37-81, 100-125, 137-138
+manage.py                                                                         12      3    75%   23-29
+mechanisms/__init__.py                                                             0      0   100%
+mechanisms/admin.py                                                               47     14    70%   87-88, 102, 126-130, 144, 159, 173-179
+mechanisms/apps.py                                                                 9      0   100%
+mechanisms/figures.py                                                             64     64     0%   10-202
+mechanisms/forms.py                                                               26      8    69%   43, 60-62, 78, 88-90, 100
+mechanisms/management/__init__.py                                                  0      0   100%
+mechanisms/management/commands/__init__.py                                         0      0   100%
+mechanisms/management/commands/run_mechanism_checks.py                             9      9     0%   1-12
+mechanisms/mechanism_pb2.py                                                       26     26     0%   5-40
+mechanisms/middleware.py                                                          54     54     0%   9-151
+mechanisms/models.py                                                              66     32    52%   105, 115, 124-148, 157, 166-168, 180-201
+mechanisms/plotlyapp.py                                                           47     47     0%   10-286
+mechanisms/tasks.py                                                               17     17     0%   7-42
+mechanisms/templatetags/__init__.py                                                0      0   100%
+mechanisms/templatetags/mechanism_tags.py                                         57     29    49%   36, 51-61, 76-79, 94-102, 117-119, 134-136, 151-159
+mechanisms/test.py                                                                17     15    12%   4-24
+mechanisms/urls.py                                                                 6      6     0%   1-12
+mechanisms/views.py                                                              133    133     0%   10-302
+navigation/__init__.py                                                             0      0   100%
+navigation/apps.py                                                                 4      0   100%
+navigation/forms.py                                                                0      0   100%
+navigation/migrations/__init__.py                                                  0      0   100%
+navigation/models.py                                                               0      0   100%
+navigation/tests.py                                                                0      0   100%
+navigation/urls.py                                                                 3      0   100%
+navigation/views.py                                                               32     17    47%   24-31, 44-59
+obligations/__init__.py                                                            0      0   100%
+obligations/admin.py                                                             114     47    59%   71, 88-97, 148-157, 187-191, 293, 306-307, 329-349, 370-376, 397-399
+obligations/api_views.py                                                          89     89     0%   21-268
+obligations/apps.py                                                                8      0   100%
+obligations/constants.py                                                          10     10     0%   13-26
+obligations/context_processors.py                                                 20     20     0%   10-58
+obligations/filters.py                                                            18     18     0%   6-46
+obligations/forms.py                                                             184    184     0%   20-506
+obligations/management/__init__.py                                                 0      0   100%
+obligations/management/commands/__init__.py                                        0      0   100%
+obligations/management/commands/normalize_existing_frequencies.py                 34     34     0%   1-70
+obligations/management/commands/send_obligation_reminders.py                       9      9     0%   1-12
+obligations/management/commands/update_recurring_inspection_dates.py              15     15     0%   1-25
+obligations/migrations/0001_initial.py                                            10      0   100%
+obligations/migrations/0002_alter_obligation_recurring_frequency_and_more.py       4      0   100%
+obligations/migrations/__init__.py                                                 0      0   100%
+obligations/models.py                                                            232    106    54%   33-34, 46-47, 65, 292, 302-336, 346-353, 364-380, 390-393, 411-427, 438-440, 451, 456-503, 510, 603, 613-618
+obligations/obligations_pb2.py                                                    15      0   100%
+obligations/proto_utils.py                                                        33     33     0%   19-109
+obligations/serializers.py                                                        40     40     0%   18-111
+obligations/signals.py                                                            27      8    70%   26-31, 43-45, 57, 64
+obligations/tables.py                                                             11     11     0%   1-25
+obligations/tasks.py                                                              35     35     0%   6-69
+obligations/templatetags/__init__.py                                               0      0   100%
+obligations/templatetags/obligation_tags.py                                       62     35    44%   27-37, 54-58, 72-99, 113-122, 136-138, 144, 150, 156
+obligations/tests.py                                                              36     35     3%   2-67
+obligations/types.py                                                               0      0   100%
+obligations/urls.py                                                               13     13     0%   1-20
+obligations/utils.py                                                               2      2     0%   12-14
+obligations/validators.py                                                          8      3    62%   29-31
+obligations/views.py                                                             305    305     0%   10-801
+procedures/__init__.py                                                             0      0   100%
+procedures/admin.py                                                               25     25     0%   10-95
+procedures/apps.py                                                                 4      4     0%   1-8
+procedures/commons.py                                                              5      5     0%   8-20
+procedures/constants.py                                                           16      0   100%
+procedures/figures.py                                                            207    207     0%   3-575
+procedures/forms.py                                                               18     18     0%   18-64
+procedures/management/__init__.py                                                  0      0   100%
+procedures/management/commands/__init__.py                                         0      0   100%
+procedures/management/commands/review_procedures.py                                9      9     0%   1-12
+procedures/middleware.py                                                          68     68     0%   7-174
+procedures/models.py                                                              52     10    81%   133, 138-139, 152-156, 170-172
+procedures/permissions.py                                                          6      6     0%   10-28
+procedures/plotlyapp.py                                                           65     65     0%   8-323
+procedures/proto_utils.py                                                         36     36     0%   19-98
+procedures/serializers.py                                                         58     58     0%   6-90
+procedures/tasks.py                                                               16     16     0%   6-40
+procedures/templatetags/__init__.py                                                0      0   100%
+procedures/templatetags/procedure_tags.py                                         23     23     0%   10-106
+procedures/test_procedures.py                                                     14     12    14%   6-24
+procedures/types.py                                                               36     36     0%   18-114
+procedures/urls.py                                                                 5      5     0%   1-13
+procedures/validators.py                                                           5      3    40%   19-21
+procedures/views.py                                                              175    175     0%   11-550
+projects/__init__.py                                                               0      0   100%
+projects/add_slug_column.py                                                       16     16     0%   1-24
+projects/admin.py                                                                 63     14    78%   50-59, 92, 121, 138, 155, 172, 194-201
+projects/apps.py                                                                   8      0   100%
+projects/forms.py                                                                 20     20     0%   11-37
+projects/management/__init__.py                                                    0      0   100%
+projects/management/commands/__init__.py                                           0      0   100%
+projects/management/commands/update_project_statuses.py                            9      9     0%   1-12
+projects/migrations/0001_initial.py                                                8      0   100%
+projects/migrations/__init__.py                                                    0      0   100%
+projects/models.py                                                               102     41    60%   84, 96, 109-112, 125, 140-146, 161-165, 178, 191-201, 216-221, 225-228, 277, 287-296, 310-312
+projects/projects_pb2.py                                                          23      0   100%
+projects/proto_utils.py                                                           70     53    24%   36, 41-92, 116-121, 138-144, 161-169, 186-197
+projects/serializers.py                                                          109     80    27%   32-48, 67-70, 86-98, 111-116, 126-128, 147-150, 166-178, 188-190, 202-205, 209-226, 230-233
+projects/signals.py                                                               19      4    79%   30, 41, 60-61
+projects/tables.py                                                                11      0   100%
+projects/tasks.py                                                                 20     20     0%   6-42
+projects/templatetags/__init__.py                                                  0      0   100%
+projects/templatetags/project_tags.py                                             98     33    66%   37, 44, 60-64, 71, 85, 92-94, 106, 113-122, 133-139, 150-167, 181, 202, 209, 216, 225
+projects/tests.py                                                                 21      4    81%   8, 13, 18, 23
+projects/urls.py                                                                   5      0   100%
+projects/views.py                                                                215    127    41%   67-73, 99-109, 124, 138-144, 159-167, 182-186, 201, 216-218, 232, 246-258, 276, 290, 304, 320-328, 343-351, 367-390, 397-407, 414-425, 433-462, 477-484
+protobuf/__init__.py                                                               0      0   100%
+protobuf/apps.py                                                                   6      0   100%
+protobuf/auditing_pb2.py                                                          35      0   100%
+protobuf/chart_data_pb2.py                                                        35      0   100%
+protobuf/chatbot_pb2.py                                                           17     17     0%   5-28
+protobuf/company_pb2.py                                                           23      0   100%
+protobuf/compile_proto.py                                                         48     48     0%   7-126
+protobuf/core_audit_pb2.py                                                        15      0   100%
+protobuf/core_pb2.py                                                              11     11     0%   5-22
+protobuf/dashboard_pb2.py                                                         19     19     0%   5-30
+protobuf/feedback_pb2.py                                                          21      0   100%
+protobuf/greenova_data_pb2.py                                                     29      0   100%
+protobuf/landing_pb2.py                                                           23     23     0%   5-34
+protobuf/mechanism_pb2.py                                                         24     24     0%   5-35
+protobuf/migrations/0001_initial.py                                                6      0   100%
+protobuf/migrations/__init__.py                                                    0      0   100%
+protobuf/models.py                                                                76     31    59%   31-38, 45-47, 96-105, 138-151
+protobuf/navigation_pb2.py                                                        11     11     0%   5-22
+protobuf/obligations_pb2.py                                                       15     15     0%   5-26
+protobuf/projects_pb2.py                                                          23     23     0%   5-34
+protobuf/report_pb2.py                                                            11     11     0%   5-22
+protobuf/responsibility_pb2.py                                                    11     11     0%   5-22
+protobuf/sidebar_pb2.py                                                           11     11     0%   5-22
+protobuf/urls.py                                                                   4      0   100%
+protobuf/views.py                                                                 83     71    14%   22-52, 60-79, 87-101, 114-165
+reports/__init__.py                                                                1      0   100%
+reports/apps.py                                                                    6      6     0%   21-30
+reports/forms.py                                                                  17     17     0%   18-63
+reports/management/__init__.py                                                     0      0   100%
+reports/management/commands/__init__.py                                            0      0   100%
+reports/management/commands/generate_scheduled_reports.py                          9      9     0%   1-12
+reports/mixins.py                                                                 22     22     0%   12-43
+reports/models.py                                                                 17     17     0%   21-65
+reports/permissions.py                                                             6      6     0%   10-28
+reports/serializers.py                                                            59     59     0%   18-157
+reports/tasks.py                                                                  18     18     0%   6-33
+reports/test_reports.py                                                           14      3    79%   8, 13, 18
+reports/types.py                                                                  34     34     0%   18-113
+reports/urls.py                                                                    5      5     0%   21-29
+reports/utils.py                                                                   0      0   100%
+reports/views.py                                                                  59     59     0%   21-106
+responsibility/__init__.py                                                         0      0   100%
+responsibility/admin.py                                                           43     19    56%   54-56, 74-79, 110-131
+responsibility/apps.py                                                             4      0   100%
+responsibility/commons.py                                                          5      5     0%   8-19
+responsibility/constants.py                                                        4      4     0%   7-11
+responsibility/figures.py                                                         69     69     0%   1-206
+responsibility/management/__init__.py                                              0      0   100%
+responsibility/management/commands/__init__.py                                     0      0   100%
+responsibility/management/commands/check_responsibility_compliance.py              9      9     0%   1-12
+responsibility/middleware.py                                                      68     68     0%   7-176
+responsibility/models.py                                                          32      2    94%   38, 81
+responsibility/permissions.py                                                      6      6     0%   10-28
+responsibility/plotlyapp.py                                                       97     97     0%   8-467
+responsibility/serializers.py                                                    110    110     0%   6-166
+responsibility/tasks.py                                                           11     11     0%   6-25
+responsibility/templatetags/__init__.py                                            0      0   100%
+responsibility/templatetags/responsibility_tags.py                                20      9    55%   11, 18, 25, 31-38
+responsibility/test_responsibility.py                                             10      8    20%   6-16
+responsibility/urls.py                                                             5      5     0%   1-12
+responsibility/validators.py                                                       5      3    40%   19-21
+responsibility/views.py                                                           91     91     0%   10-202
+sidebar/__init__.py                                                                0      0   100%
+sidebar/apps.py                                                                    4      0   100%
+sidebar/forms.py                                                                   0      0   100%
+sidebar/migrations/__init__.py                                                     0      0   100%
+sidebar/models.py                                                                  0      0   100%
+sidebar/tests.py                                                                   0      0   100%
+sidebar/urls.py                                                                    3      0   100%
+sidebar/views.py                                                                   3      0   100%
+------------------------------------------------------------------------------------------------------------
+TOTAL                                                                           9710   7126    27%

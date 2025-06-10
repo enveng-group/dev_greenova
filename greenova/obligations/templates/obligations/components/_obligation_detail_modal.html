@@ -1,55 +1,29 @@
-{% extends "core/base.html" %}
 {% load static obligation_tags %}
-{% load bootstrap5 %}
-{% block content %}
-  {% include "navigation/navbar.html" %}
-  {% include "sidebar/sidebar.html" %}
-  <div class="modal fade" id="obligationDetailModal" tabindex="-1" aria-labelledby="obligationDetailModalLabel" aria-hidden="true">
+{% load django_bootstrap5 %}
+
+{% comment %}
+Obligation Detail Modal - Bootstrap 5, accessible, componentized, no logic in template.
+This modal is meant to be included in other templates and populated via htmx/hyperscript.
+{% endcomment %}
+<div class="modal fade"
+     id="obligationDetailModal"
+     tabindex="-1"
+     aria-labelledby="obligationDetailModalLabel"
+     aria-hidden="true"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="obligationDetailModalLabel">Obligation Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                  _="on click remove .show from #obligationDetailModal then remove style 'display:block;' from #obligationDetailModal then remove .modal-backdrop from <body/> then halt">
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="obligationDetailModalLabel">Obligation Details</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="obligation-modal-body" tabindex="0">
+                <!-- Content loaded dynamically via htmx or hyperscript -->
+            </div>
         </div>
-        <div class="modal-body">
-          {% block obligation_detail_content %}
-            <div class="mb-3">
-              <h2 id="obligation-modal-title" class="fw-bold">
-                <span id="modal-obligation-number">Loading...</span>
-              </h2>
-              <p class="text-muted" id="modal-project-name">Loading...</p>
-            </div>
-            <div id="obligation-modal-content">
-              <div class="d-flex align-items-center">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <span class="ms-2">Loading obligation details...</span>
-              </div>
-            </div>
-          {% endblock %}
-        </div>
-        <div class="modal-footer">
-          <div class="d-flex justify-content-between w-100">
-            <div>
-              <span class="fw-bold">Status:</span>
-              <span id="modal-obligation-status">Loading...</span>
-            </div>
-            <div>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                      _="on click remove .show from #obligationDetailModal then remove style 'display:block;' from #obligationDetailModal then remove .modal-backdrop from <body/> then halt">
-                Close
-              </button>
-              <button type="button" id="modal-edit-btn" class="btn btn-primary">Edit</button>
-              <button type="button" id="modal-delete-btn" class="btn btn-danger">Delete</button>
-              <button type="button" id="modal-cancel-btn" class="btn btn-secondary d-none">Cancel</button>
-              <button type="button" id="modal-save-btn" class="btn btn-primary d-none">Save Changes</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-{% endblock %}
+</div>

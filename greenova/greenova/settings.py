@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "dal_select2",
     "core",
     "landing",
-    "dashboard",
+    "dashboard",  # Use the full dotted path for dashboard app
     "sidebar",
     "navigation",
     "protobuf",  # Protobuf3 integration
@@ -157,7 +157,6 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "core" / "static",
-    BASE_DIR / "landing" / "static",
 ]
 
 # Default primary key field type

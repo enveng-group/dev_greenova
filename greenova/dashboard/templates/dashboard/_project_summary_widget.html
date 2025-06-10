@@ -1,0 +1,17 @@
+{# Project Summary Widget Partial - Bootstrap 5, semantic HTML, accessible #}
+<section class="card shadow-sm mb-4" aria-labelledby="project-summary-title">
+  <div class="card-body">
+    <h2 id="project-summary-title" class="h5 mb-3">Project Overview</h2>
+    <dl class="row mb-0">
+      <dt class="col-6">Total Projects</dt>
+      <dd class="col-6">{{ project_summary.total_projects }}</dd>
+      <dt class="col-6">Active Projects</dt>
+      <dd class="col-6">{{ project_summary.active_projects }}</dd>
+      <dt class="col-6">Completed Projects</dt>
+      <dd class="col-6">{{ project_summary.completed_projects }}</dd>
+    </dl>
+    <div class="mt-3">
+      <a href="{# TODO: project list URL #}" class="btn btn-primary btn-sm">View All Projects</a>
+    </div>
+  </div>
+</section>

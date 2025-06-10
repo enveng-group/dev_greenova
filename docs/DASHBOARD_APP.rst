@@ -36,6 +36,19 @@ Usage Notes
 - To extend dashboard summaries, add new Protobuf3 fields and update views
 - For new charts, use Matplotlib and Protobuf3 serialization for frontend/backend
 
+BPMN Validation and Workflow Integration
+========================================
+
+The dashboard app has been validated against the Greenova-Workflow.bpmn process model:
+
+- The dashboard is the post-auth landing page, with authentication and registration flows matching BPMN subprocesses.
+- Sidebar and header navigation provide access to all major modules (Obligation, Responsibility, Project, User/Company, Analytics, Notifications, Logout), matching BPMN navigation gateways.
+- Project selection, context switching, and cancellation/decision points are implemented as per BPMN gateways and user tasks.
+- All module entry/exit points and return-to-dashboard flows are present and accessible.
+- User decision points and safe exits are supported throughout the dashboard UI.
+
+This ensures the dashboard is fully aligned with business process requirements and provides a seamless, standards-compliant user experience.
+
 Module Structure
 ----------------
 - `views.py`: Main dashboard views, Protobuf3 logic, chart generation

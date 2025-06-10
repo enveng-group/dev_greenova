@@ -48,3 +48,37 @@ class DashboardStubForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.add_input(Submit("submit", "Submit", css_class="btn btn-primary"))
+
+
+@beartype
+class AddObligationForm(forms.Form):
+    """Form for adding a new obligation to a project.
+
+    Uses crispy-forms and Bootstrap 5 markup.
+    """
+
+    title = forms.CharField(
+        label="Obligation Title",
+        max_length=128,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Title"}),
+    )
+    description = forms.CharField(
+        label="Description",
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+        required=False,
+    )
+    status = forms.ChoiceField(
+        label="Status",
+        choices=[("open", "Open"), ("closed", "Closed"), ("pending", "Pending")],
+        widget=RadioSelectButtonGroup,
+    )
+    due_date = forms.DateField(
+        label="Due Date",
+        widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+    )
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.add_input(Submit("submit", "Add Obligation"))
