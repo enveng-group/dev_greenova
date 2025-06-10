@@ -12,6 +12,7 @@
 		"./local-features/dropbear": {},
 		"./local-features/protoc": {},
 		"./local-features/chromium": {},
+		"./local-features/graphviz": {},
 		"./local-features/fish": {}
 	},
 	"mounts": [

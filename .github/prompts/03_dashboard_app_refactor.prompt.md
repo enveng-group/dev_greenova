@@ -25,8 +25,9 @@ The `dashboard` app provides the **Main Dashboard Interface & Navigation** as de
 
 - **Post-Authentication Landing**: Users are directed here after successful authentication from the `core` app
 - **Data Aggregation Hub**: Displays summaries and key metrics from `obligations`, `projects`, `audits`, `mechanisms`, and `company` apps
-- **Navigation Gateway**: Provides pathways to all other business processes including obligation management, project workflows, and reporting
+- **Navigation Gateway**: Provides pathways to all other business processes including obligation management, project workflows, and reporting with explicit user selection gateways
 - **Context Management**: Works with `company` app to manage active company context and user permissions
+- **User Decision Points**: Implements detailed navigation flows with cancellation options and prompt actions
 
 **Inter-App Dependencies:**
 

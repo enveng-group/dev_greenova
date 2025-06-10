@@ -27,8 +27,11 @@ Key Modules
 
 django-allauth Integration
 -------------------------
-- Allauth is used for registration, login, password reset
-- Allauth templates are overridden for consistent UI
+- Allauth is used for registration, login, password reset with detailed user decision points
+- Includes explicit retry logic for failed login attempts (max 3 retries before lockout)
+- Email verification process with 24-hour timeout boundary events
+- Password reset process with secure email delivery
+- Allauth templates are overridden for consistent UI with enhanced user experience
 
 Testing
 -------

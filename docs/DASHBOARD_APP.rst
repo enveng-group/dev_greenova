@@ -10,9 +10,10 @@ business processes in the Greenova platform.
 
 Features
 --------
-- Post-authentication landing page for all users
+- Post-authentication landing page for all users with explicit navigation gateways
 - Project, obligation, and compliance summaries (Protobuf3, Matplotlib)
-- Centralized navigation to all other Greenova apps
+- Centralized navigation to all other Greenova apps with user decision points
+- Enhanced user experience with detailed navigation flows and cancellation options
 - Responsive, accessible UI using django-bootstrap5 and django-hyperscript
 - Object-level permissions and security (Django, django-guardian, django-csp)
 

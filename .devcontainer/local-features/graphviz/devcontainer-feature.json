@@ -1,0 +1,6 @@
+{
+  "id": "graphviz",
+  "version": "1.0.0",
+  "name": "Bourne Again Shell (graphviz)",
+  "description": "Installs graphviz using Alpine package manager."
+}

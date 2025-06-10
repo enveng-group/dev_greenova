@@ -4,6 +4,7 @@
 - [Greenova App Ecosystem and Business Process Workflow](#greenova-app-ecosystem-and-business-process-workflow)
   - [Overview](#overview)
   - [Business Process Flow Summary](#business-process-flow-summary)
+  - [Enhanced User Journey Details](#enhanced-user-journey-details)
   - [App Dependencies and Relationships](#app-dependencies-and-relationships)
     - [Core Foundation Apps](#core-foundation-apps)
       - [1. `core` App](#1-core-app)
@@ -59,14 +60,26 @@ This document outlines the complete app ecosystem for the Greenova Environmental
 
 Based on the Greenova-Workflow.bpmn, the system implements these core business processes:
 
-1. **Authentication Flow** - User login, registration, and access control
-2. **Main Dashboard Interface & Navigation** - Central hub for system navigation
+1. **Authentication Flow** - User login, registration, email verification, and access control with detailed user decision points
+2. **Main Dashboard Interface & Navigation** - Central hub for system navigation with explicit user selection gateways and decision flows
 3. **Comprehensive Obligation Management** - Core environmental obligation tracking
 4. **User Role Assignment & Responsibility Management** - Accountability and ownership
 5. **Project & Environmental Mechanism Management** - Implementation coordination
 6. **User Profile & Company Management** - Organization and user context
 7. **Data Analytics & Interactive Reporting** - Performance insights and compliance
 8. **Notification & Communication System** - Automated alerts and updates
+
+## Enhanced User Journey Details
+
+The updated BPMN includes detailed user decision points with explicit gateways for:
+
+- **Project Selection Logic**: "Is Project Selected?" gateway with paths for selection, cancellation, and prompting
+- **Mechanism Selection Logic**: "Is Mechanism Selected?" gateway with decision branches
+- **Procedure Selection Logic**: "Is Procedure Selected?" gateway with user action flows
+- **Obligation Selection Logic**: "Is Obligation Selected?" gateway with drill-down navigation
+- **Error Handling**: Multiple end events for authentication failures, verification timeouts
+- **Timer Events**: 24-hour email verification timeout with boundary events
+- **Retry Logic**: Explicit loops for login retry attempts and user navigation flows
 
 ## App Dependencies and Relationships
 

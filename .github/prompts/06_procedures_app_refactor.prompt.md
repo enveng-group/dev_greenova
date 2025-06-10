@@ -30,6 +30,7 @@ The `procedures` app manages documented procedures and standard operating proced
 - **Workflow Support**: Provides standardized procedures that support obligation fulfillment and project implementation
 - **Compliance Guidance**: Links procedures to obligations and audits for compliance verification
 - **Knowledge Management**: Centralizes procedural knowledge for environmental management
+- **User Decision Points**: Implements detailed procedure selection flows with user action paths and cancellation options
 
 **Inter-App Dependencies:**
 

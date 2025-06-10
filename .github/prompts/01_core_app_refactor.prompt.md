@@ -27,7 +27,7 @@ The global `core` app is central to the Greenova project, providing shared utili
 
 **Business Process Integration:**
 
-- **Authentication Flow**: Manages user login, registration, email verification, and password reset processes
+- **Authentication Flow**: Manages user login, registration, email verification, password reset processes with detailed user decision points and retry logic
 - **User Profile Management**: Handles extended user profiles, preferences, and company-specific user settings (consolidated from deprecated users app)
 - **Audit Trail Management**: Maintains comprehensive audit logs for all system activities and changes (consolidated from deprecated auditing app)
 - **Foundation for All Apps**: Provides base templates, utilities, and user context that enable dashboard navigation, obligation management, project workflows, and company management

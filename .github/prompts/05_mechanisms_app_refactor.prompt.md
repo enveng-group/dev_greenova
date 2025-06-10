@@ -30,6 +30,7 @@ The `mechanisms` app manages environmental control mechanisms and measures imple
 - **Project Support**: Provides mechanisms that can be associated with projects for implementation
 - **Obligation Fulfillment**: Links mechanisms to specific obligations to demonstrate compliance methods
 - **Implementation Tracking**: Tracks effectiveness and status of environmental mechanisms
+- **User Decision Points**: Implements detailed mechanism selection flows with decision branches and user action paths
 
 **Inter-App Dependencies:**
 

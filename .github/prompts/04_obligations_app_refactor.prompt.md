@@ -34,6 +34,7 @@ The `obligations` app is a critical part of Greenova, implementing the **Compreh
 - **Evidence Collection**: Manages obligation evidence and documentation
 - **Automated Workflows**: Provides reminders and recurring inspection scheduling
 - **Notification Integration**: Sends automated reminders and compliance notifications through the notification system
+- **User Decision Points**: Implements detailed obligation selection flows with drill-down navigation and cancellation options
 
 **Inter-App Dependencies:**
 

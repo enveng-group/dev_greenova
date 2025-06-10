@@ -32,6 +32,7 @@ The `projects` app implements the **Project & Environmental Mechanism Management
 - **Resource Coordination**: Manages project resources, timelines, and deliverables
 - **Progress Tracking**: Monitors project status and completion against environmental goals
 - **Notification Integration**: Sends project updates and milestone notifications through the notification system
+- **User Decision Points**: Implements detailed project selection flows with cancellation options and prompt actions
 
 **Inter-App Dependencies:**
 
