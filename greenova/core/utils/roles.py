@@ -1,3 +1,6 @@
+# Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
+# SPDX-License-Identifier: AGPL-3.0
+
 """Role utilities for the core app.
 
 Provides role display helpers for use in obligations and other apps.
@@ -103,6 +106,7 @@ def get_role_choices() -> list[tuple[str, str]]:
 
 def get_responsibility_choices() -> list[tuple[str, str]]:
     """Get choices for the responsibility field in Obligation model.
+
     Uses display names as values for backward compatibility.
 
     Returns:

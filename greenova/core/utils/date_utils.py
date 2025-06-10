@@ -13,14 +13,14 @@ from beartype import beartype
 
 @beartype
 def add_days_to_date(date: datetime, days: int) -> datetime:
-    """Add a specified number of days to a date.
+    """Add a number of days to a datetime object.
 
     Args:
-        date: The original date.
-        days: The number of days to add.
+        date: The original datetime.
+        days: Number of days to add.
 
     Returns:
-        A new datetime object with the days added.
+        The new datetime after adding days.
 
     """
     return date + timedelta(days=days)
@@ -39,3 +39,18 @@ def format_date(date: datetime, format_string: str = "%Y-%m-%d") -> str:
 
     """
     return date.strftime(format_string)
+
+
+@beartype
+def days_between_dates(start: datetime, end: datetime) -> int:
+    """Calculate the number of days between two dates.
+
+    Args:
+        start: The start datetime.
+        end: The end datetime.
+
+    Returns:
+        The number of days between start and end.
+
+    """
+    return (end - start).days

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package greenova.core;
+package core;
 
 // Environmental obligation data structure
 message Obligation {

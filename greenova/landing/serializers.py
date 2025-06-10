@@ -103,7 +103,8 @@ class LandingSerializer:
             msg.ParseFromString(data)
         except Exception as exc:
             logger.exception(
-                "Failed to deserialize newsletter signup response: %s", exc
+                "Failed to deserialize newsletter signup response: %s",
+                exc,
             )
             msg = "Invalid newsletter signup response data"
             raise ValidationError(msg) from exc
@@ -201,3 +202,89 @@ class LandingSerializer:
             logger.exception("Failed to deserialize landing page content: %s", e)
             msg = "Invalid landing page content data"
             raise ValidationError(msg) from e
+
+    @staticmethod
+    @beartype
+    def parse_newsletter_signup_request(
+        data: bytes,
+    ) -> landing_pb2.NewsletterSignupRequest:
+        """Parse a NewsletterSignupRequest from Protobuf bytes.
+
+        Args:
+            data: Protobuf-encoded request bytes.
+
+        Returns:
+            NewsletterSignupRequest message.
+
+        """
+        msg = landing_pb2.NewsletterSignupRequest()
+        msg.ParseFromString(data)
+        return msg
+
+    @staticmethod
+    @beartype
+    def build_newsletter_signup_response(success: bool, message: str) -> bytes:
+        """Build a NewsletterSignupResponse and serialize to Protobuf bytes.
+
+        Args:
+            success: Whether signup was successful.
+            message: Response message.
+
+        Returns:
+            Protobuf-encoded NewsletterSignupResponse bytes.
+
+        """
+        resp = landing_pb2.NewsletterSignupResponse(success=success, message=message)
+        return resp.SerializeToString()
+
+    @staticmethod
+    @beartype
+    def build_landing_page_content() -> bytes:
+        """Build and serialize landing page content (features, stats, testimonials, etc.).
+
+        Returns:
+            Protobuf-encoded LandingPageContent bytes.
+
+        """
+        content = landing_pb2.LandingPageContent(
+            hero_title="Environmental Management Made Simple",
+            hero_subtitle="Greenova empowers professionals to achieve compliance excellence.",
+            features=[
+                landing_pb2.Feature(
+                    title="Obligation Tracking",
+                    description="Track all your environmental obligations in one place.",
+                ),
+                landing_pb2.Feature(
+                    title="Automated Reminders",
+                    description="Never miss a deadline with automated compliance reminders.",
+                ),
+                landing_pb2.Feature(
+                    title="Real-Time Dashboards",
+                    description="Visualize compliance status and key metrics instantly.",
+                ),
+            ],
+            stats=[
+                landing_pb2.Stat(name="Obligations Managed", value=1200),
+                landing_pb2.Stat(name="Projects Supported", value=85),
+                landing_pb2.Stat(name="Compliance Rate", value=99),
+                landing_pb2.Stat(name="Active Users", value=350),
+            ],
+            benefits=[
+                "Reduce compliance risk and manual effort.",
+                "Centralize all regulatory requirements.",
+                "Boost team accountability and transparency.",
+            ],
+            testimonials=[
+                landing_pb2.Testimonial(
+                    name="Alex, Environmental Manager",
+                    content="Greenova has transformed our compliance process—simple, reliable, and effective!",
+                ),
+                landing_pb2.Testimonial(
+                    name="Morgan, Consultant",
+                    content="The dashboards and reminders keep my clients on track. Highly recommended.",
+                ),
+            ],
+            cta_title="Ready to Transform Your Environmental Compliance?",
+            cta_subtitle="Join thousands of professionals who trust Greenova.",
+        )
+        return content.SerializeToString()

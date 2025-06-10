@@ -1,0 +1,8 @@
+{% load django_bootstrap5 %}
+<form method="post" action="{% url 'landing:newsletter_signup' %}" class="needs-validation" novalidate>
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.email|as_crispy_field }}
+  </div>
+  <button type="submit" class="btn btn-success btn-lg w-100">Sign Up</button>
+</form>

@@ -3,6 +3,7 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 # Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
 # SPDX-License-Identifier: AGPL-3.0
 
@@ -15,12 +16,7 @@ from .forms import (
     EnvironmentalObligationForm,
     UserProfileForm,
 )
-from .models import (
-    AuditLog,
-    CustomUser,
-    EnvironmentalObligation,
-    UserProfile,
-)
+from .models import AuditLog, CustomUser, EnvironmentalObligation, UserProfile
 
 
 @admin.register(EnvironmentalObligation)
@@ -84,5 +80,3 @@ class AuditLogAdmin(admin.ModelAdmin):
         "ip_address",
     )
     list_filter = ("action", "object_type", "timestamp")
-
-

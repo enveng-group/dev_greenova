@@ -31,7 +31,7 @@ def projects_context(request: HttpRequest) -> dict[str, Any]:
     current_project = None
     if user and user.is_authenticated:
         projects = Project.objects.filter(
-            Q(memberships__user=user) | Q(owner=user)
+            Q(memberships__user=user) | Q(owner=user),
         ).distinct()
         current_project = getattr(request, "current_project", None)
     return {

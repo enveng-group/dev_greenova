@@ -4,7 +4,7 @@ set -eu
 
 # Python 3.12.10 is already available from the base image
 # Just install Python development tools and packages from requirements.txt
-apk add --no-cache python3-dev
+apk add --no-cache python3 python3-dev graphviz graphviz-dev
 
 # Install Python packages from requirements.txt
 # uv is already included in requirements.txt, so install with pip first

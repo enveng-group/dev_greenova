@@ -22,7 +22,10 @@ User = get_user_model()
 @receiver(post_save, sender=CustomUser)
 @beartype
 def user_saved(
-    sender: type[CustomUser], instance: CustomUser, created: bool, **kwargs: Any
+    _sender: type[CustomUser],
+    instance: CustomUser,
+    created: bool,
+    **kwargs: Any,
 ) -> None:
     """Log audit event when a CustomUser is created or updated."""
     action = "created" if created else "updated"
@@ -37,7 +40,9 @@ def user_saved(
 
 @receiver(post_delete, sender=CustomUser)
 @beartype
-def user_deleted(sender: type[CustomUser], instance: CustomUser, **kwargs: Any) -> None:
+def user_deleted(
+    _sender: type[CustomUser], instance: CustomUser, **kwargs: Any
+) -> None:
     """Log audit event when a CustomUser is deleted."""
     log_audit_event(
         user=None,
@@ -51,7 +56,10 @@ def user_deleted(sender: type[CustomUser], instance: CustomUser, **kwargs: Any) 
 @receiver(post_save, sender=UserProfile)
 @beartype
 def profile_saved(
-    sender: type[UserProfile], instance: UserProfile, created: bool, **kwargs: Any
+    _sender: type[UserProfile],
+    instance: UserProfile,
+    created: bool,
+    **kwargs: Any,
 ) -> None:
     """Log audit event when a UserProfile is created or updated."""
     action = "created" if created else "updated"
@@ -67,7 +75,9 @@ def profile_saved(
 @receiver(post_delete, sender=UserProfile)
 @beartype
 def profile_deleted(
-    sender: type[UserProfile], instance: UserProfile, **kwargs: Any
+    _sender: type[UserProfile],
+    instance: UserProfile,
+    **kwargs: Any,
 ) -> None:
     """Log audit event when a UserProfile is deleted."""
     log_audit_event(

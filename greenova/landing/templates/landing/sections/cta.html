@@ -13,16 +13,7 @@
           <a href="/accounts/login" class="btn btn-outline-light btn-lg" _="on pointerdown if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .btn-press to me then wait 150ms then remove .btn-press from me">Sign In</a>
         </div>
         <div class="newsletter-form mx-auto mw-32rem">
-          <h3 class="h4 fw-semibold mb-2">Stay Updated</h3>
-          <p class="mb-3">Subscribe to our newsletter for compliance insights and platform updates</p>
-          <form method="post" action="{% url 'landing:newsletter_signup' %}" id="newsletter-signup-form" class="row g-2 align-items-center justify-content-center" _="on submit if not window.matchMedia('(prefers-reduced-motion: reduce)').matches add .form-sending to #newsletter-submit then wait 800ms then remove .form-sending from #newsletter-submit">
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            <div class="col-auto">
-              {% bootstrap_button "Subscribe" button_type="submit" button_class="btn-light" %}
-            </div>
-          </form>
-          <div id="newsletter-response" class="mt-2 small">We respect your privacy. Your information is safe and will never be shared.</div>
+          {% include "landing/sections/newsletter_form.html" %}
         </div>
       </div>
     </div>

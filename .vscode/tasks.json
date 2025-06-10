@@ -3,9 +3,35 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run Django Server",
+      "label": "Run Django Server (Gunicorn)",
       "type": "shell",
-      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py runserver 0.0.0.0:8000",
+      "command": "gunicorn",
+      "args": [
+        "--config",
+        "${env:GUNICORN_CONFIG_PATH}",
+        "${env:GUNICORN_WSGI_MODULE}"
+      ],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Django Server (Development)",
+      "type": "shell",
+      "command": "${env:DJANGO_MANAGE_PY}",
+      "args": ["runserver", "0.0.0.0:8000"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
       "group": {
         "kind": "test",
         "isDefault": false
@@ -17,9 +43,67 @@
       "problemMatcher": []
     },
     {
+      "label": "Django Test - All",
+      "type": "shell",
+      "command": "${env:DJANGO_MANAGE_PY}",
+      "args": ["test", "--keepdb", "--parallel", "auto", "--verbosity=2"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Test - Fast",
+      "type": "shell",
+      "command": "${env:DJANGO_MANAGE_PY}",
+      "args": ["test", "--keepdb", "--failfast", "--verbosity=1"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Test - Coverage",
+      "type": "shell",
+      "command": "coverage",
+      "args": ["run", "--source=.", "manage.py", "test", "--keepdb"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Django Makemigrations",
       "type": "shell",
-      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py makemigrations",
+      "command": "${env:DJANGO_MANAGE_PY}",
+      "args": ["makemigrations"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
       "group": {
         "kind": "build",
         "isDefault": false
@@ -33,7 +117,11 @@
     {
       "label": "Django Migrate",
       "type": "shell",
-      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py migrate",
+      "command": "${env:DJANGO_MANAGE_PY}",
+      "args": ["migrate"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
       "group": {
         "kind": "build",
         "isDefault": false
@@ -47,7 +135,11 @@
     {
       "label": "Django Collectstatic",
       "type": "shell",
-      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py collectstatic --clear --noinput",
+      "command": "${env:DJANGO_MANAGE_PY}",
+      "args": ["collectstatic", "--clear", "--noinput"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
       "group": {
         "kind": "build",
         "isDefault": false
@@ -61,11 +153,75 @@
     {
       "label": "Django Check",
       "type": "shell",
-      "command": "cd /workspaces/greenova/greenova && /workspaces/greenova/.venv/bin/python manage.py check",
+      "command": "${env:DJANGO_MANAGE_PY}",
+      "args": ["check"],
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
       "group": {
         "kind": "test",
         "isDefault": false
       },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Ruff Check",
+      "type": "shell",
+      "command": "/usr/local/bin/ruff",
+      "args": ["check", "."],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Ruff Format",
+      "type": "shell",
+      "command": "/usr/local/bin/ruff",
+      "args": ["format", "."],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run MyPy",
+      "type": "shell",
+      "command": "/usr/local/bin/mypy",
+      "args": ["greenova/"],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Pre-commit",
+      "type": "shell",
+      "command": "/usr/local/bin/pre-commit",
+      "args": ["run"],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "shared"

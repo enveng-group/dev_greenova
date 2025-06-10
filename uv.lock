@@ -229,6 +229,19 @@ wheels = [
 ]
 
 [[package]]
+name = "crispy-bootstrap5"
+version = "2025.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-crispy-forms" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/97/30/36cc4144b6dff91bb54490a3b474897b7469bcda9517bf9f54681ea91011/crispy_bootstrap5-2025.6.tar.gz", hash = "sha256:f1bde7cac074c650fc82f31777d4a4cfd0df2512c68bc4128f259c75d3daada4", size = 23950, upload-time = "2025-06-08T07:43:35.461Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d8/d4/8cf1ba773a91fc17bab1fd46b75bbdef780c4cccbbb8230e617980a0362c/crispy_bootstrap5-2025.6-py3-none-any.whl", hash = "sha256:a343aa128b4383f35f00295b94de2b10862f2a4f24eda21fa6ead45234c07050", size = 24794, upload-time = "2025-06-08T07:43:34.206Z" },
+]
+
+[[package]]
 name = "cryptography"
 version = "45.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -710,6 +723,7 @@ dependencies = [
     { name = "cffi" },
     { name = "cfgv" },
     { name = "crispy-bootstrap4" },
+    { name = "crispy-bootstrap5" },
     { name = "cryptography" },
     { name = "distlib" },
     { name = "django" },
@@ -736,6 +750,7 @@ dependencies = [
     { name = "filelock" },
     { name = "google" },
     { name = "googleapis-common-protos" },
+    { name = "gunicorn" },
     { name = "identify" },
     { name = "matplotlib" },
     { name = "nodeenv" },
@@ -758,6 +773,7 @@ requires-dist = [
     { name = "cffi", specifier = "==1.17.1" },
     { name = "cfgv", specifier = "==3.4.0" },
     { name = "crispy-bootstrap4", specifier = ">=2024.2" },
+    { name = "crispy-bootstrap5", specifier = ">=2025.6" },
     { name = "cryptography", specifier = "==45.0.3" },
     { name = "distlib", specifier = "==0.3.9" },
     { name = "django", specifier = ">=5.2.1" },
@@ -784,6 +800,7 @@ requires-dist = [
     { name = "filelock", specifier = "==3.18.0" },
     { name = "google", specifier = ">=3.0.0" },
     { name = "googleapis-common-protos", specifier = ">=1.70.0" },
+    { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "identify", specifier = "==2.6.12" },
     { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "nodeenv", specifier = "==1.9.1" },
@@ -797,6 +814,18 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "python-slugify", specifier = ">=8.0.4" },
     { name = "pyyaml", specifier = "==6.0.2" },
+]
+
+[[package]]
+name = "gunicorn"
+version = "23.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/34/72/9614c465dc206155d93eff0ca20d42e1e35afc533971379482de953521a4/gunicorn-23.0.0.tar.gz", hash = "sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec", size = 375031, upload-time = "2024-08-10T20:25:27.378Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cb/7d/6dac2a6e1eba33ee43f318edbed4ff29151a49b5d37f080aad1e6469bca4/gunicorn-23.0.0-py3-none-any.whl", hash = "sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d", size = 85029, upload-time = "2024-08-10T20:25:24.996Z" },
 ]
 
 [[package]]

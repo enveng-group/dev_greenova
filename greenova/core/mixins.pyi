@@ -7,7 +7,10 @@ class ProjectPermissionRequiredMixin:
     required_roles: list[str]
     error_message: str
     def dispatch(
-        self, request: HttpRequest, *args: Any, **kwargs: Any
+        self,
+        request: HttpRequest,
+        *args: Any,
+        **kwargs: Any,
     ) -> HttpResponse: ...
 
 class ProjectContextMixin:
@@ -20,7 +23,10 @@ class ObligationPermissionRequiredMixin:
     required_roles: list[str]
     error_message: str
     def dispatch(
-        self, request: HttpRequest, *args: Any, **kwargs: Any
+        self,
+        request: HttpRequest,
+        *args: Any,
+        **kwargs: Any,
     ) -> HttpResponse: ...
 
 class ObligationContextMixin:

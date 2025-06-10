@@ -33,6 +33,7 @@ class AuditLog(models.Model):
     timestamp: Incomplete
     ip_address: Incomplete
     extra_data: Incomplete
+
     class Meta:
         verbose_name: str
         verbose_name_plural: str

@@ -3,6 +3,7 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 # Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
 # SPDX-License-Identifier: AGPL-3.0
 
@@ -26,6 +27,15 @@ class EnvironmentalObligationForm(forms.ModelForm):  # type: ignore[misc]
         widgets = {
             "due_date": forms.DateInput(attrs={"type": "date"}),
         }
+
+
+@beartype
+class MinimalEnvironmentalObligationForm(forms.ModelForm):  # type: ignore[misc]
+    """Minimal form for EnvironmentalObligation objects."""
+
+    class Meta:
+        model = EnvironmentalObligation
+        fields = ["name"]
 
 
 @beartype

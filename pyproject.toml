@@ -49,6 +49,8 @@ dependencies = [
     "protobuf==4.25.3",
     "google>=3.0.0",
     "googleapis-common-protos>=1.70.0",
+    "gunicorn>=23.0.0",
+    "crispy-bootstrap5>=2025.6",
 ]
 
 [tool.setuptools.packages.find]
@@ -80,7 +82,12 @@ exclude = [
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = []
+ignore = [
+    "D211",  # no-blank-line-before-class (conflicts with D203)
+    "D213",  # multi-line-summary-second-line (conflicts with D212)
+    "COM812", # formatter conflict
+    "D203",   # disables incorrect-blank-line-before-class (formatter conflict)
+]
 fixable = ["ALL"]
 unfixable = []
 preview = true

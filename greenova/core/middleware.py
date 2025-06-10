@@ -27,8 +27,8 @@ class AuditMiddleware(MiddlewareMixin):
         self,
         request: HttpRequest,
         view_func: Callable[..., HttpResponse],
-        view_args: tuple[Any, ...],
-        view_kwargs: dict[str, Any],
+        _view_args: tuple[Any, ...],
+        _view_kwargs: dict[str, Any],
     ) -> None:
         if request.user.is_authenticated and hasattr(request.user, "pk"):
             user: CustomUser = request.user  # type: ignore

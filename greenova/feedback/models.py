@@ -8,7 +8,7 @@ except ImportError:
     ProtoBufMixin = models.Model  # fallback for type checking
 
 try:
-    from greenova.protobuf.feedback_pb2 import BugReportProto
+    from protobuf.feedback_pb2 import BugReportProto
 except ImportError:
     BugReportProto = None
 

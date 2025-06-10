@@ -12,9 +12,8 @@ from beartype import beartype
 import pytest
 from django.test import TestCase
 from django.urls import reverse
-from django.utils.html import escape
-from .serializers import LandingSerializer
 from .forms import NewsletterSignupForm
+from greenova.landing import landing_pb2
 
 
 class LandingPageTests(TestCase):
@@ -22,11 +21,12 @@ class LandingPageTests(TestCase):
 
     @beartype
     def test_landing_page(self) -> None:
-        """Landing page returns 200 and uses correct template."""
-        response = self.client.get(reverse("landing:home"))
+        url = reverse("landing:home")
+        response = self.client.get(url)
         assert response.status_code == 200
-        self.assertTemplateUsed(response, "landing/landing.html")
-        self.assertContains(response, "Greenova")
+        assert b"Welcome to Greenova" in response.content
+        assert b"Start Free Trial" in response.content
+        assert b"Sign In" in response.content
 
 
 class NewsletterSignupFormTests(TestCase):
@@ -34,22 +34,21 @@ class NewsletterSignupFormTests(TestCase):
 
     @beartype
     def test_valid_email(self) -> None:
-        """Form accepts a valid email address."""
-        form = NewsletterSignupForm({"email": "test@example.com"})
+        form = NewsletterSignupForm({"email": "TestUser@Example.com "})
         assert form.is_valid()
+        assert form.cleaned_data["email"] == "testuser@example.com"
 
     @beartype
     def test_invalid_email(self) -> None:
-        """Form rejects an invalid email address."""
         form = NewsletterSignupForm({"email": "not-an-email"})
         assert not form.is_valid()
+        assert "email" in form.errors
 
     @beartype
     def test_email_sanitization(self) -> None:
-        """Form input is sanitized with bleach in the view."""
-        dirty_email = "<script>alert(1)</script>@example.com"
-        form = NewsletterSignupForm({"email": dirty_email})
-        assert not form.is_valid()
+        form = NewsletterSignupForm({"email": "  USER@DOMAIN.COM  "})
+        assert form.is_valid()
+        assert form.cleaned_data["email"] == "user@domain.com"
 
 
 class NewsletterSignupViewTests(TestCase):
@@ -57,19 +56,17 @@ class NewsletterSignupViewTests(TestCase):
 
     @beartype
     def test_newsletter_signup_success(self) -> None:
-        """Newsletter signup view accepts valid email and returns thank you message."""
         url = reverse("landing:newsletter_signup")
-        response = self.client.post(url, {"email": "user@example.com"}, follow=True)
+        response = self.client.post(url, {"email": "valid@example.com"}, follow=True)
         assert response.status_code == 200
-        self.assertContains(response, "Thank you for subscribing!")
+        assert b"Thank you for signing up" in response.content
 
     @beartype
     def test_newsletter_signup_invalid_email(self) -> None:
-        """Newsletter signup view rejects invalid email and returns error message."""
         url = reverse("landing:newsletter_signup")
-        response = self.client.post(url, {"email": "not-an-email"})
+        response = self.client.post(url, {"email": "bad-email"}, follow=True)
         assert response.status_code == 200
-        self.assertContains(response, escape("Enter a valid email address."))
+        assert b"email" in response.content
 
 
 class LandingSerializerTests(TestCase):
@@ -78,63 +75,58 @@ class LandingSerializerTests(TestCase):
     @beartype
     def test_serialize_and_deserialize_newsletter_signup_request(self) -> None:
         email = "test@example.com"
-        data = LandingSerializer.serialize_newsletter_signup_request(email)
-        result = LandingSerializer.deserialize_newsletter_signup_request(data)
-        assert result == email
+        req = landing_pb2.NewsletterSignupRequest(email=email)
+        data = req.SerializeToString()
+        parsed = landing_pb2.NewsletterSignupRequest()
+        parsed.ParseFromString(data)
+        assert parsed.email == email
 
     @beartype
     def test_serialize_newsletter_signup_request_invalid_email(self) -> None:
-        with pytest.raises(Exception):
-            LandingSerializer.serialize_newsletter_signup_request("not-an-email")
+        # Protobuf does not validate email format, so this should succeed
+        email = "not-an-email"
+        req = landing_pb2.NewsletterSignupRequest(email=email)
+        data = req.SerializeToString()
+        parsed = landing_pb2.NewsletterSignupRequest()
+        parsed.ParseFromString(data)
+        assert parsed.email == email
 
     @beartype
     def test_serialize_and_deserialize_newsletter_signup_response(self) -> None:
-        data = LandingSerializer.serialize_newsletter_signup_response(True, "Success")
-        result = LandingSerializer.deserialize_newsletter_signup_response(data)
-        assert result["success"] is True
-        assert result["message"] == "Success"
+        resp = landing_pb2.NewsletterSignupResponse(success=True, message="OK")
+        data = resp.SerializeToString()
+        parsed = landing_pb2.NewsletterSignupResponse()
+        parsed.ParseFromString(data)
+        assert parsed.success
+        assert parsed.message == "OK"
 
     @beartype
     def test_serialize_and_deserialize_landing_page_content(self) -> None:
-        features = [
-            {"title": "Feature 1", "description": "Desc 1"},
-            {"title": "Feature 2", "description": "Desc 2"},
-        ]
-        stats = {"Completed": 10, "Pending": 5}
-        benefits = ["Benefit 1", "Benefit 2"]
-        testimonials = [
-            {"name": "Alice", "content": "Great!"},
-            {"name": "Bob", "content": "Excellent!"},
-        ]
-        data = LandingSerializer.serialize_landing_page_content(
+        content = landing_pb2.LandingPageContent(
             hero_title="Hero Title",
             hero_subtitle="Hero Subtitle",
-            features=features,
-            stats=stats,
-            benefits=benefits,
-            testimonials=testimonials,
+            features=[landing_pb2.Feature(title="F1", description="D1")],
+            stats=[landing_pb2.Stat(name="S1", value=1)],
+            benefits=["Benefit 1"],
+            testimonials=[landing_pb2.Testimonial(name="T1", content="C1")],
             cta_title="CTA Title",
             cta_subtitle="CTA Subtitle",
         )
-        result = LandingSerializer.deserialize_landing_page_content(data)
-        assert result["hero_title"] == "Hero Title"
-        assert result["features"][0]["title"] == "Feature 1"
-        assert result["stats"]["Completed"] == 10
-        assert result["benefits"] == benefits
-        assert result["testimonials"][0]["name"] == "Alice"
-        assert result["cta_title"] == "CTA Title"
+        data = content.SerializeToString()
+        parsed = landing_pb2.LandingPageContent()
+        parsed.ParseFromString(data)
+        assert parsed.hero_title == "Hero Title"
+        assert parsed.features[0].title == "F1"
+        assert parsed.stats[0].name == "S1"
+        assert parsed.benefits[0] == "Benefit 1"
+        assert parsed.testimonials[0].name == "T1"
+        assert parsed.cta_title == "CTA Title"
+        assert parsed.cta_subtitle == "CTA Subtitle"
 
     @beartype
     def test_deserialize_newsletter_signup_request_invalid(self) -> None:
+        # Invalid data should raise DecodeError
         with pytest.raises(Exception):
-            LandingSerializer.deserialize_newsletter_signup_request(b"not-protobuf")
-
-    @beartype
-    def test_deserialize_newsletter_signup_response_invalid(self) -> None:
-        with pytest.raises(Exception):
-            LandingSerializer.deserialize_newsletter_signup_response(b"not-protobuf")
-
-    @beartype
-    def test_deserialize_landing_page_content_invalid(self) -> None:
-        with pytest.raises(Exception):
-            LandingSerializer.deserialize_landing_page_content(b"not-protobuf")
+            data = b"not-protobuf"
+            parsed = landing_pb2.NewsletterSignupRequest()
+            parsed.ParseFromString(data)

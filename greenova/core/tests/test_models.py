@@ -3,10 +3,14 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 from beartype import beartype
+from core.models import AuditLog
+from core.models import CustomUser
+from core.models import EnvironmentalObligation
+from core.models import UserProfile
 from django.test import TestCase
 from django.utils import timezone
-from core.models import CustomUser, UserProfile, EnvironmentalObligation, AuditLog
 
 
 class CustomUserModelTests(TestCase):
@@ -48,7 +52,8 @@ class UserProfileModelTests(TestCase):
             password="testpass123!",
         )
         self.profile = UserProfile.objects.create(
-            user=self.user, display_name="Test User")
+            user=self.user, display_name="Test User"
+        )
 
     @beartype
     def test_profile_creation(self) -> None:
@@ -63,9 +68,8 @@ class UserProfileModelTests(TestCase):
     @beartype
     def test_create_profile(self) -> None:
         user = CustomUser.objects.create_user(
-            username="profileuser",
-            password="testpass",
-            email="profileuser@example.com")
+            username="profileuser", password="testpass", email="profileuser@example.com"
+        )
         profile = UserProfile.objects.create(user=user)
         self.assertEqual(profile.user, user)
 
@@ -116,7 +120,7 @@ class AuditLogModelTests(TestCase):
             action="login",
             object_type="CustomUser",
             object_id=str(self.user.pk),
-            message="User logged in."
+            message="User logged in.",
         )
 
     @beartype
@@ -141,7 +145,8 @@ class AuditLogModelTests(TestCase):
         self.assertIsNotNone(log.timestamp)
 
         log_simple = AuditLog.objects.create(
-            user=user, action="login", timestamp=timezone.now())
+            user=user, action="login", timestamp=timezone.now()
+        )
         self.assertEqual(log_simple.user, user)
         self.assertEqual(log_simple.action, "login")
 

@@ -8,5 +8,46 @@
   "extensions.experimental.deferredStartupFinishedActivation": true,
   "extensions.experimental.issueQuickAccess": false,
   "extensions.ignoreRecommendations": true,
-  "remote.downloadExtensionsLocally": false
+  "remote.downloadExtensionsLocally": false,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "/bin/bash",
+      "args": ["--rcfile", "${workspaceFolder}/.vscode/bashrc_with_venv"]
+    }
+  },
+  "github.copilot.advanced": {
+    "debug.overrideEngine": "copilot-chat",
+    "debug.testOverrideProxyUrl": "",
+    "debug.overrideProxyUrl": ""
+  },
+  "python.defaultInterpreterPath": "/workspaces/greenova/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}/greenova",
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "files.associations": {
+    "**/greenova/**/*.py": "python",
+    "**/greenova/manage.py": "python",
+    "**/test_*.py": "python",
+    "**/tests.py": "python",
+    "**/tests/*.py": "python"
+  },
+  "search.exclude": {
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  },
+  "python.analysis.extraPaths": [
+    "/workspaces/greenova",
+    "/workspaces/greenova/greenova"
+  ],
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.typeCheckingMode": "strict"
 }

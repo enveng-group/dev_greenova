@@ -1,6 +1,6 @@
 {% extends "core/base.html" %}
 {% load django_bootstrap5 %}
-{% block title %}Audit Log{% endblock %}
+{% block title %}Audit Log{% endblock title %}
 {% block content %}
 <main class="container py-5">
   <section aria-labelledby="audit-log-heading" class="row justify-content-center">
@@ -9,7 +9,7 @@
         <div class="card-body">
           <h1 id="audit-log-heading" class="card-title mb-4">Audit Log</h1>
           <form method="get" class="mb-4">
-            {% bootstrap_form filter.form %}
+            {% bootstrap_form form %}
             <button type="submit" class="btn btn-greenova">Filter</button>
           </form>
           <div class="table-responsive">
@@ -47,4 +47,4 @@
     </div>
   </section>
 </main>
-{% endblock %}
+{% endblock content %}

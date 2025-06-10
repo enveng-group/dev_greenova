@@ -16,4 +16,6 @@ def is_obligation_overdue(due_date: date) -> bool:
         True if the obligation is overdue, False otherwise.
 
     """
-    return due_date < date.today()
+    from datetime import date as dt_date
+
+    return due_date < dt_date.today()

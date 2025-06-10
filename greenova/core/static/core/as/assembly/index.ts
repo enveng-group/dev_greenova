@@ -7,6 +7,7 @@ import { ProjectProto, ProjectMembershipProto, ProjectObligationProto, ProjectCo
 import { ObligationInsight, ObligationInsightResponse, ChartSegment, ChartData, ChartResponse } from "./proto/mechanism";
 import { LandingPageContent } from "./proto/landing";
 import { ChartData as ChartDataProto } from "./proto/chart_data";
+import { AuditLogProto, AuditLogCollection, AuditLogUtils } from "./proto/core_audit";
 
 /**
  * Greenova AssemblyScript Core Implementation
@@ -280,4 +281,200 @@ export function decodeChartDataWasm(ptr: usize, len: i32): i32 {
   }
   const chart = ChartDataProto.decode(data);
   return len;
+}
+
+/**
+ * WASM interop function for decoding core_audit.proto AuditLogProto
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data using AuditLogProto.decode
+ */
+export function decodeAuditLogProtoWasm(ptr: usize, len: i32): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const auditLog = AuditLogProto.decode(data);
+  return len;
+}
+
+/**
+ * WASM interop function for decoding core_audit.proto AuditLogCollection
+ * @param ptr Pointer to protobuf binary data
+ * @param len Length of binary data
+ * @returns Length of processed data using AuditLogCollection.decode
+ */
+export function decodeAuditLogCollectionWasm(ptr: usize, len: i32): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const collection = AuditLogCollection.decode(data);
+  return len;
+}
+
+/**
+ * WASM interop function for encoding AuditLogProto to protobuf binary
+ * @param id Audit log ID
+ * @param userId User ID
+ * @param action Action performed
+ * @param objectType Object type affected
+ * @param objectId Object ID affected
+ * @param message Audit log message
+ * @param ipAddress IP address
+ * @param timestamp Timestamp
+ * @returns Pointer to encoded binary data
+ */
+export function encodeAuditLogProtoWasm(
+  id: string,
+  userId: string,
+  action: string,
+  objectType: string,
+  objectId: string,
+  message: string,
+  ipAddress: string,
+  timestamp: string
+): usize {
+  const auditLog = AuditLogUtils.createAuditLog(
+    id, userId, action, objectType, objectId, message, ipAddress, timestamp
+  );
+  const encoded = AuditLogProto.encode(auditLog);
+  // Return pointer to the encoded data for JS to retrieve
+  return changetype<usize>(encoded.buffer);
+}
+
+/**
+ * Filter audit logs by action using WASM processing
+ * @param ptr Pointer to AuditLogCollection protobuf binary data
+ * @param len Length of binary data
+ * @param action Action to filter by
+ * @returns Length of filtered collection
+ */
+export function filterAuditLogsByActionWasm(ptr: usize, len: i32, action: string): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const collection = AuditLogCollection.decode(data);
+  const filtered = collection.filterByAction(action);
+  const encoded = AuditLogCollection.encode(filtered);
+  return encoded.length;
+}
+
+/**
+ * Filter audit logs by user using WASM processing
+ * @param ptr Pointer to AuditLogCollection protobuf binary data
+ * @param len Length of binary data
+ * @param userId User ID to filter by
+ * @returns Length of filtered collection
+ */
+export function filterAuditLogsByUserWasm(ptr: usize, len: i32, userId: string): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const collection = AuditLogCollection.decode(data);
+  const filtered = collection.filterByUser(userId);
+  const encoded = AuditLogCollection.encode(filtered);
+  return encoded.length;
+}
+
+/**
+ * Get audit log count from collection using WASM processing
+ * @param ptr Pointer to AuditLogCollection protobuf binary data
+ * @param len Length of binary data
+ * @returns Number of audit logs in the collection
+ */
+export function getAuditLogCountWasm(ptr: usize, len: i32): i32 {
+  const data = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    data[i] = load<u8>(ptr + i);
+  }
+  const collection = AuditLogCollection.decode(data);
+  return collection.count();
+}
+
+/**
+ * Encode a single AuditLogProto to protobuf binary (real usage)
+ */
+export function encodeAuditLogProto(
+  id: string,
+  userId: string,
+  action: string,
+  objectType: string,
+  objectId: string,
+  message: string,
+  ipAddress: string,
+  timestamp: string
+): Uint8Array {
+  const auditLog = AuditLogUtils.createAuditLog(
+    id, userId, action, objectType, objectId, message, ipAddress, timestamp
+  );
+  return AuditLogProto.encode(auditLog);
+}
+
+/**
+ * Decode a single AuditLogProto from protobuf binary (real usage)
+ */
+export function decodeAuditLogProto(buffer: Uint8Array): AuditLogProto {
+  return AuditLogProto.decode(buffer);
+}
+
+/**
+ * Encode a collection of AuditLogProto to protobuf binary (real usage)
+ */
+export function encodeAuditLogCollection(logs: Array<AuditLogProto>): Uint8Array {
+  const collection = new AuditLogCollection();
+  for (let i = 0; i < logs.length; i++) {
+    collection.addAuditLog(logs[i]);
+  }
+  return AuditLogCollection.encode(collection);
+}
+
+/**
+ * Decode a collection of AuditLogProto from protobuf binary (real usage)
+ */
+export function decodeAuditLogCollection(buffer: Uint8Array): AuditLogCollection {
+  return AuditLogCollection.decode(buffer);
+}
+
+/**
+ * Filter audit logs by action (real usage)
+ */
+export function filterAuditLogsByAction(
+  logs: Array<AuditLogProto>,
+  action: string
+): Array<AuditLogProto> {
+  const collection = new AuditLogCollection();
+  for (let i = 0; i < logs.length; i++) {
+    collection.addAuditLog(logs[i]);
+  }
+  const filtered = collection.filterByAction(action);
+  return filtered.audit_logs;
+}
+
+/**
+ * Filter audit logs by user (real usage)
+ */
+export function filterAuditLogsByUser(
+  logs: Array<AuditLogProto>,
+  userId: string
+): Array<AuditLogProto> {
+  const collection = new AuditLogCollection();
+  for (let i = 0; i < logs.length; i++) {
+    collection.addAuditLog(logs[i]);
+  }
+  const filtered = collection.filterByUser(userId);
+  return filtered.audit_logs;
+}
+
+/**
+ * Get the most recent audit log from a collection (real usage)
+ */
+export function getMostRecentAuditLog(logs: Array<AuditLogProto>): AuditLogProto | null {
+  const collection = new AuditLogCollection();
+  for (let i = 0; i < logs.length; i++) {
+    collection.addAuditLog(logs[i]);
+  }
+  return AuditLogUtils.getMostRecent(collection);
 }

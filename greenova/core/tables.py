@@ -19,6 +19,7 @@ class EnvironmentalObligationTable(tables.Table):
         model = EnvironmentalObligation
         template_name = "django_tables2/bootstrap5.html"
         fields = (
+            "id",
             "name",
             "description",
             "due_date",

@@ -16,21 +16,17 @@ class AllauthSignInTest(TestCase):
     @beartype
     def test_signin(self) -> None:
         user = User.objects.create_user(
-            username="signinuser",
-            password="testpass",
-            email="signinuser@example.com"
+            username="signinuser", password="testpass", email="signinuser@example.com"
         )
         response = self.client.post(
-            reverse("account_login"), {
-                "login": "signinuser", "password": "testpass"})
+            reverse("account_login"), {"login": "signinuser", "password": "testpass"}
+        )
         self.assertEqual(response.status_code, 302)
 
     @beartype
     def test_signout(self) -> None:
         user = User.objects.create_user(
-            username="signoutuser",
-            password="testpass",
-            email="signoutuser@example.com"
+            username="signoutuser", password="testpass", email="signoutuser@example.com"
         )
         self.client.login(username="signoutuser", password="testpass")
         response = self.client.post(reverse("account_logout"))

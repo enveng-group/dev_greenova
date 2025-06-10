@@ -17,17 +17,19 @@ def to_snake_case(text: str) -> str:
         text: The input string.
 
     Returns:
-        The string converted to snake_case.
+        The snake_case version of the string.
 
     """
     import re
 
-    return re.sub(r"(?<!^)(?=[A-Z])", "_", text).lower()
+    text = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", text)
+    text = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", text)
+    return text.replace("-", "_").lower()
 
 
 @beartype
 def truncate_string(text: str, max_length: int) -> str:
-    """Truncate a string to a maximum length, adding ellipsis if necessary.
+    """Truncate a string to a maximum length, adding ellipsis if needed.
 
     Args:
         text: The input string.
@@ -37,4 +39,6 @@ def truncate_string(text: str, max_length: int) -> str:
         The truncated string.
 
     """
-    return text if len(text) <= max_length else text[: max_length - 3] + "..."
+    if len(text) <= max_length:
+        return text
+    return text[: max_length - 3] + "..."

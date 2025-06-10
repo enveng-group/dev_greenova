@@ -1,4 +1,5 @@
-cd /workspaces/greenova/greenova; ./manage.py test core
+. /workspaces/greenova/.venv/bin/activate && cd /workspaces/greenova/greenova && python manage.py test core
+
 
 continue to iterate, checking off the acceptance criteria checklist in core prompt until all is complete, do not ask what is next, just complete until the below core app refactoring is complete by iterating
 

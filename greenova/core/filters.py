@@ -17,8 +17,4 @@ class EnvironmentalObligationFilter(django_filters.FilterSet):
 
     class Meta:
         model = EnvironmentalObligation
-        fields = {
-            "name": ["icontains"],
-            "due_date": ["exact", "gte", "lte"],
-            "is_complete": ["exact"],
-        }
+        fields = ["name"]

@@ -3,6 +3,7 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 # Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
 # SPDX-License-Identifier: AGPL-3.0
 
@@ -12,6 +13,7 @@ from .views import (
     EnvironmentalObligationListView,
     audit_log_api,
     audit_log_list_view,
+    obligation_list_view,
     obligations_api,
     profile_detail_view,
     profile_edit_view,
@@ -48,4 +50,5 @@ urlpatterns = [
         audit_log_api,
         name="audit_log_api",
     ),
+    path("obligations/", obligation_list_view, name="obligation_list"),
 ]

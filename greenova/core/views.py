@@ -3,6 +3,7 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 # Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
 # SPDX-License-Identifier: AGPL-3.0
 
@@ -42,6 +43,13 @@ class EnvironmentalObligationListView(LoginRequiredMixin, SingleTableMixin, Filt
 
 
 @beartype
+def obligation_list_view(request: HttpRequest) -> HttpResponse:
+    """List all environmental obligations."""
+    obligations = EnvironmentalObligation.objects.all()
+    return render(request, "core/obligation_list.html", {"obligations": obligations})
+
+
+@beartype
 @login_required
 def obligations_api(request: HttpRequest) -> HttpResponse:
     """API endpoint for serialized obligations (protobuf or JSON)."""
@@ -64,7 +72,9 @@ def profile_detail_view(request: HttpRequest) -> HttpResponse:
     """Display the user's profile details."""
     profile = UserProfile.objects.get(user=request.user)
     return render(
-        request, "core/profile_detail.html", {"user": request.user, "profile": profile}
+        request,
+        "core/profile_detail.html",
+        {"user": request.user, "profile": profile},
     )
 
 
@@ -99,13 +109,13 @@ def audit_log_list_view(request: HttpRequest) -> HttpResponse:
     if filter_form.is_valid():
         if filter_form.cleaned_data.get("user"):
             logs = logs.filter(
-                user__username__icontains=filter_form.cleaned_data["user"]
+                user__username__icontains=filter_form.cleaned_data["user"],
             )
         if filter_form.cleaned_data.get("action"):
             logs = logs.filter(action__icontains=filter_form.cleaned_data["action"])
         if filter_form.cleaned_data.get("object_type"):
             logs = logs.filter(
-                object_type__icontains=filter_form.cleaned_data["object_type"]
+                object_type__icontains=filter_form.cleaned_data["object_type"],
             )
         if filter_form.cleaned_data.get("date_from"):
             logs = logs.filter(timestamp__gte=filter_form.cleaned_data["date_from"])
@@ -114,10 +124,15 @@ def audit_log_list_view(request: HttpRequest) -> HttpResponse:
     paginator = Paginator(logs, 50)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+
+    context = {
+        "audit_logs": page_obj,
+        "form": filter_form,
+    }
     return render(
         request,
         "core/audit_log_list.html",
-        {"audit_logs": page_obj, "filter": filter_form},
+        context,
     )
 
 
@@ -132,7 +147,7 @@ def audit_log_api(request: HttpRequest) -> HttpResponse:
             import importlib
 
             serializers = importlib.import_module("core.serializers")
-            proto_bytes = serializers.audit_logs_to_protobuf(logs)
+            proto_bytes = serializers.audit_logs_to_protobuf(list(logs))
             return HttpResponse(proto_bytes, content_type="application/x-protobuf")
         except Exception as e:
             logger.exception("Protobuf serialization failed: %s", e)

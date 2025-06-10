@@ -3,11 +3,12 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 from beartype import beartype
+from core.models import UserProfile
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-from core.models import UserProfile
 
 User = get_user_model()
 
@@ -40,10 +41,14 @@ class ProfileViewTests(TestCase):
     @beartype
     def test_profile_edit_view_post(self) -> None:
         url = reverse("core:profile_edit")
-        response = self.client.post(url, {
-            "display_name": "Frank Updated",
-            "preferences": "{}",
-        }, follow=True)
+        response = self.client.post(
+            url,
+            {
+                "display_name": "Frank Updated",
+                "preferences": "{}",
+            },
+            follow=True,
+        )
         self.assertEqual(response.status_code, 200)
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.display_name, "Frank Updated")
@@ -53,9 +58,8 @@ class ProfileViewTest(TestCase):
     @beartype
     def test_profile_view_authenticated(self) -> None:
         user = User.objects.create_user(
-            username="profileview",
-            password="testpass",
-            email="profileview@example.com")
+            username="profileview", password="testpass", email="profileview@example.com"
+        )
         UserProfile.objects.create(user=user, display_name="Profile View")
         self.client.login(username="profileview", password="testpass")
         response = self.client.get(reverse("core:profile_detail"))

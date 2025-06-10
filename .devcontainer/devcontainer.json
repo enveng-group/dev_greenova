@@ -12,7 +12,6 @@
 		"./local-features/dropbear": {},
 		"./local-features/protoc": {},
 		"./local-features/chromium": {},
-		"./local-features/graphviz": {},
 		"./local-features/fish": {}
 	},
 	"mounts": [
@@ -34,7 +33,30 @@
 					"fish": {
 						"path": "fish"
 					}
-				}
+				},
+				"emmet.includeLanguages": {
+					"django-html": "html"
+				},
+				"python.testing.nosetestsEnabled": false,
+				"python.testing.djangoTestsEnabled": true,
+				"python.testing.djangoTestsArgs": [
+					"--keepdb",
+					"--parallel",
+					"auto",
+					"--verbosity=2"
+				],
+				"python.testing.djangoSettingsModule": "greenova.settings",
+				"python.linting.enabled": true,
+				"python.linting.pylintEnabled": true,
+				"python.linting.pylintPath": "/usr/local/bin/pylint",
+				"python.linting.mypyEnabled": true,
+				"python.linting.mypyPath": "/usr/local/bin/mypy",
+				"python.linting.banditEnabled": true,
+				"python.linting.banditPath": "/usr/local/bin/bandit",
+				"python.formatting.provider": "black",
+				"python.formatting.blackPath": "/usr/local/bin/black",
+				"python.formatting.autopep8Path": "/usr/local/bin/autopep8",
+				"python.sortImports.path": "/usr/local/bin/isort",
 			}
 		},
 		"remoteEnv": {

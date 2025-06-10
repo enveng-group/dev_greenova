@@ -1,3 +1,6 @@
+# Copyright (c) 2025 Adrian Gallo <agallo@enveng-group.com.au>
+# SPDX-License-Identifier: AGPL-3.0
+
 """Core utility functions and constants for Greenova.
 
 This module provides shared logic, constants, and validators for use across all apps.
@@ -39,27 +42,44 @@ PROJECT_ROLE_CHOICES = [
 
 
 @beartype
-def get_obligation_status(due_date: date, is_complete: bool) -> str:
-    """Return obligation status based on due date and completion flag."""
-    if is_complete:
-        return "completed"
-    today = date.today()
-    if due_date < today:
-        return "overdue"
-    if due_date == today:
-        return "in progress"
-    return "upcoming"
+def get_obligation_status(obligation: Mapping[str, str]) -> str:
+    """Get the status of an obligation from a mapping.
+
+    Args:
+        obligation: A mapping with a 'status' key.
+
+    Returns:
+        The status string.
+
+    """
+    return obligation.get("status", "unknown")
 
 
 @beartype
 def get_project_role_display(role: str) -> str:
-    """Return display string for a project role."""
+    """Return display string for a project role.
+
+    Args:
+        role: The project role value.
+
+    Returns:
+        The display string for the role.
+
+    """
     return role.replace("_", " ").title()
 
 
 @beartype
 def validate_project_name(value: str) -> None:
-    """Validate project name (must be non-empty and at least 3 chars)."""
+    """Validate project name (must be non-empty and at least 3 chars).
+
+    Args:
+        value: The project name to validate.
+
+    Raises:
+        ValidationError: If the project name is invalid.
+
+    """
     if not value or len(value.strip()) < 3:
         msg = "Project name must be at least 3 characters."
         raise ValidationError(msg)
@@ -67,15 +87,31 @@ def validate_project_name(value: str) -> None:
 
 @beartype
 def validate_non_empty_field(value: Any) -> None:
-    """Raise ValidationError if value is empty."""
+    """Raise ValueError if the value is empty.
+
+    Args:
+        value: The value to check.
+
+    Raises:
+        ValueError: If value is empty.
+
+    """
     if not value:
-        msg = "This field cannot be empty."
-        raise ValidationError(msg)
+        msg = "Field cannot be empty."
+        raise ValueError(msg)
 
 
 @beartype
 def validate_obligation_number(value: str) -> None:
-    """Validate obligation number format (must be non-empty and alphanumeric)."""
+    """Validate obligation number format (must be non-empty and alphanumeric).
+
+    Args:
+        value: The obligation number to validate.
+
+    Raises:
+        ValidationError: If the obligation number is invalid.
+
+    """
     if not value or not value.isalnum():
         msg = "Obligation number must be alphanumeric."
         raise ValidationError(msg)
@@ -89,11 +125,11 @@ def is_obligation_overdue(
     """Determine if an obligation is overdue based on its status and due date.
 
     Args:
-        obligation: An Obligation model instance or a dictionary with obligation attributes
-        reference_date: Optional date to compare against (defaults to today)
+        obligation: An Obligation model instance or a dictionary with obligation attributes.
+        reference_date: Optional date to compare against (defaults to today).
 
     Returns:
-        bool: True if the obligation is overdue, False otherwise
+        bool: True if the obligation is overdue, False otherwise.
 
     """
     if reference_date is None:
@@ -116,10 +152,10 @@ def get_responsibility_display_name(responsibility_value: str) -> str:
     """Get the display name for a responsibility value.
 
     Args:
-        responsibility_value: The responsibility value to get display name for
+        responsibility_value: The responsibility value to get display name for.
 
     Returns:
-        str: The display name for the responsibility
+        str: The display name for the responsibility.
 
     """
     # Fallback: just return the input with title casing for readability

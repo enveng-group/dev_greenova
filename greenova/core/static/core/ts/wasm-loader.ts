@@ -33,6 +33,14 @@ async function loadWasmModule(): Promise<any> {
       decodeObligationProtoWasm: exports.decodeObligationProtoWasm || (() => 0),
       decodeChartDataProtoWasm: exports.decodeChartDataProtoWasm || (() => 0),
 
+      // Audit log protobuf functions
+      decodeAuditLogProtoWasm: exports.decodeAuditLogProtoWasm || (() => 0),
+      decodeAuditLogCollectionWasm: exports.decodeAuditLogCollectionWasm || (() => 0),
+      encodeAuditLogProtoWasm: exports.encodeAuditLogProtoWasm || (() => 0),
+      filterAuditLogsByActionWasm: exports.filterAuditLogsByActionWasm || (() => 0),
+      filterAuditLogsByUserWasm: exports.filterAuditLogsByUserWasm || (() => 0),
+      getAuditLogCountWasm: exports.getAuditLogCountWasm || (() => 0),
+
       // Memory management
       memory: exports.memory,
       __newString: exports.__newString,
@@ -73,6 +81,14 @@ function createFallbackModule() {
     decodeProjectProtoWasm: () => 0,
     decodeObligationProtoWasm: () => 0,
     decodeChartDataProtoWasm: () => 0,
+
+    // Audit log fallback functions
+    decodeAuditLogProtoWasm: () => 0,
+    decodeAuditLogCollectionWasm: () => 0,
+    encodeAuditLogProtoWasm: () => 0,
+    filterAuditLogsByActionWasm: () => 0,
+    filterAuditLogsByUserWasm: () => 0,
+    getAuditLogCountWasm: () => 0,
   };
 }
 
@@ -111,6 +127,134 @@ function createFallbackModule() {
   const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
   const result = (window as any).wasmModule.decodeChartDataProtoWasm(ptr, buffer.length);
   return result;
+};
+
+(window as any).decodeAuditLogProtoWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeAuditLogProtoWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.decodeAuditLogProtoWasm(ptr, buffer.length);
+  return result;
+};
+
+(window as any).decodeAuditLogCollectionWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeAuditLogCollectionWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.decodeAuditLogCollectionWasm(ptr, buffer.length);
+  return result;
+};
+
+(window as any).encodeAuditLogProtoWasm = async function(auditLog: any): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.encodeAuditLogProtoWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  // Convert auditLog fields to strings as needed
+  const ptr = (window as any).wasmModule.encodeAuditLogProtoWasm(
+    auditLog.id || "",
+    auditLog.user_id || "",
+    auditLog.action || "",
+    auditLog.object_type || "",
+    auditLog.object_id || "",
+    auditLog.message || "",
+    auditLog.ip_address || "",
+    auditLog.timestamp || ""
+  );
+  return ptr;
+};
+
+(window as any).filterAuditLogsByActionWasm = async function(buffer: Uint8Array, action: string): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.filterAuditLogsByActionWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.filterAuditLogsByActionWasm(ptr, buffer.length, action);
+  return result;
+};
+
+(window as any).filterAuditLogsByUserWasm = async function(buffer: Uint8Array, userId: string): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.filterAuditLogsByUserWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const result = (window as any).wasmModule.filterAuditLogsByUserWasm(ptr, buffer.length, userId);
+  return result;
+};
+
+(window as any).getAuditLogCountWasm = async function(buffer: Uint8Array): Promise<number> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.getAuditLogCountWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  const count = (window as any).wasmModule.getAuditLogCountWasm(ptr, buffer.length);
+  return count;
+};
+
+// Real usage: encode a single audit log to protobuf using WASM
+(window as any).encodeAuditLogProto = async function(auditLog) {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.encodeAuditLogProto) {
+    throw new Error("WASM module not loaded");
+  }
+  return (window as any).wasmModule.encodeAuditLogProto(
+    auditLog.id || "",
+    auditLog.user_id || "",
+    auditLog.action || "",
+    auditLog.object_type || "",
+    auditLog.object_id || "",
+    auditLog.message || "",
+    auditLog.ip_address || "",
+    auditLog.timestamp || ""
+  );
+};
+
+// Real usage: decode a single audit log from protobuf using WASM
+(window as any).decodeAuditLogProto = async function(buffer) {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeAuditLogProto) {
+    throw new Error("WASM module not loaded");
+  }
+  return (window as any).wasmModule.decodeAuditLogProto(buffer);
+};
+
+// Real usage: encode a collection of audit logs to protobuf using WASM
+(window as any).encodeAuditLogCollection = async function(logs) {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.encodeAuditLogCollection) {
+    throw new Error("WASM module not loaded");
+  }
+  return (window as any).wasmModule.encodeAuditLogCollection(logs);
+};
+
+// Real usage: decode a collection of audit logs from protobuf using WASM
+(window as any).decodeAuditLogCollection = async function(buffer) {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeAuditLogCollection) {
+    throw new Error("WASM module not loaded");
+  }
+  return (window as any).wasmModule.decodeAuditLogCollection(buffer);
+};
+
+// Real usage: filter audit logs by action using WASM
+(window as any).filterAuditLogsByAction = async function(logs, action) {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.filterAuditLogsByAction) {
+    throw new Error("WASM module not loaded");
+  }
+  return (window as any).wasmModule.filterAuditLogsByAction(logs, action);
+};
+
+// Real usage: filter audit logs by user using WASM
+(window as any).filterAuditLogsByUser = async function(logs, userId) {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.filterAuditLogsByUser) {
+    throw new Error("WASM module not loaded");
+  }
+  return (window as any).wasmModule.filterAuditLogsByUser(logs, userId);
+};
+
+// Real usage: get most recent audit log from a collection using WASM
+(window as any).getMostRecentAuditLog = async function(logs) {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.getMostRecentAuditLog) {
+    throw new Error("WASM module not loaded");
+  }
+  return (window as any).wasmModule.getMostRecentAuditLog(logs);
 };
 
 function initializeTheme(): void {

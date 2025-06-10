@@ -92,10 +92,8 @@ class MechanismStateDict(TypedDict):
     """TypedDict for a mechanism state."""
 
     id: str
-    mechanism_id: str
     status: str
     last_run: str | None
-    result: Any
 
 
 class MechanismResultDict(TypedDict):

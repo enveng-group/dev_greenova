@@ -3,14 +3,14 @@
 Author: Adrian Gallo <agallo@enveng-group.com.au>
 License: AGPL-3.0
 """
+
 from beartype import beartype
+from core.forms import CustomUserCreationForm
+from core.forms import EnvironmentalObligationForm
+from core.forms import UserProfileForm
+from core.models import CustomUser
+from core.models import UserProfile
 from django.test import TestCase
-from core.forms import (
-    EnvironmentalObligationForm,
-    CustomUserCreationForm,
-    UserProfileForm,
-)
-from core.models import CustomUser, UserProfile
 from django.utils import timezone
 
 
@@ -19,21 +19,25 @@ class EnvironmentalObligationFormTests(TestCase):
 
     @beartype
     def test_valid_form(self) -> None:
-        form = EnvironmentalObligationForm(data={
-            "name": "Test Obligation",
-            "description": "Test desc",
-            "due_date": timezone.now().date(),
-            "is_complete": False,
-        })
+        form = EnvironmentalObligationForm(
+            data={
+                "name": "Test Obligation",
+                "description": "Test desc",
+                "due_date": timezone.now().date(),
+                "is_complete": False,
+            }
+        )
         self.assertTrue(form.is_valid())
 
     @beartype
     def test_partial_form(self) -> None:
-        form = EnvironmentalObligationForm(data={
-            "name": "Test",
-            "description": "desc",
-            "due_date": timezone.now().date(),
-        })
+        form = EnvironmentalObligationForm(
+            data={
+                "name": "Test",
+                "description": "desc",
+                "due_date": timezone.now().date(),
+            }
+        )
         self.assertTrue(form.is_valid())
 
 
@@ -42,14 +46,16 @@ class CustomUserCreationFormTests(TestCase):
 
     @beartype
     def test_valid_user_creation(self) -> None:
-        form = CustomUserCreationForm(data={
-            "username": "dave",
-            "email": "dave@example.com",
-            "password1": "pass12345",
-            "password2": "pass12345",
-            "company": "EnvEng",
-            "is_mfa_enabled": True,
-        })
+        form = CustomUserCreationForm(
+            data={
+                "username": "dave",
+                "email": "dave@example.com",
+                "password1": "pass12345",
+                "password2": "pass12345",
+                "company": "EnvEng",
+                "is_mfa_enabled": True,
+            }
+        )
         self.assertTrue(form.is_valid())
         user = form.save()
         self.assertEqual(user.username, "dave")
@@ -59,14 +65,16 @@ class CustomUserCreationFormTests(TestCase):
 
     @beartype
     def test_minimal_user_creation(self) -> None:
-        form = CustomUserCreationForm(data={
-            "username": "newuser",
-            "email": "newuser_minimal2@example.com",
-            "password1": "aS3cureP@ssw0rd!",
-            "password2": "aS3cureP@ssw0rd!",
-            "company": "",
-            "is_mfa_enabled": False,
-        })
+        form = CustomUserCreationForm(
+            data={
+                "username": "newuser",
+                "email": "newuser_minimal2@example.com",
+                "password1": "aS3cureP@ssw0rd!",
+                "password2": "aS3cureP@ssw0rd!",
+                "company": "",
+                "is_mfa_enabled": False,
+            }
+        )
         self.assertTrue(form.is_valid())
 
     def test_password_mismatch(self) -> None:
@@ -89,10 +97,13 @@ class UserProfileFormTests(TestCase):
             username="eve", email="eve@example.com", password="pass123"
         )
         profile = UserProfile.objects.create(user=user)
-        form = UserProfileForm(data={
-            "display_name": "Evie",
-            "preferences": "{}",
-        }, instance=profile)
+        form = UserProfileForm(
+            data={
+                "display_name": "Evie",
+                "preferences": "{}",
+            },
+            instance=profile,
+        )
         self.assertTrue(form.is_valid())
 
     @beartype
@@ -113,8 +124,14 @@ class UserProfileFormTests(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_invalid_form(self) -> None:
-        form_data = {"display_name": ""}  # Required field missing
-        form = UserProfileForm(data=form_data)
+        # preferences must be valid JSON, so pass invalid JSON to force error
+        form_data = {"display_name": "Test", "preferences": "{"}  # invalid JSON
+        user = CustomUser.objects.create_user(
+            username="invalidprofileuser2",
+            password="testpass",
+            email="invalidprofile2@example.com")
+        profile = UserProfile.objects.create(user=user)
+        form = UserProfileForm(data=form_data, instance=profile)
         self.assertFalse(form.is_valid())
 
 
@@ -122,19 +139,23 @@ class UserCreationFormTest(TestCase):
     """Tests for UserCreationForm."""
 
     def test_valid_form(self) -> None:
-        form = CustomUserCreationForm(data={
-            "username": "testuser2",
-            "email": "testuser2@example.com",
-            "password1": "testpass123",
-            "password2": "testpass123",
-        })
+        form = CustomUserCreationForm(
+            data={
+                "username": "testuser2",
+                "email": "testuser2@example.com",
+                "password1": "testpass123",
+                "password2": "testpass123",
+            }
+        )
         self.assertTrue(form.is_valid())
 
     def test_invalid_form(self) -> None:
-        form = CustomUserCreationForm(data={
-            "username": "",
-            "email": "not-an-email",
-            "password1": "123",
-            "password2": "456",
-        })
+        form = CustomUserCreationForm(
+            data={
+                "username": "",
+                "email": "not-an-email",
+                "password1": "123",
+                "password2": "456",
+            }
+        )
         self.assertFalse(form.is_valid())

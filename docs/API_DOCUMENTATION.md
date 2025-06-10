@@ -86,7 +86,7 @@ Returns chart data in protobuf format.
     .then(buffer => {
       // Use protobuf.js to decode
       const root = await protobuf.load('greenova_data.proto');
-      const ObligationList = root.lookupType('greenova.core.ObligationList');
+      const ObligationList = root.lookupType('core.ObligationList');
       const message = ObligationList.decode(new Uint8Array(buffer));
       // Now you can use message.obligations
     });

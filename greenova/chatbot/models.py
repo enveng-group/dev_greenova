@@ -28,8 +28,8 @@ except ImportError:
     ProtoBufMixin = models.Model  # fallback for type checking
 
 try:
-    from greenova.protobuf.chatbot_pb2 import ChatMessage as ChatMessageProto
-    from greenova.protobuf.chatbot_pb2 import ChatResponse as ChatResponseProto
+    from protobuf.chatbot_pb2 import ChatMessage as ChatMessageProto
+    from protobuf.chatbot_pb2 import ChatResponse as ChatResponseProto
 except ImportError:
     ChatMessageProto = None
     ChatResponseProto = None
