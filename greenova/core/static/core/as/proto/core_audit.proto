@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package core_audit;
+
+// Audit log entry for the core app
+message AuditLogProto {
+  string id = 1;
+  string user_id = 2;
+  string action = 3;
+  string object_type = 4;
+  string object_id = 5;
+  string message = 6;
+  string ip_address = 7;
+  string timestamp = 8;
+}
+
+// Collection of audit log entries
+message AuditLogCollection {
+  repeated AuditLogProto audit_logs = 1;
+}

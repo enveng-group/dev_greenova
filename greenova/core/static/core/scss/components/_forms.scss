@@ -1,6 +1,7 @@
 // Greenova Form Components
 // Advanced form styling beyond Bootstrap utilities
 
+@use 'sass:string';
 @use '../variables' as vars;
 @use '../mixins' as mix;
 
@@ -68,7 +69,7 @@
 // Date picker styling
 .datepicker-environmental {
   .form-control {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23#{str-slice(#{vars.$greenova-primary}, 2)}' d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 4v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4H2z'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23#{string.slice(#{vars.$greenova-primary}, 2)}' d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 4v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4H2z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right vars.$spacer-sm center;
     background-size: 16px;

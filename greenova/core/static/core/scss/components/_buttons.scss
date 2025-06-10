@@ -1,6 +1,7 @@
 // Greenova Button Components
 // Advanced button styling beyond Bootstrap utilities
 
+@use 'sass:color';
 @use '../variables' as vars;
 @use '../mixins' as mix;
 
@@ -48,7 +49,7 @@
   transition: vars.$transition-medium;
 
   &:hover {
-    background-color: darken(vars.$greenova-primary, 10%);
+    background-color: color.adjust(vars.$greenova-primary, $lightness: -10%);
     transform: scale(1.1);
     box-shadow: vars.$shadow-heavy, 0 0 20px rgba(vars.$greenova-primary, 0.3);
   }

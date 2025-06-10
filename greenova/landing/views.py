@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 @beartype
 def landing_page(request: HttpRequest) -> HttpResponse:
-    """Render the Greenova landing page.
+    """Render the Greenova landing page with Protobuf3 content.
 
     Args:
         request: The HTTP request object.
@@ -36,9 +36,42 @@ def landing_page(request: HttpRequest) -> HttpResponse:
     """
     logger.info("Rendering landing page")
     form = NewsletterSignupForm()
+    # Get landing page content from serializer (Protobuf3)
+    data = LandingSerializer.serialize_landing_page_content(hero_title="Greenova Environmental Management",
+                                                            hero_subtitle="Simplify compliance. Empower sustainability. Trusted by professionals across industries.",
+                                                            features=[{"title": "Automated Compliance Tracking",
+                                                                       "description": "Monitor obligations and deadlines with real-time alerts.",
+                                                                       },
+                                                                      {"title": "Centralized Documentation",
+                                                                       "description": "All your compliance evidence and records in one place.",
+                                                                       },
+                                                                      {"title": "Powerful Reporting",
+                                                                       "description": "Generate audit-ready reports in seconds.",
+                                                                       },
+                                                                      ],
+                                                            stats={"Active Users": 1200,
+                                                                   "Projects Managed": 85,
+                                                                   "Obligations Tracked": 3400,
+                                                                   "Compliance Rate": 98,
+                                                                   },
+                                                            benefits=["Reduce audit risk and manual effort",
+                                                                      "Stay ahead of regulatory changes",
+                                                                      "Empower your team with collaboration tools",
+                                                                      ],
+                                                            testimonials=[{"name": "Jane Smith, EnviroCorp",
+                                                                           "content": "Greenova transformed our compliance process.",
+                                                                           },
+                                                                          {"name": "John Doe, EcoConsult",
+                                                                           "content": "The best tool for environmental professionals.",
+                                                                           },
+                                                                          ],
+                                                            cta_title="Ready to Transform Your Environmental Compliance?",
+                                                            cta_subtitle="Join thousands of environmental professionals who have simplified their compliance management with Greenova.",
+                                                            )
+    content = LandingSerializer.deserialize_landing_page_content(data)
     context: dict[str, object] = {
         "form": form,
-        "context": {},  # for bootstrap_messages
+        **content,
     }
     html = render_to_string(
         "landing/landing.html",
@@ -52,7 +85,7 @@ def landing_page(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET", "POST"])
 @beartype
 def newsletter_signup(request: HttpRequest) -> HttpResponse:
-    """Handle newsletter signup form submission.
+    """Handle newsletter signup form submission with Protobuf3 serialization.
 
     Accepts GET (renders form) and POST (validates and processes signup).
     Uses Protobuf3 for API serialization if request is AJAX or content-type is protobuf.
@@ -68,23 +101,24 @@ def newsletter_signup(request: HttpRequest) -> HttpResponse:
         form = NewsletterSignupForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"]
-            # Here you would add logic to save the email to a newsletter list or send
-            # to a service
             logger.info("Newsletter signup: %s", email)
+            # Serialize request and response using Protobuf3
+            LandingSerializer.serialize_newsletter_signup_request(email)
+            # (Here you would save req_bytes to a queue or service)
+            resp_bytes = LandingSerializer.serialize_newsletter_signup_response(
+                True, "Thank you for signing up!"
+            )
             if request.headers.get("Content-Type") == "application/x-protobuf":
-                resp_bytes = LandingSerializer.build_newsletter_signup_response(
-                    True, "Thank you for signing up!"
-                )
                 return HttpResponse(resp_bytes, content_type="application/x-protobuf")
             messages.success(
                 request, "Thank you for signing up for the Greenova newsletter!"
             )
             return redirect("landing:home")
         logger.warning("Newsletter signup failed: %s", form.errors)
+        resp_bytes = LandingSerializer.serialize_newsletter_signup_response(
+            False, "Invalid email address."
+        )
         if request.headers.get("Content-Type") == "application/x-protobuf":
-            resp_bytes = LandingSerializer.build_newsletter_signup_response(
-                False, "Invalid email address."
-            )
             return HttpResponse(resp_bytes, content_type="application/x-protobuf")
     else:
         form = NewsletterSignupForm()

@@ -1,4 +1,5 @@
-// Obligation List Page Logic (TypeScript version)
+import { fetchObligations, decodeObligationProto } from "./proto";
+import { showNotification } from "../shared/dom";
 
 document.addEventListener("DOMContentLoaded", function () {
   if ((window as any).wasmReady) {
@@ -42,12 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
       obligationCount.innerHTML = '<span class="loading-spinner"></span> Loading...';
     }
     try {
-      // Use protobuf API endpoint for type safety
-      const response = await fetch((window as any).OBLIGATIONS_API_URL + "?format=pb");
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const buffer = new Uint8Array(await response.arrayBuffer());
-      const decoded = await (window as any).decodeObligationProtoWasm(buffer);
-      const obligations = decoded.obligations || [];
+      const obligations = await fetchObligations();
       updateObligationCount(obligations.length);
       updateObligationTable(obligations);
     } catch (error) {
@@ -82,18 +78,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function showNotification(message: string, type: "info" | "success" | "error" = "info") {
-    const notification = document.createElement("div");
-    notification.className = `alert alert-${type === "error" ? "danger" : type === "success" ? "success" : "info"} alert-dismissible fade show position-fixed greenova-notification`;
-    notification.innerHTML = `
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.remove();
-      }
-    }, 5000);
+    // Use shared DOM notification
+    import("../shared/dom").then(({ showNotification }) => showNotification(message, type));
   }
 
   const filterForm = document.getElementById("filter-form") as HTMLFormElement;
@@ -106,7 +92,4 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-
-  // Optionally, call this on page load or when obligations need to be loaded
-  // fetchAndDecodeObligations();
 });

@@ -4,6 +4,7 @@
 // =============================================
 // Import Foundation and Configuration
 // =============================================
+@use 'sass:color';
 @use 'variables' as vars;
 @use 'mixins' as mix;
 
@@ -106,8 +107,8 @@ $dark: vars.$greenova-dark;
 
 // Base layout and typography
 .greenova-container {
-  @include mix.container-responsive;
   background-color: vars.$greenova-bg-light;
+  @include mix.container-responsive;
 }
 
 body.greenova-container, .container-fluid {
@@ -140,7 +141,7 @@ body.greenova-container, .container-fluid {
     text-decoration: none;
 
     &:hover {
-      color: lighten(vars.$greenova-accent, 10%);
+      color: color.adjust(vars.$greenova-accent, $lightness: 10%);
       text-decoration: underline;
     }
   }

@@ -1,5 +1,0 @@
-// Placeholder for as-proto runtime module
-// This file is required for static file collection and build processes.
-// Replace with the actual as-proto implementation or generated code as needed.
-
-export const AS_PROTO_PLACEHOLDER = true;

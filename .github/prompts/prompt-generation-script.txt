@@ -1,5 +1,6 @@
 . /workspaces/greenova/.venv/bin/activate && cd /workspaces/greenova/greenova && python manage.py test core
 
+analyse what is remaining to be implemente with refactoring and integrating the landing app as per its refactoring plan and also Greenova-Workflow.bpmn
 
 continue to iterate, checking off the acceptance criteria checklist in core prompt until all is complete, do not ask what is next, just complete until the below core app refactoring is complete by iterating
 

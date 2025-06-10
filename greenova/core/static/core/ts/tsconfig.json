@@ -10,8 +10,9 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "allowJs": false,
-    "declaration": false
+    "declaration": false,
+    "types": ["jest", "node"]
   },
-  "include": ["*.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "../js"]
 }

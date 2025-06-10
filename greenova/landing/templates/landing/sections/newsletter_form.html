@@ -1,8 +1,11 @@
 {% load django_bootstrap5 %}
-<form method="post" action="{% url 'landing:newsletter_signup' %}" class="needs-validation" novalidate>
+<form method="post" action="{% url 'landing:newsletter_signup' %}" class="needs-validation" novalidate _="on submit if my.email.value.trim() === '' add .is-invalid to my.email else remove .is-invalid from my.email">
   {% csrf_token %}
   <div class="mb-3">
     {{ form.email|as_crispy_field }}
+    <div class="invalid-feedback" id="email-error" aria-live="polite">
+      Please enter a valid email address.
+    </div>
   </div>
   <button type="submit" class="btn btn-success btn-lg w-100">Sign Up</button>
 </form>

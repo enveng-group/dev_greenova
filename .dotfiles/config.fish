@@ -14,6 +14,9 @@ set -x VENV_PATH "/workspaces/greenova/.venv"
 set -x NODE_MODULES_PATH "/workspaces/greenova/node_modules"
 set -x FRONTEND_DIST_DIR "/workspaces/greenova/greenova/static/dist"
 
+# Set up PATH for user, system, node, and venv binaries
+set -x PATH /home/vscode/.local/bin /usr/local/bin /usr/bin $NODE_MODULES_PATH/.bin $VENV_PATH/bin $PATH
+
 # Django environment
 set -x DJANGO_SETTINGS_MODULE "greenova.settings"
 set -x DJANGO_DEBUG "True"
@@ -42,6 +45,7 @@ set -x PROSELINT_PATH "/usr/local/bin/proselint"
 set -x PROTOC_PATH "/usr/bin/protoc"
 set -x BANDIT_PATH "/usr/local/bin/bandit"
 set -x ISORT_PATH "/usr/local/bin/isort"
+set -x DOIT "/usr/local/bin/doit"
 
 # Django server aliases
 alias django-run "$VENV_PATH/bin/python $DJANGO_MANAGE_PY runserver 0.0.0.0:8000"

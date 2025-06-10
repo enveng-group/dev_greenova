@@ -3,6 +3,16 @@
  * Integrates WebAssembly compiled from TypeScript for theme management and animations
  */
 
+import "./shared/api";
+import "./shared/dom";
+import "./shared/types";
+import "./core/proto";
+import "./core/index";
+import "./landing/proto";
+import "./landing/index";
+import "./obligations/proto";
+import "./obligations/index";
+
 export {};
 
 (window as any).wasmModule = null;
@@ -192,8 +202,60 @@ function createFallbackModule() {
   return count;
 };
 
+// === Greenova Landing Protobuf WASM wrappers ===
+(window as any).decodeLandingPageContentWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeLandingPageContentWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  return (window as any).wasmModule.decodeLandingPageContentWasm(ptr, buffer.length);
+};
+
+(window as any).encodeLandingPageContentWasm = async function(content: any): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.encodeLandingPageContentWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  // content: JS object with fields matching LandingPageContent
+  return (window as any).wasmModule.encodeLandingPageContentWasm(content);
+};
+
+(window as any).decodeNewsletterSignupRequestWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeNewsletterSignupRequestWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  return (window as any).wasmModule.decodeNewsletterSignupRequestWasm(ptr, buffer.length);
+};
+
+(window as any).encodeNewsletterSignupRequestWasm = async function(req: any): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.encodeNewsletterSignupRequestWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  // req: JS object with field 'email'
+  return (window as any).wasmModule.encodeNewsletterSignupRequestWasm(req.email || "");
+};
+
+(window as any).decodeNewsletterSignupResponseWasm = async function(buffer: Uint8Array): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.decodeNewsletterSignupResponseWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  const ptr = (window as any).wasmModule.__newArray((window as any).wasmModule.Uint8Array_ID, buffer);
+  return (window as any).wasmModule.decodeNewsletterSignupResponseWasm(ptr, buffer.length);
+};
+
+(window as any).encodeNewsletterSignupResponseWasm = async function(resp: any): Promise<any> {
+  if (!(window as any).wasmModule || !(window as any).wasmModule.encodeNewsletterSignupResponseWasm) {
+    throw new Error("WASM module not loaded");
+  }
+  // resp: JS object with fields 'success', 'message'
+  return (window as any).wasmModule.encodeNewsletterSignupResponseWasm(
+    !!resp.success,
+    resp.message || ""
+  );
+};
+
 // Real usage: encode a single audit log to protobuf using WASM
-(window as any).encodeAuditLogProto = async function(auditLog) {
+(window as any).encodeAuditLogProto = async function(auditLog: any): Promise<any> {
   if (!(window as any).wasmModule || !(window as any).wasmModule.encodeAuditLogProto) {
     throw new Error("WASM module not loaded");
   }
@@ -210,7 +272,7 @@ function createFallbackModule() {
 };
 
 // Real usage: decode a single audit log from protobuf using WASM
-(window as any).decodeAuditLogProto = async function(buffer) {
+(window as any).decodeAuditLogProto = async function(buffer: Uint8Array): Promise<any> {
   if (!(window as any).wasmModule || !(window as any).wasmModule.decodeAuditLogProto) {
     throw new Error("WASM module not loaded");
   }
@@ -218,7 +280,7 @@ function createFallbackModule() {
 };
 
 // Real usage: encode a collection of audit logs to protobuf using WASM
-(window as any).encodeAuditLogCollection = async function(logs) {
+(window as any).encodeAuditLogCollection = async function(logs: any[]): Promise<any> {
   if (!(window as any).wasmModule || !(window as any).wasmModule.encodeAuditLogCollection) {
     throw new Error("WASM module not loaded");
   }
@@ -226,7 +288,7 @@ function createFallbackModule() {
 };
 
 // Real usage: decode a collection of audit logs from protobuf using WASM
-(window as any).decodeAuditLogCollection = async function(buffer) {
+(window as any).decodeAuditLogCollection = async function(buffer: Uint8Array): Promise<any> {
   if (!(window as any).wasmModule || !(window as any).wasmModule.decodeAuditLogCollection) {
     throw new Error("WASM module not loaded");
   }
@@ -234,7 +296,7 @@ function createFallbackModule() {
 };
 
 // Real usage: filter audit logs by action using WASM
-(window as any).filterAuditLogsByAction = async function(logs, action) {
+(window as any).filterAuditLogsByAction = async function(logs: any[], action: string): Promise<any> {
   if (!(window as any).wasmModule || !(window as any).wasmModule.filterAuditLogsByAction) {
     throw new Error("WASM module not loaded");
   }
@@ -242,7 +304,7 @@ function createFallbackModule() {
 };
 
 // Real usage: filter audit logs by user using WASM
-(window as any).filterAuditLogsByUser = async function(logs, userId) {
+(window as any).filterAuditLogsByUser = async function(logs: any[], userId: string): Promise<any> {
   if (!(window as any).wasmModule || !(window as any).wasmModule.filterAuditLogsByUser) {
     throw new Error("WASM module not loaded");
   }
@@ -250,7 +312,7 @@ function createFallbackModule() {
 };
 
 // Real usage: get most recent audit log from a collection using WASM
-(window as any).getMostRecentAuditLog = async function(logs) {
+(window as any).getMostRecentAuditLog = async function(logs: any[]): Promise<any> {
   if (!(window as any).wasmModule || !(window as any).wasmModule.getMostRecentAuditLog) {
     throw new Error("WASM module not loaded");
   }

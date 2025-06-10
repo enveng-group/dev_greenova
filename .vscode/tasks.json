@@ -227,6 +227,219 @@
         "panel": "shared"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Doit - Build All (Development)",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "build_all_dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "Doit - Build All (Production)",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "build_all_prod"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "Doit - Compile Protobuf (Python)",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "compile_proto_python"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Compile WASM (Release)",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "compile_wasm_release"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Compile WASM (Debug)",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "compile_wasm_debug"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Build SCSS/CSS",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "build_scss"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Build TypeScript",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "build_typescript"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Clean All",
+      "type": "shell",
+      "command": "doit",
+      "args": [
+        "clean_all"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Parcel - Build Development",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "build:parcel:dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Parcel - Build Production",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "build:parcel:prod"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Parcel - Dev Server",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "dev:parcel"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "NPM - Install Dependencies",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "install"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Watch - SCSS Development",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "build:sass:dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      }
     }
   ]
 }
