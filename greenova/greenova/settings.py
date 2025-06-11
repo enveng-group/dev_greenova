@@ -619,91 +619,6 @@ TEST_RUNNER = "django.test.runner.DiscoverRunner"
 try:
     import sentry_sdk
 
-<<<<<<< HEAD
-# Silk configuration
-
-# Create profiles directory for Silk profiler results if it doesn't exist
-# PROFILES_DIR = os.path.join(BASE_DIR, "greenova", "profiles")
-# if not os.path.exists(PROFILES_DIR):
-#   os.makedirs(PROFILES_DIR)
-
-# Silk configuration
-# SILKY_PYTHON_PROFILER = True
-# SILKY_PYTHON_PROFILER_BINARY = False
-# SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
-# SILKY_AUTHENTICATION = True
-# SILKY_AUTHORISATION = True
-# SILKY_META = True
-
-# Garbage collection settings for small server environment
-# SILKY_MAX_RECORDED_REQUESTS = 500  # Store maximum of 500 requests
-# SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50  # Run GC check on 50% of requests
-# SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Limit request body size to 1KB
-# SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # Limit response body size to 1KB
-# SILKY_INTERCEPT_PERCENT = 25  # Only profile 25% of requests
-
-# Debug Toolbar Configuration
-# DEBUG_TOOLBAR_CONFIG = {
-#     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
-#     "JQUERY_URL": "",  # Don't load jQuery
-#     "DISABLE_PANELS": {"debug_toolbar.panels.redirects.RedirectsPanel"},
-#     "SHOW_COLLAPSED": True,
-#     "SHOW_TEMPLATE_CONTEXT": True,
-#     "SQL_WARNING_THRESHOLD": 100,
-#     "ENABLE_STACKTRACES": True,
-#     "EXTRA_SIGNALS": [],
-#     "HIDE_IN_STACKTRACES": (
-#         "django",
-#         "debug_toolbar",
-#         "django.db",
-#         "django.core",
-#         "django.contrib",
-#     ),
-# }
-
-SHELL_PLUS = "ipython"
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-# Silk configuration
-
-# Create profiles directory for Silk profiler results if it doesn't exist
-# PROFILES_DIR = os.path.join(BASE_DIR, "greenova", "profiles")
-# if not os.path.exists(PROFILES_DIR):
-#   os.makedirs(PROFILES_DIR)
-
-# Silk configuration
-# SILKY_PYTHON_PROFILER = True
-# SILKY_PYTHON_PROFILER_BINARY = False
-# SILKY_PYTHON_PROFILER_RESULT_PATH = PROFILES_DIR
-# SILKY_AUTHENTICATION = True
-# SILKY_AUTHORISATION = True
-# SILKY_META = True
-
-# Garbage collection settings for small server environment
-# SILKY_MAX_RECORDED_REQUESTS = 500  # Store maximum of 500 requests
-# SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 50  # Run GC check on 50% of requests
-# SILKY_MAX_REQUEST_BODY_SIZE = 1024  # Limit request body size to 1KB
-# SILKY_MAX_RESPONSE_BODY_SIZE = 1024  # Limit response body size to 1KB
-# SILKY_INTERCEPT_PERCENT = 25  # Only profile 25% of requests
-
-# Debug Toolbar Configuration
-# DEBUG_TOOLBAR_CONFIG = {
-#     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
-#     "JQUERY_URL": "",  # Don't load jQuery
-#     "DISABLE_PANELS": {"debug_toolbar.panels.redirects.RedirectsPanel"},
-#     "SHOW_COLLAPSED": True,
-#     "SHOW_TEMPLATE_CONTEXT": True,
-#     "SQL_WARNING_THRESHOLD": 100,
-#     "ENABLE_STACKTRACES": True,
-#     "EXTRA_SIGNALS": [],
-#     "HIDE_IN_STACKTRACES": (
-#         "django",
-#         "debug_toolbar",
-#         "django.db",
-#         "django.core",
-#         "django.contrib",
-#     ),
-# }
-=======
     if not DEBUG:
         sentry_sdk.init(
             dsn=(
@@ -728,4 +643,3 @@ except ImportError:
         ImportWarning,
         stacklevel=2,
     )
->>>>>>> 37e6b25 (Squashed commit of the following:)
