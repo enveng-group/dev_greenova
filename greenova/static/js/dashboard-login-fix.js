@@ -8,6 +8,8 @@
 (function () {
   'use strict'
 
+  const hasReloaded = false
+
   // Check if we're on the dashboard page after login
   function checkDashboardState () {
     // Only run on dashboard pages
@@ -15,16 +17,29 @@
       return
     }
 
+    // Prevent infinite reload loops (persist across reloads)
+    if (window.sessionStorage.getItem('dashboardReloaded') === 'true') {
+      return
+    }
+
     // Check if user is authenticated but no project is selected
     const isAuthenticated = document.body.dataset.authenticated === 'true'
+    const projectSelect = document.querySelector('#project_id')
     const hasProjects =
-      document.querySelector('#project_id') &&
-      document.querySelector('#project_id option[value!=""]')
+      projectSelect &&
+      projectSelect.querySelector('option:not([value=""])') &&
+      !projectSelect.disabled &&
+      projectSelect.offsetParent !== null // visible
     const showingEmptyState = document.querySelector('.dashboard-empty-state')
 
-    if (isAuthenticated && hasProjects && showingEmptyState) {
-      // This suggests we're showing the empty state even though the user has projects
-      // This can happen when the session isn't properly loaded via HTMX
+    if (
+      isAuthenticated &&
+      hasProjects &&
+      showingEmptyState &&
+      projectSelect // must be visible and enabled
+    ) {
+      // Only reload if the project select is visible and enabled
+      window.sessionStorage.setItem('dashboardReloaded', 'true')
       console.log('Dashboard state inconsistent, forcing reload...')
       window.location.reload()
     }
@@ -37,9 +52,16 @@
     checkDashboardState()
   }
 
-  // Also run after HTMX requests complete
+  // Also run after HTMX requests complete (but with more restrictive conditions)
   document.addEventListener('htmx:afterRequest', function (event) {
-    // Small delay to allow DOM updates
-    setTimeout(checkDashboardState, 100)
+    // Only check after specific HTMX requests, not all of them
+    if (
+      event.detail.target &&
+      (event.detail.target.id === 'main-content' ||
+        event.detail.target.classList.contains('dashboard-content'))
+    ) {
+      // Small delay to allow DOM updates
+      setTimeout(checkDashboardState, 100)
+    }
   })
 })()

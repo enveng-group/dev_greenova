@@ -29,4 +29,20 @@ urlpatterns = [
     path(
         "projects-at-risk/", views.ProjectsAtRiskView.as_view(), name="projects_at_risk"
     ),
+    # Drilldown views for dashboard navigation
+    path(
+        "mechanism-drilldown/",
+        views.MechanismDrilldownView.as_view(),
+        name="mechanism_drilldown",
+    ),
+    path(
+        "procedure-drilldown/",
+        views.ProcedureDrilldownView.as_view(),
+        name="procedure_drilldown",
+    ),
+    path(
+        "obligation-list-drilldown/",
+        views.ObligationListDrilldownView.as_view(),
+        name="obligation_list_drilldown",
+    ),
 ]

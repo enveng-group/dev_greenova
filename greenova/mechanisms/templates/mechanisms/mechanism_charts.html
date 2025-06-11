@@ -11,23 +11,21 @@
     <!-- Chart Gallery -->
     <div id="chartGallery" class="grid grid-cols-3 gap-4" role="region" aria-label="Chart gallery">
       {% for mech in mechanism_charts %}
-        <article class="mechanism-chart bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+        <article class="mechanism-chart bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+                 role="button"
+                 tabindex="0"
+                 aria-label="View procedures for {{ mech.name }}"
+                 hx-get="{% url 'dashboard:procedure_drilldown' %}?project_id={{ project_id|default:request.GET.project_id }}&mechanism_id={{ mech.id }}"
+                 hx-target="#obligation-compliance-chart"
+                 hx-push-url="false"
+                 style="cursor: pointer;"
+                 _="on keydown[key:Enter or key:Space] trigger click on me">>
           <header><h3 class="text-lg font-semibold text-gray-800 mb-2">{{ mech.name }}</h3></header>
-
-          {% if mech.id and mech.id|add:""|floatformat:"0"|add:"" == mech.id|add:"" %}
-            <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}" style="text-decoration: none">
-          {% endif %}
 
           <figure>
             <figcaption class="text-sm text-gray-500 mb-2">{{ mech.name }} Status Distribution</figcaption>
-            <!-- Just canvas placeholder, no data here -->
             <canvas id="chart-{{ mech.id|default:'overall' }}" width="300" height="300" class="w-full h-auto"></canvas>
-
           </figure>
-
-          {% if mech.id and mech.id|add:""|floatformat:"0"|add:"" == mech.id|add:"" %}
-            </a>
-          {% endif %}
         </article>
       {% endfor %}
     </div>
@@ -43,10 +41,28 @@
   </div>
 {% endif %}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
 
 <script>
+  // Track Chart.js instances by canvas ID
+  const chartInstances = {};
+
+  function renderChartOnCanvas(canvasId, chartConfig) {
+    // Destroy existing chart if present
+    if (chartInstances[canvasId]) {
+      chartInstances[canvasId].destroy();
+    }
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    chartInstances[canvasId] = new Chart(ctx, chartConfig);
+  }
+
   async function fetchAndRenderCharts() {
+    // Check if Chart.js is available
+    if (typeof Chart === 'undefined') {
+      console.error('Chart.js is not available when trying to render charts');
+      return;
+    }
+    
     try {
       const response = await fetch("{% url 'mechanisms:mechanism_charts_json' %}?project_id={{ project.id }}");
       if (!response.ok) throw new Error('Network response was not ok');
@@ -57,8 +73,7 @@
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
-        const ctx = canvas.getContext('2d');
-        new Chart(ctx, {
+        const chartConfig = {
           type: 'pie',
           data: {
             labels: mechanism.labels,
@@ -86,7 +101,9 @@
               }
             }
           }
-        });
+        };
+
+        renderChartOnCanvas(canvasId, chartConfig);
       });
     } catch (error) {
       console.error("Failed to load or render charts:", error);
@@ -97,10 +114,29 @@
     htmx.on('htmx:afterSwap', (evt) => {
       const targetId = evt.detail.target.id;
       if (targetId === 'obligation-compliance-chart' || targetId === 'chartGallery') {
-        fetchAndRenderCharts();
+        initializeCharts();
       }
     });
   }
 
-  document.addEventListener('DOMContentLoaded', fetchAndRenderCharts);
+  // Ensure Chart.js is loaded before running
+  let chartJsRetryCount = 0;
+  const chartJsMaxRetries = 20;
+  function initializeCharts() {
+    if (typeof Chart !== 'undefined') {
+      fetchAndRenderCharts();
+    } else if (chartJsRetryCount < chartJsMaxRetries) {
+      chartJsRetryCount++;
+      setTimeout(initializeCharts, 100);
+    } else {
+      console.error('Chart.js failed to load after multiple attempts.');
+    }
+  }
+
+  // Run when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCharts);
+  } else {
+    initializeCharts();
+  }
 </script>

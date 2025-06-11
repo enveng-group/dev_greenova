@@ -132,8 +132,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",  # Debug after core middleware
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
+
+# Conditionally add browser reload middleware only when explicitly enabled
+if DEBUG and os.environ.get("ENABLE_BROWSER_RELOAD", "False").lower() == "true":
+    MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")
 
 # Authentication settings
 AUTHENTICATION_BACKENDS = [
@@ -401,7 +404,11 @@ except ImportError:
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
     "JQUERY_URL": "",
-    "DISABLE_PANELS": {"debug_toolbar.panels.redirects.RedirectsPanel"},
+    "DISABLE_PANELS": {
+        "debug_toolbar.panels.redirects.RedirectsPanel",
+        # Disable profiling panel to avoid conflicts
+        "debug_toolbar.panels.profiling.ProfilingPanel",
+    },
     "SHOW_COLLAPSED": True,
     "SHOW_TEMPLATE_CONTEXT": True,
     "SQL_WARNING_THRESHOLD": 100,

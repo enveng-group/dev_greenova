@@ -12,7 +12,7 @@ from typing import Any, TypedDict, cast
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.db.models import QuerySet
+from django.db.models import Q, QuerySet
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -304,9 +304,7 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
                 {
                     "project": project,
                     "overdue_count": overdue_count,
-                    "last_due_date": last_due_date.action_due_date
-                    if last_due_date
-                    else None,
+                    "last_due_date": getattr(last_due_date, "action_due_date", None),
                 }
             )
         context["projects_with_stats"] = projects_with_stats
@@ -344,9 +342,7 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
                 {
                     "project": project,
                     "overdue_count": overdue_count,
-                    "last_due_date": last_due_date.action_due_date
-                    if last_due_date
-                    else None,
+                    "last_due_date": getattr(last_due_date, "action_due_date", None),
                 }
             )
         context["projects_with_stats"] = projects_with_stats
@@ -480,4 +476,167 @@ class UpcomingObligationsView(ProjectAwareDashboardMixin, ListView):
         """Add additional context for upcoming obligations."""
         context = super().get_context_data(**kwargs)
         context["selected_project_id"] = get_selected_project_id(self.request)
+        return context
+
+
+# Drilldown views for dashboard navigation
+class MechanismDrilldownView(ProjectAwareDashboardMixin, TemplateView):
+    """Drilldown view showing mechanism charts for a selected project."""
+
+    template_name = "dashboard/partials/mechanism_drilldown.html"
+    login_url = "account_login"
+
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
+        """Add mechanism charts context data."""
+        context = super().get_context_data(**kwargs)
+
+        project_id = get_selected_project_id(self.request)
+        if not project_id:
+            context["error"] = "No project selected"
+            return context
+
+        try:
+            project = Project.objects.get(id=project_id)
+            context.update(
+                {
+                    "project": project,
+                    "selected_project_id": project_id,
+                    "mechanism_charts": [],  # Simple placeholder for now
+                }
+            )
+
+        except Project.DoesNotExist:
+            logger.exception(f"Project {project_id} not found")
+            context["error"] = "Project not found"
+
+        return context
+
+
+class ProcedureDrilldownView(ProjectAwareDashboardMixin, TemplateView):
+    """Drilldown view for procedure charts for a mechanism in the dashboard."""
+
+    template_name = "dashboard/partials/procedure_drilldown_charts.html"
+    login_url = "account_login"
+
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        project_id = self.request.GET.get("project_id")
+        mechanism_id = self.request.GET.get("mechanism_id")
+
+        if not (project_id and mechanism_id):
+            context["error"] = "Missing project or mechanism ID"
+            return context
+
+        try:
+            from mechanisms.models import EnvironmentalMechanism
+
+            project = Project.objects.get(id=project_id)
+            mechanism = EnvironmentalMechanism.objects.get(
+                id=mechanism_id, project=project
+            )
+
+            obligations = Obligation.objects.filter(
+                project=project, primary_environmental_mechanism=mechanism
+            ).exclude(procedure="Missing procedure")
+
+            # Group obligations by unique procedure name
+            procedure_map: dict[str, list[Obligation]] = {}
+            for obligation in obligations:
+                proc_name = getattr(obligation, "procedure", None) or "(Unspecified)"
+                if proc_name not in procedure_map:
+                    procedure_map[proc_name] = []
+                procedure_map[proc_name].append(obligation)
+
+            procedure_charts = []
+            for proc_name, proc_obligations in procedure_map.items():
+                total = len(proc_obligations)
+                overdue = sum(
+                    1
+                    for o in proc_obligations
+                    if getattr(o, "action_due_date", None)
+                    and o.action_due_date < timezone.now().date()
+                    and getattr(o, "status", None) != "completed"
+                )
+
+                procedure_charts.append(
+                    {
+                        "id": str(proc_name).replace(" ", "_").lower(),
+                        "name": proc_name,
+                        "description": f"Obligations for {proc_name}",
+                        "total_obligations": total,
+                        "overdue_count": overdue,
+                    }
+                )
+
+            context.update(
+                {
+                    "procedure_charts": procedure_charts,
+                    "mechanism": mechanism,
+                    "project_id": project_id,
+                    "selected_project_id": project_id,
+                    "selected_mechanism_id": mechanism_id,
+                }
+            )
+
+        except Exception as e:
+            logger.exception(f"Error in ProcedureDrilldownView: {e}")
+            context["error"] = "Failed to load procedure data"
+
+        return context
+
+
+class ObligationListDrilldownView(ProjectAwareDashboardMixin, TemplateView):
+    """Drilldown view showing obligation list for a selected procedure."""
+
+    template_name = "dashboard/partials/obligation_list_drilldown.html"
+    login_url = "account_login"
+
+    def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
+        """Add obligation list context data."""
+        context = super().get_context_data(**kwargs)
+
+        project_id = self.request.GET.get("project_id")
+        mechanism_id = self.request.GET.get("mechanism_id")
+        procedure_id = self.request.GET.get("procedure_id")
+
+        if not all([project_id, mechanism_id, procedure_id]):
+            context["error"] = "Missing required parameters"
+            return context
+
+        try:
+            from mechanisms.models import EnvironmentalMechanism
+
+            project = Project.objects.get(id=project_id)
+            mechanism = EnvironmentalMechanism.objects.get(
+                id=mechanism_id, project=project
+            )
+
+            # Filter obligations by project, mechanism, and procedure
+            obligations = Obligation.objects.filter(
+                project=project,
+                primary_environmental_mechanism=mechanism,
+                procedure=procedure_id,
+            ).order_by("action_due_date")
+
+            context.update(
+                {
+                    "project": project,
+                    "mechanism": mechanism,
+                    "procedure_name": procedure_id,
+                    "project_id": project_id,
+                    "selected_project_id": project_id,
+                    "selected_mechanism_id": mechanism_id,
+                    "selected_procedure_id": procedure_id,
+                    "obligations": obligations,
+                    "total_obligations": obligations.count(),
+                }
+            )
+
+        except Project.DoesNotExist:
+            logger.exception(f"Project {project_id} not found")
+            context["error"] = "Project not found"
+        except Exception as e:
+            logger.exception(f"Error in ObligationListDrilldownView: {e}")
+            context["error"] = "Failed to load obligation data"
+
         return context

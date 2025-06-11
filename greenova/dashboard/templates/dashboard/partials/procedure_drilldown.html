@@ -1,5 +1,6 @@
 {% load static %}
 {% load core_tags %}
+{% load custom_filters %}
 
 <link rel="stylesheet" href="{% static 'css/dashboard-drilldown.css' %}">
 
@@ -41,7 +42,7 @@
                    hx-vals='{"procedure_id": "{{ chart.id }}", "mechanism_id": "{{ selected_mechanism_id }}", "project_id": "{{ selected_project_id }}"}'
                    hx-target="#main-content"
                    hx-push-url="true"
-                   _="on keydown[Enter,Space] from me trigger click">
+                   _="on keydown[key:Enter or key:Space] from me trigger click">
             
             <header class="chart-header">
               <h3>{{ chart.name }}</h3>

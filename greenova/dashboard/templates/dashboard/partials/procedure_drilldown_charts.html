@@ -1,0 +1,100 @@
+{% comment %} Partial for procedure charts in dashboard obligation compliance container {% endcomment %}
+{% if error %}
+  <div role="alert" class="notice error">
+    <p>{{ error }}</p>
+  </div>
+{% elif procedure_charts %}
+  <!-- Ensure Chart.js is loaded -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  
+  <!-- Navigation breadcrumb -->
+  <nav class="breadcrumb mb-4" aria-label="Drilldown navigation">
+    <ol>
+      <li><a href="{% url 'dashboard:home' %}?project_id={{ project_id }}">Dashboard</a></li>
+      <li><a href="#" hx-get="{% url 'mechanisms:mechanism_charts' %}?project_id={{ project_id }}" 
+             hx-target="#obligation-compliance-chart" hx-swap="innerHTML">Mechanisms</a></li>
+      <li aria-current="page">{{ mechanism.name }} Procedures</li>
+    </ol>
+  </nav>
+
+  <div id="chartGallery" class="grid grid-cols-3 gap-4" role="region" aria-label="Procedure chart gallery">
+    {% for chart in procedure_charts %}
+      <article class="procedure-chart bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+               role="button"
+               tabindex="0"
+               aria-label="View obligations for {{ chart.name }}"
+               hx-get="{% url 'dashboard:obligation_list_drilldown' %}?project_id={{ project_id }}&mechanism_id={{ mechanism.id }}&procedure_id={{ chart.name }}"
+               hx-target="#obligation-compliance-chart"
+               hx-push-url="false"
+               _="on keydown[key:Enter or key:Space] trigger click on me">
+        <header><h3 class="text-lg font-semibold text-gray-800 mb-2">{{ chart.name }}</h3></header>
+        <figure>
+          <figcaption class="text-sm text-gray-500 mb-2">{{ chart.name }} Obligations</figcaption>
+          <canvas id="procedure-chart-{{ chart.id }}" width="300" height="300" class="w-full h-auto"></canvas>
+        </figure>
+        <footer class="text-center text-sm text-gray-500 mt-2">
+          <p>Click to view obligations</p>
+        </footer>
+      </article>
+    {% endfor %}
+  </div>
+  <script>
+    // Render procedure charts with unique scope
+    (function() {
+      const procedureChartInstances = {};
+      const procedureChartConfigs = [
+        {% for chart in procedure_charts %}
+        {
+          canvasId: 'procedure-chart-{{ chart.id }}',
+          data: {
+            labels: ['Total', 'Overdue'],
+            datasets: [{
+              data: [{{ chart.total_obligations }}, {{ chart.overdue_count }}],
+              backgroundColor: ['#34d399', '#f87171'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
+      
+      function renderProcedureCharts() {
+        procedureChartConfigs.forEach(config => {
+          const ctx = document.getElementById(config.canvasId)?.getContext('2d');
+          if (!ctx) return;
+          
+          if (procedureChartInstances[config.canvasId]) {
+            procedureChartInstances[config.canvasId].destroy();
+          }
+          
+          procedureChartInstances[config.canvasId] = new Chart(ctx, {
+            type: 'pie',
+            data: config.data,
+            options: config.options
+          });
+        });
+      }
+      
+      if (typeof Chart !== 'undefined') {
+        renderProcedureCharts();
+      } else {
+        let retryCount = 0;
+        (function waitForChartJs() {
+          if (typeof Chart !== 'undefined') {
+            renderProcedureCharts();
+          } else if (retryCount++ < 20) {
+            setTimeout(waitForChartJs, 100);
+          }
+        })();
+      }
+    })();
+  </script>
+{% else %}
+  <div role="status" class="notice">
+    <p>No procedures found for this mechanism.</p>
+  </div>
+{% endif %}
