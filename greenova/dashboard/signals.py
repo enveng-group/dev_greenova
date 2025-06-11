@@ -1,8 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""
-Signal handlers for dashboard events.
+"""Signal handlers for dashboard events.
 
 These signals handle project selection changes, dashboard data updates,
 and other events related to dashboard state management.
@@ -29,8 +28,7 @@ dashboard_data_updated = Signal()  # Sent when dashboard data is updated
 def handle_project_selection(
     sender: Any, request: HttpRequest, project_id: str | None, **kwargs: dict[str, Any]
 ) -> None:
-    """
-    Handle project selection events.
+    """Handle project selection events.
 
     This signal handler ensures proper session state when a project is selected.
 
@@ -39,6 +37,7 @@ def handle_project_selection(
         request: The current HTTP request
         project_id: The ID of the selected project
         **kwargs: Additional keyword arguments
+
     """
     if project_id:
         request.session["selected_project_id"] = project_id
@@ -56,8 +55,7 @@ def handle_project_selection(
 def restore_dashboard_state(
     sender: Any, request: HttpRequest, user: Any, **kwargs: dict[str, Any]
 ) -> None:
-    """
-    Restore dashboard state when a user logs in.
+    """Restore dashboard state when a user logs in.
 
     This ensures continuity of experience across login sessions.
 
@@ -66,6 +64,7 @@ def restore_dashboard_state(
         request: The current HTTP request
         user: The user who just logged in
         **kwargs: Additional keyword arguments
+
     """
     # Nothing to do if there's no request
     if not request:
@@ -73,18 +72,21 @@ def restore_dashboard_state(
 
     # Check if user had a previously selected project
     try:
-        # Try to get the user's last accessed project
-        last_project = (
-            Project.objects.filter(members=user).order_by("-last_accessed").first()
+        # Try to get the user's first project (most recently created)
+        first_project = (
+            Project.objects.filter(members=user).order_by("-created_at").first()
         )
 
-        if last_project:
-            request.session["selected_project_id"] = str(last_project.id)
+        if first_project:
+            request.session["selected_project_id"] = str(first_project.id)
+            request.session.modified = True
             logger.debug(
-                "Restored last accessed project %s for user %s",
-                last_project.id,
+                "Auto-selected first project %s for user %s after login",
+                first_project.id,
                 user.username,
             )
+        else:
+            logger.debug("No projects found for user %s", user.username)
     except Exception as e:
         logger.exception("Error restoring dashboard state: %s", str(e))
 
@@ -93,13 +95,13 @@ def restore_dashboard_state(
 def update_dashboard_data(
     sender: Any, instance: Obligation, **kwargs: dict[str, Any]
 ) -> None:
-    """
-    Signal handler to update dashboard data when obligations change.
+    """Signal handler to update dashboard data when obligations change.
 
     Args:
         sender: The model class sending the signal
         instance: The Obligation instance that was saved
         **kwargs: Additional keyword arguments
+
     """
     # This currently just logs the event
     # In a real-time application, this might trigger WebSocket updates

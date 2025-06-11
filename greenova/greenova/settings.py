@@ -14,6 +14,7 @@ import os
 import sys
 import warnings
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -26,10 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 try:
     SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 except KeyError as exc:
-    raise RuntimeError(
+    msg = (
         "DJANGO_SECRET_KEY environment variable is required. "
         "Ensure it is set in the .env file."
-    ) from exc
+    )
+    raise RuntimeError(msg) from exc
 
 # Optional environment variables with defaults
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in {"true", "1"}
@@ -122,6 +124,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",  # Keep CSRF for form handling
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "allauth.account.middleware.AccountMiddleware",  # Should follow auth middleware
+    "authentication.login_middleware.LoginRedirectMiddleware",  # Handle login redirects
     "authentication.middleware.LogoutStateMiddleware",  # Add our new middleware here
     "company.middleware.ActiveCompanyMiddleware",  # Add ActiveCompanyMiddleware here
     "core.middleware.ProjectSelectionMiddleware",
@@ -141,7 +144,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 MFA_SUPPORTED_TYPES = ["totp", "recovery_codes"]
-LOGIN_REDIRECT_URL = "dashboard:home"
+LOGIN_REDIRECT_URL = "/dashboard/"
+ACCOUNT_LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "landing:index"
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -371,6 +375,7 @@ TEST_RUNNER = "django.test.runner.DiscoverRunner"
 # Sentry.io configuration
 try:
     import sentry_sdk
+
     if not DEBUG:
         sentry_sdk.init(
             dsn=(
@@ -410,3 +415,5 @@ DEBUG_TOOLBAR_CONFIG = {
         "django.contrib",
     ),
 }
+LOGIN_REDIRECT_URL = "/dashboard/"
+ACCOUNT_LOGIN_REDIRECT_URL = "/dashboard/"

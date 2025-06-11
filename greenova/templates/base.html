@@ -15,7 +15,6 @@
 {% load static %}
 {% load hyperscript %}
 {% load django_htmx %}
-{% load tailwind_tags %}
 {% load user_tags %}
 {% load core_tags %}
 
@@ -43,11 +42,11 @@
 
 {% block head_scripts %}
   <!-- Core dependencies -->
-  <script src="{% static 'ts/dist/helper.bundle.js' %}" type="module"></script>
-  <script src="{% static 'ts/dist/wasm-loader.bundle.js' %}" type="module"></script>
-  <script src="{% static 'ts/dist/error-handler.bundle.js' %}" type="module"></script>
-  <script src="{% static 'ts/dist/foldable.bundle.js' %}" type="module"></script>
-  <script src="{% static 'ts/dist/app-modules.bundle.js' %}" type="module"></script>
+  <script src="{% static 'ts/dist/helper.bundle.js' %}" type="module" defer></script>
+  <script src="{% static 'ts/dist/wasm-loader.bundle.js' %}" type="module" defer></script>
+  <script src="{% static 'ts/dist/error-handler.bundle.js' %}" type="module" defer></script>
+  <script src="{% static 'ts/dist/foldable.bundle.js' %}" type="module" defer></script>
+  <script src="{% static 'ts/dist/app-modules.bundle.js' %}" type="module" defer></script>
 
   <!-- GSAP Animation Framework -->
   <script src="{% static 'js/vendors/gsap/gsap.min.js' %}" defer></script>
@@ -58,10 +57,10 @@
   <script src="{% static 'js/vendors/gsap/SplitText.min.js' %}" defer></script>
 
   <!-- Theme initialization: must be before hyperscript -->
-  <script src="{% static 'js/modules/theme-init.js' %}"></script>
+  <script src="{% static 'js/modules/theme-init.js' %}" defer></script>
 
   <!-- Custom JS -->
-  <script src="{% static 'js/custom.js' %}"></script>
+  <script src="{% static 'js/custom.js' %}" defer></script>
 
   <!-- HTMX -->
   <script src="{% static 'js/vendors/htmx/htmx.min.js' %}" defer></script>
@@ -82,13 +81,14 @@
 {% endblock extra_head %}
 
 {% block body_attrs %}
-  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
   hx-ext="head-support, loading-states, class-tools, path-deps"
-  hx-boost="true"
   hx-swap="innerHTML transition:true"
   hx-indicator="#htmx-indicator"
   data-theme="{{ request.session.theme|default:'light' }}"
+  data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
 {% endblock body_attrs %}
+
+{# For HTMX-enabled forms or elements, add: hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' #}
 
 {% block body %}
   <!-- Skip link for accessibility -->

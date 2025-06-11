@@ -14,6 +14,10 @@ Dashboard | Greenova
   <link rel="stylesheet" href="{% static 'css/dist/components/chat.css' %}" />
 {% endblock extra_css %}
 
+{% block body_scripts %}
+  <script src="{% static 'js/dashboard-login-fix.js' %}"></script>
+{% endblock body_scripts %}
+
 {% block navbar_extra %}
   <!-- Dashboard-specific navbar content -->
   <div class="navbar-search">
@@ -74,8 +78,8 @@ Dashboard | Greenova
 {% include "projects/projects_selector.html" %}
       </div>
       <div id="dashboard-content-container">
-        {% if selected_project_id %}
-{% include "dashboard/partials/dashboard_content.html" %}
+        {% if selected_project_id and not show_empty_state %}
+          {% include "dashboard/partials/dashboard_content.html" %}
           <div class="chart-container">
             {{ obligations_status_chart_svg|safe }}
           </div>

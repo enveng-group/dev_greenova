@@ -21,11 +21,10 @@
         </li>
       {% endif %}
       <li class="navbar-nav-item navbar-right">
-        <a href="#"
-           class="navbar-nav-link"
-           hx-post="{% url 'account_logout' %}"
-           hx-target="body"
-           hx-include="[name='csrfmiddlewaretoken']">Logout</a>
+        <form method="post" action="{% url 'account_logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="navbar-nav-link" style="background:none;border:none;padding:0;cursor:pointer;">Logout</button>
+        </form>
       </li>
     {% else %}
       <li class="navbar-nav-item navbar-left"><img src="{% static 'img/favicon.svg' %}" alt="Greenova Logo" /></li>

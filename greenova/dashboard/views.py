@@ -13,7 +13,7 @@ from typing import Any, TypedDict, cast
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
@@ -21,10 +21,6 @@ from django.views.decorators.vary import vary_on_headers
 from django.views.generic import ListView, TemplateView
 from obligations.models import Obligation
 from projects.models import Project
-from django.http import JsonResponse
-from django.views.decorators.http import require_GET
-from .figures import create_obligations_status_chart_svg
-
 
 # Import our new components
 from .figures import (
@@ -90,21 +86,27 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         """Handle GET requests with enhanced HTMX support."""
+        # Check if we need to force a full page reload after login
+        if request.session.pop("_force_dashboard_reload", False):
+            # Force a full page reload by redirecting to self
+            from django.shortcuts import redirect
+
+            return redirect(request.path)
+
         # Let the ProjectAwareDashboardMixin handle most of the logic
-        response = super().get(request, *args, **kwargs)
-        return response
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
-
         context = super().get_context_data(**kwargs)
 
         selected_project_id = get_selected_project_id(self.request)
         context["selected_project_id"] = selected_project_id
         from django.utils.timezone import now
+
         context["now"] = now()
 
         try:
-            user = cast(AbstractUser, self.request.user)
+            user = cast("AbstractUser", self.request.user)
 
             # Always get projects for selector — don't skip
             projects = self.get_projects().prefetch_related("memberships")
@@ -119,44 +121,48 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
             # If no project selected, set flag and minimal dashboard data
             if not selected_project_id:
-                context.update({
-                    "show_empty_state": True,
-                    "overdue_obligations_count": 10,
-                    "active_obligations_count": 20,
-                    "active_obligations_trend": 30,
-                    "upcoming_deadlines_count": 0,
-                    "active_projects_count": projects.count(),
-                    "active_mechanisms_count": 0,
-                    "show_feedback_link": True,
-                    "system_status": SYSTEM_STATUS,
-                    "app_version": APP_VERSION,
-                    "last_updated": LAST_UPDATED,
-                    "debug": settings.DEBUG,
-                    "error": None,
-                })
+                context.update(
+                    {
+                        "show_empty_state": True,
+                        "overdue_obligations_count": 10,
+                        "active_obligations_count": 20,
+                        "active_obligations_trend": 30,
+                        "upcoming_deadlines_count": 0,
+                        "active_projects_count": projects.count(),
+                        "active_mechanisms_count": 0,
+                        "show_feedback_link": True,
+                        "system_status": SYSTEM_STATUS,
+                        "app_version": APP_VERSION,
+                        "last_updated": LAST_UPDATED,
+                        "debug": settings.DEBUG,
+                        "error": None,
+                    }
+                )
                 return context
 
             # If a project is selected, load full dashboard data
-            context.update({
-                "show_empty_state": False,
-                "system_status": SYSTEM_STATUS,
-                "app_version": APP_VERSION,
-                "last_updated": LAST_UPDATED,
-                "user": user,
-                "debug": settings.DEBUG,
-                "error": None,
-                "show_feedback_link": True,
-                "overdue_obligations_count": self.get_overdue_obligations_count(),
-                "active_obligations_count": self.get_active_obligations_count(),
-                "active_obligations_trend": self.get_obligations_trend(),
-                "upcoming_deadlines_count7": self.get_upcoming_deadlines_count(7),
-                "upcoming_deadlines_count14": self.get_upcoming_deadlines_count(14),
-                "upcoming_deadlines_count30": self.get_upcoming_deadlines_count(30),
-                "upcoming_deadlines_count90": self.get_upcoming_deadlines_count(90),
-                "active_projects_count": projects.count(),
-                "active_mechanisms_count": self.get_active_mechanisms_count(),
-                "selected_project_id": selected_project_id,
-            })
+            context.update(
+                {
+                    "show_empty_state": False,
+                    "system_status": SYSTEM_STATUS,
+                    "app_version": APP_VERSION,
+                    "last_updated": LAST_UPDATED,
+                    "user": user,
+                    "debug": settings.DEBUG,
+                    "error": None,
+                    "show_feedback_link": True,
+                    "overdue_obligations_count": self.get_overdue_obligations_count(),
+                    "active_obligations_count": self.get_active_obligations_count(),
+                    "active_obligations_trend": self.get_obligations_trend(),
+                    "upcoming_deadlines_count7": self.get_upcoming_deadlines_count(7),
+                    "upcoming_deadlines_count14": self.get_upcoming_deadlines_count(14),
+                    "upcoming_deadlines_count30": self.get_upcoming_deadlines_count(30),
+                    "upcoming_deadlines_count90": self.get_upcoming_deadlines_count(90),
+                    "active_projects_count": projects.count(),
+                    "active_mechanisms_count": self.get_active_mechanisms_count(),
+                    "selected_project_id": selected_project_id,
+                }
+            )
 
             # Add any charts or extra context as usual
             self.add_specific_charts(context)
@@ -167,30 +173,31 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         try:
             _, compliance_chart = create_project_compliance_chart(context["projects"])
-            context["compliance_chart"] = base64.b64encode(
-                compliance_chart).decode("utf-8")
+            context["compliance_chart"] = base64.b64encode(compliance_chart).decode(
+                "utf-8"
+            )
         except Exception as exc:
             logger.exception("Error generating compliance chart: %s", exc)
 
         try:
-            context["obligations_status_chart_svg"] = create_obligations_status_chart_svg(
-                selected_project_id)
+            context["obligations_status_chart_svg"] = (
+                create_obligations_status_chart_svg(selected_project_id)
+            )
         except Exception as exc:
             logger.exception("Error generating obligations status chart: %s", exc)
         self.add_specific_charts(context)
         return context
 
     def add_specific_charts(self, context: dict[str, Any]) -> None:
-        """
-        Add view-specific chart data to the context.
+        """Add view-specific chart data to the context.
 
         Args:
             context: The context dictionary to update
+
         """
         # Add any dashboard-specific chart data here
         # This method is intentionally left minimal as the base charts
         # are already being added in the get_context_data method
-        pass
 
     def get_projects(self) -> QuerySet[Project]:
         """Get projects for the current user.
@@ -198,6 +205,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         Returns:
             QuerySet[Project]: Projects for authenticated user, or empty queryset
                 for anonymous users.
+
         """
         user = self.request.user
         # Robustly handle anonymous users (SimpleLazyObject or AnonymousUser)
@@ -206,7 +214,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         try:
             return Project.objects.filter(members=user).order_by("-created_at")
         except Exception as e:
-            logger.error("Error fetching projects for user %s: %s", user, e)
+            logger.exception("Error fetching projects for user %s: %s", user, e)
             return Project.objects.none()
 
     def get_active_obligations_count(self) -> int:
@@ -275,11 +283,10 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
     def get_queryset(self):
         """Return the queryset for projects at risk of missing deadlines."""
         now = timezone.now()
-        queryset = Project.objects.filter(
+        return Project.objects.filter(
             obligations__action_due_date__lt=now,
             obligations__status__in=["pending", "in progress"],
         ).distinct()
-        return queryset
 
     def get_context_data(self, **kwargs):
         """Add projects_with_stats to the context for at-risk projects."""
@@ -347,25 +354,25 @@ class ProjectsAtRiskView(ProjectAwareDashboardMixin, ListView):
 
 
 def search_obligations(request):
-    query = request.GET.get('q', '').strip()
+    query = request.GET.get("q", "").strip()
     project_id = get_selected_project_id(request)  # your project filter function
 
     if not project_id:
-        return JsonResponse({'obligations': []})
+        return JsonResponse({"obligations": []})
 
     # Filter obligations based on project and search query in
     # obligation_number or obligation fields
-    obligations_qs = Obligation.objects.filter(
-        project_id=project_id
-    ).filter(
-        Q(obligation_number__icontains=query) | Q(obligation__icontains=query)
-    ).values(
-        'id', 'obligation_number', 'obligation', 'action_due_date', 'status'
-    )[:50]  # limit for performance
+    obligations_qs = (
+        Obligation.objects.filter(project_id=project_id)
+        .filter(Q(obligation_number__icontains=query) | Q(obligation__icontains=query))
+        .values("id", "obligation_number", "obligation", "action_due_date", "status")[
+            :50
+        ]
+    )  # limit for performance
 
     obligations = list(obligations_qs)
 
-    return JsonResponse({'obligations': obligations})
+    return JsonResponse({"obligations": obligations})
 
 
 class OverdueObligationsView(ProjectAwareDashboardMixin, ListView):
@@ -392,7 +399,9 @@ class OverdueObligationsView(ProjectAwareDashboardMixin, ListView):
 
 
 class ActiveObligationsView(ProjectAwareDashboardMixin, ListView):
-    template_name = "dashboard/partials/active_obligations_table.html"  # create this template
+    template_name = (
+        "dashboard/partials/active_obligations_table.html"  # create this template
+    )
     context_object_name = "obligations"
 
     def get_queryset(self):
@@ -435,11 +444,12 @@ class UpcomingObligationsDaysView(ProjectAwareDashboardMixin, ListView):
             status__in=["pending", "in progress"],
         ).order_by("action_due_date")
 
-        def get_context_data(self, **kwargs):
+        def get_context_data(self, **kwargs) -> None:
             context = super().get_context_data(**kwargs)
             context["selected_project_id"] = get_selected_project_id(self.request)
-            context['period_label'] = f"Upcoming Obligations (Next {
-                self.get_days()} Days)"
+            context["period_label"] = (
+                f"Upcoming Obligations (Next {self.get_days()} Days)"
+            )
 
         return context
 
