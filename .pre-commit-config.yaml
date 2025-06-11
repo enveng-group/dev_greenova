@@ -1,15 +1,5 @@
-<<<<<<< HEAD
----
-exclude: '^$'
-fail_fast: false # Add this line to continue running hooks even when some fail
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-# .pre-commit-config.yaml
-exclude: '^$'
-fail_fast: false # Add this line to continue running hooks even when some fail
-=======
 # .pre-commit-config.yaml
 
->>>>>>> 37e6b25 (Squashed commit of the following:)
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
     rev: v5.0.0
@@ -38,16 +28,8 @@ repos:
         exclude: '\.md$|\.txt$|\.rst$|\.html$|\.djhtml$|\.jinja$|\.yaml'
       - id: check-vcs-permalinks
 
-<<<<<<< HEAD
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.26.0
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.25.1
-=======
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.27.0
->>>>>>> 37e6b25 (Squashed commit of the following:)
     hooks:
       - id: gitleaks
         args:
@@ -90,41 +72,17 @@ repos:
           - --atomic
           - --diff
 
-<<<<<<< HEAD
-  # 4. Python formatting and linting (Ruff as primary)
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.10
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-  # 4. Python formatting and linting (Ruff as primary)
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.9
-=======
   - repo: https://github.com/astral-sh/ruff-pre-commit.git
     rev: v0.11.12
->>>>>>> 37e6b25 (Squashed commit of the following:)
     hooks:
       - id: ruff-check
         types_or: [python, pyi]
-<<<<<<< HEAD
-        args: ['--unsafe-fixes', '--fix']
-
-  - repo: https://github.com/hhatto/autopep8
-    rev: v2.1.0
-    hooks:
-      - id: autopep8
-        args: [--max-line-length=88]
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-        args: ['--unsafe-fixes', '--fix']
-      - id: ruff-format
-        types_or: [python, pyi]
-=======
         args: [--fix, --unsafe-fixes, --exit-non-zero-on-fix]
         exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
       - id: ruff-format
         types_or: [python, pyi]
         args: []
         exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
   - repo: https://github.com/hhatto/autopep8.git
     rev: v2.3.2
@@ -143,28 +101,6 @@ repos:
         name: pylint (python)
         entry: pylint
         types: [python]
-<<<<<<< HEAD
-        exclude: 'migrations|_pb2.py|\.venv|tests/|test_|__init__\.py|mypy_pb2_plugin\.py'
-        additional_dependencies:
-          - pylint_django
-          - pylint_pytest
-          - pylint_plugin_utils
-          - pylint_pydantic
-          - pylint_protobuf
-          - pylint_flask
-          - pylint_celery
-          - pylint_quotes
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-        args: ['--rcfile=.pylintrc']
-        exclude: "greenova/.*\\.py$"
-      - id: pylint
-        name: pylint (django)
-        entry: env PYTHONPATH=/workspaces/greenova:/workspaces/greenova/greenova DJANGO_SETTINGS_MODULE=greenova.greenova.settings pylint
-        language: system
-        types: [python]
-        args: ['--rcfile=.pylintrc-django', '--load-plugins=pylint_django']
-        files: "greenova/.*\\.py$"
-=======
         exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|tests/|test_|__init__\.py|manage\.py|wsgi\.py|asgi\.py|settings/|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
         additional_dependencies:
           - pylint_django
@@ -176,37 +112,12 @@ repos:
           - --output-format=colorized
           - --reports=y
           - --score=y
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
     rev: v1.16.0
     hooks:
       - id: mypy
         name: mypy
-<<<<<<< HEAD
-        args: ['--config-file=mypy.ini', '--namespace-packages']
-        exclude: 'migrations|venv|\.venv|tests/|test_|__init__\.py|.*_pb2\.py$'
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-        name: mypy (standard)
-        args:
-          [
-            '--ignore-missing-imports',
-            '--disallow-untyped-defs',
-            '--no-implicit-optional',
-            '--namespace-packages',
-          ]
-        exclude: "greenova/.*\\.py$|setup\\.py"
-        additional_dependencies:
-          - 'types-requests'
-          - 'types-PyYAML'
-          - 'types-python-dateutil'
-          - 'pytest-stub'
-          - 'types-setuptools'
-      - id: mypy
-        name: mypy (django)
-        args: ['--config-file=mypy.ini', '--namespace-packages']
-        files: "greenova/.*\\.py$"
-=======
         args:
           [
             '--config-file=mypy.ini',
@@ -215,7 +126,6 @@ repos:
             '--ignore-missing-imports',
           ]
         exclude: 'migrations|venv|\.venv|tests/|test_|__init__\.py|.*_pb2\.py$|.*_pb2_grpc\.py$|manage\.py|wsgi\.py|asgi\.py|settings/|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
->>>>>>> 37e6b25 (Squashed commit of the following:)
         additional_dependencies:
           - 'django-stubs'
           - 'django-stubs-ext'
@@ -235,23 +145,11 @@ repos:
           - 'types-cryptography'
           - 'types-flake8'
           - 'plotly-stubs'
-<<<<<<< HEAD
-          - 'types-pytest-lazy-fixture'
-          - 'types-protobuf'
           - 'types-sqlalchemy'
           - 'types-toml'
           - 'types-urllib3'
           - 'types-docutils'
           - 'types-psutil'
-          - 'types-redis'
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-=======
-          - 'types-sqlalchemy'
-          - 'types-toml'
-          - 'types-urllib3'
-          - 'types-docutils'
-          - 'types-psutil'
->>>>>>> 37e6b25 (Squashed commit of the following:)
           - 'types-click'
           - 'types-markdown'
 
@@ -266,16 +164,7 @@ repos:
       - id: rst-inline-touching-normal
       - id: text-unicode-replacement-char
 
-<<<<<<< HEAD
-  # 8. Framework-specific tools
-  - repo: https://github.com/adamchainz/django-upgrade
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-  # 8. Framework-specific tools
-  - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.24.0
-=======
   - repo: https://github.com/adamchainz/django-upgrade.git
->>>>>>> 37e6b25 (Squashed commit of the following:)
     rev: 1.25.0
     hooks:
       - id: django-upgrade
@@ -285,27 +174,6 @@ repos:
     rev: v2.4.1
     hooks:
       - id: codespell
-<<<<<<< HEAD
-        exclude: >
-          (?x)^(
-            requirements/.*\.txt|
-            requirements/.*\.in|
-            notebooks/pie_chart_gallery\.ipynb|
-            greenova/static/js/vendors/.*
-          )$
-
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.18.1
-    hooks:
-      - id: markdownlint-cli2
-        args: ['--config', '.markdownlint-cli2.jsonc', '--fix']
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-  - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.18.0
-    hooks:
-      - id: markdownlint-cli2
-        args: ['--config', '.markdownlint-cli2.jsonc', '--fix']
-=======
         args: ['--write-changes']
         exclude: |
           (?x)^(\
@@ -327,17 +195,7 @@ repos:
             .*_pb2_grpc\.ts$|\
             .*tailwind\.css$\
           )$
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
-<<<<<<< HEAD
-  # 10. Frontend formatting and linting
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-  # 10. Frontend formatting and linting
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
-=======
   - repo: https://github.com/crate-ci/typos.git
     rev: v1
     hooks:
@@ -387,15 +245,10 @@ repos:
 
   - repo: https://github.com/pre-commit/mirrors-prettier.git
     rev: v4.0.0-alpha.8
->>>>>>> 37e6b25 (Squashed commit of the following:)
     hooks:
       - id: prettier
         language_version: system
         types_or: [javascript, css, markdown, yaml, json]
-<<<<<<< HEAD
-        exclude: ^greenova/static/js/vendors/.*$
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-=======
         exclude: |
           (?x)^(\
             greenova/static/js/vendors/.*|\
@@ -418,7 +271,6 @@ repos:
           )$
         additional_dependencies: ['prettier@4.0.0-alpha.8']
         files: \.(js|ts|css|scss|sass|json|md|yaml|yml)$
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
   - repo: https://github.com/pre-commit/mirrors-eslint.git
     rev: v9.28.0
@@ -431,16 +283,6 @@ repos:
           - '--fix'
           - '--max-warnings=9999'
           - '--config'
-<<<<<<< HEAD
-          - 'eslint.config.js'
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-        args: [
-            '--fix',
-            '--max-warnings=9999',
-            '--config',
-            'eslint.config.js', # Add this line if your config is not auto-detected
-          ]
-=======
           - 'eslint.config.cjs'
         exclude: |
           (?x)^(\
@@ -462,7 +304,6 @@ repos:
             .*_pb2_grpc\.ts$|\
             .*tailwind\.css$\
           )$
->>>>>>> 37e6b25 (Squashed commit of the following:)
         additional_dependencies:
           - eslint@9.26.0
           - prettier@3.2.4
@@ -524,38 +365,8 @@ repos:
     rev: '1.8.3'
     hooks:
       - id: bandit
-<<<<<<< HEAD
-        name: bandit
-        entry: /usr/local/py-utils/bin/bandit
-        language: system
-        args: ['--configfile', 'pyproject.toml']
-        exclude: 'tests/.*'
-        types: [python]
-      - id: safety-check
-        name: Safety dependency checker
-        entry: >
-          bash -c 'pip install safety &&
-          safety check --ignore 65278,66704,65212,65647,62556,62044,75180'
-        language: system
-        types: [python]
-        pass_filenames: false
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-        name: bandit
-        entry: /workspaces/greenova/.venv/bin/bandit
-        language: system
-        args: ['--configfile', 'pyproject.toml']
-        exclude: 'tests/.*'
-        types: [python]
-      - id: safety-check
-        name: Safety dependency checker
-        entry: bash -c 'pip install safety && safety check --ignore 65278,66704,65212,65647,62556,62044,75180'
-        language: system
-        types: [python]
-        pass_filenames: false
-=======
         exclude: 'migrations|_pb2\.py|_pb2_grpc\.py|\.venv|tests/|test_|static/|staticfiles/|media/|logs/|authentication/account/|authentication/allauth/|authentication/mfa/|authentication/openid/|authentication/socialaccount/|authentication/usersessions/'
         args: ['--skip=B101,B601,B602,B603,B604,B605,B606,B607,B608,B609']
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
   - repo: https://github.com/thoughtworks/talisman.git
     rev: 'v1.37.0'

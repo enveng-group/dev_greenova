@@ -1,5 +1,0 @@
--r requirements.in
--c constraints.txt
-# Production server
-# Performance monitoring
-gprof2dot
