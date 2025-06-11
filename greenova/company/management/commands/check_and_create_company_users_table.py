@@ -1,29 +1,15 @@
-"""
-Management command to check and create the company_company_users table.
-
-This module defines a custom Django management command for ensuring the
-company_company_users table exists in the database for the company app.
-"""
 from django.core.management.base import BaseCommand
 from django.db import connection
 
 
 class Command(BaseCommand):
-    """Custom management command to check and create company_company_users table."""
     help = "Check and create the company_company_users table if it does not exist."
 
-    def handle(self, *args: object, **options: object) -> None:
-        """Execute the command to check and create the company_company_users table.
-
-        Args:
-            *args: Variable length argument list.
-            **options: Arbitrary keyword arguments.
-        """
+    def handle(self, *args, **options):
         with connection.cursor() as cursor:
             # Check if the table exists
             cursor.execute(
-                "SELECT name FROM sqlite_master "
-                "WHERE type='table' AND name='company_company_users';"
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='company_company_users';"
             )
             result = cursor.fetchone()
 

@@ -1,10 +1,4 @@
-"""
-Forms for the company app.
-
-This module defines forms for managing companies, memberships, documents, and search.
-"""
 import logging
-from typing import ClassVar
 
 from django import forms
 from django.contrib.auth import get_user_model
@@ -30,12 +24,8 @@ class CompanyForm(forms.ModelForm):
         return cleaned_data
 
     class Meta:
-        """Meta options for CompanyForm.
-
-        Specifies the model, fields, widgets, labels, and help_texts for the form.
-        """
         model = Company
-        fields: ClassVar[list[str]] = [
+        fields = [
             "name",
             "logo",
             "description",
@@ -48,15 +38,15 @@ class CompanyForm(forms.ModelForm):
             "industry",
             "is_active",
         ]
-        widgets: ClassVar[dict[str, forms.Widget]] = {
+        widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
             "address": forms.Textarea(attrs={"rows": 3}),
         }
-        labels: ClassVar[dict[str, str]] = {
+        labels = {
             "name": _("Company Name"),
             "is_active": _("Active Status"),
         }
-        help_texts: ClassVar[dict[str, str]] = {
+        help_texts = {
             "name": _("Enter a unique name for the company"),
             "company_type": _("Select the type that best describes this company"),
             "industry": _("Select the primary industry sector for this company"),
@@ -78,23 +68,13 @@ class CompanyMembershipForm(forms.ModelForm):
     )
 
     class Meta:
-        """Meta options for CompanyMembershipForm.
-
-        Specifies the model, fields, labels, and help_texts for the form.
-        """
         model = CompanyMembership
-        fields: ClassVar[list[str]] = [
-            "user",
-            "role",
-            "department",
-            "position",
-            "is_primary",
-        ]
-        labels: ClassVar[dict[str, str]] = {
+        fields = ["user", "role", "department", "position", "is_primary"]
+        labels = {
             "role": _("Role in Company"),
             "is_primary": _("Primary Company"),
         }
-        help_texts: ClassVar[dict[str, str]] = {
+        help_texts = {
             "role": _("Determines user permissions within this company"),
             "is_primary": _("Set if this is the user's main company"),
         }
@@ -108,20 +88,16 @@ class CompanyDocumentForm(forms.ModelForm):
     """
 
     class Meta:
-        """Meta options for CompanyDocumentForm.
-
-        Specifies the model, fields, widgets, labels, and help_texts for the form.
-        """
         model = CompanyDocument
-        fields: ClassVar[list[str]] = ["name", "description", "file", "document_type"]
-        widgets: ClassVar[dict[str, forms.Widget]] = {
+        fields = ["name", "description", "file", "document_type"]
+        widgets = {
             "description": forms.Textarea(attrs={"rows": 3}),
         }
-        labels: ClassVar[dict[str, str]] = {
+        labels = {
             "name": _("Document Name"),
             "document_type": _("Document Type"),
         }
-        help_texts: ClassVar[dict[str, str]] = {
+        help_texts = {
             "file": _("Upload a document file (PDF, DOC, XLS, etc.)"),
             "document_type": _("Categorize the document for easier retrieval"),
         }

@@ -1,30 +1,51 @@
-"""
-Admin configuration for the company app.
-
-This module defines admin classes for managing company-related models in the
-Django admin interface.
-"""
+# Standard library imports
 from __future__ import annotations
 
 import logging
+from typing import Any
 
+# Third-party imports
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
+from django.db.models import Model
+from django.http import HttpRequest
 
+# Import the Company model
 from .models import Company
 
+# Configure logger
 logger = logging.getLogger(__name__)
+
 
 class BaseModelAdmin(admin.ModelAdmin):
     """Base admin class with type safety."""
-    # ...existing code...
+
+    def dispatch(
+        self, request: HttpRequest, object_id: Any, from_field: str | None = None
+    ) -> Model | None:
+        """Get object with type safety and permission checking."""
+        obj = super().get_object(request, object_id, from_field)
+
+        # Implement permission check
+        if obj is not None and not self.has_view_permission(request, obj):
+            logger.warning(
+                (
+                    "Permission denied: User %s attempted to access %s "
+                    "without sufficient permissions."
+                ),
+                request.user,
+                obj,
+            )
+            raise PermissionDenied(
+                "You do not have permission to view this object. "
+                "Please contact the administrator if you believe this is an error."
+            )
+
+        return obj
+
 
 @admin.register(Company)
 class CompanyAdmin(BaseModelAdmin):
-    """Admin interface for the Company model.
-
-    Provides list display, filtering, and search for company records in the admin site.
-    """
     list_display = ("name", "company_type", "industry", "is_active", "created_at")
     list_filter = ("company_type", "is_active")
     search_fields = ("name",)
-# ...existing code...
