@@ -1,82 +1,19 @@
 [MASTER]
-<<<<<<< HEAD
-persistent=yes
-suggestion-mode=yes
-unsafe-load-any-extension=no
-ignore=migrations,venv,.venv,tests,tests/*,test_*,__init__.py,*_pb2.py
-
-[FORMAT]
-max-line-length=88
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-# Base configuration for all Python files
-persistent = yes
-suggestion-mode = yes
-unsafe-load-any-extension = no
-ignore = migrations, venv, .venv
-
-[FORMAT]
-max-line-length = 88
-=======
 ignore=migrations,venv,.venv,tests,test_,__init__.py,static,media,stubs
 jobs=0
 persistent=yes
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
 [MESSAGES CONTROL]
 disable=
-<<<<<<< HEAD
-    C0111, # missing-docstring
-    C0103, # invalid-name
-    W0613, # unused-argument
-    W0703, # broad-except
-    R0903, # too-few-public-methods
-    R0901, # too-many-ancestors
-    W0212, # protected-access
-    W0221, # arguments-differ
-    E0401, # import-error
-    R1705, # no-else-return
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-# Adding R0801 to the disabled messages to prevent duplicate code warnings
-disable = no-member, C0111, R0903, C0103, R0801
-=======
     C0114, # missing-module-docstring
     C0115, # missing-class-docstring
     C0116, # missing-function-docstring
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
-<<<<<<< HEAD
-[SIMILARITIES]
-ignore-comments=yes
-ignore-docstrings=yes
-ignore-imports=yes
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-[SIMILARITIES]
-ignore-comments = yes
-ignore-docstrings = yes
-ignore-imports = yes
-# Increase the minimum similarity to avoid duplicate code warnings for standard patterns
-min-similarity-lines = 12
-=======
 [REPORTS]
 output-format=colorized
 reports=y
 score=y
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
-<<<<<<< HEAD
-[BASIC]
-good-names=i,j,k,ex,Run,_,id,pk,setUp,tearDown
-
-[DESIGN]
-max-parents=13
-
-[TYPECHECK]
-ignored-classes=WSGIRequest,HttpRequest,HttpResponse,QuerySet,ManyToManyField
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-[BASIC]
-good-names = _, i, j, k, e, f, db, id, pk, setUp, tearDown, maxDiff, Meta
-=======
 [FORMAT]
 max-line-length=88
 indent-string='    '
->>>>>>> 37e6b25 (Squashed commit of the following:)

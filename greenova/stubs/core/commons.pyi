@@ -1,0 +1,9 @@
+from _typeshed import Incomplete
+from django.http import HttpRequest
+from typing import Any
+
+logger: Incomplete
+
+def get_active_namespace(request: HttpRequest) -> str: ...
+def get_user_display_name(user) -> str: ...
+def get_app_settings() -> dict[str, Any]: ...

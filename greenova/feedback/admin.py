@@ -16,12 +16,13 @@ class BugReportAdminForm(forms.ModelForm):
 
     class Meta:
         """Meta options for BugReportAdminForm."""
+
         model = BugReport
         fields = "__all__"
 
 
 @admin.register(BugReport)
-class BugReportAdmin(admin.ModelAdmin[BugReport]):
+class BugReportAdmin(admin.ModelAdmin):  # type: ignore[type-arg]
     """Admin configuration for BugReport model."""
 
     form = BugReportAdminForm
@@ -77,11 +78,7 @@ class BugReportAdmin(admin.ModelAdmin[BugReport]):
     ]
 
     def get_form(
-        self,
-        request: HttpRequest,
-        obj: Any = None,
-        change: bool = False,
-        **kwargs: Any
+        self, request: HttpRequest, obj: Any = None, change: bool = False, **kwargs: Any
     ) -> type[ModelForm]:
         """Return the form class to use in the admin, adding help text to fields."""
         form = super().get_form(request, obj, **kwargs)

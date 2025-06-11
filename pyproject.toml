@@ -1,118 +1,3 @@
-<<<<<<< HEAD
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
-# Dependency management is handled via pip-tools and requirements/*.in files.
-# See requirements/README.rst and docs/REQUIREMENTS_WORKFLOW.md for workflow.
-# Do not add dependencies here; use requirements/requirements.in and pip-compile.
-
-[tool.autopep8]
-max_line_length = 88
-ignore = ["E302", "E305"]
-in-place = true
-recursive = true
-aggressive = 3
-single_quotes = true
-
-[tool.djlint]
-profile = "django"
-indent = 2
-max_line_length = 88
-use_gitignore = true
-format_css = false
-format_js = false
-ignore = "H014,H015,T002"
-include = "**/*.html,**/*.jinja,**/*.djhtml"
-exclude = "**/node_modules/**,**/bower_components/**,**/vendors/**,**/static/**,**/media/**,**/migrations/**,**/__pycache__/**,**/.git/**,**/.venv/**,**/.env/**,**/.pytest_cache/**,**/.mypy_cache/**,**/build/**,**/dist/**,**/.eggs/**,**/docs/conf.py/**,**/requirements/**,**/*.py,**/*.pyi"
-extension = "django-html,html,jinja"
-preserve_blank_lines = true
-preserve_leading_space = true
-require_pragma = false
-
-[tool.mypy]
-python_version = "3.12"
-plugins = ["mypy_django_plugin.main"]
-exclude = ['^migrations/.*\.py$', '^tests/.*\.py$', '.*_pb2\.py$']
-mypy_path = "greenova/stubs"
-explicit_package_bases = true
-namespace_packages = true
-strict = true
-packages = ["greenova"]
-ignore_missing_imports = true
-
-[tool.django-stubs]
-django_settings_module = "greenova.settings"
-
-[tool.bandit]
-context_lines = 3
-exclude = [
-    "/tests",
-    "/env",
-    "/venv",
-    "/.git",
-    "*.pyc",
-    "**/test_*.py",
-    "**/*_test.py",
-    "**/mock_*.py",
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-[build-system]
-requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta"
-
-# Dependency management is handled via pip-tools and requirements/*.in files.
-# See requirements/README.rst and docs/REQUIREMENTS_WORKFLOW.md for workflow.
-# Do not add dependencies here; use requirements/requirements.in and pip-compile.
-
-[tool.autopep8]
-max_line_length = 88
-ignore = ["E501", "E302", "E305"]
-in-place = true
-recursive = true
-aggressive = 3
-single_quotes = true
-
-[tool.djlint]
-profile = "django"
-indent = 2
-max_line_length = 88
-use_gitignore = true
-format_css = false
-format_js = false
-ignore = "H014,H015,T002"
-include = "**/*.html,**/*.jinja,**/*.djhtml"
-exclude = "**/node_modules/**,**/bower_components/**,**/vendors/**,**/static/**,**/media/**,**/migrations/**,**/__pycache__/**,**/.git/**,**/.venv/**,**/.env/**,**/.pytest_cache/**,**/.mypy_cache/**,**/build/**,**/dist/**,**/.eggs/**,**/docs/conf.py/**,**/requirements/**"
-extension = "django-html,html,jinja"
-preserve_blank_lines = true
-preserve_leading_space = true
-require_pragma = false
-
-[tool.mypy]
-python_version = "3.12"
-plugins = ["mypy_django_plugin.main"]
-exclude = ['^migrations/.*\.py$', '^tests/.*\.py$']
-mypy_path = "greenova/stubs"
-explicit_package_bases = true
-namespace_packages = true
-strict = true
-packages = ["greenova"]
-ignore_missing_imports = true
-
-[tool.django-stubs]
-django_settings_module = "greenova.greenova.settings"
-
-[tool.bandit]
-context_lines = 3
-exclude = [
-    "/tests",
-    "/env",
-    "/venv",
-    "/.git",
-    "*.pyc",
-    "**/test_*.py",
-    "**/*_test.py",
-    "**/mock_*.py",
-=======
 [project]
 name = "greenova"
 version = "0.1.0"
@@ -167,7 +52,6 @@ dependencies = [
     "gunicorn>=23.0.0",
     "crispy-bootstrap5>=2025.6",
     "sentry-sdk>=2.29.1",
->>>>>>> 37e6b25 (Squashed commit of the following:)
 ]
 
 [tool.setuptools.packages.find]
@@ -188,20 +72,6 @@ exclude = [
     "venv",
     "migrations",
     "node_modules",
-<<<<<<< HEAD
-    "docs/conf.py",
-    "old",
-    "build",
-    "dist",
-    ".eggs",
-    "*_pb2.py",
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-    "docs/conf.py",
-    "old",
-    "build",
-    "dist",
-    ".eggs",
-=======
     "static",
     "staticfiles",
     "media",
@@ -209,7 +79,6 @@ exclude = [
     "tests",
     "db.sqlite3",
     "db.sqlite3.bak"
->>>>>>> 37e6b25 (Squashed commit of the following:)
 ]
 
 [tool.ruff.lint]
@@ -220,59 +89,14 @@ ignore = [
     "COM812", # formatter conflict
     "D203",   # disables incorrect-blank-line-before-class (formatter conflict)
 ]
-<<<<<<< HEAD
-ignore = ["D203", "D212"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.pylint]
-max-args = 8
-max-branches = 12
-max-statements = 50
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401", "F403"]
-"tests/*" = ["D100", "S105", "S106", "S107"]
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-ignore = ["E501", "D203", "D212"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.pylint]
-max-args = 8
-max-branches = 12
-max-statements = 50
-
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401", "F403"]
-"tests/*" = ["S101", "S105", "S106", "S107"]
-=======
 fixable = ["ALL"]
 unfixable = []
 preview = true
->>>>>>> 37e6b25 (Squashed commit of the following:)
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
-<<<<<<< HEAD
-
-[tool.beartype]
-# Enable runtime type checking for all modules in the greenova package
-package = "greenova"
-
-[tool.stubgen]
-# Directory to output generated stubs
-output = "greenova/stubs"
-
-[tool.stubtest]
-# Target package for stubtest
-package = "greenova"
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-=======
 line-ending = "auto"
 docstring-code-format = true
 
@@ -365,4 +189,3 @@ django_settings_module = "greenova.settings"
 [tool.ipython]
 # IPython configuration can go here if needed
 # Most IPython config is handled in the startup script and Django settings
->>>>>>> 37e6b25 (Squashed commit of the following:)

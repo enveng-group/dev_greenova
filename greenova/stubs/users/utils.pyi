@@ -1,0 +1,3 @@
+from obligations.models import Obligation
+
+def calculate_overdue_obligations(user_id: int) -> list[Obligation]: ...

@@ -476,6 +476,44 @@
         "panel": "shared"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Clear Django Migrations and Pycache",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": ["/workspaces/greenova/scripts/clear_migrations_and_pycache.py"],
+      "options": {
+        "cwd": "/workspaces/greenova"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Regenerate Stubgen and Validate",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": [
+        "/workspaces/greenova/scripts/regenerate_stubgen_in_greenova.py"
+      ],
+      "options": {
+        "cwd": "/workspaces/greenova"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
     }
   ]
 }
