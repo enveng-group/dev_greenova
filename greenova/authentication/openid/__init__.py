@@ -1,1 +1,0 @@
-"""Authentication OpenID integration package."""

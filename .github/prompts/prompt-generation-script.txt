@@ -1,14 +1,14 @@
-<<<<<<< HEAD
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-using prompt-generation.prompt.md for instructions and formatting, please create a new prompt in gpt-4-1.prompt.md to resolve the below issue:
-=======
 . /workspaces/greenova/.venv/bin/activate && cd /workspaces/greenova/greenova && python manage.py test core
+
+using github mcp server and git mcp server are you able to help analyse the diff between my branch https://github.com/enveng-group/dev_greenova/tree/cherry-pick-niyati which is the base and the branch i need to merge for all its improbements in the django greenova from target https://github.com/niyati-dot/dev_greenova/tree/main/greenova i am only concerned with file the file diffs for  greenova/authentication app
+
+security and performance is low priority at this stage of development so please refactor urls.py for simplicity and stability as high priority
+
 
 analyse what is remaining to be implemente with refactoring and integrating the landing app as per its refactoring plan and also Greenova-Workflow.bpmn
 
 continue to iterate, checking off the acceptance criteria checklist in core prompt until all is complete, do not ask what is next, just complete until the below core app refactoring is complete by iterating
 
->>>>>>> 37e6b25 (Squashed commit of the following:)
 using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
 
 
@@ -20,9 +20,6 @@ this prompt gpt-4.1.prompt.md has a lot of tasks for agent to do, therefore, sti
 run git add . && pre-commit run --files greenova/mechanism/figures.py and iterate until resolved with no errors, use semantic-thinking mcp server to think and use Context7 mcp server to fetch documentation references for context and use filesystem mcp server to read and write files
 
 iterate `pre-commit --run-file greenova/obligations/views.py` until everything passes and no errors, remember we can also use `stubgen` and `stubtest` to assist with mypy strict type checking. Stub files can be found in `greenova/stubs/greenova/obligations/views.pyi`, please use these stub files to assist with the type checking and ensure that all functions and methods are properly typed and documented.
-<<<<<<< HEAD
-||||||| parent of 37e6b25 (Squashed commit of the following:)
-=======
 
 firstly run source .venv/bin/activate and then using filesystem mcp server and iterate git add . && pre-commit run check-merge-conflict && pre-commit run detect-private-key && pre-commit run check-added-large-files && pre-commit run check-yaml && pre-commit run check-json && pre-commit run check-toml && pre-commit run end-of-file-fixer && pre-commit run trailing-whitespace && pre-commit run mixed-line-ending && pre-commit run requirements-txt-fixer && pre-commit run debug-statements && pre-commit run check-case-conflict && pre-commit run check-symlinks && pre-commit run check-illegal-windows-names && pre-commit run check-executables-have-shebangs && pre-commit run check-vcs-permalinks && pre-commit run gitleaks && pre-commit run autoflake && pre-commit run vulture && pre-commit run isort && pre-commit run ruff-check && pre-commit run ruff-format && pre-commit run autopep8 && pre-commit run pylint && pre-commit run mypy && pre-commit run python-no-eval && pre-commit run python-no-log-warn && pre-commit run python-use-type-annotations && pre-commit run rst-backticks && pre-commit run rst-directive-colons && pre-commit run rst-inline-touching-normal && pre-commit run text-unicode-replacement-char && pre-commit run django-upgrade && pre-commit run codespell && pre-commit run typos && pre-commit run markdownlint && pre-commit run proselint && pre-commit run yamllint && pre-commit run yamlfmt && pre-commit run doctoc && pre-commit run check-github-workflows && pre-commit run actionlint && pre-commit run prettier && pre-commit run eslint && pre-commit run biome-check && pre-commit run standard && pre-commit run jshint && pre-commit run fixmyjs && pre-commit run csslint && pre-commit run shfmt && pre-commit run shellcheck && pre-commit run pyupgrade && pre-commit run bandit && pre-commit run talisman-commit && pre-commit run checkmake && pre-commit run sync-pre-commit-deps until all tests pass
 
@@ -438,4 +435,3 @@ Update or add module-level docstrings and usage notes.
 9. Cleanup
 Remove any legacy JS, CSS, DTL templates, or unused files.
 Remove any code, documentation, or assets not referenced in the new structure.
->>>>>>> 37e6b25 (Squashed commit of the following:)
