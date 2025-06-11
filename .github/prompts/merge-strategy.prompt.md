@@ -41,35 +41,35 @@ When analyzing and resolving conflicts:
 3. Keep code quality high (PEP 8, project conventions)
 4. Minimize manual developer intervention
 5. Ensure tests pass after resolution
+6. **Leverage the `merge-conflict-detector` tool for automated analysis and recommendations**
 
 ## Analyzing Conflicts
 
 For each conflict:
 
 1. Identify the conflict type (content, structure, logic, etc.)
-2. Determine which changes should take precedence
-3. Check for related changes in other files that may be affected
-4. Consider model integrity, database migrations, and API compatibility
-5. Review surrounding context to understand developer intent
+2. **Run the `merge-conflict-detector` tool before attempting manual resolution:**
+   - Example: `merge-conflict-detector main feature-branch`
+   - Review the generated report for risk scores, file-specific issues, and recommendations.
+3. Reference the following project standards and prompt files for required conventions and best practices:
+   - `.github/prompts/code-style.prompt.md`
+   - `.github/prompts/merge-strategy.prompt.md`
+   - `.github/prompts/pre-commit-fix.prompt.md`
+   - `.github/prompts/configuration.prompt.md`
+   - `docs/resources/git/merge-instructions.txt`
+   - `docs/resources/git/merging.md`
+4. Integrate the tool's recommendations into your merge strategy:
+   - Address high-risk files first
+   - Follow automated suggestions for low-risk or documentation-only changes
+   - Document any manual interventions in the merge commit message
+5. After resolving conflicts, re-run the tool to verify no new issues were introduced.
+6. Ensure all tests pass and pre-commit checks are clean before finalizing the merge.
 
-## Resolution Approach
+## Automated Analysis Integration
 
-### Resolution Strategy Selection
-
-Choose from these strategies based on the conflict nature:
-
-1. **Accept Current**: When current changes are clearly superior or newer
-2. **Accept Incoming**: When incoming changes are clearly superior or newer
-3. **Combine Changes**: When both changes provide value and don't conflict
-   logically
-4. **Rewrite Solution**: When combining directly would create issues
-
-### Priority Order for Conflict Resolution
-
-1. Data integrity and security concerns
-2. Functional correctness
-3. API and interface compatibility
-4. Code quality and style
+- Always run `merge-conflict-detector` as part of the pre-merge checklist.
+- Use the tool's output to inform both manual and automated merge strategies.
+- For recurring or complex conflicts, update the conflict pattern and risk rules databases to improve future detection.
 
 ## Common Conflict Scenarios
 
@@ -264,3 +264,16 @@ For complex conflicts:
 Remember: Always prioritize data integrity and application functionality over
 code style issues. When in doubt, preserve both changes and add a comment for
 developer review.
+
+## Best Practices
+
+- Keep documentation and prompt files up to date with workflow changes.
+- Use the tool's JSON or text output for audit trails and team review.
+- Reference the official merging and repository management guides for advanced scenarios.
+
+---
+
+*For more details, see:*
+- `docs/resources/git/merging.md`
+- `docs/resources/git/merge-instructions.txt`
+- `docs/resources/git/git-repository-management.md`

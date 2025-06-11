@@ -1,248 +1,481 @@
 {
+  // See https://code.visualstudio.com/docs/editor/tasks for documentation
+  "version": "2.0.0",
   "tasks": [
     {
-      "args": [
-        "-c",
-        "autopep8 --in-place --aggressive --aggressive \"${file}\""
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Format with autopep8",
-      "presentation": {
-        "clear": true,
-        "panel": "shared",
-        "reveal": "silent"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "isort \"${file}\""],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Sort imports with isort",
-      "presentation": {
-        "clear": true,
-        "panel": "shared",
-        "reveal": "silent"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "pylint \"${file}\""],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Lint with pylint",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "owner": "python",
-        "pattern": {
-          "column": 3,
-          "file": 1,
-          "line": 2,
-          "message": 5,
-          "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error|fatal):\\s+(.*)$",
-          "severity": 4
-        }
-      },
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "mypy \"${file}\""],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Type check with mypy",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "owner": "python",
-        "pattern": {
-          "file": 1,
-          "line": 2,
-          "message": 4,
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "severity": 3
-        }
-      },
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "mypy --ignore-missing-imports --disallow-untyped-defs --no-implicit-optional \"${file}\""
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Type check with mypy (standard)",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "owner": "python",
-        "pattern": {
-          "file": 1,
-          "line": 2,
-          "message": 4,
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "severity": 3
-        }
-      },
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "mypy --config-file \"${workspaceFolder}/mypy.ini\" \"${file}\""
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Type check with mypy (Django)",
-      "options": {
-        "env": {
-          "PYTHONPATH": "/workspaces/greenova"
-        }
-      },
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": {
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "owner": "python",
-        "pattern": {
-          "file": 1,
-          "line": 2,
-          "message": 4,
-          "regexp": "^(.+):(\\d+):\\s+(error|note):\\s+(.*)$",
-          "severity": 3
-        }
-      },
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "bandit -r \"${file}\" --skip B101"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Python: Security check with bandit",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "dependsOn": [
-        "Python: Sort imports with isort",
-        "Python: Format with autopep8",
-        "Python: Lint with pylint",
-        "Python: Type check with mypy (standard)",
-        "Python: Security check with bandit"
-      ],
-      "dependsOrder": "sequence",
-      "group": "none",
-      "label": "Python: Fix all",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": []
-    },
-    {
-      "args": [
-        "-c",
-        "cd greenova && python3 manage.py runserver 0.0.0.0:8000"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Run server",
-      "presentation": {
-        "panel": "dedicated",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": [
-        "-c",
-        "cd greenova && python manage.py create_missing_profiles"
-      ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Create Missing Profiles",
-      "presentation": {
-        "panel": "dedicated",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "label": "Django: Refresh migrations",
-      "dependsOn": [
-        "Django: Delete Migrations",
-        "Django: Create migrations",
-        "Django: Apply migrations"
-      ],
-      "dependsOrder": "sequence",
+      "label": "Run Django Server (Gunicorn)",
       "type": "shell",
-      "group": "none",
+      "command": "/workspaces/greenova/scripts/run_gunicorn.py",
+      "options": {
+        "cwd": "${env:DJANGO_PROJECT_ROOT}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": []
     },
     {
-      "args": ["-c", "cd greenova && python manage.py makemigrations"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Create migrations",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
-      "args": ["-c", "cd greenova && python manage.py migrate"],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Apply migrations",
-      "presentation": {
-        "panel": "shared",
-        "reveal": "always"
-      },
-      "problemMatcher": [],
-      "type": "shell"
-    },
-    {
+      "label": "Run Django Server (Development)",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
       "args": [
-        "-c",
-        "cd greenova && find */migrations -name \"*.py\" ! -name \"__init__.py\" -delete"
+        "/workspaces/greenova/greenova/manage.py",
+        "runserver",
+        "0.0.0.0:8000"
       ],
-      "command": "/bin/sh",
-      "group": "none",
-      "label": "Django: Delete Migrations",
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
       "presentation": {
-        "panel": "shared",
-        "reveal": "always"
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Test - All",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": [
+        "/workspaces/greenova/greenova/manage.py",
+        "test",
+        "--keepdb",
+        "--parallel",
+        "auto",
+        "--verbosity=2"
+      ],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Test - Fast",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": [
+        "/workspaces/greenova/greenova/manage.py",
+        "test",
+        "--keepdb",
+        "--failfast",
+        "--verbosity=1"
+      ],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Test - Coverage",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": [
+        "-m",
+        "coverage",
+        "run",
+        "--source=.",
+        "manage.py",
+        "test",
+        "--keepdb"
+      ],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Makemigrations",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": ["/workspaces/greenova/greenova/manage.py", "makemigrations"],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova",
+        "env": {
+          "PYTHONPATH": "/workspaces/greenova/greenova"
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Migrate",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": ["/workspaces/greenova/greenova/manage.py", "migrate"],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Collectstatic",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": [
+        "/workspaces/greenova/greenova/manage.py",
+        "collectstatic",
+        "--clear",
+        "--noinput"
+      ],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Django Check",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": ["/workspaces/greenova/greenova/manage.py", "check"],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Ruff Check",
+      "type": "shell",
+      "command": "/usr/local/bin/ruff",
+      "args": ["check", "."],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Ruff Format",
+      "type": "shell",
+      "command": "/usr/local/bin/ruff",
+      "args": ["format", "."],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run MyPy",
+      "type": "shell",
+      "command": "/usr/local/bin/mypy",
+      "args": ["greenova/"],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Pre-commit",
+      "type": "shell",
+      "command": "/usr/local/bin/pre-commit",
+      "args": ["run"],
+      "options": {
+        "cwd": "${env:WORKSPACE_ROOT}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Build All (Development)",
+      "type": "shell",
+      "command": "doit",
+      "args": ["build_all_dev"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
       },
       "problemMatcher": [],
-      "type": "shell"
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "Doit - Build All (Production)",
+      "type": "shell",
+      "command": "doit",
+      "args": ["build_all_prod"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "Doit - Compile Protobuf (Python)",
+      "type": "shell",
+      "command": "doit",
+      "args": ["compile_proto_python"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Compile WASM (Release)",
+      "type": "shell",
+      "command": "doit",
+      "args": ["compile_wasm_release"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Compile WASM (Debug)",
+      "type": "shell",
+      "command": "doit",
+      "args": ["compile_wasm_debug"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Build SCSS/CSS",
+      "type": "shell",
+      "command": "doit",
+      "args": ["build_scss"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Build TypeScript",
+      "type": "shell",
+      "command": "doit",
+      "args": ["build_typescript"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Doit - Clean All",
+      "type": "shell",
+      "command": "doit",
+      "args": ["clean_all"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Parcel - Build Development",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build:parcel:dev"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Parcel - Build Production",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build:parcel:prod"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Parcel - Dev Server",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev:parcel"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "NPM - Install Dependencies",
+      "type": "shell",
+      "command": "npm",
+      "args": ["install"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Watch - SCSS Development",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build:sass:dev"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      }
+    },
+    {
+      "label": "Django Shell Plus",
+      "type": "shell",
+      "command": "/workspaces/greenova/.venv/bin/python",
+      "args": ["/workspaces/greenova/greenova/manage.py", "shell_plus"],
+      "options": {
+        "cwd": "/workspaces/greenova/greenova"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Debug - Test Environment Variables",
+      "type": "shell",
+      "command": "echo",
+      "args": [
+        "Python: /workspaces/greenova/.venv/bin/python",
+        "&&",
+        "echo",
+        "Django Manage: ${env:DJANGO_MANAGE_PY}",
+        "&&",
+        "echo",
+        "Project Root: ${env:DJANGO_PROJECT_ROOT}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
     }
-  ],
-  "version": "2.0.0"
+  ]
 }

@@ -1,3 +1,29 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [MyPy with Django: Static Type Checking for Python Projects](#mypy-with-django-static-type-checking-for-python-projects)
+  - [Introduction to MyPy](#introduction-to-mypy)
+  - [Benefits of Static Type Checking](#benefits-of-static-type-checking)
+  - [Django Integration with django-stubs](#django-integration-with-django-stubs)
+    - [What django-stubs Provides](#what-django-stubs-provides)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Adding Type Annotations](#adding-type-annotations)
+    - [Basic Example](#basic-example)
+  - [Running MyPy](#running-mypy)
+  - [Common Type Annotations for Django](#common-type-annotations-for-django)
+    - [Models](#models)
+    - [Views](#views)
+    - [Form Processing](#form-processing)
+  - [Best Practices](#best-practices)
+  - [Troubleshooting Common Issues](#troubleshooting-common-issues)
+    - [Missing Stubs for Third-Party Packages](#missing-stubs-for-third-party-packages)
+    - [Dynamic Attribute Access](#dynamic-attribute-access)
+    - [Complex QuerySet Operations](#complex-queryset-operations)
+  - [Resources and Further Reading](#resources-and-further-reading)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # MyPy with Django: Static Type Checking for Python Projects
 
 ## Introduction to MyPy

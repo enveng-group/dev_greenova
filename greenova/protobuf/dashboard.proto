@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package dashboard;
+
+// Dashboard widget type
+message DashboardWidget {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string config_json = 4;
+}
+
+// Dashboard layout configuration
+message DashboardLayout {
+  repeated DashboardWidget widgets = 1;
+  string layout_json = 2;
+}
+
+// Dashboard user preferences
+message DashboardPreferences {
+  string user_id = 1;
+  string selected_project = 2;
+  string selected_mechanism = 3;
+  string preferences_json = 4;
+}
+
+// Dashboard API response (for extensibility)
+message DashboardAPIResponse {
+  DashboardLayout layout = 1;
+  DashboardPreferences preferences = 2;
+  int64 last_updated = 3;
+}

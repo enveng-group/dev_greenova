@@ -1,23 +1,12 @@
-# Dependabot configuration for automated dependency updates
-# For more information, see:
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for more information:
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://containers.dev/guide/dependabot
 
 version: 2
 updates:
-  # Enable version updates for devcontainers
-  - package-ecosystem: 'devcontainers' # Updates for devcontainer features
-    directory: '/' # Root directory of the repository
+  - package-ecosystem: 'devcontainers'
+    directory: '/'
     schedule:
-      interval: weekly # Check for updates every week
-
-  # Enable version updates for npm dependencies
-  - package-ecosystem: 'npm' # Updates for Node.js dependencies
-    directory: '/' # Root directory of the repository
-    schedule:
-      interval: monthly # Check for updates every month
-
-  # Enable version updates for Python dependencies
-  - package-ecosystem: 'pip' # Updates for Python dependencies
-    directory: '/' # Root directory of the repository
-    schedule:
-      interval: monthly # Check for updates every month
+      interval: weekly

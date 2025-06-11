@@ -1,0 +1,6 @@
+{
+	"id": "bash",
+	"version": "1.0.0",
+	"name": "Bourne Again Shell (bash)",
+	"description": "Installs bash using Alpine package manager."
+}

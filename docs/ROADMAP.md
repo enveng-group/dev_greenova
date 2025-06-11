@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Greenova Roadmap](#greenova-roadmap)
+  - [Phase 1: Core User and Project Management](#phase-1-core-user-and-project-management)
+  - [Phase 2: Advanced Features and Reporting](#phase-2-advanced-features-and-reporting)
+  - [Phase 3: Modularization, UI/UX, and Auditing](#phase-3-modularization-uiux-and-auditing)
+  - [References](#references)
+    - [✅ Phase 1: Setup & Auth](#-phase-1-setup--auth)
+    - [🛠️ Phase 2: Core Features](#-phase-2-core-features)
+    - [📊 Phase 3: Dashboards & Navigation](#-phase-3-dashboards--navigation)
+    - [📈 Phase 4: Visuals & Final Polish](#-phase-4-visuals--final-polish)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Greenova Roadmap
 
 ## Phase 1: Core User and Project Management

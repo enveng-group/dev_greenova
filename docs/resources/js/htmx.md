@@ -1,3 +1,70 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [HTMX with Django Guide](#htmx-with-django-guide)
+  - [Introduction](#introduction)
+  - [Benefits of HTMX with Django](#benefits-of-htmx-with-django)
+  - [Installation and Setup](#installation-and-setup)
+    - [1. Install django-htmx](#1-install-django-htmx)
+    - [2. Add the Middleware](#2-add-the-middleware)
+    - [3. Include HTMX in Templates](#3-include-htmx-in-templates)
+  - [Core Concepts](#core-concepts)
+    - [Checking for HTMX Requests](#checking-for-htmx-requests)
+    - [Basic HTMX Attributes](#basic-htmx-attributes)
+  - [Practical Examples](#practical-examples)
+    - [Simple Click-to-Load Example](#simple-click-to-load-example)
+    - [Form Submission Without Page Reload](#form-submission-without-page-reload)
+    - [Live Search](#live-search)
+    - [CRUD Operations Inside a Table](#crud-operations-inside-a-table)
+      - [List View with Delete Button](#list-view-with-delete-button)
+      - [Inline Edit Form](#inline-edit-form)
+  - [Working with Django Messages](#working-with-django-messages)
+  - [Advanced Techniques](#advanced-techniques)
+    - [Indicators for Loading States](#indicators-for-loading-states)
+    - [Browser History Management](#browser-history-management)
+    - [Triggering Events](#triggering-events)
+  - [Partial Rendering](#partial-rendering)
+    - [Using django-template-partials](#using-django-template-partials)
+    - [Leveraging django-template-partials for Reusability](#leveraging-django-template-partials-for-reusability)
+      - [1. Installation](#1-installation)
+      - [2. Define Partials in Your Templates](#2-define-partials-in-your-templates)
+      - [3. Render Only the Partial in Your View](#3-render-only-the-partial-in-your-view)
+    - [Swapping the Base Template](#swapping-the-base-template)
+      - [1. In Your View](#1-in-your-view)
+      - [2. Template Structure](#2-template-structure)
+      - [Partial template (\_partial.html)](#partial-template-%5C_partialhtml)
+  - [Common Use Cases](#common-use-cases)
+    - [Pagination](#pagination)
+    - [Form Validation](#form-validation)
+  - [Best Practices](#best-practices)
+  - [Troubleshooting](#troubleshooting)
+    - [Request Not Working](#request-not-working)
+    - [Swap Issues](#swap-issues)
+    - [Event Handling Problems](#event-handling-problems)
+  - [HTMX Extensions](#htmx-extensions)
+  - [Additional Resources](#additional-resources)
+  - [Extensions Overview](#extensions-overview)
+    - [Head Support Extension Overview](#head-support-extension-overview)
+    - [Head Support Extension](#head-support-extension)
+    - [Using Head Support](#using-head-support)
+      - [Typical Use Cases](#typical-use-cases)
+      - [Path Dependencies Example with Django](#path-dependencies-example-with-django)
+  - [Loading States Extension](#loading-states-extension)
+    - [Loading States Extension Overview](#loading-states-extension-overview)
+      - [Features](#features)
+      - [Django Comments Example](#django-comments-example)
+    - [Class Tools Extension Overview](#class-tools-extension-overview)
+      - [Key Features](#key-features)
+      - [Example with Django](#example-with-django)
+    - [Path Dependencies Overview](#path-dependencies-overview)
+  - [Conclusion](#conclusion)
+  - [Troubleshooting: Indicator and CSRF Errors](#troubleshooting-indicator-and-csrf-errors)
+    - [HTMX Indicator Error](#htmx-indicator-error)
+    - [CSRF Token Error](#csrf-token-error)
+      - [Example (Django)](#example-django)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # HTMX with Django Guide
 
 ## Introduction
@@ -21,6 +88,10 @@ provides integration between Django and HTMX.
 ### 1. Install django-htmx
 
 ```bash
+# Using uv (preferred)
+uv pip install django-htmx
+
+# Alternative: Using pip
 pip install django-htmx
 ```
 
@@ -340,6 +411,10 @@ reusable sections called "partials" that can be rendered independently.
 #### 1. Installation
 
 ```bash
+# Using uv (preferred)
+uv pip install django-template-partials
+
+# Alternative: Using pip
 pip install django-template-partials
 ```
 

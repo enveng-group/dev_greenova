@@ -1,3 +1,28 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Fish Shell](#fish-shell)
+  - [Introduction](#introduction)
+  - [Key Features](#key-features)
+  - [Installation](#installation)
+    - [macOS](#macos)
+    - [Ubuntu/Debian](#ubuntudebian)
+    - [Fedora](#fedora)
+    - [Arch Linux](#arch-linux)
+    - [From Source](#from-source)
+  - [Setting Fish as Your Default Shell](#setting-fish-as-your-default-shell)
+  - [Basic Usage](#basic-usage)
+    - [Navigation](#navigation)
+    - [Command History](#command-history)
+    - [Autosuggestions](#autosuggestions)
+    - [Variables](#variables)
+  - [Using Fish with Greenova](#using-fish-with-greenova)
+    - [Project-Specific Fish Configuration](#project-specific-fish-configuration)
+    - [Activating Virtual Environment in Fish](#activating-virtual-environment-in-fish)
+    - [Virtual Environment Auto-Activation](#virtual-environment-auto-activation)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Fish Shell
 
 ## Introduction

@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Python Packaging with Setuptools](#python-packaging-with-setuptools)
+  - [Introduction to Setuptools](#introduction-to-setuptools)
+    - [Key Benefits](#key-benefits)
+  - [Setup.py Overview](#setuppy-overview)
+    - [Key Configuration Parameters](#key-configuration-parameters)
+    - [Example Setup.py for Greenova](#example-setuppy-for-greenova)
+  - [References](#references)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Python Packaging with Setuptools
 
 ## Introduction to Setuptools
@@ -33,7 +46,7 @@ application, manage its dependencies, and prepare it for deployment.
 | `author_email`                  | Maintainer contact                            | `"team@greenova.example"`                             |
 | `url`                           | Project homepage                              | `"https://github.com/greenova/greenova"`              |
 | `packages`                      | Python packages to include                    | `find_packages()`                                     |
-| `python_requires`               | Python version constraints                    | `">=3.12.9"`                                          |
+| `python_requires`               | Python version constraints                    | `">=3.12.10"`                                         |
 | `install_requires`              | Package dependencies                          | `["Django>=5.2", ...]`                                |
 | `extras_require`                | Optional dependency groups                    | `{"dev": ["pytest", "black"], ...}`                   |
 | `package_data`                  | Non-Python files to include                   | `{"greenova": ["static/*", "templates/*"]}`           |
@@ -60,7 +73,7 @@ setup(
     url="https://github.com/greenova/greenova",
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.12.9",
+    python_requires=">=3.12.10",
     install_requires=[
         "Django==5.2",
         "matplotlib==3.9.4",

@@ -1,0 +1,126 @@
+[user]
+    name = enveng-group
+    email = 164126503+enveng-group@users.noreply.github.com
+    signingkey = ~/.ssh/id_ed25519
+
+[core]
+    editor=vi
+    compression = 9
+    whitespace = trailing-space
+    autocrlf = input
+    eol = lf
+    safecrlf = true
+    fsmonitor = true
+    preloadIndex = true
+    fscache = true
+    fileMode = false
+	sshCommand = /workspaces/greenova/.devcontainer/scripts/post_create/git_ssh_dropbear.py
+
+[color]
+    ui = auto
+
+[http]
+    postBuffer = 1024m
+    keepAlive = true
+    maxRequests = 100
+
+[ssh]
+	variant = simple
+    program = /usr/bin/ssh
+
+[gpg]
+    format = ssh
+
+[gpg "ssh"]
+    program = /usr/bin/ssh-keygen
+    allowedSignersFile = ~/.ssh/allowed_signers
+
+[pull]
+    rebase = true
+
+[merge]
+    conflictstyle = zdiff3
+
+[rebase]
+    autoSquash = true
+    autoStash = true
+    updateRefs = true
+
+[commit]
+    gpgSign = true
+
+[tag]
+    gpgsign = true
+    forceSignAnnotated = true
+
+[apply]
+    whitespace = fix
+
+[help]
+    autocorrect = 1
+
+[gc]
+    auto = 100
+    pruneExpire = now
+    aggressive = true
+    reflogExpire = 30.days
+    reflogExpireUnreachable = 15.days
+    writeCommitGraph = true
+
+[fetch]
+    prune = true
+    pruneTags = true
+    writeCommitGraph = true
+
+[maintenance]
+    auto = true
+    schedule = daily
+    task = gc,commit-graph,loose-objects,incremental-repack,pack-refs
+
+[pack]
+    threads = 1
+    deltaCacheSize = 512m
+    windowMemory = 512m
+    compression = 9
+    auto = 256
+    autoPackLimit = 50
+    useDeltaIslands = true
+    packSizeLimit = 512m
+
+[receive]
+    fsckObjects = true
+
+[transfer]
+    fsckObjects = true
+    compression = 9
+
+[push]
+    autoSetupRemote = true
+    gpgsign = if-asked
+
+[branch "main"]
+    mergeOptions = --ff-only
+
+[branch]
+    namingConvention = <type>/<description>
+    autoSetupMerge = true
+    autoSetupRebase = always
+
+[repack]
+    threads = 1
+    usedeltabaseoffset = true
+
+[index]
+    pack = true
+
+[safe]
+    directory = /workspaces/greenova
+    directory = /Users/adriangallo/greenova
+    directory = /Users/adriangallo/dev_greenova
+    directory = /Users/adriangallo/dotfiles
+    directory = /home/vscode/dotfiles
+  
+[status]
+    showUntrackedFiles = all
+[credential]
+	helper = "!f() { /home/vscode/.vscode-server/bin/848b80aeb52026648a8ff9f7c45a9b0a80641e2e/node /tmp/vscode-remote-containers-1d183020-d8f6-4b49-b9ce-cd75166725e8.js git-credential-helper $*; }; f"

@@ -1,3 +1,30 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django CORS Headers](#django-cors-headers)
+  - [What is CORS?](#what-is-cors)
+  - [About django-cors-headers](#about-django-cors-headers)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+    - [1. `CORS_ALLOWED_ORIGINS`](#1-cors_allowed_origins)
+    - [2. `CORS_ALLOWED_ORIGIN_REGEXES`](#2-cors_allowed_origin_regexes)
+    - [3. `CORS_ALLOW_ALL_ORIGINS`](#3-cors_allow_all_origins)
+    - [4. `CORS_ALLOW_METHODS`](#4-cors_allow_methods)
+    - [5. `CORS_ALLOW_HEADERS`](#5-cors_allow_headers)
+    - [6. `CORS_EXPOSE_HEADERS`](#6-cors_expose_headers)
+    - [7. `CORS_PREFLIGHT_MAX_AGE`](#7-cors_preflight_max_age)
+  - [Common Use Cases](#common-use-cases)
+    - [1. Development Environment](#1-development-environment)
+    - [2. Production with Specific Domains](#2-production-with-specific-domains)
+    - [3. API with Multiple Client Applications](#3-api-with-multiple-client-applications)
+  - [Security Considerations](#security-considerations)
+  - [Debugging CORS Issues](#debugging-cors-issues)
+  - [Example Implementation](#example-implementation)
+  - [Additional Resources](#additional-resources)
+  - [Compatibility](#compatibility)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django CORS Headers
 
 ## What is CORS?

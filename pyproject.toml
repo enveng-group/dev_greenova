@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
@@ -54,53 +55,172 @@ exclude = [
     "**/test_*.py",
     "**/*_test.py",
     "**/mock_*.py",
-]
-skips = ["B311"]
-hardcoded_password_string = ["password", "passwd", "pwd", "secret"]
-severity = "LOW"
-confidence = "LOW"
-format = "txt"
-output = "bandit-results.txt"
-processes = 4
-exit_zero = false
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# Dependency management is handled via pip-tools and requirements/*.in files.
+# See requirements/README.rst and docs/REQUIREMENTS_WORKFLOW.md for workflow.
+# Do not add dependencies here; use requirements/requirements.in and pip-compile.
+
+[tool.autopep8]
+max_line_length = 88
+ignore = ["E501", "E302", "E305"]
+in-place = true
 recursive = true
-verbose = true
-exclude_dirs = ["tests", "migrations", "docs"]
+aggressive = 3
+single_quotes = true
+
+[tool.djlint]
+profile = "django"
+indent = 2
+max_line_length = 88
+use_gitignore = true
+format_css = false
+format_js = false
+ignore = "H014,H015,T002"
+include = "**/*.html,**/*.jinja,**/*.djhtml"
+exclude = "**/node_modules/**,**/bower_components/**,**/vendors/**,**/static/**,**/media/**,**/migrations/**,**/__pycache__/**,**/.git/**,**/.venv/**,**/.env/**,**/.pytest_cache/**,**/.mypy_cache/**,**/build/**,**/dist/**,**/.eggs/**,**/docs/conf.py/**,**/requirements/**"
+extension = "django-html,html,jinja"
+preserve_blank_lines = true
+preserve_leading_space = true
+require_pragma = false
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+exclude = ['^migrations/.*\.py$', '^tests/.*\.py$']
+mypy_path = "greenova/stubs"
+explicit_package_bases = true
+namespace_packages = true
+strict = true
+packages = ["greenova"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "greenova.greenova.settings"
+
+[tool.bandit]
+context_lines = 3
+exclude = [
+    "/tests",
+    "/env",
+    "/venv",
+    "/.git",
+    "*.pyc",
+    "**/test_*.py",
+    "**/*_test.py",
+    "**/mock_*.py",
+=======
+[project]
+name = "greenova"
+version = "0.1.0"
+description = "Greenova environmental management"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beartype>=0.21.0",
+    "cffi==1.17.1",
+    "cfgv==3.4.0",
+    "cryptography==45.0.3",
+    "distlib==0.3.9",
+    "django>=5.2.1",
+    "django-allauth>=65.9.0",
+    "django-browser-reload>=1.18.0",
+    "django-cors-headers>=4.7.0",
+    "django-debug-toolbar>=5.2.0",
+    "django-extensions>=4.1",
+    "django-htmx>=1.23.0",
+    "django-hyperscript>=1.5.2",
+    "django-matplotlib>=0.1",
+    "django-pdb>=0.6.2",
+    "django-plotly-dash>=2.4.6",
+    "django-silk>=5.4.0",
+    "django-csp>=3.8",
+    "django-filter>=23.5",
+    "django-tables2>=2.7",
+    "fido2>=2.0.0",
+    "filelock==3.18.0",
+    "identify==2.6.12",
+    "matplotlib>=3.10.3",
+    "nodeenv==1.9.1",
+    "pandas>=2.2.3",
+    "patchelf==0.17.2.2",
+    "platformdirs==4.3.8",
+    "pycparser==2.22",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.1.0",
+    "PyYAML==6.0.2",
+    "django-crispy-forms>=2.1",
+    "crispy-bootstrap4>=2024.2",
+    "django-guardian>=2.4.0",
+    "django-autocomplete-light>=3.9.7",
+    "pillow>=10.3.0",
+    "python-slugify>=8.0.4",
+    "bleach>=6.1.0",
+    "django-bootstrap5>=25.1",
+    "django-select2>=8.4.1",
+    "protobuf==4.25.3",
+    "google>=3.0.0",
+    "googleapis-common-protos>=1.70.0",
+    "gunicorn>=23.0.0",
+    "crispy-bootstrap5>=2025.6",
+    "sentry-sdk>=2.29.1",
+>>>>>>> 37e6b25 (Squashed commit of the following:)
+]
+
+[tool.setuptools.packages.find]
+include = ["greenova*"]
+exclude = ["node_modules*", "logs*"]
+
+[build-system]
+requires = ["setuptools", "wheel", "uvenv"]
+build-backend = "setuptools.build_meta"
 
 [tool.ruff]
 line-length = 88
+indent-width = 4
 target-version = "py312"
-fix = true
-unsafe-fixes = true
-extend-exclude = [
-    "migrations",
-    "__pycache__",
-    ".pytest_cache",
-    ".mypy_cache",
+exclude = [
+    ".git",
     ".venv",
+    "venv",
+    "migrations",
     "node_modules",
+<<<<<<< HEAD
     "docs/conf.py",
     "old",
     "build",
     "dist",
     ".eggs",
     "*_pb2.py",
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+    "docs/conf.py",
+    "old",
+    "build",
+    "dist",
+    ".eggs",
+=======
+    "static",
+    "staticfiles",
+    "media",
+    "stubs",
+    "tests",
+    "db.sqlite3",
+    "db.sqlite3.bak"
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 ]
 
 [tool.ruff.lint]
-select = [
-    "E",   # pycodestyle
-    "F",   # pyflakes
-    "D",   # pydocstyle
-    "I",   # isort
-    "N",   # pep8-naming
-    "UP",  # pyupgrade
-    "PLC", # pylint
-    "PLE", # pylint
-    "PLR", # pylint
-    "PLW", # pylint
-    "RUF", # Ruff-specific rules
+select = ["ALL"]
+ignore = [
+    "D211",  # no-blank-line-before-class (conflicts with D203)
+    "D213",  # multi-line-summary-second-line (conflicts with D212)
+    "COM812", # formatter conflict
+    "D203",   # disables incorrect-blank-line-before-class (formatter conflict)
 ]
+<<<<<<< HEAD
 ignore = ["D203", "D212"]
 
 [tool.ruff.lint.pydocstyle]
@@ -114,12 +234,31 @@ max-statements = 50
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
 "tests/*" = ["D100", "S105", "S106", "S107"]
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+ignore = ["E501", "D203", "D212"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 8
+max-branches = 12
+max-statements = 50
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
+"tests/*" = ["S101", "S105", "S106", "S107"]
+=======
+fixable = ["ALL"]
+unfixable = []
+preview = true
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
-line-ending = "lf"
 skip-magic-trailing-comma = false
+<<<<<<< HEAD
 
 [tool.beartype]
 # Enable runtime type checking for all modules in the greenova package
@@ -132,3 +271,98 @@ output = "greenova/stubs"
 [tool.stubtest]
 # Target package for stubtest
 package = "greenova"
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+=======
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.isort]
+profile = "black"
+line_length = 88
+atomic = true
+force_single_line = true
+known_first_party = "greenova"
+skip_gitignore = true
+
+[tool.autopep8]
+max_line_length = 88
+in-place = true
+recursive = true
+aggressive = 3
+
+[tool.djlint]
+profile = "django"
+indent = 4
+max_line_length = 88
+format_css = true
+format_js = true
+close_void_tags = true
+blank_line_after_tag = "load,extends,include"
+blank_line_before_tag = "load,extends,include"
+format_attribute_template_tags = true
+preserve_blank_lines = false
+preserve_leading_space = false
+use_gitignore = true
+require_pragma = false
+
+[tool.vulture]
+# Configuration for vulture: https://github.com/jendrikseipp/vulture
+# Install in your virtual environment and run:
+# python -m vulture | tail -r | less
+# The below configuration tries to remove some false positives, but there are
+# still many, for example for model properties used only in templates.
+# See also:
+# https://adamj.eu/tech/2023/07/12/django-clean-up-unused-code-vulture/
+exclude = [
+  "*/settings.py",
+  "*/settings/*.py",
+  "*/migrations/*.py",
+]
+ignore_decorators = [
+  # Django
+  "@receiver",
+  "@register.filter",
+  "@register.inclusion_tag",
+  "@register.simple_tag",
+  # django.contrib.admin
+  "@admin.action",
+  "@admin.display",
+  "@admin.register",
+  # pytest
+  "@pytest.fixture",
+]
+ignore_names = [
+  # Django
+  "*Config",  # AppConfig subclasses
+  "*Middleware",
+  "clean_*",
+  "Meta",
+  "urlpatterns",
+  # django.contrib.admin
+  "get_extra",
+  "get_fieldsets",
+  "has_add_permission",
+  "has_change_permission",
+  "has_delete_permission",
+  "has_view_permission",
+  "lookups",
+]
+paths = [
+  "greenova",
+]
+sort_by_size = true
+min_confidence = 95
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+django_settings_module = "greenova.settings"
+
+[tool.django-stubs]
+django_settings_module = "greenova.settings"
+
+# IPython Configuration
+[tool.ipython]
+# IPython configuration can go here if needed
+# Most IPython config is handled in the startup script and Django settings
+>>>>>>> 37e6b25 (Squashed commit of the following:)

@@ -1,3 +1,38 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Django Debug Toolbar](#django-debug-toolbar)
+  - [Introduction](#introduction)
+  - [Installation](#installation)
+    - [1. Install the package](#1-install-the-package)
+    - [2. Configure your settings.py](#2-configure-your-settingspy)
+    - [3. Add URLs to your project](#3-add-urls-to-your-project)
+  - [Key Features](#key-features)
+    - [1. SQL Panel](#1-sql-panel)
+    - [2. Timer Panel](#2-timer-panel)
+    - [3. Headers Panel](#3-headers-panel)
+    - [4. Request Panel](#4-request-panel)
+    - [5. Templates Panel](#5-templates-panel)
+    - [6. Static Files Panel](#6-static-files-panel)
+    - [7. Cache Panel](#7-cache-panel)
+    - [8. Signals Panel](#8-signals-panel)
+    - [9. Logging Panel](#9-logging-panel)
+  - [Configuration Options](#configuration-options)
+    - [Customizing Panels](#customizing-panels)
+    - [Toolbar Configuration](#toolbar-configuration)
+    - [Performance Considerations](#performance-considerations)
+    - [Debugging Tips](#debugging-tips)
+  - [Advanced Usage](#advanced-usage)
+    - [Custom Panels](#custom-panels)
+    - [Panel Templates](#panel-templates)
+  - [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [Django Rest Framework Integration](#django-rest-framework-integration)
+  - [Resources](#resources)
+  - [Conclusion](#conclusion)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Django Debug Toolbar
 
 ## Introduction

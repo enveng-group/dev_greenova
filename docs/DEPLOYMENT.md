@@ -1,3 +1,33 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Deployment Guide](#deployment-guide)
+  - [Architecture Overview](#architecture-overview)
+  - [Prerequisites](#prerequisites)
+  - [Installation Steps](#installation-steps)
+    - [Step 5: Ensure Database Schema Consistency](#step-5-ensure-database-schema-consistency)
+  - [Django Production Settings](#django-production-settings)
+  - [Django Deployment Checklist](#django-deployment-checklist)
+  - [Setting Up Gunicorn](#setting-up-gunicorn)
+  - [Setting Up Nginx](#setting-up-nginx)
+  - [Setting Up SSL with Let's Encrypt](#setting-up-ssl-with-lets-encrypt)
+  - [Cloudflare Configuration](#cloudflare-configuration)
+  - [Collect Static Files](#collect-static-files)
+  - [Finalizing Deployment](#finalizing-deployment)
+  - [Monitoring and Maintenance](#monitoring-and-maintenance)
+    - [Log Rotation](#log-rotation)
+    - [Backup Strategy](#backup-strategy)
+    - [Updating Your Application](#updating-your-application)
+  - [Troubleshooting](#troubleshooting)
+    - [Check Gunicorn Status](#check-gunicorn-status)
+    - [Check Nginx Status](#check-nginx-status)
+    - [Check Logs](#check-logs)
+    - [Common Issues](#common-issues)
+    - [Add a small swap file to minimise overhead](#add-a-small-swap-file-to-minimise-overhead)
+  - [Resources](#resources)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Deployment Guide
 
 ## Architecture Overview
@@ -19,7 +49,7 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 
 ## Prerequisites
 
-- Python 3.12.9
+- Python 3.12.10
 - SQLite3 (or your preferred database)
 - Nginx web server
 - Virtual environment tool
@@ -29,11 +59,23 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 
 ## Installation Steps
 
-1. Create virtual environment: python3 -m venv venv
+1. Create virtual environment:
+
+   ```bash
+   # Using uv (preferred)
+   uv venv venv
+
+   # Alternative: Using traditional venv
+   python3 -m venv venv
+   ```
 
 2. Install required packages:
 
    ```bash
+   # Using uv (preferred)
+   uv pip install Django==5.2 gunicorn==23.0.0 psycopg2-binary==2.9.9
+
+   # Alternative: Using pip
    pip install Django==5.2 gunicorn==23.0.0 psycopg2-binary==2.9.9
    ```
 
@@ -47,6 +89,10 @@ User → HTTPS → Cloudflare Edge → HTTPS → Nginx Server → Gunicorn → D
 4. Install project dependencies:
 
    ```bash
+   # Using uv (preferred)
+   uv pip install -r requirements.txt
+
+   # Alternative: Using pip
    pip install -r requirements.txt
    ```
 
@@ -366,6 +412,10 @@ Add the following configuration:
 3. Install any new dependencies:
 
    ```bash
+   # Using uv (preferred)
+   uv pip install -r requirements.txt
+
+   # Alternative: Using pip
    pip install -r requirements.txt
    ```
 

@@ -1,8 +1,7 @@
 # Copyright 2025 Enveng Group.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-"""
-Protocol buffer utilities for the feedback app.
+"""Protocol buffer utilities for the feedback app.
 
 This module provides serialization and deserialization functions for
 converting between Django models and Protocol Buffer messages in the
@@ -22,11 +21,19 @@ logger = logging.getLogger(__name__)
 
 # Import generated protobuf modules with improved error handling
 try:
+<<<<<<< HEAD
     from .proto import feedback_pb2
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+    from .proto import feedback_pb2
+=======
+    from . import feedback_pb2
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
     logger.info("Successfully imported feedback_pb2 from proto subdirectory")
 except ImportError:
-    logger.error("feedback_pb2 module not found. Ensure to compile the protobuf files.")
+    logger.exception(
+        "feedback_pb2 module not found. Ensure to compile the protobuf files."
+    )
 
     # Create a minimal stub for the module to allow Django to continue loading
     from types import ModuleType
@@ -39,8 +46,14 @@ except ImportError:
         """Stub class for BugReport protocol buffer message."""
 
         # pylint: disable=too-many-instance-attributes
+<<<<<<< HEAD
         def __init__(self):
             """Initialize BugReportProto stub with default values."""
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        def __init__(self):
+=======
+        def __init__(self) -> None:
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             # Core fields that must be instance attributes
             self.id = 0
             self.title = ""
@@ -98,8 +111,15 @@ except ImportError:
             STATUS_CLOSED = 4
             STATUS_REJECTED = 5
 
+<<<<<<< HEAD
         def serialize_to_string(self) -> bytes:
             """Serialize the BugReportProto to bytes (stub)."""
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        def SerializeToString(self) -> bytes:
+            return b''
+=======
+        def SerializeToString(self) -> bytes:
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             return b""
 
         def parse_from_string(self, data: bytes) -> None:
@@ -107,14 +127,27 @@ except ImportError:
             # No-op for stub
 
     class BugReportCollection:
+<<<<<<< HEAD
         """Stub class for a collection of BugReport protocol buffer messages."""
 
         def __init__(self):
             """Initialize BugReportCollection stub with empty report list."""
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        def __init__(self):
+=======
+        def __init__(self) -> None:
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             self.reports = []
 
+<<<<<<< HEAD
         def serialize_to_string(self) -> bytes:
             """Serialize the BugReportCollection to bytes (stub)."""
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        def SerializeToString(self) -> bytes:
+            return b''
+=======
+        def SerializeToString(self) -> bytes:
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             return b""
 
         def parse_from_string(self, data: bytes) -> None:
@@ -131,14 +164,23 @@ except ImportError:
 
 
 def serialize_bug_report(bug_report: BugReport) -> bytes | None:
+<<<<<<< HEAD
     """
     Serialize a BugReport instance to a Protocol Buffer message.
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+def serialize_bug_report(bug_report: BugReport) -> Optional[bytes]:
+    """
+    Serialize a BugReport instance to a Protocol Buffer message.
+=======
+    """Serialize a BugReport instance to a Protocol Buffer message.
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
     Args:
         bug_report: The BugReport instance to serialize
 
     Returns:
         Serialized protocol buffer data as bytes, or None if serialization failed
+
     """
     try:
         # Create a new BugReportProto message
@@ -170,24 +212,43 @@ def serialize_bug_report(bug_report: BugReport) -> bytes | None:
         # Serialize to bytes
         return proto.serialize_to_string()
     except (AttributeError, TypeError) as e:
+<<<<<<< HEAD
         logger.error(
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        logger.error(
+            "Failed to serialize bug report due to attribute or type error: %s",
+            str(e)
+=======
+        logger.exception(
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             "Failed to serialize bug report due to attribute or type error: %s", str(e)
         )
         return None
     except ValueError as e:
-        logger.error("Failed to serialize bug report due to invalid value: %s", str(e))
+        logger.exception(
+            "Failed to serialize bug report due to invalid value: %s", str(e)
+        )
         return None
 
 
 def deserialize_bug_report(data: bytes) -> BugReport | None:
+<<<<<<< HEAD
     """
     Deserialize Protocol Buffer data to a BugReport instance.
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+def deserialize_bug_report(data: bytes) -> Optional[BugReport]:
+    """
+    Deserialize Protocol Buffer data to a BugReport instance.
+=======
+    """Deserialize Protocol Buffer data to a BugReport instance.
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
     Args:
         data: Serialized protocol buffer data
 
     Returns:
         BugReport instance or None if deserialization failed
+
     """
     try:
         # Parse the binary data into a BugReportProto
@@ -221,30 +282,47 @@ def deserialize_bug_report(data: bytes) -> BugReport | None:
 
         return bug_report
     except (AttributeError, TypeError) as e:
-        logger.error(
+        logger.exception(
             "Failed to deserialize bug report due to attribute or type error: %s",
             str(e),
         )
         return None
     except ValueError as e:
+<<<<<<< HEAD
         logger.error(
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        logger.error(
+            "Failed to deserialize bug report due to invalid value: %s",
+            str(e)
+=======
+        logger.exception(
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             "Failed to deserialize bug report due to invalid value: %s", str(e)
         )
         return None
     except (OSError, SystemError, OverflowError) as e:
-        logger.error("Failed to deserialize bug report: %s", str(e))
+        logger.exception("Failed to deserialize bug report: %s", str(e))
         return None
 
 
 def serialize_bug_reports(bug_reports: list[BugReport]) -> bytes | None:
+<<<<<<< HEAD
     """
     Serialize a list of BugReport instances to Protocol Buffer collection.
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+def serialize_bug_reports(bug_reports: List[BugReport]) -> Optional[bytes]:
+    """
+    Serialize a list of BugReport instances to Protocol Buffer collection.
+=======
+    """Serialize a list of BugReport instances to Protocol Buffer collection.
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
     Args:
         bug_reports: List of BugReport instances to serialize
 
     Returns:
         Serialized protocol buffer collection as bytes, or None if serialization failed
+
     """
     try:
         # Create a new BugReportCollection message
@@ -261,31 +339,48 @@ def serialize_bug_reports(bug_reports: list[BugReport]) -> bytes | None:
         # Serialize the collection to bytes
         return collection.serialize_to_string()
     except (AttributeError, TypeError) as e:
-        logger.error(
+        logger.exception(
             "Failed to serialize bug report collection due to attribute "
             "or type error: %s",
             str(e),
         )
         return None
     except ValueError as e:
+<<<<<<< HEAD
         logger.error(
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        logger.error(
+            "Failed to serialize bug report collection due to invalid value: %s",
+            str(e)
+=======
+        logger.exception(
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             "Failed to serialize bug report collection due to invalid value: %s", str(e)
         )
         return None
     except (OSError, SystemError) as e:
-        logger.error("Failed to serialize bug report collection: %s", str(e))
+        logger.exception("Failed to serialize bug report collection: %s", str(e))
         return None
 
 
 def deserialize_bug_reports(data: bytes) -> list[BugReport]:
+<<<<<<< HEAD
     """
     Deserialize Protocol Buffer collection data to a list of BugReport instances.
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+def deserialize_bug_reports(data: bytes) -> List[BugReport]:
+    """
+    Deserialize Protocol Buffer collection data to a list of BugReport instances.
+=======
+    """Deserialize Protocol Buffer collection data to a list of BugReport instances.
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
     Args:
         data: Serialized protocol buffer collection
 
     Returns:
         List of BugReport instances
+
     """
     try:
         # Parse the binary data into a BugReportCollection
@@ -303,20 +398,20 @@ def deserialize_bug_reports(data: bytes) -> list[BugReport]:
 
         return bug_reports
     except (AttributeError, TypeError) as e:
-        logger.error(
+        logger.exception(
             "Failed to deserialize bug report collection due to attribute "
             "or type error: %s",
             str(e),
         )
         return []
     except ValueError as e:
-        logger.error(
+        logger.exception(
             "Failed to deserialize bug report collection due to invalid value: %s",
             str(e),
         )
         return []
     except (OSError, SystemError) as e:
-        logger.error(
+        logger.exception(
             "Failed to deserialize bug report collection due to system error: %s",
             str(e),
         )

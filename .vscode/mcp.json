@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "inputs": [
     {
       "type": "promptString",
@@ -83,4 +84,133 @@
       ]
     }
   }
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "github_token",
+      "description": "GitHub Personal Access Token",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "db_path",
+      "description": "SQLite Database Path",
+      "default": "/workspaces/greenova/greenova/db.sqlite3"
+    }
+  ],
+  "servers": {
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
+      }
+    },
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "${workspaceFolder}"
+      ]
+    },
+    "json": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@gongrzhe/server-json-mcp@1.0.3"]
+    },
+    "Context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "sqlite": {
+      "type": "stdio",
+      "command": "uvenv",
+      "args": [
+        "run",
+        "mcp-server-sqlite",
+        "--",
+        "--db-path",
+        "${input:db_path}"
+      ]
+    },
+    "git": {
+      "type": "stdio",
+      "command": "uvenv",
+      "args": ["run", "mcp-server-git"]
+    },
+    "fetch": {
+      "type": "stdio",
+      "command": "uvenv",
+      "args": ["run", "mcp-server-fetch"]
+    },
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    }
+  }
+=======
+	"inputs": [
+		{
+			"type": "promptString",
+			"id": "github_token",
+			"description": "GitHub Personal Access Token",
+			"password": true
+		},
+	],
+	"servers": {
+		"github": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "@modelcontextprotocol/server-github"],
+			"env": {
+				"GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
+			}
+		},
+		"filesystem": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [
+				"-y",
+				"@modelcontextprotocol/server-filesystem",
+				"${workspaceFolder}"
+			]
+		},
+		"json": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["@gongrzhe/server-json-mcp@1.0.3"]
+		},
+		"Context7": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "@upstash/context7-mcp@latest"]
+		},
+		"git": {
+			"type": "stdio",
+			"command": "uvenv",
+			"args": ["run", "mcp-server-git"]
+		},
+		"fetch": {
+			"type": "stdio",
+			"command": "uvenv",
+			"args": ["run", "mcp-server-fetch"]
+		},
+		"sequential-thinking": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+		}
+	}
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 }

@@ -1,0 +1,6 @@
+{
+	"id": "dropbear",
+	"version": "1.0.0",
+	"name": "Dropbear SSH",
+	"description": "Lightweight SSH client and server using Dropbear"
+}

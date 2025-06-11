@@ -1,3 +1,26 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Pico CSS Learning Resource](#pico-css-learning-resource)
+  - [Introduction](#introduction)
+  - [Key Features](#key-features)
+  - [Installation Options](#installation-options)
+    - [CDN Integration](#cdn-integration)
+    - [NPM Installation](#npm-installation)
+    - [Classless Mode](#classless-mode)
+    - [With CSS Classes](#with-css-classes)
+  - [Core Components](#core-components)
+    - [Grid System](#grid-system)
+    - [Forms](#forms)
+    - [Cards](#cards)
+  - [Customization](#customization)
+  - [Integration with Django](#integration-with-django)
+  - [Best Practices for Greenova Project](#best-practices-for-greenova-project)
+  - [Useful Resources](#useful-resources)
+  - [Integration with Project's HTML-First Development](#integration-with-projects-html-first-development)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Pico CSS Learning Resource
 
 ## Introduction

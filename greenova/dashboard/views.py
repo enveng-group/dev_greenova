@@ -29,7 +29,7 @@ from .mixins import ChartMixin, ProjectAwareDashboardMixin
 
 # Constants for system information
 SYSTEM_STATUS = "operational"  # or fetch from settings/environment
-APP_VERSION = "0.0.6"  # or fetch from settings/environment
+APP_VERSION = "0.0.7"  # or fetch from settings/environment
 LAST_UPDATED = datetime.now().date()  # or fetch from settings/environment
 
 logger = logging.getLogger(__name__)
@@ -130,8 +130,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
             An HttpResponse object.
         """
         # Let the ProjectAwareDashboardMixin handle most of the logic
-        response = super().get(request, *args, **kwargs)
-        return response
+        return super().get(request, *args, **kwargs)
 
     @beartype
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -147,7 +146,7 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         try:
-            user = cast(AbstractUser, self.request.user)
+            user = cast("AbstractUser", self.request.user)
 
             # Get projects for the current user with prefetch_related
             projects = self.get_projects().prefetch_related("memberships")
@@ -189,12 +188,30 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
 
         return context
 
+<<<<<<< HEAD
     @beartype
     def get_overdue_obligations(self) -> QuerySet[Obligation]:
         """Get overdue obligations for the selected project.
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+    def add_specific_charts(self, context: dict[str, Any]) -> None:
+        """
+        Add view-specific chart data to the context.
+=======
+    def add_specific_charts(self, context: dict[str, Any]) -> None:
+        """Add view-specific chart data to the context.
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
+<<<<<<< HEAD
         Returns:
             QuerySet of overdue Obligation objects.
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        Args:
+            context: The context dictionary to update
+=======
+        Args:
+            context: The context dictionary to update
+
+>>>>>>> 37e6b25 (Squashed commit of the following:)
         """
         project_id_str: str | None = self.selected_project_id
         query_filter: dict[str, Any] = {}
@@ -224,12 +241,14 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         Returns:
             QuerySet[Project]: Projects for authenticated user, or empty queryset
                 for anonymous users.
+
         """
         user = self.request.user
         # Robustly handle anonymous users (SimpleLazyObject or AnonymousUser)
         if not getattr(user, "is_authenticated", False):
             return cast(QuerySet[Project], Project.objects.none())
         try:
+<<<<<<< HEAD
             # Ensure user is not AnonymousUser before filtering
             if hasattr(user, "pk"):  # Check if user has a primary key
                 return cast(
@@ -240,6 +259,17 @@ class DashboardHomeView(ProjectAwareDashboardMixin, TemplateView):
         except Exception as e:  # pylint: disable=broad-except
             logger.error("Error fetching projects for user %s: %s", user, e)
             return cast(QuerySet[Project], Project.objects.none())
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+            return Project.objects.filter(members=user).order_by("-created_at")
+        except Exception as e:
+            logger.error("Error fetching projects for user %s: %s", user, e)
+            return Project.objects.none()
+=======
+            return Project.objects.filter(members=user).order_by("-created_at")
+        except Exception as e:
+            logger.exception("Error fetching projects for user %s: %s", user, e)
+            return Project.objects.none()
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 
     @beartype
     def get_active_obligations_count(self) -> int:
@@ -354,11 +384,16 @@ class ChartView(ChartMixin, ProjectAwareDashboardMixin, TemplateView):
             A QuerySet of Project objects.
         """
         now = timezone.now()
+<<<<<<< HEAD
         queryset: QuerySet[Project] = Project.objects.filter(
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+        queryset = Project.objects.filter(
+=======
+        return Project.objects.filter(
+>>>>>>> 37e6b25 (Squashed commit of the following:)
             obligations__action_due_date__lt=now,
             obligations__status__in=[STATUS_NOT_STARTED, STATUS_IN_PROGRESS],
         ).distinct()
-        return queryset
 
     @beartype
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:

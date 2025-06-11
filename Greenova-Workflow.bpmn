@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             id="greenova_workflow_definitions"
+             targetNamespace="http://enveng-group.com.au/greenova/bpmn20"
+             exporter="GitHub Copilot"
+             exporterVersion="1.0">
+  <process id="GreenovaEMS" name="Greenova Environmental Management System Workflow" isExecutable="true">
+    <laneSet>
+      <lane id="lane_user" name="Environmental Professional User"/>
+      <lane id="lane_system" name="System Backend and Services"/>
+    </laneSet>
+    <startEvent id="start_user_access" name="User Accesses Greenova System"/>
+
+    <!-- Main Process Flow -->
+    <sequenceFlow id="flow_start_to_auth" sourceRef="start_user_access" targetRef="authentication_flow"/>
+    <sequenceFlow id="flow_auth_to_dashboard" sourceRef="authentication_flow" targetRef="dashboard_main"/>
+
+    <!-- Navigation from Dashboard to other modules -->
+    <exclusiveGateway id="dashboard_navigation_choice" name="User Selects Module from Dashboard"/>
+    <sequenceFlow id="flow_dashboard_to_nav_choice" sourceRef="dashboard_main" targetRef="dashboard_navigation_choice"/>
+
+    <sequenceFlow id="flow_nav_to_obligation_mgmt" sourceRef="dashboard_navigation_choice" targetRef="obligation_management" name="Selects Obligation Management"/>
+    <sequenceFlow id="flow_nav_to_responsibility_mgmt" sourceRef="dashboard_navigation_choice" targetRef="responsibility_management" name="Selects Responsibility Management"/>
+    <sequenceFlow id="flow_nav_to_project_mgmt" sourceRef="dashboard_navigation_choice" targetRef="project_management" name="Selects Project Management"/>
+    <sequenceFlow id="flow_nav_to_user_company_mgmt" sourceRef="dashboard_navigation_choice" targetRef="user_company_management" name="Selects User/Company Management"/>
+    <sequenceFlow id="flow_nav_to_analytics" sourceRef="dashboard_navigation_choice" targetRef="analytics_reporting" name="Selects Analytics/Reporting"/>
+    <sequenceFlow id="flow_nav_to_notifications" sourceRef="dashboard_navigation_choice" targetRef="notification_system" name="Selects Notifications"/>
+    <sequenceFlow id="flow_nav_to_logout" sourceRef="dashboard_navigation_choice" targetRef="user_logout" name="Selects Logout"/>
+
+    <!-- Flows from modules back to dashboard or to logout -->
+    <sequenceFlow id="flow_obligation_mgmt_to_dashboard" sourceRef="obligation_management" targetRef="dashboard_main" name="Return to Dashboard"/>
+    <sequenceFlow id="flow_responsibility_mgmt_to_dashboard" sourceRef="responsibility_management" targetRef="dashboard_main" name="Return to Dashboard"/>
+    <sequenceFlow id="flow_project_mgmt_to_dashboard" sourceRef="project_management" targetRef="dashboard_main" name="Return to Dashboard"/>
+    <sequenceFlow id="flow_user_company_mgmt_to_dashboard" sourceRef="user_company_management" targetRef="dashboard_main" name="Return to Dashboard"/>
+    <sequenceFlow id="flow_analytics_to_dashboard" sourceRef="analytics_reporting" targetRef="dashboard_main" name="Return to Dashboard"/>
+    <sequenceFlow id="flow_notifications_to_dashboard" sourceRef="notification_system" targetRef="dashboard_main" name="Return to Dashboard"/>
+
+    <sequenceFlow id="flow_logout_to_end" sourceRef="user_logout" targetRef="end_user_session"/>
+
+    <subProcess id="authentication_flow" name="User Authentication and Registration Flow">
+      <dataObject id="user_credentials_do" name="User Credentials"/>
+      <startEvent id="auth_start" name="Begin Authentication"/>
+      <userTask id="navigate_login" name="Navigate to Login Page"/>
+      <exclusiveGateway id="auth_choice" name="Authentication Action Choice"/>
+      <userTask id="user_login" name="User Login Authentication">
+        <dataInputAssociation id="dia_login_creds">
+          <sourceRef>dor_user_login_input</sourceRef>
+          <targetRef>user_credentials_do</targetRef>
+        </dataInputAssociation>
+      </userTask>
+      <dataObjectReference id="dor_user_login_input" dataObjectRef="user_credentials_do" />
+      <exclusiveGateway id="login_validation" name="Login Credentials Valid?"/>
+      <textAnnotation id="anno_login_validation">
+        <text>System validates credentials against database. Max 3 retries before temporary lockout.</text>
+      </textAnnotation>
+      <association id="assoc_login_validation" sourceRef="login_validation" targetRef="anno_login_validation"/>
+      <userTask id="login_error_display" name="Display Login Error Message"/>
+      <userTask id="user_registration" name="New User Registration">
+        <dataOutputAssociation id="doa_reg_creds">
+          <sourceRef>dor_user_registration_output</sourceRef>
+          <targetRef>user_credentials_do</targetRef>
+        </dataOutputAssociation>
+      </userTask>
+      <dataObjectReference id="dor_user_registration_output" dataObjectRef="user_credentials_do" />
+      <serviceTask id="create_user_account_db" name="Create User Account in DB"/>
+      <serviceTask id="send_verification_email" name="Send Verification Email"/>
+      <userTask id="email_verification" name="Email Verification Process"/>
+      <boundaryEvent id="timer_email_verification_timeout" attachedToRef="email_verification" cancelActivity="true">
+        <timerEventDefinition>
+          <timeDuration>PT24H</timeDuration>
+        </timerEventDefinition>
+      </boundaryEvent>
+      <exclusiveGateway id="email_verified_check" name="Email Verified?"/>
+      <userTask id="password_reset" name="Password Reset Process"/>
+      <serviceTask id="send_password_reset_email" name="Send Password Reset Email"/>
+      <endEvent id="auth_end" name="Authentication Complete"/>
+      <endEvent id="auth_failed_end" name="Authentication Failed"/>
+      <endEvent id="verification_failed_end" name="Email Verification Failed"/>
+
+      <sequenceFlow id="sf1" sourceRef="auth_start" targetRef="navigate_login"/>
+      <sequenceFlow id="sf2" sourceRef="navigate_login" targetRef="auth_choice"/>
+      <sequenceFlow id="sf3" sourceRef="auth_choice" targetRef="user_login" name="Chooses Login"/>
+      <sequenceFlow id="sf4" sourceRef="auth_choice" targetRef="user_registration" name="Chooses Register"/>
+      <sequenceFlow id="sf5" sourceRef="auth_choice" targetRef="password_reset" name="Chooses Reset Password"/>
+      <sequenceFlow id="sf6" sourceRef="user_login" targetRef="login_validation"/>
+      <sequenceFlow id="sf7" sourceRef="login_validation" targetRef="login_error_display" name="No, Invalid Credentials"/>
+      <sequenceFlow id="sf8" sourceRef="login_validation" targetRef="auth_end" name="Yes, Valid Credentials"/>
+      <sequenceFlow id="sf_retry_login" sourceRef="login_error_display" targetRef="user_login" name="Retry Login"/>
+      <sequenceFlow id="sf_reg_to_create_account" sourceRef="user_registration" targetRef="create_user_account_db"/>
+      <sequenceFlow id="sf_create_account_to_send_email" sourceRef="create_user_account_db" targetRef="send_verification_email"/>
+      <sequenceFlow id="sf_send_email_to_verify_step" sourceRef="send_verification_email" targetRef="email_verification"/>
+      <sequenceFlow id="sf_email_verify_to_check" sourceRef="email_verification" targetRef="email_verified_check"/>
+      <sequenceFlow id="sf_email_verified_yes" sourceRef="email_verified_check" targetRef="auth_end" name="Yes, Verified"/>
+      <sequenceFlow id="sf_email_verified_no" sourceRef="email_verified_check" targetRef="verification_failed_end" name="No, Not Verified"/>
+      <sequenceFlow id="sf_timer_to_verification_failed" sourceRef="timer_email_verification_timeout" targetRef="verification_failed_end" name="Verification Timed Out"/>
+      <sequenceFlow id="sf_pwd_reset_to_send_email" sourceRef="password_reset" targetRef="send_password_reset_email"/>
+      <sequenceFlow id="sf_pwd_email_sent_to_auth_end" sourceRef="send_password_reset_email" targetRef="auth_end" name="Password Reset Instructions Sent"/>
+    </subProcess>
+
+    <subProcess id="dashboard_main" name="Main Dashboard Interface and Navigation">
+      <userTask id="dashboard_load" name="Load Dashboard Interface"/>
+      <userTask id="project_context_setup" name="Initialize Project Context"/>
+      <userTask id="sidebar_navigation" name="Sidebar Navigation and Toggle"/>
+      <userTask id="project_selection" name="Project Selection and Context Switch"/>
+      <exclusiveGateway id="project_selected_check" name="Is Project Selected?"/>
+      <userTask id="project_selection_prompt" name="Prompt Project Selection"/>
+      <userTask id="project_selection_cancel" name="Cancel Project Selection"/>
+      <userTask id="mechanism_selection" name="Select Mechanism"/>
+      <exclusiveGateway id="mechanism_selected_check" name="Is Mechanism Selected?"/>
+      <userTask id="mechanism_selection_prompt" name="Prompt Mechanism Selection"/>
+      <userTask id="mechanism_selection_cancel" name="Cancel Mechanism Selection"/>
+      <userTask id="procedure_selection" name="Select Procedure"/>
+      <exclusiveGateway id="procedure_selected_check" name="Is Procedure Selected?"/>
+      <userTask id="procedure_selection_prompt" name="Prompt Procedure Selection"/>
+      <userTask id="procedure_selection_cancel" name="Cancel Procedure Selection"/>
+      <userTask id="obligation_drilldown" name="View Linked Obligations"/>
+      <exclusiveGateway id="obligation_selected_check" name="Is Obligation Selected?"/>
+      <userTask id="obligation_selection_prompt" name="Prompt Obligation Selection"/>
+      <userTask id="obligation_selection_cancel" name="Cancel Obligation Selection"/>
+      <userTask id="dashboard_content_load" name="Load Project-Specific Dashboard Content"/>
+      <endEvent id="dashboard_end" name="Dashboard Ready"/>
+
+      <sequenceFlow id="dsf1" sourceRef="dashboard_load" targetRef="project_context_setup"/>
+      <sequenceFlow id="dsf2" sourceRef="project_context_setup" targetRef="sidebar_navigation"/>
+      <sequenceFlow id="dsf3" sourceRef="sidebar_navigation" targetRef="project_selection"/>
+      <sequenceFlow id="dsf4" sourceRef="project_selection" targetRef="project_selected_check"/>
+      <sequenceFlow id="dsf5a" sourceRef="project_selected_check" targetRef="mechanism_selection"/>
+      <sequenceFlow id="dsf5b" sourceRef="project_selected_check" targetRef="project_selection_prompt"/>
+      <sequenceFlow id="dsf5c" sourceRef="project_selected_check" targetRef="project_selection_cancel"/>
+      <sequenceFlow id="dsf6a" sourceRef="mechanism_selection" targetRef="mechanism_selected_check"/>
+      <sequenceFlow id="dsf6b" sourceRef="mechanism_selected_check" targetRef="procedure_selection"/>
+      <sequenceFlow id="dsf6c" sourceRef="mechanism_selected_check" targetRef="mechanism_selection_prompt"/>
+      <sequenceFlow id="dsf6d" sourceRef="mechanism_selected_check" targetRef="mechanism_selection_cancel"/>
+      <sequenceFlow id="dsf7a" sourceRef="procedure_selection" targetRef="procedure_selected_check"/>
+      <sequenceFlow id="dsf7b" sourceRef="procedure_selected_check" targetRef="obligation_drilldown"/>
+      <sequenceFlow id="dsf7c" sourceRef="procedure_selected_check" targetRef="procedure_selection_prompt"/>
+      <sequenceFlow id="dsf7d" sourceRef="procedure_selected_check" targetRef="procedure_selection_cancel"/>
+      <sequenceFlow id="dsf8a" sourceRef="obligation_drilldown" targetRef="obligation_selected_check"/>
+      <sequenceFlow id="dsf8b" sourceRef="obligation_selected_check" targetRef="dashboard_content_load"/>
+      <sequenceFlow id="dsf8c" sourceRef="obligation_selected_check" targetRef="obligation_selection_prompt"/>
+      <sequenceFlow id="dsf8d" sourceRef="obligation_selected_check" targetRef="obligation_selection_cancel"/>
+      <sequenceFlow id="dsf9" sourceRef="dashboard_content_load" targetRef="dashboard_end"/>
+    </subProcess>
+
+    <subProcess id="obligation_management" name="Comprehensive Obligation Management">
+      <userTask id="obligation_dashboard_cards" name="View Obligation Summary Cards"/>
+      <userTask id="obligation_popups" name="Interactive Obligation Hover Popups"/>
+      <userTask id="add_obligation_button" name="Sticky Add Obligation Button"/>
+      <exclusiveGateway id="add_obligation_context" name="Project Context Available?"/>
+      <userTask id="project_selection_required" name="Prompt Project Selection for Obligation"/>
+      <userTask id="obligation_form_load" name="Load Obligation Creation Form"/>
+      <userTask id="obligation_creation" name="Create New Obligation"/>
+      <userTask id="obligation_list_view" name="View Obligation List">
+        <multiInstanceLoopCharacteristics/>
+      </userTask>
+      <intermediateCatchEvent id="timer_obligation_reminder" name="Obligation Follow-up Reminder">
+        <timerEventDefinition>
+          <timeDuration>P7D</timeDuration>
+        </timerEventDefinition>
+      </intermediateCatchEvent>
+      <sequenceFlow id="sf_link_reminder_to_task_or_notification" sourceRef="timer_obligation_reminder" targetRef="notification_display"/>
+      <userTask id="obligation_detail_view" name="View Obligation Details"/>
+      <userTask id="obligation_edit" name="Edit Obligation"/>
+      <userTask id="obligation_delete" name="Delete Obligation"/>
+      <userTask id="chart_drilldown" name="Chart Drilldown Navigation"/>
+    </subProcess>
+
+    <subProcess id="responsibility_management" name="User Role Assignment and Responsibility Management">
+      <userTask id="role_assignment_interface" name="Role Assignment Interface"/>
+      <userTask id="user_obligation_linking" name="Link Users to Obligations"/>
+      <userTask id="responsibility_dashboard" name="Responsibility Dashboard View"/>
+      <userTask id="role_based_permissions" name="Enforce Role-Based Permissions"/>
+    </subProcess>
+
+    <subProcess id="project_management" name="Project and Environmental Mechanism Management">
+      <userTask id="project_creation" name="Create New Project"/>
+      <userTask id="project_management_interface" name="Project Management Dashboard"/>
+      <userTask id="mechanism_definition" name="Define Environmental Mechanisms"/>
+      <userTask id="project_member_management" name="Manage Project Members"/>
+    </subProcess>
+
+    <subProcess id="user_company_management" name="User Profile and Company Management">
+      <userTask id="user_profile_management" name="User Profile CRUD Operations"/>
+      <userTask id="company_management" name="Company Information CRUD"/>
+      <userTask id="navigation_integration" name="Header Navigation Integration"/>
+    </subProcess>
+
+    <subProcess id="analytics_reporting" name="Data Analytics and Interactive Reporting">
+      <userTask id="chart_generation" name="Generate Interactive Charts"/>
+      <userTask id="dashboard_analytics" name="Dashboard Statistics and Analytics"/>
+      <userTask id="search_filter" name="Advanced Search and Filtering"/>
+      <userTask id="report_generation" name="Generate Compliance Reports"/>
+    </subProcess>
+
+    <subProcess id="notification_system" name="Notification and Communication System">
+      <userTask id="notification_display" name="Display Notifications"/>
+      <userTask id="email_notifications" name="Email Notification System"/>
+    </subProcess>
+
+    <userTask id="user_logout" name="User Logout Process"/>
+    <endEvent id="end_user_session" name="User Session Ended"/>
+  </process>
+</definitions>

@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+using prompt-generation.prompt.md for instructions and formatting, please create a new prompt in gpt-4-1.prompt.md to resolve the below issue:
+=======
+. /workspaces/greenova/.venv/bin/activate && cd /workspaces/greenova/greenova && python manage.py test core
+
+analyse what is remaining to be implemente with refactoring and integrating the landing app as per its refactoring plan and also Greenova-Workflow.bpmn
+
+continue to iterate, checking off the acceptance criteria checklist in core prompt until all is complete, do not ask what is next, just complete until the below core app refactoring is complete by iterating
+
+>>>>>>> 37e6b25 (Squashed commit of the following:)
 using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
 
 
@@ -9,3 +20,422 @@ this prompt gpt-4.1.prompt.md has a lot of tasks for agent to do, therefore, sti
 run git add . && pre-commit run --files greenova/mechanism/figures.py and iterate until resolved with no errors, use semantic-thinking mcp server to think and use Context7 mcp server to fetch documentation references for context and use filesystem mcp server to read and write files
 
 iterate `pre-commit --run-file greenova/obligations/views.py` until everything passes and no errors, remember we can also use `stubgen` and `stubtest` to assist with mypy strict type checking. Stub files can be found in `greenova/stubs/greenova/obligations/views.pyi`, please use these stub files to assist with the type checking and ensure that all functions and methods are properly typed and documented.
+<<<<<<< HEAD
+||||||| parent of 37e6b25 (Squashed commit of the following:)
+=======
+
+firstly run source .venv/bin/activate and then using filesystem mcp server and iterate git add . && pre-commit run check-merge-conflict && pre-commit run detect-private-key && pre-commit run check-added-large-files && pre-commit run check-yaml && pre-commit run check-json && pre-commit run check-toml && pre-commit run end-of-file-fixer && pre-commit run trailing-whitespace && pre-commit run mixed-line-ending && pre-commit run requirements-txt-fixer && pre-commit run debug-statements && pre-commit run check-case-conflict && pre-commit run check-symlinks && pre-commit run check-illegal-windows-names && pre-commit run check-executables-have-shebangs && pre-commit run check-vcs-permalinks && pre-commit run gitleaks && pre-commit run autoflake && pre-commit run vulture && pre-commit run isort && pre-commit run ruff-check && pre-commit run ruff-format && pre-commit run autopep8 && pre-commit run pylint && pre-commit run mypy && pre-commit run python-no-eval && pre-commit run python-no-log-warn && pre-commit run python-use-type-annotations && pre-commit run rst-backticks && pre-commit run rst-directive-colons && pre-commit run rst-inline-touching-normal && pre-commit run text-unicode-replacement-char && pre-commit run django-upgrade && pre-commit run codespell && pre-commit run typos && pre-commit run markdownlint && pre-commit run proselint && pre-commit run yamllint && pre-commit run yamlfmt && pre-commit run doctoc && pre-commit run check-github-workflows && pre-commit run actionlint && pre-commit run prettier && pre-commit run eslint && pre-commit run biome-check && pre-commit run standard && pre-commit run jshint && pre-commit run fixmyjs && pre-commit run csslint && pre-commit run shfmt && pre-commit run shellcheck && pre-commit run pyupgrade && pre-commit run bandit && pre-commit run talisman-commit && pre-commit run checkmake && pre-commit run sync-pre-commit-deps until all tests pass
+
+firstly run `source .venv/bin/activate` and then iterate `git add . && pre-commit run ruff-check` until all fix and the hook passes
+
+pre-commit run check-merge-conflict && pre-commit run detect-private-key && pre-commit run check-added-large-files && pre-commit run check-yaml && pre-commit run check-json && pre-commit run check-toml && pre-commit run end-of-file-fixer && pre-commit run trailing-whitespace && pre-commit run mixed-line-ending && pre-commit run requirements-txt-fixer && pre-commit run debug-statements && pre-commit run check-case-conflict && pre-commit run check-symlinks && pre-commit run check-illegal-windows-names && pre-commit run check-executables-have-shebangs && pre-commit run check-vcs-permalinks && pre-commit run gitleaks && pre-commit run autoflake && pre-commit run vulture && pre-commit run isort && pre-commit run ruff-check
+
+
+ruff check --select=DOC201 . > ruff.log || true
+
+iterate with filesystem mcp server to resolve ruff DOC201 errors in the workspace:
+
+
+
+
+
+using prompt-generation.prompt.md for instructions and formatting, please overwrite and generate a new prompt in gpt-4-1.prompt.md to resolve the below issue:
+
+use github mcp server and git mcp server to review the following files changed in commit a9f9cc0c92f1b303e58361404dcdef56de5e5600 at https://github.com/enveng-group/dev_greenova/pull/151/commits/774eed9401f052c3a0440ab379d9317abbfca17f for the local branch integration/v0.0.7 which is associated with https://github.com/enveng-group/dev_greenova/pull/151 against the local and remote branch integration/v0.0.7
+
+i have also run my own merge detector tool so use filesystem mcp server to read merge-detector.log
+then use github mcp server to read https://github.com/enveng-group/dev_greenova/issues/31
+and then use sequential_thinking mcp server to analayse investigate decide recommend and
+provide guidance instructions on whether the files changed in https://github.com/enveng-group/dev_greenova/pull/151
+resolves https://github.com/enveng-group/dev_greenova/issues/31 and it is safe to merge the changes into integration/v0.0.7
+and close both https://github.com/enveng-group/dev_greenova/pull/151 and https://github.com/enveng-group/dev_greenova/issues/31
+
+
+investigate whether any other python modules can be used for project's current implementation to further enhance:
+
+# Tool and Dependency Use-Cases for Code Generation in Greenova
+
+## Python/Django Dependencies
+
+- **beartype**: Decorate all public functions and methods for runtime type checking. Use in every Python module to enforce type safety and catch type errors early.
+- **django-allauth**: Use for authentication, registration, and multi-factor auth. Integrate for user management and permission-based access control.
+- **django-cors-headers**: Add CORS support for API endpoints or cross-origin integrations. Configure in settings as needed.
+- **django-htmx**: Use for AJAX and partial page updates. Only use when django-hyperscript cannot achieve the required interaction. Always prefer django-hyperscript for simple client-side logic.
+- **django-hyperscript**: Primary tool for client-side interactivity. Use for form validation, toggling UI, and simple dynamic behaviors. Prefer over custom JS.
+- **django-matplotlib**: Use for server-side chart generation (SVG/PNG) in reports and static visualizations. Do not use for interactive charts.
+- **django-plotly-dash**: Use for advanced, interactive dashboards. Only introduce when plotly.js or django-hyperscript/htmx are insufficient.
+- **django-bootstrap5**: Use for integrating Bootstrap 5. Use as the sole primary styling framework for all new development.
+- **django-filter**: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
+- **django-tables2**: Use for rendering tabular data in templates. Prefer over custom table markup.
+- **django-crispy-forms** and **crispy-bootstrap4**: Use for rendering forms with consistent, accessible markup. Prefer over custom form templates.
+- **django-guardian**: Use for object-level permissions. Integrate with custom user model and access control logic.
+- **django-autocomplete-light**: Use for autocomplete widgets in forms with large datasets.
+- **pillow**: Use for image processing in models, forms, and admin.
+- **python-slugify**: Use for generating slugs for URLs and filenames.
+- **bleach**: Use for sanitizing user input and HTML content.
+- **ipython**: Use for enhanced shell and debugging in development.
+- **matplotlib**: Use for all server-side static charting. Integrate with django-matplotlib.
+- **pandas**: Use for data analysis, reporting, and ETL tasks. Do not use in request/response cycle unless necessary.
+- **python-dateutil**: Use for robust date parsing and manipulation.
+- **python-dotenv**: Use for loading environment variables from .env files. Do not hardcode secrets.
+- **cryptography**: Use for encryption, signing, and secure token generation.
+
+
+investigate technologogy stack priority is correct adhered and followed for obligations app:
+
+## Frontend Technologies
+
+- **Simplicity First**: Always choose the simplest effective solution
+- **Plain Text / HTML First**: Start with semantic HTML before adding
+  complexity
+
+### Technology Priority Order (Expanded)
+
+1. **Restructured Text (RST)**: Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
+2. **Django-Html**: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+3. **Protobuf3**: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
+4. **django-bootstrap5**: Use as the sole primary styling framework for all new development.
+5. **django-hyperscript**: Use for all simple client-side interactions. Avoid custom JS unless required.
+6. **django-htmx**: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
+7. **scss**: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
+8. **AssemblyScript**: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
+
+
+investigate to ensure project's colour styling and theming scheme is followed strictly:
+
+# Branding, Styling, and Colour Scheme Guidelines
+
+## Greenova Branding and UI Styling
+
+All UI components, templates, and styles must adhere to the Greenova branding
+guidelines. Use the following CSS custom properties for color, spacing, and
+typography to ensure a consistent and accessible user experience across the
+application. These variables must be used in Tailwind configuration, custom
+CSS, and any scss extensions.
+
+### Primary Color Palette
+
+```
+--color-green-primary: #7fb04f;
+--color-orange-primary: #ec7a32;
+--color-blue-primary: #30aee4;
+```
+
+### Secondary Color Palette
+
+```
+--color-gray-dark: #58595b;
+--color-green-olive: #526827;
+--color-orange-rust: #cc6114;
+--color-blue-teal: #146890;
+--color-blue-deep: #0e4f6e;
+--color-green-light: #a3c77e;
+```
+
+### Neutral Color Scale
+
+```
+--color-neutral-50: #fafafa;
+--color-neutral-100: #f5f5f5;
+--color-neutral-200: #e5e5e5;
+--color-neutral-300: #d4d4d4;
+--color-neutral-400: #a3a3a3;
+--color-neutral-500: #737373;
+--color-neutral-600: #525252;
+--color-neutral-700: #404040;
+--color-neutral-800: #262626;
+--color-neutral-900: #171717;
+```
+
+### Background Colors
+
+```
+--greenova-background-primary: #f8f9fa;
+--greenova-background-secondary: #fff;
+--greenova-background-tertiary: #f0f2f5;
+--greenova-beige-primary: #f7f5f0;
+--greenova-beige-secondary: #efeae0;
+```
+
+### Text Colors (Accessible Contrast)
+
+```
+--greenova-text-primary-dark: #212529;
+--greenova-text-secondary-dark: #495057;
+--greenova-text-tertiary-dark: #6c757d;
+--greenova-text-primary-light: #fff;
+--greenova-text-secondary-light: #f8f9fa;
+--greenova-text-tertiary-light: #e9ecef;
+```
+
+### Border & Outline Colors
+
+```
+--greenova-border-color: #dee2e6;
+--greenova-border-focus: #80c261;
+```
+
+### Form Element Colors
+
+```
+--greenova-input-bg: #fff;
+--greenova-input-color: #212529;
+--greenova-input-border: #ced4da;
+--greenova-input-placeholder: #adb5bd;
+```
+
+### Notification & Status Colors (Accessible)
+
+```
+--greenova-notif-primary-low: #2fc709;
+--greenova-notif-primary-mid: #fae100;
+--greenova-notif-primary-high: #ff1f1f;
+--greenova-notif-secondary-low: #e3f9dd;
+--greenova-notif-secondary-mid: #fff9d6;
+--greenova-notif-secondary-high: #ffe0e0;
+
+--greenova-success-text: #0d5613;
+--greenova-success-background: #e3f9dd;
+--greenova-success-border: #a2e68f;
+--greenova-warning-text: #664d03;
+--greenova-warning-background: #fff9d6;
+--greenova-warning-border: #fed94f;
+--greenova-error-text: #991b1b;
+--greenova-error-background: #ffe0e0;
+--greenova-error-border: #f87171;
+--greenova-info-text: #0c5460;
+--greenova-info-background: #d1ecf1;
+--greenova-info-border: #86cfdb;
+```
+
+### Spacing Variables
+
+```
+--greenova-spacing-mini: 0.25rem;
+--greenova-spacing-small: 0.5rem;
+--greenova-spacing: 1rem;
+--greenova-spacing-large: 1.5rem;
+--greenova-spacing-xlarge: 2rem;
+--greenova-spacing-xxlarge: 3rem;
+--greenova-padding-mini: 0.25rem;
+--greenova-padding-small: 0.5rem;
+--greenova-padding: 1rem;
+--greenova-padding-large: 1.5rem;
+--greenova-padding-xlarge: 2rem;
+--greenova-spacing-inline-start: 1rem;
+--greenova-spacing-inline-end: 1rem;
+--greenova-spacing-block-start: 1rem;
+--greenova-spacing-block-end: 1rem;
+```
+
+### Typography Variables
+
+```
+--greenova-font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+--greenova-font-size-xs: 0.75rem;
+--greenova-font-size-sm: 0.875rem;
+--greenova-font-size-base: 1rem;
+--greenova-font-size-lg: 1.125rem;
+--greenova-font-size-xl: 1.25rem;
+--greenova-font-size-2xl: 1.5rem;
+--greenova-font-size-3xl: 1.875rem;
+--greenova-font-size-4xl: 2.25rem;
+--greenova-input-label: 0.875rem;
+--greenova-input-size: 1rem;
+--greenova-table-size: 0.875rem;
+--greenova-button-size: 1rem;
+--greenova-line-height-tight: 1.25;
+--greenova-line-height-base: 1.5;
+--greenova-line-height-loose: 1.75;
+--greenova-font-weight-light: 300;
+--greenova-font-weight-normal: 400;
+--greenova-font-weight-medium: 500;
+--greenova-font-weight-semibold: 600;
+--greenova-font-weight-bold: 700;
+--greenova-btn-font-weight: 500;
+--greenova-btn-line-height: 1.5;
+--greenova-btn-font-size: var(--greenova-font-size-base);
+--greenova-btn-padding-y: 0.5rem;
+--greenova-btn-padding-x: 1rem;
+--greenova-btn-border-width: 1px;
+```
+
+#### Usage Notes
+
+- Always use these variables for all new scss, and Bootstrap theme
+  extensions.
+- Ensure all UI elements meet WCAG AA color contrast requirements.
+- Do not override these variables in component-level styles; extend only via
+  theme configuration.
+- For custom components, reference these variables for backgrounds, text,
+  borders, and spacing.
+- All templates and UI code must use these variables for consistent branding.
+- Document any exceptions or additions in the design system documentation.
+
+
+fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstrap5.readthedocs.io/en/latest/widgets.html https://django-bootstrap5.readthedocs.io/en/latest/templates.html https://django-bootstrap5.readthedocs.io/en/latest/settings.html https://django-bootstrap5.readthedocs.io/en/latest/templatetags.html https://django-bootstrap5.readthedocs.io/en/latest/forms.html https://django-bootstrap5.readthedocs.io/en/latest/migrate.html https://django-bootstrap5.readthedocs.io/en/latest/quickstart.html and check the applicabble templates are using django-bootstrap5 tags correctly as django-bootstrap5 is main styling framework along with our own overrides
+
+
+now check all templates and views.py they are primarily using django_hyperscript template tags correctly and its implementation as per documentation http://pypi.org/project/django-hyperscript/ https://github.com/LucLor06/django-hyperscript and only to compliment django_hyperscript, we are applying django_htmx templatetags correctly https://django-htmx.readthedocs.io/en/latest/installation.html https://django-htmx.readthedocs.io/en/latest/middleware.html https://django-htmx.readthedocs.io/en/latest/template_tags.html https://django-htmx.readthedocs.io/en/latest/http.html https://django-htmx.readthedocs.io/en/latest/example_project.html https://github.com/adamchainz/django-htmx/tree/main/example/example https://django-htmx.readthedocs.io/en/latest/tips.html
+
+
+lets enhance current project implementation by integrating:
+
+Forms: Use django-autocomplete-light for any large select fields.
+Dashboard: Integrate django-matplotlib or django-plotly-dash if you want to add charts.
+Security: Add django-csp and consider cryptography for sensitive features.
+
+
+Remove any remaining non-semantic markup or unused classes.
+
+can you firstly provide me an analysis of what files to keep from my previous legacy app of the project app to fit in with the new projects guidelines and structure
+
+
+
+refactor all files in the project to strictly adhere to the new project's coding tech stack guidelines:
+
+Frontend Technologies
+Simplicity First: Always choose the simplest effective solution
+Plain Text / HTML First: Start with semantic HTML before adding
+complexity
+Technology Priority Order (Expanded)
+Restructured Text (RST): Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
+Django-Html: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+Protobuf3: Use for all data serialization between backend (protoc) and frontend (as-proto and protobufjs). Prefer over JSON for APIs and data exports.
+django-bootstrap5: Use as the sole primary styling framework for all new development.
+django-hyperscript: Use for all simple client-side interactions. Avoid custom JS unless required.
+django-htmx: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
+SASS: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting Bootstrap utility options.
+AssemblyScript: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
+
+
+Refactor template inheritance to always use the correct base (base.html).
+
+
+fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstrap5.readthedocs.io/en/latest/widgets.html https://django-bootstrap5.readthedocs.io/en/latest/templates.html https://django-bootstrap5.readthedocs.io/en/latest/settings.html https://django-bootstrap5.readthedocs.io/en/latest/templatetags.html https://django-bootstrap5.readthedocs.io/en/latest/forms.html https://django-bootstrap5.readthedocs.io/en/latest/migrate.html https://django-bootstrap5.readthedocs.io/en/latest/quickstart.html and check the applicabble templates are using django-bootstrap5 tags correctly as django-bootstrap5 is main styling framework along with our own overrides
+
+yes fetch https://django-bootstrap5.readthedocs.io/en/latest/ https://django-bootstrap5.readthedocs.io/en/latest/widgets.html https://django-bootstrap5.readthedocs.io/en/latest/templates.html https://django-bootstrap5.readthedocs.io/en/latest/settings.html https://django-bootstrap5.readthedocs.io/en/latest/templatetags.html https://django-bootstrap5.readthedocs.io/en/latest/forms.html https://django-bootstrap5.readthedocs.io/en/latest/migrate.html https://django-bootstrap5.readthedocs.io/en/latest/quickstart.html and ensure they are all using django-bootstrap5 tags tempaltetags correctly as django-bootstrap5 is main styling framework along with our own overrides
+
+ow check all templates and views.py they are primarily using django_hyperscript template tags correctly and its implementation as per documentation http://pypi.org/project/django-hyperscript/ https://github.com/LucLor06/django-hyperscript and only to compliment django_hyperscript, we are applying django_htmx templatetags correctly https://django-htmx.readthedocs.io/en/latest/installation.html https://django-htmx.readthedocs.io/en/latest/middleware.html https://django-htmx.readthedocs.io/en/latest/template_tags.html https://django-htmx.readthedocs.io/en/latest/http.html https://django-htmx.readthedocs.io/en/latest/example_project.html https://github.com/adamchainz/django-htmx/tree/main/example/example https://django-htmx.readthedocs.io/en/latest/tips.html
+
+
+Remove any remaining non-semantic markup or unused classes.
+
+
+identify any reusable content that is better off in the core app as globals for the entire project
+
+and then migrate from projects app to core app those globals and then remove from projects app and identify any shared logic newly identified into core that can be used across the apps dashboard landing protobuf sidebar navigation, if only applicable
+
+
+Use the new core modules for any shared logic or utilities in all apps.
+
+
+
+but can any existing apps and their modules use these new core modules?
+
+
+have we integrated the project selector tool into the dashboard view now when the user successfully signs in?
+
+
+integrate the project selector into the dashboard view so it appears after a successful sign-in
+Update the dashboard template to include the project selector.
+Ensure the context provides the necessary project data for the selector.
+double check all of the project templates and modules are being used, if not advise what to remove
+
+
+
+can we compile projects.proto and ensure it is correctly used in the projects app?
+
+
+check for any duplications conflicts unused files methods classes and opportunities for consolidation in across the greenova project and its apps
+
+
+
+
+can you firstly provide me an analysis of what files to keep from my previous legacy app of the mechanisms app to fit in with the new projects guidelines and structure
+
+Tool and Dependency Use-Cases for Code Generation in Greenova
+Python/Django Dependencies
+beartype: Decorate all public functions and methods for runtime type checking. Use in every Python module to enforce type safety and catch type errors early.
+django-allauth: Use for authentication, registration, and multi-factor auth. Integrate for user management and permission-based access control.
+django-cors-headers: Add CORS support for API endpoints or cross-origin integrations. Configure in settings as needed.
+django-htmx: Use for AJAX and partial page updates. Only use when django-hyperscript cannot achieve the required interaction. Always prefer django-hyperscript for simple client-side logic.
+django-hyperscript: Primary tool for client-side interactivity. Use for form validation, toggling UI, and simple dynamic behaviors. Prefer over custom JS.
+django-matplotlib: Use for server-side chart generation (SVG/PNG) in reports and static visualizations. Do not use for interactive charts.
+django-plotly-dash: Use for advanced, interactive dashboards. Only introduce when plotly.js or django-hyperscript/htmx are insufficient.
+django-silk: Use for profiling and performance monitoring in development.
+django-bootstrap5: Use for integrating Bootstrap 5. Use as the sole primary styling framework for all new development.
+django-csp: Enforce Content Security Policy headers. Use to harden security for all HTML responses.
+django-filter: Use for building filterable list views and APIs. Integrate with django-tables2 and forms.
+django-tables2: Use for rendering tabular data in templates. Prefer over custom table markup.
+django-crispy-forms and crispy-bootstrap4: Use for rendering forms with consistent, accessible markup. Prefer over custom form templates.
+django-guardian: Use for object-level permissions. Integrate with custom user model and access control logic.
+django-autocomplete-light: Use for autocomplete widgets in forms with large datasets.
+pillow: Use for image processing in models, forms, and admin.
+python-slugify: Use for generating slugs for URLs and filenames.
+bleach: Use for sanitizing user input and HTML content.
+ipython: Use for enhanced shell and debugging in development.
+matplotlib: Use for all server-side static charting. Integrate with django-matplotlib.
+pandas: Use for data analysis, reporting, and ETL tasks. Do not use in request/response cycle unless necessary.
+Technology Priority Order (Expanded)
+Restructured Text (RST): Use for documentation, content, and messages. Prefer for all technical docs and user-facing help.
+HTML: Use for semantic structure. No inline styles/scripts. All templates must be accessible and pass djlint.
+Protobuf3: Use for all data serialization between backend and frontend. Prefer over JSON for APIs and data exports.
+django-bootstrap5: Use as the sole primary styling framework for all new development.
+django-hyperscript: Use for all simple client-side interactions. Avoid custom JS unless required.
+django-htmx: Use for AJAX, partial updates, and dynamic content loading. Only when django-hyperscript is insufficient.
+scss: Use for advanced styling and theming, in conjunction with django-bootstrap5. Only after exhausting bootstrap utility options.
+AssemblyScript: Use exclusively for all client-side interactivity logic that cannot be solved by django-hyperscript or django-htmx. Do not use JavaScript in this project.
+
+
+
+
+
+. Core Python Codebase Refactoring
+a. Type Safety & Runtime Checking
+
+Add strict type annotations to all functions, methods, and class attributes.
+Decorate all public functions and methods with @beartype.
+b. Docstrings & Documentation
+
+Add/complete Google style docstrings for all public modules, copyright headers, classes, and functions.
+Ensure all docstrings are wrapped at 88 characters.
+c. Logging
+
+Replace all print statements with the logging module.
+Use lazy formatting for log messages.
+d. Imports & Structure
+
+Reorganize imports: standard library, third-party, then local.
+Remove unused imports and code.
+2. Protobuf3 Integration
+Ensure all serialization between backend and frontend uses Protobuf3.
+Refactor any JSON-based APIs or data exports to use Protobuf3.
+Validate that .proto files and generated Python code are up to date.
+3. Template Refactoring
+Ensure all templates use Django-Html (not DTL), are accessible, and pass djlint.
+Remove inline JavaScript; use django-hyperscript for simple interactivity, django-htmx for AJAX/partial updates, and only use AssemblyScript for complex logic.
+Use Bootstrap 5 classes for all styling; remove custom CSS unless required for advanced theming.
+Ensure all forms use crispy-forms or Bootstrap 5 markup.
+4. Testing & Linting
+Add/complete unit tests for all models, views, forms, and utilities using Django’s TestCase.
+Ensure at least 80% test coverage (100% for critical code).
+Run and fix all issues flagged by: ruff, mypy, pylint, djlint, shellcheck, stylelint, and prettier.
+Generate .pyi stub files for all internal modules and validate with stubtest.
+5. Permissions & Security
+Ensure all permission logic uses Django’s permissions framework and django-guardian for object-level permissions.
+Integrate django-csp for Content Security Policy headers.
+Use bleach for sanitizing user input and HTML content.
+6. Admin & Middleware
+Refactor admin classes for type safety, docstrings, and optimized queryset usage.
+Refactor middleware for type safety, docstrings, and correct Django middleware patterns.
+7. Environment & Configuration
+Ensure all environment variables are loaded via .env and accessed with os.environ.get() or os.environ[] as appropriate.
+Validate all required environment variables at startup.
+8. Documentation
+Convert or add all technical documentation in RST format.
+Update or add module-level docstrings and usage notes.
+9. Cleanup
+Remove any legacy JS, CSS, DTL templates, or unused files.
+Remove any code, documentation, or assets not referenced in the new structure.
+>>>>>>> 37e6b25 (Squashed commit of the following:)

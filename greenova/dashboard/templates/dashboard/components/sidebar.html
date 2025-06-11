@@ -113,16 +113,12 @@
           </a>
         </li>
         <li class="sidebar-nav-item" data-tooltip="Settings">
-          <a href="{% url 'settings:settings' %}"
-             class="sidebar-nav-link
-                    {% if request.resolver_match.namespace == 'settings' %}
-                      active
-                    {% endif %}">
+          <span class="sidebar-nav-link disabled" aria-disabled="true" tabindex="-1">
             <span class="sidebar-nav-icon" aria-hidden="true">
               <img src="{% static 'img/icons/settings.svg' %}" alt="" aria-hidden="true" />
             </span>
             <span class="sidebar-nav-text">Settings</span>
-          </a>
+          </span>
         </li>
       {% endif %}
     </ul>

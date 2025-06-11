@@ -1,0 +1,31 @@
+import os
+
+
+def main() -> None:
+    """Copy the project config.fish to the user's home directory for the devcontainer.
+
+    Overwrites any existing ~/.config/fish/config.fish file.
+    """
+    src = "/workspaces/greenova/.dotfiles/config.fish"
+    dest = os.path.expanduser("~/.config/fish/config.fish")
+    dest_dir = os.path.dirname(dest)
+
+    # Ensure the source file exists
+    if not os.path.isfile(src):
+        msg = f"Source config.fish not found at {src}"
+        raise FileNotFoundError(msg)
+
+    # Ensure the destination directory exists
+    if not os.path.isdir(dest_dir):
+        os.makedirs(dest_dir, exist_ok=True)
+
+    # Copy with UTF-8 encoding
+    with (
+        open(src, encoding="utf-8") as fsrc,
+        open(dest, "w", encoding="utf-8") as fdest,
+    ):
+        fdest.write(fsrc.read())
+
+
+if __name__ == "__main__":
+    main()
