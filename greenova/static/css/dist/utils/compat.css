@@ -198,12 +198,6 @@ h6 {
   }
 }
 
-/* ======= Dark Mode Compatibility ======= */
-
-/* Ensure dark mode works across both frameworks */
-[data-theme='dark'] {
-  color-scheme: dark;
-}
 
 [data-theme='light'] {
   color-scheme: light;

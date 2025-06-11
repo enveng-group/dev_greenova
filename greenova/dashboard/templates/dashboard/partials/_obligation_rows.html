@@ -1,0 +1,26 @@
+{% for obligation in obligations %}
+<tr>
+  <td>{{ obligation.obligation_number }}</td>
+  <td>{{ obligation.obligation }}</td>
+  <td>{{ obligation.action_due_date }}</td>
+  <td>{{ obligation.status }}</td>
+  <td>
+    <a href="{% url 'obligations:update' obligation.obligation_number %}" class="btn btn-primary btnedit custedit">
+      <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+    </a>
+  </td>
+  <td>
+    <button
+      class="btn btn-danger btnedit custdelete"
+      hx-post="{% url 'obligations:delete' obligation_number=obligation.obligation_number %}"
+      hx-confirm="Are you sure you want to delete this obligation?"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+      hx-trigger="click"
+      hx-swap="none"
+      hx-on="htmx:afterOnLoad: window.location.href = '{% url 'dashboard:home' %}?project_id={{ project_id }}';"
+    >
+      <i class="fa fa-trash-o" aria-hidden="true"></i>
+    </button>
+  </td>
+</tr>
+{% endfor %}

@@ -207,7 +207,7 @@ Annually
     </div>
   </div>
 
-  {% if obligation.general_comments or obligation.supporting_information or obligation.compliance_comments %}
+  {% if obligation.general_comments or obligation.supporting_information %}
     <div class="detail-section">
       <h3 class="detail-section-title">
 Comments & Additional Information
@@ -235,18 +235,6 @@ Comments & Additional Information
                       class="detail-input edit-mode"
                       style="display: none"
                       rows="3">{{ obligation.supporting_information|default:'' }}</textarea>
-          </div>
-        </div>
-        <div class="detail-field full-width">
-          <span class="detail-label">Compliance Comments</span>
-          <div class="detail-value-container">
-            <div class="detail-value view-mode textarea">
-{{ obligation.compliance_comments|linebreaks|default:"No compliance comments" }}
-            </div>
-            <textarea name="compliance_comments"
-                      class="detail-input edit-mode"
-                      style="display: none"
-                      rows="3">{{ obligation.compliance_comments|default:'' }}</textarea>
           </div>
         </div>
       </div>

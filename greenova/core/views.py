@@ -1,18 +1,13 @@
-"""
-Views for the Greenova core app.
-
-This module defines core views for routing, health checks, and system endpoints.
-"""
-
 import logging
 import os
 from typing import Any
 
-from constants import AUTH_NAVIGATION, MAIN_NAVIGATION, USER_NAVIGATION
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.views.generic import TemplateView, View
+
+from .constants import AUTH_NAVIGATION, MAIN_NAVIGATION, USER_NAVIGATION
 
 logger = logging.getLogger(__name__)
 

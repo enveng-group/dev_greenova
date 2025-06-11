@@ -1,24 +1,37 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
+"""
+
 """Protobuf utilities for mechanism data.
 
 This module provides utility functions for serializing and deserializing data
 between Django models and Protocol Buffers for the mechanisms app.
 """
 
+from obligations.models import Obligation
+from models import EnvironmentalMechanism
+from django.db.models import QuerySet
+from typing import cast
+from dataclasses import dataclass
 import logging
 from collections.abc import Sequence
-from dataclasses import dataclass
-from typing import cast
 
-from django.db.models import QuerySet
-from models import EnvironmentalMechanism
-from obligations.models import Obligation
-
-from .proto.mechanism_pb2 import (  # pylint: disable=no-name-in-module
-    ChartData,
-    ChartResponse,
-    ObligationInsightResponse,
-    ObligationStatus,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +58,7 @@ def serialize_obligation_insights(
 
     Returns:
         ObligationInsightResponse protobuf message.
+
     """
     response = ObligationInsightResponse()
     response.mechanism_id = params.mechanism_id
@@ -80,6 +94,7 @@ def serialize_mechanism_chart_data(
 
     Returns:
         ChartData protobuf message.
+
     """
     chart_data = ChartData()
     chart_data.mechanism_id = mechanism.id
@@ -95,7 +110,7 @@ def serialize_mechanism_chart_data(
     ]
     colors: list[str] = ["#f9c74f", "#90be6d", "#43aa8b", "#f94144"]
 
-    for status, value, color in zip(statuses, values, colors):
+    for status, value, color in zip(statuses, values, colors, strict=False):
         segment = chart_data.segments.add()  # type: ignore
         segment.label = status
         segment.value = value
@@ -116,6 +131,7 @@ def serialize_overall_chart_data(
 
     Returns:
         ChartData protobuf message.
+
     """
     chart_data = ChartData()
     chart_data.mechanism_id = 0  # 0 indicates overall chart
@@ -131,7 +147,7 @@ def serialize_overall_chart_data(
     values: list[int] = [not_started, in_progress, completed, overdue]
     colors: list[str] = ["#f9c74f", "#90be6d", "#43aa8b", "#f94144"]
 
-    for status, value, color in zip(statuses, values, colors):
+    for status, value, color in zip(statuses, values, colors, strict=False):
         segment = chart_data.segments.add()  # type: ignore
         segment.label = status
         segment.value = value
@@ -152,6 +168,7 @@ def serialize_chart_response(
 
     Returns:
         ChartResponse protobuf message.
+
     """
     response = ChartResponse()
 
@@ -173,16 +190,17 @@ def status_string_to_enum(status: str) -> ObligationStatus:
 
     Returns:
         ObligationStatus enum value.
+
     """
     status_map: dict[str, ObligationStatus] = {
-        "not_started": cast(ObligationStatus, ObligationStatus.STATUS_NOT_STARTED),
-        "in_progress": cast(ObligationStatus, ObligationStatus.STATUS_IN_PROGRESS),
-        "completed": cast(ObligationStatus, ObligationStatus.STATUS_COMPLETED),
-        "overdue": cast(ObligationStatus, ObligationStatus.STATUS_OVERDUE),
+        "not_started": cast("ObligationStatus", ObligationStatus.STATUS_NOT_STARTED),
+        "in_progress": cast("ObligationStatus", ObligationStatus.STATUS_IN_PROGRESS),
+        "completed": cast("ObligationStatus", ObligationStatus.STATUS_COMPLETED),
+        "overdue": cast("ObligationStatus", ObligationStatus.STATUS_OVERDUE),
     }
 
     return status_map.get(
-        status.lower(), cast(ObligationStatus, ObligationStatus.STATUS_UNKNOWN)
+        status.lower(), cast("ObligationStatus", ObligationStatus.STATUS_UNKNOWN),
     )
 
 
@@ -194,12 +212,13 @@ def status_enum_to_string(status: ObligationStatus) -> str:
 
     Returns:
         Status string (e.g., "not_started").
+
     """
     status_map: dict[ObligationStatus, str] = {
-        cast(ObligationStatus, ObligationStatus.STATUS_NOT_STARTED): "not_started",
-        cast(ObligationStatus, ObligationStatus.STATUS_IN_PROGRESS): "in_progress",
-        cast(ObligationStatus, ObligationStatus.STATUS_COMPLETED): "completed",
-        cast(ObligationStatus, ObligationStatus.STATUS_OVERDUE): "overdue",
+        cast("ObligationStatus", ObligationStatus.STATUS_NOT_STARTED): "not_started",
+        cast("ObligationStatus", ObligationStatus.STATUS_IN_PROGRESS): "in_progress",
+        cast("ObligationStatus", ObligationStatus.STATUS_COMPLETED): "completed",
+        cast("ObligationStatus", ObligationStatus.STATUS_OVERDUE): "overdue",
     }
 
     return status_map.get(status, "unknown")

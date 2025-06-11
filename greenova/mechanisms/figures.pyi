@@ -1,0 +1,19 @@
+# Stub file for mechanisms.figures
+from typing import List, Tuple
+
+from matplotlib.figure import Figure
+
+def generate_pie_chart(
+    data: List[int],
+    labels: List[str],
+    colors: List[str],
+    fig_width: int = ...,
+    fig_height: int = ...,
+) -> Figure: ...
+def encode_figure_to_base64(fig: Figure) -> str: ...
+def get_mechanism_chart(
+    mechanism_id: int, fig_width: int = ..., fig_height: int = ...
+) -> Tuple[Figure, str]: ...
+def get_overall_chart(
+    project_id: int, fig_width: int = ..., fig_height: int = ...
+) -> Tuple[Figure, str]: ...

@@ -1,5 +1,24 @@
+"""Copyright (C) 2025 Adrian Gallo.
+
+This file is part of Greenova.
+
+Greenova is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Greenova is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Greenova. If not, see <https://www.gnu.org/licenses/>.
+
+Author: Adrian Gallo <agallo@enveng-group.com.au>
 """
-Shared chart utilities for Greenova project.
+
+"""Shared chart utilities for Greenova project.
 
 This module provides reusable functions and constants for generating charts
 (e.g., pie charts) using matplotlib, to eliminate code duplication and
@@ -10,8 +29,8 @@ Email: agallo@enveng-group.com.au
 License: AGPL-3.0
 """
 
-from collections.abc import Sequence
 
+from collections.abc import Sequence
 from matplotlib.figure import Figure
 
 
@@ -33,6 +52,7 @@ def create_pie_chart(
 
     Returns:
         Matplotlib Figure object containing the pie chart.
+
     """
     fig_width, fig_height = fig_size
     fig: Figure = Figure(figsize=(fig_width / 100, fig_height / 100), dpi=100)

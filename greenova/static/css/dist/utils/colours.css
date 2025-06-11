@@ -4,8 +4,7 @@
  *                                                *
  **************************************************/
 :root,
-:root[data-theme='light'],
-:root[data-theme='dark'] {
+:root[data-theme='light'] {
   /**************************************************
     *                                                *
     *              Pico Defaults colours             *

@@ -1,12 +1,4 @@
-# Copyright 2025 Enveng Group.
-# SPDX-License-Identifier: 	AGPL-3.0-or-later
-
-"""Custom template tags for the mechanisms app.
-
-This module defines template tags for use in the mechanisms app templates.
-"""
-
-from typing import Any
+from typing import Any, Dict
 
 from django import template
 from django.db.models import QuerySet
@@ -17,7 +9,7 @@ register = template.Library()
 
 
 @register.filter
-def get_item(dictionary: dict[str, Any], key: Any) -> Any:
+def get_item(dictionary: Dict[str, Any], key: Any) -> Any:
     """Get item from dictionary by key."""
     return dictionary.get(key)
 
@@ -29,9 +21,9 @@ def mechanism_name(mechanism_id: int) -> str:
         mechanism = EnvironmentalMechanism.objects.get(id=mechanism_id)
         return mechanism.name
     except EnvironmentalMechanism.DoesNotExist:
-        return "Unknown Mechanism"
+        return 'Unknown Mechanism'
     except ValueError:
-        return "Error retrieving mechanism"
+        return 'Error retrieving mechanism'
 
 
 @register.filter
@@ -48,29 +40,29 @@ def total_obligations(mechanism: EnvironmentalMechanism) -> int:
     return mechanism.total_obligations
 
 
-@register.inclusion_tag("mechanisms/components/mechanism_card.html")
-def mechanism_card(mechanism: EnvironmentalMechanism) -> dict[str, Any]:
+@register.inclusion_tag('mechanisms/components/mechanism_card.html')
+def mechanism_card(mechanism: EnvironmentalMechanism) -> Dict[str, Any]:
     """Render a mechanism card with status counts."""
     status_data = mechanism.get_status_data()
     return {
-        "mechanism": mechanism,
-        "status_data": status_data,
+        'mechanism': mechanism,
+        'status_data': status_data,
     }
 
 
-@register.inclusion_tag("mechanisms/components/mechanism_table.html")
-def mechanism_table(mechanisms: QuerySet[EnvironmentalMechanism]) -> dict[str, Any]:
+@register.inclusion_tag('mechanisms/components/mechanism_table.html')
+def mechanism_table(mechanisms: QuerySet[EnvironmentalMechanism]) -> Dict[str, Any]:
     """Render a table of mechanisms with their status counts."""
-    return {"mechanisms": mechanisms}
+    return {'mechanisms': mechanisms}
 
 
 @register.filter
 def get_status_color(status: str) -> str:
     """Get appropriate color class for status."""
     status_colors = {
-        "Not Started": "warning",
-        "In Progress": "info",
-        "Completed": "success",
-        "Overdue": "error",
+        'Not Started': 'warning',
+        'In Progress': 'info',
+        'Completed': 'success',
+        'Overdue': 'error',
     }
-    return status_colors.get(status, "secondary")
+    return status_colors.get(status, 'secondary')

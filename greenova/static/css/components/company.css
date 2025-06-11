@@ -1,0 +1,140 @@
+/* Company specific styling */
+
+/* Company logo */
+.company-logo-container {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--greenova-spacing);
+  overflow: hidden;
+  border-radius: var(--greenova-border-radius);
+  background-color: var(--greenova-background-secondary);
+}
+
+.company-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.company-logo.placeholder {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--greenova-text-primary-dark);
+  text-transform: uppercase;
+}
+
+/* Company details layout */
+.company-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--greenova-spacing);
+  margin-bottom: var(--greenova-spacing-large);
+}
+
+@media (min-width: 768px) {
+  .company-header {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .company-basic-info {
+    flex: 1;
+  }
+}
+
+.company-body {
+  margin-top: var(--greenova-spacing-large);
+}
+
+/* Company section styling */
+.company-profile,
+.company-projects,
+.company-members,
+.company-documents {
+  margin-bottom: var(--greenova-spacing-large);
+  padding: var(--greenova-spacing);
+  background-color: var(--greenova-background-secondary);
+  border-radius: var(--greenova-border-radius);
+}
+
+.company-profile h2,
+.company-projects h2,
+.company-members h2,
+.company-documents h2 {
+  margin-bottom: var(--greenova-spacing);
+}
+
+/* Modal for member role editing */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--greenova-background-primary);
+  padding: var(--greenova-spacing-large);
+  border-radius: var(--greenova-border-radius);
+  max-width: 500px;
+  position: relative;
+}
+
+.close-modal {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Document form container */
+.document-form-container {
+  background-color: var(--greenova-background-secondary);
+  padding: var(--greenova-spacing);
+  border-radius: var(--greenova-border-radius);
+  margin-bottom: var(--greenova-spacing);
+}
+
+/* Delete confirmation styling */
+.delete-confirmation {
+  background-color: var(--greenova-background-secondary);
+  padding: var(--greenova-spacing);
+  border-radius: var(--greenova-border-radius);
+}
+
+.company-info,
+.document-info {
+  margin: var(--greenova-spacing) 0;
+}
+
+.company-info dl,
+.document-info dl {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 0.5rem;
+}
+
+.company-info dt,
+.document-info dt {
+  font-weight: bold;
+}
+
+/* Company list page */
+.company-list-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--greenova-spacing);
+}

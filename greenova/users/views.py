@@ -21,10 +21,11 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django_htmx.http import trigger_client_event
-from forms import AdminUserForm, ProfileImageForm, UserProfileForm
-from models import Profile
 from obligations.models import Obligation
 from projects.models import Project
+
+from .forms import AdminUserForm, ProfileImageForm, UserProfileForm
+from .models import Profile
 
 User = get_user_model()
 
@@ -42,11 +43,9 @@ class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = "users"
 
     def test_func(self):
-        """Check if the current user is staff or superuser for access control."""
         return self.request.user.is_staff or self.request.user.is_superuser
 
     def get_queryset(self):
-        """Return a queryset of all users ordered by date joined descending."""
         return User.objects.all().order_by("-date_joined")
 
 
@@ -119,7 +118,9 @@ def profile_edit(request: HttpRequest) -> HttpResponse:
                 )
                 return trigger_client_event(response, "profileUpdated", {})
             return redirect("users:profile")
-
+        if request.htmx:
+            return render(request, "users/partials/profile_edit_form.html",
+                          {"form": form, "profile": profile})
         messages.error(request, "Please correct the errors below.")
     else:
         # Initialize form with current user data

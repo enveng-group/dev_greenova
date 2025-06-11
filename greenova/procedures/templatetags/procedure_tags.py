@@ -7,8 +7,7 @@ Django template tags and filters for the procedures app.
 This module provides template tags and filters that can be used in Django templates
 for procedure-related functionality.
 """
-
-from typing import Any
+from typing import Any, Dict
 
 from django import template
 from django.utils.html import format_html
@@ -27,7 +26,7 @@ def format_procedure_name(name: str) -> str:
     Returns:
         Formatted procedure name
     """
-    return name.replace("_", " ").title()
+    return name.replace('_', ' ').title()
 
 
 @register.filter
@@ -42,10 +41,10 @@ def format_procedure_status(status: str) -> str:
         Formatted status string
     """
     statuses = {
-        "not started": "Not Started",
-        "in progress": "In Progress",
-        "completed": "Completed",
-        "on hold": "On Hold",
+        'not started': 'Not Started',
+        'in progress': 'In Progress',
+        'completed': 'Completed',
+        'on hold': 'On Hold'
     }
     return statuses.get(status.lower(), status)
 
@@ -62,23 +61,22 @@ def procedure_status_badge(status: str) -> str:
         HTML for the status badge
     """
     status_colors = {
-        "not started": "warning",
-        "in progress": "info",
-        "completed": "success",
-        "on hold": "secondary",
-        "overdue": "error",
+        'not started': 'warning',
+        'in progress': 'info',
+        'completed': 'success',
+        'on hold': 'secondary',
+        'overdue': 'error'
     }
 
     formatted_status = format_procedure_status(status)
-    color_class = status_colors.get(status.lower(), "secondary")
+    color_class = status_colors.get(status.lower(), 'secondary')
 
-    return format_html(
-        '<span class="status-badge {}">{}</span>', color_class, formatted_status
-    )
+    return format_html('<span class="status-badge {}">{}</span>',
+                       color_class, formatted_status)
 
 
-@register.inclusion_tag("procedures/components/procedure_stats.html")
-def procedure_stats(stats: dict[str, int]) -> dict[str, Any]:
+@register.inclusion_tag('procedures/components/procedure_stats.html')
+def procedure_stats(stats: Dict[str, int]) -> Dict[str, Any]:
     """
     Render procedure statistics.
 
@@ -88,11 +86,11 @@ def procedure_stats(stats: dict[str, int]) -> dict[str, Any]:
     Returns:
         Context for the template
     """
-    return {"stats": stats}
+    return {'stats': stats}
 
 
-@register.inclusion_tag("procedures/components/procedure_chart_card.html")
-def procedure_chart_card(procedure: dict[str, Any]) -> dict[str, Any]:
+@register.inclusion_tag('procedures/components/procedure_chart_card.html')
+def procedure_chart_card(procedure: Dict[str, Any]) -> Dict[str, Any]:
     """
     Render a procedure chart card.
 
@@ -102,4 +100,4 @@ def procedure_chart_card(procedure: dict[str, Any]) -> dict[str, Any]:
     Returns:
         Context for the template
     """
-    return {"procedure": procedure}
+    return {'procedure': procedure}

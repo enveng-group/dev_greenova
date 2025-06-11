@@ -4,9 +4,7 @@
 /**
  * Enhanced Obligation Detail Modal with Inline Editing
  */
-(function () {
-  'use strict';
-
+(() => {
   class ObligationModal {
     constructor() {
       this.modal = document.getElementById('obligation-detail-modal');
@@ -135,7 +133,7 @@
       let hasChanges = false;
 
       // Compare form data
-      for (let [key, value] of currentData.entries()) {
+      for (const [key, value] of currentData.entries()) {
         if (this.originalFormData.get(key) !== value) {
           hasChanges = true;
           break;
@@ -166,15 +164,12 @@
 
       try {
         // Fetch obligation details with edit form
-        const response = await fetch(
-          `/obligations/view/${obligationNumber}/`,
-          {
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await fetch(`/obligations/view/${obligationNumber}/`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -193,7 +188,7 @@
     handleClose() {
       if (this.hasUnsavedChanges) {
         const confirmClose = confirm(
-          'You have unsaved changes. Are you sure you want to close without saving?'
+          'You have unsaved changes. Are you sure you want to close without saving?',
         );
         if (!confirmClose) return;
       }
@@ -232,7 +227,7 @@
 
       // Focus first input
       const firstInput = this.modal.querySelector(
-        '.edit-mode input, .edit-mode textarea, .edit-mode select'
+        '.edit-mode input, .edit-mode textarea, .edit-mode select',
       );
       if (firstInput) firstInput.focus();
     }
@@ -257,7 +252,7 @@
     cancelEdit() {
       if (this.hasUnsavedChanges) {
         const confirmCancel = confirm(
-          'Are you sure you want to cancel? All unsaved changes will be lost.'
+          'Are you sure you want to cancel? All unsaved changes will be lost.',
         );
         if (!confirmCancel) return;
       }
@@ -272,7 +267,7 @@
       if (!form || !this.originalFormData) return;
 
       // Reset all form fields to original values
-      for (let [key, value] of this.originalFormData.entries()) {
+      for (const [key, value] of this.originalFormData.entries()) {
         const field = form.querySelector(`[name="${key}"]`);
         if (field) {
           if (field.type === 'checkbox') {
@@ -308,7 +303,7 @@
               'X-Requested-With': 'XMLHttpRequest',
             },
             body: formData,
-          }
+          },
         );
 
         if (response.ok) {
@@ -363,12 +358,12 @@
         if (viewElement && obligationData[field]) {
           if (field.includes('date')) {
             viewElement.textContent = new Date(
-              obligationData[field]
+              obligationData[field],
             ).toLocaleDateString();
           } else if (field.includes('comments') || field === 'obligation') {
             viewElement.innerHTML = obligationData[field].replace(
               /\n/g,
-              '<br>'
+              '<br>',
             );
           } else {
             viewElement.textContent = obligationData[field];
@@ -415,8 +410,9 @@
 
       // Reset header content
       if (this.modalTitle) this.modalTitle.textContent = 'Loading...';
-      if (this.modalProjectName)
+      if (this.modalProjectName) {
         this.modalProjectName.textContent = 'Loading...';
+      }
       if (this.modalStatus) this.modalStatus.textContent = 'Loading...';
     }
 
@@ -435,13 +431,16 @@
 
     populateModal(data) {
       // Update header
-      if (this.modalTitle)
+      if (this.modalTitle) {
         this.modalTitle.textContent = data.obligation_number || 'Unknown';
-      if (this.modalProjectName)
+      }
+      if (this.modalProjectName) {
         this.modalProjectName.textContent =
           data.project_name || 'Unknown Project';
-      if (this.modalStatus)
+      }
+      if (this.modalStatus) {
         this.modalStatus.innerHTML = data.status_display || 'Unknown';
+      }
 
       // Populate content
       if (this.modalContent && data.content) {
@@ -453,7 +452,7 @@
       if (!this.currentObligationNumber) return;
 
       const confirmed = confirm(
-        'Are you sure you want to delete this obligation? This action cannot be undone.'
+        'Are you sure you want to delete this obligation? This action cannot be undone.',
       );
 
       if (!confirmed) return;
@@ -470,7 +469,7 @@
               'X-Requested-With': 'XMLHttpRequest',
               'Content-Type': 'application/json',
             },
-          }
+          },
         );
 
         if (response.ok) {
@@ -482,9 +481,7 @@
         }
       } catch (error) {
         console.error('Error deleting obligation:', error);
-        this.showErrorMessage(
-          'Failed to delete obligation. Please try again.'
-        );
+        this.showErrorMessage('Failed to delete obligation. Please try again.');
       }
     }
 

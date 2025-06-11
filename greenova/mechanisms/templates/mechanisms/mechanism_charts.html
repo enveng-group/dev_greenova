@@ -1,105 +1,106 @@
 {% load static %}
 {% load mechanism_tags %}
 
-{% block extra_head %}
-  <!-- Plotly JS (explicit stable version) -->
-  <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" data-hx-head="true"></script>
-  <!-- Minimal chart styles for Plotly -->
-  <link rel="stylesheet"
-        href="{% static 'mechanisms/css/plotly-chart.css' %}" />
-{% endblock extra_head %}
-
 {% if mechanism_charts %}
+
   <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">
-      Environmental Mechanisms Analysis
+      Environmental Mechanisms Analysis for "{{ project.name }}"
     </h2>
-    <!-- Responsive Chart Grid -->
-    <div id="chartGrid"
-         class="chart-grid"
-         role="region"
-         aria-label="Mechanism chart grid">
+
+    <!-- Chart Gallery -->
+    <div id="chartGallery" class="grid grid-cols-3 gap-4" role="region" aria-label="Chart gallery">
       {% for mech in mechanism_charts %}
-        <article class="mechanism-chart"
-                 tabindex="0"
-                 aria-labelledby="chart-{{ forloop.counter }}">
-          <header>
-            <h3 id="chart-{{ forloop.counter }}">
-              {{ mech.name }}
-            </h3>
-          </header>
-          {% if mech.id %}
-            <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}"
-               aria-label="View procedure analysis for {{ mech.name }}">
-            {% endif %}
-            <div class="plotly-chart-container">
-            {{ mech.chart_html|safe }}
-            </div>
-            {% if mech.id %}
+        <article class="mechanism-chart bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+          <header><h3 class="text-lg font-semibold text-gray-800 mb-2">{{ mech.name }}</h3></header>
+
+          {% if mech.id and mech.id|add:""|floatformat:"0"|add:"" == mech.id|add:"" %}
+            <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}" style="text-decoration: none">
+          {% endif %}
+
+          <figure>
+            <figcaption class="text-sm text-gray-500 mb-2">{{ mech.name }} Status Distribution</figcaption>
+            <!-- Just canvas placeholder, no data here -->
+            <canvas id="chart-{{ mech.id|default:'overall' }}" width="300" height="300" class="w-full h-auto"></canvas>
+
+          </figure>
+
+          {% if mech.id and mech.id|add:""|floatformat:"0"|add:"" == mech.id|add:"" %}
             </a>
           {% endif %}
         </article>
       {% endfor %}
     </div>
-    <!-- End Responsive Chart Grid -->
-
-    {% if table_data %}
-      <!-- Detailed Data Table -->
-      <article class="data-table">
-        <header>
-          <h3>
-            Detailed Statistics
-          </h3>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
-            -
-          </button>
-        </header>
-        <div class="table-container">
-          <table role="grid">
-            <thead>
-              <tr>
-                <th>
-Mechanism
-                </th>
-                <th>
-Not Started
-                </th>
-                <th>
-In Progress
-                </th>
-                <th>
-Completed
-                </th>
-                <th>
-Overdue
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for row in table_data %}
-                <tr>
-                  <td>
-{{ row.name }}
-                  </td>
-                  <td>
-{{ row.not_started }}
-                  </td>
-                  <td>
-{{ row.in_progress }}
-                  </td>
-                  <td>
-{{ row.completed }}
-                  </td>
-                  <td>
-{{ row.overdue }}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </article>
-    {% endif %}
   </section>
+
+{% elif error %}
+  <div role="alert" class="notice error">
+    <p>{{ error }}</p>
+  </div>
+{% else %}
+  <div role="status" class="notice">
+    <p>Please select a project to view mechanism charts.</p>
+  </div>
 {% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  async function fetchAndRenderCharts() {
+    try {
+      const response = await fetch("{% url 'mechanisms:mechanism_charts_json' %}?project_id={{ project.id }}");
+      if (!response.ok) throw new Error('Network response was not ok');
+      const chartData = await response.json();
+
+      chartData.forEach((mechanism, index) => {
+        const canvasId = `chart-${mechanism.id || 'overall'}`;
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: mechanism.labels,
+            datasets: [{
+              data: mechanism.data,
+              backgroundColor: [
+                '#f87171',  // Not Started
+                '#fbbf24',  // In Progress
+                '#34d399',  // Completed
+                '#6366f1'   // Overdue
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.label}: ${context.raw}`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Failed to load or render charts:", error);
+    }
+  }
+
+  if (window.htmx) {
+    htmx.on('htmx:afterSwap', (evt) => {
+      const targetId = evt.detail.target.id;
+      if (targetId === 'obligation-compliance-chart' || targetId === 'chartGallery') {
+        fetchAndRenderCharts();
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchAndRenderCharts);
+</script>

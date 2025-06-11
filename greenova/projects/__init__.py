@@ -1,6 +1,2 @@
-"""
-Projects app package for Greenova.
-
-This package provides models, admin, and utilities for managing projects and
-memberships.
-"""
+# Copyright 2025 Enveng Group.
+# SPDX-License-Identifier: 	AGPL-3.0-or-later

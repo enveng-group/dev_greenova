@@ -3,9 +3,7 @@
 /**
  * Chart interactivity functions for SVG charts
  */
-(function () {
-  'use strict';
-
+(() => {
   // Initialize tooltip container
   function initializeTooltip() {
     // Create tooltip container if it doesn't exist
@@ -40,7 +38,7 @@
         if (mechanismId) {
           segment.setAttribute(
             'hx-get',
-            `/mechanisms/insights/?mechanism_id=${mechanismId}&status=${statusKey}`
+            `/mechanisms/insights/?mechanism_id=${mechanismId}&status=${statusKey}`,
           );
           segment.setAttribute('hx-target', '#chart-tooltip-container');
           segment.setAttribute('hx-trigger', 'mouseenter');
@@ -70,16 +68,16 @@
 
   // Set up event listeners
   function setupEventListeners() {
-    document.addEventListener('htmx:afterSwap', function (e) {
+    document.addEventListener('htmx:afterSwap', (e) => {
       if (e.detail.target.id === 'chart-tooltip-container') {
         positionTooltip(e.detail.triggeringEvent);
       }
     });
 
-    document.addEventListener('mouseover', function (e) {
+    document.addEventListener('mouseover', (e) => {
       if (e.target.closest('[id^="segment-"]')) {
         const tooltipContainer = document.getElementById(
-          'chart-tooltip-container'
+          'chart-tooltip-container',
         );
         if (tooltipContainer) {
           positionTooltip(e);
@@ -87,7 +85,7 @@
       }
     });
 
-    document.addEventListener('mouseout', function (e) {
+    document.addEventListener('mouseout', (e) => {
       if (e.target.closest('[id^="segment-"]')) {
         hideTooltip();
       }
@@ -95,14 +93,14 @@
   }
 
   // Initialize when DOM is loaded
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', () => {
     initializeTooltip();
     initializeChartInteractivity();
     setupEventListeners();
   });
 
   // Also initialize when charts are loaded via HTMX
-  document.addEventListener('htmx:afterSettle', function () {
+  document.addEventListener('htmx:afterSettle', () => {
     initializeTooltip();
     initializeChartInteractivity();
   });

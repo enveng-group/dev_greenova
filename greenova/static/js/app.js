@@ -33,10 +33,7 @@
 
         // Initialize app modules
         Object.keys(MODULES).forEach((module) => {
-          if (
-            module !== 'core' &&
-            typeof MODULES[module].init === 'function'
-          ) {
+          if (module !== 'core' && typeof MODULES[module].init === 'function') {
             try {
               MODULES[module].init();
             } catch (err) {
@@ -52,14 +49,14 @@
       setupGlobalEventListeners() {
         // Handle flash messages with auto-dismiss
         const flashMessages = document.querySelectorAll(
-          '.message[data-auto-dismiss]'
+          '.message[data-auto-dismiss]',
         );
         flashMessages.forEach((message) => {
           setTimeout(() => {
             if (message.getAttribute) {
               message.setAttribute(
                 'classes',
-                'add fade-out:0s, remove message:1s'
+                'add fade-out:0s, remove message:1s',
               );
             }
           }, 5000); // 5 second delay before starting fade-out
@@ -139,7 +136,7 @@
             const baseUrl = currentHref.split('?')[0];
             addObligationBtn.setAttribute(
               'href',
-              `${baseUrl}?project_id=${projectId}`
+              `${baseUrl}?project_id=${projectId}`,
             );
           }
         }
@@ -195,7 +192,7 @@
         // Listen for new content that may contain tables
         document.addEventListener(
           'htmx:afterSettle',
-          this.setupTableScrolling.bind(this)
+          this.setupTableScrolling.bind(this),
         );
       },
 
@@ -218,7 +215,7 @@
 
             // Update scroll indicator on scroll
             scrollArea.addEventListener('scroll', () =>
-              this.updateScrollIndicator(scrollArea, thumb)
+              this.updateScrollIndicator(scrollArea, thumb),
             );
 
             // Initial update
@@ -255,13 +252,13 @@
         // Extract headers
         const rows = Array.from(table.querySelectorAll('tr'));
         const headers = Array.from(rows[0].querySelectorAll('th')).map(
-          (cell) => `"${cell.textContent.trim().replace(/"/g, '""')}"`
+          (cell) => `"${cell.textContent.trim().replace(/"/g, '""')}"`,
         );
 
         // Extract data rows
         const data = rows.slice(1).map((row) => {
           return Array.from(row.querySelectorAll('td')).map(
-            (cell) => `"${cell.textContent.trim().replace(/"/g, '""')}"`
+            (cell) => `"${cell.textContent.trim().replace(/"/g, '""')}"`,
           );
         });
 
@@ -381,7 +378,7 @@
         const filterCount = document.getElementById('filter-count');
         if (filterCount) {
           const activeFilters = Array.from(
-            form.querySelectorAll('select, input[type="text"]')
+            form.querySelectorAll('select, input[type="text"]'),
           ).filter((el) => el.value && el.value !== '').length;
 
           filterCount.textContent = activeFilters;
@@ -442,34 +439,11 @@
 
             // Store the current project ID in session storage
             const projectId = document.querySelector(
-              'input[name="project_id"]'
+              'input[name="project_id"]',
             )?.value;
             if (projectId) {
               sessionStorage.setItem('lastProjectId', projectId);
             }
-          }
-        });
-      },
-    },
-
-    /**
-     * Theme switching functionality
-     */
-    theme: {
-      init() {
-        // Theme initialization is now handled by theme-init.js
-        // This is just for additional theme-related functionality
-
-        // Handle theme change events
-        document.addEventListener('themeChanged', (e) => {
-          // Custom logic when theme changes
-          const theme = e.detail.theme;
-          console.log(`Theme changed to: ${theme}`);
-
-          // You could load additional theme-specific resources here
-          if (theme === 'dark') {
-            // Load dark theme specific resources
-            console.log('Dark theme activated');
           }
         });
       },

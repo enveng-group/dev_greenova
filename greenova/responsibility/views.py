@@ -1,21 +1,51 @@
-"""Views for the responsibility app.
-
-Handles responsibility home, assignment list, and role list views for users.
-"""
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+from .models import Responsibility, ResponsibilityAssignment
 
 
 @login_required
 def responsibility_home(request):
     """Home view for responsibility app."""
-    # ...existing code...
+    # Get assignments for current user
+    assignments = ResponsibilityAssignment.objects.filter(
+        user=request.user
+    ).select_related('obligation', 'role')
+
+    context = {
+        'assignments': assignments,
+    }
+
+    return render(request, 'responsibility/responsibility_home.html', context)
+
 
 @login_required
 def assignment_list(request):
     """List view for responsibility assignments."""
-    # ...existing code...
+    # Get assignments for current user
+    assignments = ResponsibilityAssignment.objects.filter(
+        user=request.user
+    ).select_related('obligation', 'role')
+
+    context = {
+        'assignments': assignments,
+    }
+
+    return render(request, 'responsibility/assignment_list.html', context)
+
 
 @login_required
 def role_list(request):
     """List view for responsibility roles."""
-    # ...existing code...
+    # Get roles for companies the user belongs to
+    user_companies = request.user.companies.all()
+    roles = Responsibility.objects.filter(
+        company__in=user_companies,
+        is_active=True
+    ).select_related('company')
+
+    context = {
+        'roles': roles,
+    }
+
+    return render(request, 'responsibility/role_list.html', context)

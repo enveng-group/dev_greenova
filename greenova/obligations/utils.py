@@ -1,44 +1,163 @@
-"""Utility functions for the obligations app.
+import logging
+from datetime import date, timedelta
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
-Provides helpers for status, frequency normalization, and responsibility display.
-"""
+from core.utils.roles import get_role_display
+from django.utils import timezone
 
-from datetime import date
-from typing import cast
+# Import Obligation only for type checking to avoid circular imports
+if TYPE_CHECKING:
+    from .models import Obligation
 
-from beartype import beartype
-from constants import FREQUENCY_ALIASES
-from models import Obligation
+from .constants import (
+    FREQUENCY_ALIASES,
+    FREQUENCY_ANNUAL,
+    FREQUENCY_BIANNUAL,
+    FREQUENCY_DAILY,
+    FREQUENCY_FORTNIGHTLY,
+    FREQUENCY_MONTHLY,
+    FREQUENCY_QUARTERLY,
+    FREQUENCY_WEEKLY,
+    STATUS_COMPLETED,
+    STATUS_OVERDUE,
+    STATUS_UPCOMING,
+)
+
+logger = logging.getLogger(__name__)
 
 
-@beartype
+def is_obligation_overdue(
+    obligation: Union['Obligation', Dict[str, Any]],
+    reference_date: Optional[date] = None
+) -> bool:
+    """
+    Determine if an obligation is overdue based on its status and due date.
+
+    This is the canonical implementation for determining overdue status that should be
+    used throughout the application to ensure consistency.
+
+    Args:
+        obligation: An Obligation model instance or dict with obligation attributes
+        reference_date: Optional date to compare against (defaults to today)
+
+    Returns:
+        bool: True if the obligation is overdue, False otherwise
+    """
+    if reference_date is None:
+        reference_date = timezone.now().date()
+
+    # Get status - handle both model instances and dictionaries
+    if isinstance(obligation, dict):
+        status = obligation.get('status')
+        due_date = obligation.get('action_due_date')
+    else:
+        status = obligation.status
+        due_date = obligation.action_due_date
+
+    # Rule 1: Completed obligations are never overdue
+    if status == STATUS_COMPLETED:
+        return False
+
+    # Rule 2: Obligations without a due date cannot be overdue
+    if not due_date:
+        return False
+
+    # Rule 3: If the due date is in the past and not completed, it's overdue
+    return due_date < reference_date
+
+
+def get_obligation_status(obligation):
+    """
+    Determine the real status of an obligation based on its due date and current status.
+
+    Returns one of: 'overdue', 'upcoming', 'completed', or the original status.
+    """
+    status = getattr(obligation, 'status', '').lower()
+    due_date = getattr(obligation, 'action_due_date', None)
+    today = timezone.now().date()
+
+    if status == STATUS_COMPLETED:
+        return STATUS_COMPLETED
+
+    if due_date and due_date < today:
+        return STATUS_OVERDUE
+
+    if due_date and today <= due_date <= today + timedelta(days=14):
+        return STATUS_UPCOMING
+
+    return status
+
+
+def _match_frequency_pattern(frequency_lower: str) -> Optional[str]:
+    """Helper function to match frequency patterns and return canonical form."""
+    # Daily/Weekly patterns
+    if any(term in frequency_lower for term in ['day', 'daily']):
+        return FREQUENCY_DAILY
+    if any(term in frequency_lower for term in ['fortnight', 'bi-week', 'biweek']):
+        return FREQUENCY_FORTNIGHTLY
+    if 'week' in frequency_lower:
+        return FREQUENCY_WEEKLY
+
+    # Monthly patterns
+    monthly_patterns = {
+        ('quarter', '3 month', 'three month'): FREQUENCY_QUARTERLY,
+        ('biannual', 'bi annual', 'semi', 'twice a year'): FREQUENCY_BIANNUAL,
+        ('annual', 'year', '12 month', 'twelve month'): FREQUENCY_ANNUAL
+    }
+
+    if 'month' in frequency_lower:
+        for terms, freq in monthly_patterns.items():
+            if any(term in frequency_lower for term in terms):
+                return freq
+        return FREQUENCY_MONTHLY
+
+    return None
+
+
 def normalize_frequency(frequency: str) -> str:
-    """Normalize frequency string to canonical value used in the system.
+    """
+    Normalize a frequency string to its canonical form.
 
     Args:
-        frequency: The frequency string to normalize.
+        frequency: A string representing the frequency
 
     Returns:
-        The canonical frequency string.
+        str: The normalized frequency string
     """
-    freq = frequency.strip().lower().replace(" ", "-")
-    # Explicitly cast to str to satisfy type checker
-    return cast(str, FREQUENCY_ALIASES.get(freq, freq))
+    if not frequency:
+        return ''
+
+    frequency_lower = frequency.lower().strip()
+
+    # Check if it's already in canonical form
+    canonical_frequencies = {
+        FREQUENCY_DAILY, FREQUENCY_WEEKLY, FREQUENCY_FORTNIGHTLY,
+        FREQUENCY_MONTHLY, FREQUENCY_QUARTERLY, FREQUENCY_BIANNUAL,
+        FREQUENCY_ANNUAL
+    }
+    if frequency_lower in canonical_frequencies:
+        return frequency_lower
+
+    # Check aliases first
+    for alias, canonical in FREQUENCY_ALIASES.items():
+        if alias in frequency_lower:
+            return canonical
+
+    # Try pattern matching
+    matched_frequency = _match_frequency_pattern(frequency_lower)
+    if matched_frequency:
+        return matched_frequency
+
+    return frequency_lower
 
 
-@beartype
-def is_obligation_overdue(obligation: Obligation) -> bool:
-    """Check if an obligation is overdue.
+def get_responsibility_display_name(responsibility_value: str) -> str:
+    """Get the display name for a responsibility value."""
+    if 'Perdaman' in responsibility_value or 'SCJV' in responsibility_value:
+        return responsibility_value
 
-    Args:
-        obligation: The Obligation instance to check.
+    role_display = get_role_display(responsibility_value)
+    if role_display != responsibility_value:
+        return role_display
 
-    Returns:
-        True if the obligation is overdue, False otherwise.
-    """
-    if not obligation.action_due_date:
-        return False
-    if obligation.status == "completed":
-        return False
-    # Ensure the comparison returns a bool
-    return bool(obligation.action_due_date < date.today())
+    return responsibility_value.replace('_', ' ').title()

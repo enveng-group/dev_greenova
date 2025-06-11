@@ -4,116 +4,57 @@
 {% load dashboard_tags %}
 {% load custom_filters %}
 
-<!-- Persistent htmx indicator for partial swaps (hidden, ARIA-compliant) -->
-<div id="htmx-indicator" class="htmx-indicator" aria-hidden="true" hidden>
-  <div class="loading-spinner" role="status">
-    <span class="visually-hidden">Loading...</span>
-  </div>
-</div>
-
-<!-- Ensure project-selector is present for all htmx-include references -->
-<div hidden aria-hidden="true" tabindex="-1">
-{% include "projects/projects_selector.html" %}
-</div>
-
 <!-- Dashboard content that will be swapped when a project is selected -->
 <!-- This contains ONLY the charts and data tables, not structural elements -->
-
+{% if show_empty_state %}
+  <section class="dashboard-empty-state" aria-label="Select a project">
+    <div class="empty-message">
+      <h2>Please select a project to view your dashboard.</h2>
+      <p>Choose a project from the selector above to load charts, tables, and compliance data.</p>
+    </div>
+  </section>
+{% else %}
 <!-- Dashboard Summary Cards -->
 <section class="dashboard-metrics"
          aria-label="Dashboard Summary"
          id="dashboard-metrics-container"
          data-hx-preserve="true">
   <div class="card metric-card card-status-danger"
-       tabindex="0"
-       aria-describedby="overdue-obligations-container"
-       aria-label="Overdue obligations"
-       role="region">
+    role="button"
+    tabindex="0"
+    hx-get="{% url 'dashboard:overdue_obligations' %}"
+    hx-target="#modal-container"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-include="#project-selector">
     <div class="card-body">
       <h3 class="metric-card-label">
-Overdue Obligations
+        Overdue Obligations
       </h3>
       <div class="metric-card-value">
-{{ overdue_obligations_count|default:"0" }}
+        {{ overdue_obligations_count }}
       </div>
       <div class="metric-card-trend">
         <span class="trend-indicator"></span>
         <span class="trend-down">Overdue</span>
       </div>
-      <button type="button"
-              class="overdue-obligations-trigger"
-              aria-label="View overdue obligations details"
-              aria-expanded="false"
-              aria-controls="overdue-obligations-container"
-              _="on click toggle .expanded on #overdue-obligations-container then if #overdue-obligations-container.classList.contains('expanded') set @aria-expanded of me to 'true' then remove @hidden from #overdue-obligations-container then send show to #overdue-obligations-container else set @aria-expanded of me to 'false' then set @hidden of #overdue-obligations-container to 'true' then send hide to #overdue-obligations-container end">
-        <span class="visually-hidden">View Details</span>
-        <svg width="16"
-             height="16"
-             viewBox="0 0 16 16"
-             fill="currentColor"
-             aria-hidden="true">
-<path d="M8 2a6 6 0 100 12A6 6 0 008 2zM7 7V5h2v2H7zm0 4V9h2v2H7z" />
-        </svg>
-      </button>
     </div>
   </div>
 
-  <!-- Overdue Obligations Modal/Overlay -->
-  <div id="overdue-obligations-container"
-       class="overdue-obligations-container"
-       role="dialog"
-       aria-modal="true"
-       aria-labelledby="overdue-obligations-title"
-       aria-describedby="overdue-obligations-body"
-       tabindex="-1"
-       hidden>
-    <div class="overdue-obligations-backdrop"
-         tabindex="-1"
-         aria-hidden="true"
-         _="on click remove .expanded from #overdue-obligations-container then set the @aria-expanded of .overdue-obligations-trigger to 'false' then set the @hidden of #overdue-obligations-container to 'true' then send hide to #overdue-obligations-container">
-    </div>
-    <div class="overdue-obligations-content" role="document">
-      <header class="overdue-obligations-header">
-        <h2 id="overdue-obligations-title" class="overdue-obligations-title">
-          Overdue Obligations
-        </h2>
-        <button type="button"
-                class="overdue-obligations-close"
-                aria-label="Close overdue obligations details"
-                _="on click remove .expanded from #overdue-obligations-container then set the @aria-expanded of .overdue-obligations-trigger to 'false' then set the @hidden of #overdue-obligations-container to 'true' then send hide to #overdue-obligations-container">
-          <span aria-hidden="true">×</span>
-        </button>
-      </header>
-      <div id="overdue-obligations-body" class="overdue-obligations-body">
-        {% if overdue_obligations %}
-{% include "obligations/components/_obligations_summary.html" with obligations=overdue_obligations show_overdue_only=True user_can_edit=user.is_staff %}
-        {% else %}
-          <div class="empty-state">
-            <p>
-No overdue obligations found.
-            </p>
-            {% if user.is_staff %}
-              <small class="text-muted">
-                Debug: overdue_obligations_count = {{ overdue_obligations_count|default:"None" }}
-              </small>
-            {% endif %}
-          </div>
-        {% endif %}
-      </div>
-    </div>
-    <div class="visually-hidden"
-         aria-live="polite"
-         id="overdue-obligations-live">
-    </div>
-  </div>
-
-  <div class="card metric-card card-status-primary">
+  <div class="card metric-card card-status-primary"
+    role="button"
+    tabindex="0"
+    hx-get="{% url 'dashboard:active_obligations' %}"
+    hx-target="#modal-container"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-include="#project-selector">
     <div class="card-body">
       <h3 class="metric-card-label">
 Active Obligations
       </h3>
       <div class="metric-card-value">
-{{ active_obligations_count|default:"120" }}
+{{ active_obligations_count }}
       </div>
       <div class="metric-card-trend">
         <span class="trend-indicator"></span>
@@ -128,20 +69,88 @@ Active Obligations
     </div>
   </div>
 
-  <div class="card metric-card card-status-warning">
+  <div class="card metric-card card-status-warning"
+    role="button"
+    tabindex="0"
+    hx-get="{% url 'dashboard:upcoming_obligations_days' days=7 %}"
+    hx-target="#modal-container"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-include="#project-selector">
     <div class="card-body">
       <h3 class="metric-card-label">
-Upcoming Deadlines
+Upcoming (7 Days)
       </h3>
       <div class="metric-card-value">
-{{ upcoming_deadlines_count|default:"15" }}
+{{ upcoming_deadlines_count7|default:"0" }}
       </div>
       <div class="metric-card-trend">
 within 7 days
       </div>
     </div>
   </div>
+<div class="card metric-card card-status-warning"
+    role="button"
+    tabindex="0"
+    hx-get="{% url 'dashboard:upcoming_obligations_days' days=14 %}"
+    hx-target="#modal-container"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-include="#project-selector">
+  <div class="card-body">
+    <h3 class="metric-card-label">
+      Upcoming (14 Days)
+    </h3>
+    <div class="metric-card-value">
+      {{ upcoming_deadlines_count14|default:"0" }}
+    </div>
+    <div class="metric-card-trend">
+      within 14 days
+    </div>
+  </div>
+</div>
 
+<div class="card metric-card card-status-warning"
+    role="button"
+    tabindex="0"
+    hx-get="{% url 'dashboard:upcoming_obligations_days' days=30 %}"
+    hx-target="#modal-container"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-include="#project-selector">
+  <div class="card-body">
+    <h3 class="metric-card-label">
+      Upcoming (30 Days)
+    </h3>
+    <div class="metric-card-value">
+      {{ upcoming_deadlines_count30|default:"0" }}
+    </div>
+    <div class="metric-card-trend">
+      within 30 days
+    </div>
+  </div>
+</div>
+
+<div class="card metric-card card-status-warning"
+    role="button"
+    tabindex="0"
+    hx-get="{% url 'dashboard:upcoming_obligations_days' days=90 %}"
+    hx-target="#modal-container"
+    hx-trigger="click"
+    hx-swap="innerHTML"
+    hx-include="#project-selector">
+  <div class="card-body">
+    <h3 class="metric-card-label">
+      Upcoming (90 Days)
+    </h3>
+    <div class="metric-card-value">
+      {{ upcoming_deadlines_count90|default:"0" }}
+    </div>
+    <div class="metric-card-trend">
+      within 90 days
+    </div>
+  </div>
+</div>
   <div class="card metric-card card-status-success">
     <div class="card-body">
       <h3 class="metric-card-label">
@@ -156,27 +165,64 @@ Active Projects
     </div>
   </div>
 
-</section>
-
-<!-- Only render the environmental mechanisms analysis card, its chart, and table -->
-<div id="data-containers"
-     data-hx-ext="class-tools"
-     class="dashboard-charts">
-  <!-- Mechanisms Chart -->
-  <div id="mechanism-data-container"
-       class="card chart-container"
-       hx-get="{% url 'mechanisms:mechanism_charts' %}"
-       hx-trigger="load"
-       hx-include="#project-selector"
-       hx-target="#mechanism-data-container"
-       hx-swap="innerHTML">
-    <div class="loading-indicator">
-      <span class="loading-spinner"></span>
-      <p>
-Loading chart data...
-      </p>
+  <div class="card metric-card card-status-secondary">
+    <div class="card-body">
+      <h3 class="metric-card-label">
+Mechanisms Overview
+      </h3>
+      <div class="metric-card-value">
+{{ active_mechanisms_count|default:"10" }}
+      </div>
+      <div class="metric-card-trend">
+Active Mechanisms
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<script src="{% static 'js/obligation_modal.js' %}"></script>
+<!-- Data Container for Charts -->
+<div id="data-containers"
+     data-hx-ext="class-tools"
+     class="dashboard-charts full-w">
+
+  <!-- Obligation Compliance Chart -->
+  <div class="card chart-container">
+    <div class="card-header">
+      <h3 class="card-header-title">
+Obligation Compliance
+      </h3>
+      <div class="card-header-actions">
+        <button class="btn-icon" aria-label="Refresh chart">
+          <span class="icon-refresh" aria-hidden="true"></span>
+        </button>
+        <button class="btn-icon" aria-label="Download chart data">
+          <span class="icon-download" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body chart-content"
+         id="obligation-compliance-chart"
+         hx-get="{% url 'mechanisms:mechanism_charts' %}"
+         hx-trigger="load"
+         {% if project_selector_exists %}
+           hx-include="#project-selector"
+         {% endif %}
+         hx-target="#obligation-compliance-chart"
+         hx-swap="innerHTML">
+        <canvas id="complianceChart" width="400" height="400" aria-label="Obligation Compliance Pie Chart" role="img"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- Add Obligation Floating Button -->
+<div class="floating-action-button" id="add-obligation-button">
+  <a href="{% url 'obligations:create' %}?project_id={{ selected_project_id }}"
+     class="fab-button obligation"
+     aria-label="Add new obligation">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+  </a>
+  <span class="fab-tooltip">Add Obligation</span>
+</div>
+{% endif %}
+<!-- Modal container for HTMX dynamic content -->
+<div id="modal-container" class="modal-placeholder hidden"></div>

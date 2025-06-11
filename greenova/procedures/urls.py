@@ -1,7 +1,3 @@
-"""URL configuration for the procedures app.
-
-Defines URL patterns for procedure charts and list views.
-"""
 from django.urls import path
 
 from . import views

@@ -64,13 +64,8 @@ Actions
                 {% for obligation in obligations %}
                   <tr>
                     <td>
-                      <a href="#"
-                         class="obligation-link modal-trigger"
-                         data-obligation-number="{{ obligation.obligation_number }}"
-                         role="button"
-                         aria-label="View details for {{ obligation.obligation_number }}">
-                        {{ obligation.obligation_number }}
-                      </a>
+                      <a href="{% url 'obligations:detail' obligation.obligation_number %}"
+                         class="obligation-link">{{ obligation.obligation_number }}</a>
                     </td>
                     <td>
 {{ obligation.obligation|truncatechars:50 }}
@@ -92,12 +87,9 @@ Actions
                     </td>
                     <td class="actions-column">
                       <div class="action-buttons">
-                        <button type="button"
-                                class="action-btn view modal-trigger"
-                                data-obligation-number="{{ obligation.obligation_number }}"
-                                aria-label="View obligation details">
-                          View
-                        </button>
+                        <a href="{% url 'obligations:detail' obligation.obligation_number %}"
+                           class="action-btn view"
+                           aria-label="View obligation details">View</a>
                         {% if user_can_edit %}
                           <a href="{% url 'obligations:update' obligation.obligation_number %}"
                              class="action-btn edit"
@@ -159,7 +151,6 @@ Overdue
         <h3>
 Obligations for {{ project.name }}
         </h3>
-
         <div class="quick-filters">
           <p>
 Quick Filters:
@@ -169,35 +160,40 @@ Quick Filters:
                     class="quick-filter-btn"
                     hx-get="/obligations/summary/"
                     hx-target="#obligations-container"
-                    hx-vals='{"status": "not started", "mechanism_id": "{{ mechanism_id }}"}'>
+                    hx-vals='{"status": "not started", "mechanism_id": "{{ mechanism_id }}"}'
+                    aria-label="Show not started obligations">
 Not Started
             </button>
             <button type="button"
                     class="quick-filter-btn"
                     hx-get="/obligations/summary/"
                     hx-target="#obligations-container"
-                    hx-vals='{"status": "in progress", "mechanism_id": "{{ mechanism_id }}"}'>
+                    hx-vals='{"status": "in progress", "mechanism_id": "{{ mechanism_id }}"}'
+                    aria-label="Show in progress obligations">
 In Progress
             </button>
             <button type="button"
                     class="quick-filter-btn"
                     hx-get="/obligations/summary/"
                     hx-target="#obligations-container"
-                    hx-vals='{"status": "completed", "mechanism_id": "{{ mechanism_id }}"}'>
+                    hx-vals='{"status": "completed", "mechanism_id": "{{ mechanism_id }}"}'
+                    aria-label="Show completed obligations">
 Completed
             </button>
             <button type="button"
                     class="quick-filter-btn"
                     hx-get="/obligations/summary/"
                     hx-target="#obligations-container"
-                    hx-vals='{"status": "overdue", "mechanism_id": "{{ mechanism_id }}"}'>
+                    hx-vals='{"status": "overdue", "mechanism_id": "{{ mechanism_id }}"}'
+                    aria-label="Show overdue obligations">
 Overdue
             </button>
             <button type="button"
                     class="quick-filter-btn"
                     hx-get="/obligations/summary/"
                     hx-target="#obligations-container"
-                    hx-vals='{"date_filter": "14days", "mechanism_id": "{{ mechanism_id }}"}'>
+                    hx-vals='{"date_filter": "14days", "mechanism_id": "{{ mechanism_id }}"}'
+                    aria-label="Show obligations due in next 14 days">
 14-day Lookahead
             </button>
             <button type="button"
@@ -209,24 +205,25 @@ Reset Filters
             </button>
           </div>
         </div>
-
-        <div class="filter-container">
+        <div class="controls-container">
+          <!-- Search Box -->
           <div class="search-control">
-            <label for="search-input">
+            <label for="search-box">
 Search:
             </label>
             <input type="search"
-                   id="search-input"
+                   id="search-box"
                    name="search"
+                   placeholder="Search obligations..."
                    value="{{ filters.search|default:'' }}"
                    hx-get="/obligations/summary/"
                    hx-target="#obligations-container"
-                   hx-trigger="input changed delay:500ms"
-                   hx-include="[name='status'], [name='phase']"
-                   hx-push-url="true" />
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-include="select[name='status'], select[name='phase']" />
           </div>
-
+          <!-- Filter Controls -->
           <div class="filter-controls">
+            <!-- Status Filter -->
             <div class="filter-group">
               <label for="status-filter">
 Status:
@@ -265,7 +262,7 @@ Overdue
                 </option>
               </select>
             </div>
-
+            <!-- Phase Filter -->
             <div class="filter-group">
               <label for="phase-filter">
 Phase:
@@ -283,7 +280,7 @@ Phase:
                           {% if phase in filters.phase %}
                             selected
                           {% endif %}>
-{{ phase }}
+                    {{ phase }}
                   </option>
                 {% endfor %}
               </select>
@@ -291,16 +288,15 @@ Phase:
           </div>
         </div>
       </div>
-
       <div class="obligation-list-container">
         {% if total_count %}
+          <!-- Results Count -->
           <div class="results-summary">
             <p>
 Showing {{ obligations|length }} of {{ total_count }} obligations
             </p>
           </div>
         {% endif %}
-
         <div class="horizontal-scroll">
           <table role="grid">
             <thead>
@@ -338,13 +334,8 @@ Actions
               {% for obligation in obligations %}
                 <tr>
                   <td>
-                    <a href="#"
-                       class="obligation-link modal-trigger"
-                       data-obligation-number="{{ obligation.obligation_number }}"
-                       role="button"
-                       aria-label="View details for {{ obligation.obligation_number }}">
-                      {{ obligation.obligation_number }}
-                    </a>
+                    <a href="{% url 'obligations:detail' obligation.obligation_number %}"
+                       class="obligation-link">{{ obligation.obligation_number }}</a>
                   </td>
                   <td>
 {{ obligation.obligation|truncatechars:50 }}
@@ -363,9 +354,9 @@ Actions
                   </td>
                   <td>
                     {% if obligation.recurring_obligation %}
-Yes
+                      Yes
                     {% else %}
-No
+                      No
                     {% endif %}
                   </td>
                   <td>
@@ -373,12 +364,9 @@ No
                   </td>
                   <td class="actions-column">
                     <div class="action-buttons">
-                      <button type="button"
-                              class="action-btn view modal-trigger"
-                              data-obligation-number="{{ obligation.obligation_number }}"
-                              aria-label="View obligation details">
-                        View
-                      </button>
+                      <a href="{% url 'obligations:detail' obligation.obligation_number %}"
+                         class="action-btn view"
+                         aria-label="View obligation details">View</a>
                       {% if user_can_edit %}
                         <a href="{% url 'obligations:update' obligation.obligation_number %}"
                            class="action-btn edit"
@@ -391,22 +379,55 @@ No
             </tbody>
           </table>
         </div>
-
         <!-- Pagination -->
         {% if page_obj.has_other_pages %}
           <nav class="pagination" aria-label="Obligations pagination">
             <ul>
               {% if page_obj.has_previous %}
                 <li>
-                  <a href="?page={{ page_obj.previous_page_number }}" rel="prev">Previous</a>
+                  <a href="?page=1&{% if filters.status %}status={{ filters.status|join:',' }}&{% endif %}{% if filters.phase %}phase={{ filters.phase|join:',' }}&{% endif %}{% if filters.search %}search={{ filters.search }}&{% endif %}mechanism_id={{ mechanism_id }}"
+                     aria-label="First page">
+                    &laquo;
+                  </a>
+                </li>
+                <li>
+                  <a href="?page={{ page_obj.previous_page_number }}&{% if filters.status %}status={{ filters.status|join:',' }}&{% endif %}{% if filters.phase %}phase={{ filters.phase|join:',' }}&{% endif %}{% if filters.search %}search={{ filters.search }}&{% endif %}mechanism_id={{ mechanism_id }}"
+                     aria-label="Previous page">
+                    &lsaquo;
+                  </a>
                 </li>
               {% endif %}
-              <li>
-                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-              </li>
+              {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                  <li>
+                    <a href="#"
+                       class="active"
+                       aria-label="Current page, page {{ i }}"
+                       aria-current="page">
+                      {{ i }}
+                    </a>
+                  </li>
+                {% elif i > page_obj.number|add:"-3" and i < page_obj.number|add:"3" %}
+                  <li>
+                    <a href="?page={{ i }}&{% if filters.status %}status={{ filters.status|join:',' }}&{% endif %}{% if filters.phase %}phase={{ filters.phase|join:',' }}&{% endif %}{% if filters.search %}search={{ filters.search }}&{% endif %}mechanism_id={{ mechanism_id }}"
+                       aria-label="Page {{ i }}">
+                      {{ i }}
+                    </a>
+                  </li>
+                {% endif %}
+              {% endfor %}
               {% if page_obj.has_next %}
                 <li>
-                  <a href="?page={{ page_obj.next_page_number }}" rel="next">Next</a>
+                  <a href="?page={{ page_obj.next_page_number }}&{% if filters.status %}status={{ filters.status|join:',' }}&{% endif %}{% if filters.phase %}phase={{ filters.phase|join:',' }}&{% endif %}{% if filters.search %}search={{ filters.search }}&{% endif %}mechanism_id={{ mechanism_id }}"
+                     aria-label="Next page">
+                    &rsaquo;
+                  </a>
+                </li>
+                <li>
+                  <a href="?page={{ page_obj.paginator.num_pages }}&{% if filters.status %}status={{ filters.status|join:',' }}&{% endif %}{% if filters.phase %}phase={{ filters.phase|join:',' }}&{% endif %}{% if filters.search %}search={{ filters.search }}&{% endif %}mechanism_id={{ mechanism_id }}"
+                     aria-label="Last page">
+                    &raquo;
+                  </a>
                 </li>
               {% endif %}
             </ul>
@@ -416,6 +437,3 @@ No
     {% endif %}
   {% endif %}
 </div>
-
-<!-- Include the obligation detail modal -->
-{% include "obligations/components/_obligation_detail_modal.html" %}
