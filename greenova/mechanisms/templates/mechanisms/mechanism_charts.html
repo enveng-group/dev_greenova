@@ -5,160 +5,102 @@
 
   <section class="charts-section" aria-labelledby="charts-heading">
     <h2 id="charts-heading">
-Environmental Mechanisms Analysis
+      Environmental Mechanisms Analysis for "{{ project.name }}"
     </h2>
-    <!-- Chart Navigation -->
-    <nav class="chart-nav" aria-label="Mechanism charts navigation">
-      <button type="button" onclick="scrollCharts('left')" aria-label="Scroll left">
-        ←
-      </button>
-      <button type="button"
-              onclick="scrollCharts('right')"
-              aria-label="Scroll right">
-→
-      </button>
-    </nav>
+
     <!-- Chart Gallery -->
-    <div id="chartGallery"
-         class="chart-gallery"
-         role="region"
-         aria-label="Chart gallery">
+    <div id="chartGallery" class="grid grid-cols-3 gap-4" role="region" aria-label="Chart gallery">
       {% for mech in mechanism_charts %}
+        <article class="mechanism-chart bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+          <header><h3 class="text-lg font-semibold text-gray-800 mb-2">{{ mech.name }}</h3></header>
 
-        <article class="mechanism-chart">
-          <header>
-            <h3>
-{{ mech.name }}
-            </h3>
-          </header>
-          {% if mech.id %}
-            <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}"
-               style="text-decoration: none">
-            {% endif %}
-
-            <figure>
-              <figcaption>
-{{ mech.name }} Status Distribution
-              </figcaption>
-              <img src="data:image/png;base64,{{ mech.image_data }}"
-                   alt="Chart for {{ mech.name }}"
-                   class="chart-image"
-                   width="400"
-                   height="400" />
-            </figure>
-            {% if mech.id %}
-            </a>
+          {% if mech.id and mech.id|add:""|floatformat:"0"|add:"" == mech.id|add:"" %}
+            <a href="{% url 'procedures:procedure_charts' mechanism_id=mech.id %}" style="text-decoration: none">
           {% endif %}
 
+          <figure>
+            <figcaption class="text-sm text-gray-500 mb-2">{{ mech.name }} Status Distribution</figcaption>
+            <!-- Just canvas placeholder, no data here -->
+            <canvas id="chart-{{ mech.id|default:'overall' }}" width="300" height="300" class="w-full h-auto"></canvas>
+
+          </figure>
+
+          {% if mech.id and mech.id|add:""|floatformat:"0"|add:"" == mech.id|add:"" %}
+            </a>
+          {% endif %}
         </article>
       {% endfor %}
-
     </div>
-    {% if table_data %}
-
-      <!-- Detailed Data Table -->
-      <article class="data-table">
-        <header>
-          <h3>
-Detailed Statistics
-          </h3>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
--
-          </button>
-        </header>
-        <div class="table-container">
-          <table role="grid">
-            <thead>
-              <tr>
-                <th>
-Mechanism
-                </th>
-                <th>
-Not Started
-                </th>
-                <th>
-In Progress
-                </th>
-                <th>
-Completed
-                </th>
-                <th>
-Overdue
-                </th>
-                <th>
-Total
-                </th>
-                <th>
-Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in table_data %}
-
-                <tr>
-                  <td>
-{{ item.name }}
-                  </td>
-                  <td>
-{{ item.not_started }}
-                  </td>
-                  <td>
-{{ item.in_progress }}
-                  </td>
-                  <td>
-{{ item.completed }}
-                  </td>
-                  <td>
-{{ item.overdue }}
-                  </td>
-                  <td>
-{{ item.total }}
-                  </td>
-                  <td>
-                    {% if item.id %}
-                      <a href="{% url 'procedures:procedure_charts' mechanism_id=item.id %}"
-                         class="btn-secondary"
-                         aria-label="View details for {{ item.name }}">View</a>
-                    {% endif %}
-
-                  </td>
-                </tr>
-              {% endfor %}
-
-            </tbody>
-          </table>
-        </div>
-      </article>
-    {% endif %}
-
   </section>
-{% elif error %}
 
+{% elif error %}
   <div role="alert" class="notice error">
-    <p>
-{{ error }}
-    </p>
+    <p>{{ error }}</p>
   </div>
 {% else %}
-
   <div role="status" class="notice">
-    <p>
-Please select a project to view mechanism charts.
-    </p>
+    <p>Please select a project to view mechanism charts.</p>
   </div>
 {% endif %}
-<script>
-  function scrollCharts(direction) {
-    const container = document.getElementById('chartGallery');
-    const scrollAmount = 350;
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
 
- else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  async function fetchAndRenderCharts() {
+    try {
+      const response = await fetch("{% url 'mechanisms:mechanism_charts_json' %}?project_id={{ project.id }}");
+      if (!response.ok) throw new Error('Network response was not ok');
+      const chartData = await response.json();
+
+      chartData.forEach((mechanism, index) => {
+        const canvasId = `chart-${mechanism.id || 'overall'}`;
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: mechanism.labels,
+            datasets: [{
+              data: mechanism.data,
+              backgroundColor: [
+                '#f87171',  // Not Started
+                '#fbbf24',  // In Progress
+                '#34d399',  // Completed
+                '#6366f1'   // Overdue
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.label}: ${context.raw}`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Failed to load or render charts:", error);
     }
   }
+
+  if (window.htmx) {
+    htmx.on('htmx:afterSwap', (evt) => {
+      const targetId = evt.detail.target.id;
+      if (targetId === 'obligation-compliance-chart' || targetId === 'chartGallery') {
+        fetchAndRenderCharts();
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchAndRenderCharts);
 </script>

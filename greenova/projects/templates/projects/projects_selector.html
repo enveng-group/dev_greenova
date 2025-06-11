@@ -9,7 +9,12 @@
       <form id="project-selector" class="project-selector-form" hx-target="#dashboard-content-container">
         <div class="form-group">
           <label for="project_id">Select Project:</label>
-          <select name="project_id" id="project_id" hx-get="{% url 'dashboard:home' %}" hx-trigger="change">
+          <select name="project_id"
+            id="project_id"
+            hx-get="{% url 'dashboard:home' %}"
+            hx-trigger="change"
+            hx-target="#dashboard-content-container"
+            hx-include="[name='project_id']">
             <option value="">-- Select a Project --</option>
             {% for project in projects %}
               <option value="{{ project.id }}" {% if project.id|stringformat:"s" == selected_project_id %}selected{% endif %}>

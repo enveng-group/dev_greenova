@@ -4,7 +4,8 @@
 {% load procedure_tags %}
 
 {% block title %}
-  procedure analysis for {{ mechanism.name }}
+  <h1>Procedure Analysis</h1>
+
 {% endblock title %}
 
 {% block body %}
@@ -143,194 +144,139 @@ Apply Filters
           </div>
         </form>
       </section>
-      <!-- New Responsibility Distribution Section -->
-      <section aria-labelledby="responsibility-heading" class="charts-section">
-        <h2 id="responsibility-heading">
-Responsibility Distribution
-        </h2>
-        <article class="overall-chart">
-          <figure>
-            <figcaption>
-Obligations by Responsibility
-            </figcaption>
-            {{ responsibility_chart|safe }}
 
-          </figure>
-        </article>
-      </section>
-      <section aria-labelledby="charts-heading" class="charts-section">
-        <h2 id="charts-heading">
-Procedures by Status
+      <section aria-labelledby="charts-heading" class="charts-section max-w-7xl mx-auto">
+        <h2 id="charts-heading" class="text-xl font-bold mb-4">
+          Procedures by Status
         </h2>
         <!-- Chart Navigation -->
-        <nav role="navigation"
-             aria-label="Procedure charts navigation"
-             class="chart-nav">
-          <button type="button"
-                  onclick="scrollCharts('chartScroll', 'left')"
-                  aria-label="Scroll left">
-←
-          </button>
-          <button type="button"
-                  onclick="scrollCharts('chartScroll', 'right')"
-                  aria-label="Scroll right">
-→
-          </button>
-        </nav>
-        <div id="chartScroll" class="chart-scroll-container">
+        <div id="chartGrid" class="grid grid-cols-3 gap-4">
           {% for proc in procedure_charts %}
-{% procedure_chart_card proc %}
-          {% endfor %}
+            <article class="procedure-chart-card border border-gray-300 rounded-lg shadow-sm w-full">
 
+              <h3 class="text-lg font-semibold mb-2">{% if proc.name %}{{ proc.name }}{% else %} Procedure Chart {% endif %}</h3>
+              <p class="text-sm text-gray-700 mb-2">
+                <strong>Total:</strong> {{ proc.stats.total|default:0 }} |
+                <strong>Not Started:</strong> {{ proc.stats.not_started|default:0 }} |
+                <strong>In Progress:</strong> {{ proc.stats.in_progress|default:0 }} |
+                <strong>Completed:</strong> {{ proc.stats.completed|default:0 }} |
+                <strong>Overdue:</strong> {{ proc.stats.overdue|default:0 }}
+              </p>
+              <canvas class="chartjs-pie"
+                  id="chart-{{ forloop.counter }}"
+                  aria-label="Pie chart for {{ proc.name }}"
+                  role="img"
+                  data-labels='{{ proc.labels|default:"[]"|safe }}'
+                  data-data='{{ proc.data|default:"[]"|safe }}'
+                  data-procedure="{{ proc.name }}"
+                  data-project="{{ mechanism.project.id }}"
+              ></canvas>
+            </article>
+          {% endfor %}
         </div>
       </section>
-      <!-- Data Table -->
-      <article class="data-table">
-        <header>
-          <h3>
-Detailed Statistics
-          </h3>
-          <button onclick="foldElement(this.parentElement.nextElementSibling, 'block')"
-                  class="btn-fold">
--
-          </button>
-        </header>
-        <div class="table-container">
-          <table role="grid">
-            <thead>
-              <tr>
-                <th scope="col">
-Procedure
-                </th>
-                <th scope="col">
-Not Started
-                </th>
-                <th scope="col">
-In Progress
-                </th>
-                <th scope="col">
-Completed
-                </th>
-                <th scope="col">
-Overdue
-                </th>
-                <th scope="col">
-Total
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in table_data %}
-
-                <tr>
-                  <td>
-                    <h2>
-{{ item.name|format_procedure_name }}
-                    </h2>
-                    <span class="status">{{ item.status|format_procedure_status }}</span>
-                  </td>
-                  <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=not_started&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Not Started obligations for {{ item.name }}'">
-                        {{ item.not_started }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=in_progress&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'In Progress obligations for {{ item.name }}'">
-                        {{ item.in_progress }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=completed&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Completed obligations for {{ item.name }}'">
-                        {{ item.completed }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="#"
-                       class="status-count-link"
-                       hx-get="{% url 'obligations:summary' %}?status=overdue&procedure={{ item.name }}&project_id={{ mechanism.project.id }}"
-                       hx-target="#obligation-list-container"
-                       hx-swap="innerHTML"
-                       hx-trigger="click"
-                       _="on click add .selected to me remove .selected from .status-count-link where it is not me set #current-filter.innerText to 'Overdue obligations for {{ item.name }}'">
-                        {{ item.overdue }}
-                    </a>
-                  </td>
-                  <td>
-{{ item.total }}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        <div id="data-containers" data-hx-ext="class-tools">
-          <!-- Obligations Container -->
-          <div id="obligations-container"
-               hx-get="{% url 'obligations:summary' %}"
-               hx-target="#obligations-container"
-               hx-swap="innerHTML"
-               hx-trigger="load"
-               hx-include="#mechanism_id">
-            <!-- Obligations will be loaded here -->
-          </div>
-        </div>
-        <div id="current-filter" class="filter-label">
-          <!-- Will be set dynamically -->
-        </div>
-
-        <div id="obligation-list-container"
-             aria-live="polite"
-             class="obligations-container">
-          <!-- Filtered obligations will be loaded here via HTMX -->
-        </div>
-      </article>
     {% endif %}
   </article>
-  <script>
-  // Add the chart scrolling function
-  function scrollCharts(containerId, direction) {
-    const container = document.getElementById(containerId);
-    const scrollAmount = 350; // Adjust as needed
+<!-- Modal -->
+<div id="obligation-modal" class="modal-placeholder hidden" style="display: none;">
+  <div class="modal-content">
+    <button onclick="closeObligationPopup()">× Close</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
 
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.2"></script>
 
- else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  }
+<script>
 
-  // Add folding function
+  // Folding function (if needed)
   function foldElement(el, display) {
     if (el.style.display === 'none') {
       el.style.display = display;
       el.previousElementSibling.querySelector('.btn-fold').textContent = '-';
-    }
-
- else {
+    } else {
       el.style.display = 'none';
       el.previousElementSibling.querySelector('.btn-fold').textContent = '+';
     }
   }
-
   </script>
+
+<script>
+  /// Modal logic
+  function showObligationsPopup(status, procedure, projectId) {
+    const url = `/obligations/popup/?status=${encodeURIComponent(status)}&procedure=${encodeURIComponent(procedure)}&project_id=${projectId}`;
+
+    fetch(url)
+      .then(res => res.text())
+      .then(html => {
+        const modal = document.getElementById("obligation-modal");
+        modal.classList.remove("hidden");
+        modal.style.display = "flex";
+
+        document.getElementById("modal-body").innerHTML = html;
+      });
+  }
+
+  function closeObligationPopup() {
+    const modal = document.getElementById("obligation-modal");
+    modal.classList.add("hidden");
+    modal.style.display = "none";
+    document.getElementById("modal-body").innerHTML = "";
+  }
+
+  // Chart init
+  document.addEventListener('DOMContentLoaded', () => {
+    const statusKeyMap = {
+      'Not Started': 'not_started',
+      'In Progress': 'in_progress',
+      'Completed': 'completed',
+      'Overdue': 'overdue'
+    };
+
+    document.querySelectorAll('canvas.chartjs-pie').forEach(canvas => {
+      console.log("Found canvas:", canvas.id);
+
+      try{
+        const ctx = canvas.getContext('2d');
+        const labels = JSON.parse(canvas.dataset.labels || '[]');
+        const data = JSON.parse(canvas.dataset.data || '[]');
+        const procedure = canvas.dataset.procedure;
+        const projectId = "{{ mechanism.project.id }}";
+
+        const chart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF9F40'],
+              hoverOffset: 10
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            },
+            onClick: (evt, elements) => {
+              if (!elements.length) return;
+              const idx = elements[0].index;
+              const label = chart.data.labels[idx];
+              const status = statusKeyMap[label] || label.toLowerCase();
+              showObligationsPopup(status, procedure, projectId);
+            }
+          }
+        });
+      } catch (err) {
+        console.error("Chart init failed for canvas:", canvas.id, err);
+      }
+    });
+  });
+</script>
+<style>
+  .modal-placeholder.hidden { display: none; }
+  .modal-placeholder { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+  .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 80%; max-height: 80%; overflow-y: auto; }
+</style>
 {% endblock body %}

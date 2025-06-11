@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package greenova.mechanisms;
+
+option java_package = "com.greenova.mechanisms";
+option go_package = "greenova/mechanisms";
+
+// Status represents obligation status values
+enum ObligationStatus {
+  STATUS_UNKNOWN = 0;
+  STATUS_NOT_STARTED = 1;
+  STATUS_IN_PROGRESS = 2;
+  STATUS_COMPLETED = 3;
+  STATUS_OVERDUE = 4;
+}
+
+// ObligationInsight provides minimal obligation data for tooltips
+message ObligationInsight {
+  string obligation_number = 1;
+  string due_date = 2;
+  string close_out_date = 3;
+}
+
+// ObligationInsightResponse represents data returned for chart tooltips
+message ObligationInsightResponse {
+  int32 mechanism_id = 1;
+  string status = 2;
+  string status_key = 3;
+  int32 count = 4;
+  int32 total_count = 5;
+  repeated ObligationInsight obligations = 6;
+  string error = 7;
+}
+
+// ChartSegment represents a single pie chart segment
+message ChartSegment {
+  string label = 1;
+  int32 value = 2;
+  string color = 3;
+}
+
+// ChartData represents the data for a pie chart
+message ChartData {
+  repeated ChartSegment segments = 1;
+  int32 mechanism_id = 2;
+  string mechanism_name = 3;
+}
+
+// ChartResponse represents the response for mechanism charts
+message ChartResponse {
+  repeated ChartData charts = 1;
+  string error = 2;
+}

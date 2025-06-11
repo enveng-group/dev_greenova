@@ -1,0 +1,7 @@
+{% comment %}
+Accessible tooltip for overdue obligations list.
+Renders a list of all overdue obligations for the authenticated user.
+{% endcomment %}
+
+{# Reuse the obligations summary partial for overdue obligations overlay #}
+{% include "obligations/components/_obligations_summary.html" with obligations=overdue_obligations show_overdue_only=True user_can_edit=user_can_edit error=error total_count=overdue_obligations|length filters={"status": ["overdue"]} %}

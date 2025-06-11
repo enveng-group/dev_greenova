@@ -255,7 +255,6 @@ INTERNAL_IPS = [
 
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
-    # Core Django apps (must be first)
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -263,13 +262,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+
     # Third-party authentication (keep together)
     "allauth",
     "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.github",
-    "allauth.usersessions",
-    "allauth.mfa",
+
     # Other third-party libraries
     "corsheaders",
     "django_htmx",
@@ -279,9 +276,7 @@ INSTALLED_APPS = [
     "template_partials",
     "tailwind",
     "django_browser_reload",
-    #    "debug_toolbar",
-    "pb_model",
-    #    "silk",
+    
     # Your local apps (ordered by dependency)
     "authentication.apps.AuthenticationConfig",
     "core.apps.CoreConfig",  # Core logic, should be initialized early
@@ -332,11 +327,8 @@ MIDDLEWARE = [
     "dashboard.middleware.DashboardPersistenceMiddleware",  # Add our new middleware
     "django.contrib.messages.middleware.MessageMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",  # Debug after core middleware
     "django_browser_reload.middleware.BrowserReloadMiddleware",
-    # 'django_pdb.middleware.PdbMiddleware',
-    # "silk.middleware.SilkyMiddleware",  # Profiling middleware works best at the end
-    # 'allauth.usersessions.middleware.UserSessionMiddleware',
+  
 ]
 
 # Authentication settings
@@ -347,24 +339,11 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-MFA_SUPPORTED_TYPES = ["totp", "recovery_codes"]
 LOGIN_REDIRECT_URL = "dashboard:home"
 LOGOUT_REDIRECT_URL = "landing:index"
 
-SOCIALACCOUNT_PROVIDERS = {
-    "github": {
-        "SCOPE": [
-            "user",
-            "repo",
-            "read:org",
-        ],
-        "VERIFIED_EMAIL": True,
-        "APP": {
-            "client_id": os.environ.get("GITHUB_CLIENT_ID"),
-            "secret": os.environ.get("GITHUB_CLIENT_SECRET"),
-        },
-    }
-}
+SOCIALACCOUNT_PROVIDERS = {}
+SOCIALACCOUNT_ENABLED = False
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ROOT_URLCONF = "greenova.urls"

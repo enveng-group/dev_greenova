@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import date, timedelta
 from typing import Any
-
+from django.utils import timezone
 from company.models import CompanyMembership
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -21,6 +21,8 @@ from django.views.generic.edit import DeleteView
 from django_htmx.http import trigger_client_event
 from mechanisms.models import EnvironmentalMechanism
 from projects.models import Project, ProjectMembership
+from responsibility.models import Responsibility, ResponsibilityAssignment
+from django.http import HttpRequest, HttpResponse
 
 from .forms import EvidenceUploadForm, ObligationForm
 from .models import Obligation, ObligationEvidence
@@ -423,6 +425,8 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
                 kwargs["project"] = project
             except Project.DoesNotExist:
                 pass
+        kwargs["responsibilities"] = Responsibility.objects.all()
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -430,6 +434,16 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         project_id = self.request.GET.get("project_id")
         if project_id:
             context["project_id"] = project_id
+            try:
+                project = Project.objects.get(id=project_id)
+                context["project_name"] = project.name
+            except Project.DoesNotExist:
+                context["project_name"] = "Unknown Project"
+
+        #for current user info
+        context["user_id"] = self.request.user.id
+        context["user_name"] = self.request.user.get_full_name() or self.request.user.username
+
         return context
 
     def form_valid(self, form):
@@ -444,6 +458,42 @@ class ObligationCreateView(LoginRequiredMixin, CreateView):
         try:
             # Save the form
             obligation = form.save()
+
+            # Handle primary responsibility
+            primary_responsibility = None
+            responsibility_str = form.cleaned_data.get("responsibility")
+            try:
+                primary_responsibility = Responsibility.objects.get(name=responsibility_str)
+            except Responsibility.DoesNotExist:
+                pass
+
+            if primary_responsibility:
+                assignment, created = ResponsibilityAssignment.objects.get_or_create(
+                    user=self.request.user,
+                    obligation=obligation,
+                    role=primary_responsibility,
+                    defaults={
+                        "responsibility": primary_responsibility,
+                        "created_by": self.request.user,
+                    }
+                )
+
+
+            # Handle additional responsibilities
+            responsibilities = form.cleaned_data.get("responsibilities")
+            if responsibilities:
+                for responsibility_obj in responsibilities:
+
+                    if not responsibility_obj:
+                        continue
+                    ResponsibilityAssignment.objects.get_or_create(
+                        user=self.request.user,
+                        obligation=obligation,
+                        responsibility=responsibility_obj,
+                        role=primary_responsibility or responsibility_obj,  # fallback to itself
+                        created_by=self.request.user,
+                    )
+
 
             # Add success message
             messages.success(
@@ -662,9 +712,24 @@ class ObligationListView(LoginRequiredMixin, ListView):
     model = Obligation
     template_name = "obligations/obligations_list.html"
     context_object_name = "obligations"
+    paginate_by = 10
 
     def get_queryset(self):
-        return Obligation.objects.all()
+        project_id = self.request.GET.get("project_id")
+        if not project_id:
+            return Obligation.objects.none()
+
+        queryset = Obligation.objects.filter(
+            project_id=project_id,
+        ).order_by("-action_due_date")
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["project_id"] = self.request.GET.get("project_id")
+        return context
+
 
 
 def upload_evidence(request, obligation_id):
@@ -705,3 +770,26 @@ def upload_evidence(request, obligation_id):
             "form": form,
         },
     )
+
+def obligation_list_popup(request):
+    procedure_name = request.GET.get("procedure")
+    status = request.GET.get("status")
+    project_id = request.GET.get("project_id")
+
+    if not procedure_name or not status:
+        return HttpResponseBadRequest("Missing required parameters.")
+
+    obligations = Obligation.objects.filter(procedure=procedure_name)
+
+    today = timezone.now().date()
+
+    if status == "overdue":
+        obligations = obligations.filter(action_due_date__lt=today).exclude(status="completed")
+    else:
+        obligations = obligations.filter(status=status)
+    print(obligations)
+    return render(request, "obligations\components\_obligation_popup.html", {
+        "obligations": obligations,
+        "label": status,
+        "project_id": project_id,
+    })

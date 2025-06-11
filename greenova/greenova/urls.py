@@ -47,8 +47,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("landing/", include("landing.urls")),
     path("admin/", admin.site.urls),
     # Authentication URLs
-    path("authentication/", include("allauth.urls")),
-    path("accounts/", include("allauth.urls")),
+    path("accounts/", include("allauth.account.urls")),
     path("dashboard/", include("dashboard.urls", namespace="dashboard")),
     path("chatbot/", include("chatbot.urls", namespace="chatbot")),
     path("users/", include("users.urls", namespace="users")),

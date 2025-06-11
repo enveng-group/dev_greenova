@@ -53,12 +53,7 @@ Dashboard | Greenova
 {% block content %}
   <div class="dashboard-layout">
     <!-- Include our new sidebar component -->
-{% include "dashboard/components/sidebar.html" %}
-
-    <!-- Semantic breadcrumbs navigation for accessibility and navigation -->
-        {# Render breadcrumbs for both authenticated and anonymous users #}
-{% include "layouts/_breadcrumbs.html" %}
-
+{% include "dashboard/components/sidebar.html" with selected_project_id=selected_project_id %}
     <!-- Main dashboard content area -->
     <main class="main-content">
       <!-- Dashboard welcome header - ALWAYS VISIBLE and above selector -->
@@ -72,12 +67,6 @@ Dashboard | Greenova
           <p>
             Environmental Compliance Management System Dashboard
           </p>
-        </div>
-        <div class="dashboard-welcome-actions">
-          <div class="date-display">
-            <span class="icon-calendar" aria-hidden="true"></span>
-            <span>{{ current_date|date:"d/m/Y" }}</span>
-          </div>
         </div>
       </header>
       <!-- Project selector - ALWAYS VISIBLE -->
@@ -105,4 +94,5 @@ Dashboard | Greenova
       </div>
     </main>
   </div>
+
 {% endblock content %}

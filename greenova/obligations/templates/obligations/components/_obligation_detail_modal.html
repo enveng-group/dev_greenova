@@ -1,0 +1,72 @@
+{% load static obligation_tags %}
+<!-- Obligation Detail Modal -->
+<div id="obligation-detail-modal"
+     class="obligation-detail-modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="obligation-modal-title"
+     hidden>
+  <div class="obligation-detail-backdrop" aria-hidden="true">
+  </div>
+  <div class="obligation-detail-content" role="document">
+    <header class="obligation-detail-header">
+      <div>
+        <h2 id="obligation-modal-title" class="obligation-detail-title">
+          <span id="modal-obligation-number">Loading...</span>
+        </h2>
+        <p class="obligation-detail-subtitle" id="modal-project-name">
+Loading...
+        </p>
+      </div>
+      <button type="button"
+              class="obligation-detail-close"
+              aria-label="Close obligation details">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+
+    <div class="obligation-detail-body" id="obligation-modal-content">
+      <div class="obligation-detail-loading">
+        <div class="loading-spinner">
+        </div>
+        <span style="margin-left: 0.5rem;">Loading obligation details...</span>
+      </div>
+    </div>
+
+    <footer class="obligation-detail-footer">
+      <div class="obligation-detail-status">
+        <span>Status:</span>
+        <span id="modal-obligation-status">Loading...</span>
+      </div>
+      <div class="obligation-detail-actions">
+        <!-- View mode buttons -->
+        <div id="view-mode-actions" class="action-group">
+          <button type="button"
+                  class="btn-modal btn-modal-secondary obligation-detail-close">
+            Close
+          </button>
+          <button type="button" id="modal-edit-btn" class="btn-modal btn-modal-primary">
+            Edit
+          </button>
+          <button type="button"
+                  id="modal-delete-btn"
+                  class="btn-modal btn-modal-danger">
+            Delete
+          </button>
+        </div>
+
+        <!-- Edit mode buttons -->
+        <div id="edit-mode-actions" class="action-group" style="display: none;">
+          <button type="button"
+                  id="modal-cancel-btn"
+                  class="btn-modal btn-modal-secondary">
+            Cancel
+          </button>
+          <button type="button" id="modal-save-btn" class="btn-modal btn-modal-primary">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>

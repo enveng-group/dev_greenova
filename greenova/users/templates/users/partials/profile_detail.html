@@ -4,12 +4,12 @@
 <div class="profile-container">
   <div class="profile-header">
     <h1>
-User Profile
+      User Profile
     </h1>
   </div>
   <div class="profile-section">
     <h2>
-Profile
+      Profile
     </h2>
     <div class="profile-image-container">
       {% if profile.profile_image %}
@@ -24,10 +24,10 @@ Profile
     </div>
     <div class="profile-name">
       <h3>
-{{ profile.user.first_name }} {{ profile.user.last_name }}
+        {{ profile.user.first_name }} {{ profile.user.last_name }}
       </h3>
       <p>
-{{ profile.user.username }}
+        {{ profile.user.username }}
       </p>
     </div>
   </div>
@@ -38,7 +38,7 @@ Profile
         You have <strong>{{ overdue_count }}</strong> overdue compliance items
       </p>
       {% comment %}Handle URL that might not be available in tests{% endcomment %}
-{% url 'obligations:summary' as obligations_url %}
+      {% url 'obligations:summary' as obligations_url %}
       <a href="{{ obligations_url|default:'/obligations/' }}" class="button">View all</a>
     </div>
   {% endif %}

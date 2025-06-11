@@ -1,10 +1,16 @@
+{% load static %}
 <nav aria-label="Breadcrumb navigation"
      role="navigation"
      class="breadcrumbs">
   <ul class="breadcrumbs-list">
-    <li>
-      <a href="{% url 'dashboard:home' %}" role="menuitem" aria-current="page">Dashboard</a>
-    </li>
+    <a
+                class="menu-btn" id="toggle-sidebar" href="#" aria-label="Toggle Sidebar">
+                <i class="fa fa-outdent" aria-hidden="true"></i></a>
+     <a href="{% url 'dashboard:home' %}" onclick="window.location=this.href; return false;">
+  <img src="{% static 'img/favicon.svg' %}" alt="Greenova Logo" />
+</a>
+   
+     
     {% block breadcrumbs %}
     {% endblock breadcrumbs %}
   </ul>

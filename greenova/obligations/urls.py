@@ -44,4 +44,5 @@ urlpatterns = [
         name="toggle_custom_aspect",
     ),
     path("list/", views.ObligationListView.as_view(), name="obligation_list"),
+    path("popup/", views.obligation_list_popup, name="obligations_popup"),
 ]

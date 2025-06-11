@@ -1,0 +1,135 @@
+/*
+ * GREENOVA MODERNIZER-NORMALIZER
+ * Base CSS reset and normalization with project-specific defaults
+ */
+
+/* Document */
+*,
+::before,
+::after {
+	box-sizing: border-box;
+	letter-spacing: var(--greenova-letter-spacing);
+	margin: 0;
+	padding: 0;
+}
+
+/* Improved document setup */
+:root {
+	scroll-behavior: smooth;
+	scroll-padding-top: var(--greenova-spacing-large, 2rem);
+}
+
+html {
+	tab-size: 4;
+	line-height: 1.5;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	font-family: var(--greenova-font-family);
+	font-weight: var(--greenova-font-weight);
+	color: var(--greenova-text-secondary-dark);
+	background-color: var(--greenova-background-primary);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+/* Layout */
+main,
+#main-content,
+[role="main"],
+header[role="banner"] {
+	max-width: calc(100% - 2 * var(--greenova-main-spacing));
+	margin: 0 var(--greenova-main-spacing);
+	padding: var(--greenova-spacing-large) 0;
+}
+
+.page-content {
+	margin: var(--greenova-spacing-large) 0;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: var(--greenova-text-secondary-dark);
+	overflow-wrap: break-word;
+	text-wrap: balance;
+	line-height: 1.2;
+	margin-bottom: var(--greenova-spacing-medium, 1rem);
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
+	font-size: var(--greenova-title-size);
+	color: var(--greenova-text-primary-dark);
+}
+
+h1:not(:first-child),
+h2:not(:first-child),
+h3:not(:first-child),
+h4:not(:first-child),
+h5:not(:first-child),
+h6:not(:first-child) {
+	font-size: var(--greenova-subtitle-size);
+	font-weight: bold;
+}
+
+p,
+article {
+	color: var(--greenova-text-secondary-dark);
+	font-size: var(--greenova-text-size);
+	text-wrap: pretty;
+	overflow-wrap: break-word;
+	margin-bottom: var(--greenova-spacing-medium, 1rem);
+}
+
+/* Form elements */
+button,
+input,
+optgroup,
+select,
+textarea {
+	font-size: var(--greenova-text-size);
+	line-height: 1.15;
+	font-family: inherit;
+	border-radius: var(--greenova-border-radius, 4px);
+}
+
+/* Accessibility improvements */
+:focus-visible {
+	outline: 3px solid var(--greenova-green-primary);
+	outline-offset: 2px;
+}
+
+[tabindex]:focus-visible {
+	outline: 3px solid var(--greenova-green-primary);
+	outline-offset: 2px;
+}
+
+/* Skip link for accessibility - making it visible when focused */
+.skip-link {
+	position: absolute;
+	top: -50px;
+	left: var(--greenova-spacing-medium, 1rem);
+	padding: var(--greenova-spacing-small, 0.5rem)
+		var(--greenova-spacing-medium, 1rem);
+	background: var(--greenova-green-primary);
+	color: var(--greenova-text-primary-light);
+	z-index: 100;
+	transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+	top: var(--greenova-spacing-small, 0.5rem);
+}
+
+/* Rest of your CSS remains unchanged... */

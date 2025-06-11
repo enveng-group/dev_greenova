@@ -1,9 +1,9 @@
+<div class="profile-container"> 
 <section class="profile-edit">
   <form method="post"
         enctype="multipart/form-data"
         hx-post="{% url 'users:profile_edit' %}"
-        hx-target=".profile-container"
-        _="on submit add .is-submitting to me">
+        hx-target=".profile-container">
 {% csrf_token %}
 
     <div class="form-group">
@@ -65,12 +65,9 @@ Phone Number
     </div>
 
     <div class="form-actions">
-      <button type="submit"
-              class="btn-primary"
-              _="on click if closest('form').classList.contains('is-submitting') then this.disabled = true add {'loading': ''} to me set my innerHTML to 'Saving...'">
+      <button type="submit" class="btn-primary">
         Save Changes
       </button>
-
       <button type="button"
               class="btn-secondary"
               hx-get="{% url 'users:profile' %}"
@@ -81,3 +78,4 @@ Phone Number
     </div>
   </form>
 </section>
+</div>

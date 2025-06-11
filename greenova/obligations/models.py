@@ -12,6 +12,7 @@ from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from projects.models import Project
+from responsibility.models import Responsibility
 
 from .constants import (
     FREQUENCY_ANNUAL,
@@ -28,7 +29,6 @@ from .constants import (
 from .utils import normalize_frequency
 
 logger = logging.getLogger(__name__)
-
 
 class Obligation(models.Model):
     """Represents an environmental obligation."""
@@ -118,6 +118,8 @@ class Obligation(models.Model):
     responsibility: Any = models.CharField(
         max_length=255,
         choices=get_responsibility_choices(),
+        null=False,
+        blank=False,
     )
     project_phase: Any = models.CharField(
         max_length=255,

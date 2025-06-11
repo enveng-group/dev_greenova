@@ -118,7 +118,8 @@ def profile_edit(request: HttpRequest) -> HttpResponse:
                 )
                 return trigger_client_event(response, "profileUpdated", {})
             return redirect("users:profile")
-
+        if request.htmx:
+            return render(request, "users/partials/profile_edit_form.html", {"form": form, "profile": profile})
         messages.error(request, "Please correct the errors below.")
     else:
         # Initialize form with current user data

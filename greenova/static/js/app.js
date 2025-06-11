@@ -451,29 +451,7 @@
         });
       },
     },
-
-    /**
-     * Theme switching functionality
-     */
-    theme: {
-      init() {
-        // Theme initialization is now handled by theme-init.js
-        // This is just for additional theme-related functionality
-
-        // Handle theme change events
-        document.addEventListener('themeChanged', (e) => {
-          // Custom logic when theme changes
-          const theme = e.detail.theme;
-          console.log(`Theme changed to: ${theme}`);
-
-          // You could load additional theme-specific resources here
-          if (theme === 'dark') {
-            // Load dark theme specific resources
-            console.log('Dark theme activated');
-          }
-        });
-      },
-    },
+   
   };
 
   // Initialize application when DOM is ready

@@ -15,9 +15,11 @@ from django.views.generic import ListView, TemplateView
 from mechanisms.models import EnvironmentalMechanism
 from obligations.models import Obligation
 from responsibility.figures import get_responsibility_chart
-
+from django.utils.safestring import mark_safe
+import json
 from .figures import get_procedure_charts as get_all_procedure_charts
 from .models import Procedure
+from django.template.loader import render_to_string
 
 matplotlib.use("Agg")  # Use Agg backend for non-interactive plotting
 logger = logging.getLogger(__name__)
@@ -28,7 +30,7 @@ logger = logging.getLogger(__name__)
 class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     """View for displaying procedure charts filtered by environmental mechanism."""
 
-    template_name = "procedures/procedure_charts.html"  # Changed to HTML
+    template_name = "procedures/procedure_charts.html"
 
     def get_template_names(self):
         """Return appropriate template based on request type."""
@@ -170,24 +172,22 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     def _generate_procedure_charts(
         self, mechanism_id, filtered_obligations, all_obligations, filters_applied
     ):
-        """Generate charts for each procedure."""
-        procedure_charts = []
 
         # Get filtered IDs if filters are applied
+        procedure_charts = []
         filtered_ids = None
         if filters_applied:
             filtered_ids = filtered_obligations.values_list("id", flat=True)
 
-        # Generate charts for each procedure
-        charts_dict = get_all_procedure_charts(mechanism_id, filtered_ids=filtered_ids)
-
-        for procedure_name, fig in charts_dict.items():
-            # Create procedure chart data
-            procedure_data = self._create_procedure_chart_data(
-                procedure_name,
-                fig,
-                filtered_obligations if filters_applied else all_obligations,
+        # Get distinct procedure names from obligations (filtered or all)
+        obligations_to_use = filtered_obligations if filters_applied else all_obligations
+        procedure_names = (
+            obligations_to_use.order_by("procedure")
+            .values_list("procedure", flat=True)
+            .distinct()
             )
+        for procedure_name in procedure_names:
+            procedure_data = self._create_procedure_chart_data(procedure_name, obligations_to_use)
             procedure_charts.append(procedure_data)
 
         return procedure_charts
@@ -195,34 +195,17 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
     def _create_procedure_chart_data(
         self,
         procedure_name,
-        fig,
         obligations,
         # Removed unused argument 'filters_applied'
     ):
-        """Create data for a specific procedure chart."""
-        # Create image for this procedure
-        buf = io.BytesIO()
-        fig.savefig(buf, format="png", bbox_inches="tight")
-        buf.seek(0)
-
-        base64_data = base64.b64encode(buf.getvalue()).decode()
-        chart_img = (
-            f'<img src="data:image/png;base64,{base64_data}" '
-            f'alt="{procedure_name} Chart" '
-            f'width="300" height="250">'
-        )
 
         # Get obligations for this procedure
         proc_obligations = obligations.filter(procedure=procedure_name)
-
+        now = timezone.now().date()
         # Count status types
         status_counts = {
-            "not_started": sum(
-                1 for o in proc_obligations if o.status == "not started"
-            ),
-            "in_progress": sum(
-                1 for o in proc_obligations if o.status == "in progress"
-            ),
+            "not_started": sum(1 for o in proc_obligations if o.status == "not started"),
+            "in_progress": sum(1 for o in proc_obligations if o.status == "in progress"),
             "completed": sum(1 for o in proc_obligations if o.status == "completed"),
             "overdue": sum(1 for o in proc_obligations if o.is_overdue),
         }
@@ -231,7 +214,19 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
             + status_counts["in_progress"]
             + status_counts["completed"]
         )
-        return {"name": procedure_name, "chart": chart_img, "stats": status_counts}
+        labels_list = ["Not Started", "In Progress", "Completed", "Overdue"]
+        data_list = [
+            status_counts["not_started"],
+            status_counts["in_progress"],
+            status_counts["completed"],
+            status_counts["overdue"],
+        ]
+        return {
+            "name": procedure_name,
+            "stats": status_counts,
+            "labels": json.dumps(labels_list),
+            "data": json.dumps(data_list),
+        }
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         """Get context data for rendering the template."""
@@ -298,7 +293,7 @@ class ProcedureChartsView(LoginRequiredMixin, TemplateView):
                 filter_params["filters_applied"],
             )
             context["procedure_charts"] = procedure_charts
-
+            context["procedure_charts_json"] = mark_safe(json.dumps(procedure_charts))
             # Add table data for all procedures
             context["table_data"] = [
                 {
@@ -333,3 +328,4 @@ class ProcedureListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Procedure.objects.all()
+

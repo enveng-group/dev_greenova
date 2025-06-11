@@ -5,7 +5,7 @@
       <li>
         <a href="#"
            role="button"
-           hx-get="{% url 'obligations:summary' %}?project_id={{ project_id }}&page={{ page_obj.previous_page_number }}"
+           hx-get="{% url 'obligations:summary' %}?project_id=1&page={{ page_obj.previous_page_number }}"
            hx-target=".obligations-section"
            hx-swap="outerHTML"
            rel="prev"

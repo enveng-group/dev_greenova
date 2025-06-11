@@ -13,138 +13,170 @@
              _="on click preventDefault() then history.back()">Mechanisms</a>
         </li>
         <li>
-{{ mechanism.name }}
+          {{ mechanism.name }}
+
         </li>
       </ol>
     </nav>
-    <h1>
-Procedure Analysis
-    </h1>
-    <h2>
-{{ mechanism.name }}
-    </h2>
+    <h1>Procedure Analysis</h1>
   </header>
-  {% if error %}
 
+  {% if error %}
     <div class="notice error" role="alert">
-      <p>
-{{ error }}
-      </p>
+      <p>{{ error }}</p>
     </div>
   {% elif procedure_charts %}
-
-    <!-- New Responsibility Distribution Section -->
-    <section aria-labelledby="responsibility-heading" class="charts-section">
-      <h2 id="responsibility-heading">
-Responsibility Distribution
-      </h2>
-      <article class="overall-chart">
-        <figure>
-          <figcaption>
-Obligations by Responsibility
-          </figcaption>
-          {{ responsibility_chart|safe }}
-
-        </figure>
-      </article>
-    </section>
-    <section aria-labelledby="charts-heading" class="charts-section">
-      <h2 id="charts-heading">
-Procedures by Status
-      </h2>
-      <!-- Chart Navigation -->
-      <nav role="navigation"
-           aria-label="Procedure charts navigation"
-           class="chart-nav">
-        <button type="button"
-                onclick="scrollCharts('chartScroll', 'left')"
-                aria-label="Scroll left">
-←
-        </button>
-        <button type="button"
-                onclick="scrollCharts('chartScroll', 'right')"
-                aria-label="Scroll right">
-→
-        </button>
-      </nav>
+    <section aria-labelledby="charts-heading" class="charts-section max-w-7xl mx-auto">
+      <h2 id="charts-heading" class="text-xl font-bold mb-4">Procedures by Status</h2>
       <!-- Charts Container -->
-      <div class="chart-scroll-container"
-           id="chartScroll"
-           role="region"
-           aria-label="Chart gallery"
-           tabindex="0">
-        {% for proc in procedure_charts %}
-{% procedure_chart_card proc %}
-        {% endfor %}
+      <div id="chartGrid" class="grid grid-cols-3 gap-4">
+      {% for proc in procedure_charts %}
+        <article class="procedure-chart-card border border-gray-300 rounded-lg shadow-sm w-full">
 
-      </div>
-      <!-- Data Table -->
-      <article class="data-table">
-        <header>
-          <h3>
-Detailed Statistics
-          </h3>
-        </header>
-        <div class="table-container">
-          <table role="grid">
-            <thead>
-              <tr>
-                <th scope="col">
-Procedure
-                </th>
-                <th scope="col">
-Not Started
-                </th>
-                <th scope="col">
-In Progress
-                </th>
-                <th scope="col">
-Completed
-                </th>
-                <th scope="col">
-Overdue
-                </th>
-                <th scope="col">
-Total
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in table_data %}
-
-                <tr>
-                  <td>
-{{ item.name|format_procedure_name }}
-                  </td>
-                  <td>
-{{ item.not_started }}
-                  </td>
-                  <td>
-{{ item.in_progress }}
-                  </td>
-                  <td>
-{{ item.completed }}
-                  </td>
-                  <td>
-{{ item.overdue }}
-                  </td>
-                  <td>
-{{ item.total }}
-                  </td>
-                </tr>
-              {% endfor %}
-
-            </tbody>
-          </table>
-        </div>
-      </article>
+          <h3 class="text-lg font-semibold mb-2">{% if proc.name %}{{ proc.name }}{% else %} Procedure Chart {% endif %}</h3>
+          <p class="text-sm text-gray-700 mb-2">
+            <strong>Total:</strong> {{ proc.stats.total|default:0 }} |
+            <strong>Not Started:</strong> {{ proc.stats.not_started|default:0 }} |
+            <strong>In Progress:</strong> {{ proc.stats.in_progress|default:0 }} |
+            <strong>Completed:</strong> {{ proc.stats.completed|default:0 }} |
+            <strong>Overdue:</strong> {{ proc.stats.overdue|default:0 }}
+          </p>
+          <canvas
+            class="chartjs-pie"
+            id="chart-{{ proc.id }}"
+            aria-label="Pie chart for {{ proc.name }}"
+            role="img"
+            data-labels='{{ proc.labels|default:"[]"|safe }}'
+            data-data='{{ proc.data|default:"[]"|safe }}'
+            data-procedure="{{ proc.name }}"
+            data-project="{{ mechanism.project.id }}"
+          ></canvas>
+        </article>
+      {% endfor %}
+    </div>
     </section>
   {% else %}
-
     <div class="notice" role="status">
-      <p>
-No procedure data available for this mechanism.
-      </p>
+      <p>No procedure data available for this mechanism.</p>
     </div>
   {% endif %}
 </article>
+<!-- Modal -->
+<div id="obligation-modal" class="modal-placeholder hidden" style="display: none;">
+  <div class="modal-content">
+    <button onclick="closeObligationPopup()">&times;</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
+<script>
+  // Folding function (if needed)
+  function foldElement(el, display) {
+    if (el.style.display === 'none') {
+      el.style.display = display;
+      el.previousElementSibling.querySelector('.btn-fold').textContent = '-';
+    } else {
+      el.style.display = 'none';
+      el.previousElementSibling.querySelector('.btn-fold').textContent = '+';
+    }
+  }
+</script>
+<script>
+  function showObligationsPopup(status, procedure, projectId) {
+  const url = `/obligations/popup/?status=${encodeURIComponent(status)}&procedure=${encodeURIComponent(procedure)}&project_id=${projectId}`;
+
+    fetch(url)
+      .then(res => res.text())
+      .then(html => {
+        const modal = document.getElementById("obligation-modal");
+        modal.classList.remove("hidden");
+        modal.style.display = "flex";
+
+        document.getElementById("modal-body").innerHTML = html;
+      });
+  }
+
+  function closeObligationPopup() {
+    const modal = document.getElementById("obligation-modal");
+    modal.classList.add("hidden");
+    modal.style.display = "none";
+    document.getElementById("modal-body").innerHTML = "";
+  }
+
+  async function fetchAndRenderCharts() {
+
+    const statusKeyMap = {
+      'Not Started': 'not_started',
+      'In Progress': 'in_progress',
+      'Completed': 'completed',
+      'Overdue': 'overdue'
+    };
+
+    if (window._charts) {
+      window._charts.forEach(chart => chart.destroy());
+    }
+    window._charts = [];
+
+    document.querySelectorAll('canvas.chartjs-pie').forEach(canvas => {
+      console.log("Found canvas:", canvas.id);
+
+      try{
+        const ctx = canvas.getContext('2d');
+        const labels = JSON.parse(canvas.dataset.labels || '[]');
+        const data = JSON.parse(canvas.dataset.data || '[]');
+        const procedure = canvas.dataset.procedure;
+        const projectId = "{{ mechanism.project.id }}";
+
+
+        const chart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF9F40'],
+              hoverOffset: 10
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            },
+            onClick: (evt, elements) => {
+              if (!elements.length) return;
+              const idx = elements[0].index;
+              const label = chart.data.labels[idx];
+              const status = statusKeyMap[label] || label.toLowerCase();
+              showObligationsPopup(status, procedure, projectId);
+            }
+          }
+        });
+        window._charts.push(chart);
+
+      } catch (err) {
+        console.error('Error initializing chart:', err, canvas);
+      }
+    });
+  }
+
+  // Re-init charts after HTMX swaps (if you use HTMX)
+  if (window.htmx) {
+    htmx.on('htmx:afterSwap', (evt) => {
+      if (evt.detail.target.querySelector('.chartjs-pie')) {
+        fetchAndRenderCharts();
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchAndRenderCharts);
+  fetchAndRenderCharts();
+</script>
+<style>
+  .modal-placeholder.hidden { display: none; }
+  .modal-placeholder { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+  .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 80%; max-height: 80%; overflow-y: auto; }
+</style>
