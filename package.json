@@ -44,7 +44,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.15.16",
     "@typescript-eslint/eslint-plugin": "8.32.0",
-    "@typescript-eslint/parser": "8.32.0",
+    "@typescript-eslint/parser": "8.41.0",
     "assemblyscript": "0.27.36",
     "autoprefixer": "^10.4.21",
     "cssnano": "^7.0.7",
