@@ -8,7 +8,7 @@
     "htmx-ext-head-support": "2.0.4",
     "htmx-ext-loading-states": "2.0.1",
     "htmx-ext-path-deps": "2.0.1",
-    "htmx.org": "^1.9.12",
+    "htmx.org": "^2.0.7",
     "hyperscript.org": "^0.9.14",
     "tailwindcss": "^4.1.5"
   },
