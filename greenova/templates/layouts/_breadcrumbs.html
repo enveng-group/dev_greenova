@@ -1,11 +1,22 @@
+{% load core_tags %}
 <nav aria-label="Breadcrumb navigation"
      role="navigation"
      class="breadcrumbs">
   <ul class="breadcrumbs-list">
-    <li>
-      <a href="{% url 'dashboard:home' %}" role="menuitem" aria-current="page">Dashboard</a>
-    </li>
-    {% block breadcrumbs %}
-    {% endblock breadcrumbs %}
+    {% if breadcrumbs %}
+      {% for label, url in breadcrumbs %}
+        <li>
+          {% if url %}
+            <a href="{% if url == 'home' %}{% url 'dashboard:home' %}{% else %}{{ url }}{% endif %}" role="menuitem">{{ label }}</a>
+          {% else %}
+            <span aria-current="page">{{ label }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    {% else %}
+      <li>
+        <a href="{% url 'dashboard:home' %}" role="menuitem" aria-current="page">Dashboard</a>
+      </li>
+    {% endif %}
   </ul>
 </nav>
